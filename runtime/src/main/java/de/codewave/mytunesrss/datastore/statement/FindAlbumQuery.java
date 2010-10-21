@@ -31,6 +31,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private int myMinYear;
     private int myMaxYear;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private List<String> myExcludedPlaylistIds = Collections.emptyList();
     ;
     private boolean mySortByYear;
 
@@ -42,6 +43,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
         myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         mySortByYear = sortByYear;
     }
 
@@ -56,6 +58,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("albumorder", !mySortByYear);
         conditionals.put("yearorder", mySortByYear);
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", StringUtils.lowerCase(myFilter));
         statement.setString("artist", StringUtils.lowerCase(myArtist));
@@ -64,6 +67,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         statement.setInt("min_year", myMinYear);
         statement.setInt("max_year", myMaxYear);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
+        statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         return execute(statement, new AlbumResultBuilder());
     }
 

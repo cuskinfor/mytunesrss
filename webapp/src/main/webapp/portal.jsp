@@ -144,12 +144,12 @@
         <c:if test="${!empty container}">
             <tr class="even">
                 <td class="homefolder" colspan="3" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'">
-                    [ / ]
+                    &nbsp;
                 </td>
             </tr>
             <tr class="odd">
                 <td class="parentfolder" colspan="3" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
-                    [ .. ]
+                    &nbsp;
                 </td>
             </tr>
         </c:if>

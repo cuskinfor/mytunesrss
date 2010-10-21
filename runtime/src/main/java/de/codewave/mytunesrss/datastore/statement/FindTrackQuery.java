@@ -35,6 +35,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
@@ -45,6 +46,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         return query;
@@ -58,6 +60,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.myAlbums[i] = albums[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         return query;
     }
 
@@ -69,6 +72,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.myArtists[i] = artists[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         return query;
     }
 
@@ -80,6 +84,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.myGenres[i] = genres[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         return query;
     }
 
@@ -89,6 +94,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myArtists;
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
 
     private FindTrackQuery() {
@@ -111,6 +117,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             conditionals.put("temptables", Boolean.TRUE);
         }
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
         conditionals.put("albumsort", mySortOrder == SortOrder.Album);
         conditionals.put("album", myAlbums != null && myAlbums.length > 0);
@@ -121,6 +128,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("artist", myArtists);
         statement.setItems("genre", myGenres);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
+        statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         return execute(statement, new TrackResultBuilder());
 
     }

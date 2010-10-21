@@ -28,6 +28,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     private String myGenre;
     private int myIndex;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private List<String> myExcludedPlaylistIds = Collections.emptyList();
     ;
 
     public FindArtistQuery(User user, String filter, String album, String genre, int index) {
@@ -36,6 +37,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         myGenre = genre;
         myIndex = index;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
     }
 
     public QueryResult<Artist> execute(Connection connection) throws SQLException {
@@ -46,12 +48,14 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         conditionals.put("artist", StringUtils.isNotBlank(myAlbum));
         conditionals.put("genre", StringUtils.isNotBlank(myGenre));
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists", conditionals);
         statement.setString("filter", StringUtils.lowerCase(myFilter));
         statement.setString("album", StringUtils.lowerCase(myAlbum));
         statement.setString("genre", StringUtils.lowerCase(myGenre));
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
+        statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         return execute(statement, new ArtistResultBuilder());
     }
 

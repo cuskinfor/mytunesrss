@@ -641,7 +641,7 @@ table.navigation {
 }
 
 .tracklist td.parentfolder {
-    padding-left: 28pxs;
+    padding-left: 28px;
     background-image: url( "../images/parent_folder.png" );
     background-position: 5px center;
     background-repeat: no-repeat;

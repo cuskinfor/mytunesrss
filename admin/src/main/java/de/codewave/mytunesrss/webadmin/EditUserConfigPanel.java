@@ -267,7 +267,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                     CheckBox restricted = new CheckBox();
                     restricted.setValue(myUser.getRestrictedPlaylistIds().contains(playlist.getId()));
                     CheckBox excluded = new CheckBox();
-                    restricted.setValue(myUser.getExcludedPlaylistIds().contains(playlist.getId()));
+                    excluded.setValue(myUser.getExcludedPlaylistIds().contains(playlist.getId()));
                     StringBuilder name = new StringBuilder();
                     for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
                         name.append(" \u21E8 ").append(pathElement.getName());

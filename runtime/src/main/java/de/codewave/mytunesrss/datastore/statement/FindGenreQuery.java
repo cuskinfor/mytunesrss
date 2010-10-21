@@ -24,20 +24,24 @@ import java.util.Map;
 public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Genre>> {
     private int myIndex;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private List<String> myExcludedPlaylistIds = Collections.emptyList();
     ;
 
     public FindGenreQuery(User user, int index) {
         myIndex = index;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
     }
 
     public QueryResult<Genre> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
+        statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         return execute(statement, new GenreResultBuilder());
     }
 

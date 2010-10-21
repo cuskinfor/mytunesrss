@@ -19,6 +19,12 @@
                 AND rltp.track_id = t.id
                 AND t.album = a.name
             </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year
             <albumorder>ORDER BY albumname</albumorder>
             <yearorder>ORDER BY year</yearorder>
@@ -42,6 +48,12 @@
                 AND rltp.track_id = t.id
                 AND t.artist = a.name
             </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             GROUP BY a.name, a.track_count, a.album_count
             ORDER BY a.name
             ]]>
@@ -73,6 +85,12 @@
                 AND rltp.track_id = t.id
                 AND t.genre = g.name
             </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             GROUP BY g.name, g.track_count, g.artist_count, g.album_count
             ORDER BY g.name
             ]]>
@@ -83,12 +101,23 @@
         <sql>
             <![CDATA[
             SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
-            FROM playlist p<restricted>, link_track_playlist rltp, link_track_playlist ltp</restricted>
+            FROM playlist p<restricted>, link_track_playlist rltp,</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded>
             WHERE type != 'TEMP'
             <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
             <matching>AND user_owner = :username</matching>
             <user>AND (user_private IS NULL OR user_private = FALSE OR user_owner = :username)</user>
-            <restricted>AND rltp.playlist_id IN (:restrictedPlaylistIds[]) AND ltp.track_id = rltp.track_id AND ltp.playlist_id = p.id</restricted>
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND ltp.track_id = rltp.track_id
+                AND ltp.playlist_id = p.id
+            </restricted>
+            <excluded>
+                AND p.id NOT IN (:excludedPlaylistIds[])
+                AND ltp.track_id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             <types>AND p.type IN (:types[])</types>
             <id>AND p.id = :id</id>
             <container>AND container_id = :containerId</container>
@@ -115,6 +144,12 @@
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND t.id = rltp.track_id
             </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             GROUP BY ltp.idx, {trackColumnsForGrouping}
             <indexorder>ORDER BY idx</indexorder>
             <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
@@ -130,6 +165,12 @@
             FROM track t<restricted>, link_track_playlist rltp
             WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id</restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             GROUP BY {trackColumnsForGrouping}
             <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
             <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
@@ -163,6 +204,12 @@
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
         </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
         <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY {trackColumnsForGrouping}
         <albumsort>ORDER BY t.album, t.pos_number, t.track_number, t.name</albumsort>
@@ -576,6 +623,12 @@
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND t.id = rltp.track_id
             </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             {findRandomTracksOrderClause}
             ]]>
         </sql>
@@ -588,6 +641,12 @@
             FROM track t<restricted>, link_track_playlist rltp
             WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id</restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             {findLastUpdatedTracksOrderClause}
             ]]>
         </sql>
@@ -600,6 +659,12 @@
             FROM track t<restricted>, link_track_playlist rltp
             WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id</restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             {findMostPlayedTracksOrderClause}
             ]]>
         </sql>
@@ -613,6 +678,12 @@
             WHERE t.ts_played IS NOT NULL
             <restricted>AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND t.id = rltp.track_id</restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
             {findRecentlyPlayedTracksOrderClause}
             ]]>
         </sql>

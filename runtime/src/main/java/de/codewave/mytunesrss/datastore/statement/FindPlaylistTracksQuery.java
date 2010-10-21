@@ -31,7 +31,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
 
     private String myId;
     private SortOrder mySortOrder;
-    private List<String> myRestrictionPlaylistIds = Collections.emptyList();
+    private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
 
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
@@ -41,7 +42,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
 
     public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder) {
         this(id, sortOrder);
-        myRestrictionPlaylistIds = user.getRestrictedPlaylistIds();
+        myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
     }
 
     public void setResultSetType(ResultSetType resultSetType) {
@@ -51,7 +53,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
-        conditionals.put("restricted", !myRestrictionPlaylistIds.isEmpty() && (myRestrictionPlaylistIds.size() > 1 || !myRestrictionPlaylistIds.get(0).equals(myId)));
+        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty() && (myRestrictedPlaylistIds.size() > 1 || !myRestrictedPlaylistIds.get(0).equals(myId)));
+        conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId) || PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals, myResultSetType);
             conditionals.put("albumorder", PSEUDO_ID_ALL_BY_ALBUM.equals(myId));
@@ -104,7 +107,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
                 statement.setInt("lastIndex", Integer.parseInt(parts[2]));
             }
         }
-        statement.setItems("restrictedPlaylistIds", myRestrictionPlaylistIds);
+        statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
+        statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         return execute(statement, new TrackResultBuilder());
     }
 }

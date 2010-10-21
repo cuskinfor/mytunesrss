@@ -24,6 +24,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     private String myContainerId;
     private List<PlaylistType> myTypes;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
+    private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
@@ -38,6 +39,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
         this(types, id, containerId, includeHidden);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
     }
@@ -50,6 +52,8 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         conditionals.put("matching", myMatchingOwnerOnly);
         conditionals.put("user", !myMatchingOwnerOnly && StringUtils.isNotBlank(myUserName));
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists", conditionals);
@@ -63,6 +67,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         statement.setString("id", myId);
         statement.setString("containerId", myContainerId);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
+        statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
         return execute(statement, new PlaylistResultBuilder());
