@@ -9,6 +9,9 @@
 
         <release version="4.0.0-EAP-10" date="2010-xx-xx">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-208] Progress window for long running tasks
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-154] Completely hide playlist (playlist exclusions per user)
             </action>
             <action dev="mdescher" type="update">

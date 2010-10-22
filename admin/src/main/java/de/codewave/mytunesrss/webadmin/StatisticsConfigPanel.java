@@ -5,23 +5,23 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.DateField;
 import com.vaadin.ui.Form;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
-import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
-import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.mytunesrss.webadmin.task.SendStatisticsTask;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import org.apache.commons.lang.StringUtils;
+import de.codewave.vaadin.component.ProgressWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.mail.MailException;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
 
@@ -88,7 +88,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
             GregorianCalendar to = new GregorianCalendar();
             to.setTime((Date) myReportToDate.getValue());
             if (from.compareTo(to) < 0) {
-                sendAdminStatistics(from, to);
+                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("statisticsConfigPanel.task.message", MyTunesRss.CONFIG.getAdminEmail()), false, 2000, new SendStatisticsTask(getApplication(), from, to)).show(getApplication().getMainWindow());
             } else {
                 getApplication().showError("statisticsConfigPanel.error.illegalDateOrder");
             }
@@ -97,37 +97,4 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         }
     }
 
-    private void sendAdminStatistics(Calendar from, Calendar to) {
-        DataStoreSession tx = MyTunesRss.STORE.getTransaction();
-        try {
-            tx.executeStatement(new RemoveOldEventsStatement());
-            Calendar nextDay = new GregorianCalendar();
-            nextDay.setTimeInMillis(to.getTimeInMillis());
-            nextDay.add(Calendar.DATE, 1);
-            List<String> csv = tx.executeQuery(new GetStatisticEventsQuery(from.getTimeInMillis(), nextDay.getTimeInMillis(), "yyyy-MM-dd"));
-            tx.commit();
-            String statisticsMailBody = StringUtils.join(csv, System.getProperty("line.separator"));
-            try {
-                MyTunesRss.MAILER.sendMail(MyTunesRss.CONFIG.getAdminEmail(), MyTunesRssUtils.getBundleString(Locale.getDefault(), "email.subject.statistics",
-                        Integer.toString(from.get(Calendar.DAY_OF_MONTH)),
-                        Integer.toString(from.get(Calendar.MONTH) + 1),
-                        Integer.toString(from.get(Calendar.YEAR)),
-                        Integer.toString(to.get(Calendar.DAY_OF_MONTH)),
-                        Integer.toString(to.get(Calendar.MONTH) + 1),
-                        Integer.toString(to.get(Calendar.YEAR))),
-                        statisticsMailBody);
-                getApplication().showInfo("statisticsConfigPanel.info.statisticsSentSuccessfully");
-            } catch (final MailException e) {
-                LOG.error("Could not send statistics email.", e);
-                getApplication().showError("statisticsConfigPanel.error.statisticsNotSent");
-            }
-        } catch (final SQLException e) {
-            try {
-                tx.rollback();
-            } catch (SQLException e1) {
-                LOG.error("Could not rollback transaction.", e1);
-            }
-            getApplication().showError("statisticsConfigPanel.error.statisticsNotSent");
-        }
-    }
 }

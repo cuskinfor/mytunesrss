@@ -6,18 +6,23 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.task.SendSupportRequestCallable;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssRegistration;
+import de.codewave.mytunesrss.MyTunesRssRegistrationException;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.webadmin.task.SendSupportRequestTask;
 import de.codewave.vaadin.SmartTextField;
-import de.codewave.vaadin.component.SinglePanelWindow;
+import de.codewave.vaadin.component.ProgressWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
@@ -117,12 +122,8 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == mySendSupport) {
             if (StringUtils.isNotBlank((String) myName.getValue()) && StringUtils.isNotBlank((String) myEmail.getValue()) && StringUtils.isNotBlank((String) myDescription.getValue())) {
-                SendSupportRequestCallable requestCallable = new SendSupportRequestCallable((String) myName.getValue(), (String) myEmail.getValue(), (String) myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
-                if (requestCallable.call()) {
-                    getApplication().showInfo("supportConfigPanel.info.supportRequestSent");
-                } else {
-                    getApplication().showError("supportConfigPanel.error.supportRequestFailed");
-                }
+                SendSupportRequestTask task = new SendSupportRequestTask(getApplication(), (String) myName.getValue(), (String) myEmail.getValue(), myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
+                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("supportConfigPanel.task.message"), false, 2000, task).show(getApplication().getMainWindow());
             } else {
                 getApplication().showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
@@ -169,4 +170,5 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
             FileUtils.deleteQuietly(myUploadDir);
         }
     }
+
 }

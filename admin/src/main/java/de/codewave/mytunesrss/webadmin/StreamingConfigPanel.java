@@ -253,7 +253,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myAddTranscoder) {
             Form form = createTranscoder();
-            String name = getBundleString("transcoderConfigPanel.transcoder.defaultName", myTranscoderNumberGenerator.getAndIncrement());
+            String name = getBundleString("streamingConfigPanel.transcoder.defaultName", myTranscoderNumberGenerator.getAndIncrement());
             form.getField("name").setValue(name);
             Panel panel = VaadinUtils.getAncestor(form, Panel.class);
             ((TabSheet) panel.getParent()).getTab(panel).setCaption(name);
