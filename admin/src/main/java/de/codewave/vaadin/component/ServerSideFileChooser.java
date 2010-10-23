@@ -26,6 +26,8 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
 
     public static Pattern PATTERN_ALL = Pattern.compile("^.*$");
 
+    private static File theLastSelectedDir = new File(System.getProperty("user.home"));
+
     private Table myChooser;
     private File myCurrentDir;
     private Button myOk;
@@ -41,10 +43,10 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir, String rootsLabel) {
         myAllowedDirPattern = allowedDirPattern;
         myAllowedFilePattern = allowedFilePattern;
-        if (currentDir.exists()) {
+        if (currentDir != null && currentDir.exists()) {
             myCurrentDir = currentDir.isDirectory() ? currentDir : currentDir.getParentFile();
         } else {
-            myCurrentDir = new File("/");
+            myCurrentDir = theLastSelectedDir;
         }
         Panel panel = new Panel();
         ((Layout) panel.getContent()).setMargin(true);
@@ -137,9 +139,11 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         if (clickEvent.getButton() == myOk) {
             File file = (File) myChooser.getValue();
             if (isAllowedSelect(file)) {
+                theLastSelectedDir = myCurrentDir;
                 onFileSelected(file);
             }
         } else if (clickEvent.getButton() == myCancel) {
+            theLastSelectedDir = myCurrentDir;
             onCancel();
         } else if (clickEvent.getButton() == myCreateDir) {
             new TextFieldWindow(30, Sizeable.UNITS_EM, null, null, "Create folder", "Please enter the name of the new folder.", "Create", "Cancel") {

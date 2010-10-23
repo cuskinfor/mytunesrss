@@ -19,6 +19,7 @@ import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -277,8 +278,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         } else if (VaadinUtils.isChild(myTranscoderAccordionPanel, clickEvent.getButton())) {
             final Form buttonForm = (Form) clickEvent.getButton().getData();
             if (buttonForm.getField("selectBinary") == clickEvent.getButton()) {
-                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), new File((String) buttonForm.getField("binary").getValue()), null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
-
+                File dir = StringUtils.isNotBlank((String) buttonForm.getField("binary").getValue()) ? new File((String) buttonForm.getField("binary").getValue()) : null;
+                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
                     @Override
                     protected void onFileSelected(File file) {
                         buttonForm.getField("binary").setValue(file.getAbsolutePath());

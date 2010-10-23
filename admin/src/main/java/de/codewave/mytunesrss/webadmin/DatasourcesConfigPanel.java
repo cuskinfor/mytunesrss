@@ -17,6 +17,7 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.*;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -108,7 +109,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddLocalDatasource) {
-            addOrEditLocalDataSource(null, new File(""));
+            addOrEditLocalDataSource(null, null);
         } else if (findTableItemWithObject(myDatasources, clickEvent.getSource()) != null) {
             Item item = myDatasources.getItem(findTableItemWithObject(myDatasources, clickEvent.getSource()));
             if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
@@ -144,8 +145,8 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 }
             }
         } else if (clickEvent.getSource() == mySelectUploadDir) {
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), new File((String) myUploadDir.getValue()), ServerSideFileChooser.PATTERN_ALL, null, true, "Roots") { // TODO i18n
-
+            File dir = StringUtils.isNotBlank((String)myUploadDir.getValue()) ? new File((String) myUploadDir.getValue()) : null;
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), dir, ServerSideFileChooser.PATTERN_ALL, null, true, "Roots") { // TODO i18n
                 @Override
                 protected void onFileSelected(File file) {
                     myUploadDir.setValue(file.getAbsolutePath());
@@ -159,7 +160,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private void addOrEditLocalDataSource(final Object itemId, File file) {
         new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), file, ServerSideFileChooser.PATTERN_ALL, XML_FILE_PATTERN, false, "Roots") { // TODO i18n
-
             @Override
             protected void onFileSelected(File file) {
                 if (itemId != null) {

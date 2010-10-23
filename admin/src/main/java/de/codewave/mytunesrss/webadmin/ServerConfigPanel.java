@@ -241,7 +241,8 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == mySslKeystoreFileSelect) {
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("serverConfigPanel.caption.selectKeystoreFile"), new File((String) mySslKeystoreFile.getValue()), null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
+            File dir = StringUtils.isNotBlank((String) mySslKeystoreFile.getValue()) ? new File((String) mySslKeystoreFile.getValue()) : null;
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("serverConfigPanel.caption.selectKeystoreFile"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
                 @Override
                 protected void onFileSelected(File file) {
                     mySslKeystoreFile.setValue(file.getAbsolutePath());

@@ -18,6 +18,7 @@ import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.component.MessageWindow;
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import java.io.File;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
