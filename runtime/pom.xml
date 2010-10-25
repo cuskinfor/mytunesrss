@@ -252,7 +252,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>camel</artifactId>
-            <version>0.9.10</version>
+            <version>1.0.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
