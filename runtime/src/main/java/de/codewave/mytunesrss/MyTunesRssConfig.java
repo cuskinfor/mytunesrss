@@ -324,13 +324,17 @@ public class MyTunesRssConfig {
     }
 
     public Collection<User> getUsers() {
-        return new HashSet<User>(myUsers);
+        Collection<User> users = new HashSet<User>();
+        for (User user : myUsers) {
+            users.add(user);
+        }
+        return users;
     }
 
     public Collection<User> getUserClones() {
         Map<User, User> originalToClone = new HashMap<User, User>();
         List<User> clones = new ArrayList<User>();
-        for (User user : MyTunesRss.CONFIG.getUsers()) {
+        for (User user : getUsers()) {
             User clone = (User) user.clone();
             clones.add(clone);
             originalToClone.put(user, clone);
@@ -1048,6 +1052,7 @@ public class MyTunesRssConfig {
             user.loadFromPreferences(userContext);
             addUser(user);
         }
+        markGroupUsers();
         myFlashPlayers.clear();
         Iterator<JXPathContext> flashPlayerIterator = JXPathUtils.getContextIterator(settings, "flash-players/player");
         while (flashPlayerIterator.hasNext()) {
@@ -1058,6 +1063,27 @@ public class MyTunesRssConfig {
                     new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8")
             );
             addFlashPlayer(flashPlayerConfig);
+        }
+    }
+
+    /**
+     * Mark all groups users as groups
+     */
+    private void markGroupUsers() {
+        // mark them
+        for (User userToCheck : myUsers) {
+            for (User user : myUsers) {
+                if (userToCheck.equals(user.getParent())) {
+                    userToCheck.setGroup(true);
+                    break;
+                }
+            }
+        }
+        // and flatten them
+        for (User user : myUsers) {
+            if (user.isGroup()) {
+                user.setParent(null);
+            }
         }
     }
 

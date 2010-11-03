@@ -370,7 +370,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         } else {
             myUser.setExpiration(0);
         }
-        myUserConfigPanel.saveUser(myUser);
+        myUserConfigPanel.saveUser(myUser, getComponentFactory());
     }
 
     @Override

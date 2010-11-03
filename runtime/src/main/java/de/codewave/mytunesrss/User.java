@@ -94,6 +94,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private Set<String> myForceTranscoders = new HashSet<String>();
     private long myExpiration;
     private boolean myYahooPlayer = true;
+    private boolean myGroup = false;
 
     public User(String name) {
         myName = name;
@@ -431,6 +432,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myYahooPlayer = yahooPlayer;
     }
 
+    public boolean isGroup() {
+        return myGroup;
+    }
+
+    public void setGroup(boolean group) {
+        myGroup = group;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -579,6 +588,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
         setExpiration(JXPathUtils.getLongValue(settings, "expiration", myExpiration));
         setYahooPlayer(JXPathUtils.getBooleanValue(settings, "yahooPlayer", myYahooPlayer));
+        setGroup(JXPathUtils.getBooleanValue(settings, "group", myGroup));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -653,8 +663,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
         if (getExpiration() > 0) {
             users.appendChild(DOMUtils.createLongElement(settings, "expiration", getExpiration()));
-            users.appendChild(DOMUtils.createBooleanElement(settings, "yahooPlayer", isYahooPlayer()));
         }
+        users.appendChild(DOMUtils.createBooleanElement(settings, "yahooPlayer", isYahooPlayer()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "group", isGroup()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {

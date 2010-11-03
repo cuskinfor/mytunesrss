@@ -159,15 +159,4 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
             super.buttonClick(clickEvent);
         }
     }
-
-    private Object findTableItemWithObject(Table table, Object component) {
-        for (Object itemId : table.getItemIds()) {
-            for (Object itemPropertyId : table.getItem(itemId).getItemPropertyIds()) {
-                if (component == table.getItem(itemId).getItemProperty(itemPropertyId).getValue()) {
-                    return itemId;
-                }
-            }
-        }
-        return null;
-    }
 }

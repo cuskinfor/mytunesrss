@@ -189,15 +189,4 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         }
         return true;
     }
-
-    private Object findTableItemWithObject(Table table, Object component) {
-        for (Object itemId : table.getItemIds()) {
-            for (Object itemPropertyId : table.getItem(itemId).getItemPropertyIds()) {
-                if (component == table.getItem(itemId).getItemProperty(itemPropertyId).getValue()) {
-                    return itemId;
-                }
-            }
-        }
-        return null;
-    }
 }

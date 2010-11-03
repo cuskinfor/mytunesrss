@@ -157,4 +157,15 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     public void refresh(Refresher source) {
         getApplication().pollNotifications();
     }
+
+    protected Object findTableItemWithObject(Table table, Object component) {
+        for (Object itemId : table.getItemIds()) {
+            for (Object itemPropertyId : table.getItem(itemId).getItemPropertyIds()) {
+                if (component == table.getItem(itemId).getItemProperty(itemPropertyId).getValue()) {
+                    return itemId;
+                }
+            }
+        }
+        return null;
+    }
 }

@@ -5,13 +5,13 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.event.Action;
-import com.vaadin.event.ItemClickEvent;
+import com.vaadin.data.Item;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.LdapAuthMethod;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
+import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -19,12 +19,14 @@ import de.codewave.vaadin.component.SelectWindow;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickEvent.ItemClickListener, Action.Handler {
+public class UserConfigPanel extends MyTunesRssConfigPanel {
 
-    private Panel myUserTreePanel;
-    private Tree myUserTree;
+    private Panel myUserPanel;
+    private Panel myGroupsPanel;
+    private Table myGroupTable;
+    private Table myUserTable;
+    private Button myAddGroup;
     private Button myAddUser;
     private Form myLdapForm;
     private SmartTextField myLdapHost;
@@ -41,16 +43,31 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
 
     public void attach() {
         if (!myInitialized) {
-            init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
+            init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
             myNoTemplateUser = new User(getBundleString("userConfigPanel.selectTemplateUser.noTemplateOption"));
-            myUserTreePanel = new Panel(getBundleString("userConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
-            myUserTree = new Tree();
-            myUserTree.addListener(this);
-            myUserTree.addActionHandler(this);
-            myUserTreePanel.addComponent(myUserTree);
+            myGroupsPanel = new Panel(getBundleString("userConfigPanel.caption.groups"), getComponentFactory().createVerticalLayout(true, true));
+            myGroupTable = new Table();
+            myGroupTable.addContainerProperty("name", String.class, null, getBundleString("userConfigPanel.groups.name"), null, null);
+            myGroupTable.addContainerProperty("edit", Button.class, null, null, null, null);
+            myGroupTable.addContainerProperty("delete", Button.class, null, null, null, null);
+            myGroupTable.setEditable(false);
+            myGroupTable.setSortContainerPropertyId("name");
+            myGroupsPanel.addComponent(myGroupTable);
+            myAddGroup = getComponentFactory().createButton("userConfigPanel.addGroup", this);
+            myGroupsPanel.addComponent(myAddGroup);
+            addComponent(myGroupsPanel);
+            myUserPanel = new Panel(getBundleString("userConfigPanel.caption.users"), getComponentFactory().createVerticalLayout(true, true));
+            myUserTable = new Table();
+            myUserTable.addContainerProperty("name", String.class, null, getBundleString("userConfigPanel.users.name"), null, null);
+            myUserTable.addContainerProperty("group", String.class, null, getBundleString("userConfigPanel.users.group"), null, null);
+            myUserTable.addContainerProperty("edit", Button.class, null, null, null, null);
+            myUserTable.addContainerProperty("delete", Button.class, null, null, null, null);
+            myUserTable.setEditable(false);
+            myUserTable.setSortContainerPropertyId("name");
+            myUserPanel.addComponent(myUserTable);
             myAddUser = getComponentFactory().createButton("userConfigPanel.addUser", this);
-            myUserTreePanel.addComponent(myAddUser);
-            addComponent(myUserTreePanel);
+            myUserPanel.addComponent(myAddUser);
+            addComponent(myUserPanel);
             myLdapForm = getComponentFactory().createForm(null, true);
             myLdapHost = getComponentFactory().createTextField("userConfigPanel.ldapHost");
             myLdapPort = getComponentFactory().createTextField("userConfigPanel.ldapPort");
@@ -73,14 +90,14 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
             myLdapForm.addField("ldapEmailAttribute", myLdapEmailAttribute);
             myLdapForm.addField("templateUser", myTemplateUser);
             addComponent(getComponentFactory().surroundWithPanel(myLdapForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.ldap")));
-            attach(0, 2, 0, 2);
+            attach(0, 3, 0, 3);
             initFromConfig();
             myInitialized = true;
         }
     }
 
     protected void initFromConfig() {
-        initUserTree();
+        initUsersAndGroupsTable();
         myLdapHost.setValue(MyTunesRss.CONFIG.getLdapConfig().getHost());
         myLdapPort.setValue(MyTunesRss.CONFIG.getLdapConfig().getPort(), 1, 65535, "");
         myLdapAuthMethod.setValue(MyTunesRss.CONFIG.getLdapConfig().getAuthMethod());
@@ -95,19 +112,18 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
         }
     }
 
-    private void initUserTree() {
-        myUserTree.removeAllItems();
-        Collection<User> clones = MyTunesRss.CONFIG.getUserClones();
-        for (User user : clones) {
-            myUserTree.addItem(user);
-            myUserTree.setChildrenAllowed(user, false);
-        }
-        for (User user : clones) {
-            if (user.getParent() != null) {
-                myUserTree.setChildrenAllowed(user.getParent(), true);
-                myUserTree.setParent(user, user.getParent());
+    private void initUsersAndGroupsTable() {
+        myGroupTable.removeAllItems();
+        myUserTable.removeAllItems();
+        for (User user : MyTunesRss.CONFIG.getUserClones()) {
+            if (user.isGroup()) {
+                addGroup(user, getComponentFactory());
+            } else {
+                addUser(user, getComponentFactory());
             }
         }
+        myGroupTable.sort();
+        myUserTable.sort();
     }
 
     protected void writeToConfig() {
@@ -130,13 +146,49 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddUser) {
-            createUser(null);
+            createUser(false);
+        } else if (clickEvent.getSource() == myAddGroup) {
+            createUser(true);
+        } else if (findTableItemWithObject(myUserTable, clickEvent.getSource()) != null) {
+            final User user = (User)findTableItemWithObject(myUserTable, clickEvent.getSource());
+            Item item = myUserTable.getItem(user);
+            if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
+                editUser(user);
+            } else if (item.getItemProperty("delete").getValue() == clickEvent.getSource()) {
+                final Button yes = new Button(getBundleString("button.yes"));
+                Button no = new Button(getBundleString("button.no"));
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteUser.caption"), getBundleString("userConfigPanel.optionWindowDeleteUser.message", user.getName()), yes, no) {
+                    public void clicked(Button button) {
+                        if (button == yes) {
+                            myUserTable.removeItem(user);
+                            setTablePageLengths();
+                        }
+                    }
+                }.show(getApplication().getMainWindow());
+            }
+        } else if (findTableItemWithObject(myGroupTable, clickEvent.getSource()) != null) {
+            final User group = (User)findTableItemWithObject(myGroupTable, clickEvent.getSource());
+            Item item = myGroupTable.getItem(group);
+            if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
+                editUser(group);
+            } else if (item.getItemProperty("delete").getValue() == clickEvent.getSource()) {
+                final Button yes = new Button(getBundleString("button.yes"));
+                Button no = new Button(getBundleString("button.no"));
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteGroup.caption"), getBundleString("userConfigPanel.optionWindowDeleteGroup.message", group.getName()), yes, no) {
+                    public void clicked(Button button) {
+                        if (button == yes) {
+                            myGroupTable.removeItem(group);
+                            setTablePageLengths();
+                        }
+                    }
+                }.show(getApplication().getMainWindow());
+            }
         } else {
             super.buttonClick(clickEvent);
         }
     }
 
-    private void createUser(final User parentUser) {
+    private void createUser(final boolean group) {
         List<User> users = new ArrayList<User>(MyTunesRss.CONFIG.getUsers());
         Collections.sort(users);
         users.add(0, myNoTemplateUser);
@@ -146,143 +198,49 @@ public class UserConfigPanel extends MyTunesRssConfigPanel implements ItemClickE
                 getApplication().getMainWindow().removeWindow(this);
                 User user = (User) template.clone();
                 user.setName(getBundleString("userConfigPanel.newUserName"));
-                if (parentUser != null) {
-                    user.setParent(parentUser);
-                }
+                user.setGroup(group);
                 editUser(user);
             }
         }.show(getApplication().getMainWindow());
-
-
-    }
-
-    public void itemClick(ItemClickEvent itemClickEvent) {
-        if (itemClickEvent.getButton() == ItemClickEvent.BUTTON_LEFT) {
-            editUser((User) itemClickEvent.getItemId());
-        }
     }
 
     private void editUser(User user) {
         getApplication().setMainComponent(new EditUserConfigPanel(this, user));
     }
 
-    public Action[] getActions(Object target, Object sender) {
-        if (getMoveTargetUsers((User) target).isEmpty()) {
-            return new Action[]{new AddUserAction((User) target), new RemoveUserAction((User) target)};
-        } else {
-            return new Action[]{new AddUserAction((User) target), new MoveUserAction((User) target), new RemoveUserAction((User) target)};
-        }
-    }
-
-    public void handleAction(Action action, Object sender, final Object target) {
-        if (action instanceof AddUserAction) {
-            createUser((User) target);
-        } else if (action instanceof MoveUserAction) {
-            final User user = (User) target;
-            final List<User> targetUsers = getMoveTargetUsers(user);
-            final User makeRootUserItem = new User(getBundleString("userConfigPanel.moveUser.makeRoot"));
-            if (user.getParent() != null) {
-                targetUsers.add(0, makeRootUserItem);
-            }
-            new SelectWindow<User>(50, Sizeable.UNITS_EM, targetUsers, null, null, getBundleString("userConfigPanel.moveUser.caption"), getBundleString("userConfigPanel.moveUser.message", user.getName()), getBundleString("button.ok"), getBundleString("button.cancel")) {
-                @Override
-                protected void onOk(User targetUser) {
-                    User oldParent = user.getParent();
-                    if (targetUser == makeRootUserItem) {
-                        user.setParent(null);
-                        myUserTree.setParent(user, null);
-                    } else {
-                        user.setParent(targetUser);
-                        myUserTree.setChildrenAllowed(targetUser, true);
-                        myUserTree.setParent(user, targetUser);
-                        myUserTree.expandItem(targetUser);
-                        myUserTree.select(user);
-                    }
-                    if (oldParent != null) {
-                        myUserTree.setChildrenAllowed(oldParent, !myUserTree.getChildren(oldParent).isEmpty());
-                    }
-                    getApplication().getMainWindow().removeWindow(this);
-                }
-            }.show(getApplication().getMainWindow());
-        } else if (action instanceof RemoveUserAction) {
-            final User user = (User) target;
-            final Button yes = new Button(getBundleString("button.yes"));
-            Button no = new Button(getBundleString("button.no"));
-            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteUser.caption"), getBundleString("userConfigPanel.optionWindowDeleteUser.message", user.getName()), yes, no) {
-                public void clicked(Button button) {
-                    if (button == yes) {
-                        myUserTree.removeItem(user);
-                        if (user.getParent() != null) {
-                            myUserTree.setChildrenAllowed(user.getParent(), !myUserTree.getChildren(user.getParent()).isEmpty());
-                            myUserTree.select(user.getParent());
-                        }
-                    }
-                }
-            }.show(getApplication().getMainWindow());
-        } else {
-            throw new IllegalArgumentException("Illegal action of type \"" + action.getClass() + "\".");
-        }
-    }
-
-    private List<User> getMoveTargetUsers(User user) {
-        final List<User> targetUsers = new ArrayList<User>();
-        for (User otherUser : getUsers()) {
-            if (otherUser != user && !isChildUser(user, otherUser) && otherUser != user.getParent()) {
-                targetUsers.add(otherUser);
-            }
-        }
-        Collections.sort(targetUsers);
-        return targetUsers;
-    }
-
-    /**
-     * Check if the other user is a child user of the user.
-     *
-     * @param user      Parent user.
-     * @param otherUser Other user.
-     * @return TRUE if the other user is a child of the parent user or FALSE otherwise.
-     */
-    private boolean isChildUser(User user, User otherUser) {
-        for (; otherUser != null && otherUser != user; otherUser = otherUser.getParent()) ;
-        return otherUser == user;
-    }
-
-    public Set<User> getUsers() {
+    Set<User> getUsers() {
         Set<User> users = new HashSet<User>();
-        for (Object itemId : myUserTree.getItemIds()) {
+        for (Object itemId : myUserTable.getItemIds()) {
+            users.add((User) itemId);
+        }
+        for (Object itemId : myGroupTable.getItemIds()) {
             users.add((User) itemId);
         }
         return users;
     }
 
-    public class AddUserAction extends Action {
-        public AddUserAction(User user) {
-            super(getBundleString("userConfigPanel.action.addUser", user.getName()));
+    void saveUser(User user, ComponentFactory componentFactory) {
+        if (!user.isGroup() && !myUserTable.containsId(user)) {
+            addUser(user, componentFactory);
+            myUserTable.sort();
+        } else if (user.isGroup() && !myGroupTable.containsId(user)) {
+            addGroup(user, componentFactory);
+            myGroupTable.sort();
         }
     }
 
-    public class RemoveUserAction extends Action {
-        public RemoveUserAction(User user) {
-            super(getBundleString("userConfigPanel.action.removeUser", user.getName()));
-        }
+    private void addUser(User user, ComponentFactory componentFactory) {
+        myUserTable.addItem(new Object[]{user.getName(), user.getParent() != null ? user.getParent().getName() : null, componentFactory.createButton("button.edit", this), componentFactory.createButton("button.delete", this)}, user);
+        setTablePageLengths();
     }
 
-    public class MoveUserAction extends Action {
-        public MoveUserAction(User user) {
-            super(getBundleString("userConfigPanel.action.moveUser", user.getName()));
-        }
+    private void addGroup(User group, ComponentFactory componentFactory) {
+        myGroupTable.addItem(new Object[]{group.getName(), componentFactory.createButton("button.edit", this), componentFactory.createButton("button.delete", this)}, group);
+        setTablePageLengths();
     }
 
-    void saveUser(User user) {
-        if (!myUserTree.containsId(user)) {
-            myUserTree.addItem(user);
-            myUserTree.setChildrenAllowed(user, false);
-            if (user.getParent() != null) {
-                myUserTree.setChildrenAllowed(user.getParent(), true);
-                myUserTree.setParent(user, user.getParent());
-                myUserTree.expandItem(user.getParent());
-            }
-            myUserTree.select(user);
-        }
+    private void setTablePageLengths() {
+        myGroupTable.setPageLength(Math.min(myGroupTable.getItemIds().size(), 10));
+        myUserTable.setPageLength(Math.min(myUserTable.getItemIds().size(), 10));
     }
 }
