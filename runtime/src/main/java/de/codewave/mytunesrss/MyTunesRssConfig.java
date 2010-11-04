@@ -331,7 +331,7 @@ public class MyTunesRssConfig {
         return users;
     }
 
-    public Collection<User> getUserClones() {
+    /*public Collection<User> getUserClones() {
         Map<User, User> originalToClone = new HashMap<User, User>();
         List<User> clones = new ArrayList<User>();
         for (User user : getUsers()) {
@@ -345,11 +345,7 @@ public class MyTunesRssConfig {
             }
         }
         return clones;
-    }
-
-    public void setUsers(Collection<User> users) {
-        myUsers = new HashSet<User>(users);
-    }
+    }*/
 
     public User getUser(String name) {
         for (User user : getUsers()) {
@@ -360,8 +356,16 @@ public class MyTunesRssConfig {
         return null;
     }
 
-    public void addUser(User user) {
+    public void removeUser(User user) {
         myUsers.remove(user);
+        for (User eachUser : myUsers) {
+            if (eachUser.getParent() == user) {
+                eachUser.setParent(null);
+            }
+        }
+    }
+
+    public void addUser(User user) {
         myUsers.add(user);
     }
 

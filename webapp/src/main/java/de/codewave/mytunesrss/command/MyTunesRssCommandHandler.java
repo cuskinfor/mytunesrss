@@ -64,7 +64,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         LOG.debug("Checking authorization with local users.");
         MyTunesRssConfig config = getMyTunesRssConfig();
         User user = config.getUser(userName);
-        return user != null && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
+        return user != null && !user.isGroup() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
     }
 
     protected void authorize(WebAppScope scope, String userName) {

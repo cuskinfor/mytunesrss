@@ -69,31 +69,36 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private UserConfigPanel myUserConfigPanel;
     private CheckBox myExpire;
     private DateField myExpiration;
+    private boolean myNewUser;
 
-    public EditUserConfigPanel(UserConfigPanel userConfigPanel, User user) {
+    public EditUserConfigPanel(UserConfigPanel userConfigPanel, User user, boolean newUser) {
         myUserConfigPanel = userConfigPanel;
         myUser = user;
+        myNewUser = newUser;
     }
 
     public void attach() {
-        init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
+        int rows = myUser.getParent() == null ? 6 : 3;
+        init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, rows, true, true));
         myUsername = getComponentFactory().createTextField("editUserConfigPanel.username", new UniqueUsernameValidator());
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
         myRetypePassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.retypePassword", new SameValidator(myPassword, getBundleString("editUserConfigPanel.error.retypePassword")));
         myEmail = getComponentFactory().createTextField("editUserConfigPanel.email", new EmailValidator(getBundleString("editUserConfigPanel.error.email")));
         myExpire = getComponentFactory().createCheckBox("editUserConfigPanel.expire");
-        myExpire.addListener((Property.ValueChangeListener)this);
+        myExpire.addListener((Property.ValueChangeListener) this);
         myExpiration = new DateField(getBundleString("editUserConfigPanel.expiration"), new Date(0));
         myExpiration.setLenient(false);
         myExpiration.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myExpiration.setResolution(DateField.RESOLUTION_DAY);
         myIdentificationForm = getComponentFactory().createForm(null, true);
         myIdentificationForm.addField("username", myUsername);
-        myIdentificationForm.addField("password", myPassword);
-        myIdentificationForm.addField("retypePassword", myRetypePassword);
-        myIdentificationForm.addField("email", myEmail);
-        myIdentificationForm.addField("expireCheck", myExpire);
-        myIdentificationForm.addField("expiration", myExpiration);
+        if (!myUser.isGroup()) {
+            myIdentificationForm.addField("password", myPassword);
+            myIdentificationForm.addField("retypePassword", myRetypePassword);
+            myIdentificationForm.addField("email", myEmail);
+            myIdentificationForm.addField("expireCheck", myExpire);
+            myIdentificationForm.addField("expiration", myExpiration);
+        }
         addComponent(getComponentFactory().surroundWithPanel(myIdentificationForm, FORM_PANEL_MARGIN_INFO, getBundleString("editUserConfigPanel.caption.identification")));
         myPermRss = new CheckBox();
         myPermPlaylist = new CheckBox();
@@ -111,6 +116,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermEditLastFm = new CheckBox();
         myPermEditSettings = new CheckBox();
         myPermEditPlaylists = new CheckBox();
+        Panel panel = null;
         myPermissions = new Table();
         myPermissions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPermissions.addContainerProperty("active", CheckBox.class, null, "", null, null);
@@ -134,9 +140,11 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.addItem(new Object[]{myPermEditSettings, getBundleString("editUserConfigPanel.permEditSettings")}, myPermEditSettings);
         myPermissions.addItem(new Object[]{myPermEditPlaylists, getBundleString("editUserConfigPanel.permEditPlaylists")}, myPermEditPlaylists);
         myPermissions.setPageLength(Math.min(myPermissions.size(), 10));
-        Panel panel = new Panel(getBundleString("editUserConfigPanel.caption.permissions"));
+        panel = new Panel(getBundleString("editUserConfigPanel.caption.permissions"));
         panel.addComponent(myPermissions);
-        addComponent(panel);
+        if (myUser.getParent() == null) {
+            addComponent(panel);
+        }
         myPlaylistsRestrictions = new Table();
         myPlaylistsRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPlaylistsRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.restricted"), null, null);
@@ -147,7 +155,9 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPlaylistsRestrictions.setSortContainerPropertyId("name");
         panel = new Panel(getBundleString("editUserConfigPanel.caption.restrictedPlaylists"));
         panel.addComponent(myPlaylistsRestrictions);
-        addComponent(panel);
+        if (myUser.getParent() == null) {
+            addComponent(panel);
+        }
         myForceTranscoders = new Table();
         myForceTranscoders.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myForceTranscoders.addContainerProperty("active", CheckBox.class, null, "", null, null);
@@ -157,7 +167,9 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myForceTranscoders.setSortContainerPropertyId("name");
         panel = new Panel(getBundleString("editUserConfigPanel.caption.forceTranscoders"));
         panel.addComponent(myForceTranscoders);
-        addComponent(panel);
+        if (myUser.getParent() == null) {
+            addComponent(panel);
+        }
         mySearchFuzziness = getComponentFactory().createTextField("editUserConfigPanel.searchFuzziness", getApplication().getValidatorFactory().createMinMaxValidator(0, 100));
         myDownloadLimitType = getComponentFactory().createSelect("editUserConfigPanel.downloadLimitType", Arrays.asList(User.QuotaType.values()));
         myDownloadLimitType.setNewItemsAllowed(false);
@@ -170,60 +182,25 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myLastFmPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.lastFmPassword");
         myEncryptUrls = getComponentFactory().createCheckBox("editUserConfigPanel.encryptUrls");
         myOptionsForm = getComponentFactory().createForm(null, true);
-        myOptionsForm.addField("searchFuzziness", mySearchFuzziness);
-        myOptionsForm.addField("downloadLimitType", myDownloadLimitType);
-        myOptionsForm.addField("downloadLimitSize", myDownloadLimitSize);
-        myOptionsForm.addField("maxFilesPerArchive", myMaxFilesPerArchive);
-        myOptionsForm.addField("sessionTimeout", mySessionTimeout);
-        myOptionsForm.addField("bandwidthLimit", myBandwidthLimit);
-        myOptionsForm.addField("sharedUser", mySharedUser);
-        myOptionsForm.addField("lastFmUsername", myLastFmUsername);
-        myOptionsForm.addField("lastFmPassword", myLastFmPassword);
-        myOptionsForm.addField("encryptUrls", myEncryptUrls);
+        if (myUser.getParent() == null) {
+            myOptionsForm.addField("searchFuzziness", mySearchFuzziness);
+            myOptionsForm.addField("downloadLimitType", myDownloadLimitType);
+            myOptionsForm.addField("downloadLimitSize", myDownloadLimitSize);
+            myOptionsForm.addField("maxFilesPerArchive", myMaxFilesPerArchive);
+            myOptionsForm.addField("sessionTimeout", mySessionTimeout);
+            myOptionsForm.addField("bandwidthLimit", myBandwidthLimit);
+            myOptionsForm.addField("sharedUser", mySharedUser);
+            myOptionsForm.addField("encryptUrls", myEncryptUrls);
+        }
+        if (!myUser.isGroup()) {
+            myOptionsForm.addField("lastFmUsername", myLastFmUsername);
+            myOptionsForm.addField("lastFmPassword", myLastFmPassword);
+        }
         addComponent(getComponentFactory().surroundWithPanel(myOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("editUserConfigPanel.caption.options")));
 
-        attach(0, 5, 0, 5);
+        attach(0, rows - 1, 0, rows - 1);
 
         initFromConfig();
-
-        if (myUser.getParent() != null) {
-            disableReadOnlyComponents();
-        }
-    }
-
-    private void disableReadOnlyComponents() {
-        for (Object itemId : myPermissions.getItemIds()) {
-            for (Object itemPropertyId : myPermissions.getItem(itemId).getItemPropertyIds()) {
-                if (myPermissions.getItem(itemId).getItemProperty(itemPropertyId).getValue() instanceof Component) {
-                    ((Component) myPermissions.getItem(itemId).getItemProperty(itemPropertyId).getValue()).setEnabled(false);
-                }
-            }
-        }
-        for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
-            for (Object itemPropertyId : myPlaylistsRestrictions.getItem(itemId).getItemPropertyIds()) {
-                if (myPlaylistsRestrictions.getItem(itemId).getItemProperty(itemPropertyId).getValue() instanceof Component) {
-                    ((Component) myPlaylistsRestrictions.getItem(itemId).getItemProperty(itemPropertyId).getValue()).setEnabled(false);
-                }
-            }
-        }
-        for (Object itemId : myForceTranscoders.getItemIds()) {
-            for (Object itemPropertyId : myForceTranscoders.getItem(itemId).getItemPropertyIds()) {
-                if (myForceTranscoders.getItem(itemId).getItemProperty(itemPropertyId).getValue() instanceof Component) {
-                    ((Component) myForceTranscoders.getItem(itemId).getItemProperty(itemPropertyId).getValue()).setEnabled(false);
-                }
-            }
-        }
-        /*myPermissions.setEnabled(false);
-        myPlaylistsRestrictions.setEnabled(false);
-        myForceTranscoders.setEnabled(false);*/
-        mySearchFuzziness.setEnabled(false);
-        myDownloadLimitType.setEnabled(false);
-        myDownloadLimitSize.setEnabled(false);
-        myMaxFilesPerArchive.setEnabled(false);
-        mySessionTimeout.setEnabled(false);
-        myBandwidthLimit.setEnabled(false);
-        mySharedUser.setEnabled(false);
-        myEncryptUrls.setEnabled(false);
     }
 
     protected void initFromConfig() {
@@ -370,7 +347,10 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         } else {
             myUser.setExpiration(0);
         }
-        myUserConfigPanel.saveUser(myUser, getComponentFactory());
+        if (myNewUser) {
+            MyTunesRss.CONFIG.addUser(myUser);
+        }
+        MyTunesRss.CONFIG.save();
     }
 
     @Override
@@ -388,7 +368,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     public void valueChange(Property.ValueChangeEvent event) {
-        if (((EventObject)event).getSource() == myExpire) {
+        if (((EventObject) event).getSource() == myExpire) {
             myExpiration.setVisible((Boolean) event.getProperty().getValue());
         }
     }
@@ -401,7 +381,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
 
         @Override
         protected boolean isValidString(String s) {
-            for (User user : myUserConfigPanel.getUsers()) {
+            for (User user : MyTunesRss.CONFIG.getUsers()) {
                 if (user != myUser && StringUtils.equalsIgnoreCase(user.getName(), s)) {
                     return false;
                 }

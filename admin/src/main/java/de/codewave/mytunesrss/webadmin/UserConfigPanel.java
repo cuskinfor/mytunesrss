@@ -6,18 +6,20 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.LdapAuthMethod;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.User;
-import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
 import org.apache.commons.lang.StringUtils;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class UserConfigPanel extends MyTunesRssConfigPanel {
@@ -58,8 +60,9 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             addComponent(myGroupsPanel);
             myUserPanel = new Panel(getBundleString("userConfigPanel.caption.users"), getComponentFactory().createVerticalLayout(true, true));
             myUserTable = new Table();
+            myUserTable.addContainerProperty("active", Embedded.class, null, "", null, null);
             myUserTable.addContainerProperty("name", String.class, null, getBundleString("userConfigPanel.users.name"), null, null);
-            myUserTable.addContainerProperty("group", String.class, null, getBundleString("userConfigPanel.users.group"), null, null);
+            myUserTable.addContainerProperty("group", Select.class, null, getBundleString("userConfigPanel.users.group"), null, null);
             myUserTable.addContainerProperty("edit", Button.class, null, null, null, null);
             myUserTable.addContainerProperty("delete", Button.class, null, null, null, null);
             myUserTable.setEditable(false);
@@ -77,7 +80,12 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myLdapSearchExpression = getComponentFactory().createTextField("userConfigPanel.ldapSearchExpression");
             myLdapSearchTimeout = getComponentFactory().createTextField("userConfigPanel.ldapSearchTimeout");
             myLdapEmailAttribute = getComponentFactory().createTextField("userConfigPanel.ldapEmailAttribute");
-            List<User> users = new ArrayList<User>(MyTunesRss.CONFIG.getUsers());
+            List<User> users = new ArrayList<User>();
+            for (User user : MyTunesRss.CONFIG.getUsers()) {
+                if (!user.isGroup()) {
+                    users.add(user);
+                }
+            }
             Collections.sort(users);
             myTemplateUser = getComponentFactory().createSelect("userConfigPanel.templateUser", users);
             myLdapForm.addField("ldapHost", myLdapHost);
@@ -93,6 +101,8 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             attach(0, 3, 0, 3);
             initFromConfig();
             myInitialized = true;
+        } else {
+            initUsersAndGroupsTable();
         }
     }
 
@@ -115,11 +125,11 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     private void initUsersAndGroupsTable() {
         myGroupTable.removeAllItems();
         myUserTable.removeAllItems();
-        for (User user : MyTunesRss.CONFIG.getUserClones()) {
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
             if (user.isGroup()) {
-                addGroup(user, getComponentFactory());
+                addGroup(user);
             } else {
-                addUser(user, getComponentFactory());
+                addUser(user);
             }
         }
         myGroupTable.sort();
@@ -127,7 +137,6 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setUsers(getUsers());
         MyTunesRss.CONFIG.getLdapConfig().setHost(myLdapHost.getStringValue(null));
         MyTunesRss.CONFIG.getLdapConfig().setPort(myLdapPort.getIntegerValue(-1));
         MyTunesRss.CONFIG.getLdapConfig().setAuthMethod((LdapAuthMethod) myLdapAuthMethod.getValue());
@@ -136,6 +145,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.getLdapConfig().setSearchExpression(myLdapSearchExpression.getStringValue(null));
         MyTunesRss.CONFIG.getLdapConfig().setSearchTimeout(myLdapSearchTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.getLdapConfig().setMailAttributeName(myLdapEmailAttribute.getStringValue(null));
+        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(((User)myTemplateUser.getValue()).getName());
         MyTunesRss.CONFIG.save();
     }
 
@@ -150,35 +160,37 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         } else if (clickEvent.getSource() == myAddGroup) {
             createUser(true);
         } else if (findTableItemWithObject(myUserTable, clickEvent.getSource()) != null) {
-            final User user = (User)findTableItemWithObject(myUserTable, clickEvent.getSource());
+            final User user = (User) findTableItemWithObject(myUserTable, clickEvent.getSource());
             Item item = myUserTable.getItem(user);
             if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
-                editUser(user);
+                editUser(user, false);
             } else if (item.getItemProperty("delete").getValue() == clickEvent.getSource()) {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteUser.caption"), getBundleString("userConfigPanel.optionWindowDeleteUser.message", user.getName()), yes, no) {
                     public void clicked(Button button) {
                         if (button == yes) {
-                            myUserTable.removeItem(user);
-                            setTablePageLengths();
+                            MyTunesRss.CONFIG.removeUser(user);
+                            MyTunesRss.CONFIG.save();
+                            initUsersAndGroupsTable();
                         }
                     }
                 }.show(getApplication().getMainWindow());
             }
         } else if (findTableItemWithObject(myGroupTable, clickEvent.getSource()) != null) {
-            final User group = (User)findTableItemWithObject(myGroupTable, clickEvent.getSource());
+            final User group = (User) findTableItemWithObject(myGroupTable, clickEvent.getSource());
             Item item = myGroupTable.getItem(group);
             if (item.getItemProperty("edit").getValue() == clickEvent.getSource()) {
-                editUser(group);
+                editUser(group, false);
             } else if (item.getItemProperty("delete").getValue() == clickEvent.getSource()) {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteGroup.caption"), getBundleString("userConfigPanel.optionWindowDeleteGroup.message", group.getName()), yes, no) {
                     public void clicked(Button button) {
                         if (button == yes) {
-                            myGroupTable.removeItem(group);
-                            setTablePageLengths();
+                            MyTunesRss.CONFIG.removeUser(group);
+                            MyTunesRss.CONFIG.save();
+                            initUsersAndGroupsTable();
                         }
                     }
                 }.show(getApplication().getMainWindow());
@@ -188,54 +200,73 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         }
     }
 
-    private void createUser(final boolean group) {
-        List<User> users = new ArrayList<User>(MyTunesRss.CONFIG.getUsers());
-        Collections.sort(users);
-        users.add(0, myNoTemplateUser);
-        new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
-            @Override
-            protected void onOk(User template) {
-                getApplication().getMainWindow().removeWindow(this);
-                User user = (User) template.clone();
-                user.setName(getBundleString("userConfigPanel.newUserName"));
-                user.setGroup(group);
-                editUser(user);
+    private void createUser(boolean group) {
+        if (!group) {
+            List<User> users = new ArrayList<User>();
+            for (User user : MyTunesRss.CONFIG.getUsers()) {
+                if (!user.isGroup()) {
+                    users.add(user);
+                }
             }
-        }.show(getApplication().getMainWindow());
-    }
-
-    private void editUser(User user) {
-        getApplication().setMainComponent(new EditUserConfigPanel(this, user));
-    }
-
-    Set<User> getUsers() {
-        Set<User> users = new HashSet<User>();
-        for (Object itemId : myUserTable.getItemIds()) {
-            users.add((User) itemId);
-        }
-        for (Object itemId : myGroupTable.getItemIds()) {
-            users.add((User) itemId);
-        }
-        return users;
-    }
-
-    void saveUser(User user, ComponentFactory componentFactory) {
-        if (!user.isGroup() && !myUserTable.containsId(user)) {
-            addUser(user, componentFactory);
-            myUserTable.sort();
-        } else if (user.isGroup() && !myGroupTable.containsId(user)) {
-            addGroup(user, componentFactory);
-            myGroupTable.sort();
+            Collections.sort(users);
+            users.add(0, myNoTemplateUser);
+            new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
+                @Override
+                protected void onOk(User template) {
+                    getApplication().getMainWindow().removeWindow(this);
+                    User user = (User) template.clone();
+                    user.setName(getBundleString("userConfigPanel.newUserName"));
+                    editUser(user, true);
+                }
+            }.show(getApplication().getMainWindow());
+        } else {
+            User user = (User) myNoTemplateUser.clone();
+            user.setName(getBundleString("userConfigPanel.newGroupName"));
+            user.setGroup(true);
+            editUser(user, true);
         }
     }
 
-    private void addUser(User user, ComponentFactory componentFactory) {
-        myUserTable.addItem(new Object[]{user.getName(), user.getParent() != null ? user.getParent().getName() : null, componentFactory.createButton("button.edit", this), componentFactory.createButton("button.delete", this)}, user);
+    private void editUser(User user, boolean newUser) {
+        getApplication().setMainComponent(new EditUserConfigPanel(this, user, newUser));
+    }
+
+    private void addUser(User user) {
+        Embedded icon = null;
+        if (!user.isActive()) {
+            icon = new Embedded("", new ClassResource("inactive_user.png", getApplication()));
+            icon.setDescription(getBundleString("userConfigPanel.userExpired", new SimpleDateFormat(getBundleString("common.dateFormat")).format(new Date(user.getExpiration()))));
+        } else if (user.getExpiration() > 0) {
+            icon = new Embedded("", new ClassResource("expiring_user.png", getApplication()));
+            icon.setDescription(getBundleString("userConfigPanel.userWillExpire", new SimpleDateFormat(getBundleString("common.dateFormat")).format(new Date(user.getExpiration()))));
+        }
+        myUserTable.addItem(new Object[]{icon, user.getName(), createGroupSelect(user), getComponentFactory().createButton("button.edit", this), getComponentFactory().createButton("button.delete", this)},
+                user);
         setTablePageLengths();
     }
 
-    private void addGroup(User group, ComponentFactory componentFactory) {
-        myGroupTable.addItem(new Object[]{group.getName(), componentFactory.createButton("button.edit", this), componentFactory.createButton("button.delete", this)}, group);
+    private Select createGroupSelect(final User user) {
+        List<User> groups = new ArrayList<User>();
+        for (User group : MyTunesRss.CONFIG.getUsers()) {
+            if (group.isGroup()) {
+                groups.add(group);
+            }
+        }
+        Collections.sort(groups);
+        Select select = getComponentFactory().createSelect(null, groups);
+        select.setNullSelectionAllowed(true);
+        select.setValue(user.getParent());
+        select.addListener(new Property.ValueChangeListener() {
+            public void valueChange(Property.ValueChangeEvent event) {
+                user.setParent((User)event.getProperty().getValue());
+                MyTunesRss.CONFIG.save();
+            }
+        });
+        return select;
+    }
+
+    private void addGroup(User group) {
+        myGroupTable.addItem(new Object[]{group.getName(), getComponentFactory().createButton("button.edit", this), getComponentFactory().createButton("button.delete", this)}, group);
         setTablePageLengths();
     }
 

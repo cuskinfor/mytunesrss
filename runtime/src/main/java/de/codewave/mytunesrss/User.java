@@ -447,7 +447,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     @Override
     public boolean equals(Object object) {
-        return object != null && object instanceof User && getName().equalsIgnoreCase(((User) object).getName());
+        return object != null && object instanceof User && getName().toLowerCase(Locale.ENGLISH).equals(((User) object).getName().toLowerCase(Locale.ENGLISH));
     }
 
     @Override
