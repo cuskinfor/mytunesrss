@@ -72,6 +72,7 @@ function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
     new $jQ.ajax({
         url : serverUrl + "/../jsonrpc",
         type : "POST",
+        contentType : "application/json",
         beforeSend : function(req) {
             if (sessionId != undefined) {
                 req.setRequestHeader("X-MyTunesRSS-ID", sessionId);
