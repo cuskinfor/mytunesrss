@@ -8,6 +8,12 @@
     <body>
 
         <release version="4.0.0-RC-1" date="2010-xx-xx">
+            <action dev="mdescher" type="add">
+                Catch all throwables in the main loop and write a log message.
+            </action>
+            <action dev="mdescher" type="fix">
+                Possible bugfix for problem on startup when checking bundled native dir for libraries.
+            </action>
             <action dev="mdescher" type="fix">
                 German translation or admin interface.
             </action>

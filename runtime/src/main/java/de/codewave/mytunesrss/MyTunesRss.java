@@ -117,54 +117,55 @@ public class MyTunesRss {
     public static PresetManager PRESET_MANAGER = new PresetManager();
 
     public static void main(final String[] args) throws Exception {
-        /*NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Test1", "This is a test",  null));
-        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Second Info", "Wow, it works!",  null));
-        NOTIFICATION_QUEUE.offer(new MyTunesRssNotification("Error No. 3", "Mambo NO. 5",  null));*/
-        registerShutdownHook();
-        processArguments(args);
-        createMissingPrefDirs();
-        copyOldPrefsAndCache();
-        createDigests();
-        prepareLogging();
-        LOGGER.info("Command line: " + StringUtils.join(args, " "));
-        WEBSERVER = new WebServer();
-        MAILER = new MailSender();
-        ADMIN_NOTIFY = new AdminNotifier();
-        loadSystemProperties();
-        prepareUpdateUrl();
-        readVersion();
-        loadConfig();
-        handleRegistration();
-        startAdminServer();
-        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
-        initializeQuicktimePlayer();
-        checkHttpLiveStreamingSupport();
-        logSystemInfo();
-        prepareCacheDirs();
-        Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(false));
-        validateWrapperStartSystemProperty();
-        processSanityChecks();
-        startQuartzScheduler();
-        initializeCaches();
-        StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
-        initializeDatabase();
-        MyTunesRssJobUtils.scheduleStatisticEventsJob();
-        MyTunesRssJobUtils.scheduleDatabaseJob();
-        if (MyTunesRss.CONFIG.getPort() > 0) {
-            startWebserver();
-        }
-        MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-        MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-        while (!QUIT_REQUEST) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                LOGGER.debug("Main thread was interrupted in headless mode.", e);
-                QUIT_REQUEST = true;
+        try {
+            registerShutdownHook();
+            processArguments(args);
+            createMissingPrefDirs();
+            copyOldPrefsAndCache();
+            createDigests();
+            prepareLogging();
+            LOGGER.info("Command line: " + StringUtils.join(args, " "));
+            WEBSERVER = new WebServer();
+            MAILER = new MailSender();
+            ADMIN_NOTIFY = new AdminNotifier();
+            loadSystemProperties();
+            prepareUpdateUrl();
+            readVersion();
+            loadConfig();
+            handleRegistration();
+            startAdminServer();
+            MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
+            initializeQuicktimePlayer();
+            checkHttpLiveStreamingSupport();
+            logSystemInfo();
+            prepareCacheDirs();
+            Thread.setDefaultUncaughtExceptionHandler(new MyTunesRssUncaughtHandler(false));
+            validateWrapperStartSystemProperty();
+            processSanityChecks();
+            startQuartzScheduler();
+            initializeCaches();
+            StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
+            initializeDatabase();
+            MyTunesRssJobUtils.scheduleStatisticEventsJob();
+            MyTunesRssJobUtils.scheduleDatabaseJob();
+            if (MyTunesRss.CONFIG.getPort() > 0) {
+                startWebserver();
             }
+            MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
+            MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+            while (!QUIT_REQUEST) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    LOGGER.debug("Main thread was interrupted in headless mode.", e);
+                    QUIT_REQUEST = true;
+                }
+            }
+            LOGGER.debug("Quit request was TRUE.");
+            MyTunesRssUtils.shutdownGracefully();
+        } catch (Throwable t) {
+            LOGGER.error("Fatal error in main loop!", t);
         }
-        LOGGER.debug("Quit request was TRUE.");
-        MyTunesRssUtils.shutdownGracefully();
     }
 
     private static void createMissingPrefDirs() throws IOException {
@@ -544,7 +545,7 @@ public class MyTunesRss {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Checking native libs for http live streaming support: \"" + MyTunesRssUtils.getNativeLibPath().getAbsolutePath() + "\".");
                 }
-                HTTP_LIVE_STREAMING_AVAILABLE = HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
+                HTTP_LIVE_STREAMING_AVAILABLE = MyTunesRssUtils.getNativeLibPath().isDirectory() && HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
             }
         } catch (IOException e) {
             if (LOGGER.isWarnEnabled()) {
