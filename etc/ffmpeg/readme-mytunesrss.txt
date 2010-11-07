@@ -2,7 +2,7 @@ The FFmpeg binaries distributed with MyTunesRSS were built on a 64 Bit Mac OS X 
 
 SVN export of sources:
 ======================
-svn export -r25689 svn://svn.ffmpeg.org/ffmpeg/trunk ffmpeg-r25689
+svn export -r25689 svn://svn.ffmpeg.org/ffmpeg/trunk src
 
 Windows (mingw32):
 ==================

@@ -9,6 +9,9 @@
 
         <release version="4.0.0-RC-1" date="2010-xx-xx">
             <action dev="mdescher" type="update">
+                Update ffmpeg sources to trunk revision 25689. No patching anymore.
+            </action>
+            <action dev="mdescher" type="update">
                 Update ffmpeg-jna to 1.0.2.
             </action>
         </release>
