@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.0.0-RC-1" date="2010-xx-xx">
+        <release version="4.0.0-EAP-11" date="2010-11-07">
             <action dev="mdescher" type="add">
                 Catch all throwables in the main loop and write a log message.
             </action>
