@@ -25,20 +25,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.henrik.refresher.Refresher;
 
+import javax.xml.bind.JAXB;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener, Refresher.RefreshListener {
-    private static final Logger LOG = LoggerFactory.getLogger(StatusPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatusPanel.class);
 
     private Panel myAlertPanel;
-    private Label myAlertLabel;
     private Label myServerStatus;
     private Label myDatabaseStatus;
     private Label myMyTunesRssComStatus;
@@ -70,6 +71,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private boolean myInitialized;
     private Panel myUpdatePanel;
     private Button myQuitMyTunesRss;
+    private String myMessageOfTheDay;
+    private long myMessageOfTheDayLastRefresh;
 
     public void attach() {
         if (!myInitialized) {
@@ -81,8 +84,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             addComponent(logo);
             myAlertPanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
             myAlertPanel.setStyleName("alertPanel");
-            myAlertLabel = new Label();
-            myAlertPanel.addComponent(myAlertLabel);
             myAlertPanel.setVisible(false);
             addComponent(myAlertPanel);
             Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
@@ -347,8 +348,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                 return getApplication().getBundleString("statusPanel.databaseNotYetCreated");
             }
         } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not get last update time from database.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not get last update time from database.", e);
             }
         } finally {
             session.commit();
@@ -452,23 +453,52 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     }
 
     private void refreshAlert() {
+        myAlertPanel.setVisible(false);
+        myAlertPanel.removeAllComponents();
+        myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
+        myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
+
+        // message of the day
+        if (myMessageOfTheDay == null || (System.currentTimeMillis() - myMessageOfTheDayLastRefresh > 1000 * 60 * 15)) {
+            // refresh every 15 minutes<
+            try {
+                URI uri = MyTunesRss.REGISTRATION.isReleaseVersion() && !MyTunesRss.REGISTRATION.isUnregistered() ? new URI("http://www.codewave.de/tools/motd/mytunesrss.xml") : new URI("http://www.codewave.de/tools/motd/mytunesrss_unregistered.xml");
+                MessageOfTheDay motd = JAXB.unmarshal(uri, MessageOfTheDay.class);
+                if (motd != null && motd.getItems() != null) {
+                    for (MessageOfTheDayItem item : motd.getItems()) {
+                        if (!StringUtils.isBlank(item.getValue())) {
+                            Version minVersion = StringUtils.isNotBlank(item.getMinVersion()) ? new Version(item.getMinVersion()) : new Version(0, 0, 0);
+                            Version maxVersion = StringUtils.isNotBlank(item.getMaxVersion()) ? new Version(item.getMaxVersion()) : new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+                            Version currentVersion = new Version(MyTunesRss.VERSION);
+                            if (minVersion.compareTo(new Version(MyTunesRss.VERSION)) <= 0 && maxVersion.compareTo(currentVersion) >= 0) {
+                                myMessageOfTheDay = item.getValue().trim();
+                            }
+                        }
+                    }
+                }
+            } catch (URISyntaxException e) {
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Could not read and parse message of the day from Codewave server.", e);
+                }
+            }
+        }
+        if (myMessageOfTheDay != null) {
+            myAlertPanel.setVisible(true);
+            myAlertPanel.addComponent(new Label(myMessageOfTheDay, Label.CONTENT_XHTML));
+        }
+
+        // registration feedback
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(getLocale());
         if (feedback != null && feedback.getMessage() != null) {
             myAlertPanel.setVisible(true);
-            myAlertLabel.setValue(feedback.getMessage());
+            myAlertPanel.addComponent(new Label(feedback.getMessage()));
             if (!feedback.isValid()) {
                 myStartServer.setEnabled(false);
                 myStopServer.setEnabled(false);
                 MyTunesRss.stopWebserver();
-            } else {
-                myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-                myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
             }
-        } else {
-            myAlertPanel.setVisible(false);
-            myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
-            myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
         }
+
     }
 
     private String[] getLocalAddresses() {
