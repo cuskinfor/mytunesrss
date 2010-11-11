@@ -71,7 +71,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private boolean myInitialized;
     private Panel myUpdatePanel;
     private Button myQuitMyTunesRss;
-    private String myMessageOfTheDay;
+    private MessageOfTheDayItem myMessageOfTheDay;
     private long myMessageOfTheDayLastRefresh;
 
     public void attach() {
@@ -471,7 +471,12 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                             Version maxVersion = StringUtils.isNotBlank(item.getMaxVersion()) ? new Version(item.getMaxVersion()) : new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
                             Version currentVersion = new Version(MyTunesRss.VERSION);
                             if (minVersion.compareTo(new Version(MyTunesRss.VERSION)) <= 0 && maxVersion.compareTo(currentVersion) >= 0) {
-                                myMessageOfTheDay = item.getValue().trim();
+                                if (StringUtils.equalsIgnoreCase(getLocale().getLanguage(), item.getLanguage())) {
+                                    myMessageOfTheDay = item;
+                                    break;
+                                } else if (StringUtils.isBlank(item.getLanguage())) {
+                                    myMessageOfTheDay = item;
+                                }
                             }
                         }
                     }
@@ -484,7 +489,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         }
         if (myMessageOfTheDay != null) {
             myAlertPanel.setVisible(true);
-            myAlertPanel.addComponent(new Label(myMessageOfTheDay, Label.CONTENT_XHTML));
+            myAlertPanel.addComponent(new Label(StringUtils.trim(myMessageOfTheDay.getValue()), Label.CONTENT_XHTML));
         }
 
         // registration feedback

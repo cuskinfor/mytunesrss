@@ -16,6 +16,9 @@ public class MessageOfTheDayItem {
     @XmlAttribute(name = "max-version")
     private String maxVersion;
 
+    @XmlAttribute(name = "lang")
+    private String language;
+
     @XmlValue
     private String value;
 
@@ -25,6 +28,10 @@ public class MessageOfTheDayItem {
 
     public String getMaxVersion() {
         return maxVersion;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 
     public String getValue() {
