@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Form;
+import com.vaadin.ui.Layout;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Upload;
 import de.codewave.mytunesrss.FlashPlayerConfig;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -50,7 +52,9 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
         addComponent(getComponentFactory().surroundWithPanel(myForm, FORM_PANEL_MARGIN_INFO, getBundleString("flashPlayerEditPanel.caption.form")));
 
-        addComponent(getComponentFactory().surroundWithPanel(myUpload, FORM_PANEL_MARGIN_INFO, getBundleString("flashPlayerEditPanel.caption.form")));
+        Panel panel = getComponentFactory().surroundWithPanel(myUpload, new Layout.MarginInfo(false, false, false, false), null);
+        panel.setStyleName("light");
+        addComponent(panel);
 
         attach(0, 2, 0, 2);
 
