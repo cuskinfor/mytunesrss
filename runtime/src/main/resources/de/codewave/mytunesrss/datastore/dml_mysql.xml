@@ -23,10 +23,6 @@
         </sql>
     </statement>
 
-    <statement name="migrate_3.8.0_eap_1_part_3">
-        <sql>ALTER TABLE track MODIFY COLUMN lower_artist VARCHAR(255) NOT NULL</sql>
-    </statement>
-
     <!-- reusable sql fragments -->
 
     <fragment name="selectLimitedTracks">SELECT {trackColumns}</fragment>
