@@ -7,13 +7,11 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.Terminal;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
-import de.codewave.mytunesrss.MyTunesRssNotification;
-import de.codewave.mytunesrss.ResourceBundleManager;
+import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.component.MessageWindow;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -106,8 +104,14 @@ public class MyTunesRssWebAdmin extends Application {
         }.show(getMainWindow());
     }
 
-    public void handleException(Exception e) {
-        MyTunesRss.NOTIFICATION_QUEUE.add(new MyTunesRssNotification("Unexpected error.", "An unexpected error has occured. Please consider sending a support request now.", e)); // TODO i18n
+    @Override
+    public void terminalError(Terminal.ErrorEvent event) {
+        super.terminalError(event);
+        MyTunesRss.UNCAUGHT_HANDLER.uncaughtException(Thread.currentThread(), event.getThrowable());
+    }
+
+    public void handleException(Throwable e) {
+        MyTunesRssUncaughtHandler.addUncaughtExceptionNotification(e);
     }
 
     public StatusPanel getStatusPanel() {
