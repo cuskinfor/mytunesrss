@@ -11,16 +11,13 @@ import com.vaadin.terminal.Terminal;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Window;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.ResourceBundleManager;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.component.MessageWindow;
-import org.apache.commons.lang.exception.ExceptionUtils;
 
-import java.io.File;
 import java.text.MessageFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
 public class MyTunesRssWebAdmin extends Application {
@@ -28,8 +25,6 @@ public class MyTunesRssWebAdmin extends Application {
     public static final ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRssWebAdmin.class.getClassLoader());
 
     public static final int ADMIN_REFRESHER_INTERVAL_MILLIS = 2500;
-
-    public static final int LOG_REFRESHER_INTERVAL_MILLIS = 500;
 
     public static String getBundleString(ResourceBundle bundle, String key, Object... parameters) {
         if (parameters == null || parameters.length == 0) {
@@ -106,12 +101,7 @@ public class MyTunesRssWebAdmin extends Application {
 
     @Override
     public void terminalError(Terminal.ErrorEvent event) {
-        super.terminalError(event);
-        MyTunesRss.UNCAUGHT_HANDLER.uncaughtException(Thread.currentThread(), event.getThrowable());
-    }
-
-    public void handleException(Throwable e) {
-        MyTunesRssUncaughtHandler.addUncaughtExceptionNotification(e);
+        MyTunesRss.UNHANDLED_EXCEPTION.set(true);
     }
 
     public StatusPanel getStatusPanel() {
@@ -123,15 +113,14 @@ public class MyTunesRssWebAdmin extends Application {
         return "/";
     }
 
-    public void pollNotifications() {
-        List<MyTunesRssNotification> notifications = new ArrayList<MyTunesRssNotification>();
-        for (MyTunesRssNotification notification = MyTunesRss.NOTIFICATION_QUEUE.poll(); notification != null; notification = MyTunesRss.NOTIFICATION_QUEUE.poll()) {
-            notifications.add(notification);
-        }
-        if (!notifications.isEmpty()) {
-            Window notificationsWindow = new Window("Notifications"); // TODO i18n
-            notificationsWindow.addComponent(new NotificationsPanel(notifications));
-            getMainWindow().addWindow(notificationsWindow);
+    public void checkUnhandledException() {
+        if (MyTunesRss.UNHANDLED_EXCEPTION.getAndSet(false)) {
+            new MessageWindow(50, Sizeable.UNITS_EM, null, getBundleString("unhandledException.header"), getBundleString("unhandledException.detail"), new Button(getBundleString("button.ok"))) {
+                @Override
+                protected void onClick(Button button) {
+                    // intentionally left blank
+                }
+            }.show(getMainWindow());
         }
     }
 }

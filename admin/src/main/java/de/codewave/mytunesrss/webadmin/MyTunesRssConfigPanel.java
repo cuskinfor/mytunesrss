@@ -9,18 +9,9 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.FetchExternalAddressRunnable;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssNotification;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.vaadin.ComponentFactory;
-import org.apache.commons.lang.StringUtils;
 import org.vaadin.henrik.refresher.Refresher;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MyTunesRssConfigPanel extends Panel implements Button.ClickListener, Refresher.RefreshListener {
@@ -57,6 +48,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         addComponent(myRefresher);
         myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
         myRefresher.addListener(this);
+        getApplication().checkUnhandledException();
     }
 
     protected abstract void writeToConfig();
@@ -155,7 +147,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     public void refresh(Refresher source) {
-        getApplication().pollNotifications();
+        getApplication().checkUnhandledException();
     }
 
     protected Object findTableItemWithObject(Table table, Object component) {

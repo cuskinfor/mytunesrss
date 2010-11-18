@@ -253,7 +253,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 }
                 myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
-                getApplication().handleException(e);
+                MyTunesRss.UNHANDLED_EXCEPTION.set(true);
             }
             myPlaylistsRestrictions.setPageLength(Math.min(playlists.size(), 10));
             myForceTranscoders.removeAllItems();

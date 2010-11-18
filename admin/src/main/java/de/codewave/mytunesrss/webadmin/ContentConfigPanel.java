@@ -61,7 +61,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                 myPlaylists.addItem(new Object[]{visible, name.substring(3)}, playlist);
             }
         } catch (SQLException e) {
-            getApplication().handleException(e);
+            MyTunesRss.UNHANDLED_EXCEPTION.set(true);
         }
         myPlaylists.sort();
         myPlaylists.setPageLength(Math.min(playlists.size(), 20));

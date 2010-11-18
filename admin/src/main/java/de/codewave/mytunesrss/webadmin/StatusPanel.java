@@ -207,6 +207,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         refreshMyTunesRssComUpdateState();
         refreshMyTunesUpdateInfo();
         refreshAlert();
+        getApplication().checkUnhandledException();
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -402,7 +403,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myConnections.addItem(new Object[]{info.remoteAddress, info.userName, info.sessions, new Date(info.lastAccessTime), MyTunesRssUtils.getMemorySizeForDisplay(info.bytesStreamed)}, info.remoteAddress + info.userName);
         }
         myConnections.setPageLength(Math.min(myConnections.getItemIds().size(), 15));
-        getApplication().pollNotifications();
+        getApplication().checkUnhandledException();
     }
 
     private void refreshMyTunesRssComUpdateState() {

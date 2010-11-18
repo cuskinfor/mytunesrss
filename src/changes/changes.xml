@@ -9,6 +9,9 @@
 
         <release version="4.0.0-RC-2" date="2010-11-15">
             <action dev="mdescher" type="fix">
+                Display unhandled exceptions in admin interface.
+            </action>
+            <action dev="mdescher" type="fix">
                 Correctly refresh message of the day only every 15 minutes.
             </action>
         </release>

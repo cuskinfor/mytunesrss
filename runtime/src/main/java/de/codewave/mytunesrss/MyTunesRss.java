@@ -57,6 +57,7 @@ import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -110,7 +111,7 @@ public class MyTunesRss {
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
     public static Server ADMIN_SERVER;
-    public static Queue<MyTunesRssNotification> NOTIFICATION_QUEUE = new ConcurrentLinkedQueue<MyTunesRssNotification>();
+    public static final AtomicBoolean UNHANDLED_EXCEPTION = new AtomicBoolean(false);
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
     public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
