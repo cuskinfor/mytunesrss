@@ -460,6 +460,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
 
         // message of the day
         if (myMessageOfTheDay == null || (System.currentTimeMillis() - myMessageOfTheDayLastRefresh > 1000 * 60 * 15)) {
+            myMessageOfTheDayLastRefresh = System.currentTimeMillis();
             // refresh every 15 minutes<
             try {
                 URI uri = MyTunesRss.REGISTRATION.isReleaseVersion() && !MyTunesRss.REGISTRATION.isUnregistered() ? new URI("http://www.codewave.de/tools/motd/mytunesrss.xml") : new URI("http://www.codewave.de/tools/motd/mytunesrss_unregistered.xml");
