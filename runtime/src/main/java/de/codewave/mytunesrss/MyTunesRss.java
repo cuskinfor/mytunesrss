@@ -145,14 +145,14 @@ public class MyTunesRss {
         startQuartzScheduler();
         initializeCaches();
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
+        MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
+        MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
         initializeDatabase();
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         if (MyTunesRss.CONFIG.getPort() > 0) {
             startWebserver();
         }
-        MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-        MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
         while (!QUIT_REQUEST) {
             try {
                 Thread.sleep(1000);

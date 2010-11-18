@@ -86,6 +86,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myAlertPanel.setStyleName("alertPanel");
             myAlertPanel.setVisible(false);
             addComponent(myAlertPanel);
+            myUpdatePanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+            addComponent(myUpdatePanel);
             Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
             addComponent(server);
             ((Layout) server.getContent()).setMargin(true);
@@ -178,8 +180,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             configButtons.addComponent(myStreamingConfig);
             configButtons.addComponent(myAddonsConfig);
             configButtons.addComponent(mySupportConfig);
-            myUpdatePanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
-            addComponent(myUpdatePanel);
             Panel buttons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
             buttons.addStyleName("light");
             addComponent(buttons);
