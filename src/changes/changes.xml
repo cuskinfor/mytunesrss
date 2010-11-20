@@ -11,6 +11,9 @@
             <action dev="mdescher" type="fix">
                 Update to codewave-utils 1.0.0 to fix update charset issue.
             </action>
+            <action dev="mdescher" type="update">
+                Admin login screen only if admin password has been set.
+            </action>
             <action dev="mdescher" type="fix">
                 Display unhandled exceptions in admin interface.
             </action>
