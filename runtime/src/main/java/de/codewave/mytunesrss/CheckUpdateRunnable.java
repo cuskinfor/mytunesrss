@@ -22,6 +22,6 @@ public class CheckUpdateRunnable implements Runnable {
         if (MyTunesRss.CONFIG.isProxyServer()) {
             proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort()));
         }
-        UPDATE_INFO = NetworkUtils.getCurrentUpdateInfo(MyTunesRss.UPDATE_URL, READ_TIMEOUT, proxy);
+        UPDATE_INFO = NetworkUtils.getCurrentUpdateInfo(MyTunesRssUtils.createHttpClient(), MyTunesRss.UPDATE_URL);
     }
 }

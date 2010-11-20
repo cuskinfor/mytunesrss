@@ -14,10 +14,12 @@ import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.ResourceBundleManager;
+import de.codewave.utils.swing.components.PasswordHashField;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.component.MessageWindow;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.ResourceBundle;
 
 public class MyTunesRssWebAdmin extends Application {
@@ -51,7 +53,8 @@ public class MyTunesRssWebAdmin extends Application {
         Window main = new Window(getBundleString("mainWindowTitle", MyTunesRss.VERSION));
         main.getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
         setMainWindow(main);
-        main.addComponent(new LoginPanel());
+        boolean emptyAdminPassword = Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), MyTunesRss.SHA1_DIGEST.digest(new byte[0]));
+        main.addComponent(emptyAdminPassword ? getStatusPanel() : new LoginPanel());
     }
 
     public String getBundleString(String key, Object... parameters) {

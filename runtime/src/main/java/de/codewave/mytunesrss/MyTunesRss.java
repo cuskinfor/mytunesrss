@@ -90,7 +90,7 @@ public class MyTunesRss {
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static String VERSION;
-    public static URL UPDATE_URL;
+    public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG;
     public static WebServer WEBSERVER = new WebServer();
@@ -131,7 +131,6 @@ public class MyTunesRss {
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
         loadSystemProperties();
-        prepareUpdateUrl();
         readVersion();
         loadConfig();
         handleRegistration();
@@ -194,16 +193,6 @@ public class MyTunesRss {
             httpLiveStreamingDir.mkdirs();
         }
 
-    }
-
-    private static void prepareUpdateUrl() {
-        try {
-            UPDATE_URL = new URL("http://www.codewave.de/download/versions/mytunesrss.xml");
-        } catch (MalformedURLException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create update external.", e);
-            }
-        }
     }
 
     private static void loadSystemProperties() {

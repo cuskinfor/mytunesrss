@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.transcoding;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.httpclient.HttpClient;
@@ -61,7 +62,7 @@ public class PresetManager implements Runnable {
         List<TranscoderConfig> presets = new ArrayList<TranscoderConfig>();
         presets.add(myIphoneVideo);
         presets.add(myMp3Audio);
-        HttpClient httpClient = new HttpClient();
+        HttpClient httpClient = MyTunesRssUtils.createHttpClient();
         GetMethod getMethod = new GetMethod(PRESETS_URL);
         try {
             if (httpClient.executeMethod(getMethod) == 200) {
