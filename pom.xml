@@ -88,9 +88,9 @@
                                 <descriptor>src/assembly/system-independent.xml</descriptor>
                                 <descriptor>src/assembly/windows.xml</descriptor>
                                 <descriptor>src/assembly/ffmpeg.xml</descriptor>
-                                <!--descriptor>src/assembly/web-language.xml</descriptor>
+                                <descriptor>src/assembly/web-language.xml</descriptor>
                                 <descriptor>src/assembly/default-theme.xml</descriptor>
-                                <descriptor>src/assembly/yoics.xml</descriptor-->
+                                <!--descriptor>src/assembly/yoics.xml</descriptor-->
                             </descriptors>
                         </configuration>
                         <goals>
