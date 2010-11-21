@@ -13,15 +13,9 @@ import java.net.Proxy;
 
 public class CheckUpdateRunnable implements Runnable {
 
-    private static final int READ_TIMEOUT = 10000;
-
     public static UpdateInfo UPDATE_INFO;
 
     public void run() {
-        Proxy proxy = null;
-        if (MyTunesRss.CONFIG.isProxyServer()) {
-            proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(MyTunesRss.CONFIG.getProxyHost(), MyTunesRss.CONFIG.getProxyPort()));
-        }
         UPDATE_INFO = NetworkUtils.getCurrentUpdateInfo(MyTunesRssUtils.createHttpClient(), MyTunesRss.UPDATE_URL);
     }
 }

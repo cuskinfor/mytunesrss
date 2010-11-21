@@ -187,7 +187,9 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myLogout = getApplication().getComponentFactory().createButton("statusPanel.logout", StatusPanel.this);
             myQuitMyTunesRss = getApplication().getComponentFactory().createButton("statusPanel.quitMyTunesRss", StatusPanel.this);
             buttons.addComponent(myHelp);
-            buttons.addComponent(myLogout);
+            if (MyTunesRss.CONFIG.isAdminPassword()) {
+                buttons.addComponent(myLogout);
+            }
             buttons.addComponent(myQuitMyTunesRss);
             myInitialized = true;
             myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
@@ -284,7 +286,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myResetDatabase.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
         } else if (clickEvent.getSource() == myHelp) {
-            getApplication().getMainWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss3"));
+            getApplication().getMainWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss4"));
         } else if (clickEvent.getSource() == myQuitMyTunesRss) {
             final Button yes = new Button(getApplication().getBundleString("button.yes"));
             Button no = new Button(getApplication().getBundleString("button.no"));

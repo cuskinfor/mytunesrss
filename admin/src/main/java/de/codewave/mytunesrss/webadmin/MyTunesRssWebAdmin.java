@@ -53,8 +53,7 @@ public class MyTunesRssWebAdmin extends Application {
         Window main = new Window(getBundleString("mainWindowTitle", MyTunesRss.VERSION));
         main.getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
         setMainWindow(main);
-        boolean emptyAdminPassword = Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), MyTunesRss.SHA1_DIGEST.digest(new byte[0]));
-        main.addComponent(emptyAdminPassword ? getStatusPanel() : new LoginPanel());
+        main.addComponent(MyTunesRss.CONFIG.isAdminPassword() ? new LoginPanel() : getStatusPanel());
     }
 
     public String getBundleString(String key, Object... parameters) {

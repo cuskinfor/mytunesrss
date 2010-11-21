@@ -811,6 +811,10 @@ public class MyTunesRssConfig {
         return myLdapConfig;
     }
 
+    public boolean isAdminPassword() {
+        return !Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), MyTunesRss.SHA1_DIGEST.digest(new byte[0]));
+    }
+
     public byte[] getAdminPasswordHash() {
         return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(""));
     }

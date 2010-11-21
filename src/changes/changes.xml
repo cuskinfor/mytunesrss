@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="___V___" date="___D___">
+            <action dev="mdescher" type="fix">
+               Help link to MyTunesRSS4 documentation.
+            </action>
+            <action dev="mdescher" type="update">
+                No admin logout button when admin password is not set.
+            </action>
+        </release>
+
         <release version="4.0.0-RC-2" date="2010-11-20">
             <action dev="mdescher" type="fix">
                 Update to codewave-utils 1.0.0 to fix update charset issue.
