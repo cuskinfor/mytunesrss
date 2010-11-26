@@ -9,6 +9,9 @@
 
         <release version="___V___" date="___D___">
             <action dev="mdescher" type="add">
+               Display swing dialog box in case of fatal error in main thread for non-headless systems.
+            </action>
+            <action dev="mdescher" type="add">
                Option for disabling admin port info popup.
             </action>
             <action dev="mdescher" type="fix">

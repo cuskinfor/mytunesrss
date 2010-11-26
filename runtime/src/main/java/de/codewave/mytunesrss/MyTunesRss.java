@@ -116,42 +116,38 @@ public class MyTunesRss {
     public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
     public static PresetManager PRESET_MANAGER = new PresetManager();
-    public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler(false);
+    public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
-        try {
-            registerShutdownHook();
-            processArguments(args);
-            createMissingPrefDirs();
-            copyOldPrefsAndCache();
-            createDigests();
-            prepareLogging();
-            LOGGER.info("Command line: " + StringUtils.join(args, " "));
-            WEBSERVER = new WebServer();
-            MAILER = new MailSender();
-            ADMIN_NOTIFY = new AdminNotifier();
-            loadSystemProperties();
-            readVersion();
-            loadConfig();
-            handleRegistration();
-            MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
-            initializeQuicktimePlayer();
-            checkHttpLiveStreamingSupport();
-            logSystemInfo();
-            prepareCacheDirs();
-            validateWrapperStartSystemProperty();
-            processSanityChecks();
-            startQuartzScheduler();
-            initializeCaches();
-            StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
-            MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-            MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-            initializeDatabase();
-            startAdminServer();
-        } catch (Exception e) {
-            MyTunesRssUtils.shutdownGracefully();
-        }
+        registerShutdownHook();
+        processArguments(args);
+        createMissingPrefDirs();
+        copyOldPrefsAndCache();
+        createDigests();
+        prepareLogging();
+        LOGGER.info("Command line: " + StringUtils.join(args, " "));
+        WEBSERVER = new WebServer();
+        MAILER = new MailSender();
+        ADMIN_NOTIFY = new AdminNotifier();
+        loadSystemProperties();
+        readVersion();
+        loadConfig();
+        handleRegistration();
+        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
+        initializeQuicktimePlayer();
+        checkHttpLiveStreamingSupport();
+        logSystemInfo();
+        prepareCacheDirs();
+        validateWrapperStartSystemProperty();
+        processSanityChecks();
+        startQuartzScheduler();
+        initializeCaches();
+        StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
+        MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
+        MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+        initializeDatabase();
+        startAdminServer();
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         if (MyTunesRss.CONFIG.getPort() > 0) {
