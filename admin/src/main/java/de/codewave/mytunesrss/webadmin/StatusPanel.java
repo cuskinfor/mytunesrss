@@ -79,7 +79,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
             setCaption(getApplication().getBundleString("statusPanel.caption"));
             Embedded logo = new Embedded("", new ClassResource("mytunesrss.png", getApplication()));
-            logo.setWidth(241, Sizeable.UNITS_PIXELS);
+            logo.setWidth(290, Sizeable.UNITS_PIXELS);
             logo.setHeight(88, Sizeable.UNITS_PIXELS);
             addComponent(logo);
             myAlertPanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
