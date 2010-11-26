@@ -34,6 +34,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myAdminPassword;
     private SmartTextField myRetypeAdminPassword;
     private CheckBox myStartAdminBrowser;
+    private CheckBox myShowAdminPortInfo;
     private CheckBox myLocalTempArchive;
     private CheckBox myAvailableOnLocalNet;
     private SmartTextField myServerName;
@@ -59,6 +60,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
         myRetypeAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.retypeAdminPassword", new SameValidator(myAdminPassword, getBundleString("serverConfigPanel.error.retypeAdminPassword")));
         myStartAdminBrowser = getComponentFactory().createCheckBox("serverConfigPanel.startAdminBrowser");
+        myShowAdminPortInfo = getComponentFactory().createCheckBox("serverConfigPanel.showAdminPortInfo");
         myLocalTempArchive = getComponentFactory().createCheckBox("serverConfigPanel.localTempArchive");
         myAvailableOnLocalNet = getComponentFactory().createCheckBox("serverConfigPanel.availableOnLocalNet");
         myAvailableOnLocalNet.addListener(new Property.ValueChangeListener() {
@@ -90,6 +92,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminForm.addField(myAdminPassword, myAdminPassword);
         myAdminForm.addField(myRetypeAdminPassword, myRetypeAdminPassword);
         myAdminForm.addField(myStartAdminBrowser, myStartAdminBrowser);
+        myAdminForm.addField(myShowAdminPortInfo, myShowAdminPortInfo);
         Panel adminPanel = getComponentFactory().surroundWithPanel(myAdminForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.admin"));
         addComponent(adminPanel);
 
@@ -137,6 +140,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
         myRetypeAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
         myStartAdminBrowser.setValue(MyTunesRss.CONFIG.isStartAdminBrowser());
+        myShowAdminPortInfo.setValue(MyTunesRss.CONFIG.isShowAdminPortInfo());
         myLocalTempArchive.setValue(MyTunesRss.CONFIG.isLocalTempArchive());
         myAvailableOnLocalNet.setValue(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         myServerName.setValue(MyTunesRss.CONFIG.getServerName());
@@ -163,6 +167,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setAdminPort(myAdminPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setAdminPasswordHash(myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
         MyTunesRss.CONFIG.setStartAdminBrowser(myStartAdminBrowser.booleanValue());
+        MyTunesRss.CONFIG.setShowAdminPortInfo(myShowAdminPortInfo.booleanValue());
         MyTunesRss.CONFIG.setLocalTempArchive(myLocalTempArchive.booleanValue());
         MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNet.booleanValue());
         MyTunesRss.CONFIG.setServerName(myServerName.getStringValue(null));

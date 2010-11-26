@@ -8,6 +8,9 @@
     <body>
 
         <release version="___V___" date="___D___">
+            <action dev="mdescher" type="add">
+               Option for disabling admin port info popup.
+            </action>
             <action dev="mdescher" type="fix">
                Help link to MyTunesRSS4 documentation.
             </action>

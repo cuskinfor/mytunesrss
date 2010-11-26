@@ -474,16 +474,20 @@ public class MyTunesRss {
                 LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
             }
 
-            DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
-            if (!GraphicsEnvironment.isHeadless() && !COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS)) {
-                new Thread() {
-                    @Override
-                    public void run() {
-                        JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.adminServerPortInfo", String.valueOf(ADMIN_SERVER.getConnectors()[0].getLocalPort())), MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.title"), JOptionPane.INFORMATION_MESSAGE);
+            if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+                if (CONFIG.isShowAdminPortInfo()) {
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.adminServerPortInfo", String.valueOf(ADMIN_SERVER.getConnectors()[0].getLocalPort())), MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.title"), JOptionPane.INFORMATION_MESSAGE);
+                        }
+                    }.start();
+                }
+                if (!COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER) && CONFIG.isStartAdminBrowser()) {
+                    DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
+                    if (desktopWrapper.isSupported()) {
+                        desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
                     }
-                }.start();
-                if (desktopWrapper.isSupported() && !COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER) && CONFIG.isStartAdminBrowser()) {
-                    desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
                 }
             } else {
                 System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
