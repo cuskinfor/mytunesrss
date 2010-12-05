@@ -7,6 +7,8 @@
 
     <body>
 
+        <release version="4.0.0" date="2010-12-06" description="no changes" />
+
         <release version="4.0.0-RC-3" date="2010-11-26">
             <action dev="mdescher" type="add">
                Display swing dialog box in case of fatal error in main thread for non-headless systems.
