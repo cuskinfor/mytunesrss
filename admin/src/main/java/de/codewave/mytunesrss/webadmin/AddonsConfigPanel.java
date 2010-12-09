@@ -293,12 +293,14 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
         }
         FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
+        setTablePageLengths();
     }
 
     void addOrUpdatePlayer(FlashPlayerConfig flashPlayerConfig) {
         myFlashPlayers.remove(flashPlayerConfig);
         myFlashPlayers.add(flashPlayerConfig);
         refreshFlashPlayers();
+        setTablePageLengths();
     }
 
     public class SiteValidator extends AbstractStringValidator {

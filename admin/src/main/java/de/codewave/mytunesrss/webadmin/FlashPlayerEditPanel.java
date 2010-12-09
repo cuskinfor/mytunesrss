@@ -23,8 +23,6 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerEditPanel.class);
 
-    private static final String PREFIX = "upload_flashplayer_";
-
     private AddonsConfigPanel myAddonsConfigPanel;
     private FlashPlayerConfig myFlashPlayerConfig;
     private Form myForm;
@@ -107,7 +105,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     public void uploadFailed(Upload.FailedEvent event) {
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
-        FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
+        FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
     }
 
     private String getUploadDir() {
@@ -120,7 +118,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     public OutputStream receiveUpload(String filename, String MIMEType) {
         try {
-            return new FileOutputStream(new File(getUploadDir(), PREFIX + filename));
+            return new FileOutputStream(new File(getUploadDir(), filename));
         } catch (IOException e) {
             throw new RuntimeException("Could not receive upload.", e);
         }
@@ -128,7 +126,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     public void uploadSucceeded(Upload.SucceededEvent event) {
         try {
-            File uploadFile = new File(getUploadDir(), PREFIX + event.getFilename());
+            File uploadFile = new File(getUploadDir(), event.getFilename());
             File targetDir = myFlashPlayerConfig.getBaseDir();
             targetDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myFlashPlayerConfig.getId());
             targetDir.mkdirs();
@@ -145,7 +143,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             }
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         } finally {
-            FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
+            FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
         }
     }
 }
