@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -31,6 +32,7 @@ public class RemoveTrackStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRemovingTracks");
         MyTunesRssEventManager.getInstance().fireEvent(event);
+        MyTunesRss.LAST_DATABASE_EVENT = event;
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTrack");
         statement.setObject("track_id", myTrackIds);
         statement.execute();

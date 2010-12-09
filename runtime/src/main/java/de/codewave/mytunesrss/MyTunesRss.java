@@ -115,6 +115,7 @@ public class MyTunesRss {
     public static PresetManager PRESET_MANAGER = new PresetManager();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
+    public static MyTunesRssEvent LAST_DATABASE_EVENT;
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);

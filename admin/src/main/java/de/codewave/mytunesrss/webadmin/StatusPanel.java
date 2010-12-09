@@ -193,7 +193,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         }
         buttons.addComponent(myQuitMyTunesRss);
         myServerStatus.setValue(MyTunesRss.WEBSERVER.isRunning() ? getApplication().getBundleString("statusPanel.serverRunning") : getApplication().getBundleString("statusPanel.serverStopped"));
-        myDatabaseStatus.setValue(MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() ? null : getLastDatabaseUpdateText());
+        MyTunesRssEvent event = MyTunesRss.LAST_DATABASE_EVENT;
+        myDatabaseStatus.setValue(MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() ? MyTunesRssUtils.getBundleString(getLocale(), event.getMessageKey(), event.getMessageParams()) : getLastDatabaseUpdateText());
         myRefresher = new Refresher();
         addComponent(myRefresher);
         myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
