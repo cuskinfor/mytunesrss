@@ -24,7 +24,6 @@ import java.util.List;
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
 
     private Form myDatabaseTypeForm;
-    private Form myMiscOptionsForm;
     private Select myDatabaseType;
     private SmartTextField myDatabaseDriver;
     private SmartTextField myDatabaseConnection;
@@ -35,7 +34,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     public void attach() {
         super.attach();
-        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
@@ -57,9 +56,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseTypeForm.addField(myDatabaseUser, myDatabaseUser);
         myDatabaseTypeForm.addField(myDatabasePassword, myDatabasePassword);
         addComponent(getComponentFactory().surroundWithPanel(myDatabaseTypeForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.database")));
-
-        myMiscOptionsForm = getComponentFactory().createForm(null, true);
-        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.misc")));
 
         Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.cronTriggers"), getComponentFactory().createVerticalLayout(true, true));
         schedulesPanel.addComponent(myCronTriggers);
@@ -169,7 +165,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected boolean beforeSave() {
-        if (VaadinUtils.isValid(myDatabaseTypeForm, myMiscOptionsForm)) {
+        if (VaadinUtils.isValid(myDatabaseTypeForm)) {
             if (isDatabaseChanged()) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("databaseConfigPanel.warning.databaseChanged");
             }
