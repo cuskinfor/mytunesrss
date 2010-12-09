@@ -8,8 +8,12 @@
     <body>
 
         <release version="4.0.3" date="___D___">
-            <action dev="mdescher" type="update">
-                Removed the option to update the database when starting the server.
+            <action dev="mdescher" type="add">
+                Added simple main window.
+            </action>
+            <action dev="mdescher" type="remove">
+                Removed options to update the database when starting the server, to show admin port
+                in popup dialog and to automatically start the browser.
             </action>
         </release>
 

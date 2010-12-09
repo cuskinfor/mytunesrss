@@ -119,6 +119,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         MyTunesRss.CONFIG.setSupportName((String) myName.getValue());
         MyTunesRss.CONFIG.setSupportEmail((String) myEmail.getValue());
         MyTunesRss.CONFIG.save();
+        MyTunesRss.FORM.refreshSupportConfig();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {

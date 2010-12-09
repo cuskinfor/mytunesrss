@@ -119,8 +119,6 @@ public class MyTunesRssConfig {
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
     private int myAdminPort;
-    private boolean myStartAdminBrowser = true;
-    private boolean myShowAdminPortInfo = true;
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
 
@@ -823,22 +821,6 @@ public class MyTunesRssConfig {
         myAdminPort = adminPort;
     }
 
-    public boolean isStartAdminBrowser() {
-        return myStartAdminBrowser;
-    }
-
-    public void setStartAdminBrowser(boolean startAdminBrowser) {
-        myStartAdminBrowser = startAdminBrowser;
-    }
-
-    public boolean isShowAdminPortInfo() {
-        return myShowAdminPortInfo;
-    }
-
-    public void setShowAdminPortInfo(boolean showAdminPortInfo) {
-        myShowAdminPortInfo = showAdminPortInfo;
-    }
-
     public boolean isImportOriginalImageSize() {
         return myImportOriginalImageSize;
     }
@@ -940,8 +922,6 @@ public class MyTunesRssConfig {
     private void load(JXPathContext settings) throws IOException {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
-        setStartAdminBrowser(JXPathUtils.getBooleanValue(settings, "startAdminBrowser", isStartAdminBrowser()));
-        setShowAdminPortInfo(JXPathUtils.getBooleanValue(settings, "showAdminPortInfo", isShowAdminPortInfo()));
         setImportOriginalImageSize(JXPathUtils.getBooleanValue(settings, "importOriginalImageSize", isImportOriginalImageSize()));
         setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
@@ -1207,8 +1187,6 @@ public class MyTunesRssConfig {
             settings.appendChild(root);
             root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", getAdminPasswordHash()));
             root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "startAdminBrowser", myStartAdminBrowser));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "showAdminPortInfo", myShowAdminPortInfo));
             root.appendChild(DOMUtils.createBooleanElement(settings, "importOriginalImageSize", myImportOriginalImageSize));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
