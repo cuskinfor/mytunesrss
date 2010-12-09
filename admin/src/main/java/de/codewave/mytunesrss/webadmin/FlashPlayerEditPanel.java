@@ -11,6 +11,8 @@ import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -18,6 +20,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerEditPanel.class);
 
     private static final String PREFIX = "upload_flashplayer_";
 
@@ -136,6 +140,9 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
                 FileUtils.copyFileToDirectory(uploadFile, targetDir);
             }
         } catch (IOException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not upload data.", e);
+            }
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         } finally {
             FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
