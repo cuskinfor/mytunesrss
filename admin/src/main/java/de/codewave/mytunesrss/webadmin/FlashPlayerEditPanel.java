@@ -128,7 +128,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     public void uploadSucceeded(Upload.SucceededEvent event) {
         try {
-            File uploadFile = new File(getUploadDir(), event.getFilename());
+            File uploadFile = new File(getUploadDir(), PREFIX + event.getFilename());
             File targetDir = myFlashPlayerConfig.getBaseDir();
             targetDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myFlashPlayerConfig.getId());
             targetDir.mkdirs();
