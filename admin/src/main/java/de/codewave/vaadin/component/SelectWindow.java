@@ -68,7 +68,7 @@ public abstract class SelectWindow<T> extends Window implements Button.ClickList
     }
 
     protected void onCancel() {
-        getApplication().getMainWindow().removeWindow(this);
+        getParent().removeWindow(this);
     }
 
     protected abstract void onOk(T selectedItem);

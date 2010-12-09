@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.Terminal;
 import com.vaadin.ui.Button;
@@ -17,6 +18,8 @@ import de.codewave.mytunesrss.ResourceBundleManager;
 import de.codewave.utils.swing.components.PasswordHashField;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.component.MessageWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -24,9 +27,11 @@ import java.util.ResourceBundle;
 
 public class MyTunesRssWebAdmin extends Application {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssWebAdmin.class);
+
     public static final ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRssWebAdmin.class.getClassLoader());
 
-    public static final int ADMIN_REFRESHER_INTERVAL_MILLIS = 2500;
+    public static final int ADMIN_REFRESHER_INTERVAL_MILLIS = 5000;
 
     public static String getBundleString(ResourceBundle bundle, String key, Object... parameters) {
         if (parameters == null || parameters.length == 0) {
@@ -41,29 +46,29 @@ public class MyTunesRssWebAdmin extends Application {
 
     private ValidatorFactory myValidatorFactory;
 
-    private StatusPanel myStatusPanel;
 
     public void init() {
         myBundle = RESOURCE_BUNDLE_MANAGER.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin", getLocale());
         myComponentFactory = new ComponentFactory(myBundle);
         myValidatorFactory = new ValidatorFactory(myBundle);
-        myStatusPanel = new StatusPanel();
-        MyTunesRssEventManager.getInstance().addListener(myStatusPanel);
         setTheme("mytunesrss");
-        Window main = new Window(getBundleString("mainWindowTitle", MyTunesRss.VERSION));
-        main.getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
-        setMainWindow(main);
-        main.addComponent(MyTunesRss.CONFIG.isAdminPassword() ? new LoginPanel() : getStatusPanel());
+        setMainWindow(new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION)));
+    }
+
+    @Override
+    public Window getWindow(String name) {
+        Window window = super.getWindow(name);
+        if (window == null) {
+            window = new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION));
+            window.setName(name);
+            addWindow(window);
+            //window.open(new ExternalResource(window.getURL()));
+        }
+        return window;
     }
 
     public String getBundleString(String key, Object... parameters) {
         return getBundleString(myBundle, key, parameters);
-    }
-
-    public void setMainComponent(Component component) {
-        Window mainWindow = getMainWindow();
-        mainWindow.removeAllComponents();
-        mainWindow.addComponent(component);
     }
 
     public ComponentFactory getComponentFactory() {
@@ -74,55 +79,16 @@ public class MyTunesRssWebAdmin extends Application {
         return myValidatorFactory;
     }
 
-    public void showError(String messageKey, Object... parameters) {
-        new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
-            @Override
-            protected void onClick(Button button) {
-                // intentionally left blank
-            }
-        }.show(getMainWindow());
-    }
-
-    public void showWarning(String messageKey, Object... parameters) {
-        new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
-            @Override
-            protected void onClick(Button button) {
-                // intentionally left blank
-            }
-        }.show(getMainWindow());
-    }
-
-    public void showInfo(String messageKey, Object... parameters) {
-        new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
-            @Override
-            protected void onClick(Button button) {
-                // intentionally left blank
-            }
-        }.show(getMainWindow());
-    }
-
     @Override
     public void terminalError(Terminal.ErrorEvent event) {
+        if (LOGGER.isErrorEnabled()) {
+            LOGGER.error("Unhandled exception.", event.getThrowable());
+        }
         MyTunesRss.UNHANDLED_EXCEPTION.set(true);
-    }
-
-    public StatusPanel getStatusPanel() {
-        return myStatusPanel;
     }
 
     @Override
     public String getLogoutURL() {
         return "/";
-    }
-
-    public void checkUnhandledException() {
-        if (MyTunesRss.UNHANDLED_EXCEPTION.getAndSet(false)) {
-            new MessageWindow(50, Sizeable.UNITS_EM, null, getBundleString("unhandledException.header"), getBundleString("unhandledException.detail"), new Button(getBundleString("button.ok"))) {
-                @Override
-                protected void onClick(Button button) {
-                    // intentionally left blank
-                }
-            }.show(getMainWindow());
-        }
     }
 }

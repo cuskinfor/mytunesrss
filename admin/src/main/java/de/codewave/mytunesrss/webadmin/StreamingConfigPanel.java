@@ -45,6 +45,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private List<TranscoderConfig> myTranscoderPresets;
 
     public void attach() {
+        super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         myTranscoderPresets = MyTunesRss.PRESET_MANAGER.getPresets();
         myTranscoderPanel = new Panel(getBundleString("streamingConfigPanel.caption.transcoder"));
@@ -223,9 +224,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             transcoderNames.add(name);
         }
         if (!valid) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else if (duplicateName) {
-            getApplication().showError("streamingConfigPanel.error.duplicateName");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("streamingConfigPanel.error.duplicateName");
             valid = false;
         }
         return valid;
@@ -272,9 +273,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                     form.getField("options").setValue(transcoderConfig.getOptions());
                     Panel panel = VaadinUtils.getAncestor(form, Panel.class);
                     ((TabSheet) panel.getParent()).getTab(panel).setCaption(transcoderConfig.getName());
-                    getApplication().getMainWindow().removeWindow(this);
+                    getParent().removeWindow(this);
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else if (VaadinUtils.isChild(myTranscoderAccordionPanel, clickEvent.getButton())) {
             final Form buttonForm = (Form) clickEvent.getButton().getData();
             if (buttonForm.getField("selectBinary") == clickEvent.getButton()) {
@@ -283,9 +284,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                     @Override
                     protected void onFileSelected(File file) {
                         buttonForm.getField("binary").setValue(file.getAbsolutePath());
-                        getApplication().getMainWindow().removeWindow(this);
+                        getParent().removeWindow(this);
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             } else {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
@@ -295,7 +296,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                             myTranscoderAccordionPanel.removeComponent(VaadinUtils.getAncestor(buttonForm, Panel.class));
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             }
         } else {
             super.buttonClick(clickEvent);

@@ -39,6 +39,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private Map<Long, DatasourceConfig> myConfigs = new HashMap<Long, DatasourceConfig>();
 
     public void attach() {
+        super.attach();
         init(getBundleString("datasourcesConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         Panel sourcesPanel = new Panel(getBundleString("datasourcesConfigPanel.caption.sources"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(sourcesPanel);
@@ -126,7 +127,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                             setTablePageLengths();
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             } else {
                 DatasourceConfig datasourceConfig = myConfigs.get(findTableItemWithObject(myDatasources, clickEvent.getSource()));
                 switch (datasourceConfig.getType()) {
@@ -150,9 +151,9 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 @Override
                 protected void onFileSelected(File file) {
                     myUploadDir.setValue(file.getAbsolutePath());
-                    getApplication().getMainWindow().removeWindow(this);
+                    getParent().removeWindow(this);
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }
@@ -177,14 +178,14 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                     addDatasource(getApplication(), DatasourceConfig.create(file.getAbsolutePath()));
                     setTablePageLengths();
                 }
-                getApplication().getMainWindow().removeWindow(this);
+                getParent().removeWindow(this);
             }
-        }.show(getApplication().getMainWindow());
+        }.show(getWindow());
     }
 
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myUploadForm)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }
         return true;

@@ -47,8 +47,8 @@ public abstract class OptionWindow extends Window implements Button.ClickListene
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        close();
         clicked(clickEvent.getButton());
+        close();
     }
 
     protected abstract void clicked(Button button);

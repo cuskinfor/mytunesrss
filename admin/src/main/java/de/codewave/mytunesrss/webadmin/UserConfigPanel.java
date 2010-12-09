@@ -44,6 +44,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     private User myNoTemplateUser;
 
     public void attach() {
+        super.attach();
         if (!myInitialized) {
             init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
             myNoTemplateUser = new User(getBundleString("userConfigPanel.selectTemplateUser.noTemplateOption"));
@@ -175,7 +176,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                             initUsersAndGroupsTable();
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             }
         } else if (findTableItemWithObject(myGroupTable, clickEvent.getSource()) != null) {
             final User group = (User) findTableItemWithObject(myGroupTable, clickEvent.getSource());
@@ -193,7 +194,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                             initUsersAndGroupsTable();
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             }
         } else {
             super.buttonClick(clickEvent);
@@ -213,12 +214,12 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
                 @Override
                 protected void onOk(User template) {
-                    getApplication().getMainWindow().removeWindow(this);
+                    getParent().removeWindow(this);
                     User user = (User) template.clone();
                     user.setName(getBundleString("userConfigPanel.newUserName"));
                     editUser(user, true);
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else {
             User user = (User) myNoTemplateUser.clone();
             user.setName(getBundleString("userConfigPanel.newGroupName"));
@@ -228,7 +229,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private void editUser(User user, boolean newUser) {
-        getApplication().setMainComponent(new EditUserConfigPanel(this, user, newUser));
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditUserConfigPanel(this, user, newUser));
     }
 
     private void addUser(User user) {

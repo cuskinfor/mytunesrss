@@ -34,6 +34,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     private Button mySendButton;
 
     public void attach() {
+        super.attach();
         init(getBundleString("statisticsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myConfigForm = getComponentFactory().createForm(null, true);
         myStatisticsKeepTime = getComponentFactory().createTextField("statisticsConfigPanel.statisticsKeepTime", getApplication().getValidatorFactory().createMinMaxValidator(1, 720));
@@ -76,7 +77,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myConfigForm);
         if (!valid) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return valid;
     }
@@ -88,9 +89,9 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
             GregorianCalendar to = new GregorianCalendar();
             to.setTime((Date) myReportToDate.getValue());
             if (from.compareTo(to) < 0) {
-                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("statisticsConfigPanel.task.message", MyTunesRss.CONFIG.getAdminEmail()), false, 2000, new SendStatisticsTask(getApplication(), from, to)).show(getApplication().getMainWindow());
+                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("statisticsConfigPanel.task.message", MyTunesRss.CONFIG.getAdminEmail()), false, 2000, new SendStatisticsTask(((MainWindow) VaadinUtils.getApplicationWindow(this)), from, to)).show(getWindow());
             } else {
-                getApplication().showError("statisticsConfigPanel.error.illegalDateOrder");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("statisticsConfigPanel.error.illegalDateOrder");
             }
         } else {
             super.buttonClick(clickEvent);

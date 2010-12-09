@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.MyTunesRssRegistrationException;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.webadmin.task.SendSupportRequestTask;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ProgressWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +47,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private File myUploadDir;
 
     public void attach() {
+        super.attach();
         init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         mySupportForm = getComponentFactory().createForm(null, true);
         myName = getComponentFactory().createTextField("supportConfigPanel.name");
@@ -122,13 +124,13 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == mySendSupport) {
             if (StringUtils.isNotBlank((String) myName.getValue()) && StringUtils.isNotBlank((String) myEmail.getValue()) && StringUtils.isNotBlank((String) myDescription.getValue())) {
-                SendSupportRequestTask task = new SendSupportRequestTask(getApplication(), (String) myName.getValue(), (String) myEmail.getValue(), myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
-                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("supportConfigPanel.task.message"), false, 2000, task).show(getApplication().getMainWindow());
+                SendSupportRequestTask task = new SendSupportRequestTask(((MainWindow) VaadinUtils.getApplicationWindow(this)), (String) myName.getValue(), (String) myEmail.getValue(), myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
+                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("supportConfigPanel.task.message"), false, 2000, task).show(getWindow());
             } else {
-                getApplication().showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
         } else if (clickEvent.getSource() == myShowLog) {
-            getApplication().getMainWindow().open(new ExternalResource("/-system/log"));
+            getWindow().open(new ExternalResource("/-system/log"));
         } else {
             super.buttonClick(clickEvent);
         }
@@ -148,20 +150,20 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
 
     public void uploadFailed(Upload.FailedEvent event) {
         FileUtils.deleteQuietly(myUploadDir);
-        getApplication().showError("supportConfigPanel.error.licenseUploadFailed");
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.licenseUploadFailed");
     }
 
     public void uploadSucceeded(Upload.SucceededEvent event) {
         try {
             MyTunesRssRegistration registration = MyTunesRssRegistration.register(new File(myUploadDir, event.getFilename()));
-            getApplication().showInfo("supportConfigPanel.info.licenseOk", registration.getName());
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("supportConfigPanel.info.licenseOk", registration.getName());
         } catch (MyTunesRssRegistrationException e) {
             switch (e.getErrror()) {
                 case InvalidFile:
-                    getApplication().showError("supportConfigPanel.error.invalidLicenseFile");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.invalidLicenseFile");
                     break;
                 case LicenseExpired:
-                    getApplication().showError("supportConfigPanel.error.licenseExpired");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.licenseExpired");
                     break;
                 default:
                     throw new IllegalArgumentException("Unexpected error code \"" + e.getErrror() + "\".");

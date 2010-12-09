@@ -65,7 +65,7 @@ public class ProgressWindow extends Window implements Refresher.RefreshListener 
             // TODO: refresh progress
         }
         if (!myThread.isAlive()) {
-            getApplication().getMainWindow().removeWindow(this);
+            getParent().removeWindow(this);
             myTask.onWindowClosed();
         }
     }

@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
+import de.codewave.mytunesrss.webadmin.MainWindow;
 import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.component.ProgressWindow;
@@ -27,7 +28,7 @@ public class SendStatisticsTask implements ProgressWindow.Task {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SendStatisticsTask.class);
 
-    private MyTunesRssWebAdmin myApplication;
+    private MainWindow myMainWindow;
 
     private Calendar myFrom;
 
@@ -37,8 +38,8 @@ public class SendStatisticsTask implements ProgressWindow.Task {
 
     private String myInfo;
 
-    public SendStatisticsTask(MyTunesRssWebAdmin application, Calendar from, Calendar to) {
-        myApplication = application;
+    public SendStatisticsTask(MainWindow mainWindow, Calendar from, Calendar to) {
+        myMainWindow = mainWindow;
         myFrom = from;
         myTo = to;
     }
@@ -49,9 +50,9 @@ public class SendStatisticsTask implements ProgressWindow.Task {
 
     public void onWindowClosed() {
         if (myError != null) {
-            myApplication.showInfo(myError);
+            myMainWindow.showInfo(myError);
         } else if (myInfo != null) {
-            myApplication.showInfo(myInfo);
+            myMainWindow.showInfo(myInfo);
         }
     }
 
