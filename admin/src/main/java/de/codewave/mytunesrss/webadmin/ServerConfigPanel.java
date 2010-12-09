@@ -55,6 +55,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField mySslKeystoreKeyAlias;
 
     public void attach() {
+        super.attach();
         init(getBundleString("serverConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
         myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
@@ -186,7 +187,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setSslKeystorePass(mySslKeystorePass.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(mySslKeystoreKeyAlias.getStringValue(null));
         if (adminServerConfigChanged) {
-            getApplication().showInfo("serverConfigPanel.info.adminServerRestart");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.adminServerRestart");
             MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
                 public void run() {
                     if (MyTunesRss.stopAdminServer()) {
@@ -198,12 +199,12 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         if (musicServerConfigChanged) {
             if (!MyTunesRss.WEBSERVER.isRunning() || MyTunesRss.WEBSERVER.stop()) {
                 if (MyTunesRss.WEBSERVER.start()) {
-                    getApplication().showInfo("serverConfigPanel.info.serverRestarted");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.serverRestarted");
                 } else {
-                    getApplication().showInfo("serverConfigPanel.error.serverStartFailed");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStartFailed");
                 }
             } else {
-                getApplication().showInfo("serverConfigPanel.error.serverStopFailed");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStopFailed");
             }
         }
         MyTunesRss.CONFIG.save();
@@ -239,7 +240,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myAdminForm, myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm);
         if (!valid) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return valid;
     }
@@ -251,9 +252,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 @Override
                 protected void onFileSelected(File file) {
                     mySslKeystoreFile.setValue(file.getAbsolutePath());
-                    getApplication().getMainWindow().removeWindow(this);
+                    getWindow().getParent().removeWindow(this);
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }

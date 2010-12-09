@@ -34,6 +34,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private Form myMiscForm;
 
     public void attach() {
+        super.attach();
         init(getBundleString("dataimportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         Panel typesPanel = new Panel(getBundleString("dataimportConfigPanel.caption.types"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(typesPanel);
@@ -143,7 +144,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
                         setTablePageLength();
                     }
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else if (clickEvent.getSource() instanceof Button && ((Component) clickEvent.getSource()).getParent() == myFileTypes) {
             final Button yes = new Button(getBundleString("button.yes"));
             Button no = new Button(getBundleString("button.no"));
@@ -154,7 +155,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
                         setTablePageLength();
                     }
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }
@@ -162,7 +163,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myFileTypes, myMiscForm)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }
         return true;

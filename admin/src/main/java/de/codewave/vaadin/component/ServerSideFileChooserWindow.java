@@ -34,7 +34,7 @@ public abstract class ServerSideFileChooserWindow extends Window {
         setContent(new ServerSideFileChooser(currentDir, allowedDirPattern, allowedFilePattern, allowCreateFolders, rootsLabel) {
             @Override
             protected void onCancel() {
-                getApplication().getMainWindow().removeWindow(getWindow());
+                getWindow().getParent().removeWindow(getWindow());
             }
 
             @Override

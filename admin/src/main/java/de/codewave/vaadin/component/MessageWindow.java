@@ -50,7 +50,7 @@ public abstract class MessageWindow extends Window implements Button.ClickListen
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        getApplication().getMainWindow().removeWindow(this);
+        getParent().removeWindow(this);
         onClick(clickEvent.getButton());
     }
 

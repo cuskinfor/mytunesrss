@@ -35,6 +35,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Button myAddSchedule;
 
     public void attach() {
+        super.attach();
         init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
@@ -165,7 +166,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
                             setCronTriggersPageLength();
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             } else {
                 super.buttonClick(clickEvent);
             }
@@ -175,11 +176,11 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     protected boolean beforeSave() {
         if (VaadinUtils.isValid(myDatabaseTypeForm, myMiscOptionsForm)) {
             if (isDatabaseChanged()) {
-                getApplication().showWarning("databaseConfigPanel.warning.databaseChanged");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("databaseConfigPanel.warning.databaseChanged");
             }
             return true;
         } else {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return false;
     }

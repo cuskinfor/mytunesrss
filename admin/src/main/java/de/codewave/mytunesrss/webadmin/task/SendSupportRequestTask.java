@@ -9,7 +9,7 @@ import de.codewave.mytunesrss.DatasourceConfig;
 import de.codewave.mytunesrss.DatasourceType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
+import de.codewave.mytunesrss.webadmin.MainWindow;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.component.ProgressWindow;
 import org.apache.commons.httpclient.HttpClient;
@@ -33,10 +33,10 @@ public class SendSupportRequestTask implements ProgressWindow.Task {
     private String myName;
     private String myComment;
     private boolean mySuccess;
-    private MyTunesRssWebAdmin myApplication;
+    private MainWindow myMainWindow;
 
-    public SendSupportRequestTask(MyTunesRssWebAdmin application, String name, String email, String comment, boolean includeItunesXml) {
-        myApplication = application;
+    public SendSupportRequestTask(MainWindow mainWindow, String name, String email, String comment, boolean includeItunesXml) {
+        myMainWindow = mainWindow;
         myName = name;
         myEmail = email;
         myComment = comment;
@@ -49,9 +49,9 @@ public class SendSupportRequestTask implements ProgressWindow.Task {
 
     public void onWindowClosed() {
         if (mySuccess) {
-            myApplication.showInfo("supportConfigPanel.info.supportRequestSent");
+            myMainWindow.showInfo("supportConfigPanel.info.supportRequestSent");
         } else {
-            myApplication.showError("supportConfigPanel.error.supportRequestFailed");
+            myMainWindow.showError("supportConfigPanel.error.supportRequestFailed");
         }
     }
 

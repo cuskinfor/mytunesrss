@@ -34,6 +34,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     }
 
     public void attach() {
+        super.attach();
         init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         myForm = getComponentFactory().createForm(null, true);
@@ -76,16 +77,16 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myForm)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else try {
             if (!myFlashPlayerConfig.getBaseDir().isDirectory()) {
-                getApplication().showError("flashPlayerEditPanel.error.missingFiles");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.missingFiles");
             } else {
                 writeToConfig();
                 closeWindow();
             }
         } catch (IOException e) {
-            getApplication().showError("flashPlayerEditPanel.error.missingFiles");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.missingFiles");
         }
         return false; // make sure the default operation is not used
     }
@@ -97,11 +98,11 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     }
 
     private void closeWindow() {
-        getWindow().getParent().getWindow().removeWindow(getWindow());
+        getWindow().getParent().removeWindow(getWindow());
     }
 
     public void uploadFailed(Upload.FailedEvent event) {
-        getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
     }
 
@@ -129,13 +130,13 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             targetDir.mkdirs();
             if (event.getFilename().toLowerCase().endsWith(".zip")) {
                 if (!ZipUtils.unzip(uploadFile, targetDir)) {
-                    getApplication().showError("flashPlayerEditPanel.error.extractFailed");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.extractFailed");
                 }
             } else {
                 FileUtils.copyFileToDirectory(uploadFile, targetDir);
             }
         } catch (IOException e) {
-            getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         } finally {
             FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
         }

@@ -149,11 +149,11 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
             new TextFieldWindow(30, Sizeable.UNITS_EM, null, null, "Create folder", "Please enter the name of the new folder.", "Create", "Cancel") {
                 @Override
                 protected void onOk(String text) {
-                    ServerSideFileChooser.this.getApplication().getMainWindow().removeWindow(this);
+                    getParent().removeWindow(this);
                     new File(myCurrentDir, text).mkdir();
                     setFiles();
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         }
     }
 

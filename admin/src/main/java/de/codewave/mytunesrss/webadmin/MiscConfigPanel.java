@@ -35,6 +35,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myMailSender;
 
     public void attach() {
+        super.attach();
         init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         myMyTunesRssComForm = getComponentFactory().createForm(null, true);
         myWebInterfaceForm = getComponentFactory().createForm(null, true);
@@ -121,7 +122,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
         if (!valid) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return valid;
     }
