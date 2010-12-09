@@ -66,9 +66,6 @@ public class MyTunesRss {
     // Specify admin server port on command line (e.g. -adminPort 9090)
     public static final String CMD_ADMIN_PORT = "adminPort";
 
-    // Do not start browser when starting admin server on an non-headless system (e.g. -noBrowser)
-    public static final String CMD_NO_BROWSER = "noBrowser";
-
     // Location of the cache data path (e.g. -cacheDataPath /var/mytunesrss/cache)
     public static final String CMD_CACHE_PATH = "cacheDataPath";
 
