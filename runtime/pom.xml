@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.0-RC-3-SNAPSHOT</version>
+    <version>4.0.3</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -14,7 +14,7 @@
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-maven2-base</artifactId>
-        <version>3.2.0</version>
+        <version>3.3.0</version>
     </parent>
     <repositories>
         <repository>
@@ -414,6 +414,6 @@
         </plugins>
     </build>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/trunk</developerConnection>
+        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/tags/mytunesrss-4.0.3</developerConnection>
     </scm>
 </project>

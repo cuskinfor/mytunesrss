@@ -66,7 +66,7 @@ public abstract class TextFieldWindow extends Window implements Button.ClickList
     }
 
     protected void onCancel() {
-        getApplication().getMainWindow().removeWindow(this);
+        getParent().removeWindow(this);
     }
 
     protected abstract void onOk(String text);

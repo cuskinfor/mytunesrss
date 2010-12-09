@@ -24,25 +24,23 @@ import java.util.List;
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
 
     private Form myDatabaseTypeForm;
-    private Form myMiscOptionsForm;
     private Select myDatabaseType;
     private SmartTextField myDatabaseDriver;
     private SmartTextField myDatabaseConnection;
     private SmartTextField myDatabaseUser;
     private SmartTextField myDatabasePassword;
-    private CheckBox myUpdateDatabaseOnServerStart;
     private Table myCronTriggers;
     private Button myAddSchedule;
 
     public void attach() {
-        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        super.attach();
+        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
         myDatabaseUser = getComponentFactory().createTextField("databaseConfigPanel.databaseUser");
         myDatabasePassword = getComponentFactory().createPasswordTextField("databaseConfigPanel.databasePassword");
-        myUpdateDatabaseOnServerStart = getComponentFactory().createCheckBox("databaseConfigPanel.updateDatabaseOnServerStart");
         myCronTriggers = new Table();
         myCronTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
         myCronTriggers.addContainerProperty("hour", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
@@ -59,16 +57,12 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseTypeForm.addField(myDatabasePassword, myDatabasePassword);
         addComponent(getComponentFactory().surroundWithPanel(myDatabaseTypeForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.database")));
 
-        myMiscOptionsForm = getComponentFactory().createForm(null, true);
-        myMiscOptionsForm.addField(myUpdateDatabaseOnServerStart, myUpdateDatabaseOnServerStart);
-        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.misc")));
-
         Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.cronTriggers"), getComponentFactory().createVerticalLayout(true, true));
         schedulesPanel.addComponent(myCronTriggers);
         schedulesPanel.addComponent(myAddSchedule);
         addComponent(schedulesPanel);
 
-        attach(0, 3, 0, 3);
+        attach(0, 2, 0, 2);
 
         initFromConfig();
     }
@@ -79,7 +73,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
         myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
         myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
-        myUpdateDatabaseOnServerStart.setValue(MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart());
         showHideDatabaseDetails(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
         refreshCronTriggers();
     }
@@ -134,7 +127,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
         MyTunesRss.CONFIG.setDatabasePassword(myDatabasePassword.getStringValue(null));
-        MyTunesRss.CONFIG.setUpdateDatabaseOnServerStart(myUpdateDatabaseOnServerStart.booleanValue());
         List<String> databaseCronTriggers = new ArrayList<String>();
         for (Object itemId : myCronTriggers.getItemIds()) {
             databaseCronTriggers.add("0 " + getTableCellString(itemId, "minute") + " " + getTableCellString(itemId, "hour") + " ? * " + getTableCellString(itemId, "day"));
@@ -165,7 +157,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
                             setCronTriggersPageLength();
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             } else {
                 super.buttonClick(clickEvent);
             }
@@ -173,13 +165,13 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected boolean beforeSave() {
-        if (VaadinUtils.isValid(myDatabaseTypeForm, myMiscOptionsForm)) {
+        if (VaadinUtils.isValid(myDatabaseTypeForm)) {
             if (isDatabaseChanged()) {
-                getApplication().showWarning("databaseConfigPanel.warning.databaseChanged");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("databaseConfigPanel.warning.databaseChanged");
             }
             return true;
         } else {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return false;
     }

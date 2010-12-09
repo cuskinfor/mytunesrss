@@ -78,6 +78,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     public void attach() {
+        super.attach();
         int rows = myUser.getParent() == null ? 6 : 3;
         init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, rows, true, true));
         myUsername = getComponentFactory().createTextField("editUserConfigPanel.username", new UniqueUsernameValidator());

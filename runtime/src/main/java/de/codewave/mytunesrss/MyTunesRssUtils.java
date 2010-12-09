@@ -30,6 +30,8 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -42,6 +44,7 @@ import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -107,6 +110,17 @@ public class MyTunesRssUtils {
             return Arrays.equals((Object[]) o1, (Object[]) o2);
         }
         return o1.equals(o2);
+    }
+
+    public static void showErrorMessageWithDialog(String message) {
+        if (LOGGER.isErrorEnabled()) {
+            LOGGER.error(message);
+        }
+        if (!MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showMessageDialog(null, message);
+        } else {
+            System.err.println(message);
+        }
     }
 
     public static void showErrorMessage(String message) {
@@ -306,19 +320,6 @@ public class MyTunesRssUtils {
                 }
             }
         }), resultSetType);
-    }
-
-    public static void executeDatabaseUpdate() {
-        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
-        try {
-            if (!MyTunesRss.EXECUTOR_SERVICE.getDatabaseUpdateResult()) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.updateNotRun"));
-            }
-        } catch (Exception e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Error during database update", e);
-            }
-        }
     }
 
     public static void setCodewaveLogLevel(Level level) {

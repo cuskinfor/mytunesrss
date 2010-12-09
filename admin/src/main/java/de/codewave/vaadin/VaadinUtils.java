@@ -10,12 +10,10 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Validatable;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.CompositeValidator;
-import com.vaadin.ui.Component;
-import com.vaadin.ui.ComponentContainer;
-import com.vaadin.ui.Table;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.*;
 import org.apache.commons.lang.StringUtils;
 
+import java.awt.event.WindowEvent;
 import java.util.Iterator;
 
 public class VaadinUtils {
@@ -105,4 +103,19 @@ public class VaadinUtils {
         }
         return compositeValidator;
     }
+
+    /**
+     *
+     * @param component
+     * @return
+     */
+    public static Window getApplicationWindow(Component component) {
+       Window w = component instanceof Window ? (Window)component : component.getWindow();
+       if (w != null) {
+           for (Window parent = w.getParent(); parent != null; w = parent, parent = w.getParent());
+           return w;
+       }
+       return null;
+    }
+
 }

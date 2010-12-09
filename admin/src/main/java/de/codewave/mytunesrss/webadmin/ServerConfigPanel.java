@@ -33,8 +33,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myAdminPort;
     private SmartTextField myAdminPassword;
     private SmartTextField myRetypeAdminPassword;
-    private CheckBox myStartAdminBrowser;
-    private CheckBox myShowAdminPortInfo;
     private CheckBox myLocalTempArchive;
     private CheckBox myAvailableOnLocalNet;
     private SmartTextField myServerName;
@@ -55,12 +53,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField mySslKeystoreKeyAlias;
 
     public void attach() {
+        super.attach();
         init(getBundleString("serverConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
         myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
         myRetypeAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.retypeAdminPassword", new SameValidator(myAdminPassword, getBundleString("serverConfigPanel.error.retypeAdminPassword")));
-        myStartAdminBrowser = getComponentFactory().createCheckBox("serverConfigPanel.startAdminBrowser");
-        myShowAdminPortInfo = getComponentFactory().createCheckBox("serverConfigPanel.showAdminPortInfo");
         myLocalTempArchive = getComponentFactory().createCheckBox("serverConfigPanel.localTempArchive");
         myAvailableOnLocalNet = getComponentFactory().createCheckBox("serverConfigPanel.availableOnLocalNet");
         myAvailableOnLocalNet.addListener(new Property.ValueChangeListener() {
@@ -91,8 +88,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminForm.addField(myAdminPort, myAdminPort);
         myAdminForm.addField(myAdminPassword, myAdminPassword);
         myAdminForm.addField(myRetypeAdminPassword, myRetypeAdminPassword);
-        myAdminForm.addField(myStartAdminBrowser, myStartAdminBrowser);
-        myAdminForm.addField(myShowAdminPortInfo, myShowAdminPortInfo);
         Panel adminPanel = getComponentFactory().surroundWithPanel(myAdminForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.admin"));
         addComponent(adminPanel);
 
@@ -139,8 +134,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminPort.setValue(MyTunesRss.CONFIG.getAdminPort(), 1, 65535, "");
         myAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
         myRetypeAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
-        myStartAdminBrowser.setValue(MyTunesRss.CONFIG.isStartAdminBrowser());
-        myShowAdminPortInfo.setValue(MyTunesRss.CONFIG.isShowAdminPortInfo());
         myLocalTempArchive.setValue(MyTunesRss.CONFIG.isLocalTempArchive());
         myAvailableOnLocalNet.setValue(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         myServerName.setValue(MyTunesRss.CONFIG.getServerName());
@@ -166,8 +159,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         boolean musicServerConfigChanged = isMusicServerConfigChanged();
         MyTunesRss.CONFIG.setAdminPort(myAdminPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setAdminPasswordHash(myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
-        MyTunesRss.CONFIG.setStartAdminBrowser(myStartAdminBrowser.booleanValue());
-        MyTunesRss.CONFIG.setShowAdminPortInfo(myShowAdminPortInfo.booleanValue());
         MyTunesRss.CONFIG.setLocalTempArchive(myLocalTempArchive.booleanValue());
         MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNet.booleanValue());
         MyTunesRss.CONFIG.setServerName(myServerName.getStringValue(null));
@@ -186,7 +177,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setSslKeystorePass(mySslKeystorePass.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(mySslKeystoreKeyAlias.getStringValue(null));
         if (adminServerConfigChanged) {
-            getApplication().showInfo("serverConfigPanel.info.adminServerRestart");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.adminServerRestart");
             MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
                 public void run() {
                     if (MyTunesRss.stopAdminServer()) {
@@ -198,12 +189,12 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         if (musicServerConfigChanged) {
             if (!MyTunesRss.WEBSERVER.isRunning() || MyTunesRss.WEBSERVER.stop()) {
                 if (MyTunesRss.WEBSERVER.start()) {
-                    getApplication().showInfo("serverConfigPanel.info.serverRestarted");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.serverRestarted");
                 } else {
-                    getApplication().showInfo("serverConfigPanel.error.serverStartFailed");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStartFailed");
                 }
             } else {
-                getApplication().showInfo("serverConfigPanel.error.serverStopFailed");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStopFailed");
             }
         }
         MyTunesRss.CONFIG.save();
@@ -239,7 +230,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myAdminForm, myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm);
         if (!valid) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return valid;
     }
@@ -251,9 +242,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 @Override
                 protected void onFileSelected(File file) {
                     mySslKeystoreFile.setValue(file.getAbsolutePath());
-                    getApplication().getMainWindow().removeWindow(this);
+                    getWindow().getParent().removeWindow(this);
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }

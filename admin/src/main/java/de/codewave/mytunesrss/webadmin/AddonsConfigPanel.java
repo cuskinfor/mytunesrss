@@ -47,6 +47,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Set<FlashPlayerConfig> myFlashPlayers;
 
     public void attach() {
+        super.attach();
         init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 5, true, true));
         myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
@@ -191,7 +192,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     @Override
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(mySitesTable)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }
         return true;
@@ -233,7 +234,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                             setTablePageLengths();
                         }
                     }
-                }.show(getApplication().getMainWindow());
+                }.show(getWindow());
             }
         } else if (clickEvent.getSource() == myAddSite) {
             addSite(new ExternalSiteDefinition("album", "new site", "http://"));
@@ -265,7 +266,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     }
 
     public void uploadFailed(Upload.FailedEvent event) {
-        getApplication().showError("addonsConfigPanel.error.uploadFailed");
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.uploadFailed");
         FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
     }
 
@@ -273,21 +274,21 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         if (event.getSource() == myUploadTheme) {
             AddonsUtils.AddFileResult result = AddonsUtils.addTheme(new File(getUploadDir(), PREFIX + event.getFilename()));
             if (result == AddonsUtils.AddFileResult.InvalidFile) {
-                getApplication().showError("addonsConfigPanel.error.invalidTheme");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.invalidTheme");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {
-                getApplication().showError("addonsConfigPanel.error.extractFailed");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.extractFailed");
             } else {
-                getApplication().showInfo("addonsConfigPanel.info.themeOk");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.themeOk");
                 refreshThemes();
             }
         } else {
             AddonsUtils.AddFileResult result = AddonsUtils.addLanguage(new File(getUploadDir(), PREFIX + event.getFilename()));
             if (result == AddonsUtils.AddFileResult.InvalidFile) {
-                getApplication().showError("addonsConfigPanel.error.invalidLanguage");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.invalidLanguage");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {
-                getApplication().showError("addonsConfigPanel.error.extractFailed");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.extractFailed");
             } else {
-                getApplication().showInfo("addonsConfigPanel.info.languageOk");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.languageOk");
                 refreshLanguages();
             }
         }
