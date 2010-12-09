@@ -634,9 +634,6 @@ public class MyTunesRss {
     }
 
     public static void startWebserver() {
-        if (MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart()) {
-            MyTunesRssUtils.executeDatabaseUpdate();
-        }
         WEBSERVER.start();
         if (WEBSERVER.isRunning()) {
             MyTunesRss.EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();

@@ -55,7 +55,6 @@ public class MyTunesRssConfig {
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myMyTunesRssComSsl = false;
-    private boolean myUpdateDatabaseOnServerStart = true;
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
     private SecretKey myPathInfoKey;
@@ -428,14 +427,6 @@ public class MyTunesRssConfig {
 
     public void setMyTunesRssComSsl(boolean myTunesRssComSsl) {
         myMyTunesRssComSsl = myTunesRssComSsl;
-    }
-
-    public boolean isUpdateDatabaseOnServerStart() {
-        return myUpdateDatabaseOnServerStart;
-    }
-
-    public void setUpdateDatabaseOnServerStart(boolean updateOnServerStart) {
-        myUpdateDatabaseOnServerStart = updateOnServerStart;
     }
 
     public String getWebWelcomeMessage() {
@@ -956,7 +947,6 @@ public class MyTunesRssConfig {
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-        setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
         readDataSources(settings);
         setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
@@ -1225,7 +1215,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
             writeDataSources(settings, root);
