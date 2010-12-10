@@ -9,12 +9,16 @@ import java.util.Set;
  * Configuration for a flash player.
  */
 public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneable {
-    private static final FlashPlayerConfig DEFAULT = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", "<embed src=\"mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>");
+    private static final FlashPlayerConfig JW46 = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", "<embed src=\"mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>");
+    private static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", "<embed src=\"mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list&amp;shuffle=true\"/>");
+    private static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", "<embed src=\"xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url={PLAYLIST_URL}\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"displaywidth=256\"/>");
 
     private static final Set<FlashPlayerConfig> DEFAULTS = new HashSet<FlashPlayerConfig>();
 
     static {
-        DEFAULTS.add(DEFAULT);
+        DEFAULTS.add(JW46);
+        DEFAULTS.add(JW46_SHUFFLE);
+        DEFAULTS.add(SIMPLE);
     }
 
     public static Set<FlashPlayerConfig> getDefaults() {
@@ -27,7 +31,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
                 return flashPlayer;
             }
         }
-        return DEFAULT;
+        return JW46;
     }
 
     private String myId;
