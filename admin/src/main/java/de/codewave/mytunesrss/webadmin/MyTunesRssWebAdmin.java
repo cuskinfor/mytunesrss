@@ -52,17 +52,16 @@ public class MyTunesRssWebAdmin extends Application {
         myComponentFactory = new ComponentFactory(myBundle);
         myValidatorFactory = new ValidatorFactory(myBundle);
         setTheme("mytunesrss");
-        setMainWindow(new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION)));
+        setMainWindow(new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), MyTunesRss.CONFIG.isAdminPassword() ? new LoginPanel() : new StatusPanel()));
     }
 
     @Override
     public Window getWindow(String name) {
         Window window = super.getWindow(name);
         if (window == null) {
-            window = new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION));
+            window = new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), MyTunesRss.CONFIG.isAdminPassword() && getUser() == null ? new LoginPanel() : new StatusPanel());
             window.setName(name);
             addWindow(window);
-            //window.open(new ExternalResource(window.getURL()));
         }
         return window;
     }

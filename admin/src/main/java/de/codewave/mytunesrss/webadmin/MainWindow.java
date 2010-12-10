@@ -8,16 +8,17 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.component.MessageWindow;
 
 public class MainWindow extends Window {
 
-    public MainWindow(String caption) {
+    public MainWindow(String caption, Panel panel) {
         super(caption);
         getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
-        addComponent(MyTunesRss.CONFIG.isAdminPassword() ? new LoginPanel() : new StatusPanel());
+        addComponent(panel);
     }
 
     public void showComponent(Component component) {
