@@ -13,6 +13,8 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     private static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", "<embed src=\"mediaplayer-4-6.swf\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list&amp;shuffle=true\"/>");
     private static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", "<embed src=\"xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url={PLAYLIST_URL}\" width=\"100%\" height=\"100%\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"displaywidth=256\"/>");
 
+    public static final FlashPlayerConfig ABSOLUTE_DEFAULT = JW46;
+
     private static final Set<FlashPlayerConfig> DEFAULTS = new HashSet<FlashPlayerConfig>();
 
     static {

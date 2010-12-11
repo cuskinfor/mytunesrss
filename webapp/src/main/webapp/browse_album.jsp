@@ -277,6 +277,7 @@
 
 </div>
 
+<jsp:include page="incl_select_flashplayer_dialog.jsp"/>
 <jsp:include page="incl_edit_playlist_dialog.jsp"/>
 
 <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('album')}"/>

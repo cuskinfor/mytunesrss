@@ -483,6 +483,9 @@ public class MyTunesRss {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could start admin server.", e);
             }
+            if (FORM != null) {
+                FORM.setAdminPort(-1);
+            }
             return false;
         }
         if (FORM != null) {
@@ -630,22 +633,28 @@ public class MyTunesRss {
     public static void startWebserver() {
         WEBSERVER.start();
         if (WEBSERVER.isRunning()) {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
+            if (FORM != null) {
+                FORM.setUserPort(CONFIG.getPort());
+            }
             MyTunesRss.EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
         }
     }
 
     public static void stopWebserver() {
         MyTunesRss.WEBSERVER.stop();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
+            if (FORM != null) {
+                FORM.setUserPort(-1);
+            }
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
             MyTunesRss.EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
         }
     }
 

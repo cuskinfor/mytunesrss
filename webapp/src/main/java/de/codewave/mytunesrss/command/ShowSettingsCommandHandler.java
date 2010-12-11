@@ -29,10 +29,6 @@ public class ShowSettingsCommandHandler extends MyTunesRssCommandHandler {
                                                                                                        null,
                                                                                                        false,
                                                                                                        false)).getResults());
-            List<FlashPlayerConfig> flashPlayerConfigs = new ArrayList<FlashPlayerConfig>(FlashPlayerConfig.getDefaults());
-            flashPlayerConfigs.addAll(MyTunesRss.CONFIG.getFlashPlayers());
-            Collections.sort(flashPlayerConfigs);
-            getRequest().setAttribute("flashplayers", flashPlayerConfigs);
             forward(MyTunesRssResource.Settings);
         } else {
             forward(MyTunesRssResource.Login);

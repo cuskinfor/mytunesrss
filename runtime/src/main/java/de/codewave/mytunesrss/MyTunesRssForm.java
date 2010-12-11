@@ -30,6 +30,8 @@ public class MyTunesRssForm {
     private JTextField mySupportEmail;
     private JTextArea mySupportDescription;
     private JPanel myRootPanel;
+    private JButton myStartUserBrowser;
+    private JTextField myUserPort;
 
     public MyTunesRssForm() {
         myStartAdminBrowser.addActionListener(new ActionListener() {
@@ -39,7 +41,21 @@ public class MyTunesRssForm {
                     try {
                         desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + Integer.parseInt(myAdminPort.getText())));
                     } catch (URISyntaxException e) {
-                        throw new RuntimeException("Could not start admin in browser.", e);
+                        throw new RuntimeException("Could not open admin interface in browser.", e);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(myRootPanel, MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.needJava6ForBrowserText"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.needJava6ForBrowserTitle"), JOptionPane.OK_OPTION);
+                }
+            }
+        });
+        myStartUserBrowser.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent actionEvent) {
+                DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
+                if (desktopWrapper.isSupported()) {
+                    try {
+                        desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + Integer.parseInt(myUserPort.getText()) + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext())));
+                    } catch (URISyntaxException e) {
+                        throw new RuntimeException("Could not open user interface in browser.", e);
                     }
                 } else {
                     JOptionPane.showMessageDialog(myRootPanel, MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.needJava6ForBrowserText"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.needJava6ForBrowserTitle"), JOptionPane.OK_OPTION);
@@ -63,7 +79,7 @@ public class MyTunesRssForm {
         });
         myQuit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                for (Component c : new Component[] {myStartAdminBrowser, myAdminPort, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
+                for (Component c : new Component[] {myStartAdminBrowser, myAdminPort, myStartUserBrowser, myUserPort, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
                     c.setEnabled(false);
                 }
                 MyTunesRss.QUIT_REQUEST = true;
@@ -85,8 +101,13 @@ public class MyTunesRssForm {
     }
 
     public void setAdminPort(int port) {
-        myAdminPort.setText(Integer.toString(port));
+        myAdminPort.setText(port > 0 ? Integer.toString(port) : "");
         myStartAdminBrowser.setEnabled(myQuit.isEnabled());
+    }
+
+    public void setUserPort(int port) {
+        myUserPort.setText(port > 0 ? Integer.toString(port) : "");
+        myStartUserBrowser.setEnabled(myQuit.isEnabled());
     }
 
     public void refreshSupportConfig() {

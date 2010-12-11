@@ -357,4 +357,11 @@ public class MyTunesFunctions {
         }
         return url;
     }
+
+    public static List<FlashPlayerConfig> flashPlayerConfigs() {
+        List<FlashPlayerConfig> flashPlayerConfigs = new ArrayList<FlashPlayerConfig>(FlashPlayerConfig.getDefaults());
+        flashPlayerConfigs.addAll(MyTunesRss.CONFIG.getFlashPlayers());
+        Collections.sort(flashPlayerConfigs);
+        return flashPlayerConfigs;
+    }
 }

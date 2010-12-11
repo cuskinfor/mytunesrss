@@ -279,6 +279,8 @@
     
     </div>
 
+    <jsp:include page="incl_select_flashplayer_dialog.jsp"/>
+
 </body>
 
 </html>
