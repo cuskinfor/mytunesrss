@@ -7,9 +7,6 @@ REM
 REM Admin port (otherwise a rendomly chosen free port will be used)
 REM -adminPort 12345
 REM
-REM Do not start browser on admin port after starting MyTunesRSS
-REM -noBrowser
-REM
 REM Run without any GUI components (e.g. no admin server port notification at startup)
 REM -headless
 REM

@@ -9,9 +9,6 @@
 # Admin port (otherwise a rendomly chosen free port will be used)
 # -adminPort 12345
 #
-# Do not start browser on admin port after starting MyTunesRSS
-# -noBrowser
-#
 # Run without any GUI components (e.g. no admin server port notification at startup)
 # -headless
 #
