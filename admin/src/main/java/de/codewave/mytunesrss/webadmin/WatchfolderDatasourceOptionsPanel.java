@@ -30,6 +30,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     @Override
     public void attach() {
+        super.attach();
         init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         myIncludeExcludeForm = getComponentFactory().createForm(null, true);
@@ -86,7 +87,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else {
             writeToConfig();
             closeWindow();
@@ -101,6 +102,6 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     private void closeWindow() {
-        getWindow().getParent().getWindow().removeWindow(getWindow());
+        getWindow().getParent().removeWindow(getWindow());
     }
 }

@@ -18,7 +18,8 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         if (flashPlayerConfig == null) {
             flashPlayerConfig = FlashPlayerConfig.getDefault(id);
         }
-        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + flashPlayerConfig.getId() + "/?url=" + MyTunesRssUtils.getUtf8UrlEncoded(getPlaylistUrl()));
+        String playerId = StringUtils.defaultIfEmpty(getRequestParameter("playerId", flashPlayerConfig.getId()), FlashPlayerConfig.ABSOLUTE_DEFAULT.getId());
+        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MyTunesRssUtils.getUtf8UrlEncoded(getPlaylistUrl()));
     }
 
     private String getPlaylistUrl() {
@@ -28,6 +29,7 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
             auth = (String) getSession().getAttribute("auth");
         }
         playlistUrl.append("/").append(MyTunesRssCommand.CreatePlaylist.getName()).append("/").append(auth);
+        playlistUrl.append("/fpr=1/");
         playlistUrl.append("/").append(MyTunesRssWebUtils.encryptPathInfo(getRequest(), getRequestParameter("playlistParams", null) + "/type=Xspf"));
         return playlistUrl.toString();
     }

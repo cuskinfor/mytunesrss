@@ -4,13 +4,6 @@ var mouseY;
 
 document.onmousemove = updateTooltipPosition;
 
-function openPlayer(url) {
-    var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
-    flashPlayer.onload=function() {
-        flashPlayer.document.title = self.document.title;
-    }
-}
-
 function getElementParams(elements, separator) {
     var elementNames = elements.split(",");
     var buffer = '';

@@ -48,7 +48,7 @@ public class WebServer {
 
     public synchronized boolean start() {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if (!myRunning.get() && feedback != null && feedback.isValid()) {
+        if (!myRunning.get() && (feedback == null || feedback.isValid())) {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.illegalServerPort"));
             } else {

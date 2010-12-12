@@ -149,6 +149,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
             MyTunesRssEventManager.getInstance().fireEvent(event);
+            MyTunesRss.LAST_DATABASE_EVENT = event;
             internalExecute();
             result = Boolean.TRUE;
             if (!Thread.currentThread().isInterrupted()) {
@@ -156,11 +157,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
                 storeSession.commit();
             }
-            MyTunesRssEventManager.getInstance().fireEvent(
-                    MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
         } catch (Exception e) {
-            MyTunesRssEventManager.getInstance().fireEvent(
-                    MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
             throw e;
         }
         return result;
@@ -219,6 +218,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         myState = State.UpdatingTrackImages;
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImages");
         MyTunesRssEventManager.getInstance().fireEvent(event);
+        MyTunesRss.LAST_DATABASE_EVENT = event;
         TX_BEGIN = System.currentTimeMillis();
         DataStoreSession trackQuerySession = MyTunesRss.STORE.getTransaction();
         if (LOGGER.isInfoEnabled()) {
@@ -309,6 +309,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     myState = State.UpdatingTracksFromItunes;
                     MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningItunes");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
+                    MyTunesRss.LAST_DATABASE_EVENT = event;
                     missingItunesFiles.put(file.getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
                             .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds,
                             itunesPlaylistIds));
@@ -317,6 +318,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");
                         MyTunesRssEventManager.getInstance().fireEvent(event);
+                        MyTunesRss.LAST_DATABASE_EVENT = event;
                         FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, storeSession,
                                 timeLastUpdate, trackIds, m3uPlaylistIds);
                     } catch (ShutdownRequestedException e) {
@@ -355,6 +357,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         if (!Thread.currentThread().isInterrupted()) {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.buildingTrackIndex");
             MyTunesRssEventManager.getInstance().fireEvent(event);
+            MyTunesRss.LAST_DATABASE_EVENT = event;
             MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
         }
         return missingItunesFiles;

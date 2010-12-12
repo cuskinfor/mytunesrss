@@ -9,6 +9,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.VaadinUtils;
 
 import java.util.Arrays;
 
@@ -17,6 +18,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
     private SmartTextField myPassword;
 
     public void attach() {
+        super.attach();
         setCaption(getApplication().getBundleString("loginPanel.caption"));
         setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
         myPassword = getApplication().getComponentFactory().createPasswordTextField("loginPanel.password");
@@ -30,9 +32,10 @@ public class LoginPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST))) {
-            getApplication().setMainComponent(getApplication().getStatusPanel());
+            getApplication().setUser("USER"); // we just need any non-NULL objects here
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new StatusPanel());
         } else {
-            getApplication().showError("loginPanel.error.invalidLogin");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("loginPanel.error.invalidLogin");
         }
     }
 }

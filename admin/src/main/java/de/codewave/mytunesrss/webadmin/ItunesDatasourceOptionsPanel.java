@@ -33,6 +33,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     @Override
     public void attach() {
+        super.attach();
         init(null, getComponentFactory().createGridLayout(1, 4, true, true));
 
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
@@ -122,7 +123,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else {
             writeToConfig();
             closeWindow();
@@ -137,7 +138,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     private void closeWindow() {
-        getWindow().getParent().getWindow().removeWindow(getWindow());
+        getWindow().getParent().removeWindow(getWindow());
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
@@ -154,7 +155,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
                         setTablePageLengths();
                     }
                 }
-            }.show(getApplication().getMainWindow());
+            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }

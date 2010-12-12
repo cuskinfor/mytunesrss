@@ -55,7 +55,6 @@ public class MyTunesRssConfig {
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myMyTunesRssComSsl = false;
-    private boolean myUpdateDatabaseOnServerStart = true;
     private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
     private SecretKey myPathInfoKey;
@@ -120,8 +119,6 @@ public class MyTunesRssConfig {
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
     private int myAdminPort;
-    private boolean myStartAdminBrowser = true;
-    private boolean myShowAdminPortInfo = true;
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
 
@@ -428,14 +425,6 @@ public class MyTunesRssConfig {
 
     public void setMyTunesRssComSsl(boolean myTunesRssComSsl) {
         myMyTunesRssComSsl = myTunesRssComSsl;
-    }
-
-    public boolean isUpdateDatabaseOnServerStart() {
-        return myUpdateDatabaseOnServerStart;
-    }
-
-    public void setUpdateDatabaseOnServerStart(boolean updateOnServerStart) {
-        myUpdateDatabaseOnServerStart = updateOnServerStart;
     }
 
     public String getWebWelcomeMessage() {
@@ -832,22 +821,6 @@ public class MyTunesRssConfig {
         myAdminPort = adminPort;
     }
 
-    public boolean isStartAdminBrowser() {
-        return myStartAdminBrowser;
-    }
-
-    public void setStartAdminBrowser(boolean startAdminBrowser) {
-        myStartAdminBrowser = startAdminBrowser;
-    }
-
-    public boolean isShowAdminPortInfo() {
-        return myShowAdminPortInfo;
-    }
-
-    public void setShowAdminPortInfo(boolean showAdminPortInfo) {
-        myShowAdminPortInfo = showAdminPortInfo;
-    }
-
     public boolean isImportOriginalImageSize() {
         return myImportOriginalImageSize;
     }
@@ -949,14 +922,11 @@ public class MyTunesRssConfig {
     private void load(JXPathContext settings) throws IOException {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
-        setStartAdminBrowser(JXPathUtils.getBooleanValue(settings, "startAdminBrowser", isStartAdminBrowser()));
-        setShowAdminPortInfo(JXPathUtils.getBooleanValue(settings, "showAdminPortInfo", isShowAdminPortInfo()));
         setImportOriginalImageSize(JXPathUtils.getBooleanValue(settings, "importOriginalImageSize", isImportOriginalImageSize()));
         setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-        setUpdateDatabaseOnServerStart(JXPathUtils.getBooleanValue(settings, "updateDatabaseOnServerStart", isUpdateDatabaseOnServerStart()));
         setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
         readDataSources(settings);
         setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
@@ -1217,15 +1187,12 @@ public class MyTunesRssConfig {
             settings.appendChild(root);
             root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", getAdminPasswordHash()));
             root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "startAdminBrowser", myStartAdminBrowser));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "showAdminPortInfo", myShowAdminPortInfo));
             root.appendChild(DOMUtils.createBooleanElement(settings, "importOriginalImageSize", myImportOriginalImageSize));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "updateDatabaseOnServerStart", myUpdateDatabaseOnServerStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
             writeDataSources(settings, root);

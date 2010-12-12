@@ -355,11 +355,18 @@
                                 <td>
                                     <input type="checkbox" name="showPlayer" value="true" <c:if test="${config.showPlayer}">checked="checked"</c:if> />
                                     <img src="${appUrl}/images/action-flash.png" alt="player" style="vertical-align:text-top;" />
-                                    <select name="flashplayer">
-                                        <c:forEach items="${flashplayers}" var="player">
-                                            <option value="${player.id}" <c:if test="${config.flashplayer eq player.id}">selected="selected"</c:if>><c:out value="${player.name}"/></option>
-                                        </c:forEach>
-                                    </select>
+                                    <c:if test="${fn:length(mtfn:flashPlayerConfigs()) > 1}">
+                                        <select name="flashplayer">
+                                            <option value="" <c:if test="${empty config.flashplayer}">selected="selected"</c:if>>
+                                                <fmt:message key="settings.flashPlayerOnTheFly"/>
+                                            </option>
+                                            <c:forEach items="${mtfn:flashPlayerConfigs()}" var="player">
+                                                <option value="${player.id}"
+                                                        <c:if test="${config.flashplayer eq player.id}">selected="selected"</c:if>>
+                                                    <c:out value="${player.name}"/></option>
+                                            </c:forEach>
+                                        </select>
+                                    </c:if>
                                 </td>
                             </tr>
                         </c:if>

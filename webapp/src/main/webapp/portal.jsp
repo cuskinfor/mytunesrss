@@ -219,6 +219,7 @@
 
 </div>
 
+<jsp:include page="incl_select_flashplayer_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp"/>
 <jsp:include page="incl_edit_tags.jsp" />
 

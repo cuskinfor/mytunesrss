@@ -25,7 +25,7 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
 
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        if (getAuthUser().isPlaylist()) {
+        if (getAuthUser().isPlaylist() || "1".equals(getRequestParameter("fpr", "0"))) {
             DataStoreQuery.QueryResult<Track> tracks = getTracks();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Found " + (tracks != null ? tracks.getResultSize() : 0) + " tracks for playlist.");

@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.VaadinUtils;
 import org.vaadin.henrik.refresher.Refresher;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -33,6 +34,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     protected void attach(int columnn1, int row1, int column2, int row2) {
+        super.attach();
         mySave = getApplication().getComponentFactory().createButton("button.save", this);
         myReset = getApplication().getComponentFactory().createButton("button.reset", this);
         myCancel = getApplication().getComponentFactory().createButton("button.cancel", this);
@@ -48,7 +50,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         addComponent(myRefresher);
         myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
         myRefresher.addListener(this);
-        getApplication().checkUnhandledException();
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
     }
 
     protected abstract void writeToConfig();
@@ -112,18 +114,18 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     protected Component getSaveFollowUpComponent() {
-        return getApplication().getStatusPanel();
+        return new StatusPanel();
     }
 
     protected Component getCancelFollowUpComponent() {
-        return getApplication().getStatusPanel();
+        return new StatusPanel();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == mySave) {
             if (beforeSave()) {
                 writeToConfig();
-                getApplication().setMainComponent(getSaveFollowUpComponent());
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(getSaveFollowUpComponent());
             }
         } else if (clickEvent.getButton() == myReset) {
             if (beforeReset()) {
@@ -131,7 +133,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
             }
         } else if (clickEvent.getButton() == myCancel) {
             if (beforeCancel()) {
-                getApplication().setMainComponent(getCancelFollowUpComponent());
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(getCancelFollowUpComponent());
             }
         }
     }
@@ -147,7 +149,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     }
 
     public void refresh(Refresher source) {
-        getApplication().checkUnhandledException();
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
     }
 
     protected Object findTableItemWithObject(Table table, Object component) {

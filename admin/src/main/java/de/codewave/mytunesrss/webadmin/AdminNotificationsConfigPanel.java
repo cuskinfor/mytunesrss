@@ -32,6 +32,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myNotifyOnWebUpload;
 
     public void attach() {
+        super.attach();
         init(getBundleString("adminNotificationsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myEmailForm = getComponentFactory().createForm(null, true);
         myNotificationsForm = getComponentFactory().createForm(null, true);
@@ -94,7 +95,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myEmailForm, myNotificationsForm);
         if (!valid) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return valid;
     }

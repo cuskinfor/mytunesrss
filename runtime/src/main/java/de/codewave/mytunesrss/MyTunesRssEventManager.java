@@ -24,7 +24,7 @@ public class MyTunesRssEventManager {
     }
 
     public void removeListener(MyTunesRssEventListener listener) {
-        myListeners.add(listener);
+        myListeners.remove(listener);
     }
 
     public void fireEvent(MyTunesRssEvent event) {

@@ -66,9 +66,6 @@ public class MyTunesRss {
     // Specify admin server port on command line (e.g. -adminPort 9090)
     public static final String CMD_ADMIN_PORT = "adminPort";
 
-    // Do not start browser when starting admin server on an non-headless system (e.g. -noBrowser)
-    public static final String CMD_NO_BROWSER = "noBrowser";
-
     // Location of the cache data path (e.g. -cacheDataPath /var/mytunesrss/cache)
     public static final String CMD_CACHE_PATH = "cacheDataPath";
 
@@ -117,6 +114,8 @@ public class MyTunesRss {
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
     public static PresetManager PRESET_MANAGER = new PresetManager();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
+    public static MyTunesRssForm FORM;
+    public static MyTunesRssEvent LAST_DATABASE_EVENT;
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
@@ -135,12 +134,15 @@ public class MyTunesRss {
         loadConfig();
         handleRegistration();
         MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
+        processSanityChecks();
+        if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+            initMainWindow();
+        }
         initializeQuicktimePlayer();
         checkHttpLiveStreamingSupport();
         logSystemInfo();
         prepareCacheDirs();
         validateWrapperStartSystemProperty();
-        processSanityChecks();
         startQuartzScheduler();
         initializeCaches();
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
@@ -163,6 +165,10 @@ public class MyTunesRss {
         }
         LOGGER.debug("Quit request was TRUE.");
         MyTunesRssUtils.shutdownGracefully();
+    }
+
+    private static void initMainWindow() {
+        FORM = new MyTunesRssForm();
     }
 
     private static void createMissingPrefDirs() throws IOException {
@@ -300,7 +306,7 @@ public class MyTunesRss {
             InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
             callable.call();
             if (callable.getException() != null) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
+                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
                 if (isAutoResetDatabaseOnError()) {
                     LOGGER.info("Recreating default database.");
                     CONFIG.setDefaultDatabaseSettings();
@@ -316,7 +322,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.shutdownGracefully();
             }
             if (callable.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
+                MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
                 if (isAutoResetDatabaseOnError()) {
                     LOGGER.info("Recreating default database.");
                     CONFIG.setDefaultDatabaseSettings();
@@ -352,16 +358,16 @@ public class MyTunesRss {
 
     private static void processSanityChecks() {
         if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
+            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
             MyTunesRssUtils.shutdownGracefully();
         }
         if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
-            MyTunesRssUtils.showErrorMessage(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
+            MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
             MyTunesRssUtils.shutdownGracefully();
         }
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback != null && feedback.getMessage() != null) {
-            MyTunesRssUtils.showErrorMessage(feedback.getMessage());
+            MyTunesRssUtils.showErrorMessageWithDialog(feedback.getMessage());
         }
     }
 
@@ -373,7 +379,7 @@ public class MyTunesRss {
             } else if (SystemUtils.IS_OS_MAC_OSX) {
                 type = "osx";
             }
-            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type));
+            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type));
         }
     }
 
@@ -470,29 +476,20 @@ public class MyTunesRss {
                 LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
             }
 
-            if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
-                if (CONFIG.isShowAdminPortInfo()) {
-                    new Thread() {
-                        @Override
-                        public void run() {
-                            JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.adminServerPortInfo", String.valueOf(ADMIN_SERVER.getConnectors()[0].getLocalPort())), MyTunesRssUtils.getBundleString(Locale.getDefault(), "info.title"), JOptionPane.INFORMATION_MESSAGE);
-                        }
-                    }.start();
-                }
-                if (!COMMAND_LINE_ARGS.containsKey(CMD_NO_BROWSER) && CONFIG.isStartAdminBrowser()) {
-                    DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
-                    if (desktopWrapper.isSupported()) {
-                        desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + ADMIN_SERVER.getConnectors()[0].getLocalPort()));
-                    }
-                }
-            } else {
+            if (COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
                 System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
             }
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could start admin server.", e);
             }
+            if (FORM != null) {
+                FORM.setAdminPort(-1);
+            }
             return false;
+        }
+        if (FORM != null) {
+            FORM.setAdminPort(ADMIN_SERVER.getConnectors()[0].getLocalPort());
         }
         return true;
     }
@@ -604,7 +601,7 @@ public class MyTunesRss {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Database driver class not found.", e);
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
+                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
                         driverClassName,
                         libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdownGracefully();
@@ -621,7 +618,7 @@ public class MyTunesRss {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Database driver class not found.", e);
                 }
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
+                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
                         driverClassName,
                         libDir.getAbsolutePath()));
                 MyTunesRssUtils.shutdownGracefully();
@@ -634,27 +631,30 @@ public class MyTunesRss {
     }
 
     public static void startWebserver() {
-        if (MyTunesRss.CONFIG.isUpdateDatabaseOnServerStart()) {
-            MyTunesRssUtils.executeDatabaseUpdate();
-        }
         WEBSERVER.start();
         if (WEBSERVER.isRunning()) {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
+            if (FORM != null) {
+                FORM.setUserPort(CONFIG.getPort());
+            }
             MyTunesRss.EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
         }
     }
 
     public static void stopWebserver() {
         MyTunesRss.WEBSERVER.stop();
         if (!MyTunesRss.WEBSERVER.isRunning()) {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
+            if (FORM != null) {
+                FORM.setUserPort(-1);
+            }
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
             MyTunesRss.EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
         }
     }
 

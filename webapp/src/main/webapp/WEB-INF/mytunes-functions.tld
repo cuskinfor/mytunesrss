@@ -384,4 +384,13 @@
         <function-signature>java.lang.String hostFromUrl(java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <description>
+            Get a sorted list of all available flash player configurations.
+        </description>
+        <name>flashPlayerConfigs</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.util.List flashPlayerConfigs()</function-signature>
+    </function>
+
 </taglib>

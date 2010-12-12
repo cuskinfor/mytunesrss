@@ -11,6 +11,8 @@ import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,7 +21,7 @@ import java.io.OutputStream;
 
 public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
 
-    private static final String PREFIX = "upload_flashplayer_";
+    private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerEditPanel.class);
 
     private AddonsConfigPanel myAddonsConfigPanel;
     private FlashPlayerConfig myFlashPlayerConfig;
@@ -34,6 +36,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     }
 
     public void attach() {
+        super.attach();
         init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         myForm = getComponentFactory().createForm(null, true);
@@ -76,16 +79,16 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myForm)) {
-            getApplication().showError("error.formInvalid");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else try {
             if (!myFlashPlayerConfig.getBaseDir().isDirectory()) {
-                getApplication().showError("flashPlayerEditPanel.error.missingFiles");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.missingFiles");
             } else {
                 writeToConfig();
                 closeWindow();
             }
         } catch (IOException e) {
-            getApplication().showError("flashPlayerEditPanel.error.missingFiles");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.missingFiles");
         }
         return false; // make sure the default operation is not used
     }
@@ -97,12 +100,12 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     }
 
     private void closeWindow() {
-        getWindow().getParent().getWindow().removeWindow(getWindow());
+        getWindow().getParent().removeWindow(getWindow());
     }
 
     public void uploadFailed(Upload.FailedEvent event) {
-        getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
-        FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
+        FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
     }
 
     private String getUploadDir() {
@@ -115,7 +118,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     public OutputStream receiveUpload(String filename, String MIMEType) {
         try {
-            return new FileOutputStream(new File(getUploadDir(), PREFIX + filename));
+            return new FileOutputStream(new File(getUploadDir(), filename));
         } catch (IOException e) {
             throw new RuntimeException("Could not receive upload.", e);
         }
@@ -129,15 +132,18 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             targetDir.mkdirs();
             if (event.getFilename().toLowerCase().endsWith(".zip")) {
                 if (!ZipUtils.unzip(uploadFile, targetDir)) {
-                    getApplication().showError("flashPlayerEditPanel.error.extractFailed");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.extractFailed");
                 }
             } else {
                 FileUtils.copyFileToDirectory(uploadFile, targetDir);
             }
         } catch (IOException e) {
-            getApplication().showError("flashPlayerEditPanel.error.uploadFailed");
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not upload data.", e);
+            }
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         } finally {
-            FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
+            FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
         }
     }
 }
