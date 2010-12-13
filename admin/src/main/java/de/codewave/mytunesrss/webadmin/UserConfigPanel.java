@@ -81,14 +81,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myLdapSearchExpression = getComponentFactory().createTextField("userConfigPanel.ldapSearchExpression");
             myLdapSearchTimeout = getComponentFactory().createTextField("userConfigPanel.ldapSearchTimeout");
             myLdapEmailAttribute = getComponentFactory().createTextField("userConfigPanel.ldapEmailAttribute");
-            List<User> users = new ArrayList<User>();
-            for (User user : MyTunesRss.CONFIG.getUsers()) {
-                if (!user.isGroup()) {
-                    users.add(user);
-                }
-            }
-            Collections.sort(users);
-            myTemplateUser = getComponentFactory().createSelect("userConfigPanel.templateUser", users);
+            myTemplateUser = getComponentFactory().createSelect("userConfigPanel.templateUser", getUsersSortedByName());
             myLdapForm.addField("ldapHost", myLdapHost);
             myLdapForm.addField("ldapPort", myLdapPort);
             myLdapForm.addField("ldapAuthMethod", myLdapAuthMethod);
@@ -104,7 +97,24 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myInitialized = true;
         } else {
             initUsersAndGroupsTable();
+            Object selectedValue = myTemplateUser.getValue();
+            myTemplateUser = getComponentFactory().createSelect("userConfigPanel.templateUser", getUsersSortedByName());
+            String templateUserName = MyTunesRss.CONFIG.getLdapConfig().getTemplateUser();
+            if (selectedValue != null) {
+                myTemplateUser.setValue(selectedValue);
+            }
         }
+    }
+
+    private List<User> getUsersSortedByName() {
+        List<User> users = new ArrayList<User>();
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
+            if (!user.isGroup()) {
+                users.add(user);
+            }
+        }
+        Collections.sort(users);
+        return users;
     }
 
     protected void initFromConfig() {
@@ -146,7 +156,8 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.getLdapConfig().setSearchExpression(myLdapSearchExpression.getStringValue(null));
         MyTunesRss.CONFIG.getLdapConfig().setSearchTimeout(myLdapSearchTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.getLdapConfig().setMailAttributeName(myLdapEmailAttribute.getStringValue(null));
-        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(((User)myTemplateUser.getValue()).getName());
+        User templateUser = (User) myTemplateUser.getValue();
+        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(templateUser != null ? templateUser.getName() : null);
         MyTunesRss.CONFIG.save();
     }
 
@@ -203,13 +214,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
 
     private void createUser(boolean group) {
         if (!group) {
-            List<User> users = new ArrayList<User>();
-            for (User user : MyTunesRss.CONFIG.getUsers()) {
-                if (!user.isGroup()) {
-                    users.add(user);
-                }
-            }
-            Collections.sort(users);
+            List<User> users = getUsersSortedByName();
             users.add(0, myNoTemplateUser);
             new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
                 @Override
