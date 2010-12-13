@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.0.5" date="2010-12-xx">
+            <action dev="mdescher" type="add">
+                Added Norwegian user interface translation.
+            </action>
             <action dev="mdescher" type="fix">
                 Added apple extensions support and systray for Windows.
             </action>
