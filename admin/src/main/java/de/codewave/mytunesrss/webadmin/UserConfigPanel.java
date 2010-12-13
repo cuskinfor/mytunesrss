@@ -216,16 +216,22 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     private void createUser(boolean group) {
         if (!group) {
             List<User> users = getUsersSortedByName();
-            users.add(0, myNoTemplateUser);
-            new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
-                @Override
-                protected void onOk(User template) {
-                    getParent().removeWindow(this);
-                    User user = (User) template.clone();
-                    user.setName(getBundleString("userConfigPanel.newUserName"));
-                    editUser(user, true);
-                }
-            }.show(getWindow());
+            if (users.size() > 0) {
+                users.add(0, myNoTemplateUser);
+                new SelectWindow<User>(50, Sizeable.UNITS_EM, users, users.get(0), null, getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.caption"), getBundleString("userConfigPanel.selectTemplateUser.buttonCreate"), getBundleString("button.cancel")) {
+                    @Override
+                    protected void onOk(User template) {
+                        getParent().removeWindow(this);
+                        User user = (User) template.clone();
+                        user.setName(getBundleString("userConfigPanel.newUserName"));
+                        editUser(user, true);
+                    }
+                }.show(getWindow());
+            } else {
+                User user = (User) myNoTemplateUser.clone();
+                user.setName(getBundleString("userConfigPanel.newUserName"));
+                editUser(user, true);
+            }
         } else {
             User user = (User) myNoTemplateUser.clone();
             user.setName(getBundleString("userConfigPanel.newGroupName"));
