@@ -6,8 +6,6 @@ package de.codewave.mytunesrss;
 
 import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.desktop.DesktopWrapper;
-import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
@@ -38,13 +36,10 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.MessageDigest;
@@ -52,10 +47,8 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.Queue;
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -484,12 +477,12 @@ public class MyTunesRss {
                 LOGGER.error("Could start admin server.", e);
             }
             if (FORM != null) {
-                FORM.setAdminPort(-1);
+                FORM.setAdminUrl(-1);
             }
             return false;
         }
         if (FORM != null) {
-            FORM.setAdminPort(ADMIN_SERVER.getConnectors()[0].getLocalPort());
+            FORM.setAdminUrl(ADMIN_SERVER.getConnectors()[0].getLocalPort());
         }
         return true;
     }
@@ -635,7 +628,7 @@ public class MyTunesRss {
         if (WEBSERVER.isRunning()) {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
             if (FORM != null) {
-                FORM.setUserPort(CONFIG.getPort());
+                FORM.setUserUrl(CONFIG.getPort());
             }
             MyTunesRss.EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
             if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
@@ -649,7 +642,7 @@ public class MyTunesRss {
         if (!MyTunesRss.WEBSERVER.isRunning()) {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
             if (FORM != null) {
-                FORM.setUserPort(-1);
+                FORM.setUserUrl(-1);
             }
             MyTunesRss.SERVER_RUNNING_TIMER.cancel();
             MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");

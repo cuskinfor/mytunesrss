@@ -23,7 +23,7 @@ import java.util.Locale;
 public class MyTunesRssForm {
     private JFrame frame;
     private JButton myStartAdminBrowser;
-    private JTextField myAdminPort;
+    private JTextField myAdminUrl;
     private JButton myQuit;
     private JTextField mySupportName;
     private JButton mySendSupport;
@@ -31,7 +31,7 @@ public class MyTunesRssForm {
     private JTextArea mySupportDescription;
     private JPanel myRootPanel;
     private JButton myStartUserBrowser;
-    private JTextField myUserPort;
+    private JTextField myUserUrl;
 
     public MyTunesRssForm() {
         myStartAdminBrowser.addActionListener(new ActionListener() {
@@ -39,7 +39,7 @@ public class MyTunesRssForm {
                 DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
                 if (desktopWrapper.isSupported()) {
                     try {
-                        desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + Integer.parseInt(myAdminPort.getText())));
+                        desktopWrapper.openBrowser(new URI(myAdminUrl.getText()));
                     } catch (URISyntaxException e) {
                         throw new RuntimeException("Could not open admin interface in browser.", e);
                     }
@@ -53,7 +53,7 @@ public class MyTunesRssForm {
                 DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
                 if (desktopWrapper.isSupported()) {
                     try {
-                        desktopWrapper.openBrowser(new URI("http://127.0.0.1:" + Integer.parseInt(myUserPort.getText()) + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext())));
+                        desktopWrapper.openBrowser(new URI(myUserUrl.getText()));
                     } catch (URISyntaxException e) {
                         throw new RuntimeException("Could not open user interface in browser.", e);
                     }
@@ -79,7 +79,7 @@ public class MyTunesRssForm {
         });
         myQuit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                for (Component c : new Component[] {myStartAdminBrowser, myAdminPort, myStartUserBrowser, myUserPort, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
+                for (Component c : new Component[] {myStartAdminBrowser, myAdminUrl, myStartUserBrowser, myUserUrl, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
                     c.setEnabled(false);
                 }
                 MyTunesRss.QUIT_REQUEST = true;
@@ -100,13 +100,13 @@ public class MyTunesRssForm {
         frame.setVisible(true);
     }
 
-    public void setAdminPort(int port) {
-        myAdminPort.setText(port > 0 ? Integer.toString(port) : "");
+    public void setAdminUrl(int port) {
+        myAdminUrl.setText(port > 0 ? "http://127.0.0.1:" + port : "");
         myStartAdminBrowser.setEnabled(myQuit.isEnabled());
     }
 
-    public void setUserPort(int port) {
-        myUserPort.setText(port > 0 ? Integer.toString(port) : "");
+    public void setUserUrl(int port) {
+        myUserUrl.setText(port > 0 ? "http://127.0.0.1:" + port + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext()) : "");
         myStartUserBrowser.setEnabled(myQuit.isEnabled());
     }
 
