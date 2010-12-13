@@ -36,7 +36,10 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -160,7 +163,7 @@ public class MyTunesRss {
         MyTunesRssUtils.shutdownGracefully();
     }
 
-    private static void initMainWindow() {
+    private static void initMainWindow() throws AWTException {
         FORM = new MyTunesRssForm();
     }
 
@@ -650,5 +653,4 @@ public class MyTunesRss {
             MyTunesRss.EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
         }
     }
-
 }
