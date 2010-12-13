@@ -24,7 +24,7 @@
                 Renamed session cookie for admin to MTRAI_JSESSIONID.
             </action>
             <action dev="mdescher" type="fix">
-                Fixed NullPointerException when saving users panel with no ldap template user selected.
+                Fixed NullPointerException when saving users panel with no LDAP template user selected.
             </action>
         </release>
 
