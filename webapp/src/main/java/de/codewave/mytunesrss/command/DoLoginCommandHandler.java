@@ -43,7 +43,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
                 } else {
-                    forward(MyTunesRssCommand.ShowPortal);
+                    redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
                 }
             } else {
                 if (MyTunesRss.CONFIG.getUser(userName) != null && !MyTunesRss.CONFIG.getUser(userName).isActive()) {
@@ -53,12 +53,12 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
                     addError(new BundleError("error.loginDenied"));
                     MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, ServletUtils.getBestRemoteAddress(getRequest()));
                 }
-                forward(MyTunesRssResource.Login);
+                redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
             }
         } else if (!isSessionAuthorized()) {
-            forward(MyTunesRssResource.Login);
+            redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
         } else {
-            forward(MyTunesRssCommand.ShowPortal);
+            redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
         }
     }
 }

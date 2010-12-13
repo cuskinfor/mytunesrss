@@ -27,13 +27,13 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
                     restartMyTunesRssCom();
                 } else {
-                    forward(MyTunesRssCommand.ShowPortal);
+                    redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
                 }
             } else {
                 forward(MyTunesRssResource.Settings);
             }
         } else {
-            forward(MyTunesRssResource.Login);
+            redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
         }
     }
 

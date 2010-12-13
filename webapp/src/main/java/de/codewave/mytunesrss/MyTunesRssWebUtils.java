@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
+import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.servlet.WebConfig;
@@ -158,6 +159,11 @@ public class MyTunesRssWebUtils {
         return MyTunesRssWebUtils.getApplicationUrl(request) + servletUrl.substring(servletUrl.lastIndexOf("/")) + "/" + command.getName();
     }
 
+    public static String getResourceCommandCall(HttpServletRequest request, MyTunesRssResource resource) {
+        String servletUrl = getServletUrl(request);
+        return MyTunesRssWebUtils.getApplicationUrl(request) + servletUrl.substring(servletUrl.lastIndexOf("/")) + "/" + MyTunesRssCommand.ShowResource.getName() + "/resource=" + resource.name();
+    }
+
     public static String createTranscodingPathInfo(WebConfig config) {
         return createTranscodingParamValue(StringUtils.split(StringUtils.trimToEmpty(config.getActiveTranscoders()), ','));
     }
@@ -283,14 +289,18 @@ public class MyTunesRssWebUtils {
      * @param languageCode Language code.
      */
     public static void setCookieLanguage(HttpServletRequest request, HttpServletResponse response, String languageCode) {
+        Cookie cookie;
         if (StringUtils.isNotBlank(languageCode)) {
-            Cookie cookie = new Cookie("MyTunesRSS_Language", StringUtils.trim(languageCode));
-            cookie.setComment("MyTunesRSS language cookie");
+            cookie = new Cookie("MyTunesRSS_Language", StringUtils.trim(languageCode));
             cookie.setMaxAge(3600 * 24 * 365); // one year
-            String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
-            cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
-            response.addCookie(cookie);
+        } else {
+            cookie = new Cookie("MyTunesRSS_Language", "");
+            cookie.setMaxAge(0); // expire now
         }
+        cookie.setComment("MyTunesRSS language cookie");
+        String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
+        cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
+        response.addCookie(cookie);
     }
 
     public static void saveWebConfig(HttpServletRequest request, HttpServletResponse response, User user, WebConfig webConfig) {
