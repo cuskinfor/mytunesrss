@@ -145,6 +145,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         }
         myGroupTable.sort();
         myUserTable.sort();
+        setTablePageLengths();
     }
 
     protected void writeToConfig() {
