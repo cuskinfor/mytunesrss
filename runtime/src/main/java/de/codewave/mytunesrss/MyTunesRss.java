@@ -121,8 +121,8 @@ public class MyTunesRss {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         registerShutdownHook();
         processArguments(args);
-        createMissingPrefDirs();
         copyOldPrefsAndCache();
+        createMissingPrefDirs();
         createDigests();
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));

@@ -9,6 +9,9 @@
 
         <release version="4.0.5" date="2010-12-xx">
             <action dev="mdescher" type="fix">
+                Fixed transfer of MyTunesRSS 3 config on first MyTunesRSS 4 start.
+            </action>
+            <action dev="mdescher" type="fix">
                 Renamed session cookie for admin to MTRAI_JSESSIONID.
             </action>
             <action dev="mdescher" type="fix">
