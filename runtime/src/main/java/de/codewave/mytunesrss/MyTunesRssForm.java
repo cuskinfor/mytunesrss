@@ -89,7 +89,7 @@ public class MyTunesRssForm {
                 for (Component c : new Component[] {myStartAdminBrowser, myAdminUrl, myStartUserBrowser, myUserUrl, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
                     c.setEnabled(false);
                 }
-                MyTunesRss.QUIT_REQUEST = true;
+                MyTunesRssUtils.shutdownGracefully();
             }
         });
         refreshSupportConfig();
@@ -103,7 +103,7 @@ public class MyTunesRssForm {
                     frame.setVisible(false);
                 } else {
                     LOGGER.debug("Window is being closed, so the application is shut down now.");
-                    MyTunesRss.QUIT_REQUEST = true;
+                    MyTunesRssUtils.shutdownGracefully();
                 }
             }
 
@@ -165,7 +165,7 @@ public class MyTunesRssForm {
 
         public void handleQuit() {
             LOGGER.debug("Apple extension: handleQuit.");
-            MyTunesRss.QUIT_REQUEST = true;
+            MyTunesRssUtils.shutdownGracefully();
         }
 
         public void handleReOpenApplication() {

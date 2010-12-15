@@ -239,27 +239,6 @@ public class MyTunesRssUtils {
         }
     }
 
-    public static void onShutdown() {
-        if (MyTunesRss.STREAMING_CACHE != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Cleaning up streaming cache.");
-            }
-            MyTunesRss.STREAMING_CACHE.clearCache();
-        }
-        if (MyTunesRss.TEMP_CACHE != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Cleaning up temp cache.");
-            }
-            MyTunesRss.TEMP_CACHE.clearCache();
-        }
-        if (MyTunesRss.HTTP_LIVE_STREAMING_CACHE != null) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Cleaning up http live streaming cache.");
-            }
-            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.clearCache();
-        }
-    }
-
     private static final double KBYTE = 1024;
     private static final double MBYTE = 1024 * KBYTE;
     private static final double GBYTE = 1024 * MBYTE;

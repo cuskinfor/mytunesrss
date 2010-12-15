@@ -35,7 +35,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener, Refresher.RefreshListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusPanel.class);
@@ -467,32 +470,21 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
 
         // message of the day
-        if (myMessageOfTheDay == null || (System.currentTimeMillis() - myMessageOfTheDayLastRefresh > 1000 * 60 * 15)) {
-            myMessageOfTheDayLastRefresh = System.currentTimeMillis();
-            // refresh every 15 minutes<
-            try {
-                URI uri = MyTunesRss.REGISTRATION.isReleaseVersion() && !MyTunesRss.REGISTRATION.isUnregistered() ? new URI("http://www.codewave.de/tools/motd/mytunesrss.xml") : new URI("http://www.codewave.de/tools/motd/mytunesrss_unregistered.xml");
-                MessageOfTheDay motd = JAXB.unmarshal(uri, MessageOfTheDay.class);
-                if (motd != null && motd.getItems() != null) {
-                    for (MessageOfTheDayItem item : motd.getItems()) {
-                        if (!StringUtils.isBlank(item.getValue())) {
-                            Version minVersion = StringUtils.isNotBlank(item.getMinVersion()) ? new Version(item.getMinVersion()) : new Version(0, 0, 0);
-                            Version maxVersion = StringUtils.isNotBlank(item.getMaxVersion()) ? new Version(item.getMaxVersion()) : new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-                            Version currentVersion = new Version(MyTunesRss.VERSION);
-                            if (minVersion.compareTo(new Version(MyTunesRss.VERSION)) <= 0 && maxVersion.compareTo(currentVersion) >= 0) {
-                                if (StringUtils.equalsIgnoreCase(getLocale().getLanguage(), item.getLanguage())) {
-                                    myMessageOfTheDay = item;
-                                    break;
-                                } else if (StringUtils.isBlank(item.getLanguage())) {
-                                    myMessageOfTheDay = item;
-                                }
-                            }
+        MessageOfTheDay motd = MyTunesRss.MESSAGE_OF_THE_DAY.get();
+        if (motd != null && motd.getItems() != null) {
+            for (MessageOfTheDayItem item : motd.getItems()) {
+                if (!StringUtils.isBlank(item.getValue())) {
+                    Version minVersion = StringUtils.isNotBlank(item.getMinVersion()) ? new Version(item.getMinVersion()) : new Version(0, 0, 0);
+                    Version maxVersion = StringUtils.isNotBlank(item.getMaxVersion()) ? new Version(item.getMaxVersion()) : new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
+                    Version currentVersion = new Version(MyTunesRss.VERSION);
+                    if (minVersion.compareTo(new Version(MyTunesRss.VERSION)) <= 0 && maxVersion.compareTo(currentVersion) >= 0) {
+                        if (StringUtils.equalsIgnoreCase(getLocale().getLanguage(), item.getLanguage())) {
+                            myMessageOfTheDay = item;
+                            break;
+                        } else if (StringUtils.isBlank(item.getLanguage())) {
+                            myMessageOfTheDay = item;
                         }
                     }
-                }
-            } catch (URISyntaxException e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Could not read and parse message of the day from Codewave server.", e);
                 }
             }
         }

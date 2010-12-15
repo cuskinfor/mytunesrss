@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
+import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
 import de.codewave.mytunesrss.transcoding.PresetManager;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
@@ -53,6 +54,7 @@ import java.util.*;
 import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -92,7 +94,6 @@ public class MyTunesRss {
     public static MessageDigest MD5_DIGEST;
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
-    public static boolean QUIT_REQUEST;
     public static FileCache STREAMING_CACHE;
     public static FileCache TEMP_CACHE;
     public static ExpiringCache<HttpLiveStreamingCacheItem> HTTP_LIVE_STREAMING_CACHE;
@@ -112,10 +113,10 @@ public class MyTunesRss {
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
     public static MyTunesRssEvent LAST_DATABASE_EVENT;
+    public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
-        registerShutdownHook();
         processArguments(args);
         copyOldPrefsAndCache();
         createMissingPrefDirs();
@@ -144,6 +145,7 @@ public class MyTunesRss {
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
         MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
         MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 1000 * 60 * 15, TimeUnit.MILLISECONDS); // refresh every 15 minutes
         initializeDatabase();
         startAdminServer();
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
@@ -151,16 +153,14 @@ public class MyTunesRss {
         if (MyTunesRss.CONFIG.getPort() > 0) {
             startWebserver();
         }
-        while (!QUIT_REQUEST) {
+        while (true) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(3600000); // sleep one hour
             } catch (InterruptedException e) {
-                LOGGER.debug("Main thread was interrupted in headless mode.", e);
-                QUIT_REQUEST = true;
+                LOGGER.debug("Main thread was interrupted.", e);
+                MyTunesRssUtils.shutdownGracefully();
             }
         }
-        LOGGER.debug("Quit request was TRUE.");
-        MyTunesRssUtils.shutdownGracefully();
     }
 
     private static void initMainWindow() throws AWTException {
@@ -437,14 +437,6 @@ public class MyTunesRss {
         if (arguments != null) {
             COMMAND_LINE_ARGS.putAll(arguments);
         }
-    }
-
-    private static void registerShutdownHook() {
-        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-            public void run() {
-                MyTunesRssUtils.onShutdown();
-            }
-        }));
     }
 
     public static boolean startAdminServer() {
