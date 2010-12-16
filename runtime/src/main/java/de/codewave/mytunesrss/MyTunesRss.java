@@ -145,9 +145,14 @@ public class MyTunesRss {
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
         MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
         MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 1000 * 60 * 15, TimeUnit.MILLISECONDS); // refresh every 15 minutes
+        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
         initializeDatabase();
-        startAdminServer();
+        if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
+            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
+            if (!startAdminServer(0)) {
+                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartFailed"));
+            }
+        }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
         if (MyTunesRss.CONFIG.getPort() > 0) {
@@ -439,23 +444,9 @@ public class MyTunesRss {
         }
     }
 
-    public static boolean startAdminServer() {
+    public static boolean startAdminServer(int adminPort) {
         try {
-            int adminPort = MyTunesRss.CONFIG.getAdminPort();
-            if (COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) != null) {
-                try {
-                    adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT).toString());
-                } catch (NumberFormatException e) {
-                    if (LOGGER.isErrorEnabled()) {
-                        LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) + " specified on commmand line.");
-                    }
-                }
-            }
-            if (adminPort > 0) {
-                ADMIN_SERVER = new Server(adminPort);
-            } else {
-                ADMIN_SERVER = new Server(0);
-            }
+            ADMIN_SERVER = new Server(adminPort);
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
             adminContext.setServerClasses(new String[]{"-org.mortbay.jetty.plus.jaas.", "org.mortbay.jetty."});
             ADMIN_SERVER.setHandler(adminContext);
@@ -480,6 +471,20 @@ public class MyTunesRss {
             FORM.setAdminUrl(ADMIN_SERVER.getConnectors()[0].getLocalPort());
         }
         return true;
+    }
+
+    private static int getAdminPortFromConfigOrCommandLine() {
+        int adminPort = MyTunesRss.CONFIG.getAdminPort();
+        if (COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) != null) {
+            try {
+                adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT).toString());
+            } catch (NumberFormatException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) + " specified on commmand line.");
+                }
+            }
+        }
+        return adminPort;
     }
 
     public static boolean stopAdminServer() {

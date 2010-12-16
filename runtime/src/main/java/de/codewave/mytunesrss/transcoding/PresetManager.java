@@ -51,7 +51,7 @@ public class PresetManager implements Runnable {
         );
         myPresets.add(myIphoneVideo);
         myPresets.add(myMp3Audio);
-        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(this, 0, 3600000, TimeUnit.MILLISECONDS);
+        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(this, 0, 3600, TimeUnit.SECONDS);
     }
 
     public List<TranscoderConfig> getPresets() {

@@ -181,7 +181,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
             MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
                 public void run() {
                     if (MyTunesRss.stopAdminServer()) {
-                        MyTunesRss.startAdminServer();
+                        if (!MyTunesRss.startAdminServer(MyTunesRss.CONFIG.getAdminPort())) {
+                            MyTunesRss.startAdminServer(0);
+                        }
                     }
                 }
             }, 2, TimeUnit.SECONDS);
