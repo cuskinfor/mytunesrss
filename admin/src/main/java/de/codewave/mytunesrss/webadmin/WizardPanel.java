@@ -26,7 +26,7 @@ import java.util.Collections;
 public class WizardPanel extends Panel implements Button.ClickListener {
 
     private Button myAddDatasourceButton;
-    private Label myDatasourcePath;
+    private SmartTextField myDatasourcePath;
     private SmartTextField myUsername;
     private SmartTextField myPassword;
     private SmartTextField myRetypePassword;
@@ -37,9 +37,9 @@ public class WizardPanel extends Panel implements Button.ClickListener {
         super.attach();
         setCaption(getApplication().getBundleString("wizardPanel.caption"));
         setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
-        myDatasourcePath = new Label(getApplication().getBundleString("wizardPanel.datasource", ""));
+        myDatasourcePath = getApplication().getComponentFactory().createTextField("wizardPanel.datasource");
         myAddDatasourceButton = getApplication().getComponentFactory().createButton("wizardPanel.addDatasource", this);
-        myUsername = getApplication().getComponentFactory().createPasswordTextField("wizardPanel.username");
+        myUsername = getApplication().getComponentFactory().createTextField("wizardPanel.username");
         myPassword = getApplication().getComponentFactory().createPasswordTextField("wizardPanel.password");
         myRetypePassword = getApplication().getComponentFactory().createPasswordTextField("wizardPanel.retypePassword");
         myFinishButton = getApplication().getComponentFactory().createButton("wizardPanel.finish", this);
@@ -53,8 +53,12 @@ public class WizardPanel extends Panel implements Button.ClickListener {
         addComponent(myPassword);
         addComponent(myRetypePassword);
         addComponent(new Label(getApplication().getBundleString("wizardPanel.descButtons")));
-        addComponent(myFinishButton);
-        addComponent(mySkipButton);
+        Panel mainButtons = new Panel();
+        addComponent(mainButtons);
+        mainButtons.addStyleName("light");
+        mainButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+        mainButtons.addComponent(myFinishButton);
+        mainButtons.addComponent(mySkipButton);
     }
 
     public MyTunesRssWebAdmin getApplication() {
@@ -66,17 +70,19 @@ public class WizardPanel extends Panel implements Button.ClickListener {
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), null, ServerSideFileChooser.PATTERN_ALL, DatasourcesConfigPanel.XML_FILE_PATTERN, false, "Roots") { // TODO i18n
                 @Override
                 protected void onFileSelected(File file) {
-                    MyTunesRss.CONFIG.setDatasources(Collections.singletonList(DatasourceConfig.create(file.getAbsolutePath())));
-                    myDatasourcePath.setValue(((MyTunesRssWebAdmin)getApplication()).getBundleString("wizardPanel.datasource", file.getAbsolutePath()));
+                    myDatasourcePath.setValue(file.getAbsolutePath());
                     getParent().removeWindow(this);
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myFinishButton) {
-            if (MyTunesRss.CONFIG.getDatasources().size() == 0 || isAnyEmpty(myUsername, myPassword, myRetypePassword)) {
+            if (isAnyEmpty(myDatasourcePath, myUsername, myPassword, myRetypePassword)) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("wizardPanel.error.allFieldsMandatory");
+            } else if (DatasourceConfig.create(myDatasourcePath.getStringValue(null)) == null) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.invalidDatasourcePath");
             } else if (!myPassword.getStringValue("1").equals(myRetypePassword.getStringValue("2"))) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editUserConfigPanel.error.retypePassword");
             } else {
+                MyTunesRss.CONFIG.setDatasources(Collections.singletonList(DatasourceConfig.create(myDatasourcePath.getStringValue(null))));
                 User user = new User(myUsername.getStringValue(null));
                 user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
                 MyTunesRss.CONFIG.addUser(user);
@@ -86,7 +92,9 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());
             }
         } else if (clickEvent.getSource() == mySkipButton) {
-            MyTunesRss.CONFIG.setDatasources(Collections.<DatasourceConfig>emptyList());
+            MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
+            MyTunesRss.CONFIG.save();
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(getApplication().getNewWindowPanel());
         }
     }
 

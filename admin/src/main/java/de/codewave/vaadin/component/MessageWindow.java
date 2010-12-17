@@ -38,7 +38,7 @@ public abstract class MessageWindow extends Window implements Button.ClickListen
         Panel panel = new Panel();
         addComponent(panel);
         verticalLayout.setComponentAlignment(panel, Alignment.MIDDLE_RIGHT);
-        panel.setStyleName("light");
+        panel.addStyleName("light");
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         panel.setContent(horizontalLayout);
         horizontalLayout.setSpacing(true);

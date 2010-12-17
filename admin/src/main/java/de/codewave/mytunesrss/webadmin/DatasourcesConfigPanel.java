@@ -14,15 +14,16 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.*;
+import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.component.ServerSideFileChooser;
+import de.codewave.vaadin.component.ServerSideFileChooserWindow;
+import de.codewave.vaadin.component.SinglePanelWindow;
 import de.codewave.vaadin.validation.FileValidator;
-import de.codewave.vaadin.validation.ValidRegExpValidator;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -146,8 +147,9 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 }
             }
         } else if (clickEvent.getSource() == mySelectUploadDir) {
-            File dir = StringUtils.isNotBlank((String)myUploadDir.getValue()) ? new File((String) myUploadDir.getValue()) : null;
+            File dir = StringUtils.isNotBlank((String) myUploadDir.getValue()) ? new File((String) myUploadDir.getValue()) : null;
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), dir, ServerSideFileChooser.PATTERN_ALL, null, true, "Roots") { // TODO i18n
+
                 @Override
                 protected void onFileSelected(File file) {
                     myUploadDir.setValue(file.getAbsolutePath());
@@ -161,22 +163,27 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private void addOrEditLocalDataSource(final Object itemId, File file) {
         new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), file, ServerSideFileChooser.PATTERN_ALL, XML_FILE_PATTERN, false, "Roots") { // TODO i18n
+
             @Override
             protected void onFileSelected(File file) {
-                if (itemId != null) {
-                    myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
-                    DatasourceConfig newConfig = DatasourceConfig.create(file.getAbsolutePath());
-                    DatasourceConfig oldConfig = myConfigs.get(itemId);
-                    if (oldConfig.getType() == newConfig.getType()) {
-                        // same local type
-                        oldConfig.setDefinition(file.getAbsolutePath());
+                DatasourceConfig newConfig = DatasourceConfig.create(file.getAbsolutePath());
+                if (newConfig != null) {
+                    if (itemId != null) {
+                        myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
+                        DatasourceConfig oldConfig = myConfigs.get(itemId);
+                        if (oldConfig.getType() == newConfig.getType()) {
+                            // same local type
+                            oldConfig.setDefinition(file.getAbsolutePath());
+                        } else {
+                            // local type has changed
+                            myConfigs.put((Long) itemId, newConfig);
+                        }
                     } else {
-                        // local type has changed
-                        myConfigs.put((Long) itemId, newConfig);
+                        addDatasource(getApplication(), DatasourceConfig.create(file.getAbsolutePath()));
+                        setTablePageLengths();
                     }
                 } else {
-                    addDatasource(getApplication(), DatasourceConfig.create(file.getAbsolutePath()));
-                    setTablePageLengths();
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.invalidDatasourcePath");
                 }
                 getParent().removeWindow(this);
             }

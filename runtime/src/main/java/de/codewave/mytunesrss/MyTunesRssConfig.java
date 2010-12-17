@@ -1077,7 +1077,9 @@ public class MyTunesRssConfig {
             if (JXPathUtils.getStringValue(datasourceContext, "type", null) == null) {
                 // read pre-4.0.0-EAP-6 data source definitions
                 String definition = JXPathUtils.getStringValue(datasourceContext, ".", null);
-                dataSources.add(DatasourceConfig.create(definition));
+                if (definition != null) {
+                    dataSources.add(DatasourceConfig.create(definition));
+                }
             } else {
                 try {
                     DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
