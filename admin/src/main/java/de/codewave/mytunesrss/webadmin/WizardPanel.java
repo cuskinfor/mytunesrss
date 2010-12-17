@@ -51,6 +51,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
         addComponent(new Label(getApplication().getBundleString("wizardPanel.descUser")));
         addComponent(myUsername);
         addComponent(myPassword);
+        addComponent(myRetypePassword);
         addComponent(new Label(getApplication().getBundleString("wizardPanel.descButtons")));
         addComponent(myFinishButton);
         addComponent(mySkipButton);
@@ -66,8 +67,8 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                 @Override
                 protected void onFileSelected(File file) {
                     MyTunesRss.CONFIG.setDatasources(Collections.singletonList(DatasourceConfig.create(file.getAbsolutePath())));
+                    myDatasourcePath.setValue(WizardPanel.this.getApplication().getBundleString("wizardPanel.datasource", file.getAbsolutePath()));
                     getParent().removeWindow(this);
-                    myDatasourcePath.setValue(WizardPanel.this.getApplication().getBundleString("wizardPanel.datasourceLabel", file.getAbsolutePath()));
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myFinishButton) {
@@ -79,6 +80,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                 User user = new User(myUsername.getStringValue(null));
                 user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
                 MyTunesRss.CONFIG.addUser(user);
+                MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
                 MyTunesRss.CONFIG.save();
                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());

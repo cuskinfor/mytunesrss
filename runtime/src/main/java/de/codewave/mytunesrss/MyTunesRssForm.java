@@ -127,12 +127,22 @@ public class MyTunesRssForm {
 
     public void setAdminUrl(int port) {
         myAdminUrl.setText(port > 0 ? "http://127.0.0.1:" + port : "");
-        myStartAdminBrowser.setEnabled(myQuit.isEnabled());
+        myStartAdminBrowser.setEnabled(port > 0 && myQuit.isEnabled());
+        if (port > 0 && myQuit.isEnabled() && MyTunesRss.CONFIG.isInitialWizard()) {
+            DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
+            if (desktopWrapper.isSupported()) {
+                try {
+                    desktopWrapper.openBrowser(new URI(myAdminUrl.getText()));
+                } catch (URISyntaxException e) {
+                    LOGGER.error("Could not open admin interface in browser.", e);
+                }
+            }
+        }
     }
 
     public void setUserUrl(int port) {
         myUserUrl.setText(port > 0 ? "http://127.0.0.1:" + port + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext()) : "");
-        myStartUserBrowser.setEnabled(myQuit.isEnabled());
+        myStartUserBrowser.setEnabled(port > 0 && myQuit.isEnabled());
     }
 
     public void refreshSupportConfig() {
