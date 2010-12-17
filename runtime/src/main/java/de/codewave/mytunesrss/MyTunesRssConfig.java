@@ -121,6 +121,7 @@ public class MyTunesRssConfig {
     private int myAdminPort;
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
+    private boolean myInitialWizard;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -328,22 +329,6 @@ public class MyTunesRssConfig {
         }
         return users;
     }
-
-    /*public Collection<User> getUserClones() {
-        Map<User, User> originalToClone = new HashMap<User, User>();
-        List<User> clones = new ArrayList<User>();
-        for (User user : getUsers()) {
-            User clone = (User) user.clone();
-            clones.add(clone);
-            originalToClone.put(user, clone);
-        }
-        for (User clone : clones) {
-            if (clone.getParent() != null) {
-                clone.setParent(originalToClone.get(clone.getParent()));
-            }
-        }
-        return clones;
-    }*/
 
     public User getUser(String name) {
         for (User user : getUsers()) {
@@ -850,6 +835,14 @@ public class MyTunesRssConfig {
         myFlashPlayers.clear();
     }
 
+    public boolean isInitialWizard() {
+        return myInitialWizard;
+    }
+
+    public void setInitialWizard(boolean initialWizard) {
+        myInitialWizard = initialWizard;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1052,6 +1045,7 @@ public class MyTunesRssConfig {
             );
             addFlashPlayer(flashPlayerConfig);
         }
+        setInitialWizard(JXPathUtils.getBooleanValue(settings, "initialWizard", true));
     }
 
     /**
@@ -1346,6 +1340,7 @@ public class MyTunesRssConfig {
                     player.appendChild(DOMUtils.createByteArrayElement(settings, "html", flashPlayerConfig.getHtml().getBytes("UTF-8")));
                 }
             }
+            root.appendChild(DOMUtils.createBooleanElement(settings, "initialWizard", isInitialWizard()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

@@ -11,6 +11,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.Terminal;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
@@ -52,14 +53,26 @@ public class MyTunesRssWebAdmin extends Application {
         myComponentFactory = new ComponentFactory(myBundle);
         myValidatorFactory = new ValidatorFactory(myBundle);
         setTheme("mytunesrss");
-        setMainWindow(new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), MyTunesRss.CONFIG.isAdminPassword() ? new LoginPanel() : new StatusPanel()));
+        setMainWindow(new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), getNewWindowPanel()));
+    }
+
+    private Panel getNewWindowPanel() {
+        Panel panel;
+        if (MyTunesRss.CONFIG.isInitialWizard()) {
+            panel = new WizardPanel();
+        } else if (MyTunesRss.CONFIG.isAdminPassword()) {
+            panel = new LoginPanel();
+        } else {
+            panel = new StatusPanel();
+        }
+        return panel;
     }
 
     @Override
     public Window getWindow(String name) {
         Window window = super.getWindow(name);
         if (window == null) {
-            window = new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), MyTunesRss.CONFIG.isAdminPassword() && getUser() == null ? new LoginPanel() : new StatusPanel());
+            window = new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), getNewWindowPanel());
             window.setName(name);
             addWindow(window);
         }

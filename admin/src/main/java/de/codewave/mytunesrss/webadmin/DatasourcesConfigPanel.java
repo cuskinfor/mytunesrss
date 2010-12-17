@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
 
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
-    private static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
+    static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
 
     private Table myDatasources;
     private Button myAddLocalDatasource;
