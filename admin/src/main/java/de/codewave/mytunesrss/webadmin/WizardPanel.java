@@ -67,7 +67,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                 @Override
                 protected void onFileSelected(File file) {
                     MyTunesRss.CONFIG.setDatasources(Collections.singletonList(DatasourceConfig.create(file.getAbsolutePath())));
-                    myDatasourcePath.setValue(WizardPanel.this.getApplication().getBundleString("wizardPanel.datasource", file.getAbsolutePath()));
+                    myDatasourcePath.setValue(((MyTunesRssWebAdmin)getApplication()).getBundleString("wizardPanel.datasource", file.getAbsolutePath()));
                     getParent().removeWindow(this);
                 }
             }.show(getWindow());

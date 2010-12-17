@@ -1421,4 +1421,8 @@ public class MyTunesRssConfig {
     public boolean isValidMailConfig() {
         return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailSender());
     }
+
+    public boolean isShowInitialWizard() {
+        return isInitialWizard() && getUsers().isEmpty() && getDatasources().isEmpty();
+    }
 }

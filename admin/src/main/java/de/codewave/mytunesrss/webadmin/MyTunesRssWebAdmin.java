@@ -58,7 +58,7 @@ public class MyTunesRssWebAdmin extends Application {
 
     private Panel getNewWindowPanel() {
         Panel panel;
-        if (MyTunesRss.CONFIG.isInitialWizard()) {
+        if (MyTunesRss.CONFIG.isShowInitialWizard()) {
             panel = new WizardPanel();
         } else if (MyTunesRss.CONFIG.isAdminPassword()) {
             panel = new LoginPanel();
