@@ -56,7 +56,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         addComponent(getComponentFactory().surroundWithPanel(myForm, FORM_PANEL_MARGIN_INFO, getBundleString("flashPlayerEditPanel.caption.form")));
 
         Panel panel = getComponentFactory().surroundWithPanel(myUpload, new Layout.MarginInfo(false, false, false, false), null);
-        panel.setStyleName("light");
+        panel.addStyleName("light");
         addComponent(panel);
 
         attach(0, 2, 0, 2);
