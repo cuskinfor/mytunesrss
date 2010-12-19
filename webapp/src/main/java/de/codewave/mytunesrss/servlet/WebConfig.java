@@ -252,7 +252,9 @@ public class WebConfig {
     public String createCookieValue() {
         StringBuffer value = new StringBuffer();
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
-            value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
+            if (entry.getKey() != null && entry.getValue() != null) {
+                value.append(";").append(entry.getKey()).append("=").append(entry.getValue());
+            }
         }
         return MyTunesRssBase64Utils.encode(value.substring(1));
     }
