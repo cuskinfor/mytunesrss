@@ -213,13 +213,13 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                     public void clicked(Button button) {
                         if (button == yes) {
                             tableRowButton.deleteTableRow();
-                            if (tableRowButton.getData().toString().equals("DeleteTheme")) {
+                            if ("DeleteTheme".equals(tableRowButton.getData().toString())) {
                                 AddonsUtils.deleteTheme(name);
-                            } else if (tableRowButton.getData().toString().equals("DeleteLanguage")) {
+                            } else if ("DeleteLanguage".equals(tableRowButton.getData().toString())) {
                                 AddonsUtils.deleteLanguage(name);
-                            } else if (tableRowButton.getData().toString().equals("DeleteSite")) {
+                            } else if ("DeleteSite".equals(tableRowButton.getData().toString())) {
                                 mySitesTable.removeItem(tableRowButton.getItemId());
-                            } else if (tableRowButton.getData().toString().equals("DeletePlayer")) {
+                            } else if ("DeletePlayer".equals(tableRowButton.getData().toString())) {
                                 myFlashPlayersTable.removeItem(tableRowButton.getItemId());
                                 FlashPlayerConfig config = new FlashPlayerConfig((String) tableRowButton.getItemId(), null, null);
                                 myFlashPlayers.remove(config);
