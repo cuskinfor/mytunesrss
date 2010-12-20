@@ -78,7 +78,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         Panel webInterfacePanel = getComponentFactory().surroundWithPanel(myWebInterfaceForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.webInterface"));
         addComponent(webInterfacePanel);
 
-        attach(0, 4, 0, 4);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }

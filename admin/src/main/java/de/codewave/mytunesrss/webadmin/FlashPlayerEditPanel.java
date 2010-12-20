@@ -1,15 +1,15 @@
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.ui.Form;
-import com.vaadin.ui.Layout;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Upload;
+import com.vaadin.data.validator.AbstractStringValidator;
+import com.vaadin.ui.*;
 import de.codewave.mytunesrss.FlashPlayerConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.PlaylistFileType;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +18,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Locale;
 
 public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
 
@@ -28,11 +32,20 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     private Form myForm;
     private SmartTextField myName;
     private SmartTextField myHtml;
+    private Select myFileType;
+    private SmartTextField myWidth;
+    private SmartTextField myHeight;
     private Upload myUpload;
+    private List<String> myIllegalNames;
 
     public FlashPlayerEditPanel(AddonsConfigPanel addonsConfigPanel, FlashPlayerConfig flashPlayerConfig) {
         myAddonsConfigPanel = addonsConfigPanel;
         myFlashPlayerConfig = flashPlayerConfig;
+        myIllegalNames = new ArrayList<String>();
+        for (FlashPlayerConfig config : MyTunesRss.CONFIG.getFlashPlayers()) {
+            myIllegalNames.add(config.getName().toLowerCase(Locale.ENGLISH));
+        }
+        myIllegalNames.remove(flashPlayerConfig.getName().toLowerCase(Locale.ENGLISH));
     }
 
     public void attach() {
@@ -40,13 +53,26 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         myForm = getComponentFactory().createForm(null, true);
-        myName = getComponentFactory().createTextField("flashPlayerEditPanel.name");
+        myName = getComponentFactory().createTextField("flashPlayerEditPanel.name", new AbstractStringValidator(getBundleString("flashPlayerEditPanel.error.name")) {
+            @Override
+            protected boolean isValidString(String value) {
+                return value != null && !myIllegalNames.contains(value.toLowerCase(Locale.ENGLISH));
+            }
+        });
         setRequired(myName);
         myForm.addField("name", myName);
         myHtml = getComponentFactory().createTextField("flashPlayerEditPanel.html");
         setRequired(myHtml);
         myHtml.setRows(10);
         myForm.addField("html", myHtml);
+        myFileType = getComponentFactory().createSelect("flashPlayerEditPanel.filetype", Arrays.asList(PlaylistFileType.Xspf, PlaylistFileType.M3u)); // todo add json
+        myForm.addField("filetype", myFileType);
+        myWidth = getComponentFactory().createTextField("flashPlayerEditPanel.width", new MinMaxIntegerValidator(getBundleString("flashPlayerEditPanel.error.width", 1, 4096), 1, 4096));
+        setRequired(myWidth);
+        myForm.addField("width", myWidth);
+        myHeight = getComponentFactory().createTextField("flashPlayerEditPanel.height", new MinMaxIntegerValidator(getBundleString("flashPlayerEditPanel.error.height", 1, 4096), 1, 4096));
+        setRequired(myHeight);
+        myForm.addField("height", myHeight);
         myUpload = new Upload(null, this);
         myUpload.setButtonCaption(getBundleString("flashPlayerEditPanel.upload"));
         myUpload.setImmediate(true);
@@ -59,7 +85,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         panel.addStyleName("light");
         addComponent(panel);
 
-        attach(0, 2, 0, 2);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }
@@ -68,13 +94,19 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     protected void writeToConfig() {
         myFlashPlayerConfig.setName(myName.getStringValue("Unknown player"));
         myFlashPlayerConfig.setHtml(myHtml.getStringValue("<!-- missing flash player html -->"));
-        myAddonsConfigPanel.addOrUpdatePlayer(myFlashPlayerConfig);
+        myFlashPlayerConfig.setPlaylistFileType((PlaylistFileType) myFileType.getValue());
+        myFlashPlayerConfig.setWidth(myWidth.getIntegerValue(640));
+        myFlashPlayerConfig.setHeight(myHeight.getIntegerValue(480));
+        myAddonsConfigPanel.saveFlashPlayer(myFlashPlayerConfig);
     }
 
     @Override
     protected void initFromConfig() {
         myName.setValue(myFlashPlayerConfig.getName());
         myHtml.setValue(myFlashPlayerConfig.getHtml());
+        myFileType.setValue(myFlashPlayerConfig.getPlaylistFileType());
+        myWidth.setValue(myFlashPlayerConfig.getWidth());
+        myHeight.setValue(myFlashPlayerConfig.getHeight());
     }
 
     protected boolean beforeSave() {

@@ -66,7 +66,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm.addField(myImportOriginalImageSize, myImportOriginalImageSize);
         myMiscForm.addField(myIgnoreTimestamps, myIgnoreTimestamps);
 
-        attach(0, 2, 0, 2);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }

@@ -364,4 +364,8 @@ public class MyTunesFunctions {
         Collections.sort(flashPlayerConfigs);
         return flashPlayerConfigs;
     }
+
+    public static FlashPlayerConfig flashPlayerConfig(String id) {
+        return MyTunesRss.CONFIG.getFlashPlayer(id);
+    }
 }

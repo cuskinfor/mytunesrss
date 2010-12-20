@@ -65,7 +65,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myUploadForm.addField(myUploadCreateUserDir, myUploadCreateUserDir);
         addComponent(getComponentFactory().surroundWithPanel(myUploadForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourcesConfigPanel.caption.upload")));
 
-        attach(0, 4, 0, 4);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }

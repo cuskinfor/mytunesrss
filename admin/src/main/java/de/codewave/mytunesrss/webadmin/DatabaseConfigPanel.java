@@ -62,7 +62,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         schedulesPanel.addComponent(myAddSchedule);
         addComponent(schedulesPanel);
 
-        attach(0, 2, 0, 2);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }

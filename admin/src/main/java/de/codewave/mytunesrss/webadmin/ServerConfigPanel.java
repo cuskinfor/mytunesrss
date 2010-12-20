@@ -9,7 +9,6 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssExecutorService;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -125,7 +124,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         Panel httpsPanel = getComponentFactory().surroundWithPanel(myHttpsForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.https"));
         addComponent(httpsPanel);
 
-        attach(0, 5, 0, 5);
+        addDefaultComponents(0, 5, 0, 5, false);
 
         initFromConfig();
     }

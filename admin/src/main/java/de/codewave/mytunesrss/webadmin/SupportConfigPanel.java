@@ -95,7 +95,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySysInfoForm.addField("sysInfo", mySysInfo);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
-        attach(0, 3, 0, 3);
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
     }
