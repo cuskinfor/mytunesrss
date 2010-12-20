@@ -5,5 +5,5 @@ VERSION=$(find . -wholename ./target/mytunesrss-*-macosx.dir/mytunesrss-*/MyTune
 codesign -fs "Codewave Software" ./target/mytunesrss-${VERSION}-macosx.dir/mytunesrss-${VERSION}/MyTunesRSS.app
 
 pushd ./target/mytunesrss-${VERSION}-macosx.dir
-zip mytunesrss-${VERSION}-macosx.zip mytunesrss-${VERSION}
+zip ../mytunesrss-${VERSION}-macosx.zip mytunesrss-${VERSION}
 popd
