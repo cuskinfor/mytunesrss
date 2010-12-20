@@ -87,7 +87,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         logo.setHeight(88, Sizeable.UNITS_PIXELS);
         addComponent(logo);
         myAlertPanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
-        myAlertPanel.setStyleName("alertPanel");
+        myAlertPanel.addStyleName("alertPanel");
         myAlertPanel.setVisible(false);
         addComponent(myAlertPanel);
         myUpdatePanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
@@ -104,7 +104,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         accordion.addTab(serverGeneral, getApplication().getBundleString("statusPanel.serverGeneral.caption"), null);
         myServerStatus = new Label();
         myServerStatus.setWidth("100%");
-        myServerStatus.setStyleName("statusmessage");
+        myServerStatus.addStyleName("statusmessage");
         serverGeneral.addComponent(myServerStatus);
         Panel serverButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         serverButtons.addStyleName("light");
@@ -137,7 +137,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         addComponent(database);
         myDatabaseStatus = new Label();
         myDatabaseStatus.setWidth("100%");
-        myDatabaseStatus.setStyleName("statusmessage");
+        myDatabaseStatus.addStyleName("statusmessage");
         database.addComponent(myDatabaseStatus);
         Panel databaseButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         databaseButtons.addStyleName("light");
@@ -156,7 +156,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         addComponent(mytunesrss);
         myMyTunesRssComStatus = new Label();
         myMyTunesRssComStatus.setWidth("100%");
-        myMyTunesRssComStatus.setStyleName("statusmessage");
+        myMyTunesRssComStatus.addStyleName("statusmessage");
         mytunesrss.addComponent(myMyTunesRssComStatus);
         Panel configButtons = new Panel(getApplication().getBundleString("statusPanel.config.caption"), getApplication().getComponentFactory().createGridLayout(4, 3, true, true));
         addComponent(configButtons);
@@ -303,7 +303,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     if (button == yes) {
                         Label label = new Label(StatusPanel.this.getApplication().getBundleString("statusPanel.info.quitMyTunesRss"));
                         label.setSizeFull();
-                        label.setStyleName("goodbye");
+                        label.addStyleName("goodbye");
                         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(label);
                         MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
                             public void run() {
@@ -431,7 +431,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         Label updateStatusLabel = new Label();
         myUpdatePanel.addComponent(updateStatusLabel);
         updateStatusLabel.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-        updateStatusLabel.setStyleName("statusmessage");
+        updateStatusLabel.addStyleName("statusmessage");
         myUpdatePanel.setVisible(false);
         if (updateInfo != null) {
             Version updateVersion = new Version(updateInfo.getVersion());
@@ -451,10 +451,10 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     } else {
                         Label maxVersionInfoLabel = new Label(getApplication().getBundleString("statusPanel.updates.maxVersionLimit"));
                         maxVersionInfoLabel.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-                        maxVersionInfoLabel.setStyleName("statusmessage");
+                        maxVersionInfoLabel.addStyleName("statusmessage");
                         myUpdatePanel.addComponent(maxVersionInfoLabel);
                     }
-                    myUpdatePanel.setStyleName("updatePanel");
+                    myUpdatePanel.addStyleName("updatePanel");
                     myUpdatePanel.setVisible(true);
                 } catch (MalformedURLException e) {
                     // ignore, panel remains invisible

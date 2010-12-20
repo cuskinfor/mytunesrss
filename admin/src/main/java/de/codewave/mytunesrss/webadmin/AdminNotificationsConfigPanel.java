@@ -59,7 +59,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         addComponent(getComponentFactory().surroundWithPanel(myEmailForm, FORM_PANEL_MARGIN_INFO, getBundleString("adminNotificationsConfigPanel.email.caption")));
         addComponent(getComponentFactory().surroundWithPanel(myNotificationsForm, FORM_PANEL_MARGIN_INFO, getBundleString("adminNotificationsConfigPanel.notifications.caption")));
 
-        attach(0, 2, 0, 2);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }

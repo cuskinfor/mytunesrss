@@ -12,8 +12,17 @@
             <artifact:dependency groupid="de.codewave" artifactid="codewave-zis" version="1.1"/>
             <artifact:dependency groupid="xerces" artifactid="xercesImpl" version="2.8.1"/>
         </artifact:dependencies>
-        <copy todir="target/idea/lib" flatten="true">
+        <copy todir="target/idea/lib" flatten="true" overwrite="true">
             <fileset refid="bootstrap-libs"/>
+        </copy>
+        <artifact:pom id="mypom" file="pom.xml"/>
+        <delete dir="target/idea/webapps/ADMIN"/>
+        <copy todir="target/idea/webapps/ADMIN">
+            <fileset dir="admin/target/admin-${mypom.version}"/>
+        </copy>
+        <delete dir="target/idea/webapps/ROOT"/>
+        <copy todir="target/idea/webapps/ROOT">
+            <fileset dir="webapp/target/webapp-${mypom.version}"/>
         </copy>
     </target>
 

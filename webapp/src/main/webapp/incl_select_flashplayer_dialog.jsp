@@ -13,7 +13,7 @@
     <p>
         <select id="flashPlayerSelection" style="width:100%">
             <c:forEach items="${mtfn:flashPlayerConfigs()}" var="player">
-                <option value='${player.id}'><c:out value="${player.name}"/></option>
+                <option value='${player.id},${player.width},${player.height}'><c:out value="${player.name}"/></option>
             </c:forEach>
         </select>
     </p>
@@ -30,14 +30,15 @@
                 },
                 "<fmt:message key="doOpenFlashPlayer"/>" : function() {
                     $jQ("#selectFlashPlayerDialog").dialog("close");
-                    doOpenPlayer($jQ('#selectFlashPlayerDialog').dialog("option", "playlistUrl").replace('#ID#', $jQ("#flashPlayerSelection option:selected").val()));
+                    var val = $jQ("#flashPlayerSelection option:selected").val().split(",");
+                    doOpenPlayer($jQ('#selectFlashPlayerDialog').dialog("option", "playlistUrl").replace('#ID#', val[0]), val[1], val[2]);
                 }
             }
         });
     });
 
-    function doOpenPlayer(url) {
-        var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=600,height=276,resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
+    function doOpenPlayer(url, width, height) {
+        var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=" + width + ",height=" + height + ",resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
         flashPlayer.onload = function() {
             flashPlayer.document.title = self.document.title;
         }
@@ -50,7 +51,7 @@
                 $jQ("#selectFlashPlayerDialog").dialog("open");
             </c:when>
             <c:otherwise>
-                doOpenPlayer(url.replace("#ID#", "${config.flashplayer}"));
+                doOpenPlayer(url.replace("#ID#", "${config.flashplayer}", ${mtfn:flashPlayerConfig(config.flashplayer).width}, ${mtfn:flashPlayerConfig(config.flashplayer).height}));
             </c:otherwise>
         </c:choose>
     }

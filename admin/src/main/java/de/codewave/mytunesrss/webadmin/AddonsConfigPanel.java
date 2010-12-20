@@ -44,7 +44,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Upload myUploadLanguage;
     private Button myAddSite;
     private Button myAddFlashPlayer;
-    private Set<FlashPlayerConfig> myFlashPlayers;
 
     public void attach() {
         super.attach();
@@ -93,13 +92,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         addComponent(mySitesPanel);
         addComponent(myFlashPlayersPanel);
 
-        attach(0, 4, 0, 4);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }
 
     protected void initFromConfig() {
-        myFlashPlayers = MyTunesRss.CONFIG.getFlashPlayers();
         refreshThemes();
         refreshLanguages();
         refreshExternalSites();
@@ -116,7 +114,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private void refreshFlashPlayers() {
         myFlashPlayersTable.removeAllItems();
-        List<FlashPlayerConfig> flashPlayers = new ArrayList<FlashPlayerConfig>(myFlashPlayers);
+        List<FlashPlayerConfig> flashPlayers = new ArrayList<FlashPlayerConfig>(MyTunesRss.CONFIG.getFlashPlayers());
         Collections.sort(flashPlayers);
         for (FlashPlayerConfig flashPlayer : flashPlayers) {
             myFlashPlayersTable.addItem(new Object[]{flashPlayer.getName(), createTableRowButton("button.edit", this, flashPlayer.getId(), "EditPlayer"), createTableRowButton("button.delete", this, flashPlayer.getId(), "DeletePlayer")}, flashPlayer.getId());
@@ -165,7 +163,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 return false;
             }
         });
-        mySitesTable.addItem(new Object[]{name, type, url, createTableRowButton("button.delete", this, site, "DeleteSite")}, site);
+        Object itemId = UUID.randomUUID().toString();
+        mySitesTable.addItem(new Object[]{name, type, url, createTableRowButton("button.delete", this, itemId, "DeleteSite")}, itemId);
         setTablePageLengths();
     }
 
@@ -183,11 +182,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         for (Object itemId : mySitesTable.getItemIds()) {
             MyTunesRss.CONFIG.addExternalSite(new ExternalSiteDefinition((String) getTableCellPropertyValue(mySitesTable, itemId, "type"), (String) getTableCellPropertyValue(mySitesTable, itemId, "name"), (String) getTableCellPropertyValue(mySitesTable, itemId, "url")));
         }
-        MyTunesRss.CONFIG.clearFlashPlayer();
-        for (FlashPlayerConfig flashPlayer : myFlashPlayers) {
-            MyTunesRss.CONFIG.addFlashPlayer(flashPlayer);
-        }
-        MyTunesRss.CONFIG.save();    }
+    }
 
     @Override
     protected boolean beforeSave() {
@@ -202,7 +197,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         if (clickEvent.getSource() instanceof TableRowButton) {
             final TableRowButton tableRowButton = (TableRowButton) clickEvent.getSource();
             if ("EditPlayer".equals(tableRowButton.getData())) {
-                FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, (FlashPlayerConfig) getFlashPlayerConfig((String) tableRowButton.getItemId()).clone());
+                FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, MyTunesRss.CONFIG.getFlashPlayer((String) tableRowButton.getItemId()));
                 SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
                 flashPlayerEditWindow.show(getWindow());
             } else {
@@ -212,25 +207,24 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".message", name), yes, no) {
                     public void clicked(Button button) {
                         if (button == yes) {
-                            tableRowButton.deleteTableRow();
-                            if (tableRowButton.getData().toString().equals("DeleteTheme")) {
+                            if ("DeleteTheme".equals(tableRowButton.getData().toString())) {
                                 AddonsUtils.deleteTheme(name);
-                            } else if (tableRowButton.getData().toString().equals("DeleteLanguage")) {
+                            } else if ("DeleteLanguage".equals(tableRowButton.getData().toString())) {
                                 AddonsUtils.deleteLanguage(name);
-                            } else if (tableRowButton.getData().toString().equals("DeleteSite")) {
-                                mySitesTable.removeItem(tableRowButton.getItemId());
-                            } else if (tableRowButton.getData().toString().equals("DeletePlayer")) {
+                            } else if ("DeletePlayer".equals(tableRowButton.getData().toString())) {
                                 myFlashPlayersTable.removeItem(tableRowButton.getItemId());
-                                FlashPlayerConfig config = new FlashPlayerConfig((String) tableRowButton.getItemId(), null, null);
-                                myFlashPlayers.remove(config);
-                                try {
-                                    FileUtils.deleteQuietly(config.getBaseDir());
-                                } catch (IOException e) {
-                                    if (LOG.isErrorEnabled()) {
-                                        LOG.error("Could not get flash player base directory.");
+                                FlashPlayerConfig removedConfig = MyTunesRss.CONFIG.removeFlashPlayer((String) tableRowButton.getItemId());
+                                if (removedConfig != null) {
+                                    try {
+                                        FileUtils.deleteQuietly(removedConfig.getBaseDir());
+                                    } catch (IOException e) {
+                                        if (LOG.isErrorEnabled()) {
+                                            LOG.error("Could not get flash player base directory.");
+                                        }
                                     }
                                 }
                             }
+                            tableRowButton.deleteTableRow();
                             setTablePageLengths();
                         }
                     }
@@ -240,21 +234,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             addSite(new ExternalSiteDefinition("album", "new site", "http://"));
             setTablePageLengths();
         } else if (clickEvent.getSource() == myAddFlashPlayer) {
-            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", ""));
+            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", FlashPlayerConfig.DEFAULT_PRE + "\n" + FlashPlayerConfig.DEFAULT_POST, PlaylistFileType.Xspf, 640, 480));
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
             flashPlayerEditWindow.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }
-    }
-
-    private FlashPlayerConfig getFlashPlayerConfig(String itemId) {
-        for (FlashPlayerConfig flashPlayerConfig : myFlashPlayers) {
-            if (flashPlayerConfig.getId().equals(itemId)) {
-                return flashPlayerConfig;
-            }
-        }
-        return null;
     }
 
     public OutputStream receiveUpload(String filename, String mimeType) {
@@ -296,9 +281,10 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         setTablePageLengths();
     }
 
-    void addOrUpdatePlayer(FlashPlayerConfig flashPlayerConfig) {
-        myFlashPlayers.remove(flashPlayerConfig);
-        myFlashPlayers.add(flashPlayerConfig);
+    void saveFlashPlayer(FlashPlayerConfig flashPlayerConfig) {
+        if (MyTunesRss.CONFIG.getFlashPlayer(flashPlayerConfig.getName()) == null) {
+            MyTunesRss.CONFIG.addFlashPlayer(flashPlayerConfig);
+        }
         refreshFlashPlayers();
         setTablePageLengths();
     }

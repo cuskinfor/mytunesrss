@@ -69,7 +69,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myMiscOptionsForm.addField(myDeleteMissingFiles, myDeleteMissingFiles);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.itunesMisc")));
 
-        attach(0, 3, 0, 3);
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
     }

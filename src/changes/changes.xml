@@ -7,7 +7,30 @@
 
     <body>
 
-        <release version="4.0.6" date="2010-12-xx">
+        <release version="4.0.7" date="2010-12-20">
+            <action dev="mdescher" type="add">
+                Several flash player configuration bugfixes, e.g. missing prelude and code for HTML content.
+            </action>
+            <action dev="mdescher" type="add">
+                Configurable playlist file type and window width and height for flash players. Added default
+                prelude and coda for HTML content.
+            </action>
+            <action dev="mdescher" type="fix">
+                Handle NULL keys and values in web config correctly when creating cookie value. Fixed flash
+                player problem with "select on start" option.
+            </action>
+            <action dev="mdescher" type="fix">
+                Update to codewave-utils 1.0.3 to fix problems when unzipping archives with directory entries.
+            </action>
+        </release>
+
+        <release version="4.0.6" date="2010-12-18">
+            <action dev="mdescher" type="fix">
+                Do not create MyTunesRSS3 folder while checking for their existence.
+            </action>
+            <action dev="mdescher" type="fix">
+                MYTUNESRSS-237 "Typos in Properties"
+            </action>
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-233 "Wizard for basic configuration on first start"
             </action>

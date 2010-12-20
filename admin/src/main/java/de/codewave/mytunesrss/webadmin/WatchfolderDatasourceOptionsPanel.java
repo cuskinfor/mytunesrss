@@ -52,7 +52,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myFallbackForm.addField(myArtistFallback, myArtistFallback);
         addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.fallbacks")));
 
-        attach(0, 2, 0, 2);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }

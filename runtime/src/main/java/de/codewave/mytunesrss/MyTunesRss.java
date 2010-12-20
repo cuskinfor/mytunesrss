@@ -284,10 +284,10 @@ public class MyTunesRss {
             String[] prefsDataPathContents = prefsDataPath.list();
             if (prefsDataPathContents == null || prefsDataPathContents.length == 0) {
                 for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
-                    File oldPrefsDir = new File(PrefsUtils.getPreferencesDataPath(prevVersionAppIdentifier));
+                    File oldPrefsDir = new File(PrefsUtils.getPreferencesDataPathNoCreate(prevVersionAppIdentifier));
                     if (oldPrefsDir.isDirectory() && oldPrefsDir.list().length > 0) {
                         FileUtils.copyDirectory(oldPrefsDir, prefsDataPath);
-                        File oldCacheDir = new File(PrefsUtils.getCacheDataPath(prevVersionAppIdentifier));
+                        File oldCacheDir = new File(PrefsUtils.getCacheDataPathNoCreate(prevVersionAppIdentifier));
                         if (oldCacheDir.isDirectory() && oldCacheDir.list().length > 0) {
                             FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
                         }

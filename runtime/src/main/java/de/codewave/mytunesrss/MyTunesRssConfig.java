@@ -831,8 +831,12 @@ public class MyTunesRssConfig {
         myFlashPlayers.add(flashPlayer);
     }
 
-    public void clearFlashPlayer() {
-        myFlashPlayers.clear();
+    public FlashPlayerConfig removeFlashPlayer(String id) {
+        FlashPlayerConfig config = getFlashPlayer(id);
+        if (config != null) {
+            myFlashPlayers.remove(new FlashPlayerConfig(id, null, null, null, 0, 0));
+        }
+        return config;
     }
 
     public boolean isInitialWizard() {
@@ -1041,7 +1045,10 @@ public class MyTunesRssConfig {
             FlashPlayerConfig flashPlayerConfig = new FlashPlayerConfig(
                     JXPathUtils.getStringValue(flashPlayerContext, "id", UUID.randomUUID().toString()),
                     JXPathUtils.getStringValue(flashPlayerContext, "name", "Unknown Flash Player"),
-                    new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8")
+                    new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8"),
+                    PlaylistFileType.valueOf(JXPathUtils.getStringValue(flashPlayerContext, "filetype", PlaylistFileType.Xspf.name())),
+                    JXPathUtils.getIntValue(flashPlayerContext, "width", 600),
+                    JXPathUtils.getIntValue(flashPlayerContext, "height", 276)
             );
             addFlashPlayer(flashPlayerConfig);
         }
@@ -1077,7 +1084,9 @@ public class MyTunesRssConfig {
             if (JXPathUtils.getStringValue(datasourceContext, "type", null) == null) {
                 // read pre-4.0.0-EAP-6 data source definitions
                 String definition = JXPathUtils.getStringValue(datasourceContext, ".", null);
-                dataSources.add(DatasourceConfig.create(definition));
+                if (definition != null) {
+                    dataSources.add(DatasourceConfig.create(definition));
+                }
             } else {
                 try {
                     DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
@@ -1420,5 +1429,9 @@ public class MyTunesRssConfig {
 
     public boolean isValidMailConfig() {
         return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailSender());
+    }
+
+    public boolean isShowInitialWizard() {
+        return isInitialWizard() && getUsers().isEmpty() && getDatasources().isEmpty();
     }
 }

@@ -33,16 +33,17 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         }
     }
 
-    protected void attach(int columnn1, int row1, int column2, int row2) {
-        super.attach();
+    protected void addDefaultComponents(int columnn1, int row1, int column2, int row2, boolean onlyBackButton) {
         mySave = getApplication().getComponentFactory().createButton("button.save", this);
         myReset = getApplication().getComponentFactory().createButton("button.reset", this);
-        myCancel = getApplication().getComponentFactory().createButton("button.cancel", this);
+        myCancel = getApplication().getComponentFactory().createButton(onlyBackButton ? "button.back" : "button.cancel", this);
         Panel mainButtons = new Panel();
         mainButtons.addStyleName("light");
         mainButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
-        mainButtons.addComponent(mySave);
-        mainButtons.addComponent(myReset);
+        if (!onlyBackButton) {
+            mainButtons.addComponent(mySave);
+            mainButtons.addComponent(myReset);
+        }
         mainButtons.addComponent(myCancel);
         getGridLayout().addComponent(mainButtons, columnn1, row1, column2, row2);
         getGridLayout().setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);

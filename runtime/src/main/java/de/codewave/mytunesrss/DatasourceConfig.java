@@ -8,13 +8,18 @@ package de.codewave.mytunesrss;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
+import java.io.File;
+
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public static DatasourceConfig create(String definition) {
-        if (StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
+        File file = new File(definition);
+        if (file.isFile() && StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
             return new ItunesDatasourceConfig(definition);
-        } else {
+        } else if (file.isDirectory()) {
             return new WatchfolderDatasourceConfig(definition);
+        } else {
+            return null;
         }
     }
 

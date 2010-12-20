@@ -199,7 +199,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
         addComponent(getComponentFactory().surroundWithPanel(myOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("editUserConfigPanel.caption.options")));
 
-        attach(0, rows - 1, 0, rows - 1);
+        addDefaultComponents(0, rows - 1, 0, rows - 1, false);
 
         initFromConfig();
     }

@@ -92,7 +92,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myLdapForm.addField("ldapEmailAttribute", myLdapEmailAttribute);
             myLdapForm.addField("templateUser", myTemplateUser);
             addComponent(getComponentFactory().surroundWithPanel(myLdapForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.ldap")));
-            attach(0, 3, 0, 3);
+            addDefaultComponents(0, 3, 0, 3, false);
             initFromConfig();
             myInitialized = true;
         } else {
