@@ -308,6 +308,7 @@ public class MyTunesRssWebUtils {
             // save in user profile on server
             user.setWebConfig(MyTunesRssWebUtils.getUserAgent(request), webConfig.createCookieValue());
             MyTunesRss.CONFIG.save(); // save new user settings
+            webConfig.removeCookie(request, response); // remove cookie if it exists
         } else {
             // save in cookie
             webConfig.save(request, response);

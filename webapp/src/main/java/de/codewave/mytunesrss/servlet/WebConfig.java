@@ -249,6 +249,17 @@ public class WebConfig {
         }
     }
 
+    public void removeCookie(HttpServletRequest request, HttpServletResponse response) {
+        if (StringUtils.isEmpty((String) request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
+            Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
+            cookie.setComment("MyTunesRSS settings cookie");
+            cookie.setMaxAge(0); // delete cookie
+            String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
+            cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
+            response.addCookie(cookie);
+        }
+    }
+
     public String createCookieValue() {
         StringBuffer value = new StringBuffer();
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
