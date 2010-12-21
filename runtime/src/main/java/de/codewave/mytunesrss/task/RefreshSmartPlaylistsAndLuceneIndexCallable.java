@@ -24,8 +24,12 @@ public class RefreshSmartPlaylistsAndLuceneIndexCallable implements Callable<Voi
     public Void call() throws IOException, SQLException {
         MyTunesRss.LUCENE_TRACK_SERVICE.updateTracks(trackIds);
         DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
-        transaction.executeStatement(new RefreshSmartPlaylistsStatement());
-        transaction.commit();
+        try {
+            transaction.executeStatement(new RefreshSmartPlaylistsStatement());
+            transaction.commit();
+        } finally {
+            transaction.rollback();
+        }
         return null;
     }
 }

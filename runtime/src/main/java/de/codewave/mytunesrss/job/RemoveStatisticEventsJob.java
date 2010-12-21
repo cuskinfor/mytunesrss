@@ -34,11 +34,8 @@ public class RemoveStatisticEventsJob implements Job {
             tx.commit();
         } catch (Exception e) {
             LOGGER.error("Could not remove old statistic events.", e);
-            try {
-                tx.rollback();
-            } catch (SQLException e1) {
-                LOGGER.error("Could not rollback transaction.", e1);
-            }
+        } finally {
+            tx.rollback();
         }
     }
 }

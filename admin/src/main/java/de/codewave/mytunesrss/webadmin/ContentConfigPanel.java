@@ -48,8 +48,8 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         myPlaylists.removeAllItems();
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         List<Playlist> playlists = null;
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
             playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile), null, null, true)).getResults();
             for (Playlist playlist : playlists) {
@@ -63,13 +63,14 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
             }
         } catch (SQLException e) {
             MyTunesRss.UNHANDLED_EXCEPTION.set(true);
+        } finally {
+            session.rollback();
         }
         myPlaylists.sort();
         myPlaylists.setPageLength(Math.min(playlists.size(), 20));
     }
 
     protected void writeToConfig() {
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         SavePlaylistAttributesStatement statement = new SavePlaylistAttributesStatement();
         for (Object itemId : myPlaylists.getItemIds()) {
             Playlist playlist = (Playlist) itemId;
@@ -78,6 +79,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
             statement.setName(playlist.getName());
             statement.setUserOwner(playlist.getUserOwner());
             statement.setUserPrivate(playlist.isUserPrivate());
+            DataStoreSession session = MyTunesRss.STORE.getTransaction();
             try {
                 session.executeStatement(statement);
                 session.commit();
@@ -85,13 +87,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not update playlist attributes.", e1);
                 }
-                try {
-                    session.rollback();
-                } catch (SQLException e2) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not rollback transaction.", e2);
-                    }
-                }
+                session.rollback();
             }
         }
     }

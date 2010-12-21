@@ -21,8 +21,8 @@ public class StatisticsDatabaseWriter implements StatisticsEventListener {
             // write events only in case the keep time is greater than 0
             new Thread(new Runnable() {
                 public void run() {
-                    DataStoreSession tx = MyTunesRss.STORE.getTransaction();
                     ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    DataStoreSession tx = MyTunesRss.STORE.getTransaction();
                     try {
                         ObjectOutputStream oos = new ObjectOutputStream(baos);
                         oos.writeObject(event);
@@ -32,18 +32,10 @@ public class StatisticsDatabaseWriter implements StatisticsEventListener {
                         LOGGER.debug("Wrote statistics event \"" + event + "\" to database.");
                     } catch (IOException e) {
                         LOGGER.error("Could not write statistics event to database.", e);
-                        try {
-                            tx.rollback();
-                        } catch (SQLException e1) {
-                            throw new RuntimeException("Could not rollback transaction.", e);
-                        }
                     } catch (SQLException e) {
-                        try {
-                            tx.rollback();
-                        } catch (SQLException e1) {
-                            throw new RuntimeException("Could not rollback transaction.", e);
-                        }
-                    }
+                        LOGGER.error("Could not write statistics event to database.", e);
+                    } finally {
+                        tx.rollback();                    }
                 }
             }, "StatisticsEventWriter").start();
         }

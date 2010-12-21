@@ -106,8 +106,8 @@ public class TranscoderStream extends InputStream {
     private void replaceImageToken(Track track, String[] command, int i) {
         try {
             myImageFile = MyTunesRssUtils.createTempFile("jpg");
-            DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
             byte[] data = new byte[0];
+            DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
             try {
                 data = transaction.executeQuery(new FindTrackImageQuery(track.getId(), -1));
                 if (data != null && data.length > 0) {
@@ -131,7 +131,7 @@ public class TranscoderStream extends InputStream {
                 }
                 myImageFile.delete();
             } finally {
-                transaction.commit();
+                transaction.rollback();
             }
             try {
                 command[i] = myImageFile.getCanonicalPath();

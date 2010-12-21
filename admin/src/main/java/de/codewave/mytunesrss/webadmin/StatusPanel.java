@@ -75,7 +75,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Panel myUpdatePanel;
     private Button myQuitMyTunesRss;
     private MessageOfTheDayItem myMessageOfTheDay;
-    private long myMessageOfTheDayLastRefresh;
 
     public void attach() {
         super.attach();
@@ -204,11 +203,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myRefresher.addListener(this);
         myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
         myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
-        myUpdateDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
-        myFullUpdateDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
-        myUpdateImages.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
-        myStopDatabaseUpdate.setEnabled(MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
-        myResetDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning());
+        myUpdateDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning());
+        myFullUpdateDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning());
+        myUpdateImages.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning());
+        myStopDatabaseUpdate.setEnabled(MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning());
+        myResetDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning());
         refreshMyTunesRssComUpdateState();
         refreshMyTunesUpdateInfo();
         refreshAlert();
@@ -363,7 +362,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                 LOGGER.error("Could not get last update time from database.", e);
             }
         } finally {
-            session.commit();
+            session.rollback();
         }
         return getApplication().getBundleString("statusPanel.databaseStatusUnknown");
     }

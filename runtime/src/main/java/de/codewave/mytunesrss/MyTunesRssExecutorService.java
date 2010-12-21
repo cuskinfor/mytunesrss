@@ -57,6 +57,11 @@ public class MyTunesRssExecutorService {
                 && !DATABASE_UPDATE_FUTURE.isCancelled();
     }
 
+    public synchronized boolean isDatabaseResetRunning() {
+        return DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone()
+                && !DATABASE_RESET_FUTURE.isCancelled();
+    }
+
     public synchronized boolean getDatabaseUpdateResult() throws InterruptedException, ExecutionException {
         return DATABASE_UPDATE_FUTURE != null ? DATABASE_UPDATE_FUTURE.get() : false;
     }

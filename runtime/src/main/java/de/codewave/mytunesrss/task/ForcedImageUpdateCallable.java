@@ -41,12 +41,12 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
                 LOGGER.info("Starting forced image update.");
             }
             runImageUpdate(storeSession, System.currentTimeMillis());
-            storeSession.commit();
+            doCheckpoint(storeSession, true);
             return true;
         } catch (Exception e) {
-            storeSession.rollback();
             throw e;
         } finally {
+            storeSession.rollback();
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
         }
     }

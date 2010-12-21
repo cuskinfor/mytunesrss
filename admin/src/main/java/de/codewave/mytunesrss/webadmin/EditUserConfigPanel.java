@@ -237,8 +237,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermUpload.setValue(myUser.isUpload());
             myEncryptUrls.setValue(myUser.isUrlEncryption());
             myPlaylistsRestrictions.removeAllItems();
-            DataStoreSession session = MyTunesRss.STORE.getTransaction();
             List<Playlist> playlists = null;
+            DataStoreSession session = MyTunesRss.STORE.getTransaction();
             try {
                 playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile, PlaylistType.MyTunes, PlaylistType.MyTunesSmart), null, null, true)).getResults();
                 for (Playlist playlist : playlists) {
@@ -255,6 +255,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
                 MyTunesRss.UNHANDLED_EXCEPTION.set(true);
+            } finally {
+                session.rollback();
             }
             myPlaylistsRestrictions.setPageLength(Math.min(playlists.size(), 10));
             myForceTranscoders.removeAllItems();

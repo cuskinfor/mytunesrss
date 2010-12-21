@@ -83,7 +83,7 @@
         <dependency>
             <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4-SNAPSHOT</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-lang</groupId>
