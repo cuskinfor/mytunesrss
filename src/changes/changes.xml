@@ -10,6 +10,7 @@
         <release version="4.0.8" date="2010-12-xx">
             <action dev="mdescher" type="fix">
                 Fixed bugs and performance issues with exclusion playlists.
+                MYTUNESRSS-239 "Playlist exclusions make web interface very slow"
             </action>
             <action dev="mdescher" type="fix">
                 Fixed database transaction handling. Hopefully preventing deadlocks reported by users.
