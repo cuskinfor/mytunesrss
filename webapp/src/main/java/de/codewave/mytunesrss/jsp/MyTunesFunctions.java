@@ -366,6 +366,7 @@ public class MyTunesFunctions {
     }
 
     public static FlashPlayerConfig flashPlayerConfig(String id) {
-        return MyTunesRss.CONFIG.getFlashPlayer(id);
+        FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer(id);
+        return flashPlayerConfig != null ? flashPlayerConfig : FlashPlayerConfig.getDefault(id);
     }
 }

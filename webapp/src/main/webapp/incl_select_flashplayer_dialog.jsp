@@ -31,7 +31,7 @@
                 "<fmt:message key="doOpenFlashPlayer"/>" : function() {
                     $jQ("#selectFlashPlayerDialog").dialog("close");
                     var val = $jQ("#flashPlayerSelection option:selected").val().split(",");
-                    doOpenPlayer($jQ('#selectFlashPlayerDialog').dialog("option", "playlistUrl").replace('#ID#', val[0]), val[1], val[2]);
+                    doOpenPlayer($jQ('#selectFlashPlayerDialog').dialog("option", "playlistUrl").replace(/#ID#/, val[0]), val[1], val[2]);
                 }
             }
         });
@@ -51,7 +51,7 @@
                 $jQ("#selectFlashPlayerDialog").dialog("open");
             </c:when>
             <c:otherwise>
-                doOpenPlayer(url.replace("#ID#", "${config.flashplayer}", ${mtfn:flashPlayerConfig(config.flashplayer).width}, ${mtfn:flashPlayerConfig(config.flashplayer).height}));
+                doOpenPlayer(url.replace(/#ID#/, "${config.flashplayer}"), ${mtfn:flashPlayerConfig(config.flashplayer).width}, ${mtfn:flashPlayerConfig(config.flashplayer).height});
             </c:otherwise>
         </c:choose>
     }
