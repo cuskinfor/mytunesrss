@@ -217,14 +217,6 @@ public class WebServer {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Setting tomcat HTTP connector maximum threads to " + MyTunesRss.CONFIG.getTomcatMaxThreads() + ".");
             }
-            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getTomcatProxyHost())) {
-                LOGGER.debug("Setting proxy host to \"" + MyTunesRss.CONFIG.getTomcatProxyHost() + "\".");
-                httpConnector.setProxyName(MyTunesRss.CONFIG.getTomcatProxyHost());
-            }
-            if (MyTunesRss.CONFIG.getTomcatProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatProxyPort() < 65536) {
-                LOGGER.debug("Setting proxy port to \"" + MyTunesRss.CONFIG.getTomcatProxyPort() + "\".");
-                httpConnector.setProxyPort(MyTunesRss.CONFIG.getTomcatProxyPort());
-            }
             httpConnector.setURIEncoding("UTF-8");
             server.addConnector(httpConnector);
             if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
@@ -247,14 +239,6 @@ public class WebServer {
                     sslConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getSslPort(), "https");
                     if (sslConnector != null) {
                         LOGGER.debug("Configuring SSL connector.");
-                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getTomcatSslProxyHost())) {
-                            LOGGER.debug("Setting SSL proxy host to \"" + MyTunesRss.CONFIG.getTomcatSslProxyHost() + "\".");
-                            sslConnector.setProxyName(MyTunesRss.CONFIG.getTomcatSslProxyHost());
-                        }
-                        if (MyTunesRss.CONFIG.getTomcatSslProxyPort() > 0 && MyTunesRss.CONFIG.getTomcatSslProxyPort() < 65536) {
-                            LOGGER.debug("Setting SSL proxy port to \"" + MyTunesRss.CONFIG.getTomcatSslProxyPort() + "\".");
-                            sslConnector.setProxyPort(MyTunesRss.CONFIG.getTomcatSslProxyPort());
-                        }
                         sslConnector.setURIEncoding("UTF-8");
                         if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) ||
                                 !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {

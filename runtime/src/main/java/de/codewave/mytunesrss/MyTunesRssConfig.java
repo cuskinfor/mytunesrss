@@ -83,12 +83,6 @@ public class MyTunesRssConfig {
     private String mySslKeystorePass;
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
-    private String myTomcatProxyHost;
-    private int myTomcatProxyPort;
-    private String myTomcatProxyScheme;
-    private String myTomcatSslProxyHost;
-    private int myTomcatSslProxyPort;
-    private String myTomcatSslProxyScheme;
     private List<FileType> myFileTypes = new ArrayList<FileType>();
     private String myMailHost;
     private int myMailPort;
@@ -272,54 +266,6 @@ public class MyTunesRssConfig {
 
     public void setCodewaveLogLevel(Level codewaveLogLevel) {
         myCodewaveLogLevel = codewaveLogLevel;
-    }
-
-    public String getTomcatProxyHost() {
-        return myTomcatProxyHost;
-    }
-
-    public void setTomcatProxyHost(String tomcatProxyHost) {
-        myTomcatProxyHost = tomcatProxyHost;
-    }
-
-    public String getTomcatSslProxyHost() {
-        return myTomcatSslProxyHost;
-    }
-
-    public void setTomcatSslProxyHost(String tomcatSslProxyHost) {
-        myTomcatSslProxyHost = tomcatSslProxyHost;
-    }
-
-    public int getTomcatSslProxyPort() {
-        return myTomcatSslProxyPort;
-    }
-
-    public void setTomcatSslProxyPort(int tomcatSslProxyPort) {
-        myTomcatSslProxyPort = tomcatSslProxyPort;
-    }
-
-    public int getTomcatProxyPort() {
-        return myTomcatProxyPort;
-    }
-
-    public void setTomcatProxyPort(int tomcatProxyPort) {
-        myTomcatProxyPort = tomcatProxyPort;
-    }
-
-    public String getTomcatProxyScheme() {
-        return myTomcatProxyScheme;
-    }
-
-    public void setTomcatProxyScheme(String tomcatProxyScheme) {
-        myTomcatProxyScheme = tomcatProxyScheme;
-    }
-
-    public String getTomcatSslProxyScheme() {
-        return myTomcatSslProxyScheme;
-    }
-
-    public void setTomcatSslProxyScheme(String tomcatSslProxyScheme) {
-        myTomcatSslProxyScheme = tomcatSslProxyScheme;
     }
 
     public Collection<User> getUsers() {
@@ -973,16 +919,10 @@ public class MyTunesRssConfig {
         setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
         String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
         setWebappContext(context != null ? "/" + context : "");
-        setTomcatProxyHost(JXPathUtils.getStringValue(settings, "tomcat/proxy-host", null));
-        setTomcatProxyScheme(JXPathUtils.getStringValue(settings, "tomcat/proxy-scheme", "HTTP"));
-        setTomcatProxyPort(JXPathUtils.getIntValue(settings, "tomcat/proxy-port", 0));
         setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
         setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
         setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
         setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
-        setTomcatSslProxyScheme(JXPathUtils.getStringValue(settings, "ssl/proxy-scheme", "HTTPS"));
-        setTomcatSslProxyHost(JXPathUtils.getStringValue(settings, "ssl/proxy-host", null));
-        setTomcatSslProxyPort(JXPathUtils.getIntValue(settings, "ssl/proxy-port", 0));
         setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
         setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
         setSmtpProtocol(SmtpProtocol.valueOf(JXPathUtils.getStringValue(settings, "smtp-protocol", SmtpProtocol.PLAINTEXT.name())));
@@ -1270,28 +1210,10 @@ public class MyTunesRssConfig {
             if (getTomcatAjpPort() > 0) {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
             }
-            if (StringUtils.isNotEmpty(getTomcatProxyScheme())) {
-                tomcat.appendChild(DOMUtils.createTextElement(settings, "proxy-scheme", getTomcatProxyScheme()));
-            }
-            if (StringUtils.isNotEmpty(getTomcatProxyHost())) {
-                tomcat.appendChild(DOMUtils.createTextElement(settings, "proxy-host", getTomcatProxyHost()));
-            }
-            if (getTomcatProxyPort() > 0 && getTomcatProxyPort() < 65536) {
-                tomcat.appendChild(DOMUtils.createIntElement(settings, "proxy-port", getTomcatProxyPort()));
-            }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
-            if (StringUtils.isNotEmpty(getTomcatSslProxyScheme())) {
-                ssl.appendChild(DOMUtils.createTextElement(settings, "proxy-scheme", getTomcatSslProxyScheme()));
-            }
-            if (StringUtils.isNotEmpty(getTomcatSslProxyHost())) {
-                ssl.appendChild(DOMUtils.createTextElement(settings, "proxy-host", getTomcatSslProxyHost()));
-            }
-            if (getTomcatSslProxyPort() > 0 && getTomcatSslProxyPort() < 65536) {
-                ssl.appendChild(DOMUtils.createIntElement(settings, "proxy-port", getTomcatSslProxyPort()));
-            }
             Element keystore = settings.createElement("keystore");
             ssl.appendChild(keystore);
             keystore.appendChild(DOMUtils.createTextElement(settings, "file", getSslKeystoreFile()));

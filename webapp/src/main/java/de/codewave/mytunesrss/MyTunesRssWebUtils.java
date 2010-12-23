@@ -38,10 +38,6 @@ public class MyTunesRssWebUtils {
 
     public static String getApplicationUrl(HttpServletRequest request) {
         return ServletUtils.getApplicationUrl(request);
-//        String uri = request.getRequestURI();
-//        int levelCount = StringUtils.countMatches(uri, "/");
-//        String appUrl = StringUtils.repeat("../", levelCount - StringUtils.countMatches(request.getContextPath(), "/") - 1);
-//        return appUrl.endsWith("/") ? appUrl.substring(0, appUrl.length() - 1) : appUrl;
     }
 
     public static String getServletUrl(HttpServletRequest request) {

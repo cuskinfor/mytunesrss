@@ -39,13 +39,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myTomcatMaxThreads;
     private SmartTextField myTomcatAjpPort;
     private SmartTextField myPort;
-    private Select myTomcatProxyScheme;
-    private SmartTextField myTomcatProxyHost;
-    private SmartTextField myTomcatProxyPort;
     private SmartTextField mySslPort;
-    private Select myTomcatSslProxyScheme;
-    private SmartTextField myTomcatSslProxyHost;
-    private SmartTextField myTomcatSslProxyPort;
     private SmartTextField mySslKeystoreFile;
     private Button mySslKeystoreFileSelect;
     private SmartTextField mySslKeystorePass;
@@ -71,13 +65,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myTomcatAjpPort = getComponentFactory().createTextField("serverConfigPanel.tomcatAjpPort", getApplication().getValidatorFactory().createPortValidator());
         myPort = getComponentFactory().createTextField("serverConfigPanel.port", getApplication().getValidatorFactory().createPortValidator());
         setRequired(myPort);
-        myTomcatProxyScheme = getComponentFactory().createSelect("serverConfigPanel.tomcatProxyScheme", Arrays.asList("HTTP", "HTTPS"));
-        myTomcatProxyHost = getComponentFactory().createTextField("serverConfigPanel.tomcatProxyHost");
-        myTomcatProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatProxyPort", getApplication().getValidatorFactory().createPortValidator());
         mySslPort = getComponentFactory().createTextField("serverConfigPanel.sslPort", getApplication().getValidatorFactory().createPortValidator());
-        myTomcatSslProxyScheme = getComponentFactory().createSelect("serverConfigPanel.tomcatSslProxyScheme", Arrays.asList("HTTPS", "HTTP"));
-        myTomcatSslProxyHost = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyHost");
-        myTomcatSslProxyPort = getComponentFactory().createTextField("serverConfigPanel.tomcatSslProxyPort", getApplication().getValidatorFactory().createPortValidator());
         mySslKeystoreFile = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(getBundleString("serverConfigPanel.error.invalidKeystore"), null, FileValidator.PATTERN_ALL));
         mySslKeystoreFileSelect = getComponentFactory().createButton("serverConfigPanel.sslKeystoreFile.select", this);
         mySslKeystorePass = getComponentFactory().createPasswordTextField("serverConfigPanel.sslKeystorePass");
@@ -106,17 +94,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
         myHttpForm = getComponentFactory().createForm(null, true);
         myHttpForm.addField(myPort, myPort);
-        myHttpForm.addField(myTomcatProxyScheme, myTomcatProxyScheme);
-        myHttpForm.addField(myTomcatProxyHost, myTomcatProxyHost);
-        myHttpForm.addField(myTomcatProxyPort, myTomcatProxyPort);
         Panel httpPanel = getComponentFactory().surroundWithPanel(myHttpForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.http"));
         addComponent(httpPanel);
 
         myHttpsForm = getComponentFactory().createForm(null, true);
         myHttpsForm.addField(mySslPort, mySslPort);
-        myHttpsForm.addField(myTomcatSslProxyScheme, myTomcatSslProxyScheme);
-        myHttpsForm.addField(myTomcatSslProxyHost, myTomcatSslProxyHost);
-        myHttpsForm.addField(myTomcatSslProxyPort, myTomcatSslProxyPort);
         myHttpsForm.addField(mySslKeystoreFile, mySslKeystoreFile);
         myHttpsForm.addField(mySslKeystoreFileSelect, mySslKeystoreFileSelect);
         myHttpsForm.addField(mySslKeystorePass, mySslKeystorePass);
@@ -141,13 +123,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myTomcatMaxThreads.setValue(MyTunesRss.CONFIG.getTomcatMaxThreads());
         myTomcatAjpPort.setValue(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, "");
         myPort.setValue(MyTunesRss.CONFIG.getPort(), 1, 65535, "");
-        myTomcatProxyScheme.select(StringUtils.upperCase(MyTunesRss.CONFIG.getTomcatProxyScheme()));
-        myTomcatProxyHost.setValue(MyTunesRss.CONFIG.getTomcatProxyHost());
-        myTomcatProxyPort.setValue(MyTunesRss.CONFIG.getTomcatProxyPort(), 1, 65535, "");
         mySslPort.setValue(MyTunesRss.CONFIG.getSslPort(), 1, 65535, "");
-        myTomcatSslProxyScheme.select(StringUtils.upperCase(MyTunesRss.CONFIG.getTomcatSslProxyScheme()));
-        myTomcatSslProxyHost.setValue(MyTunesRss.CONFIG.getTomcatSslProxyHost());
-        myTomcatSslProxyPort.setValue(MyTunesRss.CONFIG.getTomcatSslProxyPort(), 1, 65535, "");
         mySslKeystoreFile.setValue(MyTunesRss.CONFIG.getSslKeystoreFile());
         mySslKeystorePass.setValue(MyTunesRss.CONFIG.getSslKeystorePass());
         mySslKeystoreKeyAlias.setValue(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
@@ -165,13 +141,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setTomcatMaxThreads(myTomcatMaxThreads.getStringValue(null));
         MyTunesRss.CONFIG.setTomcatAjpPort(myTomcatAjpPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setPort(myPort.getIntegerValue(0));
-        MyTunesRss.CONFIG.setTomcatProxyScheme(myTomcatProxyScheme.toString());
-        MyTunesRss.CONFIG.setTomcatProxyHost(myTomcatProxyHost.getStringValue(null));
-        MyTunesRss.CONFIG.setTomcatProxyPort(myTomcatProxyPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setSslPort(mySslPort.getIntegerValue(0));
-        MyTunesRss.CONFIG.setTomcatSslProxyScheme(myTomcatSslProxyScheme.toString());
-        MyTunesRss.CONFIG.setTomcatSslProxyHost(myTomcatSslProxyHost.getStringValue(null));
-        MyTunesRss.CONFIG.setTomcatSslProxyPort(myTomcatSslProxyPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setSslKeystoreFile(mySslKeystoreFile.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystorePass(mySslKeystorePass.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(mySslKeystoreKeyAlias.getStringValue(null));
@@ -214,13 +184,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatMaxThreads()), myTomcatMaxThreads.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatAjpPort(), myTomcatAjpPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getPort(), myPort.getIntegerValue(0));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatProxyScheme(), myTomcatProxyScheme.toString());
-        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatProxyHost()), myTomcatProxyHost.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatProxyPort(), myTomcatProxyPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslPort(), mySslPort.getIntegerValue(0));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatSslProxyScheme(), myTomcatSslProxyScheme.toString());
-        changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatSslProxyHost()), myTomcatSslProxyHost.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatSslProxyPort(), myTomcatSslProxyPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreFile()), mySslKeystoreFile.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystorePass()), mySslKeystorePass.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreKeyAlias()), mySslKeystoreKeyAlias.getStringValue(null));
