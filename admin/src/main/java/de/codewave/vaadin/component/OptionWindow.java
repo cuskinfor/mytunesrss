@@ -34,7 +34,7 @@ public abstract class OptionWindow extends Window implements Button.ClickListene
         Label label = new Label(message);
         addComponent(label);
         Panel panel = new Panel();
-        panel.setStyleName("light");
+        panel.addStyleName("light");
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         panel.setContent(horizontalLayout);
         horizontalLayout.setSpacing(true);

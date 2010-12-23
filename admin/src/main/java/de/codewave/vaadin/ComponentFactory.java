@@ -124,7 +124,7 @@ public class ComponentFactory {
 
     public Panel createHorizontalButtons(boolean margin, boolean spacing, Button... buttons) {
         Panel panel = new Panel(createHorizontalLayout(margin, spacing));
-        panel.setStyleName("light");
+        panel.addStyleName("light");
         for (Button button : buttons) {
             panel.addComponent(button);
         }

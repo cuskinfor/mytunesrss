@@ -81,12 +81,9 @@ public class SendStatisticsTask implements ProgressWindow.Task {
                 myError = "statisticsConfigPanel.error.statisticsNotSent";
             }
         } catch (final SQLException e) {
-            try {
-                tx.rollback();
-            } catch (SQLException e1) {
-                LOGGER.error("Could not rollback transaction.", e1);
-            }
             myError = "statisticsConfigPanel.error.statisticsNotSent";
+        } finally {
+            tx.rollback();
         }
     }
 }

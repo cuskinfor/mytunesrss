@@ -16,7 +16,7 @@ import java.util.Collection;
 public class UpdateTrackFileTypeStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(UpdateTrackFileTypeStatement.class);
 
-    public static void execute(Collection<FileType> oldTypes, Collection<FileType> newTypes) throws SQLException {
+    public static void execute(Collection<FileType> oldTypes, Collection<FileType> newTypes) {
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
             session.executeStatement(new UpdateTrackFileTypeStatement(oldTypes, newTypes));
@@ -24,6 +24,7 @@ public class UpdateTrackFileTypeStatement implements DataStoreStatement {
             session.commit();
         } catch (SQLException e) {
             LOGGER.error("Could not update file type information in database.", e);
+        } finally {
             session.rollback();
         }
     }

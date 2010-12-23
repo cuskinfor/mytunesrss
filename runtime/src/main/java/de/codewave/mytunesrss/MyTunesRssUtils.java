@@ -187,24 +187,16 @@ public class MyTunesRssUtils {
                         session.commit();
                     } catch (SQLException e) {
                         LOGGER.error("Could not remove old temporary playlists.", e);
-                        try {
-                            session.rollback();
-                        } catch (SQLException e1) {
-                            LOGGER.error("Could not rollback transaction.", e1);
-                        }
-                    }
+                    } finally {
+                        session.rollback();                    }
                     try {
                         LOGGER.debug("Removing old statistic events.");
                         session.executeStatement(new RemoveOldEventsStatement());
                         session.commit();
                     } catch (SQLException e) {
                         LOGGER.error("Could not remove old statistic events.", e);
-                        try {
-                            session.rollback();
-                        } catch (SQLException e1) {
-                            LOGGER.error("Could not rollback transaction.", e1);
-                        }
-                    }
+                    } finally {
+                        session.rollback();                    }
                     LOGGER.debug("Destroying store.");
                     MyTunesRss.STORE.destroy();
                 }

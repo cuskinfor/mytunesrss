@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -36,6 +37,7 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
     public QueryResult<Genre> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
+        conditionals.put("track", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);

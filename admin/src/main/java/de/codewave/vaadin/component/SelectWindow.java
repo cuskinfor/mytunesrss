@@ -48,7 +48,7 @@ public abstract class SelectWindow<T> extends Window implements Button.ClickList
         Panel panel = new Panel();
         addComponent(panel);
         verticalLayout.setComponentAlignment(panel, Alignment.MIDDLE_RIGHT);
-        panel.setStyleName("light");
+        panel.addStyleName("light");
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         panel.setContent(horizontalLayout);
         horizontalLayout.setSpacing(true);

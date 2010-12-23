@@ -38,7 +38,6 @@ public enum MyTunesRssResource {
     BrowseServers("/browse_servers.jsp"),
     UploadProgress("/upload_progress.jsp"),
     BrowseGenre("/browse_genre.jsp"),
-    Jukebox("/jukebox.jsp"),
     UploadFinished("/upload_finished.jsp"),
     RemoteControl("/remote_control.jsp"),
     EditSmartPlaylist("/edit_smart_playlist.jsp"),

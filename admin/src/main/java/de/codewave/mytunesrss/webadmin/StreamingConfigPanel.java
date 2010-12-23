@@ -74,7 +74,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myCacheForm.addField("limit", myStreamingCacheMaxFiles);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
 
-        attach(0, 3, 0, 3);
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
     }

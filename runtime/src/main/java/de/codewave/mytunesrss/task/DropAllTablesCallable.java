@@ -23,10 +23,10 @@ public class DropAllTablesCallable implements Callable<Void> {
 
     public Void call() throws SQLException {
         LOGGER.debug("Dropping all tables.");
+        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         try {
-            DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
             storeSession.executeStatement(new DropAllTablesStatement());
-            DatabaseBuilderCallable.doCheckpoint(storeSession, true);
+            storeSession.commit();
         } catch (SQLException e) {
             LOGGER.error("Could not drop all tables.", e);
             if (MyTunesRss.CONFIG.isDefaultDatabase()) {
@@ -36,6 +36,8 @@ public class DropAllTablesCallable implements Callable<Void> {
             } else {
                 throw e;
             }
+        } finally {
+            storeSession.rollback();
         }
         return null;
     }

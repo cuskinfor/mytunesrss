@@ -26,7 +26,11 @@ public class MyTunesRssTestUtils {
         MyTunesRss.STORE = new MyTunesRssDataStore();
         MyTunesRss.STORE.init();
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        session.executeStatement(new CreateAllTablesStatement());
-        session.commit();
+        try {
+            session.executeStatement(new CreateAllTablesStatement());
+            session.commit();
+        } finally {
+            session.rollback();
+        }
     }
 }

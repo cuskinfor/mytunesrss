@@ -48,37 +48,40 @@ public class LuceneTrackService {
         Analyzer analyzer = new WhitespaceAnalyzer();
         IndexWriter iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
-        session.executeQuery(new DataStoreQuery<Object>() {
-            @Override
-            public Object execute(Connection connection) throws SQLException {
-                execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
-                    public Object create(ResultSet resultSet) throws SQLException {
-                        List<String> tags = trackTagMap.get(resultSet.getString(1));
-                        if (tags == null) {
-                            tags = new ArrayList<String>();
-                            trackTagMap.put(resultSet.getString(1), tags);
+        try {
+            final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
+            session.executeQuery(new DataStoreQuery<Object>() {
+                @Override
+                public Object execute(Connection connection) throws SQLException {
+                    execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
+                        public Object create(ResultSet resultSet) throws SQLException {
+                            List<String> tags = trackTagMap.get(resultSet.getString(1));
+                            if (tags == null) {
+                                tags = new ArrayList<String>();
+                                trackTagMap.put(resultSet.getString(1), tags);
+                            }
+                            tags.add(resultSet.getString(2));
+                            return null;
                         }
-                        tags.add(resultSet.getString(2));
-                        return null;
-                    }
-                }).getResults(); // call #getResults() just to make result builder run
-                return null;
+                    }).getResults(); // call #getResults() just to make result builder run
+                    return null;
+                }
+            });
+            FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
+            query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+            query.setFetchSize(10000);
+            DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
+            for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+                Document document = createTrackDocument(track, trackTagMap);
+                iwriter.addDocument(document);
             }
-        });
-        FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
-        query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
-        query.setFetchSize(10000);
-        DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
-        for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-            Document document = createTrackDocument(track, trackTagMap);
-            iwriter.addDocument(document);
+            iwriter.optimize();
+            iwriter.close();
+            directory.close();
+            LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+        } finally {
+            session.rollback();
         }
-        iwriter.optimize();
-        iwriter.close();
-        directory.close();
-        session.commit();
-        LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
     }
 
     /**
@@ -113,43 +116,46 @@ public class LuceneTrackService {
         Directory directory = getDirectory();
         Analyzer analyzer = new WhitespaceAnalyzer();
         IndexWriter iwriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(300));
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
-        session.executeQuery(new DataStoreQuery<Object>() {
-            @Override
-            public Object execute(Connection connection) throws SQLException {
-                execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
-                    public Object create(ResultSet resultSet) throws SQLException {
-                        List<String> tags = trackTagMap.get(resultSet.getString(1));
-                        if (tags == null) {
-                            tags = new ArrayList<String>();
-                            trackTagMap.put(resultSet.getString(1), tags);
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
+        try {
+            session.executeQuery(new DataStoreQuery<Object>() {
+                @Override
+                public Object execute(Connection connection) throws SQLException {
+                    execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
+                        public Object create(ResultSet resultSet) throws SQLException {
+                            List<String> tags = trackTagMap.get(resultSet.getString(1));
+                            if (tags == null) {
+                                tags = new ArrayList<String>();
+                                trackTagMap.put(resultSet.getString(1), tags);
+                            }
+                            tags.add(resultSet.getString(2));
+                            return null;
                         }
-                        tags.add(resultSet.getString(2));
-                        return null;
-                    }
-                }).getResults(); // call #getResults() just to make result builder run
-                return null;
+                    }).getResults(); // call #getResults() just to make result builder run
+                    return null;
+                }
+            });
+            FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
+            query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+            query.setFetchSize(10000);
+            DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
+            Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
+            for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+                Document document = createTrackDocument(track, trackTagMap);
+                iwriter.updateDocument(new Term("id", track.getId()), document);
+                deletedTracks.remove(track.getId());
             }
-        });
-        FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
-        query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
-        query.setFetchSize(10000);
-        DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
-        Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
-        for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-            Document document = createTrackDocument(track, trackTagMap);
-            iwriter.updateDocument(new Term("id", track.getId()), document);
-            deletedTracks.remove(track.getId());
+            for (String deletedTrack : deletedTracks) {
+                iwriter.deleteDocuments(new Term("id", deletedTrack));
+            }
+            iwriter.optimize();
+            iwriter.close();
+            directory.close();
+            LOGGER.debug("Finished indexing " + trackIds.length + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+        } finally {
+            session.rollback();
         }
-        for (String deletedTrack : deletedTracks) {
-            iwriter.deleteDocuments(new Term("id", deletedTrack));
-        }
-        iwriter.optimize();
-        iwriter.close();
-        directory.close();
-        session.commit();
-        LOGGER.debug("Finished indexing " + trackIds.length + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
     }
 
     public Collection<String> searchTrackIds(String[] searchTerms, int fuzziness) throws IOException, ParseException {

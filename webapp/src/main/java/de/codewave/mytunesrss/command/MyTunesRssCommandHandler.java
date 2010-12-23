@@ -301,6 +301,15 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     LOG.debug(msg.substring(0, msg.length() - 1));
                 }
             }
+            LOG.debug("Request headers:");
+            for (Enumeration<String> enumName = getRequest().getHeaderNames(); enumName.hasMoreElements(); ) {
+                String name = enumName.nextElement();
+                StringBuilder msg = new StringBuilder("\"").append(name).append("\"=");
+                for (Enumeration<String> enumValue = getRequest().getHeaders(name); enumValue.hasMoreElements(); ) {
+                    msg.append("\"").append(enumValue.nextElement()).append("\",");
+                }
+                LOG.debug(msg.substring(0, msg.length() - 1));
+            }
         }
         setResourceBundle();
         try {

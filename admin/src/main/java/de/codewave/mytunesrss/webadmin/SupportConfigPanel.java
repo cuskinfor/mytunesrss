@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.UUID;
 
 public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
 
@@ -95,7 +96,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySysInfoForm.addField("sysInfo", mySysInfo);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
-        attach(0, 3, 0, 3);
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
     }
@@ -133,7 +134,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
         } else if (clickEvent.getSource() == myShowLog) {
-            getWindow().open(new ExternalResource("/-system/log"));
+            getWindow().open(new ExternalResource("/-system/log"), UUID.randomUUID().toString());
         } else {
             super.buttonClick(clickEvent);
         }

@@ -122,8 +122,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     }
                     return true;
                 } else if (baseDir.isFile() && "xml".equalsIgnoreCase(FilenameUtils.getExtension(baseDir.getName()))) {
-                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
                     SystemInformation systemInformation;
+                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
                     try {
                         systemInformation = session.executeQuery(new GetSystemInformationQuery());
                     } finally {
@@ -154,8 +154,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             result = Boolean.TRUE;
             if (!Thread.currentThread().isInterrupted()) {
                 DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
-                storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
-                storeSession.commit();
+                try {
+                    storeSession.executeStatement(new RefreshSmartPlaylistsStatement());
+                    storeSession.commit();
+                } finally {
+                    storeSession.rollback();
+                }
             }
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
         } catch (Exception e) {
@@ -208,8 +212,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 storeSession.commit();
             }
         } catch (Exception e) {
-            storeSession.rollback();
             throw e;
+        } finally {
+            storeSession.rollback();
         }
     }
 
@@ -220,10 +225,10 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         MyTunesRssEventManager.getInstance().fireEvent(event);
         MyTunesRss.LAST_DATABASE_EVENT = event;
         TX_BEGIN = System.currentTimeMillis();
-        DataStoreSession trackQuerySession = MyTunesRss.STORE.getTransaction();
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Processing track images.");
         }
+        DataStoreSession trackQuerySession = MyTunesRss.STORE.getTransaction();
         try {
             DataStoreQuery.QueryResult<Track> result = trackQuerySession
                     .executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
@@ -251,7 +256,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 doCheckpoint(storeSession, false);
             }
         } finally {
-            trackQuerySession.commit();
+            trackQuerySession.rollback();
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Finished processing track images.");
             }

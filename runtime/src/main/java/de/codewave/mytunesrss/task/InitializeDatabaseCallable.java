@@ -35,21 +35,26 @@ public class InitializeDatabaseCallable implements Callable<Void> {
             LOGGER.debug("Initializing the database.");
             MyTunesRss.STORE.init();
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
-            loadVersion(session);
-            if (myVersion == null) {
-                LOGGER.debug("No version found. Creating all tables.");
-                session.executeStatement(new CreateAllTablesStatement());
-                DatabaseBuilderCallable.doCheckpoint(session, true);
+            try {
                 loadVersion(session);
-            } else {
-                LOGGER.debug("Version found.");
-                if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
-                    session.executeStatement(new MigrationStatement());
+                if (myVersion == null) {
+                    LOGGER.debug("No version found. Creating all tables.");
+                    session.executeStatement(new CreateAllTablesStatement());
                     DatabaseBuilderCallable.doCheckpoint(session, true);
+                    loadVersion(session);
+                } else {
+                    LOGGER.debug("Version found.");
+                    if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
+                        session.executeStatement(new MigrationStatement());
+                        DatabaseBuilderCallable.doCheckpoint(session, true);
+                    }
+                    MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
                 }
-                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+                session.commit();
+                LOGGER.debug("Database now has version \"" + myVersion + "\".");
+            } finally {
+                session.rollback();
             }
-            LOGGER.debug("Database now has version \"" + myVersion + "\".");
         } catch (IOException e) {
             LOGGER.error("Could not initialize database.", e);
             MyTunesRss.STORE = new MyTunesRssDataStore();
