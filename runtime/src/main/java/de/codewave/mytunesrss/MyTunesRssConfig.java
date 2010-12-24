@@ -1272,7 +1272,6 @@ public class MyTunesRssConfig {
                     player.appendChild(DOMUtils.createTextElement(settings, "name", flashPlayerConfig.getName()));
                     player.appendChild(DOMUtils.createByteArrayElement(settings, "html", flashPlayerConfig.getHtml().getBytes("UTF-8")));
                     player.appendChild(DOMUtils.createTextElement(settings, "filetype", flashPlayerConfig.getPlaylistFileType().name()));
-                    player.appendChild(DOMUtils.createTextElement(settings, "filetype", flashPlayerConfig.getPlaylistFileType().name()));
                     player.appendChild(DOMUtils.createTextElement(settings, "timeunit", flashPlayerConfig.getTimeUnit().name()));
                     player.appendChild(DOMUtils.createIntElement(settings, "width", flashPlayerConfig.getWidth()));
                     player.appendChild(DOMUtils.createIntElement(settings, "height", flashPlayerConfig.getHeight()));

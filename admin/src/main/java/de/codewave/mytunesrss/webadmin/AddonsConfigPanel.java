@@ -183,6 +183,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         for (Object itemId : mySitesTable.getItemIds()) {
             MyTunesRss.CONFIG.addExternalSite(new ExternalSiteDefinition((String) getTableCellPropertyValue(mySitesTable, itemId, "type"), (String) getTableCellPropertyValue(mySitesTable, itemId, "name"), (String) getTableCellPropertyValue(mySitesTable, itemId, "url")));
         }
+        MyTunesRss.CONFIG.save();
     }
 
     @Override
