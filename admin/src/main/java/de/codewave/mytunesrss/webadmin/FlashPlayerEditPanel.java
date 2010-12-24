@@ -22,10 +22,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerEditPanel.class);
+
+    public static class TimeUnitWrapper {
+        private TimeUnit myTimeUnit;
+        private String myText;
+
+        public TimeUnitWrapper(TimeUnit timeUnit, String text) {
+            myTimeUnit = timeUnit;
+            myText = text;
+        }
+
+        public TimeUnit getTimeUnit() {
+            return myTimeUnit;
+        }
+
+        @Override
+        public String toString() {
+            return myText;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return o != null && o instanceof TimeUnitWrapper && myTimeUnit.equals(((TimeUnitWrapper) o).getTimeUnit());
+        }
+    }
 
     private AddonsConfigPanel myAddonsConfigPanel;
     private FlashPlayerConfig myFlashPlayerConfig;
@@ -33,6 +58,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     private SmartTextField myName;
     private SmartTextField myHtml;
     private Select myFileType;
+    private Select myTimeUnit;
     private SmartTextField myWidth;
     private SmartTextField myHeight;
     private Upload myUpload;
@@ -67,6 +93,8 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myForm.addField("html", myHtml);
         myFileType = getComponentFactory().createSelect("flashPlayerEditPanel.filetype", Arrays.asList(PlaylistFileType.Xspf, PlaylistFileType.M3u)); // todo add json
         myForm.addField("filetype", myFileType);
+        myTimeUnit = getComponentFactory().createSelect("flashPlayerEditPanel.timeunit", Arrays.asList(new TimeUnitWrapper(TimeUnit.SECONDS, getBundleString("flashPlayerEditPanel.timeunit.seconds")), new TimeUnitWrapper(TimeUnit.MILLISECONDS, getBundleString("flashPlayerEditPanel.timeunit.milliseconds"))));
+        myForm.addField("timeunit", myTimeUnit);
         myWidth = getComponentFactory().createTextField("flashPlayerEditPanel.width", new MinMaxIntegerValidator(getBundleString("flashPlayerEditPanel.error.width", 1, 4096), 1, 4096));
         setRequired(myWidth);
         myForm.addField("width", myWidth);
@@ -95,6 +123,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myFlashPlayerConfig.setName(myName.getStringValue("Unknown player"));
         myFlashPlayerConfig.setHtml(myHtml.getStringValue("<!-- missing flash player html -->"));
         myFlashPlayerConfig.setPlaylistFileType((PlaylistFileType) myFileType.getValue());
+        myFlashPlayerConfig.setTimeUnit(((TimeUnitWrapper)myTimeUnit.getValue()).getTimeUnit());
         myFlashPlayerConfig.setWidth(myWidth.getIntegerValue(640));
         myFlashPlayerConfig.setHeight(myHeight.getIntegerValue(480));
         myAddonsConfigPanel.saveFlashPlayer(myFlashPlayerConfig);
@@ -105,6 +134,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myName.setValue(myFlashPlayerConfig.getName());
         myHtml.setValue(myFlashPlayerConfig.getHtml());
         myFileType.setValue(myFlashPlayerConfig.getPlaylistFileType());
+        myTimeUnit.setValue(new TimeUnitWrapper(myFlashPlayerConfig.getTimeUnit(), null));
         myWidth.setValue(myFlashPlayerConfig.getWidth());
         myHeight.setValue(myFlashPlayerConfig.getHeight());
     }

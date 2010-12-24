@@ -151,7 +151,7 @@
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${authUser.player && config.showPlayer}">
-                                            <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false/filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                            <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false/filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                         </c:if>
                                         <a class="add" onclick="addArtistsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(artist.name)}']), false)" title="<fmt:message key="playlist.addArtist"/>"><span><fmt:message key="playlist.addArtist"/></span></a>
                                     </c:otherwise>

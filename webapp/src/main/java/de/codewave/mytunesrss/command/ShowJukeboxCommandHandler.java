@@ -7,22 +7,23 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * de.codewave.mytunesrss.command.ShowJukeboxCommandHandler
  */
 public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        String id = getWebConfig().getFlashplayer();
-        FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer(id);
+        String playerId = StringUtils.defaultIfEmpty(getRequestParameter("playerId", getWebConfig().getFlashplayer()), FlashPlayerConfig.ABSOLUTE_DEFAULT.getId());
+        FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer(playerId);
         if (flashPlayerConfig == null) {
-            flashPlayerConfig = FlashPlayerConfig.getDefault(id);
+            flashPlayerConfig = FlashPlayerConfig.getDefault(playerId);
         }
-        String playerId = StringUtils.defaultIfEmpty(getRequestParameter("playerId", flashPlayerConfig.getId()), FlashPlayerConfig.ABSOLUTE_DEFAULT.getId());
-        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MyTunesRssUtils.getUtf8UrlEncoded(getPlaylistUrl()));
+        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MyTunesRssUtils.getUtf8UrlEncoded(getPlaylistUrl(flashPlayerConfig.getTimeUnit())));
     }
 
-    private String getPlaylistUrl() {
+    private String getPlaylistUrl(TimeUnit timeUnit) {
         StringBuilder playlistUrl = new StringBuilder(MyTunesRssWebUtils.getServletUrl(getRequest()));
         String auth = (String) getRequest().getAttribute("auth");
         if (StringUtils.isBlank(auth)) {
@@ -30,6 +31,7 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         }
         playlistUrl.append("/").append(MyTunesRssCommand.CreatePlaylist.getName()).append("/").append(auth);
         playlistUrl.append("/fpr=1");
+        playlistUrl.append("/timeunit=" + timeUnit.name());
         playlistUrl.append("/").append(MyTunesRssWebUtils.encryptPathInfo(getRequest(), getRequestParameter("playlistParams", null) + "/type=Xspf"));
         return playlistUrl.toString();
     }

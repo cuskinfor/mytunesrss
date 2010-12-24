@@ -29,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssConfig
@@ -780,7 +781,7 @@ public class MyTunesRssConfig {
     public FlashPlayerConfig removeFlashPlayer(String id) {
         FlashPlayerConfig config = getFlashPlayer(id);
         if (config != null) {
-            myFlashPlayers.remove(new FlashPlayerConfig(id, null, null, null, 0, 0));
+            myFlashPlayers.remove(new FlashPlayerConfig(id, null, null, null, 0, 0, TimeUnit.SECONDS));
         }
         return config;
     }
@@ -985,10 +986,11 @@ public class MyTunesRssConfig {
             FlashPlayerConfig flashPlayerConfig = new FlashPlayerConfig(
                     JXPathUtils.getStringValue(flashPlayerContext, "id", UUID.randomUUID().toString()),
                     JXPathUtils.getStringValue(flashPlayerContext, "name", "Unknown Flash Player"),
-                    new String(JXPathUtils.getByteArray(flashPlayerContext, "html", "<!-- missing flash player html -->".getBytes("UTF-8")), "UTF-8"),
+                    new String(JXPathUtils.getByteArray(flashPlayerContext, "html", FlashPlayerConfig.DEFAULT_HTML.getBytes("UTF-8")), "UTF-8"),
                     PlaylistFileType.valueOf(JXPathUtils.getStringValue(flashPlayerContext, "filetype", PlaylistFileType.Xspf.name())),
                     JXPathUtils.getIntValue(flashPlayerContext, "width", 600),
-                    JXPathUtils.getIntValue(flashPlayerContext, "height", 276)
+                    JXPathUtils.getIntValue(flashPlayerContext, "height", 276),
+                    TimeUnit.valueOf(JXPathUtils.getStringValue(flashPlayerContext, "timeunit", TimeUnit.SECONDS.name()))
             );
             addFlashPlayer(flashPlayerConfig);
         }
@@ -1269,6 +1271,11 @@ public class MyTunesRssConfig {
                     player.appendChild(DOMUtils.createTextElement(settings, "id", flashPlayerConfig.getId()));
                     player.appendChild(DOMUtils.createTextElement(settings, "name", flashPlayerConfig.getName()));
                     player.appendChild(DOMUtils.createByteArrayElement(settings, "html", flashPlayerConfig.getHtml().getBytes("UTF-8")));
+                    player.appendChild(DOMUtils.createTextElement(settings, "filetype", flashPlayerConfig.getPlaylistFileType().name()));
+                    player.appendChild(DOMUtils.createTextElement(settings, "filetype", flashPlayerConfig.getPlaylistFileType().name()));
+                    player.appendChild(DOMUtils.createTextElement(settings, "timeunit", flashPlayerConfig.getTimeUnit().name()));
+                    player.appendChild(DOMUtils.createIntElement(settings, "width", flashPlayerConfig.getWidth()));
+                    player.appendChild(DOMUtils.createIntElement(settings, "height", flashPlayerConfig.getHeight()));
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "initialWizard", isInitialWizard()));

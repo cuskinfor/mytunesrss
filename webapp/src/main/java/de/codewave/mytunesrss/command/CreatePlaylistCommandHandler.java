@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * de.codewave.mytunesrss.command.CreatePlaylistCommandHandler
@@ -26,6 +27,8 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         if (getAuthUser().isPlaylist() || "1".equals(getRequestParameter("fpr", "0"))) {
+            TimeUnit timeUnit = TimeUnit.valueOf(getRequestParameter("timeunit", TimeUnit.SECONDS.name()));
+            getRequest().setAttribute("timefactor", timeUnit.convert(1, TimeUnit.SECONDS));
             DataStoreQuery.QueryResult<Track> tracks = getTracks();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Found " + (tracks != null ? tracks.getResultSize() : 0) + " tracks for playlist.");
