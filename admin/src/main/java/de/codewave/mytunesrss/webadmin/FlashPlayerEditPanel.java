@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver {
+public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Upload.SucceededListener, Upload.FailedListener, Upload.Receiver, Upload.StartedListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerEditPanel.class);
     private List<TimeUnitWrapper> myTimeUnitWrappers;
@@ -106,6 +106,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myUpload = new Upload(null, this);
         myUpload.setButtonCaption(getBundleString("flashPlayerEditPanel.upload"));
         myUpload.setImmediate(true);
+        myUpload.addListener((Upload.StartedListener) this);
         myUpload.addListener((Upload.SucceededListener) this);
         myUpload.addListener((Upload.FailedListener) this);
 
@@ -150,15 +151,9 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
-        } else try {
-            if (!myFlashPlayerConfig.getBaseDir().isDirectory()) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.missingFiles");
-            } else {
-                writeToConfig();
-                closeWindow();
-            }
-        } catch (IOException e) {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.missingFiles");
+        } else {
+            writeToConfig();
+            closeWindow();
         }
         return false; // make sure the default operation is not used
     }
@@ -171,6 +166,9 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
 
     private void closeWindow() {
         getWindow().getParent().removeWindow(getWindow());
+    }
+
+    public void uploadStarted(Upload.StartedEvent event) {
     }
 
     public void uploadFailed(Upload.FailedEvent event) {

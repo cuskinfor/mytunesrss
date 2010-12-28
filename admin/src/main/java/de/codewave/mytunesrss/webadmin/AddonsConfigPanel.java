@@ -214,7 +214,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                             } else if ("DeleteLanguage".equals(tableRowButton.getData().toString())) {
                                 AddonsUtils.deleteLanguage(name);
                             } else if ("DeletePlayer".equals(tableRowButton.getData().toString())) {
-                                myFlashPlayersTable.removeItem(tableRowButton.getItemId());
                                 FlashPlayerConfig removedConfig = MyTunesRss.CONFIG.removeFlashPlayer((String) tableRowButton.getItemId());
                                 if (removedConfig != null) {
                                     try {
