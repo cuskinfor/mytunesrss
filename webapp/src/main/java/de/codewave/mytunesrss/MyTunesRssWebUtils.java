@@ -178,7 +178,6 @@ public class MyTunesRssWebUtils {
         if (StringUtils.isNotBlank(tcValue)) {
             for (String tc : tcValue.trim().split("_")) {
                 char key = tc.charAt(0);
-                String value = tc.substring(1);
                 switch (key) {
                     case 'N':
                         names.append(",").append(tc.substring(1));
