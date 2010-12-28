@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -96,7 +97,10 @@ public class MyTunesRssWebUtils {
             httpServletRequest.setAttribute("config", webConfig);
             LOGGER.debug("Created request configuration: " + new HashMap<String, String>(webConfig.getMap()).toString());
         }
-        MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, httpServletRequest);
+        String activeTranscodersFromRequest = MyTunesRssWebUtils.getActiveTranscodingFromRequest(httpServletRequest);
+        if (activeTranscodersFromRequest != null) {
+            webConfig.setActiveTranscoders(activeTranscodersFromRequest);
+        }
         return webConfig;
     }
 
@@ -167,29 +171,13 @@ public class MyTunesRssWebUtils {
     public static String createTranscodingParamValue(String[] transcoderNames) {
         StringBuilder tc = new StringBuilder();
         for (String tcName : transcoderNames) {
-            tc.append("N").append(tcName).append("_");
+            tc.append(tcName).append(",");
         }
         return tc.length() > 0 ? tc.substring(0, tc.length() - 1) : "";
     }
 
-    public static void setTranscodingFromRequest(WebConfig config, HttpServletRequest request) {
-        String tcValue = request.getParameter("tc");
-        StringBuilder names = new StringBuilder();
-        if (StringUtils.isNotBlank(tcValue)) {
-            for (String tc : tcValue.trim().split("_")) {
-                char key = tc.charAt(0);
-                switch (key) {
-                    case 'N':
-                        names.append(",").append(tc.substring(1));
-                        break;
-                    default:
-                        LOGGER.warn("Illegal transcodig parameter \"" + tc + "\" ignored.");
-                }
-            }
-            if (names.length() > 1) {
-                config.setActiveTranscoders(names.substring(1));
-            }
-        }
+    public static String getActiveTranscodingFromRequest(HttpServletRequest request) {
+        return request.getParameter("tc");
     }
 
     /**
@@ -314,7 +302,7 @@ public class MyTunesRssWebUtils {
         boolean notranscode = "true".equals(request.getParameter("notranscode"));
         boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
         User authUser = getAuthUser(request);
-        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, getWebConfig(request), tempFile) : null;
+        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
     }
 
     public static InputStream getMediaStream(HttpServletRequest request, Track track) throws IOException {
@@ -410,6 +398,19 @@ public class MyTunesRssWebUtils {
             }
         }
         return null;
+    }
+
+    public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
+        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
+                return config;
+            }
+        }
+        return null;
+    }
+
+    public static boolean isActiveTranscoder(String activeTranscoders, String transcoder) {
+        return ArrayUtils.contains(StringUtils.split(activeTranscoders, ','), transcoder);
     }
 
 }

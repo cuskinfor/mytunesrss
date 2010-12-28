@@ -47,7 +47,7 @@ public class PresetManager implements Runnable {
                 "mp3",
                 "audio/mp3",
                 "ffmpeg",
-                "-i {infile} -f mp3 -ar 44100 -ab 128 -acodec mp3 -"
+                "-i {infile} -f mp3 -ar 44100 -ab 128k -acodec libmp3lame -"
         );
         myPresets.add(myIphoneVideo);
         myPresets.add(myMp3Audio);

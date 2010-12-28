@@ -491,19 +491,6 @@ public class WebConfig {
         myConfigValues.put(CFG_ACTIVE_TRANSCODERS, activeTranscoders);
     }
 
-    public boolean isActiveTranscoder(String name) {
-        return ArrayUtils.contains(StringUtils.split(getActiveTranscoders(), ','), name);
-    }
-
-    public TranscoderConfig getTranscoder(Track track) {
-        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            if (isActiveTranscoder(config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
-                return config;
-            }
-        }
-        return null;
-    }
-
     public boolean isKeepAlive() {
         return Boolean.valueOf(myConfigValues.get(CFG_KEEP_ALIVE));
     }

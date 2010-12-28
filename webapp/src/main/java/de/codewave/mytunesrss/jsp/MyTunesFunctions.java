@@ -100,7 +100,7 @@ public class MyTunesFunctions {
                 return transcoderConfig.getTargetSuffix();
             }
             if (user.isTranscoder()) {
-                transcoderConfig = config.getTranscoder(track);
+                transcoderConfig = MyTunesRssWebUtils.getTranscoder(config.getActiveTranscoders(), track);
                 if (transcoderConfig != null) {
                     return transcoderConfig.getTargetSuffix();
                 }
@@ -117,7 +117,7 @@ public class MyTunesFunctions {
         if (user != null && user.isTranscoder()) {
             HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
             WebConfig config = MyTunesRssWebUtils.getWebConfig(request);
-            return config.getTranscoder(track) != null;
+            return MyTunesRssWebUtils.getTranscoder(config.getActiveTranscoders(), track) != null;
         }
         return false;
     }
@@ -302,7 +302,7 @@ public class MyTunesFunctions {
     }
 
     public static boolean isTranscoder(WebConfig webConfig, TranscoderConfig transcoderConfig) {
-        return webConfig.isActiveTranscoder(transcoderConfig.getName());
+        return MyTunesRssWebUtils.isActiveTranscoder(webConfig.getActiveTranscoders(), transcoderConfig.getName());
     }
 
     public static String rssDate(long timestamp) {

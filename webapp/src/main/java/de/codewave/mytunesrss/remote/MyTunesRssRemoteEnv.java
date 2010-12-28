@@ -106,7 +106,10 @@ public class MyTunesRssRemoteEnv {
         WebConfig webConfig = new WebConfig();
         webConfig.clearWithDefaults(getRequest());
         webConfig.setActiveTranscoders(StringUtils.join((String[]) MyTunesRssRemoteEnv.getSession().getAttribute(SessionService.ACTIVE_TRANSCODER_NAMES), ','));
-        MyTunesRssWebUtils.setTranscodingFromRequest(webConfig, getRequest());
+        String activeTranscodersFromRequest = MyTunesRssWebUtils.getActiveTranscodingFromRequest(getRequest());
+        if (activeTranscodersFromRequest != null) {
+            webConfig.setActiveTranscoders(activeTranscodersFromRequest);
+        }
         getRequest().setAttribute("config", webConfig);
         LOGGER.debug("Created request configuration: " + new HashMap<String, String>(webConfig.getMap()).toString());
     }

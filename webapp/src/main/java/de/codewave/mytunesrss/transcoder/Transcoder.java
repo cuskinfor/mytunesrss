@@ -1,11 +1,7 @@
 package de.codewave.mytunesrss.transcoder;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.TranscoderConfig;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.StreamSender;
@@ -22,31 +18,22 @@ import java.io.InputStream;
 public class Transcoder {
     private boolean myTempFile;
     private Track myTrack;
-    private boolean myActive;
     private TranscoderConfig myTranscoderConfig;
 
-    public static Transcoder createTranscoder(Track track, User user, WebConfig webConfig, boolean tempFile) {
+    public static Transcoder createTranscoder(Track track, User user, String activeTranscoders, boolean tempFile) {
         TranscoderConfig transcoderConfig = user != null ? user.getForceTranscoder(track) : null;
-        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, tempFile) : null;
+        Transcoder transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() ? new Transcoder(transcoderConfig, track, tempFile) : null;
         if (transcoder == null) {
-            transcoderConfig = webConfig.getTranscoder(track);
-            transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, webConfig, tempFile) : null;
+            transcoderConfig = MyTunesRssWebUtils.getTranscoder(activeTranscoders, track);
+            transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track, tempFile) : null;
         }
-        return transcoder != null && transcoder.isAvailable() && transcoder.isActive() ? transcoder : null;
+        return transcoder;
     }
 
     protected Transcoder(TranscoderConfig transcoderConfig, Track track, boolean tempFile) {
         myTrack = track;
         myTempFile = tempFile;
         myTranscoderConfig = transcoderConfig;
-        myActive = true;
-    }
-
-    protected Transcoder(TranscoderConfig transcoderConfig, Track track, WebConfig webConfig, boolean tempFile) {
-        myTrack = track;
-        myTempFile = tempFile;
-        myTranscoderConfig = transcoderConfig;
-        myActive = webConfig.isActiveTranscoder(transcoderConfig.getName());
     }
 
     public File getTranscodedFile() throws IOException {
@@ -88,14 +75,6 @@ public class Transcoder {
         return myTrack;
     }
 
-    public boolean isAvailable() {
-        return myTranscoderConfig.isValidBinary();
-    }
-
-    public boolean isActive() {
-        return myActive;
-    }
-
     public InputStream getStream() throws IOException {
         return new TranscoderStream(myTranscoderConfig, getTrack());
     }
@@ -106,9 +85,5 @@ public class Transcoder {
 
     public String getTargetContentType() {
         return myTranscoderConfig.getTargetContentType();
-    }
-
-    public void setTempFile(boolean tempFile) {
-        myTempFile = tempFile;
     }
 }
