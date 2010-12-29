@@ -194,17 +194,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             updateHelpTables(storeSession, 0); // update image references for albums
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
             if (!Thread.currentThread().isInterrupted()) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Deleting orphaned images.");
-                }
-                storeSession.executeStatement(new DataStoreStatement() {
-                    public void execute(Connection connection) throws SQLException {
-                        MyTunesRssUtils.createStatement(connection, "deleteOrphanedImages").execute();
-                    }
-                });
+                deleteOrphanedImages(storeSession);
                 DatabaseBuilderCallable.doCheckpoint(storeSession, true);
                 if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Creating database checkpoint.");
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
                 }
                 MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart),
@@ -216,6 +208,17 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         } finally {
             storeSession.rollback();
         }
+    }
+
+    protected void deleteOrphanedImages(DataStoreSession storeSession) throws SQLException {
+        if (LOGGER.isInfoEnabled()) {
+            LOGGER.info("Deleting orphaned images.");
+        }
+        storeSession.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                MyTunesRssUtils.createStatement(connection, "deleteOrphanedImages").execute();
+            }
+        });
     }
 
     protected void runImageUpdate(DataStoreSession storeSession, final long timeUpdateStart)

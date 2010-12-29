@@ -4,10 +4,7 @@ import de.codewave.camel.CamelUtils;
 import de.codewave.camel.Endianness;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.camel.mp4.Mp4Utils;
-import de.codewave.mytunesrss.DatasourceConfig;
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
@@ -126,11 +123,9 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (imageFile != null) {
             return readImageFromImageFile(imageFile);
         } else {
-//            if (mySource == TrackSource.ITunes) {
-//                image = findItunesArtwork();
-//            }
-            if (image == null) {
-                image = readImageFromTrackFile(image);
+            image = readImageFromTrackFile(image);
+            if (image == null && mySource == TrackSource.ITunes) {
+                image = findItunesArtwork();
             }
         }
         return image;
@@ -191,8 +186,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private Image findItunesArtwork() throws IOException {
         LOGGER.debug("Looking for iTunes cover for track \"" + myTrackId + "\".");
         for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
-            File file = new File(datasource.getDefinition());
-            if (file.isFile()) {
+            if (datasource.getType() == DatasourceType.Itunes) {
+                File file = new File(datasource.getDefinition());
                 // assume itunes xml
                 LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");
                 String[] idPair = StringUtils.split(myTrackId, "_");
@@ -201,8 +196,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     String dirLevel2 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 2), 16), 2, '0');
                     String dirLevel3 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 3), 16), 2, '0');
                     File itcFile = null;
-                    for (String subdir : new String[]{"Local", "Download"}) {
-                        itcFile = new File(file.getParentFile(), "Album Artwork/" + subdir + "/" + idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
+                    for (File subdir : new File(file.getParentFile(), "Album Artwork").listFiles()) {
+                        itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
                         if (itcFile.isFile()) {
                             break;
                         }
@@ -213,13 +208,13 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         Mp4Atom itemAtom = atoms.get("item");
                         if (itemAtom != null) {
                             LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                            int offset = CamelUtils.getValue(itemAtom.getData(), 4, 4, false, Endianness.Big);
-                            Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset, itemAtom.getData().length - offset)));
+                            int offset = CamelUtils.getValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
+                            Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8))));
                             if (iter.hasNext()) {
                                 ImageReader reader = iter.next();
                                 String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
                                 LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset, itemAtom.getData().length));
+                                return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length));
                             }
                         }
                     }

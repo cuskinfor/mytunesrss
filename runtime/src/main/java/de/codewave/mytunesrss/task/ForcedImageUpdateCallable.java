@@ -27,13 +27,13 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
 
     @Override
     public Boolean call() throws Exception {
-        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
+        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateInvalidatingImages");
         MyTunesRssEventManager.getInstance().fireEvent(event);
         MyTunesRss.LAST_DATABASE_EVENT = event;
         DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         try {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Removing all existing images.");
+                LOGGER.info("Invalidating all existing images.");
             }
             resetLastImageUpdateForAllTracks(storeSession);
             doCheckpoint(storeSession, true);
@@ -41,6 +41,10 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
                 LOGGER.info("Starting forced image update.");
             }
             runImageUpdate(storeSession, System.currentTimeMillis());
+            doCheckpoint(storeSession, true);
+            updateHelpTables(storeSession, 0); // update image references for albums
+            doCheckpoint(storeSession, true);
+            deleteOrphanedImages(storeSession);
             doCheckpoint(storeSession, true);
             return true;
         } catch (Exception e) {
