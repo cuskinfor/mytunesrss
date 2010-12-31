@@ -44,6 +44,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private Button mySslKeystoreFileSelect;
     private SmartTextField mySslKeystorePass;
     private SmartTextField mySslKeystoreKeyAlias;
+    private CheckBox myUpnpAdmin;
+    private CheckBox myUpnpUserHttp;
+    private CheckBox myUpnpUserHttps;
 
     public void attach() {
         super.attach();
@@ -70,9 +73,13 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         mySslKeystoreFileSelect = getComponentFactory().createButton("serverConfigPanel.sslKeystoreFile.select", this);
         mySslKeystorePass = getComponentFactory().createPasswordTextField("serverConfigPanel.sslKeystorePass");
         mySslKeystoreKeyAlias = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreKeyAlias");
+        myUpnpAdmin = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
+        myUpnpUserHttp = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
+        myUpnpUserHttps = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
 
         myAdminForm = getComponentFactory().createForm(null, true);
         myAdminForm.addField(myAdminPort, myAdminPort);
+        myAdminForm.addField(myUpnpAdmin, myUpnpAdmin);
         myAdminForm.addField(myAdminPassword, myAdminPassword);
         myAdminForm.addField(myRetypeAdminPassword, myRetypeAdminPassword);
         Panel adminPanel = getComponentFactory().surroundWithPanel(myAdminForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.admin"));
@@ -85,26 +92,28 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         Panel generalPanel = getComponentFactory().surroundWithPanel(myGeneralForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.general"));
         addComponent(generalPanel);
 
-        myExtendedForm = getComponentFactory().createForm(null, true);
-        myExtendedForm.addField(myWebappContext, myWebappContext);
-        myExtendedForm.addField(myTomcatMaxThreads, myTomcatMaxThreads);
-        myExtendedForm.addField(myTomcatAjpPort, myTomcatAjpPort);
-        Panel extendedPanel = getComponentFactory().surroundWithPanel(myExtendedForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.extended"));
-        addComponent(extendedPanel);
-
         myHttpForm = getComponentFactory().createForm(null, true);
         myHttpForm.addField(myPort, myPort);
+        myHttpForm.addField(myUpnpUserHttp, myUpnpUserHttp);
         Panel httpPanel = getComponentFactory().surroundWithPanel(myHttpForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.http"));
         addComponent(httpPanel);
 
         myHttpsForm = getComponentFactory().createForm(null, true);
         myHttpsForm.addField(mySslPort, mySslPort);
+        myHttpsForm.addField(myUpnpUserHttps, myUpnpUserHttps);
         myHttpsForm.addField(mySslKeystoreFile, mySslKeystoreFile);
         myHttpsForm.addField(mySslKeystoreFileSelect, mySslKeystoreFileSelect);
         myHttpsForm.addField(mySslKeystorePass, mySslKeystorePass);
         myHttpsForm.addField(mySslKeystoreKeyAlias, mySslKeystoreKeyAlias);
         Panel httpsPanel = getComponentFactory().surroundWithPanel(myHttpsForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.https"));
         addComponent(httpsPanel);
+
+        myExtendedForm = getComponentFactory().createForm(null, true);
+        myExtendedForm.addField(myWebappContext, myWebappContext);
+        myExtendedForm.addField(myTomcatMaxThreads, myTomcatMaxThreads);
+        myExtendedForm.addField(myTomcatAjpPort, myTomcatAjpPort);
+        Panel extendedPanel = getComponentFactory().surroundWithPanel(myExtendedForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.extended"));
+        addComponent(extendedPanel);
 
         addDefaultComponents(0, 5, 0, 5, false);
 
@@ -127,6 +136,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         mySslKeystoreFile.setValue(MyTunesRss.CONFIG.getSslKeystoreFile());
         mySslKeystorePass.setValue(MyTunesRss.CONFIG.getSslKeystorePass());
         mySslKeystoreKeyAlias.setValue(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
+        myUpnpAdmin.setValue(MyTunesRss.CONFIG.isUpnpAdmin());
+        myUpnpUserHttp.setValue(MyTunesRss.CONFIG.isUpnpUserHttp());
+        myUpnpUserHttps.setValue(MyTunesRss.CONFIG.isUpnpUserHttps());
     }
 
     protected void writeToConfig() {
@@ -168,6 +180,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStopFailed");
             }
         }
+        MyTunesRss.CONFIG.setUpnpAdmin(myUpnpAdmin.booleanValue());
+        MyTunesRss.CONFIG.setUpnpUserHttp(myUpnpUserHttp.booleanValue());
+        MyTunesRss.CONFIG.setUpnpUserHttps(myUpnpUserHttps.booleanValue());
         MyTunesRss.CONFIG.save();
     }
 

@@ -32,6 +32,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * de.codewave.mytunesrss.server.WebServer
@@ -43,6 +44,8 @@ public class WebServer {
 
     private Embedded myEmbeddedTomcat;
     private AtomicBoolean myRunning = new AtomicBoolean(false);
+    private AtomicInteger myUpnpHttp = new AtomicInteger();
+    private AtomicInteger myUpnpHttps = new AtomicInteger();
     private Context myContext;
     private StandardManager mySessionManager;
 
@@ -81,6 +84,7 @@ public class WebServer {
                             myEmbeddedTomcat = null;
                             return false;
                         }
+                        MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
                         myRunning.set(true);
                         if (MyTunesRss.QUICKTIME_PLAYER != null) {
                             MyTunesRss.QUICKTIME_PLAYER.init();
@@ -307,6 +311,7 @@ public class WebServer {
                 return false;
             }
         }
+        MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
         myRunning.set(false);
         try {
             if (MyTunesRss.QUICKTIME_PLAYER != null) {

@@ -117,6 +117,9 @@ public class MyTunesRssConfig {
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
     private boolean myInitialWizard;
+    private boolean myUpnpAdmin;
+    private boolean myUpnpUserHttp;
+    private boolean myUpnpUserHttps;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -794,6 +797,30 @@ public class MyTunesRssConfig {
         myInitialWizard = initialWizard;
     }
 
+    public boolean isUpnpAdmin() {
+        return myUpnpAdmin;
+    }
+
+    public void setUpnpAdmin(boolean upnpAdmin) {
+        myUpnpAdmin = upnpAdmin;
+    }
+
+    public boolean isUpnpUserHttp() {
+        return myUpnpUserHttp;
+    }
+
+    public void setUpnpUserHttp(boolean upnpUserHttp) {
+        myUpnpUserHttp = upnpUserHttp;
+    }
+
+    public boolean isUpnpUserHttps() {
+        return myUpnpUserHttps;
+    }
+
+    public void setUpnpUserHttps(boolean upnpUserHttps) {
+        myUpnpUserHttps = upnpUserHttps;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -995,6 +1022,9 @@ public class MyTunesRssConfig {
             addFlashPlayer(flashPlayerConfig);
         }
         setInitialWizard(JXPathUtils.getBooleanValue(settings, "initialWizard", true));
+        setUpnpAdmin(JXPathUtils.getBooleanValue(settings, "upnp-admin", false));
+        setUpnpUserHttp(JXPathUtils.getBooleanValue(settings, "upnp-user-http", true));
+        setUpnpUserHttps(JXPathUtils.getBooleanValue(settings, "upnp-user-https", true));
     }
 
     /**
@@ -1278,6 +1308,9 @@ public class MyTunesRssConfig {
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "initialWizard", isInitialWizard()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-admin", isUpnpAdmin()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-user-http", isUpnpUserHttp()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-user-https", isUpnpUserHttps()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

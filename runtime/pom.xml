@@ -390,6 +390,11 @@
             <artifactId>jaxb-impl</artifactId>
             <version>2.2.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.bitlet.weupnp</groupId>
+            <artifactId>weupnp</artifactId>
+            <version>0.1.1</version>
+        </dependency>
 
     </dependencies>
     <build>

@@ -216,6 +216,9 @@ public class MyTunesRssUtils {
                     }
                 }
             }
+            if (MyTunesRss.ADMIN_SERVER != null) {
+                MyTunesRss.stopAdminServer();
+            }
             if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnExit()) {
                 try {
                     new DeleteDatabaseFilesCallable().call();
@@ -223,6 +226,8 @@ public class MyTunesRssUtils {
                     LOGGER.error("Could not delete default database files.");
                 }
             }
+            MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
+            MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
         } finally {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Very last log message before shutdown.");

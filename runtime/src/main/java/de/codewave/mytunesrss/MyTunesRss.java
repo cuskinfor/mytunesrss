@@ -114,6 +114,7 @@ public class MyTunesRss {
     public static MyTunesRssForm FORM;
     public static MyTunesRssEvent LAST_DATABASE_EVENT;
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
+    public static RouterConfig ROUTER_CONFIG = new RouterConfig();
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
@@ -143,9 +144,10 @@ public class MyTunesRss {
         startQuartzScheduler();
         initializeCaches();
         StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
-        MyTunesRss.EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-        MyTunesRss.EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
+        EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
+        EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+        EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
+        EXECUTOR_SERVICE.scheduleWithFixedDelay(ROUTER_CONFIG, 0, 600, TimeUnit.SECONDS); // try to get gateway device every 10 minutes
         initializeDatabase();
         if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
             MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
@@ -462,10 +464,10 @@ public class MyTunesRss {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
             }
-
             if (COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
                 System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
             }
+            ROUTER_CONFIG.addAdminPortMapping(adminPort);
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could start admin server.", e);
@@ -497,6 +499,7 @@ public class MyTunesRss {
 
     public static boolean stopAdminServer() {
         try {
+            ROUTER_CONFIG.deleteAdminPortMapping();
             ADMIN_SERVER.stop();
             ADMIN_SERVER.join();
         } catch (Exception e) {
