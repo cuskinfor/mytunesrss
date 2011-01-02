@@ -21,7 +21,7 @@ public class EncryptTag extends BodyTagSupport {
     }
 
     @Override
-    public int doStartTag() throws JspException {
+    public int doStartTag() {
         return BodyTag.EVAL_BODY_BUFFERED;
     }
 

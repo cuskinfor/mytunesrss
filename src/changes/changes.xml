@@ -8,6 +8,10 @@
     <body>
 
         <release version="" date="">
+            <action dev="mdescher" type="add">
+                Added playlist type JSON which cannot be selected in the user interface but only for
+                custom Flash player configurations.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-247] No content type set for swf files
             </action>

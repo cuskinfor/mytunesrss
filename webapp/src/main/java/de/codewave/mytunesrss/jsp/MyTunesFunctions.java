@@ -12,6 +12,7 @@ import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.io.JsonStringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -368,5 +369,9 @@ public class MyTunesFunctions {
     public static FlashPlayerConfig flashPlayerConfig(String id) {
         FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer(id);
         return flashPlayerConfig != null ? flashPlayerConfig : FlashPlayerConfig.getDefault(id);
+    }
+
+    public static String escapeJson(String json) {
+        return new String(JsonStringEncoder.getInstance().quoteAsString(json));
     }
 }

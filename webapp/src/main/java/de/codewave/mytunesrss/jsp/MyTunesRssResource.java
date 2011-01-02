@@ -32,6 +32,7 @@ public enum MyTunesRssResource {
     TemplateRss("/rss.jsp"),
     TemplateXspf("/xspf.jsp"),
     TemplateQtPlugin("/qt_plugin.jsp"),
+    TemplateJson("/json.jsp"),
     TrackInfo("/track_info.jsp"),
     FatalError("/fatal_error.jsp"),
     ShowUpload("/upload.jsp"),

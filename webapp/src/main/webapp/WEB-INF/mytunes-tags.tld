@@ -81,4 +81,13 @@
         </attribute>
     </tag>
 
+    <tag>
+        <description>
+            Escape a JSON string.
+        </description>
+        <name>escapeJson</name>
+        <tag-class>de.codewave.mytunesrss.jsp.EscapeJsonTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
 </taglib>

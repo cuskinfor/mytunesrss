@@ -402,4 +402,13 @@
         <function-signature>de.codewave.mytunesrss.FlashPlayerConfig flashPlayerConfig(java.lang.String)</function-signature>
     </function>
 
+    <function>
+        <description>
+            Escape a JSON string.
+        </description>
+        <name>escapeJson</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String escapeJson(java.lang.String)</function-signature>
+    </function>
+
 </taglib>

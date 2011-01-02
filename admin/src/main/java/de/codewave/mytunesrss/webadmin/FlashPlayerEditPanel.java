@@ -92,7 +92,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         setRequired(myHtml);
         myHtml.setRows(10);
         myForm.addField("html", myHtml);
-        myFileType = getComponentFactory().createSelect("flashPlayerEditPanel.filetype", Arrays.asList(PlaylistFileType.Xspf, PlaylistFileType.M3u)); // todo add json
+        myFileType = getComponentFactory().createSelect("flashPlayerEditPanel.filetype", Arrays.asList(PlaylistFileType.Xspf, PlaylistFileType.M3u, PlaylistFileType.Json));
         myForm.addField("filetype", myFileType);
         myTimeUnitWrappers = Arrays.asList(new TimeUnitWrapper(TimeUnit.SECONDS, getBundleString("flashPlayerEditPanel.timeunit.seconds")), new TimeUnitWrapper(TimeUnit.MILLISECONDS, getBundleString("flashPlayerEditPanel.timeunit.milliseconds")));
         myTimeUnit = getComponentFactory().createSelect("flashPlayerEditPanel.timeunit", myTimeUnitWrappers);
