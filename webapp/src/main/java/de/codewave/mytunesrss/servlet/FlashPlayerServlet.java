@@ -63,6 +63,9 @@ public class FlashPlayerServlet extends HttpServlet {
         } else {
             File file = getFile(httpServletRequest);
             String contentType = URLConnection.guessContentTypeFromName(file.getName());
+            if (StringUtils.isBlank(contentType) && StringUtils.endsWithIgnoreCase(file.getName(), ".swf")) {
+                contentType = "application/x-shockwave-flash"; // special handling
+            }
             httpServletResponse.setContentType(contentType);
             int length = (int) file.length();
             httpServletResponse.setContentLength(length);

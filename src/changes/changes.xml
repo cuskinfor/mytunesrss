@@ -8,6 +8,9 @@
     <body>
 
         <release version="" date="">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-247] No content type set for swf files
+            </action>
             <action dev="mdescher" type="add">
                 UPnP router configuration (default enabled for user interface, disabled for admin).
             </action>
