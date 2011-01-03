@@ -3,7 +3,7 @@
     <id>macosx</id>
     <formats>
         <format>dir</format>
-        <format>zip</format>
+        <!--format>zip</format--> <!-- zip is built using script -->
     </formats>
     <moduleSets>
         <moduleSet>
