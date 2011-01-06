@@ -1,0 +1,119 @@
+<html>
+
+<head>
+
+    <title>MyTunesRSS Jukebox</title>
+
+    <meta name="viewport" content="width=device-width">
+
+    <style type="text/css">
+        html, body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #jukeboxdiv {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        div.even {
+            background-color: #ffffff;
+        }
+
+        div.odd {
+            background-color: #f4f7fb;
+        }
+
+        div.current {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        div.playlistitem {
+            padding-top: 10px;
+            padding-bottom: 10px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+    </style>
+
+    <script type="text/javascript" src="../../js/jquery.js"></script>
+    <script type="text/javascript">
+
+        var playlist;
+        var currentTrack;
+
+        $(document).ready(function() {
+            new $.ajax({
+                url : "{PLAYLIST_URL}",
+                type : "GET",
+                processData : false,
+                success : function(data) {
+                    init(data);
+                }
+            });
+        });
+
+        $(window).scroll(scrollPlayer());
+
+        function scrollPlayer() {
+            $("#jukeboxdiv").css("top", ($(window).scrollTop() + 10) + "px");
+        }
+
+        function playTrack(index) {
+            // set marker in playlist
+            $("#playlist div").each(function(eachIndex) {
+                if (eachIndex == index) {
+                    $(this).addClass("current");
+                } else {
+                    $(this).removeClass("current");
+                }
+            });
+
+            // create new audio or video element and start playback
+            if (index < playlist.length) {
+                currentTrack = index;
+                if (playlist[index].mediaType === "Video") {
+                    $("#jukeboxdiv").empty();
+                    $("#jukeboxdiv").append("<video id=\"jukebox\" controls=\"controls\" preload=\"meta\" width=\"1\" height=\"1\" onended=\"playNextTrack()\" src=\"" + playlist[index].location + "\"></video>");
+                } else if (playlist[index].mediaType === "Audio" && ($("#jukebox").length === 0 || $("#jukebox")[0].tagName.toLowerCase() === "video")) {
+                    $("#jukeboxdiv").empty();
+                    $("#jukeboxdiv").append("<audio id=\"jukebox\" controls=\"controls\" preload=\"meta\" onended=\"playNextTrack()\" src=\"" + playlist[index].location + "\"></audio>");
+                } else {
+                    $("#jukebox")[0].pause();
+                    $("#jukebox").attr("src", playlist[index].location);
+                }
+                $("#jukebox")[0].play();
+                scrollPlayer();
+            }
+
+        }
+
+        function playNextTrack() {
+            playTrack(currentTrack + 1);
+        }
+
+        function init(data) {
+            playlist = data;
+            for (var i = 0; i < data.length; i++) {
+                $("#playlist").append("<div class=\"playlistitem " + (i % 2 == 0 ? "even" : "odd") + "\" onclick=\"playTrack(" + i + ")\">" + data[i].artist + " - " + data[i].name + "</div>");
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+<div id="jukeboxdiv">
+</div>
+
+<div id="playlist">
+</div>
+
+</body>
+
+</html>

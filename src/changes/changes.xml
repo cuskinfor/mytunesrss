@@ -9,6 +9,9 @@
 
         <release version="" date="">
             <action dev="mdescher" type="add">
+                Added an HTML5 based media player for the iPhone. Removed Quicktime/iPhone playlist type.
+            </action>
+            <action dev="mdescher" type="add">
                 Added playlist type JSON which cannot be selected in the user interface but only for
                 custom Flash player configurations.
             </action>

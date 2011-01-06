@@ -67,7 +67,7 @@ public class WebConfig {
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
 
     public static enum PlaylistType {
-        M3u(), Xspf(), QtPlugin(), Qtplugin(), Iphone(), Json();
+        M3u(), Xspf(), Json();
 
         public String getFileSuffix() {
             switch (this) {
@@ -75,10 +75,6 @@ public class WebConfig {
                     return "m3u";
                 case Xspf:
                     return "xspf";
-                case QtPlugin:
-                case Qtplugin:
-                case Iphone:
-                    return "html";
                 case Json:
                     return "json";
                 default:
@@ -92,10 +88,6 @@ public class WebConfig {
                     return MyTunesRssResource.TemplateM3u;
                 case Xspf:
                     return MyTunesRssResource.TemplateXspf;
-                case QtPlugin:
-                case Qtplugin:
-                case Iphone:
-                    return MyTunesRssResource.TemplateQtPlugin;
                 case Json:
                     return MyTunesRssResource.TemplateJson;
                 default:
@@ -152,11 +144,12 @@ public class WebConfig {
 
     private void initWithIphoneDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
+        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
-        myConfigValues.put(CFG_SHOW_PLAYER, "false");
-        myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.QtPlugin.name());
+        myConfigValues.put(CFG_FLASH_PLAYER, FlashPlayerConfig.HTML5.getId());
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
+        myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
     }
 
     private void initWithPspDefaults() {
@@ -164,6 +157,7 @@ public class WebConfig {
         myConfigValues.put(CFG_RSS_LIMIT, "100");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "false");
+        myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
     }
 
     private void initWithNintendoWiiDefaults() {
@@ -172,6 +166,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
+        myConfigValues.put(CFG_FLASH_PLAYER, FlashPlayerConfig.SIMPLE.getId());
     }
 
     /**
