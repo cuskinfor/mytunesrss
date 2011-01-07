@@ -8,6 +8,9 @@
     <body>
 
         <release version="" date="">
+            <action dev="mdescher" type="update">
+                Login with ENTER key in admin.
+            </action>
             <action dev="mdescher" type="add">
                 Added an HTML5 based media player for the iPhone. Removed Quicktime/iPhone playlist type.
             </action>

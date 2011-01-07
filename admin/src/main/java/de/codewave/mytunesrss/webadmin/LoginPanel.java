@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.event.ShortcutAction;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -23,7 +24,10 @@ public class LoginPanel extends Panel implements Button.ClickListener {
         setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
         myPassword = getApplication().getComponentFactory().createPasswordTextField("loginPanel.password");
         addComponent(myPassword);
-        addComponent(getApplication().getComponentFactory().createButton("loginPanel.login", this));
+        Button loginButton = getApplication().getComponentFactory().createButton("loginPanel.login", this);
+        loginButton.setClickShortcut(ShortcutAction.KeyCode.ENTER);
+        loginButton.addStyleName("primary");
+        addComponent(loginButton);
     }
 
     public MyTunesRssWebAdmin getApplication() {
