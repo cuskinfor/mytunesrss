@@ -9,10 +9,11 @@ import com.vaadin.Application;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.vaadin.SmartTextField;
 
 public abstract class TextFieldWindow extends Window implements Button.ClickListener {
 
-    private TextField myTextField;
+    private SmartTextField myTextField;
     private Button myOkButton;
     private Button myCancelButton;
 
@@ -39,7 +40,7 @@ public abstract class TextFieldWindow extends Window implements Button.ClickList
         setContent(verticalLayout);
         Label label = new Label(message);
         addComponent(label);
-        myTextField = new TextField();
+        myTextField = new SmartTextField();
         myTextField.setValue(value);
         myTextField.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         addComponent(myTextField);

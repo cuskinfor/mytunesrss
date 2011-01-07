@@ -10,6 +10,7 @@ import com.vaadin.event.ItemClickEvent;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.utils.io.IOUtils;
+import de.codewave.vaadin.VaadinUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,7 +154,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
                     new File(myCurrentDir, text).mkdir();
                     setFiles();
                 }
-            }.show(getWindow());
+            }.show(VaadinUtils.getApplicationWindow(this));
         }
     }
 

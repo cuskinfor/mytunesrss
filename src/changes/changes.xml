@@ -8,6 +8,9 @@
     <body>
 
         <release version="" date="">
+            <action dev="mdescher" type="fix">
+                Fixed exception when trying to create a new folder in the file choser dialog.
+            </action>
             <action dev="mdescher" type="update">
                 Login with ENTER key in admin.
             </action>
