@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="4.0.12" date="2011-01-12">
+            <action dev="mdescher" type="fix">
+                Background playback in HTML5 based media player on iPhone works for multiple tracks
+                now.
+            </action>
+        </release>
+
         <release version="4.0.11" date="2011-01-09">
             <action dev="mdescher" type="fix">
                 Fixed exception when trying to create a new folder in the file chooser dialog.

@@ -44,6 +44,7 @@
 
         var playlist;
         var currentTrack;
+        var currentJukebox;
 
         $(document).ready(function() {
             new $.ajax({
@@ -62,7 +63,11 @@
             $("#jukeboxdiv").css("top", ($(window).scrollTop() + 10) + "px");
         }
 
-        function playTrack(index) {
+        function clearJukeboxes() {
+            $("#jukeboxdiv").empty();
+        }
+
+        function playTrack(index, stopCurrent) {
             // set marker in playlist
             $("#playlist div").each(function(eachIndex) {
                 if (eachIndex == index) {
@@ -76,29 +81,55 @@
             if (index < playlist.length) {
                 currentTrack = index;
                 if (playlist[index].mediaType === "Video") {
-                    $("#jukeboxdiv").empty();
-                    $("#jukeboxdiv").append("<video id=\"jukebox\" controls=\"controls\" preload=\"meta\" width=\"1\" height=\"1\" onended=\"playNextTrack()\" src=\"" + playlist[index].location + "\"></video>");
-                } else if (playlist[index].mediaType === "Audio" && ($("#jukebox").length === 0 || $("#jukebox")[0].tagName.toLowerCase() === "video")) {
-                    $("#jukeboxdiv").empty();
-                    $("#jukeboxdiv").append("<audio id=\"jukebox\" controls=\"controls\" preload=\"meta\" onended=\"playNextTrack()\" src=\"" + playlist[index].location + "\"></audio>");
+                    clearJukeboxes();
+                    $("#jukeboxdiv").append("<video controls=\"controls\" preload=\"none\" onended=\"clearJukeboxes()\" src=\"" + playlist[index].location + "\"></video>");
+                    $("#jukeboxdiv video")[0].play();
+                } else if (playlist[index].mediaType === "Audio" && $("#jukeboxdiv div").length === 0) {
+                    clearJukeboxes();
+                    $("#jukeboxdiv").append("<div><audio controls=\"controls\" preload=\"none\" ontimeupdate=\"updateTime()\" src=\"" + playlist[index].location + "\"></audio></div>");
+                    $("#jukeboxdiv").append("<div style=\"display:none\"><audio controls=\"controls\" preload=\"none\" ontimeupdate=\"updateTime()\" src=\"http://127.0.0.1\"></audio></div>");
+                    currentJukebox = "first";
+                    $("#jukeboxdiv audio")[0].play();
+                    $("#jukeboxdiv audio")[1].play();
+                    $("#jukeboxdiv audio")[1].pause();
                 } else {
-                    $("#jukebox")[0].pause();
-                    $("#jukebox").attr("src", playlist[index].location);
+                    var jukebox = $("#jukeboxdiv div:" + getOtherJukebox() + " audio");
+                    jukebox.attr("src", playlist[index].location);
+                    jukebox[0].play();
+                    if (stopCurrent) {
+                        $("#jukeboxdiv div:" + currentJukebox + " audio")[0].pause();
+                    }
+                    $("#jukeboxdiv div:" + currentJukebox).css("display", "none");
+                    $("#jukeboxdiv div:" + currentJukebox).attr("src", "http://127.0.0.1");
+                    currentJukebox = getOtherJukebox();
+                    $("#jukeboxdiv div:" + currentJukebox).css("display", "block");
                 }
-                $("#jukebox")[0].play();
                 scrollPlayer();
+            } else {
+                clearJukeboxes();
             }
 
         }
 
-        function playNextTrack() {
-            playTrack(currentTrack + 1);
+        function getOtherJukebox() {
+            return currentJukebox === "first" ? "last" : "first";
+        }
+
+        function updateTime() {
+            var jukebox = $("#jukeboxdiv audio:" + currentJukebox)[0];
+            if (jukebox.duration - jukebox.currentTime < 1) {
+                var nextTrack = currentTrack + 1;
+                while (nextTrack < playlist.length && playlist[nextTrack].mediaType === "Video") {
+                    nextTrack++;
+                }
+                playTrack(nextTrack, false);
+            }
         }
 
         function init(data) {
             playlist = data;
             for (var i = 0; i < data.length; i++) {
-                $("#playlist").append("<div class=\"playlistitem " + (i % 2 == 0 ? "even" : "odd") + "\" onclick=\"playTrack(" + i + ")\">" + data[i].artist + " - " + data[i].name + "</div>");
+                $("#playlist").append("<div class=\"playlistitem " + (i % 2 == 0 ? "even" : "odd") + "\" onclick=\"playTrack(" + i + ", true)\">" + data[i].artist + " - " + data[i].name + "</div>");
             }
         }
 
