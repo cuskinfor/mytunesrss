@@ -31,6 +31,10 @@
             font-weight: bold;
         }
 
+        #playlist {
+            margin-top: 30px;
+        }
+
         div.playlistitem {
             padding-top: 10px;
             padding-bottom: 10px;
@@ -45,6 +49,7 @@
         var playlist;
         var currentTrack;
         var currentJukebox;
+        var currentPlayerPos;
 
         $(document).ready(function() {
             new $.ajax({
@@ -57,10 +62,9 @@
             });
         });
 
-        $(window).scroll(scrollPlayer());
-
         function scrollPlayer() {
             $("#jukeboxdiv").css("top", ($(window).scrollTop() + 10) + "px");
+            $(window)[0].setTimeout(scrollPlayer, 1000);
         }
 
         function clearJukeboxes() {
@@ -104,7 +108,6 @@
                     currentJukebox = getOtherJukebox();
                     $("#jukeboxdiv div:" + currentJukebox).css("display", "block");
                 }
-                scrollPlayer();
             } else {
                 clearJukeboxes();
             }
@@ -131,6 +134,7 @@
             for (var i = 0; i < data.length; i++) {
                 $("#playlist").append("<div class=\"playlistitem " + (i % 2 == 0 ? "even" : "odd") + "\" onclick=\"playTrack(" + i + ", true)\">" + data[i].artist + " - " + data[i].name + "</div>");
             }
+            scrollPlayer();
         }
 
     </script>
