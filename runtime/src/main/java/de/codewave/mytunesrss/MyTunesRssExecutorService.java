@@ -74,6 +74,10 @@ public class MyTunesRssExecutorService {
         MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 300, TimeUnit.SECONDS);
     }
 
+    public synchronized void executeMyTunesRssComUpdate() {
+        GENERAL_EXECUTOR.execute(new MyTunesRssComUpdateRunnable());
+    }
+
     public synchronized void cancelMyTunesRssComUpdate() {
         if (MYTUNESRSSCOM_UPDATE_FUTURE != null && !MYTUNESRSSCOM_UPDATE_FUTURE.isDone() && !MYTUNESRSSCOM_UPDATE_FUTURE.isCancelled()) {
             MYTUNESRSSCOM_UPDATE_FUTURE.cancel(true);

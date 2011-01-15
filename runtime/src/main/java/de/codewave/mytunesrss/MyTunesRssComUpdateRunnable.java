@@ -28,18 +28,22 @@ public class MyTunesRssComUpdateRunnable implements Runnable {
         if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
             String username = MyTunesRss.CONFIG.getMyTunesRssComUser();
             String base64Hash = MyTunesRssUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()));
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Updating mytunesrss.com: user=\"" + username + "\", password=\"" + base64Hash + "\", port=\"" + MyTunesRss.CONFIG.getPort() +
-                        "\".");
-            }
             PostMethod postMethod = new PostMethod(System.getProperty("MyTunesRSS.mytunesrsscomUrl", MYTUNESRSSCOM_URL));
             postMethod.addParameter("user", username);
             postMethod.addParameter("pass", base64Hash);
             if (MyTunesRss.CONFIG.isMyTunesRssComSsl()) {
                 postMethod.addParameter("https", "true");
                 postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getSslPort()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Updating mytunesrss.com: user=\"" + username + "\", password=\"" + base64Hash + "\", port=\"" + MyTunesRss.CONFIG.getSslPort() +
+                            "\", using HTTPS.");
+                }
             } else {
                 postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getPort()));
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Updating mytunesrss.com: user=\"" + username + "\", password=\"" + base64Hash + "\", port=\"" + MyTunesRss.CONFIG.getPort() +
+                            "\".");
+                }
             }
             postMethod.addParameter("context", MyTunesRss.CONFIG.getWebappContext());
             HttpClient client = MyTunesRssUtils.createHttpClient();

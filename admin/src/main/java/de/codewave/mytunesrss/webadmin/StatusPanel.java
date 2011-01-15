@@ -26,19 +26,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.henrik.refresher.Refresher;
 
-import javax.xml.bind.JAXB;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class StatusPanel extends Panel implements Button.ClickListener, MyTunesRssEventListener, Refresher.RefreshListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusPanel.class);
@@ -75,6 +69,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Panel myUpdatePanel;
     private Button myQuitMyTunesRss;
     private MessageOfTheDayItem myMessageOfTheDay;
+    private Button myForceMyTunesRssComUpdate;
 
     public void attach() {
         super.attach();
@@ -151,12 +146,17 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         databaseButtons.addComponent(myUpdateImages);
         databaseButtons.addComponent(myStopDatabaseUpdate);
         databaseButtons.addComponent(myResetDatabase);
-        Panel mytunesrss = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
-        addComponent(mytunesrss);
+        Panel mytunesrsscom = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
+        addComponent(mytunesrsscom);
         myMyTunesRssComStatus = new Label();
         myMyTunesRssComStatus.setWidth("100%");
         myMyTunesRssComStatus.addStyleName("statusmessage");
-        mytunesrss.addComponent(myMyTunesRssComStatus);
+        mytunesrsscom.addComponent(myMyTunesRssComStatus);
+        Panel mytunesrsscomButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+        mytunesrsscomButtons.addStyleName("light");
+        mytunesrsscom.addComponent(mytunesrsscomButtons);
+        myForceMyTunesRssComUpdate = getApplication().getComponentFactory().createButton("statusPanel.mytunesrss.forceUpdate", StatusPanel.this);
+        mytunesrsscomButtons.addComponent(myForceMyTunesRssComUpdate);
         Panel configButtons = new Panel(getApplication().getBundleString("statusPanel.config.caption"), getApplication().getComponentFactory().createGridLayout(4, 3, true, true));
         addComponent(configButtons);
         myServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.server", StatusPanel.this);
@@ -292,6 +292,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
+        } else if (clickEvent.getSource() == myForceMyTunesRssComUpdate) {
+            MyTunesRss.EXECUTOR_SERVICE.executeMyTunesRssComUpdate();
         } else if (clickEvent.getSource() == myHelp) {
             getWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss4"));
         } else if (clickEvent.getSource() == myQuitMyTunesRss) {
