@@ -293,7 +293,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myResetDatabase.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
         } else if (clickEvent.getSource() == myForceMyTunesRssComUpdate) {
-            MyTunesRss.EXECUTOR_SERVICE.executeMyTunesRssComUpdate();
+            if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
+                MyTunesRss.EXECUTOR_SERVICE.executeMyTunesRssComUpdate();
+            } else {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("statusPanel.error.mytunesrsscomNotActive");
+            }
         } else if (clickEvent.getSource() == myHelp) {
             getWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss4"));
         } else if (clickEvent.getSource() == myQuitMyTunesRss) {
