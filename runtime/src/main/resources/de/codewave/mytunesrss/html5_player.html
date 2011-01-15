@@ -48,8 +48,6 @@
 
         var playlist;
         var currentTrack;
-        var currentJukebox;
-        var currentPlayerPos;
 
         $(document).ready(function() {
             new $.ajax({
@@ -67,72 +65,61 @@
             $(window)[0].setTimeout(scrollPlayer, 1000);
         }
 
-        function clearJukeboxes() {
-            $("#jukeboxdiv").empty();
+        function removeAudioAndVideo() {
+            $("audio,video").remove();
         }
 
-        function playTrack(index, stopCurrent) {
-            // set marker in playlist
+        function setPlaylistMarker() {
             $("#playlist div").each(function(eachIndex) {
-                if (eachIndex == index) {
+                if (eachIndex == currentTrack) {
                     $(this).addClass("current");
                 } else {
                     $(this).removeClass("current");
                 }
             });
+        }
 
-            // create new audio or video element and start playback
-            if (index < playlist.length) {
-                currentTrack = index;
-                if (playlist[index].mediaType === "Video") {
-                    clearJukeboxes();
-                    $("#jukeboxdiv").append("<video controls=\"controls\" preload=\"none\" onended=\"clearJukeboxes()\" src=\"" + playlist[index].location + "\"></video>");
-                    $("#jukeboxdiv video")[0].play();
-                } else if (playlist[index].mediaType === "Audio" && $("#jukeboxdiv div").length === 0) {
-                    clearJukeboxes();
-                    $("#jukeboxdiv").append("<div><audio controls=\"controls\" preload=\"none\" ontimeupdate=\"updateTime()\" src=\"" + playlist[index].location + "\"></audio></div>");
-                    $("#jukeboxdiv").append("<div style=\"display:none\"><audio controls=\"controls\" preload=\"none\" ontimeupdate=\"updateTime()\" src=\"http://127.0.0.1\"></audio></div>");
-                    currentJukebox = "first";
-                    $("#jukeboxdiv audio")[0].play();
-                    $("#jukeboxdiv audio")[1].play();
-                    $("#jukeboxdiv audio")[1].pause();
-                } else {
-                    var jukebox = $("#jukeboxdiv div:" + getOtherJukebox() + " audio");
-                    jukebox.attr("src", playlist[index].location);
-                    jukebox[0].play();
-                    if (stopCurrent) {
-                        $("#jukeboxdiv div:" + currentJukebox + " audio")[0].pause();
-                    }
-                    $("#jukeboxdiv div:" + currentJukebox).css("display", "none");
-                    $("#jukeboxdiv div:" + currentJukebox).attr("src", "http://127.0.0.1");
-                    currentJukebox = getOtherJukebox();
-                    $("#jukeboxdiv div:" + currentJukebox).css("display", "block");
+        function playCurrentTrack() {
+            if (currentTrack < playlist.length) {
+                setPlaylistMarker();
+                if (playlist[currentTrack].mediaType === "Video") {
+                    removeAudioAndVideo();
+                    $("#jukeboxdiv").append("<video controls=\"controls\" width=\"1px\" height=\"1px\" onended=\"removeAudioAndVideo()\" src=\"" + playlist[currentTrack].location + "\"></video>");
+                    $("video")[0].play();
+                } else if (playlist[currentTrack].mediaType === "Audio" && $("audio").length === 0) {
+                    removeAudioAndVideo();
+                    $("#jukeboxdiv").append("<audio controls=\"controls\" ontimeupdate=\"updateTime()\" src=\"" + playlist[currentTrack].location + "\"></audio>");
+                    $("audio")[0].play();
+                } else if (playlist[currentTrack].mediaType === "Audio") {
+                    $("audio").attr("src", playlist[currentTrack].location);
+                    $("audio")[0].play();
                 }
             } else {
-                clearJukeboxes();
+                removeAudioAndVideo();
             }
 
         }
 
-        function getOtherJukebox() {
-            return currentJukebox === "first" ? "last" : "first";
+        function playTrack(track) {
+            currentTrack = track;
+            playCurrentTrack();
         }
 
         function updateTime() {
-            var jukebox = $("#jukeboxdiv audio:" + currentJukebox)[0];
-            if (jukebox.duration - jukebox.currentTime < 1) {
-                var nextTrack = currentTrack + 1;
-                while (nextTrack < playlist.length && playlist[nextTrack].mediaType === "Video") {
-                    nextTrack++;
+            var jukebox = $("audio");
+            if (jukebox[0].duration - jukebox[0].currentTime < 1) {
+                currentTrack++;
+                while (currentTrack < playlist.length && playlist[currentTrack].mediaType === "Video") {
+                    currentTrack++;
                 }
-                playTrack(nextTrack, false);
+                playCurrentTrack();
             }
         }
 
         function init(data) {
             playlist = data;
             for (var i = 0; i < data.length; i++) {
-                $("#playlist").append("<div class=\"playlistitem " + (i % 2 == 0 ? "even" : "odd") + "\" onclick=\"playTrack(" + i + ", true)\">" + data[i].artist + " - " + data[i].name + "</div>");
+                $("#playlist").append("<div class=\"playlistitem " + (i % 2 == 0 ? "even" : "odd") + "\" onclick=\"playTrack(" + i + ")\">" + data[i].artist + " - " + data[i].name + "</div>");
             }
             scrollPlayer();
         }
