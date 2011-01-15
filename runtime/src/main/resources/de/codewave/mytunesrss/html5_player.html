@@ -107,7 +107,7 @@
 
         function updateTime() {
             var jukebox = $("audio");
-            if (jukebox[0].duration - jukebox[0].currentTime < 1) {
+            if (jukebox[0].duration - jukebox[0].currentTime < 2) {
                 currentTrack++;
                 while (currentTrack < playlist.length && playlist[currentTrack].mediaType === "Video") {
                     currentTrack++;
