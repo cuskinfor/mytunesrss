@@ -9,6 +9,9 @@
 
         <release version="4.0.12" date="2011-01-12">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-249] Rename Flash players to Jukeboxes
+            </action>
+            <action dev="mdescher" type="update">
                 Button for explicitly updating mytunesrss.com and correct log messages for update when
                 using SSL.
             </action>
