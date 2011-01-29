@@ -7,20 +7,16 @@
 
     <body>
 
-        <release version="4.0.12" date="2011-01-12">
+        <release version="4.0.12" date="2011-01-29">
             <action dev="mdescher" type="update">
                 Updated JA and FR web interface translation.
             </action>
             <action dev="mdescher" type="update">
-                [MYTUNESRSS-249] Rename Flash players to Jukeboxes
+                [MYTUNESRSS-249] Rename Flash players to Jukeboxes.
             </action>
             <action dev="mdescher" type="update">
                 Button for explicitly updating mytunesrss.com and correct log messages for update when
                 using SSL.
-            </action>
-            <action dev="mdescher" type="fix">
-                Background playback in HTML5 based media player on iPhone works for multiple tracks
-                now.
             </action>
         </release>
 
