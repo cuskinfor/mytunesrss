@@ -487,7 +487,7 @@ public class MyTunesRss {
         int adminPort = MyTunesRss.CONFIG.getAdminPort();
         if (COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) != null) {
             try {
-                adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT).toString());
+                adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT)[0].toString());
             } catch (NumberFormatException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) + " specified on commmand line.");

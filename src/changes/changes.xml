@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.0.13" date="___D___">
+            <action dev="mdescher" type="fix">
+                Admin port from command line did not work.
+            </action>
+        </release>
+
         <release version="4.0.12" date="2011-01-29">
             <action dev="mdescher" type="update">
                 Updated JA and FR web interface translation.
