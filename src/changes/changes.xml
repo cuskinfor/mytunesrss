@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.0.13" date="___D___">
+            <action dev="mdescher" type="add">
+                Write admin port to file "adminport" in cache folder after admin server startup.
+            </action>
             <action dev="mdescher" type="fix">
                 Admin port from command line did not work.
             </action>

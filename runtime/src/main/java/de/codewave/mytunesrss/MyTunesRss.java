@@ -24,6 +24,7 @@ import de.codewave.utils.cache.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.AppenderSkeleton;
@@ -461,6 +462,7 @@ public class MyTunesRss {
             adminContext.setServerClasses(new String[]{"-org.mortbay.jetty.plus.jaas.", "org.mortbay.jetty."});
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
+            FileUtils.writeStringToFile(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"), Long.toString(adminPort));
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
             }
@@ -502,6 +504,7 @@ public class MyTunesRss {
             ROUTER_CONFIG.deleteAdminPortMapping();
             ADMIN_SERVER.stop();
             ADMIN_SERVER.join();
+            FileUtils.deleteQuietly(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"));
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Cannot stop admin server.", e);
