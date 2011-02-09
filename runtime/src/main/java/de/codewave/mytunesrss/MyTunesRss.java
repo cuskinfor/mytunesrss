@@ -462,13 +462,6 @@ public class MyTunesRss {
             adminContext.setServerClasses(new String[]{"-org.mortbay.jetty.plus.jaas.", "org.mortbay.jetty."});
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
-            FileUtils.writeStringToFile(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"), Long.toString(adminPort));
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
-            }
-            if (COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
-                System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
-            }
             ROUTER_CONFIG.addAdminPortMapping(adminPort);
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
@@ -479,8 +472,23 @@ public class MyTunesRss {
             }
             return false;
         }
+        int localPort = ADMIN_SERVER.getConnectors()[0].getLocalPort();
         if (FORM != null) {
-            FORM.setAdminUrl(ADMIN_SERVER.getConnectors()[0].getLocalPort());
+            FORM.setAdminUrl(localPort);
+        }
+        try {
+            FileUtils.writeStringToFile(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"), localPort + "\n");
+        } catch (IOException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not write admin port to file.", e);
+            }
+
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Started admin server on port " + localPort + ".");
+        }
+        if (COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
+            System.out.println("Started admin server on port " + localPort);
         }
         return true;
     }
