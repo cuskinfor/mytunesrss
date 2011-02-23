@@ -24,6 +24,7 @@ import de.codewave.utils.cache.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.AppenderSkeleton;
@@ -461,12 +462,6 @@ public class MyTunesRss {
             adminContext.setServerClasses(new String[]{"-org.mortbay.jetty.plus.jaas.", "org.mortbay.jetty."});
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort() + ".");
-            }
-            if (COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
-                System.out.println("Started admin server on port " + ADMIN_SERVER.getConnectors()[0].getLocalPort());
-            }
             ROUTER_CONFIG.addAdminPortMapping(adminPort);
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
@@ -477,8 +472,23 @@ public class MyTunesRss {
             }
             return false;
         }
+        int localPort = ADMIN_SERVER.getConnectors()[0].getLocalPort();
         if (FORM != null) {
-            FORM.setAdminUrl(ADMIN_SERVER.getConnectors()[0].getLocalPort());
+            FORM.setAdminUrl(localPort);
+        }
+        try {
+            FileUtils.writeStringToFile(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"), localPort + "\n");
+        } catch (IOException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not write admin port to file.", e);
+            }
+
+        }
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Started admin server on port " + localPort + ".");
+        }
+        if (COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
+            System.out.println("Started admin server on port " + localPort);
         }
         return true;
     }
@@ -487,7 +497,7 @@ public class MyTunesRss {
         int adminPort = MyTunesRss.CONFIG.getAdminPort();
         if (COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) != null) {
             try {
-                adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT).toString());
+                adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT)[0].toString());
             } catch (NumberFormatException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) + " specified on commmand line.");
@@ -502,6 +512,7 @@ public class MyTunesRss {
             ROUTER_CONFIG.deleteAdminPortMapping();
             ADMIN_SERVER.stop();
             ADMIN_SERVER.join();
+            FileUtils.deleteQuietly(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"));
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Cannot stop admin server.", e);
