@@ -9,6 +9,10 @@
 
         <release version="4.0.13" date="___D___">
             <action dev="mdescher" type="add">
+                Fix itunes path replacements which did not work. Replacements are applied to the location string
+                from the itunes xml file (e.g. "file://localhost/...").
+            </action>
+            <action dev="mdescher" type="add">
                 Write admin port to file "adminport" in cache folder after admin server startup.
             </action>
             <action dev="mdescher" type="fix">
