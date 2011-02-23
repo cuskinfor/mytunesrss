@@ -15,5 +15,8 @@ public class CompiledPathReplacementTest {
         CompiledPathReplacement compiledPathReplacement = new CompiledPathReplacement(replacement);
         assertEquals("/backup/iTunes Music/My Artist/My Album/My Track.mp3", compiledPathReplacement.replace("c:/Documents and Settings/mdescher/My Music/iTunes/iTunes Music/My Artist/My Album/My Track.mp3"));
         assertEquals("/no match", compiledPathReplacement.replace("/no match"));
+        replacement = new PathReplacement("iTunes Music", "backup/iTunes Music");
+        compiledPathReplacement = new CompiledPathReplacement(replacement);
+        assertEquals("C:/backup/iTunes Music/My Artist/My Album/My Track.mp3", compiledPathReplacement.replace("C:/iTunes Music/My Artist/My Album/My Track.mp3"));
     }
 }
