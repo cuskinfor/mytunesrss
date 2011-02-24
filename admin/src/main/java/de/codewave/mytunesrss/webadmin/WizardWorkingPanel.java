@@ -6,9 +6,14 @@ import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vaadin.henrik.refresher.Refresher;
+import sun.util.LocaleServiceProviderPool;
 
 public class WizardWorkingPanel extends Panel implements Refresher.RefreshListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WizardWorkingPanel.class);
 
     public void attach() {
         super.attach();
@@ -27,7 +32,11 @@ public class WizardWorkingPanel extends Panel implements Refresher.RefreshListen
 
     public void refresh(Refresher refresher) {
         if (!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
-            VaadinUtils.getApplicationWindow(this).open(new ExternalResource("http://" + getApplication().getURL().getHost() + ":" + MyTunesRss.CONFIG.getPort() + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext())));
+            String url = "http://" + getApplication().getURL().getHost() + ":" + MyTunesRss.CONFIG.getPort() + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Forwarding to user interface URL \"" + url + "\".");
+            }
+            VaadinUtils.getApplicationWindow(this).open(new ExternalResource(url));
         }
     }
 }
