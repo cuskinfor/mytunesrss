@@ -8,6 +8,10 @@
     <body>
 
         <release version="4.0.13" date="___D___">
+            <action dev="mdescher" type="fix">
+                Use same host as admin when wizard finishes instead of 127.0.0.1 which of course only works
+                on the local machine.
+            </action>
             <action dev="mdescher" type="add">
                 Fix itunes path replacements which did not work. Replacements are applied to the location string
                 from the itunes xml file (e.g. "file://localhost/...").

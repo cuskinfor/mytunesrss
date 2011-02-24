@@ -27,7 +27,7 @@ public class WizardWorkingPanel extends Panel implements Refresher.RefreshListen
 
     public void refresh(Refresher refresher) {
         if (!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
-            VaadinUtils.getApplicationWindow(this).open(new ExternalResource("http://127.0.0.1:" + MyTunesRss.CONFIG.getPort() + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext())));
+            VaadinUtils.getApplicationWindow(this).open(new ExternalResource("http://" + getApplication().getURL().getHost() + ":" + MyTunesRss.CONFIG.getPort() + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext())));
         }
     }
 }
