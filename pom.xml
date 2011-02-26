@@ -12,18 +12,18 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/branches/mytunesrss-4.0.x</developerConnection>
+        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/branches/mytunesrss-4.0.x</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-maven2-base</artifactId>
-        <version>3.3.0</version>
+        <version>3.7.0</version>
     </parent>
     <repositories>
         <repository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -36,7 +36,7 @@
         <pluginRepository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
