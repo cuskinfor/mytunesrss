@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.13-SNAPSHOT</version>
+    <version>4.0.13</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -14,13 +14,13 @@
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-maven2-base</artifactId>
-        <version>3.3.0</version>
+        <version>3.7.0</version>
     </parent>
     <repositories>
         <repository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -33,7 +33,7 @@
         <pluginRepository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.dyn-o-saur.com/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -337,8 +337,9 @@
             <artifactId>icu</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring</artifactId>
+            <groupId>org.springframework.integration</groupId>
+            <artifactId>spring-integration-mail</artifactId>
+            <version>2.0.1.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>javax.activation</groupId>
@@ -424,6 +425,6 @@
         </plugins>
     </build>
     <scm>
-        <developerConnection>scm:svn:svn://codewave.dyn-o-saur.com/mytunesrss/branches/mytunesrss-4.0.x</developerConnection>
+        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/tags/mytunesrss-4.0.13</developerConnection>
     </scm>
 </project>
