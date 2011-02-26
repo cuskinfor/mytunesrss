@@ -49,17 +49,18 @@
 			                <td class="label"><fmt:message key="playlistName" /></td>
 			                <td><input type="text" name="smartPlaylist.playlist.name" value="<c:out value="${smartPlaylist.playlist.name}"/>" /></td>
 			            </tr>
-			
-			            <tr <mt:flipFlop/>>
-			                <td class="label"><fmt:message key="playlistUserPrivate" /></td>
-			                <td>
-			                    <input type="checkbox"
-			                           name="smartPlaylist.playlist.userPrivate"
-			                           value="true"
-			                           <c:if test="${smartPlaylist.playlist.userPrivate}">checked="checked"</c:if> />
-			                </td>
-			            </tr>
-			
+
+                        <tr <mt:flipFlop/>>
+                            <td class="label"><fmt:message key="playlistUserPrivate" /></td>
+                            <td>
+                                <input type="checkbox"
+                                       <c:if test="${!authUser.createPublicPlaylists}">disabled="disabled"</c:if>
+                                       name="smartPlaylist.playlist.userPrivate"
+                                       value="true"
+                                       <c:if test="${smartPlaylist.playlist.userPrivate}">checked="checked"</c:if> />
+                            </td>
+                        </tr>
+
 			            <c:forEach items="${fields}" var="field">
 			                <tr <mt:flipFlop/>>
 			                    <td class="label"><fmt:message key="${field}" /></td>

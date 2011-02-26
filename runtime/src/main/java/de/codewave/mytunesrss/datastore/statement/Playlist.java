@@ -13,7 +13,7 @@ public class Playlist {
     private String myName;
     private PlaylistType myType;
     private int myTrackCount;
-    private boolean myUserPrivate;
+    private boolean myUserPrivate = true;
     private boolean myHidden;
     private String myUserOwner;
 
