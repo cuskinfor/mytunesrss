@@ -209,6 +209,7 @@
 		    			<fmt:message key="playlistName" />
 			    		<input type="text" id="playlistName" name="name" value="<c:out value="${editPlaylistName}"/>" />
 						<input type="checkbox"
+                               <c:if test="${!authUser.createPublicPlaylists}">disabled="disabled"</c:if>
 						       id="privatePlaylist"
 						       value="true"
 						       <c:if test="${playlist.userPrivate}">checked="checked"</c:if> />
