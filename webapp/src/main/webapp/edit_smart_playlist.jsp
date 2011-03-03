@@ -93,7 +93,18 @@
 			                    </select>
 			                </td>
 			            </tr>
-			
+
+			            <tr <mt:flipFlop/>>
+			                <td class="label"><fmt:message key="smartPlaylist.smartInfo.videotype" /></td>
+			                <td>
+			                    <select name="smartPlaylist.smartInfo.videoType">
+			                        <option value=""><fmt:message key="smartPlaylist.smartInfo.videotype.null"/></option>
+			                        <option value="Movie" <c:if test="${smartPlaylist.smartInfo.videoType == 'Movie'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.movie"/></option>
+			                        <option value="TvShow" <c:if test="${smartPlaylist.smartInfo.videoType == 'TvShow'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.tvshow"/></option>
+			                    </select>
+			                </td>
+			            </tr>
+
 			        </table>
 			
 			        <div class="buttons">

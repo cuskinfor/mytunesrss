@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.VideoType;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -9,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 public class SmartInfo {
     private String myAlbumPattern;
     private String myArtistPattern;
+    private String mySeriesPattern;
     private String myGenrePattern;
     private String myTitlePattern;
     private String myFilePattern;
@@ -18,6 +20,7 @@ public class SmartInfo {
     private Integer myTimeMax;
     private Boolean myProtected;
     private MediaType myMediaType;
+    private VideoType myVideoType;
 
     public String getAlbumPattern() {
         return myAlbumPattern;
@@ -33,6 +36,14 @@ public class SmartInfo {
 
     public void setArtistPattern(String artistPattern) {
         myArtistPattern = artistPattern;
+    }
+
+    public String getSeriesPattern() {
+        return mySeriesPattern;
+    }
+
+    public void setSeriesPattern(String seriesPattern) {
+        mySeriesPattern = seriesPattern;
     }
 
     public String getGenrePattern() {
@@ -107,7 +118,15 @@ public class SmartInfo {
         myMediaType = mediaType;
     }
 
+    public VideoType getVideoType() {
+        return myVideoType;
+    }
+
+    public void setVideoType(VideoType videoType) {
+        myVideoType = videoType;
+    }
+
     public boolean isLuceneCriteria() {
-        return StringUtils.isNotEmpty(myAlbumPattern) || StringUtils.isNotEmpty(myArtistPattern) || StringUtils.isNotEmpty(myCommentPattern) || StringUtils.isNotEmpty(myFilePattern) || StringUtils.isNotEmpty(myGenrePattern) || StringUtils.isNotEmpty(myTagPattern) || StringUtils.isNotEmpty(myTitlePattern);
+        return StringUtils.isNotEmpty(myAlbumPattern) || StringUtils.isNotEmpty(myArtistPattern) || StringUtils.isNotEmpty(myCommentPattern) || StringUtils.isNotEmpty(myFilePattern) || StringUtils.isNotEmpty(myGenrePattern) || StringUtils.isNotEmpty(myTagPattern) || StringUtils.isNotEmpty(myTitlePattern) || StringUtils.isNotEmpty(mySeriesPattern);
     }
 }

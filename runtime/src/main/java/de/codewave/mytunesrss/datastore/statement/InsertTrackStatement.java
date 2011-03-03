@@ -4,154 +4,30 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackStatement
  */
-public class InsertTrackStatement implements InsertOrUpdateTrackStatement {
+public class InsertTrackStatement extends InsertOrUpdateTrackStatement {
     private static final Logger LOG = LoggerFactory.getLogger(InsertTrackStatement.class);
-    public static final String UNKNOWN = new String("!");
-
-    private String myId;
-    private String myName;
-    private String myArtist;
-    private String myAlbum;
-    private int myTime;
-    private int myTrackNumber;
-    private String myFileName;
-    private boolean myProtected;
-    private MediaType myMediaType;
-    private String myGenre;
-    private TrackSource mySource;
-    private String myMp4Codec;
-    private String myComment;
-    private int myPosNumber;
-    private int myPosSize;
-    private int myYear;
-    private SmartStatement myStatement;
 
     public InsertTrackStatement(TrackSource source) {
-        mySource = source;
+        super(source);
     }
 
-    public void setAlbum(String album) {
-        myAlbum = album;
-    }
-
-    public void setArtist(String artist) {
-        myArtist = artist;
-    }
-
-    public void setFileName(String fileName) {
-        myFileName = fileName;
-    }
-
-    public void setId(String id) {
-        myId = id;
-    }
-
-    public void setName(String name) {
-        myName = name;
-    }
-
-    public void setTime(int time) {
-        myTime = time;
-    }
-
-    public void setTrackNumber(int trackNumber) {
-        myTrackNumber = trackNumber;
-    }
-
-    public void setProtected(boolean aProtected) {
-        myProtected = aProtected;
-    }
-
-    public void setMediaType(MediaType mediaType) {
-        myMediaType = mediaType;
-    }
-
-    public void setGenre(String genre) {
-        myGenre = genre;
-    }
-
-    public void setMp4Codec(String mp4Codec) {
-        myMp4Codec = mp4Codec;
-    }
-
-    public void setComment(String comment) {
-        myComment = comment;
-    }
-
-    public void setPos(int number, int size) {
-        myPosNumber = number;
-        myPosSize = size;
-    }
-
-    public void setYear(int year) {
-        myYear = year;
+    @Override
+    protected void logError(String id, SQLException e) {
+        if (LOG.isErrorEnabled()) {
+            LOG.error(String.format("Could not insert track with ID \"%s\" into database.", id), e);
+        }
     }
 
     protected String getStatementName() {
         return "insertTrack";
     }
 
-    public synchronized void execute(Connection connection) throws SQLException {
-        try {
-            String originalArtist = myArtist;
-            myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
-            if (myStatement == null) {
-                myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
-            }
-            myStatement.clearParameters();
-            myStatement.setString("id", myId);
-            myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
-            myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
-            myStatement.setString("original_artist", StringUtils.isNotEmpty(originalArtist) ? originalArtist : UNKNOWN);
-            myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
-            myStatement.setInt("time", myTime);
-            myStatement.setInt("track_number", myTrackNumber);
-            myStatement.setString("file", myFileName);
-            myStatement.setBoolean("protected", myProtected);
-            myStatement.setString("mediatype", myMediaType.name());
-            myStatement.setString("source", mySource.name());
-            myStatement.setString("genre", myGenre);
-            myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
-            myStatement.setString("mp4codec", myMp4Codec);
-            myStatement.setLong("ts_updated", System.currentTimeMillis());
-            myStatement.setLong("playcount", 0);
-            myStatement.setString("comment", myComment);
-            myStatement.setInt("pos_number", myPosNumber);
-            myStatement.setInt("pos_size", myPosSize);
-            myStatement.setInt("year", myYear);
-            myStatement.execute();
-        } catch (SQLException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error(String.format("Could not insert track with ID \"%s\" into database.", myId), e);
-            }
-        }
-    }
-
-    public void clear() {
-        myId = null;
-        myName = null;
-        myArtist = null;
-        myAlbum = null;
-        myTime = 0;
-        myTrackNumber = 0;
-        myFileName = null;
-        myProtected = false;
-        myMediaType = MediaType.Other;
-        myGenre = null;
-        myMp4Codec = null;
-    }
 }

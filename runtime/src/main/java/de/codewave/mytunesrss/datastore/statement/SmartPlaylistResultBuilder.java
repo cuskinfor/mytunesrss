@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.VideoType;
 import de.codewave.utils.sql.ResultBuilder;
 import org.apache.commons.lang.StringUtils;
 
@@ -30,6 +31,7 @@ public class SmartPlaylistResultBuilder implements ResultBuilder<SmartPlaylist> 
         playlist.setContainerId(resultSet.getString("CONTAINER_ID"));
         smartInfo.setAlbumPattern(resultSet.getString("ALBUM_PATTERN"));
         smartInfo.setArtistPattern(resultSet.getString("ARTIST_PATTERN"));
+        smartInfo.setSeriesPattern(resultSet.getString("SERIES_PATTERN"));
         smartInfo.setFilePattern(resultSet.getString("FILE_PATTERN"));
         smartInfo.setTagPattern(resultSet.getString("TAG_PATTERN"));
         smartInfo.setCommentPattern(resultSet.getString("COMMENT_PATTERN"));
@@ -49,7 +51,11 @@ public class SmartPlaylistResultBuilder implements ResultBuilder<SmartPlaylist> 
         smartInfo.setTitlePattern(resultSet.getString("TITLE_PATTERN"));
         String mediaTypeName = resultSet.getString("MEDIATYPE");
         if (StringUtils.isNotBlank(mediaTypeName)) {
-            smartInfo.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
+            smartInfo.setMediaType(MediaType.valueOf(mediaTypeName));
+        }
+        String videoTypeName = resultSet.getString("VIDEOTYPE");
+        if (StringUtils.isNotBlank(videoTypeName)) {
+            smartInfo.setVideoType(VideoType.valueOf(videoTypeName));
         }
         return smartPlaylist;
     }

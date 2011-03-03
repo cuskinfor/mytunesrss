@@ -97,6 +97,9 @@ public class LuceneTrackService {
         document.add(new Field("name", StringUtils.lowerCase(track.getName()), Field.Store.NO, Field.Index.ANALYZED));
         document.add(new Field("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO, Field.Index.ANALYZED));
         document.add(new Field("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO, Field.Index.ANALYZED));
+        if (StringUtils.isNotBlank(track.getSeries())) {
+            document.add(new Field("series", StringUtils.lowerCase(track.getSeries()), Field.Store.NO, Field.Index.ANALYZED));
+        }
         document.add(new Field("filename", StringUtils.lowerCase(track.getFilename()), Field.Store.NO, Field.Index.NOT_ANALYZED));
         if (StringUtils.isNotBlank(track.getComment())) {
             document.add(new Field("comment", StringUtils.lowerCase(track.getComment()), Field.Store.NO, Field.Index.ANALYZED));
@@ -197,7 +200,7 @@ public class LuceneTrackService {
         BooleanQuery andQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
             BooleanQuery orQuery = new BooleanQuery();
-            for (String field : new String[]{"name", "album", "artist", "comment", "tags"}) {
+            for (String field : new String[]{"name", "album", "artist", "series", "comment", "tags"}) {
                 String escapedSearchTerm = QueryParser.escape(searchTerm);
                 orQuery.add(new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*")), BooleanClause.Occur.SHOULD);
                 if (fuzziness > 0) {
@@ -227,6 +230,7 @@ public class LuceneTrackService {
         BooleanQuery andQuery = new BooleanQuery();
         addToAndQuery(andQuery, "album", StringUtils.lowerCase(smartInfo.getAlbumPattern()), fuzziness);
         addToAndQuery(andQuery, "artist", StringUtils.lowerCase(smartInfo.getArtistPattern()), fuzziness);
+        addToAndQuery(andQuery, "series", StringUtils.lowerCase(smartInfo.getSeriesPattern()), fuzziness);
         addToAndQuery(andQuery, "genre", StringUtils.lowerCase(smartInfo.getGenrePattern()), fuzziness);
         addToAndQuery(andQuery, "tags", StringUtils.lowerCase(smartInfo.getTagPattern()), fuzziness);
         addToAndQuery(andQuery, "name", StringUtils.lowerCase(smartInfo.getTitlePattern()), fuzziness);

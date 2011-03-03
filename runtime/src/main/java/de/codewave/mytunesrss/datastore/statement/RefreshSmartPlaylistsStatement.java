@@ -49,6 +49,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 conditionals.put("mintime", smartPlaylist.getSmartInfo().getTimeMin() != null);
                 conditionals.put("maxtime", smartPlaylist.getSmartInfo().getTimeMax() != null);
                 conditionals.put("mediatype", smartPlaylist.getSmartInfo().getMediaType() != null);
+                conditionals.put("videotype", smartPlaylist.getSmartInfo().getVideoType() != null);
                 conditionals.put("protected", smartPlaylist.getSmartInfo().getProtected() != null);
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "refreshSmartPlaylist", conditionals);
                 statement.setString("id", smartPlaylist.getPlaylist().getId());
@@ -60,6 +61,9 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 }
                 if (smartPlaylist.getSmartInfo().getMediaType() != null) {
                     statement.setString("mediatype", smartPlaylist.getSmartInfo().getMediaType().name());
+                }
+                if (smartPlaylist.getSmartInfo().getVideoType() != null) {
+                    statement.setString("videotype", smartPlaylist.getSmartInfo().getVideoType().name());
                 }
                 if (smartPlaylist.getSmartInfo().getProtected() != null) {
                     statement.setBoolean("protected", smartPlaylist.getSmartInfo().getProtected());

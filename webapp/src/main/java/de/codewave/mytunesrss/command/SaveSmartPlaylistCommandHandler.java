@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.VideoType;
 import de.codewave.mytunesrss.datastore.statement.SaveMyTunesSmartPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SmartInfo;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
@@ -24,6 +25,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             SmartInfo smartInfo = new SmartInfo();
             smartInfo.setAlbumPattern(getRequestParameter("smartPlaylist.smartInfo.albumPattern", null));
             smartInfo.setArtistPattern(getRequestParameter("smartPlaylist.smartInfo.artistPattern", null));
+            smartInfo.setSeriesPattern(getRequestParameter("smartPlaylist.smartInfo.seriesPattern", null));
             smartInfo.setGenrePattern(getRequestParameter("smartPlaylist.smartInfo.genrePattern", null));
             smartInfo.setTitlePattern(getRequestParameter("smartPlaylist.smartInfo.titlePattern", null));
             smartInfo.setFilePattern(getRequestParameter("smartPlaylist.smartInfo.filePattern", null));
@@ -37,6 +39,9 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             }
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.mediaType", null))) {
                 smartInfo.setMediaType(MediaType.valueOf(getRequestParameter("smartPlaylist.smartInfo.mediaType", MediaType.Other.name())));
+            }
+            if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.videoType", null))) {
+                smartInfo.setVideoType(VideoType.valueOf(getRequestParameter("smartPlaylist.smartInfo.videoType", null)));
             }
             if (StringUtils.isNotBlank(getRequestParameter("smartPlaylist.smartInfo.protected", null))) {
                 smartInfo.setProtected(getBooleanRequestParameter("smartPlaylist.smartInfo.protected", false));
@@ -56,6 +61,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                                  "smartPlaylist.playlist.userPrivate",
                                  "smartPlaylist.smartInfo.albumPattern",
                                  "smartPlaylist.smartInfo.artistPattern",
+                                 "smartPlaylist.smartInfo.seriesPattern",
                                  "smartPlaylist.smartInfo.genrePattern",
                                  "smartPlaylist.smartInfo.titlePattern",
                                  "smartPlaylist.smartInfo.filePattern",

@@ -4,40 +4,191 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.lang.StringUtils;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.StringTokenizer;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement
  */
-public interface InsertOrUpdateTrackStatement extends DataStoreStatement {
-    void setAlbum(String album);
+public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement {
 
-    void setArtist(String artist);
+    static String dropWordsFromArtist(String artist) {
+        String dropWords = MyTunesRss.CONFIG.getArtistDropWords();
+        if (StringUtils.isNotEmpty(dropWords) && StringUtils.isNotEmpty(artist)) {
+            for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens();) {
+                String word = tokenizer.nextToken().toLowerCase();
+                while (artist.toLowerCase().startsWith(word + " ")) {
+                    artist = artist.substring(word.length()).trim();
+                }
+            }
+        }
+        return artist;
+    }
 
-    void setFileName(String fileName);
+    public static final String UNKNOWN = new String("!");
 
-    void setId(String id);
+    private String myId;
+    private String myName;
+    private String myArtist;
+    private String myAlbum;
+    private int myTime;
+    private int myTrackNumber;
+    private String myFileName;
+    private boolean myProtected;
+    private MediaType myMediaType;
+    private String myGenre;
+    private String myMp4Codec;
+    private String myComment;
+    private int myPosNumber;
+    private int myPosSize;
+    private int myYear;
+    private VideoType myVideoType;
+    private String mySeries;
+    private int mySeason;
+    private int myEpisode;
+    private TrackSource mySource;
+    private SmartStatement myStatement;
 
-    void setName(String name);
+    protected InsertOrUpdateTrackStatement(TrackSource source) {
+        mySource = source;
+    }
 
-    void setTime(int time);
+    public void setAlbum(String album) {
+        myAlbum = album;
+    }
 
-    void setTrackNumber(int trackNumber);
+    public void setArtist(String artist) {
+        myArtist = artist;
+    }
 
-    void setProtected(boolean aProtected);
+    public void setFileName(String fileName) {
+        myFileName = fileName;
+    }
 
-    void setMediaType(MediaType mediaType);
+    public void setId(String id) {
+        myId = id;
+    }
 
-    void setGenre(String genre);
+    public void setName(String name) {
+        myName = name;
+    }
 
-    void setMp4Codec(String codec);
+    public void setTime(int time) {
+        myTime = time;
+    }
 
-    void setComment(String comment);
+    public void setTrackNumber(int trackNumber) {
+        myTrackNumber = trackNumber;
+    }
 
-    void setPos(int number, int size);
+    public void setProtected(boolean aProtected) {
+        myProtected = aProtected;
+    }
 
-    void setYear(int year);
+    public void setMediaType(MediaType mediaType) {
+        myMediaType = mediaType;
+    }
 
-    void clear();
+    public void setGenre(String genre) {
+        myGenre = genre;
+    }
+
+    public void setMp4Codec(String mp4Codec) {
+        myMp4Codec = mp4Codec;
+    }
+
+    public void setComment(String comment) {
+        myComment = comment;
+    }
+
+    public void setPos(int number, int size) {
+        myPosNumber = number;
+        myPosSize = size;
+    }
+
+    public void setYear(int year) {
+        myYear = year;
+    }
+
+    public void setVideoType(VideoType videoType) {
+        myVideoType = videoType;
+    }
+
+    public void setSeries(String series) {
+        mySeries = series;
+    }
+
+    public void setSeason(int season) {
+        mySeason = season;
+    }
+
+    public void setEpisode(int episode) {
+        myEpisode = episode;
+    }
+
+    public synchronized void execute(Connection connection) throws SQLException {
+        try {
+            String originalArtist = myArtist;
+            myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
+            if (myStatement == null) {
+                myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
+            }
+            myStatement.clearParameters();
+            myStatement.setString("id", myId);
+            myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
+            myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
+            myStatement.setString("original_artist", StringUtils.isNotEmpty(originalArtist) ? originalArtist : UNKNOWN);
+            myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
+            myStatement.setInt("time", myTime);
+            myStatement.setInt("track_number", myTrackNumber);
+            myStatement.setString("file", myFileName);
+            myStatement.setBoolean("protected", myProtected);
+            myStatement.setString("mediatype", myMediaType.name());
+            myStatement.setString("source", mySource.name());
+            myStatement.setString("genre", myGenre);
+            myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
+            myStatement.setString("mp4codec", myMp4Codec);
+            myStatement.setLong("ts_updated", System.currentTimeMillis());
+            myStatement.setLong("playcount", 0);
+            myStatement.setString("comment", myComment);
+            myStatement.setInt("pos_number", myPosNumber);
+            myStatement.setInt("pos_size", myPosSize);
+            myStatement.setString("videotype", myVideoType != null ? myVideoType.name() : null);
+            myStatement.setString("series", mySeries);
+            myStatement.setInt("season", mySeason);
+            myStatement.setInt("episode", myEpisode);
+            myStatement.setInt("year", myYear);
+            myStatement.execute();
+        } catch (SQLException e) {
+            logError(myId, e);
+        }
+    }
+
+    protected abstract void logError(String id, SQLException e);
+
+    protected abstract String getStatementName();
+
+    public void clear() {
+        myId = null;
+        myName = null;
+        myArtist = null;
+        myAlbum = null;
+        myTime = 0;
+        myTrackNumber = 0;
+        myFileName = null;
+        myProtected = false;
+        myMediaType = MediaType.Other;
+        myGenre = null;
+        myMp4Codec = null;
+        myVideoType = null;
+        mySeries = null;
+        mySeason = 0;
+        myEpisode = 0;
+    }
 }

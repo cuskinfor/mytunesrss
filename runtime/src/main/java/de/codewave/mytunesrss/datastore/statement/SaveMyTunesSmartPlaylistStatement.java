@@ -41,6 +41,7 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         statement.setString("album_pattern", mySmartInfo.getAlbumPattern());
         statement.setString("artist_pattern", mySmartInfo.getArtistPattern());
         statement.setString("genre_pattern", mySmartInfo.getGenrePattern());
+        statement.setString("series_pattern", mySmartInfo.getSeriesPattern());
         statement.setString("title_pattern", mySmartInfo.getTitlePattern());
         statement.setString("file_pattern", mySmartInfo.getFilePattern());
         statement.setString("tag_pattern", mySmartInfo.getTagPattern());
@@ -56,6 +57,9 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         }
         if (mySmartInfo.getMediaType() != null) {
             statement.setString("mediatype", mySmartInfo.getMediaType().name());
+        }
+        if (mySmartInfo.getVideoType() != null) {
+            statement.setString("videotype", mySmartInfo.getVideoType().name());
         }
         statement.execute();
     }

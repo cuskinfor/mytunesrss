@@ -117,7 +117,17 @@ public class TrackListener implements PListHandlerListener {
                                 statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
                                 statement.setFileName(filename);
                                 statement.setProtected(FileSupportUtils.isProtected(filename));
-                                statement.setMediaType(track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue() ? MediaType.Video : MediaType.Audio);
+                                boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
+                                statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
+                                if (video) {
+                                    boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
+                                    statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
+                                    if (tvshow) {
+                                        statement.setSeries(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Series"))));
+                                        statement.setSeason((int) (track.get("Season") != null ? (Long) track.get("Season") : 0));
+                                        statement.setEpisode((int) (track.get("Episode Order") != null ? (Long) track.get("Episode Order") : 0));
+                                    }
+                                }
                                 statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
                                 statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
                                 statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),

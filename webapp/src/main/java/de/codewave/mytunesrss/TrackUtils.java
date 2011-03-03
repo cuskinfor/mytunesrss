@@ -171,6 +171,9 @@ public class TrackUtils {
             setPosNumber(track.getPosNumber());
             setPosSize(track.getPosSize());
             setYear(track.getYear());
+            setVideoType(track.getVideoType());
+            setEpisode(track.getEpisode());
+            setSeason(track.getSeason());
         }
 
         public boolean isNewSection() {

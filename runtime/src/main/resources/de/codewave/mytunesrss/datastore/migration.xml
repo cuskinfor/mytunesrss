@@ -199,4 +199,17 @@
         <sql>DELETE FROM track WHERE source = 'YouTube'</sql>
     </statement>
 
+    <statement name="migrate_4.1.0_eap_1">
+        <sql>ALTER TABLE track ADD COLUMN videotype VARCHAR(20)</sql>
+        <sql>ALTER TABLE track ADD COLUMN series VARCHAR(255)</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_series VARCHAR(255)</sql>
+        <sql>ALTER TABLE track ADD COLUMN episode INTEGER</sql>
+        <sql>ALTER TABLE track ADD COLUMN season INTEGER</sql>
+        <sql>CREATE INDEX idx_track_videotype ON track (videotype)</sql>
+        <sql>CREATE INDEX idx_track_series ON track (series)</sql>
+        <sql>CREATE INDEX idx_track_lower_series ON track (lower_series)</sql>
+        <sql>ALTER TABLE smart_info ADD COLUMN series_pattern VARCHAR(100)</sql>
+        <sql>ALTER TABLE smart_info ADD COLUMN videotype VARCHAR(20)</sql>
+    </statement>
+
 </statements>

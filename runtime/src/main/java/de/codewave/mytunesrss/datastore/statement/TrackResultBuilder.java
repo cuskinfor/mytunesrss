@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.VideoType;
 import de.codewave.utils.sql.ResultBuilder;
 import org.apache.commons.lang.StringUtils;
 
@@ -38,6 +39,11 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setPosNumber(resultSet.getInt("POS_NUMBER"));
         track.setPosSize(resultSet.getInt("POS_SIZE"));
         track.setYear(resultSet.getInt("YEAR"));
+        String videoType = resultSet.getString("VIDEOTYPE");
+        track.setVideoType(videoType != null ? VideoType.valueOf(videoType) : null);
+        track.setSeries(resultSet.getString("SERIES"));
+        track.setSeason(resultSet.getInt("SEASON"));
+        track.setEpisode(resultSet.getInt("EPISODE"));
         return track;
     }
 }

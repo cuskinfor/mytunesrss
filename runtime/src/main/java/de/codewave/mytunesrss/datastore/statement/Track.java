@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.VideoType;
 
 import java.io.File;
 
@@ -34,8 +35,12 @@ public class Track {
     private int myPosNumber;
     private int myPosSize;
     private int myYear;
-    private String filename;
-    private TrackSource source;
+    private String myFilename;
+    private TrackSource mySource;
+    private VideoType myVideoType;
+    private String mySeries;
+    private int mySeason;
+    private int myEpisode;
 
     public String getAlbum() {
         return myAlbum;
@@ -215,19 +220,51 @@ public class Track {
     }
 
     public String getFilename() {
-        return filename;
+        return myFilename;
     }
 
     public void setFilename(String filename) {
-        this.filename = filename;
+        this.myFilename = filename;
     }
 
     public TrackSource getSource() {
-        return source;
+        return mySource;
     }
 
     public void setSource(TrackSource source) {
-        this.source = source;
+        this.mySource = source;
+    }
+
+    public VideoType getVideoType() {
+        return myVideoType;
+    }
+
+    public void setVideoType(VideoType videoType) {
+        myVideoType = videoType;
+    }
+
+    public String getSeries() {
+        return mySeries;
+    }
+
+    public void setSeries(String series) {
+        mySeries = series;
+    }
+
+    public int getSeason() {
+        return mySeason;
+    }
+
+    public void setSeason(int season) {
+        mySeason = season;
+    }
+
+    public int getEpisode() {
+        return myEpisode;
+    }
+
+    public void setEpisode(int episode) {
+        myEpisode = episode;
     }
 
     @Override

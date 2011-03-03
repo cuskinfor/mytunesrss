@@ -33,6 +33,11 @@
                 pos_size INTEGER,
                 image_hash CHAR(24),
                 year INTEGER,
+                videotype VARCHAR(20),
+                series VARCHAR(255),
+                lower_series VARCHAR(255),
+                episode INTEGER,
+                season INTEGER,
                 UNIQUE (id)
             )
         </sql>
@@ -120,6 +125,7 @@
                 album_pattern VARCHAR(100),
                 artist_pattern VARCHAR(100),
                 genre_pattern VARCHAR(100),
+                series_pattern VARCHAR(100),
                 title_pattern VARCHAR(100),
                 file_pattern VARCHAR(100),
                 tag_pattern VARCHAR(100),
@@ -127,6 +133,7 @@
                 time_min INTEGER,
                 time_max INTEGER,
                 mediatype VARCHAR(20),
+                videotype VARCHAR(20),
                 protected BOOLEAN,
                 UNIQUE (playlist_id),
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
@@ -150,6 +157,9 @@
         <sql>CREATE INDEX idx_track_comment ON track (comment)</sql>
         <sql>CREATE INDEX idx_track_lower_comment ON track (lower_comment)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
+        <sql>CREATE INDEX idx_track_videotype ON track (videotype)</sql>
+        <sql>CREATE INDEX idx_track_series ON track (series)</sql>
+        <sql>CREATE INDEX idx_track_lower_series ON track (lower_series)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
