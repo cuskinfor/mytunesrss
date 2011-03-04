@@ -51,8 +51,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private WatchfolderDatasourceConfig myDatasourceConfig;
     private Map<String, Pattern> myPatterns = new HashMap<String, Pattern>();
 
-    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
-            throws SQLException {
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds) {
         myDatasourceConfig = datasourceConfig;
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
@@ -341,7 +340,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return getFallbackName(file, new String(myDatasourceConfig.getAlbumFallback()));
     }
 
-    private String getFallbackName(File file, String pattern) {
+    String getFallbackName(File file, String pattern) {
         String name = new String(pattern);
         String[] dirTokens = StringUtils.substringsBetween(pattern, "[dir:", "]");
         if (dirTokens != null) {
@@ -384,17 +383,17 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (trimmedToken != null && trimmedToken.length() > 1 && trimmedToken.startsWith(":")) {
                     Pattern regExpPattern = myPatterns.get(trimmedToken.substring(1));
                     if (regExpPattern == null) {
-                        regExpPattern = Pattern.compile(trimmedToken);
-                        myPatterns.put(trimmedToken, regExpPattern);
+                        regExpPattern = Pattern.compile(trimmedToken.substring(1));
+                        myPatterns.put(trimmedToken.substring(1), regExpPattern);
                     }
                     Matcher matcher = regExpPattern.matcher(file.getName());
                     if (matcher.find()) {
-                        name = name.replace("[file:" + token + "]", matcher.group(matcher.groupCount()));
+                        name = name.replace("[file" + token + "]", matcher.group(matcher.groupCount()));
                     } else {
-                        name = name.replace("[file:" + token + "]", "");
+                        name = name.replace("[file" + token + "]", "");
                     }
                 } else {
-                    name = name.replace("[file:" + token + "]", file.getName());
+                    name = name.replace("[file" + token + "]", file.getName());
                 }
             }
         }
