@@ -8,6 +8,10 @@
     <body>
 
         <release version="4.1.0-EAP-1" date="2011-xx-xx">
+            <action dev="mdescher" type="update">
+                Support for file name replacement in fallbacks and regular expressions in directory and file
+                names.
+            </action>
             <action dev="mdescher" type="add">
                 Support for movies and TV shows from iTunes. All video from watch folders are considered
                 movies at the moment.

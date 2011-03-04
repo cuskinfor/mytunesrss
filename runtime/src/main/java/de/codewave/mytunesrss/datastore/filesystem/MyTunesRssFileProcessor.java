@@ -25,6 +25,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * de.codewave.mytunesrss.datastore.filesystem.MyTunesRssFileProcessor
@@ -46,7 +48,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private Set<String> myExistingIds = new HashSet<String>();
     private Collection<String> myTrackIds;
     private String[] myDisabledMp4Codecs;
-    WatchfolderDatasourceConfig myDatasourceConfig;
+    private WatchfolderDatasourceConfig myDatasourceConfig;
+    private Map<String, Pattern> myPatterns = new HashMap<String, Pattern>();
 
     public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds)
             throws SQLException {
@@ -340,20 +343,58 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private String getFallbackName(File file, String pattern) {
         String name = new String(pattern);
-        String[] tokens = StringUtils.substringsBetween(pattern, "[dir:", "]");
-        if (tokens != null) {
-            for (String token : tokens) {
-                String trimmedToken = StringUtils.trimToNull(token);
-                if (StringUtils.isNumeric(trimmedToken)) {
-                    int number = Integer.parseInt(trimmedToken);
+        String[] dirTokens = StringUtils.substringsBetween(pattern, "[dir:", "]");
+        if (dirTokens != null) {
+            for (String token : dirTokens) {
+                String[] numberAndRegExp = StringUtils.split(StringUtils.trimToEmpty(token), ":", 2);
+                for (int i = 0; i < numberAndRegExp.length; i++) {
+                    numberAndRegExp[i] = StringUtils.trimToNull(numberAndRegExp[i]);
+                }
+                if (numberAndRegExp.length > 0 && StringUtils.isNumeric(numberAndRegExp[0])) {
+                    int number = Integer.parseInt(numberAndRegExp[0]);
                     File dir = file.getParentFile();
                     while (dir != null && number > 0) {
                         dir = dir.getParentFile();
                         number--;
                     }
                     if (dir != null && dir.isDirectory()) {
-                        name = name.replace("[dir:" + token + "]", dir.getName());
+                        if (numberAndRegExp.length == 1) {
+                            name = name.replace("[dir:" + token + "]", dir.getName());
+                        } else {
+                            Pattern regExpPattern = myPatterns.get(numberAndRegExp[1]);
+                            if (regExpPattern == null) {
+                                regExpPattern = Pattern.compile(numberAndRegExp[1]);
+                                myPatterns.put(numberAndRegExp[1], regExpPattern);
+                            }
+                            Matcher matcher = regExpPattern.matcher(dir.getName());
+                            if (matcher.find()) {
+                                name = name.replace("[dir:" + token + "]", matcher.group(matcher.groupCount()));
+                            } else {
+                                name = name.replace("[dir:" + token + "]", "");
+                            }
+                        }
                     }
+                }
+            }
+        }
+        String[] fileTokens = StringUtils.substringsBetween(pattern, "[file", "]");
+        if (fileTokens != null) {
+            for (String token : fileTokens) {
+                String trimmedToken = StringUtils.trimToNull(token);
+                if (trimmedToken != null && trimmedToken.length() > 1 && trimmedToken.startsWith(":")) {
+                    Pattern regExpPattern = myPatterns.get(trimmedToken.substring(1));
+                    if (regExpPattern == null) {
+                        regExpPattern = Pattern.compile(trimmedToken);
+                        myPatterns.put(trimmedToken, regExpPattern);
+                    }
+                    Matcher matcher = regExpPattern.matcher(file.getName());
+                    if (matcher.find()) {
+                        name = name.replace("[file:" + token + "]", matcher.group(matcher.groupCount()));
+                    } else {
+                        name = name.replace("[file:" + token + "]", "");
+                    }
+                } else {
+                    name = name.replace("[file:" + token + "]", file.getName());
                 }
             }
         }
