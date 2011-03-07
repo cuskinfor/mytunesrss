@@ -120,6 +120,8 @@ public class TrackListener implements PListHandlerListener {
                                 boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
                                 statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
                                 if (video) {
+                                    statement.setAlbum(null);
+                                    statement.setArtist(null);
                                     boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
                                     statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
                                     if (tvshow) {

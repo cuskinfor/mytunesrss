@@ -12,12 +12,22 @@ import java.util.regex.Pattern;
 
 public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
+    public static final String DEFAULT_ALBUM_FALLBACK = "[[[dir:0]]]";
+    public static final String DEFAULT_ARTIST_FALLBACK = "[[[dir:1]]]";
+    public static final String DEFAULT_SERIES_FALLBACK = "[[[dir:1]]]";
+    public static final String DEFAULT_SEASON_FALLBACK = "[[[dir:0:Season ([0-9]+)]]]";
+    public static final String DEFAULT_EPISODE_FALLBACK = "[[[file:[0-9]+[eEx]([0-9]+)]]]";
+
     private long myMinFileSize;
     private long myMaxFileSize;
     private Pattern myIncludePattern;
     private Pattern myExcludePattern;
-    private String myAlbumFallback = "[dir:0]";
-    private String myArtistFallback = "[dir:1]";
+    private String myAlbumFallback = DEFAULT_ALBUM_FALLBACK;
+    private String myArtistFallback = DEFAULT_ARTIST_FALLBACK;
+    private String mySeriesFallback = DEFAULT_SERIES_FALLBACK;
+    private String mySeasonFallback = DEFAULT_SEASON_FALLBACK;
+    private String myEpisodeFallback = DEFAULT_EPISODE_FALLBACK;
+    private VideoType myVideoType = VideoType.Movie;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -27,6 +37,10 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myExcludePattern = source.myExcludePattern;
         myAlbumFallback = source.getAlbumFallback();
         myArtistFallback = source.getArtistFallback();
+        mySeriesFallback = source.getSeriesFallback();
+        mySeasonFallback = source.getSeasonFallback();
+        myEpisodeFallback = source.getEpisodeFallback();
+        myVideoType = source.getVideoType();
     }
 
     public WatchfolderDatasourceConfig(String definition) {
@@ -84,6 +98,38 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
     public void setArtistFallback(String artistFallback) {
         myArtistFallback = artistFallback;
+    }
+
+    public String getSeriesFallback() {
+        return mySeriesFallback;
+    }
+
+    public void setSeriesFallback(String seriesFallback) {
+        mySeriesFallback = seriesFallback;
+    }
+
+    public String getSeasonFallback() {
+        return mySeasonFallback;
+    }
+
+    public void setSeasonFallback(String seasonFallback) {
+        mySeasonFallback = seasonFallback;
+    }
+
+    public String getEpisodeFallback() {
+        return myEpisodeFallback;
+    }
+
+    public void setEpisodeFallback(String episodeFallback) {
+        myEpisodeFallback = episodeFallback;
+    }
+
+    public VideoType getVideoType() {
+        return myVideoType;
+    }
+
+    public void setVideoType(VideoType videoType) {
+        myVideoType = videoType;
     }
 
     public boolean isIncluded(File file) {

@@ -7,10 +7,14 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.Select;
+import de.codewave.mytunesrss.VideoType;
 import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+
+import java.util.Arrays;
 
 public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
@@ -22,6 +26,11 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Form myFallbackForm;
     private SmartTextField myAlbumFallback;
     private SmartTextField myArtistFallback;
+    private SmartTextField mySeriesFallback;
+    private SmartTextField mySeasonFallback;
+    private SmartTextField myEpisodeFallback;
+    private Form myMiscOptionsForm;
+    private Select myVideoType;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
@@ -31,7 +40,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 4, true, true));
 
         myIncludeExcludeForm = getComponentFactory().createForm(null, true);
         myIncludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.includePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidIncludePattern"));
@@ -42,17 +51,28 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myIncludeExcludeForm.addField(myExcludePattern, myExcludePattern);
         myIncludeExcludeForm.addField(myMinFileSize, myMinFileSize);
         myIncludeExcludeForm.addField(myMaxFileSize, myMaxFileSize);
-        Panel panel = getComponentFactory().surroundWithPanel(myIncludeExcludeForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.options"));
+        Panel panel = getComponentFactory().surroundWithPanel(myIncludeExcludeForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.filter"));
         addComponent(panel);
 
         myFallbackForm = getComponentFactory().createForm(null, true);
         myAlbumFallback = getComponentFactory().createTextField("datasourceOptionsPanel.albumFallback");
         myArtistFallback = getComponentFactory().createTextField("datasourceOptionsPanel.artistFallback");
+        mySeriesFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seriesFallback");
+        mySeasonFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seasonFallback");
+        myEpisodeFallback = getComponentFactory().createTextField("datasourceOptionsPanel.episodeFallback");
         myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
         myFallbackForm.addField(myArtistFallback, myArtistFallback);
+        myFallbackForm.addField(mySeriesFallback, mySeriesFallback);
+        myFallbackForm.addField(mySeasonFallback, mySeasonFallback);
+        myFallbackForm.addField(myEpisodeFallback, myEpisodeFallback);
         addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.fallbacks")));
 
-        addDefaultComponents(0, 2, 0, 2, false);
+        myMiscOptionsForm = getComponentFactory().createForm(null, true);
+        myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
+        myMiscOptionsForm.addField(myVideoType, myVideoType);
+        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
+
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
     }
@@ -65,6 +85,10 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setExcludePattern(myExcludePattern.getStringValue(null));
         myConfig.setAlbumFallback(myAlbumFallback.getStringValue(null));
         myConfig.setArtistFallback(myArtistFallback.getStringValue(null));
+        myConfig.setSeriesFallback(mySeriesFallback.getStringValue(null));
+        myConfig.setSeasonFallback(mySeasonFallback.getStringValue(null));
+        myConfig.setEpisodeFallback(myEpisodeFallback.getStringValue(null));
+        myConfig.setVideoType(((VideoTypeRepresentation) myVideoType.getValue()).getVideoType());
     }
 
     @Override
@@ -83,6 +107,10 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myExcludePattern.setValue(myConfig.getExcludePattern(), "");
         myAlbumFallback.setValue(myConfig.getAlbumFallback());
         myArtistFallback.setValue(myConfig.getArtistFallback());
+        mySeriesFallback.setValue(myConfig.getSeriesFallback());
+        mySeasonFallback.setValue(myConfig.getSeasonFallback());
+        myEpisodeFallback.setValue(myConfig.getEpisodeFallback());
+        myVideoType.setValue(new VideoTypeRepresentation(myConfig.getVideoType()));
     }
 
     protected boolean beforeSave() {
@@ -103,5 +131,39 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     private void closeWindow() {
         getWindow().getParent().removeWindow(getWindow());
+    }
+
+    private class VideoTypeRepresentation {
+        private VideoType myVideoType;
+
+        private VideoTypeRepresentation(VideoType videoType) {
+            myVideoType = videoType;
+        }
+
+        private VideoType getVideoType() {
+            return myVideoType;
+        }
+
+        @Override
+        public String toString() {
+            return getBundleString("datasourceOptionsPanel.videoType." + myVideoType.name());
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            VideoTypeRepresentation that = (VideoTypeRepresentation) o;
+
+            if (myVideoType != that.myVideoType) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return myVideoType != null ? myVideoType.hashCode() : 0;
+        }
     }
 }

@@ -1070,8 +1070,12 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
                             watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
                             watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
-                            watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", "[dir:0]"));
-                            watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", "[dir:1]"));
+                            watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", WatchfolderDatasourceConfig.DEFAULT_ALBUM_FALLBACK));
+                            watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", WatchfolderDatasourceConfig.DEFAULT_ARTIST_FALLBACK));
+                            watchfolderDatasourceConfig.setSeriesFallback(JXPathUtils.getStringValue(datasourceContext, "seriesFallback", WatchfolderDatasourceConfig.DEFAULT_SERIES_FALLBACK));
+                            watchfolderDatasourceConfig.setSeasonFallback(JXPathUtils.getStringValue(datasourceContext, "seasonFallback", WatchfolderDatasourceConfig.DEFAULT_SEASON_FALLBACK));
+                            watchfolderDatasourceConfig.setEpisodeFallback(JXPathUtils.getStringValue(datasourceContext, "episodeFallback", WatchfolderDatasourceConfig.DEFAULT_EPISODE_FALLBACK));
+                            watchfolderDatasourceConfig.setVideoType(VideoType.valueOf(JXPathUtils.getStringValue(datasourceContext, "videoType", VideoType.Movie.name())));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1341,6 +1345,10 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getExcludePattern()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getArtistFallback()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "albumFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getAlbumFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "seriesFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getSeriesFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "seasonFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getSeasonFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "episodeFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getEpisodeFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "videoType", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getVideoType().name()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
@@ -1371,9 +1379,25 @@ public class MyTunesRssConfig {
 
     private void migrate() {
         Version current = new Version(getVersion());
-        if (current.compareTo(new Version("3.6")) < 0) {
-            setVersion("3.6");
+        if (current.compareTo(new Version("4.1.0")) < 0) {
+            setVersion("4.1.0");
+            for (DatasourceConfig dc : getDatasources()) {
+                if (dc.getType() == DatasourceType.Watchfolder) {
+                    WatchfolderDatasourceConfig wdc = (WatchfolderDatasourceConfig) dc;
+                    wdc.setAlbumFallback(migrateFallback(wdc.getAlbumFallback()));
+                    wdc.setArtistFallback(migrateFallback(wdc.getArtistFallback()));
+                }
+            }
         }
+    }
+
+    private String migrateFallback(String fallback) {
+        for (String type : new String[] {"dir", "file"}) {
+            for (String token : StringUtils.substringsBetween(fallback, "[" + type + ":", "]")) {
+                fallback = fallback.replace("[" + type + ":" + token + "]","[[[dir:" + token + "]]]");
+            }
+        }
+        return fallback;
     }
 
     public boolean isDefaultDatabase() {

@@ -164,7 +164,10 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
         } catch (Exception e) {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
-            throw e;
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Exception during import.", e);
+            }
+
         }
         return result;
     }

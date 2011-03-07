@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.LuceneQueryParserException;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
@@ -61,6 +58,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(MediaType.Audio);
         return query;
     }
 
@@ -73,6 +71,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(MediaType.Audio);
         return query;
     }
 
@@ -85,6 +84,17 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(MediaType.Audio);
+        return query;
+    }
+
+    public static FindTrackQuery getForMediaAndVideoTypes(User user, MediaType[] mediaTypes, VideoType videoType) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.mySortOrder = SortOrder.Abc;
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(mediaTypes);
+        query.setVideoType(videoType);
         return query;
     }
 
@@ -96,6 +106,8 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
+    private MediaType[] myMediaTypes;
+    private VideoType myVideoType;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -103,6 +115,14 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     public void setResultSetType(ResultSetType resultSetType) {
         myResultSetType = resultSetType;
+    }
+
+    public void setMediaTypes(MediaType... mediaTypes) {
+        myMediaTypes = mediaTypes;
+    }
+
+    public void setVideoType(VideoType videoType) {
+        myVideoType = videoType;
     }
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
@@ -120,15 +140,20 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
         conditionals.put("albumsort", mySortOrder == SortOrder.Album);
+        conditionals.put("abcsort", mySortOrder == SortOrder.Abc);
         conditionals.put("album", myAlbums != null && myAlbums.length > 0);
         conditionals.put("artist", myArtists != null && myArtists.length > 0);
         conditionals.put("genre", myGenres != null && myGenres.length > 0);
+        conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
+        conditionals.put("videotype", myVideoType != null);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);
         statement.setItems("genre", myGenres);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
+        statement.setItems("mediaTypes", myMediaTypes);
+        statement.setString("videoType", myVideoType.name());
         return execute(statement, new TrackResultBuilder());
 
     }

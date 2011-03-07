@@ -204,6 +204,8 @@
         <genre>AND t.lower_genre IN (:genre[])</genre>
         <artist>AND t.lower_artist IN (:artist[])</artist>
         <album>AND t.lower_album IN (:album[])</album>
+        <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
+        <videotype>AND t.videotype = :videoType</videotype>
         <restricted>
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
@@ -218,6 +220,7 @@
         GROUP BY {trackColumnsForGrouping}
         <albumsort>ORDER BY t.album, t.pos_number, t.track_number, t.name</albumsort>
         <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
+        <abcsort>ORDER BY t.name</abcsort>
         ]]>
       </sql>
     </statement>
@@ -397,7 +400,7 @@
         <sql>DELETE FROM album</sql>
         <sql>
             INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash, year)
-            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash), MAX(year) FROM track GROUP BY lower_album
+            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash), MAX(year) FROM track WHERE mediatype = 'audio' GROUP BY lower_album
         </sql>
     </statement>
 
@@ -405,7 +408,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track GROUP BY lower_artist
+            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'audio' GROUP BY lower_artist
         </sql>
     </statement>
 

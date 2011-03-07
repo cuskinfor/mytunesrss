@@ -67,7 +67,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myDeleteMissingFiles = getComponentFactory().createCheckBox("datasourceOptionsPanel.itunesDeleteMissingFiles");
         myMiscOptionsForm.addField(myDeleteMissingFiles, myDeleteMissingFiles);
-        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.itunesMisc")));
+        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 3, 0, 3, false);
 

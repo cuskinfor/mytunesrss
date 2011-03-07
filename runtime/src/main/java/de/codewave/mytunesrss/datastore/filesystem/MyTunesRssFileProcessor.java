@@ -90,22 +90,32 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         statement.clear();
                         statement.setId(fileId);
                         TrackMetaData meta = null;
+                        FileType type = MyTunesRss.CONFIG.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                         if (FileSupportUtils.isMp3(file)) {
-                            meta = parseMp3MetaData(file, statement, fileId);
+                            meta = parseMp3MetaData(file, statement, fileId, type.getMediaType());
                         } else if (FileSupportUtils.isMp4(file)) {
-                            meta = parseMp4MetaData(file, statement, fileId);
+                            meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
                             if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
                                 myExistingIds.remove(fileId);
                                 DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
                                 return; // early return!!!
                             }
                         } else {
-                            setSimpleInfo(statement, file);
+                            setSimpleInfo(statement, file, type.getMediaType());
                         }
-                        FileType type = MyTunesRss.CONFIG.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                         statement.setProtected(type.isProtected());
                         statement.setMediaType(type.getMediaType());
                         statement.setFileName(canonicalFilePath);
+                        if (type.getMediaType() == MediaType.Video) {
+                            statement.setAlbum(null);
+                            statement.setArtist(null);
+                            statement.setVideoType(myDatasourceConfig.getVideoType());
+                            if (myDatasourceConfig.getVideoType() == VideoType.TvShow) {
+                                statement.setSeason(getFallbackSeason(file)); // TODO: try meta info first
+                                statement.setSeries(getFallbackSeries(file)); // TODO: try meta info first
+                                statement.setEpisode(getFallbackEpisode(file)); // TODO: try meta info first
+                            }
+                        }
                         try {
                             myStoreSession.executeStatement(statement);
                             if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
@@ -135,7 +145,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         myTrackIds.removeAll(myExistingIds);
     }
 
-    private TrackMetaData parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+    private TrackMetaData parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {
         TrackMetaData meta = new TrackMetaData();
         Id3Tag tag = null;
         try {
@@ -149,7 +159,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         if (tag == null) {
-            setSimpleInfo(statement, file);
+            setSimpleInfo(statement, file, mediaType);
         } else {
             try {
                 String album = tag.getAlbum();
@@ -209,7 +219,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 statement.clear();
                 statement.setId(fileId);
-                setSimpleInfo(statement, file);
+                setSimpleInfo(statement, file, mediaType);
             }
         }
         return meta;
@@ -258,7 +268,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return null;
     }
 
-    private TrackMetaData parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId) {
+    private TrackMetaData parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {
         TrackMetaData meta = new TrackMetaData();
         Map<String, Mp4Atom> atoms = null;
         try {
@@ -272,7 +282,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         if (atoms == null || atoms.isEmpty()) {
-            setSimpleInfo(statement, file);
+            setSimpleInfo(statement, file, mediaType);
         } else {
             try {
                 Mp4Atom atom = atoms.get(ATOM_ALBUM);
@@ -319,7 +329,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 statement.clear();
                 statement.setId(fileId);
-                setSimpleInfo(statement, file);
+                setSimpleInfo(statement, file, mediaType);
             }
         }
         Mp4Atom atom = atoms.get(ATOM_COVER);
@@ -330,19 +340,51 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return meta;
     }
 
-    private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file) {
+    private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file, MediaType mediaType) {
         statement.setName(FilenameUtils.getBaseName(file.getName()));
         statement.setAlbum(getFallbackAlbumName(file));
         statement.setArtist(getFallbackArtistName(file));
+        if (mediaType == MediaType.Video && myDatasourceConfig.getVideoType() == VideoType.TvShow) {
+            statement.setSeries(getFallbackSeries(file));
+            statement.setSeason(getFallbackSeason(file));
+            statement.setEpisode(getFallbackEpisode(file));
+        }
     }
 
     private String getFallbackAlbumName(File file) {
-        return getFallbackName(file, new String(myDatasourceConfig.getAlbumFallback()));
+        return myDatasourceConfig.getAlbumFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getAlbumFallback())) : null;
+    }
+
+    private String getFallbackArtistName(File file) {
+        return getFallbackName(file, new String(myDatasourceConfig.getArtistFallback()));
+    }
+
+
+    private String getFallbackSeries(File file) {
+        return myDatasourceConfig.getSeriesFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getSeriesFallback())) : null;
+    }
+
+    private int getFallbackSeason(File file) {
+        if (myDatasourceConfig.getSeasonFallback() != null) {
+            String fallback = StringUtils.trimToNull(getFallbackName(file, new String(myDatasourceConfig.getSeasonFallback())));
+            return StringUtils.isNumeric(fallback) ? Integer.parseInt(fallback) : 0;
+        } else {
+            return 0;
+        }
+    }
+
+    private int getFallbackEpisode(File file) {
+        if (myDatasourceConfig.getEpisodeFallback() != null) {
+            String fallback = StringUtils.trimToNull(getFallbackName(file, new String(myDatasourceConfig.getEpisodeFallback())));
+            return StringUtils.isNumeric(fallback) ? Integer.parseInt(fallback) : 0;
+        } else {
+            return 0;
+        }
     }
 
     String getFallbackName(File file, String pattern) {
         String name = new String(pattern);
-        String[] dirTokens = StringUtils.substringsBetween(pattern, "[dir:", "]");
+        String[] dirTokens = StringUtils.substringsBetween(pattern, "[[[dir:", "]]]");
         if (dirTokens != null) {
             for (String token : dirTokens) {
                 String[] numberAndRegExp = StringUtils.split(StringUtils.trimToEmpty(token), ":", 2);
@@ -358,7 +400,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                     if (dir != null && dir.isDirectory()) {
                         if (numberAndRegExp.length == 1) {
-                            name = name.replace("[dir:" + token + "]", dir.getName());
+                            name = name.replace("[[[dir:" + token + "]]]", dir.getName());
                         } else {
                             Pattern regExpPattern = myPatterns.get(numberAndRegExp[1]);
                             if (regExpPattern == null) {
@@ -367,16 +409,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             }
                             Matcher matcher = regExpPattern.matcher(dir.getName());
                             if (matcher.find()) {
-                                name = name.replace("[dir:" + token + "]", matcher.group(matcher.groupCount()));
+                                name = name.replace("[[[dir:" + token + "]]]", matcher.group(matcher.groupCount()));
                             } else {
-                                name = name.replace("[dir:" + token + "]", "");
+                                name = name.replace("[[[dir:" + token + "]]]", "");
                             }
                         }
                     }
                 }
             }
         }
-        String[] fileTokens = StringUtils.substringsBetween(pattern, "[file", "]");
+        String[] fileTokens = StringUtils.substringsBetween(pattern, "[[[file", "]]]");
         if (fileTokens != null) {
             for (String token : fileTokens) {
                 String trimmedToken = StringUtils.trimToNull(token);
@@ -388,21 +430,17 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                     Matcher matcher = regExpPattern.matcher(file.getName());
                     if (matcher.find()) {
-                        name = name.replace("[file" + token + "]", matcher.group(matcher.groupCount()));
+                        name = name.replace("[[[file" + token + "]]]", matcher.group(matcher.groupCount()));
                     } else {
-                        name = name.replace("[file" + token + "]", "");
+                        name = name.replace("[[[file" + token + "]]]", "");
                     }
                 } else {
-                    name = name.replace("[file" + token + "]", file.getName());
+                    name = name.replace("[[[file" + token + "]]]", file.getName());
                 }
             }
         }
         name = StringUtils.trimToNull(name);
         LOGGER.debug("Fallback name for \"" + file + "\" and pattern \"" + pattern + "\" is \"" + name + "\".");
         return name;
-    }
-
-    private String getFallbackArtistName(File file) {
-        return getFallbackName(file, new String(myDatasourceConfig.getArtistFallback()));
     }
 }
