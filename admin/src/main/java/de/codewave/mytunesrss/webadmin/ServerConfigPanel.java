@@ -169,9 +169,15 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 }
             }, 2, TimeUnit.SECONDS);
         }
+        MyTunesRss.CONFIG.setUpnpAdmin(myUpnpAdmin.booleanValue());
+        MyTunesRss.CONFIG.setUpnpUserHttp(myUpnpUserHttp.booleanValue());
+        MyTunesRss.CONFIG.setUpnpUserHttps(myUpnpUserHttps.booleanValue());
+        MyTunesRss.CONFIG.save();
         if (musicServerConfigChanged) {
-            if (!MyTunesRss.WEBSERVER.isRunning() || MyTunesRss.WEBSERVER.stop()) {
-                if (MyTunesRss.WEBSERVER.start()) {
+            MyTunesRss.stopWebserver();
+            if (!MyTunesRss.WEBSERVER.isRunning()) {
+                MyTunesRss.startWebserver();
+                if (MyTunesRss.WEBSERVER.isRunning()) {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.serverRestarted");
                 } else {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStartFailed");
@@ -180,10 +186,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStopFailed");
             }
         }
-        MyTunesRss.CONFIG.setUpnpAdmin(myUpnpAdmin.booleanValue());
-        MyTunesRss.CONFIG.setUpnpUserHttp(myUpnpUserHttp.booleanValue());
-        MyTunesRss.CONFIG.setUpnpUserHttps(myUpnpUserHttps.booleanValue());
-        MyTunesRss.CONFIG.save();
     }
 
     private boolean isAdminServerConfigChanged() {

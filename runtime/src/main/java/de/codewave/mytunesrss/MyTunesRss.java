@@ -132,7 +132,7 @@ public class MyTunesRss {
         readVersion();
         loadConfig();
         handleRegistration();
-        MyTunesRssUtils.setCodewaveLogLevel(MyTunesRss.CONFIG.getCodewaveLogLevel());
+        MyTunesRssUtils.setCodewaveLogLevel(CONFIG.getCodewaveLogLevel());
         processSanityChecks();
         if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
             initMainWindow();
@@ -158,7 +158,7 @@ public class MyTunesRss {
         }
         MyTunesRssJobUtils.scheduleStatisticEventsJob();
         MyTunesRssJobUtils.scheduleDatabaseJob();
-        if (MyTunesRss.CONFIG.getPort() > 0) {
+        if (CONFIG.getPort() > 0) {
             startWebserver();
         }
         while (true) {
@@ -245,9 +245,9 @@ public class MyTunesRss {
         AppenderSkeleton appender = new AppenderSkeleton() {
             @Override
             protected void append(LoggingEvent event) {
-                MyTunesRss.LOG_BUFFER.offer(new IndexedLoggingEvent(event));
-                if (MyTunesRss.LOG_BUFFER.size() > 10000) { // limit backlog
-                    MyTunesRss.LOG_BUFFER.poll();
+                LOG_BUFFER.offer(new IndexedLoggingEvent(event));
+                if (LOG_BUFFER.size() > 10000) { // limit backlog
+                    LOG_BUFFER.poll();
                 }
             }
 
@@ -256,7 +256,7 @@ public class MyTunesRss {
             }
 
             public void close() {
-                MyTunesRss.LOG_BUFFER.clear();
+                LOG_BUFFER.clear();
             }
         };
         org.apache.log4j.Logger.getRootLogger().addAppender(appender);
@@ -310,7 +310,7 @@ public class MyTunesRss {
             InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
             callable.call();
             if (callable.getException() != null) {
-                if (!MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && MyTunesRss.CONFIG.isDefaultDatabase()) {
+                if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && CONFIG.isDefaultDatabase()) {
                     int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
                         LOGGER.info("Recreating default database.");
@@ -329,8 +329,8 @@ public class MyTunesRss {
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
-            if (callable.getDatabaseVersion().compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                if (!MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && MyTunesRss.CONFIG.isDefaultDatabase()) {
+            if (callable.getDatabaseVersion().compareTo(new Version(VERSION)) > 0) {
+                if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && CONFIG.isDefaultDatabase()) {
                     int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatchReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
                         LOGGER.info("Recreating default database.");
@@ -346,7 +346,7 @@ public class MyTunesRss {
                         }
                     }
                 } else {
-                    MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), MyTunesRss.VERSION, callable.getDatabaseVersion().toString()));
+                    MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), VERSION, callable.getDatabaseVersion().toString()));
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
@@ -426,18 +426,18 @@ public class MyTunesRss {
         REGISTRATION.init(license, true);
         if (REGISTRATION.getSettings() != null) {
             LOGGER.info("Loading configuration from license.");
-            MyTunesRssConfig configFromFile = MyTunesRss.CONFIG;
-            MyTunesRss.CONFIG = new MyTunesRssConfig();
-            MyTunesRss.CONFIG.loadFromContext(REGISTRATION.getSettings());
+            MyTunesRssConfig configFromFile = CONFIG;
+            CONFIG = new MyTunesRssConfig();
+            CONFIG.loadFromContext(REGISTRATION.getSettings());
             if (configFromFile.getPathInfoKey() != null) {
-                MyTunesRss.CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
+                CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
             }
         }
     }
 
     private static void loadConfig() {
         CONFIG = new MyTunesRssConfig();
-        MyTunesRss.CONFIG.load();
+        CONFIG.load();
     }
 
     private static void readVersion() {
@@ -494,7 +494,7 @@ public class MyTunesRss {
     }
 
     private static int getAdminPortFromConfigOrCommandLine() {
-        int adminPort = MyTunesRss.CONFIG.getAdminPort();
+        int adminPort = CONFIG.getAdminPort();
         if (COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) != null) {
             try {
                 adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT)[0].toString());
@@ -580,7 +580,7 @@ public class MyTunesRss {
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         File libDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/lib");
         ClassLoader classLoader = createExtraClassloader(libDir);
-        String driverClassName = MyTunesRss.CONFIG.getDatabaseDriver();
+        String driverClassName = CONFIG.getDatabaseDriver();
         LOGGER.info("Using database driver class \"" + driverClassName + "\".");
         if (classLoader != null) {
             try {
@@ -648,24 +648,24 @@ public class MyTunesRss {
             if (FORM != null) {
                 FORM.setUserUrl(CONFIG.getPort());
             }
-            MyTunesRss.EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
-            if (MyTunesRss.CONFIG.isAvailableOnLocalNet()) {
+            EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
+            if (CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
         }
     }
 
     public static void stopWebserver() {
-        MyTunesRss.WEBSERVER.stop();
-        if (!MyTunesRss.WEBSERVER.isRunning()) {
+        WEBSERVER.stop();
+        if (!WEBSERVER.isRunning()) {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STOPPED));
             if (FORM != null) {
                 FORM.setUserUrl(-1);
             }
-            MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-            MyTunesRss.SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
+            SERVER_RUNNING_TIMER.cancel();
+            SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
-            MyTunesRss.EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
+            EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
         }
     }
 }
