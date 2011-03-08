@@ -98,7 +98,13 @@
 	                <td class="links">
                     <c:if test="${!globalConfig.disableBrowser}">
                         <a class="library" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
-                            <fmt:message key="browseLibrary" />
+                            <fmt:message key="browseLibraryAudio" />
+                        </a>
+                        <a class="library" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">page=0</mt:encrypt>">
+                            <fmt:message key="browseLibraryMovie" />
+                        </a>
+                        <a class="library" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">page=0</mt:encrypt>">
+                            <fmt:message key="browseLibraryTvShow" />
                         </a>
                     </c:if>
                     <c:if test="${authUser.createPlaylists}">

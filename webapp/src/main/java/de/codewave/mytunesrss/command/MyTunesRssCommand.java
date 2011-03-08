@@ -17,6 +17,8 @@ public enum MyTunesRssCommand implements Command {
     BrowseAlbum("browseAlbum", BrowseAlbumCommandHandler.class),
     BrowseArtist("browseArtist", BrowseArtistCommandHandler.class),
     BrowseTrack("browseTrack", BrowseTrackCommandHandler.class),
+    BrowseMovie("browseMovie", BrowseMovieCommandHandler.class),
+    BrowseTvShow("browseTvShow", BrowseTvShowCommandHandler.class),
     StartNewPlaylist("startNewPlaylist", StartNewPlaylistCommandHandler.class),
     CancelCreatePlaylist("cancelCreatePlaylist", CancelCreatePlaylistCommandHandler.class),
     DeletePlaylist("deletePlaylist", DeletePlaylistCommandHandler.class),

@@ -41,7 +41,9 @@ public enum MyTunesRssResource {
     UploadFinished("/upload_finished.jsp"),
     RemoteControl("/remote_control.jsp"),
     EditSmartPlaylist("/edit_smart_playlist.jsp"),
-    OpenSearch("/opensearch.jsp");
+    OpenSearch("/opensearch.jsp"),
+    BrowseMovie("/browse_movie.jsp"),
+    BrowseTvShow("/browse_tvshow.jsp");
 
     private String myValue;
 
