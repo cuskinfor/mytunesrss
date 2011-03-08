@@ -152,8 +152,12 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("genre", myGenres);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
-        statement.setItems("mediaTypes", myMediaTypes);
-        statement.setString("videoType", myVideoType.name());
+        if (myMediaTypes != null && myMediaTypes.length > 0) {
+            statement.setItems("mediaTypes", myMediaTypes);
+        }
+        if (myVideoType != null) {
+            statement.setString("videoType", myVideoType.name());
+        }
         return execute(statement, new TrackResultBuilder());
 
     }
