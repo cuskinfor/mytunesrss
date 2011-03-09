@@ -60,47 +60,104 @@ public class TrackUtils {
         return enhancedTracks;
     }
 
-    private static void finishSection(DataStoreSession transaction, List<EnhancedTrack> sectionTracks, boolean variousInSection) {
-        StringBuffer sectionIds = new StringBuffer();
-        for (Iterator<EnhancedTrack> iterator = sectionTracks.iterator(); iterator.hasNext();) {
-            EnhancedTrack enhancedTrack = iterator.next();
-            sectionIds.append(enhancedTrack.getId());
-            if (iterator.hasNext()) {
-                sectionIds.append(",");
+    public static List<TvShowEpisode> getTvShowEpisodes(DataStoreSession transaction, Collection<Track> tracks) {
+        List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(tracks.size());
+        String lastSeries = TrackUtils.class.getName(); // we need some dummy name
+        Integer lastSeason = null;
+        List<TvShowEpisode> seriesEpisodes = new ArrayList<TvShowEpisode>();
+        List<TvShowEpisode> seasonEpisodes = new ArrayList<TvShowEpisode>();
+        for (Track track : tracks) {
+            TvShowEpisode episode = new TvShowEpisode(track);
+            boolean newSeries = !lastSeries.equalsIgnoreCase(track.getSeries());
+            boolean newSeason = newSeries || (lastSeason == null || !lastSeason.equals(track.getSeason()));
+            if (newSeries) { // new series begins
+                episode.setNewSeries(true);
+                finishSeries(transaction, seriesEpisodes);
+                seriesEpisodes.clear();
             }
+            if (newSeason) {
+                episode.setNewSeason(true);
+                finishSeason(transaction, seasonEpisodes);
+                seasonEpisodes.clear();
+            }
+            episodes.add(episode);
+            lastSeries = track.getSeries();
+            lastSeason = track.getSeason();
         }
+        finishSeries(transaction, seriesEpisodes);
+        finishSeason(transaction, seasonEpisodes);
+        return episodes;
+    }
+
+    private static void finishSection(DataStoreSession transaction, List<EnhancedTrack> sectionTracks, boolean variousInSection) {
+        String sectionIds = sectionIdsToString(sectionTracks);
         if (!sectionTracks.isEmpty()) {
-            String sectionHash = null;
-            if (sectionTracks.size() > 1) {// for more than 1 track in a section create a temporary section playlist
-                try {
-                    sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(sectionIds.toString())));
-                    final String finalSectionHash = sectionHash;
-                    LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
-                    transaction.executeStatement(new DataStoreStatement() {
-                        public void execute(Connection connection) throws SQLException {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTempPlaylistWithId");
-                            statement.setString("id", finalSectionHash);
-                            statement.execute();
-                        }
-                    });
-                    SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
-                    statement.setId(sectionHash);
-                    statement.setName(sectionHash);
-                    statement.setTrackIds(Arrays.<String>asList(StringUtils.split(sectionIds.toString(), ',')));
-                    transaction.executeStatement(statement);
-                } catch (SQLException e) {
-                    LOGGER.error("Could not check for existing temporary playlist or could not insert missing temporary playlist.", e);
-                    sectionHash = null;// do not use calculated section hash in case of an sql exception
-                }
-            }
+            String sectionHash = sectionTracks.size() > 1 ? createTemporarySectionPlaylist(transaction, sectionIds) : null;
             for (EnhancedTrack rememberedTrack : sectionTracks) {
                 rememberedTrack.setSectionPlaylistId(sectionHash);
-                rememberedTrack.setSectionIds(sectionIds.toString());
+                rememberedTrack.setSectionIds(sectionIds);
                 if (!variousInSection) {
                     rememberedTrack.setSimple(true);
                 }
             }
         }
+    }
+
+    private static void finishSeries(DataStoreSession transaction, List<TvShowEpisode> episodes) {
+        String sectionIds = sectionIdsToString(episodes);
+        if (!episodes.isEmpty()) {
+            String sectionHash = episodes.size() > 1 ? createTemporarySectionPlaylist(transaction, sectionIds) : null;
+            for (TvShowEpisode episode : episodes) {
+                episode.setSeriesSectionPlaylistId(sectionHash);
+                episode.setSeriesSectionIds(sectionIds);
+            }
+        }
+    }
+
+    private static void finishSeason(DataStoreSession transaction, List<TvShowEpisode> episodes) {
+        String sectionIds = sectionIdsToString(episodes);
+        if (!episodes.isEmpty()) {
+            String sectionHash = episodes.size() > 1 ? createTemporarySectionPlaylist(transaction, sectionIds) : null;
+            for (TvShowEpisode episode : episodes) {
+                episode.setSeasonSectionPlaylistId(sectionHash);
+                episode.setSeasonSectionIds(sectionIds);
+            }
+        }
+    }
+
+    private static String createTemporarySectionPlaylist(DataStoreSession transaction, String sectionIds) {
+        try {
+            final String sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(sectionIds)));
+            LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
+            transaction.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTempPlaylistWithId");
+                    statement.setString("id", sectionHash);
+                    statement.execute();
+                }
+            });
+            SaveTempPlaylistStatement statement = new SaveTempPlaylistStatement();
+            statement.setId(sectionHash);
+            statement.setName(sectionHash);
+            statement.setTrackIds(Arrays.<String>asList(StringUtils.split(sectionIds, ',')));
+            transaction.executeStatement(statement);
+            return sectionHash;
+        } catch (SQLException e) {
+            LOGGER.error("Could not check for existing temporary playlist or could not insert missing temporary playlist.", e);
+            return null;// do not use calculated section hash in case of an sql exception
+        }
+    }
+
+    private static String sectionIdsToString(List<? extends Track> sectionTracks) {
+        StringBuffer sectionIds = new StringBuffer();
+        for (Iterator<? extends Track> iterator = sectionTracks.iterator(); iterator.hasNext();) {
+            Track enhancedTrack = iterator.next();
+            sectionIds.append(enhancedTrack.getId());
+            if (iterator.hasNext()) {
+                sectionIds.append(",");
+            }
+        }
+        return sectionIds.toString();
     }
 
     /**
@@ -214,6 +271,101 @@ public class TrackUtils {
 
         public void setSectionPlaylistId(String sectionPlaylistId) {
             mySectionPlaylistId = sectionPlaylistId;
+        }
+    }
+
+    public static class TvShowEpisode extends Track {
+        private boolean myNewSeries;
+        private boolean myNewSeason;
+        private boolean myContinuation;
+        private String mySeriesSectionIds;
+        private String mySeriesSectionPlaylistId;
+        private String mySeasonSectionIds;
+        private String mySeasonSectionPlaylistId;
+
+        private TvShowEpisode(Track track) {
+            setSource(track.getSource());
+            setId(track.getId());
+            setName(track.getName());
+            setAlbum(track.getAlbum());
+            setArtist(track.getArtist());
+            setOriginalArtist(track.getOriginalArtist());
+            setTime(track.getTime());
+            setTrackNumber(track.getTrackNumber());
+            setFilename(track.getFilename());
+            setFile(track.getFile());
+            setProtected(track.isProtected());
+            setMediaType(track.getMediaType());
+            setGenre(track.getGenre());
+            setMp4Codec(track.getMp4Codec());
+            setTsPlayed(track.getTsPlayed());
+            setTsUpdated(track.getTsUpdated());
+            setLastImageUpdate(track.getLastImageUpdate());
+            setPlayCount(track.getPlayCount());
+            setImageHash(track.getImageHash());
+            setComment(track.getComment());
+            setPosNumber(track.getPosNumber());
+            setPosSize(track.getPosSize());
+            setYear(track.getYear());
+            setVideoType(track.getVideoType());
+            setEpisode(track.getEpisode());
+            setSeason(track.getSeason());
+        }
+
+        public boolean isNewSeries() {
+            return myNewSeries;
+        }
+
+        public void setNewSeries(boolean newSeries) {
+            myNewSeries = newSeries;
+        }
+
+        public boolean isNewSeason() {
+            return myNewSeason;
+        }
+
+        public void setNewSeason(boolean newSeason) {
+            myNewSeason = newSeason;
+        }
+
+        public boolean isContinuation() {
+            return myContinuation;
+        }
+
+        public void setContinuation(boolean continuation) {
+            myContinuation = continuation;
+        }
+
+        public String getSeriesSectionIds() {
+            return mySeriesSectionIds;
+        }
+
+        public void setSeriesSectionIds(String seriesSectionIds) {
+            mySeriesSectionIds = seriesSectionIds;
+        }
+
+        public String getSeriesSectionPlaylistId() {
+            return mySeriesSectionPlaylistId;
+        }
+
+        public void setSeriesSectionPlaylistId(String seriesSectionPlaylistId) {
+            mySeriesSectionPlaylistId = seriesSectionPlaylistId;
+        }
+
+        public String getSeasonSectionIds() {
+            return mySeasonSectionIds;
+        }
+
+        public void setSeasonSectionIds(String seasonSectionIds) {
+            mySeasonSectionIds = seasonSectionIds;
+        }
+
+        public String getSeasonSectionPlaylistId() {
+            return mySeasonSectionPlaylistId;
+        }
+
+        public void setSeasonSectionPlaylistId(String seasonSectionPlaylistId) {
+            mySeasonSectionPlaylistId = seasonSectionPlaylistId;
         }
     }
 }

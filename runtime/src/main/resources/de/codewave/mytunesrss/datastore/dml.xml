@@ -206,21 +206,24 @@
         <album>AND t.lower_album IN (:album[])</album>
         <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
         <videotype>AND t.videotype = :videoType</videotype>
+        <tvshow>AND t.series = :series</tvshow>
+        <tvshowseason>AND t.season = :season</tvshowseason>
         <restricted>
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
             AND rltp.track_id = t.id
         </restricted>
-            <excluded>
-                AND t.id NOT IN (
-                    SELECT eltp.track_id FROM link_track_playlist eltp
-                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
-                )
-            </excluded>
+        <excluded>
+            AND t.id NOT IN (
+                SELECT eltp.track_id FROM link_track_playlist eltp
+                WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+            )
+        </excluded>
         <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY {trackColumnsForGrouping}
         <albumsort>ORDER BY t.album, t.pos_number, t.track_number, t.name</albumsort>
         <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
-        <abcsort>ORDER BY t.name</abcsort>
+        <moviesort>ORDER BY t.name</moviesort>
+        <tvshowsort>ORDER BY t.series, t.season, t.episode, t.name</tvshowsort>
         ]]>
       </sql>
     </statement>

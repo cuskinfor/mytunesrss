@@ -23,21 +23,19 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
-            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForMediaAndVideoTypes(getAuthUser(), new MediaType[] {MediaType.Video}, getVideoType());
-            List<TrackUtils.EnhancedTrack> tracks = null;
+            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = getQuery();
+            List<? extends Track> tracks = null;
             if (query != null) {
                 DataStoreQuery.QueryResult<Track> result = getTransaction().executeQuery(query);
                 int pageSize = getWebConfig().getEffectivePageSize();
-                TrackUtils.EnhancedTracks enhancedTracks;
                 if (pageSize > 0 && result.getResultSize() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);
                     Pager pager = createPager(result.getResultSize(), current);
                     getRequest().setAttribute("pager", pager);
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), result.getResults(current * pageSize, pageSize), SortOrder.KeepOrder);
+                    tracks = getEnhancedTracks(result.getResults(current * pageSize, pageSize));
                 } else {
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), result.getResults(), SortOrder.KeepOrder);
+                    tracks = getEnhancedTracks(result.getResults());
                 }
-                tracks = (List<TrackUtils.EnhancedTrack>)enhancedTracks.getTracks();
                 getRequest().setAttribute("tracks", tracks);
             }
             if (tracks == null || tracks.isEmpty()) {
@@ -56,14 +54,16 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
                                                                                                                                 false,
                                                                                                                                 true));
                 getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());
-                forward(getResource());
+                forward(getResource(tracks));
             }
         } else {
             forward(MyTunesRssResource.Login);
         }
     }
 
-    protected abstract MyTunesRssResource getResource();
+    protected abstract List<? extends Track> getEnhancedTracks(List<Track> tracks);
 
-    protected abstract VideoType getVideoType();
+    protected abstract DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery();
+
+    protected abstract MyTunesRssResource getResource(List<? extends Track> tracks);
 }

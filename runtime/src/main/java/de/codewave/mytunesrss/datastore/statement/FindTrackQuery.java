@@ -88,13 +88,46 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForMediaAndVideoTypes(User user, MediaType[] mediaTypes, VideoType videoType) {
+    public static FindTrackQuery getMovies(User user) {
         FindTrackQuery query = new FindTrackQuery();
-        query.mySortOrder = SortOrder.Abc;
+        query.mySortOrder = SortOrder.Movie;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.setMediaTypes(mediaTypes);
-        query.setVideoType(videoType);
+        query.setMediaTypes(MediaType.Video);
+        query.setVideoType(VideoType.Movie);
+        return query;
+    }
+
+    public static FindTrackQuery getTvShowEpisodes(User user) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.mySortOrder = SortOrder.TvShow;
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(MediaType.Video);
+        query.setVideoType(VideoType.TvShow);
+        return query;
+    }
+
+    public static FindTrackQuery getTvShowSeriesEpisodes(User user, String series) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.mySortOrder = SortOrder.TvShow;
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(MediaType.Video);
+        query.setVideoType(VideoType.TvShow);
+        query.setSeries(series);
+        return query;
+    }
+
+    public static FindTrackQuery getTvShowSeriesSeasonEpisodes(User user, String series, int season) {
+        FindTrackQuery query = new FindTrackQuery();
+        query.mySortOrder = SortOrder.TvShow;
+        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.setMediaTypes(MediaType.Video);
+        query.setVideoType(VideoType.TvShow);
+        query.setSeries(series);
+        query.setSeason(season);
         return query;
     }
 
@@ -108,6 +141,8 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
     private MediaType[] myMediaTypes;
     private VideoType myVideoType;
+    private String mySeries;
+    private Integer mySeason;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -125,6 +160,14 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         myVideoType = videoType;
     }
 
+    public void setSeries(String series) {
+        mySeries = series;
+    }
+
+    public void setSeason(Integer season) {
+        mySeason = season;
+    }
+
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
@@ -140,12 +183,15 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
         conditionals.put("albumsort", mySortOrder == SortOrder.Album);
-        conditionals.put("abcsort", mySortOrder == SortOrder.Abc);
+        conditionals.put("moviesort", mySortOrder == SortOrder.Movie);
+        conditionals.put("tvshowsort", mySortOrder == SortOrder.TvShow);
         conditionals.put("album", myAlbums != null && myAlbums.length > 0);
         conditionals.put("artist", myArtists != null && myArtists.length > 0);
         conditionals.put("genre", myGenres != null && myGenres.length > 0);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("videotype", myVideoType != null);
+        conditionals.put("tvshow", mySeries != null);
+        conditionals.put("tvshowseason", mySeries != null && mySeason != null);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);
@@ -153,11 +199,17 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         if (myMediaTypes != null && myMediaTypes.length > 0) {
-            statement.setItems("mediaTypes", myMediaTypes);
+            String[] mediaTypeNames = new String[myMediaTypes.length];
+            for (int i = 0; i < myMediaTypes.length; i++) {
+                mediaTypeNames[i] = myMediaTypes[i].name();
+            }
+            statement.setItems("mediaTypes", mediaTypeNames);
         }
         if (myVideoType != null) {
             statement.setString("videoType", myVideoType.name());
         }
+        statement.setString("series", mySeries);
+        statement.setInt("season", mySeason);
         return execute(statement, new TrackResultBuilder());
 
     }

@@ -20,12 +20,17 @@ import java.util.List;
  */
 public class BrowseMovieCommandHandler extends BrowseVideoCommandHandler {
     @Override
-    protected MyTunesRssResource getResource() {
-        return MyTunesRssResource.BrowseMovie;
+    protected List<Track> getEnhancedTracks(List<Track> tracks) {
+        return tracks;
     }
 
     @Override
-    protected VideoType getVideoType() {
-        return VideoType.Movie;
+    protected DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery() {
+        return FindTrackQuery.getMovies(getAuthUser());
+    }
+
+    @Override
+    protected MyTunesRssResource getResource(List<? extends Track> tracks) {
+        return MyTunesRssResource.BrowseMovie;
     }
 }
