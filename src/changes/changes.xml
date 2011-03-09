@@ -13,8 +13,7 @@
                 names.
             </action>
             <action dev="mdescher" type="add">
-                Support for movies and TV shows from iTunes. All video from watch folders are considered
-                movies at the moment.
+                Support for movies and TV shows.
             </action>
         </release>
 

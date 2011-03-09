@@ -72,43 +72,74 @@
                     <mt:initFlipFlop value1="" value2="class=\"odd\""/>
                     <tr <mt:flipFlop/>>
                         <td class="label">
-                            <fmt:message key="track" />:
+                            <fmt:message key="title" />:
                         </td>
                         <td>
                             <c:out value="${track.name}" />
                         </td>
                     </tr>
-                    <tr <mt:flipFlop/>>
-                        <td class="label">
-                            <fmt:message key="album" />:
-                        </td>
-                        <td>
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
-                        </td>
-                    </tr>
-                        <c:if test="${track.posNumber > 0}">
+                    <c:choose>
+                        <c:when test="${track.mediaType == 'Audio'}">
                             <tr <mt:flipFlop/>>
                                 <td class="label">
-                                    <fmt:message key="discnumber.label" />:
+                                    <fmt:message key="album"/>:
                                 </td>
                                 <td>
-                                    <c:set var="msg"><fmt:message key="${cwfn:choose(track.posSize == 0, 'discnumber.numberonly', 'discnumber.numberofsize')}"/></c:set>
-                                    <mt:array var="params">
-                                        <mt:arrayElement value="${track.posNumber}"/>
-                                        <mt:arrayElement value="${track.posSize}"/>
-                                    </mt:array>
-                                    <c:out value="${cwfn:choose(track.posSize == 0, track.posNumber, cwfn:message(msg, params))}" />
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}"/>
                                 </td>
                             </tr>
-                        </c:if>
-                    <tr <mt:flipFlop/>>
-                        <td class="label">
-                            <fmt:message key="artist" />:
-                        </td>
-                        <td>
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}" />
-                        </td>
-                    </tr>
+                            <c:if test="${track.posNumber > 0}">
+                                <tr <mt:flipFlop/>>
+                                    <td class="label">
+                                        <fmt:message key="discnumber.label"/>:
+                                    </td>
+                                    <td>
+                                        <c:set var="msg"><fmt:message
+                                                key="${cwfn:choose(track.posSize == 0, 'discnumber.numberonly', 'discnumber.numberofsize')}"/></c:set>
+                                        <mt:array var="params">
+                                            <mt:arrayElement value="${track.posNumber}"/>
+                                            <mt:arrayElement value="${track.posSize}"/>
+                                        </mt:array>
+                                        <c:out value="${cwfn:choose(track.posSize == 0, track.posNumber, cwfn:message(msg, params))}"/>
+                                    </td>
+                                </tr>
+                            </c:if>
+                            <tr <mt:flipFlop/>>
+                                <td class="label">
+                                    <fmt:message key="artist"/>:
+                                </td>
+                                <td>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}"/>
+                                </td>
+                            </tr>
+                        </c:when>
+                        <c:when test="${track.mediaType == 'Video' && track.videoType == 'TvShow'}">
+                            <tr <mt:flipFlop/>>
+                                <td class="label">
+                                    <fmt:message key="series"/>:
+                                </td>
+                                <td>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.series), msgUnknown, track.series)}"/>
+                                </td>
+                            </tr>
+                            <tr <mt:flipFlop/>>
+                                <td class="label">
+                                    <fmt:message key="season"/>:
+                                </td>
+                                <td>
+                                    ${track.season}
+                                </td>
+                            </tr>
+                            <tr <mt:flipFlop/>>
+                                <td class="label">
+                                    <fmt:message key="episode"/>:
+                                </td>
+                                <td>
+                                    ${track.episode}
+                                </td>
+                            </tr>
+                        </c:when>
+                    </c:choose>
                     <tr <mt:flipFlop/>>
                         <td class="label">
                             <fmt:message key="duration" />:

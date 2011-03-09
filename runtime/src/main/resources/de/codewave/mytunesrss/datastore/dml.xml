@@ -403,7 +403,7 @@
         <sql>DELETE FROM album</sql>
         <sql>
             INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash, year)
-            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash), MAX(year) FROM track WHERE mediatype = 'audio' GROUP BY lower_album
+            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash), MAX(year) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album
         </sql>
     </statement>
 
@@ -411,7 +411,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'audio' GROUP BY lower_artist
+            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_artist
         </sql>
     </statement>
 

@@ -26,15 +26,13 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
             DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = getQuery();
             List<? extends Track> tracks = null;
             if (query != null) {
-                DataStoreQuery.QueryResult<Track> result = getTransaction().executeQuery(query);
+                tracks = getEnhancedTracks(getTransaction().executeQuery(query).getResults());
                 int pageSize = getWebConfig().getEffectivePageSize();
-                if (pageSize > 0 && result.getResultSize() > pageSize) {
+                if (pageSize > 0 && tracks.size() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);
-                    Pager pager = createPager(result.getResultSize(), current);
+                    Pager pager = createPager(tracks.size(), current);
                     getRequest().setAttribute("pager", pager);
-                    tracks = getEnhancedTracks(result.getResults(current * pageSize, pageSize));
-                } else {
-                    tracks = getEnhancedTracks(result.getResults());
+                    tracks = tracks.subList(current * pageSize, pageSize);
                 }
                 getRequest().setAttribute("tracks", tracks);
             }

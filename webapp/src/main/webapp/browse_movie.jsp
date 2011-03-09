@@ -18,7 +18,7 @@
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}/sortOrder=${sortOrder}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -35,7 +35,7 @@
     <div class="body">
     
         <div class="head">    
-            <h1 class="<c:choose><c:when test="${!empty param.searchTerm}">searchResult</c:when><c:otherwise>browse</c:otherwise></c:choose>">
+            <h1 class="browse">
                 <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
@@ -72,7 +72,7 @@
                 <c:set var="fnCount" value="0" />
                 <c:forEach items="${tracks}" var="track" varStatus="loopStatus">
                 <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                    <td class="artist<c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}"> coverThumbnailColumn</c:if>" <c:if test="${!(sortOrder == 'Album' && !track.simple)}">colspan="2"</c:if>>
+                    <td class="artist<c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}"> coverThumbnailColumn</c:if>">
                         <div class="trackName">
                             <c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}">
                             	<div class="albumCover">

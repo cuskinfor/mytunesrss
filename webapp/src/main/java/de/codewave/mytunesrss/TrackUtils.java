@@ -81,6 +81,8 @@ public class TrackUtils {
                 seasonEpisodes.clear();
             }
             episodes.add(episode);
+            seriesEpisodes.add(episode);
+            seasonEpisodes.add(episode);
             lastSeries = track.getSeries();
             lastSeason = track.getSeason();
         }
@@ -231,6 +233,7 @@ public class TrackUtils {
             setVideoType(track.getVideoType());
             setEpisode(track.getEpisode());
             setSeason(track.getSeason());
+            setSeries(track.getSeries());
         }
 
         public boolean isNewSection() {
@@ -310,6 +313,7 @@ public class TrackUtils {
             setVideoType(track.getVideoType());
             setEpisode(track.getEpisode());
             setSeason(track.getSeason());
+            setSeries(track.getSeries());
         }
 
         public boolean isNewSeries() {

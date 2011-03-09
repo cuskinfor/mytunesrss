@@ -209,7 +209,9 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             statement.setString("videoType", myVideoType.name());
         }
         statement.setString("series", mySeries);
-        statement.setInt("season", mySeason);
+        if (mySeason != null) {
+            statement.setInt("season", mySeason);
+        }
         return execute(statement, new TrackResultBuilder());
 
     }

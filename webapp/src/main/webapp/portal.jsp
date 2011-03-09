@@ -103,7 +103,7 @@
                         <a class="library" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryMovie" />
                         </a>
-                        <a class="library" href="${servletUrl}/browseTvShowEpisodes/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                        <a class="library" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryTvShow" />
                         </a>
                     </c:if>
