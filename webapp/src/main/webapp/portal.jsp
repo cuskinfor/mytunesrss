@@ -98,15 +98,22 @@
 
 	                <td class="links">
                     <c:if test="${!globalConfig.disableBrowser}">
-                        <a class="music" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
-                            <fmt:message key="browseLibraryAudio" />
-                        </a>
-                        <a class="movie" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
-                            <fmt:message key="browseLibraryMovie" />
-                        </a>
-                        <a class="tvshow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
-                            <fmt:message key="browseLibraryTvShow" />
-                        </a>
+                        <c:if test="${statistics.albumCount > 0 || statistics.artistCount > 0 || statistics.genreCount > 0}">
+                            <a class="music" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
+                                <fmt:message key="browseLibraryAudio" />
+                            </a>
+                        </c:if>
+                        <c:if test="${statistics.movieCount > 0}">
+                            <a class="movie"
+                               href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                                <fmt:message key="browseLibraryMovie"/>
+                            </a>
+                        </c:if>
+                        <c:if test="${statistics.tvShowCount > 0}">
+                            <a class="tvshow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                                <fmt:message key="browseLibraryTvShow" />
+                            </a>
+                        </c:if>
                     </c:if>
                     <c:if test="${authUser.createPlaylists}">
                         <c:choose>

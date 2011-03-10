@@ -38,7 +38,7 @@
 		<key>MainClass</key>
 		<string>de.codewave.mytunesrss.MyTunesRss</string>
 		<key>VMOptions</key>
-		<string>-Xms32m -Xmx256m -Xbootclasspath/p:lib/codewave-zis-1.1.jar:lib/xercesImpl-2.8.1.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dde.codewave.mytunesrss</string>
+		<string>-Xms32m -Xmx256m -Xbootclasspath/p:lib/codewave-zis-1.1.jar:lib/xercesImpl-2.9.1.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -Dde.codewave.mytunesrss</string>
 		<key>WorkingDirectory</key>
 		<string>$APP_PACKAGE/Contents/Resources/Java</string>
 	</dict>

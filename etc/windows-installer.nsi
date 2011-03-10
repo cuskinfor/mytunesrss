@@ -8,7 +8,7 @@
 ;--------------------------------
 ;General
 
-  !define VERSION 4.0.12
+  !define VERSION 4.1.0-EAP-1
 
   ;Name and file
   Name "MyTunesRSS ${VERSION}"
@@ -78,8 +78,8 @@ SectionEnd
 ;Descriptions
 
   ;Language strings
-  LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien für MyTunesRSS."
-  LangString DESC_Jre ${LANG_GERMAN} "Java Laufzeitumgebung für MyTunesRSS. Optional, falls sie bereits Java 1.5 oder höher auf Ihrem Rechner installiert haben."
+  LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien fuer MyTunesRSS."
+  LangString DESC_Jre ${LANG_GERMAN} "Java Laufzeitumgebung fuer MyTunesRSS. Optional, falls sie bereits Java 1.5 oder hoeher auf Ihrem Rechner installiert haben."
 
   LangString DESC_MyTunesRSS ${LANG_ENGLISH} "The program files for MyTunesRSS."
   LangString DESC_Jre ${LANG_ENGLISH} "Java runtime for MyTunesRSS. Optional if you already hava Java 1.5 or better installed."
