@@ -34,15 +34,15 @@ public class MyTunesRssFileProcessorTest {
 
     @Test
     public void testGetFallbackNamesFile() {
-        assertEquals("this MyTunesRss.class name", myProcessor.getFallbackName(myFile, "this [file] name"));
-        assertEquals("this MyTunesRss name", myProcessor.getFallbackName(myFile, "this [file:(.*)\\.class] name"));
+        assertEquals("this MyTunesRss.class name", myProcessor.getFallbackName(myFile, "this [[[file]]] name"));
+        assertEquals("this MyTunesRss name", myProcessor.getFallbackName(myFile, "this [[[file:(.*)\\.class]]] name"));
     }
 
     @Test
     public void testGetFallbackNamesDir() {
-        assertEquals("this mytunesrss name", myProcessor.getFallbackName(myFile, "this [dir:0] name"));
-        assertEquals("this codewave name", myProcessor.getFallbackName(myFile, "this [dir:1] name"));
-        assertEquals("this wave name", myProcessor.getFallbackName(myFile, "this [dir:1:code(.*)] name"));
+        assertEquals("this mytunesrss name", myProcessor.getFallbackName(myFile, "this [[[dir:0]]] name"));
+        assertEquals("this codewave name", myProcessor.getFallbackName(myFile, "this [[[dir:1]]] name"));
+        assertEquals("this wave name", myProcessor.getFallbackName(myFile, "this [[[dir:1:code(.*)]]] name"));
     }
 
 }
