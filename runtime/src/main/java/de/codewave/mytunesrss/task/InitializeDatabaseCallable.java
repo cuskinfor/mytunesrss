@@ -83,9 +83,9 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                     try {
                         ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
                         if (resultSet.next()) {
-                            resultSet = MyTunesRssUtils.createStatement(connection, "getSystemInformation").executeQuery();
+                            resultSet = MyTunesRssUtils.createStatement(connection, "getVersion").executeQuery();
                             if (resultSet.next()) {
-                                return new Version(resultSet.getString("VERSION"));
+                                return new Version(resultSet.getString("version"));
                             }
                         }
                     } catch (SQLException e) {
