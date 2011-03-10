@@ -16,6 +16,7 @@
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
+<%--@elvariable id="statistics" type="de.codewave.mytunesrss.datastore.statement.SystemInformation"--%>
 
 <%--@elvariable id="playlists" type="java.util.List"--%>
 
@@ -97,13 +98,13 @@
 
 	                <td class="links">
                     <c:if test="${!globalConfig.disableBrowser}">
-                        <a class="library" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
+                        <a class="music" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
                             <fmt:message key="browseLibraryAudio" />
                         </a>
-                        <a class="library" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                        <a class="movie" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryMovie" />
                         </a>
-                        <a class="library" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                        <a class="tvshow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryTvShow" />
                         </a>
                     </c:if>
@@ -215,7 +216,9 @@
         <div class="inner">
             <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
                 <fmt:message key="statistics" />:
-                ${statistics.trackCount} <fmt:message key="statistics.tracks" />,
+                ${statistics.musicCount} <fmt:message key="statistics.tracks" />,
+                ${statistics.movieCount} <fmt:message key="statistics.movies" />,
+                ${statistics.tvShowCount} <fmt:message key="statistics.tvshows" />,
                 <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.albumCount} <fmt:message key="statistics.albums" /></a>,
                 <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.artistCount} <fmt:message key="statistics.artists" /></a>,
                 <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres" /></a>

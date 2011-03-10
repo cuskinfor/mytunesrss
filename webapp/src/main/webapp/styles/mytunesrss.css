@@ -289,8 +289,16 @@ table.navigation {
     text-decoration: underline;
 }
 
-.navigation .library {
-    background: url("../images/library.png") left center no-repeat;
+.navigation .music {
+    background: url("../images/music.png") left center no-repeat;
+}
+
+.navigation .movie {
+    background: url("../images/movie.png") left center no-repeat;
+}
+
+.navigation .tvshow {
+    background: url("../images/tvshow.png") left center no-repeat;
 }
 
 .navigation .playlists {
@@ -533,7 +541,12 @@ table.navigation {
 
 .tracklist a.movie {
 	padding-left: 24px;
-	background: url("../images/movie.gif") left center no-repeat;
+	background: url("../images/movie.png") left center no-repeat;
+}
+
+.tracklist a.tvshow {
+    padding-left: 24px;
+    background: url("../images/tvshow.png") left center no-repeat;
 }
 
 .searchResult th {

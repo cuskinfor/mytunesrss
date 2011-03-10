@@ -123,7 +123,7 @@
                                    </c:choose>
                                    onmouseover="showTooltip(this)"
                                    onmouseout="hideTooltip(this)"
-                                   title="<fmt:message key="video"/>" class="movie">
+                                   title="<fmt:message key="video"/>" class="tvshow">
                                     <c:choose>
                                         <c:when test="${empty track.id && track.season == -1}">
                                             <c:out value="${cwfn:choose(mtfn:unknown(track.series), msgUnknown, track.series)}"/>

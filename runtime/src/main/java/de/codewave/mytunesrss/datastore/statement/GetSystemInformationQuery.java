@@ -27,6 +27,9 @@ public class GetSystemInformationQuery extends DataStoreQuery<SystemInformation>
                 systemInformation.setLastUpdate(resultSet.getLong("lastupdate"));
                 systemInformation.setVersion(resultSet.getString("version"));
                 systemInformation.setTrackCount(resultSet.getInt("track_count"));
+                systemInformation.setMusicCount(resultSet.getInt("music_count"));
+                systemInformation.setMovieCount(resultSet.getInt("movie_count"));
+                systemInformation.setTvShowCount(resultSet.getInt("tvshow_count"));
                 systemInformation.setAlbumCount(resultSet.getInt("album_count"));
                 systemInformation.setArtistCount(resultSet.getInt("artist_count"));
                 systemInformation.setGenreCount(resultSet.getInt("genre_count"));

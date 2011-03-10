@@ -257,7 +257,8 @@
     <statement name="getSystemInformation">
         <sql>
             SELECT lastupdate AS lastupdate, version AS version, track_count AS track_count, album_count AS album_count,
-            artist_count AS artist_count, genre_count AS genre_count
+            artist_count AS artist_count, genre_count AS genre_count, music_count AS music_count, movie_count AS movie_count,
+            tvshow_count AS tvshow_count
             FROM system_information
         </sql>
     </statement>
@@ -432,6 +433,9 @@
         <sql>UPDATE system_information SET album_count = (SELECT COUNT(name) FROM album)</sql>
         <sql>UPDATE system_information SET artist_count = (SELECT COUNT(name) FROM artist)</sql>
         <sql>UPDATE system_information SET genre_count = (SELECT COUNT(name) FROM genre)</sql>
+        <sql>UPDATE system_information SET music_count = (SELECT COUNT(id) FROM track WHERE mediatype = 'Audio')</sql>
+        <sql>UPDATE system_information SET movie_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'Movie')</sql>
+        <sql>UPDATE system_information SET tvshow_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'TvShow')</sql>
     </statement>
 
     <statement name="removeTempPlaylistWithId">

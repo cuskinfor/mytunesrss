@@ -210,6 +210,9 @@
         <sql>CREATE INDEX idx_track_lower_series ON track (lower_series)</sql>
         <sql>ALTER TABLE smart_info ADD COLUMN series_pattern VARCHAR(100)</sql>
         <sql>ALTER TABLE smart_info ADD COLUMN videotype VARCHAR(20)</sql>
+        <sql>ALTER TABLE system_information ADD COLUMN music_count INTEGER</sql>
+        <sql>ALTER TABLE system_information ADD COLUMN movie_count INTEGER</sql>
+        <sql>ALTER TABLE system_information ADD COLUMN tvshow_count INTEGER</sql>
     </statement>
 
 </statements>

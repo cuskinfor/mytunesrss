@@ -196,7 +196,7 @@
                         <td class="label"><fmt:message key="type"/>:</td>
                         <td>
                             <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
-                            <c:if test="${track.mediaType== 'Video'}"><img src="${appUrl}/images/movie.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
+                            <c:if test="${track.mediaType == 'Video'}"><img src="${appUrl}/images/${cwfn:choose(track.videoType == 'Movie', 'movie.png', 'tvshow.png')}" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
                             <c:out value="${mtfn:suffix(null, null, track)}" />
                         </td>
                     </tr>

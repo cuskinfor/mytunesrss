@@ -169,8 +169,7 @@
                                href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                onmouseover="showTooltip(this)"
                                onmouseout="hideTooltip(this)"
-							   <c:if test="${track.mediaType == 'Video'}">title="<fmt:message key="video"/>" class="movie"</c:if>
-                            >
+							   <c:if test="${track.mediaType == 'Video'}">title="<fmt:message key="video"/>" class="${cwfn:choose(track.videoType == 'Movie', 'movie', 'tvshow')}"</c:if>>
                                 <c:choose>
                                     <c:when test="${!empty param['playlist']}">
                                         <c:if test="${!mtfn:unknown(track.artist)}"><c:out value="${track.artist}"/> -</c:if>

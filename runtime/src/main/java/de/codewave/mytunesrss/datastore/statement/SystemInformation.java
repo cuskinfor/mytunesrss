@@ -10,6 +10,9 @@ package de.codewave.mytunesrss.datastore.statement;
 public class SystemInformation {
     private long myLastUpdate = Long.MIN_VALUE;
     private String myVersion;
+    private int myMusicCount;
+    private int myMovieCount;
+    private int myTvShowCount;
     private int myTrackCount;
     private int myAlbumCount;
     private int myArtistCount;
@@ -61,5 +64,29 @@ public class SystemInformation {
 
     public void setTrackCount(int trackCount) {
         myTrackCount = trackCount;
+    }
+
+    public int getMusicCount() {
+        return myMusicCount;
+    }
+
+    public void setMusicCount(int musicCount) {
+        myMusicCount = musicCount;
+    }
+
+    public int getMovieCount() {
+        return myMovieCount;
+    }
+
+    public void setMovieCount(int movieCount) {
+        myMovieCount = movieCount;
+    }
+
+    public int getTvShowCount() {
+        return myTvShowCount;
+    }
+
+    public void setTvShowCount(int tvShowCount) {
+        myTvShowCount = tvShowCount;
     }
 }
