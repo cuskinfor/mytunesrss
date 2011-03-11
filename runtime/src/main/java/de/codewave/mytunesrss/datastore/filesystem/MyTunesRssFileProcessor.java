@@ -115,14 +115,18 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 statement.setSeries(getFallbackSeries(file)); // TODO: try meta info first
                                 statement.setEpisode(getFallbackEpisode(file)); // TODO: try meta info first
                             }
+                        } else if (type.getMediaType() == MediaType.Image) {
+                            statement.setAlbum(null);
+                            statement.setArtist(null);
+                            statement.setPhotoAlbum(getPhotoAlbum(file));
                         }
                         try {
                             myStoreSession.executeStatement(statement);
                             if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
                                 HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
                                 myStoreSession.executeStatement(handleTrackImagesStatement);
-                            } else if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0);
+                            } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
                                 myStoreSession.executeStatement(handleTrackImagesStatement);
                             }
                             myUpdatedCount++;
@@ -342,8 +346,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file, MediaType mediaType) {
         statement.setName(FilenameUtils.getBaseName(file.getName()));
-        statement.setAlbum(getFallbackAlbumName(file));
-        statement.setArtist(getFallbackArtistName(file));
+        if (mediaType == MediaType.Audio) {
+            statement.setAlbum(getFallbackAlbumName(file));
+            statement.setArtist(getFallbackArtistName(file));
+        }
         if (mediaType == MediaType.Video && myDatasourceConfig.getVideoType() == VideoType.TvShow) {
             statement.setSeries(getFallbackSeries(file));
             statement.setSeason(getFallbackSeason(file));
@@ -380,6 +386,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         } else {
             return 0;
         }
+    }
+
+    private String getPhotoAlbum(File file) {
+        return myDatasourceConfig.getPhotoAlbumPattern() != null ? getFallbackName(file, new String(myDatasourceConfig.getPhotoAlbumPattern())) : null;
     }
 
     String getFallbackName(File file, String pattern) {

@@ -32,6 +32,11 @@ public class TrackRetrieveUtils {
         return StringUtils.isNotEmpty(value) ? Boolean.valueOf(value) : defaultValue;
     }
 
+    private static int getIntegerRequestParameter(HttpServletRequest request, String name, int defaultValue) {
+        String value = request.getParameter(name);
+        return StringUtils.isNotEmpty(value) ? Integer.valueOf(value) : defaultValue;
+    }
+
     private static void decodeBase64(String[] strings) {
         if (strings != null && strings.length > 0) {
             for (int i = 0; i < strings.length; i++) {
@@ -65,6 +70,9 @@ public class TrackRetrieveUtils {
         String sortOrderName = getRequestParameter(servletRequest, "sortOrder", SortOrder.Album.name());
         SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
         boolean fullAlbums = getBooleanRequestParameter(servletRequest, "fullAlbums", false);
+        String series = MyTunesRssBase64Utils.decodeToString(getRequestParameter(servletRequest, "series", null));
+        int season = getIntegerRequestParameter(servletRequest, "season", -1);
+        String photoalbum = getRequestParameter(servletRequest, "photoalbum", null);
 
         if (albums != null && albums.length > 0) {
             return FindTrackQuery.getForAlbum(user, albums, sortOrderValue);
@@ -105,6 +113,10 @@ public class TrackRetrieveUtils {
             } else {
                 return new FindPlaylistTracksQuery(user, playlistId, sortOrderValue);
             }
+        } else if (series != null) {
+            return season > -1 ? FindTrackQuery.getTvShowSeriesSeasonEpisodes(user, series, season) : FindTrackQuery.getTvShowSeriesEpisodes(user, series);
+        } else if (photoalbum != null) {
+            return FindTrackQuery.getPhotos(user, photoalbum);
         }
         return null;
     }

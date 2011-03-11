@@ -38,6 +38,7 @@
                 lower_series VARCHAR(255),
                 episode INTEGER,
                 season INTEGER,
+                photoalbum VARCHAR(255),
                 UNIQUE (id)
             )
         </sql>
@@ -74,7 +75,8 @@
                 tvshow_count INTEGER,
                 album_count INTEGER,
                 artist_count INTEGER,
-                genre_count INTEGER
+                genre_count INTEGER,
+                photo_count INTEGER
             )
         </sql>
         <sql>
@@ -164,6 +166,7 @@
         <sql>CREATE INDEX idx_track_series ON track (series)</sql>
         <sql>CREATE INDEX idx_track_lower_series ON track (lower_series)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
+        <sql>CREATE INDEX idx_track_photoalbum ON track (photoalbum)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>

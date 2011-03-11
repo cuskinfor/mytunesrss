@@ -46,12 +46,14 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private String myTrackId;
     private Image myImage;
     private TrackSource mySource;
+    private boolean myPhoto;
 
-    public HandleTrackImagesStatement(TrackSource source, File file, String trackId, long lastUpdateTime) {
+    public HandleTrackImagesStatement(TrackSource source, File file, String trackId, long lastUpdateTime, boolean photo) {
         myLastUpdateTime = lastUpdateTime;
         myFile = file;
         myTrackId = trackId;
         mySource = source;
+        myPhoto = photo;
     }
 
     public HandleTrackImagesStatement(File file, String trackId, Image image, long lastUpdateTime) {
@@ -70,13 +72,13 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
                 }
-                if (!imageSizes.contains(Integer.valueOf(32))) {
+                if (!myPhoto && !imageSizes.contains(Integer.valueOf(32))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 32.");
                     }
                     new InsertImageStatement(imageHash, 32, ImageUtils.resizeImageWithMaxSize(image.getData(), 32)).execute(connection);
                 }
-                if (!imageSizes.contains(Integer.valueOf(64))) {
+                if (!myPhoto && !imageSizes.contains(Integer.valueOf(64))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 64.");
                     }
@@ -88,14 +90,14 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     }
                     new InsertImageStatement(imageHash, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
                 }
-                if (!imageSizes.contains(Integer.valueOf(256))) {
+                if (!myPhoto && !imageSizes.contains(Integer.valueOf(256))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 256.");
                     }
                     new InsertImageStatement(imageHash, 256, ImageUtils.resizeImageWithMaxSize(image.getData(), 256)).execute(connection);
                 }
                 int originalSize = ImageUtils.getMaxSize(image.getData());
-                if (originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize() && !imageSizes.contains(Integer.valueOf(originalSize))) {
+                if (!myPhoto && originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize() && !imageSizes.contains(Integer.valueOf(originalSize))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size " + originalSize + ".");
                     }

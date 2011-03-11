@@ -33,6 +33,7 @@ public class GetSystemInformationQuery extends DataStoreQuery<SystemInformation>
                 systemInformation.setAlbumCount(resultSet.getInt("album_count"));
                 systemInformation.setArtistCount(resultSet.getInt("artist_count"));
                 systemInformation.setGenreCount(resultSet.getInt("genre_count"));
+                systemInformation.setPhotoCount(resultSet.getInt("photo_count"));
                 return systemInformation;
             }
         } catch (SQLException e) {

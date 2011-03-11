@@ -114,6 +114,11 @@
                                 <fmt:message key="browseLibraryTvShow" />
                             </a>
                         </c:if>
+                        <c:if test="${statistics.photoCount > 0}">
+                            <a class="photo" href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                                <fmt:message key="browseLibraryPhoto" />
+                            </a>
+                        </c:if>
                     </c:if>
                     <c:if test="${authUser.createPlaylists}">
                         <c:choose>
@@ -221,15 +226,17 @@
 
     <div class="footer">
         <div class="inner">
-            <c:if test="${!empty statistics && !globalConfig.disableBrowser}">
+            <c:if test="${!empty statistics && !globalConfig.disableBrowser && statistics.anyContent}">
                 <fmt:message key="statistics" />:
-                ${statistics.musicCount} <fmt:message key="statistics.tracks" />,
-                ${statistics.movieCount} <fmt:message key="statistics.movies" />,
-                ${statistics.tvShowCount} <fmt:message key="statistics.tvshows" />,
-                <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.albumCount} <fmt:message key="statistics.albums" /></a>,
-                <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.artistCount} <fmt:message key="statistics.artists" /></a>,
-                <a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres" /></a>
-               </c:if>
+                <c:set var="separator" value="" />
+                <c:if test="statistics.musicCount > 0">${statistics.musicCount} <fmt:message key="statistics.tracks" /><c:set var="separator" value=", "/></c:if>
+                <c:if test="statistics.albumCount > 0">${separator}<a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.albumCount} <fmt:message key="statistics.albums"/></a><c:set var="separator" value=", "/></c:if>
+                <c:if test="statistics.artistCount > 0">${separator}<a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.artistCount} <fmt:message key="statistics.artists"/></a><c:set var="separator" value=", "/></c:if>
+                <c:if test="statistics.genreCount > 0">${separator}<a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres"/></a><c:set var="separator" value=", "/></c:if>
+                <c:if test="statistics.movieCount > 0">${separator}<a href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.movieCount} <fmt:message key="statistics.movies" /></a><c:set var="separator" value=", "/></c:if>
+                <c:if test="statistics.tvShowCount > 0">${separator}<a href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.tvShowCount} <fmt:message key="statistics.tvshows" /></a><c:set var="separator" value=", "/></c:if>
+                <c:if test="statistics.photoCount > 0">${separator}<a href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.photoCount} <fmt:message key="statistics.photos" /></a></c:if>
+            </c:if>
         </div>
     </div>
 

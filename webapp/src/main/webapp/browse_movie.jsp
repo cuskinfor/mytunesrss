@@ -17,6 +17,7 @@
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
+<%--@elvariable id="tracks" type="java.util.List<de.codewave.mytunesrss.datastore.statement.Track>"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -47,7 +48,7 @@
                 
                 <ul class="menu">
                     <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
-                        <li <c:if test="${!sortOrderLink}">class="first"</c:if>>
+                        <li class="first">
                             <c:choose>
                                 <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
                                     <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message key="newPlaylist"/></a>

@@ -17,6 +17,7 @@ public class SystemInformation {
     private int myAlbumCount;
     private int myArtistCount;
     private int myGenreCount;
+    private int myPhotoCount;
 
     public long getLastUpdate() {
         return myLastUpdate;
@@ -88,5 +89,17 @@ public class SystemInformation {
 
     public void setTvShowCount(int tvShowCount) {
         myTvShowCount = tvShowCount;
+    }
+
+    public int getPhotoCount() {
+        return myPhotoCount;
+    }
+
+    public void setPhotoCount(int photoCount) {
+        myPhotoCount = photoCount;
+    }
+
+    public boolean isAnyContent() {
+        return myTrackCount + myAlbumCount + myArtistCount + myGenreCount + myMovieCount + myTvShowCount + myPhotoCount > 0;
     }
 }

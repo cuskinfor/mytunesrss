@@ -43,7 +43,9 @@ public enum MyTunesRssResource {
     EditSmartPlaylist("/edit_smart_playlist.jsp"),
     OpenSearch("/opensearch.jsp"),
     BrowseMovie("/browse_movie.jsp"),
-    BrowseTvShow("/browse_tvshow.jsp");
+    BrowseTvShow("/browse_tvshow.jsp"),
+    BrowsePhotoAlbum("/browse_photoalbum.jsp"),
+    BrowsePhoto("/browse_photo.jsp");
 
     private String myValue;
 

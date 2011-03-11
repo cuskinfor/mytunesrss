@@ -207,6 +207,7 @@
         <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
         <videotype>AND t.videotype = :videoType</videotype>
         <tvshow>AND t.series = :series</tvshow>
+        <photo>AND t.photoalbum = :photoalbum</photo>
         <tvshowseason>AND t.season = :season</tvshowseason>
         <restricted>
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
@@ -224,6 +225,7 @@
         <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
         <moviesort>ORDER BY t.name</moviesort>
         <tvshowsort>ORDER BY t.series, t.season, t.episode, t.name</tvshowsort>
+        <photosort>ORDER BY t.photoalbum, t.name</photosort>
         ]]>
       </sql>
     </statement>
@@ -258,7 +260,7 @@
         <sql>
             SELECT lastupdate AS lastupdate, version AS version, track_count AS track_count, album_count AS album_count,
             artist_count AS artist_count, genre_count AS genre_count, music_count AS music_count, movie_count AS movie_count,
-            tvshow_count AS tvshow_count
+            tvshow_count AS tvshow_count, photo_count AS photo_count
             FROM system_information
         </sql>
     </statement>
@@ -321,8 +323,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, photoalbum)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :photoalbum)
         </sql>
     </statement>
 
@@ -335,8 +337,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, photoalbum)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :photoalbum)
         </sql>
     </statement>
 
@@ -353,7 +355,7 @@
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
                              lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment), year = :year,
-                             series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype
+                             series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype, photoalbum = :photoalbum
             WHERE id = :id
         </sql>
     </statement>
@@ -378,7 +380,7 @@
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
                              pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
                              lower_comment = LOWER(:comment), year = :year, series = :series, lower_series = LOWER(:series), season = :season, episode = :episode,
-                             videotype = :videotype
+                             videotype = :videotype, photoalbum = :photoalbum
             WHERE id = :id
         </sql>
     </statement>
@@ -436,6 +438,7 @@
         <sql>UPDATE system_information SET music_count = (SELECT COUNT(id) FROM track WHERE mediatype = 'Audio')</sql>
         <sql>UPDATE system_information SET movie_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'Movie')</sql>
         <sql>UPDATE system_information SET tvshow_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'TvShow')</sql>
+        <sql>UPDATE system_information SET photo_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Image')</sql>
     </statement>
 
     <statement name="removeTempPlaylistWithId">
@@ -723,6 +726,12 @@
         </sql>
     </statement>
 
+    <statement name="getPhotoAlbums">
+        <sql>
+            SELECT DISTINCT(photoalbum) FROM track ORDER BY photoalbum
+        </sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
@@ -742,12 +751,12 @@
         t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.original_artist AS original_artist, t.album AS album, t.time AS time, t.track_number AS track_number,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
         t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
-        t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode
+        t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode, t.photoalbum AS photoalbum
     </fragment>
 
     <fragment name="trackColumnsForGrouping">
         t.source, t.id, t.name, t.artist, t.original_artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
-        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode
+        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode, t.photoalbum
     </fragment>
 
     <fragment name="updatePlaylistCount">

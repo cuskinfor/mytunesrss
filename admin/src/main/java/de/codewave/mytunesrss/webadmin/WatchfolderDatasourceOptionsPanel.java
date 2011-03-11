@@ -29,6 +29,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private SmartTextField mySeriesFallback;
     private SmartTextField mySeasonFallback;
     private SmartTextField myEpisodeFallback;
+    private SmartTextField myPhotoAlbumPattern;
     private Form myMiscOptionsForm;
     private Select myVideoType;
     private WatchfolderDatasourceConfig myConfig;
@@ -60,11 +61,13 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         mySeriesFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seriesFallback");
         mySeasonFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seasonFallback");
         myEpisodeFallback = getComponentFactory().createTextField("datasourceOptionsPanel.episodeFallback");
+        myPhotoAlbumPattern = getComponentFactory().createTextField("datasourceOptionsPanel.photoAlbumPattern");
         myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
         myFallbackForm.addField(myArtistFallback, myArtistFallback);
         myFallbackForm.addField(mySeriesFallback, mySeriesFallback);
         myFallbackForm.addField(mySeasonFallback, mySeasonFallback);
         myFallbackForm.addField(myEpisodeFallback, myEpisodeFallback);
+        myFallbackForm.addField(myPhotoAlbumPattern, myPhotoAlbumPattern);
         addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.fallbacks")));
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
@@ -89,6 +92,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setSeasonFallback(mySeasonFallback.getStringValue(null));
         myConfig.setEpisodeFallback(myEpisodeFallback.getStringValue(null));
         myConfig.setVideoType(((VideoTypeRepresentation) myVideoType.getValue()).getVideoType());
+        myConfig.setPhotoAlbumPattern(myPhotoAlbumPattern.getStringValue(null));
     }
 
     @Override
@@ -111,6 +115,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         mySeasonFallback.setValue(myConfig.getSeasonFallback());
         myEpisodeFallback.setValue(myConfig.getEpisodeFallback());
         myVideoType.setValue(new VideoTypeRepresentation(myConfig.getVideoType()));
+        myPhotoAlbumPattern.setValue(myConfig.getPhotoAlbumPattern());
     }
 
     protected boolean beforeSave() {

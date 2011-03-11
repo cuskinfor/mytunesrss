@@ -48,7 +48,7 @@
 
             <ul class="menu">
                 <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
-                    <li <c:if test="${!sortOrderLink}">class="first"</c:if>>
+                    <li class="first">
                         <c:choose>
                             <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
                                 <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message

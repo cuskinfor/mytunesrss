@@ -258,7 +258,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     .nextResult()) {
                 long timeLastImageUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : track.getLastImageUpdate();
                 storeSession.executeStatement(new HandleTrackImagesStatement(track.getSource(), track.getFile(), track
-                        .getId(), timeLastImageUpdate));
+                        .getId(), timeLastImageUpdate, track.getMediaType() == MediaType.Image));
                 doCheckpoint(storeSession, false);
             }
         } finally {

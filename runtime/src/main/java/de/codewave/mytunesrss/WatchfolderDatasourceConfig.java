@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 
 import org.apache.commons.lang.StringUtils;
 
+import javax.xml.bind.annotation.XmlElementRef;
 import java.io.File;
 import java.util.regex.Pattern;
 
@@ -17,6 +18,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     public static final String DEFAULT_SERIES_FALLBACK = "[[[dir:1]]]";
     public static final String DEFAULT_SEASON_FALLBACK = "[[[dir:0:Season ([0-9]+)]]]";
     public static final String DEFAULT_EPISODE_FALLBACK = "[[[file:[0-9]+[eEx]([0-9]+)]]]";
+    public static final String DEFAULT_PHOTO_ALBUM_PATTERN = "[[[dir:1]]] - [[[dir:0]]]";
 
     private long myMinFileSize;
     private long myMaxFileSize;
@@ -28,6 +30,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private String mySeasonFallback = DEFAULT_SEASON_FALLBACK;
     private String myEpisodeFallback = DEFAULT_EPISODE_FALLBACK;
     private VideoType myVideoType = VideoType.Movie;
+    private String myPhotoAlbumPattern = DEFAULT_PHOTO_ALBUM_PATTERN;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -41,6 +44,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         mySeasonFallback = source.getSeasonFallback();
         myEpisodeFallback = source.getEpisodeFallback();
         myVideoType = source.getVideoType();
+        myPhotoAlbumPattern = source.getPhotoAlbumPattern();
     }
 
     public WatchfolderDatasourceConfig(String definition) {
@@ -130,6 +134,14 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
     public void setVideoType(VideoType videoType) {
         myVideoType = videoType;
+    }
+
+    public String getPhotoAlbumPattern() {
+        return myPhotoAlbumPattern;
+    }
+
+    public void setPhotoAlbumPattern(String photoAlbumPattern) {
+        myPhotoAlbumPattern = photoAlbumPattern;
     }
 
     public boolean isIncluded(File file) {

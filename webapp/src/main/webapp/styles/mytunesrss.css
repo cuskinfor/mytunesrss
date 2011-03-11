@@ -301,6 +301,10 @@ table.navigation {
     background: url("../images/tvshow.png") left center no-repeat;
 }
 
+.navigation .photo {
+    background: url("../images/photo.png") left center no-repeat;
+}
+
 .navigation .playlists {
     background: url("../images/playlists.png") left center no-repeat;
 }
