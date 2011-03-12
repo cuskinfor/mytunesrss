@@ -30,6 +30,7 @@ public class WebConfig {
     private static final String CFG_FEED_TYPE_PLAYLIST = "feedTypePlaylist";
     private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
+    private static final String CFG_PHOTO_PAGE_SIZE = "photoPageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static final String CFG_SHOW_PLAYER = "showPlayer";
     private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
@@ -57,7 +58,7 @@ public class WebConfig {
     private static final String CFG_SHOW_ADD_TO_PLAYLIST = "showAddToPlaylist";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
-    private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE,
+    private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
@@ -118,6 +119,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
+        myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "4");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
@@ -368,6 +370,14 @@ public class WebConfig {
 
     public void setPageSize(int pageSize) {
         myConfigValues.put(CFG_PAGE_SIZE, Integer.toString(pageSize));
+    }
+
+    public int getPhotoPageSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_PHOTO_PAGE_SIZE));
+    }
+
+    public void setPhotoPageSize(int photoPageSize) {
+        myConfigValues.put(CFG_PHOTO_PAGE_SIZE, Integer.toString(photoPageSize));
     }
 
     public int getRandomPlaylistSize() {

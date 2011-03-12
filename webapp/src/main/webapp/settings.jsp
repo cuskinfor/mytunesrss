@@ -171,6 +171,14 @@
                                        maxlength="3"
                                        value="<c:out value="${cwfn:choose(config.pageSize > 0, config.pageSize, '')}"/>" /></td>
                         </tr>
+                        <tr <mt:flipFlop/>>
+                            <td class="label"><fmt:message key="settings.photoLinesPerPage" /></td>
+                            <td><input class="number"
+                                       type="text"
+                                       name="photoPageSize"
+                                       maxlength="3"
+                                       value="<c:out value="${cwfn:choose(config.photoPageSize > 0, config.photoPageSize, '')}"/>" /></td>
+                        </tr>
                         <c:if test="${authUser.rss}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.rssFeedLimit" /></td>

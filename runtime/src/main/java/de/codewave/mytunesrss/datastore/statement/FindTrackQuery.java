@@ -134,8 +134,8 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     public static FindTrackQuery getPhotos(User user, String photoAlbum) {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = SortOrder.Photos;
-        query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        /*query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();*/
         query.setMediaTypes(MediaType.Image);
         query.setPhotoAlbum(photoAlbum);
         return query;
@@ -207,8 +207,8 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("videotype", myVideoType != null);
         conditionals.put("tvshow", mySeries != null);
         conditionals.put("tvshowseason", mySeries != null && mySeason != null);
-        conditionals.put("photos", StringUtils.isNotBlank(myPhotoAlbum));
-        conditionals.put("photosort", StringUtils.isNotBlank(myPhotoAlbum));
+        conditionals.put("photo", StringUtils.isNotBlank(myPhotoAlbum));
+        conditionals.put("photosort", mySortOrder == SortOrder.Photos);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);

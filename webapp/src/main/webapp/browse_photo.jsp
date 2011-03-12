@@ -33,6 +33,40 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script type="text/javascript">
+        $jQ(document).ready(function() {
+            $jQ("img").fullsize();
+        });
+    </script>
+
+    <style type="text/css">
+        .wraptocenter {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .wraptocenter * {
+            vertical-align: middle;
+        }
+
+            /*\*//*/
+            .wraptocenter {
+                display: block;
+            }
+            .wraptocenter span {
+                display: inline-block;
+                height: 100%;
+                width: 1px;
+            }
+            /**/
+    </style>
+    <!--[if lt IE 8]><style>
+    .wraptocenter span {
+        display: inline-block;
+        height: 100%;
+    }
+</style><![endif]-->
+
 </head>
 
 <body class="browse">
@@ -59,32 +93,18 @@
                 <jsp:include page="/incl_error.jsp" />
                 
                 <table cellspacing="0" class="tracklist searchResult">
-                <c:set var="fnCount" value="0" />
-                <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
-                <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                    <td class="artist">
-                        <div class="trackName">
-                            <div class="albumCover">
-                                <img class="coverThumbnail" id="trackthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=128</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
-                                <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${mtfn:downloadLink(pageContext, photo, '')}"/></div>
-                            </div>
-                        </div>
-                    </td>
-                    <td class="actions">
-                        <mttag:actions index="${fnCount}"
-                                       backUrl="${mtfn:encode64(backUrl)}"
-                                       linkFragment="track=${photo.id}"
-                                       filename="${mtfn:webSafeFileName(photo.name)}"
-                                       defaultPlaylistName="${photo.name}" />
-                    </td>
-                </tr>
-                <c:set var="fnCount" value="${fnCount + 1}"/>
-                </c:forEach>
+                    <c:set var="fnCount" value="0"/>
+                    <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
+                        <c:if test="${fnCount % 4 == 0}"><tr></c:if>
+                        <td class="wraptocenter"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=128</mt:encrypt>" longdesc="${mtfn:playbackLink(pageContext, photo, '')}"/></td>
+                        <c:if test="${fnCount % 4 == 3 || loopStatus.last}"></tr></c:if>
+                    <c:set var="fnCount" value="${fnCount + 1}"/>
+                    </c:forEach>
                 </table>
                 
                 <c:if test="${!empty pager}">
                     <c:set var="pagerCommand"
-                           scope="request">${servletUrl}/browsePhoto/${auth}/index={index}/backUrl=${param.backUrl}</c:set>
+                           scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
                     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                     <jsp:include page="incl_bottomPager.jsp" />
                 </c:if>

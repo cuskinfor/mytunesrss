@@ -65,6 +65,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         transferTranscoders(webConfig);
         boolean error = false;
         error |= transferAndValidatePageSize(webConfig);
+        error |= transferAndValidatePhotoPageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
         error |= transferAndValidateRandomValues(webConfig);
         error |= transferAndValidateLastUpdatedTrackCount(webConfig);
@@ -186,6 +187,20 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             }
         } catch (NumberFormatException e) {
             addError(new BundleError("error.settingsPageSizeRange"));
+            return true;
+        }
+        return false;
+    }
+
+    private boolean transferAndValidatePhotoPageSize(WebConfig webConfig) {
+        try {
+            webConfig.setPhotoPageSize(getIntegerRequestParameter("photoPageSize", 0));
+            if (webConfig.getPhotoPageSize() < 0 || webConfig.getPhotoPageSize() > 999) {
+                addError(new BundleError("error.settingsPhotoPageSizeRange"));
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            addError(new BundleError("error.settingsPhotoPageSizeRange"));
             return true;
         }
         return false;
