@@ -25,7 +25,7 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
                 LOGGER.debug("Getting photos for album \"" + photoAlbum + "\".");
             }
             DataStoreQuery.QueryResult<Track> photoResult = getTransaction().executeQuery(FindTrackQuery.getPhotos(getAuthUser(), photoAlbum));
-            int pageSize = getWebConfig().getPhotoPageSize();
+            int pageSize = getWebConfig().getEffectivePhotoPageSize();
             if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
                 Pager pager = createPager(photoResult.getResultSize(), pageSize, current);

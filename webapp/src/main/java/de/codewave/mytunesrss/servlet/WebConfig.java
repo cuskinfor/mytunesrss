@@ -376,6 +376,12 @@ public class WebConfig {
         return Integer.parseInt(myConfigValues.get(CFG_PHOTO_PAGE_SIZE));
     }
 
+    public int getEffectivePhotoPageSize() {
+        int pageSize = getPhotoPageSize();
+        return pageSize > 0 ? pageSize : 1000;
+    }
+
+
     public void setPhotoPageSize(int photoPageSize) {
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, Integer.toString(photoPageSize));
     }
