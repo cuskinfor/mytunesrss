@@ -728,7 +728,7 @@
 
     <statement name="getPhotoAlbums">
         <sql>
-            SELECT DISTINCT(photoalbum) FROM track ORDER BY photoalbum
+            SELECT DISTINCT(photoalbum) FROM track WHERE mediatype = 'Image' ORDER BY photoalbum
         </sql>
     </statement>
 
