@@ -95,9 +95,9 @@
                 <table cellspacing="0" class="tracklist searchResult">
                     <c:set var="fnCount" value="0"/>
                     <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
-                        <c:if test="${fnCount % 4 == 0}"><tr></c:if>
+                        <c:if test="${fnCount % 5 == 0}"><tr></c:if>
                         <td class="wraptocenter"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=128</mt:encrypt>" longdesc="${mtfn:playbackLink(pageContext, photo, '')}"/></td>
-                        <c:if test="${fnCount % 4 == 3 || loopStatus.last}"></tr></c:if>
+                        <c:if test="${fnCount % 5 == 4 || loopStatus.last}"></tr></c:if>
                     <c:set var="fnCount" value="${fnCount + 1}"/>
                     </c:forEach>
                 </table>
