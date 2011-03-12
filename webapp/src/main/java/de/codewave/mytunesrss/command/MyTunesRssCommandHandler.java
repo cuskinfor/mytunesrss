@@ -380,7 +380,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected Pager createPager(int itemCount, int current) {
-        int pageSize = getWebConfig().getEffectivePageSize();
+        return createPager(itemCount, getWebConfig().getEffectivePageSize(), current);
+    }
+
+    protected Pager createPager(int itemCount, int pageSize, int current) {
         if (pageSize > 0) {
             List<Pager.Page> pages = new ArrayList<Pager.Page>();
             int page = 0;

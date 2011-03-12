@@ -28,7 +28,7 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
             int pageSize = getWebConfig().getPhotoPageSize();
             if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(photoResult.getResultSize(), current);
+                Pager pager = createPager(photoResult.getResultSize(), pageSize, current);
                 getRequest().setAttribute("pager", pager);
                 getRequest().setAttribute("photos", photoResult.getResults(current * pageSize, pageSize));
             } else {
