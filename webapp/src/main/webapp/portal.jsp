@@ -114,7 +114,7 @@
                                 <fmt:message key="browseLibraryTvShow" />
                             </a>
                         </c:if>
-                        <c:if test="${statistics.photoCount > 0}">
+                        <c:if test="${statistics.photoCount > 0 && authUser.photos}">
                             <a class="photo" href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                                 <fmt:message key="browseLibraryPhoto" />
                             </a>
@@ -235,7 +235,7 @@
                 <c:if test="${statistics.genreCount > 0}">${separator}<a href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres"/></a><c:set var="separator" value="| "/></c:if>
                 <c:if test="${statistics.movieCount > 0}">${separator}<a href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.movieCount} <fmt:message key="statistics.movies" /></a><c:set var="separator" value="| "/></c:if>
                 <c:if test="${statistics.tvShowCount > 0}">${separator}<a href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.tvShowCount} <fmt:message key="statistics.tvshows" /></a><c:set var="separator" value="| "/></c:if>
-                <c:if test="${statistics.photoCount > 0}">${separator}<a href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.photoCount} <fmt:message key="statistics.photos" /></a></c:if>
+                <c:if test="${statistics.photoCount > 0 && authUser.photos}">${separator}<a href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.photoCount} <fmt:message key="statistics.photos" /></a></c:if>
             </c:if>
         </div>
     </div>

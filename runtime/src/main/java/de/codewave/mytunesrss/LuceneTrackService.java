@@ -72,8 +72,10 @@ public class LuceneTrackService {
             query.setFetchSize(10000);
             DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
             for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-                Document document = createTrackDocument(track, trackTagMap);
-                iwriter.addDocument(document);
+                if (track.getMediaType() != MediaType.Image) {
+                    Document document = createTrackDocument(track, trackTagMap);
+                    iwriter.addDocument(document);
+                }
             }
             iwriter.optimize();
             iwriter.close();
@@ -145,8 +147,10 @@ public class LuceneTrackService {
             DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
             Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
             for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-                Document document = createTrackDocument(track, trackTagMap);
-                iwriter.updateDocument(new Term("id", track.getId()), document);
+                if (track.getMediaType() != MediaType.Image) {
+                    Document document = createTrackDocument(track, trackTagMap);
+                    iwriter.updateDocument(new Term("id", track.getId()), document);
+                }
                 deletedTracks.remove(track.getId());
             }
             for (String deletedTrack : deletedTracks) {

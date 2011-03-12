@@ -53,6 +53,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermEditSettings;
     private CheckBox myPermEditPlaylists;
     private CheckBox myPermCreatePublicPlaylists;
+    private CheckBox myPermPhotos;
     private Table myPermissions;
     private Table myPlaylistsRestrictions;
     private Table myForceTranscoders;
@@ -119,6 +120,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermEditSettings = new CheckBox();
         myPermEditPlaylists = new CheckBox();
         myPermCreatePublicPlaylists = new CheckBox();
+        myPermPhotos = new CheckBox();
         Panel panel = null;
         myPermissions = new Table();
         myPermissions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
@@ -143,6 +145,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.addItem(new Object[]{myPermEditSettings, getBundleString("editUserConfigPanel.permEditSettings")}, myPermEditSettings);
         myPermissions.addItem(new Object[]{myPermEditPlaylists, getBundleString("editUserConfigPanel.permEditPlaylists")}, myPermEditPlaylists);
         myPermissions.addItem(new Object[]{myPermCreatePublicPlaylists, getBundleString("editUserConfigPanel.permCreatePublicPlaylists")}, myPermCreatePublicPlaylists);
+        myPermissions.addItem(new Object[]{myPermPhotos, getBundleString("editUserConfigPanel.permPhotos")}, myPermPhotos);
         myPermissions.setPageLength(Math.min(myPermissions.size(), 10));
         panel = new Panel(getBundleString("editUserConfigPanel.caption.permissions"));
         panel.addComponent(myPermissions);

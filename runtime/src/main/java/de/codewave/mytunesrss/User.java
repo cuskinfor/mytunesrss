@@ -96,6 +96,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myYahooPlayer = true;
     private boolean myGroup = false;
     private boolean myCreatePublicPlaylists = false;
+    private boolean myPhotos = true;
 
     public User(String name) {
         myName = name;
@@ -449,6 +450,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myCreatePublicPlaylists = createPublicPlaylists;
     }
 
+    public boolean isPhotos() {
+        return myPhotos;
+    }
+
+    public void setPhotos(boolean photos) {
+        myPhotos = photos;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -599,6 +608,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setYahooPlayer(JXPathUtils.getBooleanValue(settings, "yahooPlayer", myYahooPlayer));
         setGroup(JXPathUtils.getBooleanValue(settings, "group", myGroup));
         setCreatePublicPlaylists(JXPathUtils.getBooleanValue(settings, "createPublicPlaylists", myCreatePublicPlaylists));
+        setPhotos(JXPathUtils.getBooleanValue(settings, "featurePhotos", myPhotos));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -677,6 +687,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "yahooPlayer", isYahooPlayer()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "group", isGroup()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "createPublicPlaylists", isCreatePublicPlaylists()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featurePhotos", isPhotos()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {

@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.slf4j.Logger;
@@ -20,21 +21,26 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
-            String photoAlbum = MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbum", null));
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Getting photos for album \"" + photoAlbum + "\".");
-            }
-            DataStoreQuery.QueryResult<Track> photoResult = getTransaction().executeQuery(FindTrackQuery.getPhotos(getAuthUser(), photoAlbum));
-            int pageSize = getWebConfig().getEffectivePhotoPageSize();
-            if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
-                int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(photoResult.getResultSize(), pageSize, current);
-                getRequest().setAttribute("pager", pager);
-                getRequest().setAttribute("photos", photoResult.getResults(current * pageSize, pageSize));
+            if (!getAuthUser().isPhotos()) {
+                addError(new BundleError("error.illegalAccess"));
+                forward(MyTunesRssCommand.ShowPortal);
             } else {
-                getRequest().setAttribute("photos", photoResult.getResults());
+                String photoAlbum = MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbum", null));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Getting photos for album \"" + photoAlbum + "\".");
+                }
+                DataStoreQuery.QueryResult<Track> photoResult = getTransaction().executeQuery(FindTrackQuery.getPhotos(getAuthUser(), photoAlbum));
+                int pageSize = getWebConfig().getEffectivePhotoPageSize();
+                if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
+                    int current = getSafeIntegerRequestParameter("index", 0);
+                    Pager pager = createPager(photoResult.getResultSize(), pageSize, current);
+                    getRequest().setAttribute("pager", pager);
+                    getRequest().setAttribute("photos", photoResult.getResults(current * pageSize, pageSize));
+                } else {
+                    getRequest().setAttribute("photos", photoResult.getResults());
+                }
+                forward(MyTunesRssResource.BrowsePhoto);
             }
-            forward(MyTunesRssResource.BrowsePhoto);
         } else {
             forward(MyTunesRssResource.Login);
         }
