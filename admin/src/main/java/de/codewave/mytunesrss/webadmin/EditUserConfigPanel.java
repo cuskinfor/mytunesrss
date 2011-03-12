@@ -218,6 +218,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermChangePassword.setValue(myUser.isChangePassword());
             myPermEditPlaylists.setValue(myUser.isCreatePlaylists());
             myPermCreatePublicPlaylists.setValue(myUser.isCreatePublicPlaylists());
+            myPermPhotos.setValue(myUser.isPhotos());
             myPermDownload.setValue(myUser.isDownload());
             myPermYahooPlayer.setValue(myUser.isYahooPlayer());
             myPermEditLastFm.setValue(myUser.isEditLastFmAccount());
@@ -300,6 +301,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setChangePassword(myPermChangePassword.booleanValue());
         myUser.setCreatePlaylists(myPermEditPlaylists.booleanValue());
         myUser.setCreatePublicPlaylists(myPermCreatePublicPlaylists.booleanValue());
+        myUser.setPhotos(myPermPhotos.booleanValue());
         //myUser.setDownBytes();
         myUser.setDownload(myPermDownload.booleanValue());
         myUser.setYahooPlayer(myPermYahooPlayer.booleanValue());
