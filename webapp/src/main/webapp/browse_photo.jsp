@@ -46,7 +46,6 @@
     <style type="text/css">
 
     .thumbwrap {
-        border: 1px solid #999;
         padding: 15px 8px 0 8px;
         background-color: #f4f4f4;
         margin: 0;
@@ -56,32 +55,25 @@
         display: inline-block;
         /*\*/ vertical-align: top; /**/
         margin: 0 7px 15px 7px;
-        border: 1px solid #999;
         padding: 0;
     }
     /*  Moz: NO border qui altrimenti difficolta' con width, table altrimenti problemi a text resize (risolubili con refresh) */
     .thumbwrap li>div {
         /*\*/ display: table; table-layout: fixed; /**/
-        width: ${imageSize}px;
-    }
-    .thumbwrap a {
-        display: block;
-        text-decoration: none;
-        color: #000;
-        background-color: #ffe;
-        cursor: pointer;
+        width: 128px;
     }
     /*\*/
     .thumbwrap>li .wrimg {
         display: table-cell;
+        text-align: center;
         vertical-align: middle;
-        width: ${imageSize}px;
-        height: ${imageSize}px;
+        width: 128px;
+        height: 128px;
     }
     /**/
     .thumbwrap img {
-        border: solid 1px #66f;
         vertical-align: middle;
+        border: 1px solid black;
     }
     .thumbwrap a:hover {
         background-color: #dfd;
@@ -94,7 +86,7 @@
     * html .thumbwrap .wrimg span {
         display: inline-block;
         vertical-align: middle;
-        height: ${imageSize}px;
+        height: 128px;
         width: 1px;
     }
     /* top ib e hover Op < 9.5 */
@@ -114,8 +106,8 @@
     </style>
     <!--[if lt IE 8]><style>
     .thumbwrap li {
-        width: ${imageSize + 2}px;
-        w\idth: ${imageSize}px;
+        width: 130px;
+        w\idth: 128px;
         display: inline;
     }
     .thumbwrap {
@@ -131,7 +123,7 @@
     }
     .thumbwrap .wrimg span {
         vertical-align: middle;
-        height: ${imageSize}px;
+        height: 128px;
         zoom: 1;
     }
     </style><![endif]-->
