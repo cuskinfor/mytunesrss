@@ -8,6 +8,8 @@
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mttag" %>
 
+<c:set var="imageSize" value="128" />  
+
 <%--
   ~ Copyright (c) 2011. Codewave Software Michael Descher.
   ~ All rights reserved.
@@ -39,33 +41,102 @@
         });
     </script>
 
+    <!-- stolen code starts here -->
+
     <style type="text/css">
-        .wraptocenter {
-            text-align: center;
-            vertical-align: middle;
-        }
 
-        .wraptocenter * {
-            vertical-align: middle;
+    .thumbwrap {
+        border: 1px solid #999;
+        padding: 15px 8px 0 8px;
+        background-color: #f4f4f4;
+        margin: 0;
+    }
+    .thumbwrap li {
+        display: -moz-inline-box;
+        display: inline-block;
+        /*\*/ vertical-align: top; /**/
+        margin: 0 7px 15px 7px;
+        border: 1px solid #999;
+        padding: 0;
+    }
+    /*  Moz: NO border qui altrimenti difficolta' con width, table altrimenti problemi a text resize (risolubili con refresh) */
+    .thumbwrap li>div {
+        /*\*/ display: table; table-layout: fixed; /**/
+        width: ${imageSize}px;
+    }
+    .thumbwrap a {
+        display: block;
+        text-decoration: none;
+        color: #000;
+        background-color: #ffe;
+        cursor: pointer;
+    }
+    /*\*/
+    .thumbwrap>li .wrimg {
+        display: table-cell;
+        vertical-align: middle;
+        width: ${imageSize}px;
+        height: ${imageSize}px;
+    }
+    /**/
+    .thumbwrap img {
+        border: solid 1px #66f;
+        vertical-align: middle;
+    }
+    .thumbwrap a:hover {
+        background-color: #dfd;
+    }
+    /*\*//*/
+    * html .thumbwrap li .wrimg {
+        display: block;
+        font-size: 1px;
+    }
+    * html .thumbwrap .wrimg span {
+        display: inline-block;
+        vertical-align: middle;
+        height: ${imageSize}px;
+        width: 1px;
+    }
+    /* top ib e hover Op < 9.5 */
+    @media all and (min-width: 0px) {
+        html:first-child .thumbwrap li div {
+            display: block;
         }
-
-            /*\*//*/
-            .wraptocenter {
-                display: block;
-            }
-            .wraptocenter span {
-                display: inline-block;
-                height: 100%;
-                width: 1px;
-            }
-            /**/
+        html:first-child .thumbwrap a {
+            display: inline-block;
+            vertical-align: top;
+        }
+        html:first-child .thumbwrap {
+            border-collapse: collapse;
+            display: inline-block; /* non deve avere margin */
+        }
+    }
     </style>
     <!--[if lt IE 8]><style>
-    .wraptocenter span {
-        display: inline-block;
-        height: 100%;
+    .thumbwrap li {
+        width: ${imageSize + 2}px;
+        w\idth: ${imageSize}px;
+        display: inline;
     }
-</style><![endif]-->
+    .thumbwrap {
+        _height: 0;
+        zoom: 1;
+        display: inline;
+    }
+    .thumbwrap li .wrimg {
+        display: block;
+        /* evita hasLayout per background position */
+        width: auto;
+        height: auto;
+    }
+    .thumbwrap .wrimg span {
+        vertical-align: middle;
+        height: ${imageSize}px;
+        zoom: 1;
+    }
+    </style><![endif]-->
+
+    <!-- stolen code ends here -->
 
 </head>
 
@@ -92,16 +163,14 @@
                 
                 <jsp:include page="/incl_error.jsp" />
                 
-                <table cellspacing="0" class="tracklist searchResult">
-                    <c:set var="fnCount" value="0"/>
-                    <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
-                        <c:if test="${fnCount % 5 == 0}"><tr></c:if>
-                        <td class="wraptocenter"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=128</mt:encrypt>" longdesc="${mtfn:playbackLink(pageContext, photo, '')}"/></td>
-                        <c:if test="${fnCount % 5 == 4 || loopStatus.last}"></tr></c:if>
-                    <c:set var="fnCount" value="${fnCount + 1}"/>
-                    </c:forEach>
-                </table>
-                
+                <ul class="thumbwrap">
+                <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
+                    <li>
+                        <div><span class="wrimg"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" longdesc="${mtfn:playbackLink(pageContext, photo, '')}"/></span></div>
+                    </li>
+                </c:forEach>
+                </ul>
+
                 <c:if test="${!empty pager}">
                     <c:set var="pagerCommand"
                            scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>

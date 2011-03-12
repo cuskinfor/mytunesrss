@@ -172,7 +172,7 @@
                                        value="<c:out value="${cwfn:choose(config.pageSize > 0, config.pageSize, '')}"/>" /></td>
                         </tr>
                         <tr <mt:flipFlop/>>
-                            <td class="label"><fmt:message key="settings.photoLinesPerPage" /></td>
+                            <td class="label"><fmt:message key="settings.photoPageSize" /></td>
                             <td><input class="number"
                                        type="text"
                                        name="photoPageSize"

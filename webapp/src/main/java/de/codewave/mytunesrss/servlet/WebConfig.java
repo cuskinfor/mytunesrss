@@ -119,7 +119,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_PAGE_SIZE, "0");
-        myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "5");
+        myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "20");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
