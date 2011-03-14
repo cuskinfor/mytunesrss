@@ -18,7 +18,7 @@
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -75,6 +75,42 @@
                 <jsp:include page="incl_playlist.jsp" />
                 
                 <table cellspacing="0" class="tracklist searchResult">
+                <!-- begin playlist header -->
+                <c:if test="${!empty param.playlistName}">
+                    <tr>
+                        <th id="functionsDialogName${fnCount}" class="active" colspan="2">
+                            <c:out value="${mtfn:decode64(param.playlistName)}"/>
+                        </th>
+                        <th class="actions">
+                            <c:set var="filename" value="${mtfn:decode64(param.playlistName)}"/>
+                            <c:set var="linkFragment" value="playlist=${cwfn:encodeUrl(param.playlist)}"/>
+                            <c:choose>
+                                <c:when test="${!stateEditPlaylist}">
+                                    <mttag:actions index="${fnCount}"
+                                                   backUrl="${mtfn:encode64(backUrl)}"
+                                                   linkFragment="${linkFragment}"
+                                                   filename="${mtfn:webSafeFileName(filename)}"
+                                                   zipFileCount="${fn:length(tracks)}"
+                                                   editTagsType="Playlist"
+                                                   editTagsId="${param.playlist}"
+                                                   defaultPlaylistName="${mtfn:webSafeFileName(filename)}"/>
+
+                                </c:when>
+                                <c:otherwise>
+                                    <c:if test="${authUser.player && config.showPlayer}">
+                                        <a class="flash"
+                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}/filename=${mtfn:webSafeFileName(filename)}.xspf</mt:encrypt>'); return false;"
+                                           title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    </c:if>
+                                    <a class="add"
+                                       onclick="addPlaylistTracksToPlaylist('${param.playlist}')"
+                                       alt="add"><span>Add</span></a>
+                                </c:otherwise>
+                            </c:choose>
+                        </th>
+                    </tr>
+                </c:if>
+                <!-- end playlist header -->
                 <c:set var="fnCount" value="0" />
                 <c:forEach items="${tracks}" var="track" varStatus="loopStatus">
                 <c:if test="${track.newSection}">

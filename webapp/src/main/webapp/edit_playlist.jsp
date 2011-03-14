@@ -149,8 +149,8 @@
                 });
             }
             return templatePager.evaluate({
-                displayPreviousControls : (firstPage > 0 ? "inline" : "none"),
-                displayNextControls : ((firstPage + pagesPerPager) * itemsPerPage < totalCount ? "inline" : "none"),
+                displayPreviousControls : (firstPage > 0 ? "" : "display:none"),
+                displayNextControls : ((firstPage + pagesPerPager) * itemsPerPage < totalCount ? "" : "display:none"),
                 pagerPages : pageList
             });
         }
@@ -254,7 +254,7 @@
         </td>
         <td>
             <img src="${appUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
-            <img src="${appUrl}/images/movie#{oddSuffix}.gif" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
+            <img src="${appUrl}/images/movie.png" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
             #{trackName}
         </td>
         <td>#{trackArtist}</td>
@@ -265,11 +265,11 @@
 </textarea>
 
 <textarea id="templatePager" style="display:none">
-    <a style="cursor:pointer;display:#{displayPreviousControls}" onclick="firstItem=pagerGetIndexFirst();loadView()"><img src="${appUrl}/images/pager_first.gif" alt="first"/></a>
-    <a style="cursor:pointer;display:#{displayPreviousControls}" onclick="firstItem=pagerGetIndexPrevious();loadView()"><img src="${appUrl}/images/pager_previous.gif" alt="previous"/></a>
+    <a style="cursor:pointer;#{displayPreviousControls}" onclick="firstItem=pagerGetIndexFirst();loadView()" class="first">First</a>
+    <a style="cursor:pointer;#{displayPreviousControls}" onclick="firstItem=pagerGetIndexPrevious();loadView()" class="previous">Previous</a>
     #{pagerPages}
-    <a style="cursor:pointer;display:#{displayNextControls}" onclick="firstItem=pagerGetIndexNext();loadView()"><img src="${appUrl}/images/pager_next.gif" alt="next"/></a>
-    <a style="cursor:pointer;display:#{displayNextControls}" onclick="firstItem=pagerGetIndexLast();loadView()"><img src="${appUrl}/images/pager_last.gif" alt="last"/></a>
+    <a style="cursor:pointer;#{displayNextControls}" onclick="firstItem=pagerGetIndexNext();loadView()" class="next">Next</a>
+    <a style="cursor:pointer;#{displayNextControls}" onclick="firstItem=pagerGetIndexLast();loadView()" class="last">Last</a>
 </textarea>
 
 <textarea id="templatePagerPage" style="display:none">

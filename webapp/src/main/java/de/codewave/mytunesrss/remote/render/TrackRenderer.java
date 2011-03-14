@@ -25,8 +25,8 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("imageHash", track.getImageHash());
         result.put("lastImageUpdate", track.getLastImageUpdate());
         result.put("mp4Codec", track.getMp4Codec());
-        result.put("mediaType", track.getMediaType().name());
-        result.put("videoType", track.getVideoType().name());
+        result.put("mediaType", track.getMediaType() != null ? track.getMediaType().name() : null);
+        result.put("videoType", track.getVideoType() != null ? track.getVideoType().name() : null);
         result.put("series", track.getSeries());
         result.put("season", track.getSeason());
         result.put("episode", track.getEpisode());

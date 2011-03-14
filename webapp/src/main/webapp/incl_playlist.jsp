@@ -46,6 +46,9 @@
     function addTracksToPlaylist(tracks) {
         jsonRpc('${servletUrl}', 'EditPlaylistService.addTracks', [tracks], updateEditPlaylistCount, '${remoteApiSessionId}');
     }
+    function addPlaylistTracksToPlaylist(playlist) {
+        jsonRpc('${servletUrl}', 'EditPlaylistService.addPlaylistTracks', [playlist], updateEditPlaylistCount, '${remoteApiSessionId}');
+    }
     function updateEditPlaylistCount(result) {
         $jQ("#editPlaylistTrackCount").html(result.count);
     }

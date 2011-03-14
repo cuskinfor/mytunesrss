@@ -73,6 +73,25 @@ public class EditPlaylistService {
     }
 
     /**
+     * Add all tracks of a playlist to the currently edited playlist.
+     *
+     * @param playlistId A playlist id.
+     *
+     * @return The playlist and list of tracks after adding the new tracks.
+     *
+     * @throws IllegalAccessException
+     * @throws SQLException
+     */
+    public Object addPlaylistTracks(String playlistId) throws IllegalAccessException, SQLException {
+        Session session = MyTunesRssRemoteEnv.getSession();
+        User user = session.getUser();
+        if (user != null) {
+            return addTracks(new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder));
+        }
+        throw new IllegalAccessException("UNAUTHORIZED");
+    }
+
+    /**
      * Add all tracks returned from the specified query.
      *
      * @param query The query which must return a collection of tracks.
