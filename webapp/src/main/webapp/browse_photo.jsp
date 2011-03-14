@@ -154,7 +154,12 @@
                 </ul>
                 
                 <jsp:include page="/incl_error.jsp" />
-                
+
+                <table cellspacing="0" class="tracklist searchResult">
+                    <tr>
+                        <th class="active"><c:out value="${mtfn:decode64(param.photoalbum)}"/></th>
+                    </tr>
+                </table>
                 <ul class="thumbwrap">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>

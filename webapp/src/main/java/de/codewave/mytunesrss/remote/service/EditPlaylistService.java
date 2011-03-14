@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.remote.service;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -368,7 +369,7 @@ public class EditPlaylistService {
                 Map<String, Object> map = new HashMap<String, Object>();
                 map.put("playlist", playlist);
                 if (first < playlistTracks.size()) {
-                    map.put("tracks", playlistTracks.subList(first, count > 0 ? Math.min(first + count, playlistTracks.size()) : playlistTracks.size()));
+                    map.put("tracks", MyTunesRssUtils.getSubList(playlistTracks, first, count));
                 }
                 return RenderMachine.getInstance().render(map);
             } else {

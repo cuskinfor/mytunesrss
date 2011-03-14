@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -113,7 +114,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 int current = getSafeIntegerRequestParameter("index", 0);
                 Pager pager = createPager(playlists.size(), current);
                 getRequest().setAttribute("pager", pager);
-                playlists = playlists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, playlists.size()));
+                playlists = MyTunesRssUtils.getSubList(playlists, current * pageSize, pageSize);
             }
             getRequest().setAttribute("playlists", playlists);
             getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && StringUtils.isNotEmpty(MyTunesRss.CONFIG.getUploadDir()));

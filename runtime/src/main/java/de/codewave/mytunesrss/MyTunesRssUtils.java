@@ -501,4 +501,21 @@ public class MyTunesRssUtils {
         MyTunesRss.TEMP_CACHE.add("tmp_" + TEMP_FILE_COUNTER.incrementAndGet(), tmpFile, timeout);
         return tmpFile;
     }
+
+    /**
+     * Get a sub list.
+     *
+     * @param fullList
+     * @param first
+     * @param count If count is less than 1, the rest of the list is returned.
+     * @param <T>
+     * @return
+     */
+    public static <T> List<T> getSubList(List<T> fullList, int first, int count) {
+        if (count > 0) {
+            return fullList.subList(first, Math.min(first + count, fullList.size()));
+        } else {
+            return fullList.subList(first, fullList.size());
+        }
+    }
 }

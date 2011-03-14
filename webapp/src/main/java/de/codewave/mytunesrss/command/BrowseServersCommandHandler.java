@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -39,7 +40,7 @@ public class BrowseServersCommandHandler extends MyTunesRssCommandHandler {
                     int current = getSafeIntegerRequestParameter("index", 0);
                     Pager pager = createPager(servers.size(), current);
                     getRequest().setAttribute("indexPager", pager);
-                    servers = servers.subList(current * pageSize, Math.min((current * pageSize) + pageSize, servers.size()));
+                    servers = MyTunesRssUtils.getSubList(servers, current * pageSize, pageSize);
                 }
                 getRequest().setAttribute("servers", servers);
                 forward(MyTunesRssResource.BrowseServers);

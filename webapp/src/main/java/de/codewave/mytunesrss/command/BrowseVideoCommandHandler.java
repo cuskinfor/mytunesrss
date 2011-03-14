@@ -32,7 +32,7 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
                     int current = getSafeIntegerRequestParameter("index", 0);
                     Pager pager = createPager(tracks.size(), current);
                     getRequest().setAttribute("pager", pager);
-                    tracks = tracks.subList(current * pageSize, pageSize);
+                    tracks = MyTunesRssUtils.getSubList(tracks, current * pageSize, pageSize);
                 }
                 getRequest().setAttribute("tracks", tracks);
             }
