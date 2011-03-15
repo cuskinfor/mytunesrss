@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.Pager;
-import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -55,6 +52,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                                                MessageFormat.format(getBundleString("playlist.specialLastUpdated"), lastUpdatedPlaylistSize),
                                                lastUpdatedPlaylistSize));
                 }
+                /*
                 int randomPlaylistSize = getWebConfig().getRandomPlaylistSize();
                 if (randomPlaylistSize > 0) {
                     StringBuilder randomType = new StringBuilder();
@@ -92,6 +90,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                                 randomPlaylistSize));
                     }
                 }
+                */
             }
             if (StringUtils.isNotEmpty(containerId)) {
                 Playlist container = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, containerId, null, false, false))
@@ -105,6 +104,11 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                                                                                                                    containerId,
                                                                                                                    false,
                                                                                                                    false));
+            Playlist randomPlaylist = getBooleanRequestParameter("forceNewRandomPlaylist", false) ? null : MyTunesRssWebUtils.findRandomPlaylist(getTransaction(), getAuthUser());
+            if (randomPlaylist == null) {
+                randomPlaylist = MyTunesRssWebUtils.createRandomPlaylist(getTransaction(), getAuthUser(), getWebConfig(), MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), getWebConfig().getRandomPlaylistSize()));
+            }
+            playlists.add(randomPlaylist);
             for (Playlist playlist = queryResult.nextResult(); playlist != null; playlist = queryResult.nextResult()) {
                 playlists.add(playlist);
                 playlists.addAll(createSplittedPlaylists(playlist));

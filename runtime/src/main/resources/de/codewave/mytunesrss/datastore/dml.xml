@@ -105,7 +105,7 @@
             <![CDATA[
             SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist p<restricted>, link_track_playlist rltp</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded>
-            WHERE type != 'TEMP'
+            WHERE type != 'TEMP' AND type != 'Random'
             <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
             <matching>AND user_owner = :username</matching>
             <user>AND (user_private IS NULL OR user_private = FALSE OR user_owner = :username)</user>
@@ -128,6 +128,17 @@
             <rootcontainer>AND container_id IS NULL</rootcontainer>
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
             ORDER BY name
+            ]]>
+        </sql>
+    </statement>
+
+    <statement name="findRandomPlaylist">
+        <sql>
+            <![CDATA[
+            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
+            FROM playlist p
+            WHERE type = 'Random'
+            AND user_owner = :username
             ]]>
         </sql>
     </statement>

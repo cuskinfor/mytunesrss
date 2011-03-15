@@ -650,6 +650,13 @@ table.navigation {
     background-repeat: no-repeat;
 }
 
+.tracklist td.random {
+    padding-left: 28px;
+    background-image: url( "../images/playlist_mt_smart.png" );
+    background-position: 5px center;
+    background-repeat: no-repeat;
+}
+
 .tracklist td.homefolder {
     padding-left: 28px;
     background-image: url( "../images/home_folder.png" );

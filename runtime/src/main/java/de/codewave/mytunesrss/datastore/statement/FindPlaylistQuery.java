@@ -74,7 +74,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     }
 
     public static class PlaylistResultBuilder implements ResultBuilder<Playlist> {
-        private PlaylistResultBuilder() {
+        public PlaylistResultBuilder() {
             // intentionally left blank
         }
 

@@ -24,7 +24,7 @@ import java.util.Map;
 public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
     public static final String PSEUDO_ID_ALL_BY_ARTIST = "PlaylistAllByArtist";
     public static final String PSEUDO_ID_ALL_BY_ALBUM = "PlaylistAllByAlbum";
-    public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
+    //public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
     public static final String PSEUDO_ID_MOST_PLAYED = "PlaylistMostPlayed";
     public static final String PSEUDO_ID_RECENTLY_PLAYED = "PlaylistRecentlyPlayed";
     public static final String PSEUDO_ID_LAST_UPDATED = "PlaylistLastUpdated";
@@ -71,7 +71,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             statement = MyTunesRssUtils.createStatement(connection, "findRecentlyPlayedTracks", conditionals, myResultSetType);
             String[] splitted = myId.split("_");
             statement.setInt("maxCount", Integer.parseInt(splitted[1]));
-        } else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
+        /*} else if (myId.startsWith(PSEUDO_ID_RANDOM)) {
             String[] splitted = myId.split("_", 4);
             String mediaType = StringUtils.trimToNull(splitted[1].split("-", 2)[0]);
             boolean protection = "p".equals(splitted[1].split("-", 2)[1]);
@@ -91,7 +91,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             statement.setString("mediatype", mediaType);
             statement.setBoolean("protected", protection);
             statement.setInt("maxCount", maxCount);
-            statement.setString("sourcePlaylistId", sourcePlaylistId);
+            statement.setString("sourcePlaylistId", sourcePlaylistId);*/
         } else {
             conditionals.put("indexorder", mySortOrder != SortOrder.Album && mySortOrder != SortOrder.Artist);
             conditionals.put("albumorder", mySortOrder == SortOrder.Album);

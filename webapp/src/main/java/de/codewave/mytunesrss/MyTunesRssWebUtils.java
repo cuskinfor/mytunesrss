@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.ServletUtils;
+import de.codewave.utils.sql.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -413,4 +417,73 @@ public class MyTunesRssWebUtils {
         return ArrayUtils.contains(StringUtils.split(activeTranscoders, ','), transcoder);
     }
 
+    /**
+     * Find the user's random playlist.
+     *
+     * @param transaction
+     * @param user
+     *
+     * @return The user's random playlist or NULL if none exists.
+     *
+     * @throws SQLException
+     */
+    public static Playlist findRandomPlaylist(DataStoreSession transaction, final User user) throws SQLException {
+        return transaction.executeQuery(new DataStoreQuery<Playlist>() {
+            @Override
+            public Playlist execute(Connection connection) throws SQLException {
+                SmartStatement query = MyTunesRssUtils.createStatement(connection, "findRandomPlaylist");
+                query.setString("username", user.getName());
+                return execute(query, new FindPlaylistQuery.PlaylistResultBuilder()).getResult(0);
+            }
+        });
+
+    }
+
+    /**
+     * Create a random playlist in the database and return the playlist representation.
+     *
+     * @param transaction
+     * @param user
+     * @param webConfig
+     * @param playlistName
+     *
+     * @return
+     *
+     * @throws SQLException
+     */
+    public static Playlist createRandomPlaylist(DataStoreSession transaction, final User user, final WebConfig webConfig, String playlistName) throws SQLException {
+        List<String> trackIds = transaction.executeQuery(new DataStoreQuery<List<String>>() {
+            @Override
+            public List<String> execute(Connection connection) throws SQLException {
+                Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+                conditionals.put("restricted", !user.getRestrictedPlaylistIds().isEmpty());
+                conditionals.put("excluded", !user.getExcludedPlaylistIds().isEmpty());
+                conditionals.put("sourceplaylist", StringUtils.isNotBlank(webConfig.getRandomSource()));
+                conditionals.put("mediatype", StringUtils.isNotBlank(webConfig.getRandomMediaType()));
+                SmartStatement query = MyTunesRssUtils.createStatement(connection, "findRandomTracks", conditionals, ResultSetType.TYPE_SCROLL_INSENSITIVE);
+                query.setString("mediatype", webConfig.getRandomMediaType());
+                query.setBoolean("protected", webConfig.isRandomProtected());
+                query.setInt("maxCount", webConfig.getRandomPlaylistSize());
+                query.setString("sourcePlaylistId", webConfig.getRandomSource());
+                query.setItems("restrictedPlaylistIds", user.getRestrictedPlaylistIds());
+                query.setItems("excludedPlaylistIds", user.getExcludedPlaylistIds());
+                return execute(query, new ResultBuilder<String>() {
+                    public String create(ResultSet resultSet) throws SQLException {
+                        return resultSet.getString("ID");
+                    }
+                }).getResults();
+            }
+        });
+        Playlist randomPlaylist = findRandomPlaylist(transaction, user);
+        SaveRandomPlaylistStatement statement = new SaveRandomPlaylistStatement();
+        String playlistId = randomPlaylist != null ? randomPlaylist.getId() : "RANDOM_" + UUID.randomUUID();
+        statement.setUpdate(randomPlaylist != null);
+        statement.setId(playlistId);
+        statement.setName(playlistName);
+        statement.setTrackIds(trackIds);
+        statement.setUserName(user.getName());
+        statement.setUserPrivate(true);
+        transaction.executeStatement(statement);
+        return new Playlist(playlistId, PlaylistType.Random, playlistName, webConfig.getRandomPlaylistSize());
+    }
 }
