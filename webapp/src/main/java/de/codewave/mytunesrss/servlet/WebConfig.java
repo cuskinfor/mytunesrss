@@ -240,6 +240,7 @@ public class WebConfig {
     public void save(HttpServletRequest request, HttpServletResponse response) {
         if (StringUtils.isEmpty((String) request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
             Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
+            cookie.setVersion(1);
             cookie.setComment("MyTunesRSS settings cookie");
             cookie.setMaxAge(3600 * 24 * 365);// one year
             String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
@@ -251,6 +252,7 @@ public class WebConfig {
     public void removeCookie(HttpServletRequest request, HttpServletResponse response) {
         if (StringUtils.isEmpty((String) request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
             Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
+            cookie.setVersion(1);
             cookie.setComment("MyTunesRSS settings cookie");
             cookie.setMaxAge(0); // delete cookie
             String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
