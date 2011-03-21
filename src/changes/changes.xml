@@ -20,6 +20,12 @@
             </action>
         </release>
 
+        <release version="4.0.14" date="2011-03-xx">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-260] Saving the login does not work in Chrome
+            </action>
+        </release>
+
         <release version="4.0.13" date="2011-02-26">
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-252] Default to private user playlists / option in admin to force private lists

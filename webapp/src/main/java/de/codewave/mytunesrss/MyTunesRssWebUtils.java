@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
+import de.codewave.utils.Base64Utils;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.sql.*;
 import org.apache.commons.codec.binary.Base64;
@@ -278,10 +279,12 @@ public class MyTunesRssWebUtils {
     public static void setCookieLanguage(HttpServletRequest request, HttpServletResponse response, String languageCode) {
         Cookie cookie;
         if (StringUtils.isNotBlank(languageCode)) {
-            cookie = new Cookie("MyTunesRSS_Language", StringUtils.trim(languageCode));
+            cookie = new Cookie(MyTunesRss.APPLICATION_IDENTIFIER + "Language", Base64Utils.encode(StringUtils.trim(languageCode)));
+            cookie.setVersion(1);
             cookie.setMaxAge(3600 * 24 * 365); // one year
         } else {
-            cookie = new Cookie("MyTunesRSS_Language", "");
+            cookie = new Cookie(MyTunesRss.APPLICATION_IDENTIFIER + "Language", "");
+            cookie.setVersion(1);
             cookie.setMaxAge(0); // expire now
         }
         cookie.setComment("MyTunesRSS language cookie");
@@ -362,7 +365,8 @@ public class MyTunesRssWebUtils {
     }
 
     private static Cookie createLoginCookie(HttpServletRequest request, String cookieValue) {
-        Cookie cookie = new Cookie(MyTunesRss.APPLICATION_IDENTIFIER + "User", cookieValue);
+        Cookie cookie = new Cookie(MyTunesRss.APPLICATION_IDENTIFIER + "User", Base64Utils.encode(cookieValue));
+        cookie.setVersion(1);
         cookie.setComment("MyTunesRSS user cookie");
         cookie.setMaxAge(3600 * 24 * 60);// 60 days
         String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
@@ -381,7 +385,7 @@ public class MyTunesRssWebUtils {
             for (Cookie cookie : request.getCookies()) {
                 if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "User")) {
                     try {
-                        return new String(Base64.decodeBase64(cookie.getValue().split(";")[0]), "UTF-8");
+                        return new String(Base64.decodeBase64(Base64Utils.decodeToString(cookie.getValue()).split(";")[0]), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
                         if (LOGGER.isErrorEnabled()) {
                             LOGGER.error("Character set UTF-8 not found.");
@@ -397,7 +401,14 @@ public class MyTunesRssWebUtils {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
                 if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "User")) {
-                    return Base64.decodeBase64(cookie.getValue().split(";")[1]);
+                    try {
+                        return Base64.decodeBase64(Base64Utils.decodeToString(cookie.getValue()).split(";")[1]);
+                    } catch (Exception e) {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Could not get password from user cookie value.", e);
+                        }
+                        return null;
+                    }
                 }
             }
         }
