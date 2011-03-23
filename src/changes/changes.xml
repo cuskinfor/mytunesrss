@@ -9,6 +9,10 @@
 
         <release version="4.1.0-EAP-1" date="2011-xx-xx">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-217] Permanent random playlist in session
+                (Added a button to re-create the random playlist explicitly, each user has a private random playlist)
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-216] Action buttons for playlist.
             </action>
             <action dev="mdescher" type="update">
