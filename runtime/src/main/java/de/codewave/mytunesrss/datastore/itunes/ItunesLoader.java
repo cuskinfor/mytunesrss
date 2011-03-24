@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,16 +31,18 @@ public class ItunesLoader {
     private static final Logger LOG = LoggerFactory.getLogger(ItunesLoader.class);
 
     static String getFileNameForLocation(String location) {
-        try {
-            return new File(new URI(location).getPath()).getCanonicalPath();
-        } catch (URISyntaxException e) {
-            LOG.error("Could not create URI from location \"" + location + "\".", e);
-        } catch (IOException e) {
-            LOG.debug("Could not create canonical path from location \"" + location + "\".", e);
+        if (StringUtils.isNotBlank(location)) {
             try {
-                return MyTunesRssUtils.normalize(new File(new URI(location).getPath()).getAbsolutePath());
-            } catch (URISyntaxException e1) {
-                LOG.error("Could not create URI from location \"" + location + "\".", e1);
+                return new File(new URI(location).getPath()).getCanonicalPath();
+            } catch (URISyntaxException e) {
+                LOG.error("Could not create URI from location \"" + location + "\".", e);
+            } catch (IOException e) {
+                LOG.debug("Could not create canonical path from location \"" + location + "\".", e);
+                try {
+                    return MyTunesRssUtils.normalize(new File(new URI(location).getPath()).getAbsolutePath());
+                } catch (URISyntaxException e1) {
+                    LOG.error("Could not create URI from location \"" + location + "\".", e1);
+                }
             }
         }
         return null;
