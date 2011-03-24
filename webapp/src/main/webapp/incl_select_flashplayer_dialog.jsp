@@ -6,11 +6,11 @@
 
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 
-<div id="selectFlashPlayerDialog" style="display:none;border:solid 2px black;border-radius:6px;background-color:#FFF">
+<div id="selectFlashPlayerDialog" class="dialog">
     <h2>
         <fmt:message key="selectFlashPlayerDialogTitle"/>
     </h2>
-    <div style="margin:10px">
+    <div>
         <p>
             <fmt:message key="dialog.selectFlashPlayer"/>
         </p>
@@ -21,32 +21,31 @@
                 </c:forEach>
             </select>
         </p>
-        <p>
+        <p align="right">
             <button onclick="doOpenPlayer()"><fmt:message key="doOpenFlashPlayer"/></button>
             <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
         </p>
     </div>
-    <input id="selectFlashPlayerDialogUrl" type="hidden" />
 </div>
 
 <script type="text/javascript">
 
     function doOpenPlayer() {
         var val = $jQ("#flashPlayerSelection option:selected").val().split(",");
-        var url = $jQ('#selectFlashPlayerDialogUrl').val().replace(/#ID#/, val[0]);
+        var url = $jQ('#selectFlashPlayerDialog').data("url").replace(/#ID#/, val[0]);
         var width = val[1];
         var height = val[2];
-        $jQ.modal.close();
         var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=" + width + ",height=" + height + ",resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
         flashPlayer.onload = function() {
             flashPlayer.document.title = self.document.title;
         }
+        $jQ.modal.close();
     }
 
     function openPlayer(url) {
         <c:choose>
             <c:when test="${empty config.flashplayer}">
-                $jQ("#selectFlashPlayerDialogUrl").val(url);
+                $jQ("#selectFlashPlayerDialog").data("url", url);
                 $jQ("#selectFlashPlayerDialog").modal();
             </c:when>
             <c:otherwise>
