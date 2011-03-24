@@ -8,6 +8,12 @@
     <body>
 
         <release version="4.0.14" date="2011-03-xx">
+            <action dev="mdescher" type="fix">
+                Fixed some exceptions during artwork import for missing files.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed possible NullPointerException when location is iTunes XML is missing for a track.
+            </action>
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-260] Saving the login does not work in Chrome
             </action>

@@ -132,7 +132,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     }
 
     private Image readImageFromTrackFile(Image image) {
-        if (FileSupportUtils.isMp3(myFile)) {
+        if (myFile.isFile() && FileSupportUtils.isMp3(myFile)) {
             if (myFile.lastModified() >= myLastUpdateTime) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
@@ -141,7 +141,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             } else {
                 image = IMAGE_UP_TO_DATE;
             }
-        } else if (FileSupportUtils.isMp4(myFile)) {
+        } else if (myFile.isFile() && FileSupportUtils.isMp4(myFile)) {
             if (myFile.lastModified() >= myLastUpdateTime) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
@@ -156,7 +156,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private Image readImageFromImageFile(File imageFile) throws IOException {
         Image image;
-        if (imageFile.lastModified() >= myLastUpdateTime) {
+        if (imageFile.isFile() && imageFile.lastModified() >= myLastUpdateTime) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
             }
@@ -188,33 +188,38 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
             if (datasource.getType() == DatasourceType.Itunes) {
                 File file = new File(datasource.getDefinition());
-                // assume itunes xml
-                LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");
-                String[] idPair = StringUtils.split(myTrackId, "_");
-                if (idPair.length == 2) {
-                    String dirLevel1 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 1), 16), 2, '0');
-                    String dirLevel2 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 2), 16), 2, '0');
-                    String dirLevel3 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 3), 16), 2, '0');
-                    File itcFile = null;
-                    for (File subdir : new File(file.getParentFile(), "Album Artwork").listFiles()) {
-                        itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
-                        if (itcFile.isFile()) {
-                            break;
-                        }
-                    }
-                    if (itcFile.isFile() && itcFile.lastModified() >= myLastUpdateTime) {
-                        LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                        Map<String, Mp4Atom> atoms = Mp4Utils.getAtoms(itcFile, Collections.<String>singletonList("item"));
-                        Mp4Atom itemAtom = atoms.get("item");
-                        if (itemAtom != null) {
-                            LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                            int offset = CamelUtils.getValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
-                            Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8))));
-                            if (iter.hasNext()) {
-                                ImageReader reader = iter.next();
-                                String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
-                                LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length));
+                if (file.isFile()) {
+                    // assume itunes xml
+                    LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");
+                    String[] idPair = StringUtils.split(myTrackId, "_");
+                    if (idPair.length == 2) {
+                        String dirLevel1 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 1), 16), 2, '0');
+                        String dirLevel2 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 2), 16), 2, '0');
+                        String dirLevel3 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 3), 16), 2, '0');
+                        File itcFile = null;
+                        File albumArtworkDir = new File(file.getParentFile(), "Album Artwork");
+                        if (albumArtworkDir.isDirectory()) {
+                            for (File subdir : albumArtworkDir.listFiles()) {
+                                itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
+                                if (itcFile.isFile()) {
+                                    break;
+                                }
+                            }
+                            if (itcFile.isFile() && itcFile.lastModified() >= myLastUpdateTime) {
+                                LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                                Map<String, Mp4Atom> atoms = Mp4Utils.getAtoms(itcFile, Collections.<String>singletonList("item"));
+                                Mp4Atom itemAtom = atoms.get("item");
+                                if (itemAtom != null) {
+                                    LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                                    int offset = CamelUtils.getValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
+                                    Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8))));
+                                    if (iter.hasNext()) {
+                                        ImageReader reader = iter.next();
+                                        String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
+                                        LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                                        return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length));
+                                    }
+                                }
                             }
                         }
                     }
