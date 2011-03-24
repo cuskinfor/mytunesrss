@@ -19,6 +19,7 @@
 <script src="${appUrl}/js/functions.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/fullsize/jquery.fullsize.minified.js" type="text/javascript"></script>
 <script src="${appUrl}/loadmask/jquery.loadmask.min.js" type="text/javascript"></script>
+<script src="${appUrl}/js/jquery.simplemodal.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     var $jQ=jQuery.noConflict();
 
