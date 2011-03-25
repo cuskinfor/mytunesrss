@@ -46,7 +46,7 @@
         <c:choose>
             <c:when test="${empty config.flashplayer}">
                 $jQ("#selectFlashPlayerDialog").data("url", url);
-                $jQ("#selectFlashPlayerDialog").modal();
+                openDialog("#selectFlashPlayerDialog");
             </c:when>
             <c:otherwise>
                 doOpenPlayer(url.replace(/#ID#/, "${config.flashplayer}"), ${mtfn:flashPlayerConfig(config.flashplayer).width}, ${mtfn:flashPlayerConfig(config.flashplayer).height});

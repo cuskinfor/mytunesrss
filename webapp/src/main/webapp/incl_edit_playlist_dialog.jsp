@@ -5,92 +5,88 @@
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
 <c:if test="${!empty editablePlaylists}">
-    <div id="editPlaylistDialog" title="<fmt:message key="editPlaylistDialogTitle"/>" style="display:none">
+    <div id="editPlaylistDialog" class="dialog">
+        <h2>
+            <fmt:message key="editPlaylistDialogTitle"/>
+        </h2>
+        <div>
+            <p>
+                <fmt:message key="dialog.editPlaylist"/>
+            </p>
+            <p>
+                <select id="playlistSelection" style="width:100%">
+                    <c:forEach items="${editablePlaylists}" var="playlist">
+                        <option value='${playlist.id}'><c:out value="${playlist.name}"/></option>
+                    </c:forEach>
+                </select>
+            </p>
+            <p align="right">
+                <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+                <button onclick="editPlaylistDialog_edit()"><fmt:message key="edit"/></button>
+                <button onclick="editPlaylistDialog_new()"><fmt:message key="new"/></button>
+            </p>
+        </div>
+    </div>
+    <script type="text/javascript">
+        function editPlaylistDialog_edit() {
+            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [$jQ("#playlistSelection option:selected").val()], function() {
+                document.location.href = "${backUrl}";
+            }, "${remoteApiSessionId}");
+            $jQ.modal.close();
+        }
+        function editPlaylistDialog_new() {
+            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [null], function() {
+                document.location.href = "${backUrl}";
+            }, "${remoteApiSessionId}");
+            $jQ.modal.close();
+        }
+    </script>
+</c:if>
+
+<div id="addOneClickPlaylistDialog" class="dialog">
+    <h2>
+        <fmt:message key="editPlaylistDialogTitle"/>
+    </h2>
+    <div>
         <p>
-            <fmt:message key="dialog.editPlaylist"/>
+            <fmt:message key="dialog.addToPlaylistOneClickSelect"/>
         </p>
         <p>
-            <select id="playlistSelection" style="width:100%">
+            <select id="addOneClickPlaylistDialogPlaylistSelection" style="width:100%">
                 <c:forEach items="${editablePlaylists}" var="playlist">
                     <option value='${playlist.id}'><c:out value="${playlist.name}"/></option>
                 </c:forEach>
             </select>
         </p>
+        <p>
+            <fmt:message key="dialog.addToPlaylistOneClickEnter"/>
+        </p>
+        <p>
+            <input id="addOneClickPlaylistDialogPlaylistEnter" style="width:100%" type="text" />
+        </p>
+        <p align="right">
+            <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+            <button onclick="addOneClickPlaylistDialog_add"><fmt:message key="addToPlaylistOneClick"/></button>
+            <button onclick="addOneClickPlaylistDialog_new"><fmt:message key="createPlaylistOneClick"/></button>
+        </p>
     </div>
-    <script type="text/javascript">
-        $jQ(document).ready(function() {
-            $jQ("#editPlaylistDialog").dialog({
-                autoOpen:false,
-                modal:true,
-                buttons:{
-                    "<fmt:message key="doCancel"/>" : function() {
-                        $jQ("#editPlaylistDialog").dialog("close");
-                    },
-                    "<fmt:message key="edit"/>" : function() {
-                        $jQ("#editPlaylistDialog").dialog("close");
-                        jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [$jQ("#playlistSelection option:selected").val()], function() {
-                            document.location.href = "${backUrl}";
-                        }, "${remoteApiSessionId}");
-                    },
-                    "<fmt:message key="new"/>" : function() {
-                        $jQ("#editPlaylistDialog").dialog("close");
-                        jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [null], function() {
-                            document.location.href = "${backUrl}";
-                        }, "${remoteApiSessionId}");
-                    }
-                }
-            });
-        });
-    </script>
-</c:if>
-
-<div id="addOneClickPlaylistDialog" title="<fmt:message key="editPlaylistDialogTitle"/>" style="display:none">
-    <p>
-        <fmt:message key="dialog.addToPlaylistOneClickSelect"/>
-    </p>
-    <p>
-        <select id="addOneClickPlaylistDialogPlaylistSelection" style="width:100%">
-            <c:forEach items="${editablePlaylists}" var="playlist">
-                <option value='${playlist.id}'><c:out value="${playlist.name}"/></option>
-            </c:forEach>
-        </select>
-    </p>
-    <p>
-        <fmt:message key="dialog.addToPlaylistOneClickEnter"/>
-    </p>
-    <p>
-        <input id="addOneClickPlaylistDialogPlaylistEnter" style="width:100%" type="text" />
-    </p>
 </div>
 <script type="text/javascript">
-    $jQ(document).ready(function() {
-        $jQ("#addOneClickPlaylistDialog").dialog({
-            autoOpen:false,
-            modal:true,
-            buttons:{
-                "<fmt:message key="doCancel"/>" : function() {
-                    $jQ("#addOneClickPlaylistDialog").dialog("close");
-                },
-                "<fmt:message key="addToPlaylistOneClick"/>" : function() {
-                    $jQ("#addOneClickPlaylistDialog").dialog("close");
-                    document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/" + $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment") + "/playlistId=" + $jQ("#addOneClickPlaylistDialogPlaylistSelection option:selected").val() + "/backUrl=${mtfn:encode64(backUrl)}";
-                },
-                "<fmt:message key="createPlaylistOneClick"/>" : function() {
-                    if ($jQ("#addOneClickPlaylistDialogPlaylistEnter").val() != '') {
-                        $jQ("#addOneClickPlaylistDialog").dialog("close");
-                        document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
-                    } else {
-                        alert("TODO i18n: enter a name first!")
-                    }
-                }
-            }
-        });
-    });
-
-    function openAddOneClickPlaylistDialog(linkFragment, newPlaylistName) {
-        $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment", linkFragment);
-        $jQ("#addOneClickPlaylistDialogPlaylistEnter").val(newPlaylistName);
-        $jQ("#addOneClickPlaylistDialog").dialog("open");
+    function addOneClickPlaylistDialog_add() {
+        document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/" + $jQ("#addOneClickPlaylistDialog").data("linkFragment") + "/playlistId=" + $jQ("#addOneClickPlaylistDialogPlaylistSelection option:selected").val() + "/backUrl=${mtfn:encode64(backUrl)}";
+        $jQ.modal.close();
     }
-
+    function addOneClickPlaylistDialog_new() {
+        if ($jQ("#addOneClickPlaylistDialogPlaylistEnter").val() != '') {
+            document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
+            $jQ.modal.close();
+        } else {
+            alert("TODO i18n: enter a name first!")
+        }
+    }
+    function openAddOneClickPlaylistDialog(linkFragment, newPlaylistName) {
+        $jQ("#addOneClickPlaylistDialog").data("linkFragment", linkFragment);
+        $jQ("#addOneClickPlaylistDialogPlaylistEnter").val(newPlaylistName);
+        openDialog("#addOneClickPlaylistDialog");
+    }
 </script>

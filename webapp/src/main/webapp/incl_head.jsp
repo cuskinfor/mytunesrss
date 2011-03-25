@@ -35,5 +35,13 @@
     function showLoading(text) {
         $jQ('div.body').mask(text);
     }
+
+    function hideLoading() {
+        $jQ('div.body').unmask();
+    }
+
+    function openDialog(element) {
+        $jQ(element).modal({overlayCss:"background-color: #000;cursor: wait;"});
+    }
 </script>
 <meta name="viewport" content="width=480" />

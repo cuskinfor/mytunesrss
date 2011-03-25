@@ -62,6 +62,7 @@ function hideTooltipElement(element) {
 }
 
 function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
+    showLoading("loading...");
     new $jQ.ajax({
         url : serverUrl + "/../jsonrpc",
         type : "POST",
@@ -80,6 +81,7 @@ function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
         }),
         success : function(data) {
             if (resultCallback != undefined) {
+                hideLoading();
                 resultCallback(data.result, data.error);
             }
         }

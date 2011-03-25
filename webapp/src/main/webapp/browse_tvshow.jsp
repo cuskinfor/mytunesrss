@@ -56,7 +56,7 @@
                             </c:when>
                             <c:otherwise>
                                 <a style="cursor:pointer"
-                                   onclick="$jQ('#editPlaylistDialog').dialog('open')"><fmt:message
+                                   onclick="openDialog('#editPlaylistDialog')"><fmt:message
                                         key="editExistingPlaylist"/></a>
                             </c:otherwise>
                         </c:choose>
