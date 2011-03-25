@@ -45,15 +45,6 @@
         }
 
         $jQ(document).ready(function() {
-            $jQ("#errordialog").dialog({
-                autoOpen:false,
-                modal:true,
-                buttons:{
-                    '<fmt:message key="dialog.button.close"/>':function() {
-                        $jQ("#errordialog").dialog("close");
-                    }
-                }
-            });
             loadView();
         });
 
@@ -158,8 +149,8 @@
         function savePlaylist() {
             jsonRpc('${servletUrl}', "EditPlaylistService.savePlaylist", [$jQ("#playlistName").val(), $jQ("#privatePlaylist:checked").size() == 1], function(result, error) {
                 if (error) {
-                    $jQ("#errordialog").empty().append(serviceMessages[error.msg]);
-                    $jQ("#errordialog").dialog("open");
+                    $jQ("#errordialog p:first").empty().append(serviceMessages[error.msg]);
+                    openDialog("#errordialog");
                 } else {
                     document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
                 }
@@ -276,7 +267,15 @@
     <a style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
 </textarea>
 
-<div id="errordialog" style="display:none" title="MyTunesRSS"></div>
+<div id="errordialog" class="dialog">
+    <h2>MyTunesRSS</h2>
+    <div>
+        <p>this is the error message</p>
+        <p align="right">
+            <button onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
+        </p>
+    </div>
+</div>
 
 </body>
 

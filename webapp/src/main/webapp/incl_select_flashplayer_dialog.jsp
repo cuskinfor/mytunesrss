@@ -32,6 +32,7 @@
 
     function doOpenPlayer() {
         var val = $jQ("#flashPlayerSelection option:selected").val().split(",");
+        $jQ.cookie("last_mytunesrss_jukebox", val[0] + "," + val[1] + "," + val[2], {expires:100,path:"/"});
         var url = $jQ('#selectFlashPlayerDialog').data("url").replace(/#ID#/, val[0]);
         var width = val[1];
         var height = val[2];
@@ -46,6 +47,7 @@
         <c:choose>
             <c:when test="${empty config.flashplayer}">
                 $jQ("#selectFlashPlayerDialog").data("url", url);
+                $jQ("#flashPlayerSelection").val($jQ.cookie("last_mytunesrss_jukebox"));
                 openDialog("#selectFlashPlayerDialog");
             </c:when>
             <c:otherwise>

@@ -4,30 +4,29 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<div id="externalSites" style="display:none" title="<fmt:message key="dialog.externalSite.title"/>">
-    <c:forEach items="${externalSiteDefinitions}" var="externalSite" varStatus="siteLoopStatus">
-        <p><a style="cursor:pointer;text-decoration:underline" onclick="openExternalSite('${externalSite.value}', $jQ(this).closest('div').dialog('option', 'keyword'));$jQ(this).closest('div').dialog('close')"><c:out value="${externalSite.key}"/></a></p>
-    </c:forEach>
+<div id="externalSites" class="dialog">
+    <h2>
+        <fmt:message key="dialog.externalSite.title"/>
+    </h2>
+    <div>
+        <c:forEach items="${externalSiteDefinitions}" var="externalSite" varStatus="siteLoopStatus">
+            <p><a style="cursor:pointer;text-decoration:underline"
+                  onclick="openExternalSite('${externalSite.value}', $jQ('#externalSites').data('keyword'));$jQ.modal.close()"><c:out
+                    value="${externalSite.key}"/></a></p>
+        </c:forEach>
+        <p align="right">
+            <button onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
+        </p>
+    </div>
 </div>
 
 <script type="text/javascript">
-    $jQ(document).ready(function() {
-        $jQ("#externalSites").dialog({
-            autoOpen:false,
-            modal:true,
-            buttons:{
-                "<fmt:message key="dialog.button.close"/>":function() {
-                    $jQ(this).dialog("close");
-                }
-            }
-        })
-    });
     function openExternalSite(urlTemplate, keyword) {
         var newWindow = window.open(urlTemplate.replace(/\\{KEYWORD\\}/, $jQ.trim(keyword)), "_blank");
         newWindow.focus();
     }
     function openExternalSitesDialog(keyword) {
-        $jQ("#externalSites").dialog("option", "keyword", keyword);
-        $jQ("#externalSites").dialog("open");
+        $jQ("#externalSites").data("keyword", keyword);
+        openDialog("#externalSites");
     }
 </script>

@@ -9,6 +9,13 @@
 
         <release version="4.1.0-EAP-1" date="2011-xx-xx">
             <action dev="mdescher" type="add">
+                Remember last chosen jukebox in a cookie for up to 100 days.
+            </action>
+            <action dev="mdescher" type="update">
+                Removed jquery-ui and use the simple-modal jquery plugin for dialogs. Dialog popups look more like
+                the rest of the UI now and can easily be styled.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-217] Permanent random playlist in session
                 (Added a button to re-create the random playlist explicitly, each user has a private random playlist)
             </action>

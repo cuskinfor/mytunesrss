@@ -20,23 +20,6 @@
 
     <script type="text/javascript">
 
-        $jQ(document).ready(function() {
-            $jQ("#confirmDeletePlaylist").dialog({
-                autoOpen:false,
-                modal:true,
-                buttons:{
-                    "<fmt:message key="no"/>" : function() {
-                        $jQ("#confirmDeletePlaylist").dialog("close");
-                    },
-                    "<fmt:message key="yes"/>" : function() {
-                        var serverCall = $jQ("#confirmDeletePlaylist").dialog("option", "serverCall");
-                        $jQ("#confirmDeletePlaylist").dialog("close");
-                        document.location.href = serverCall;
-                    }
-                }
-            });
-        });
-
         function loadAndEditPlaylist(id) {
             jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [id], function() {
                 document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
@@ -93,7 +76,7 @@
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="${deleteConfirmation}">
-                                        <a class="delete" onclick="$jQ('#confirmDeletePlaylist').dialog('option', 'serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');$jQ('#confirmDeletePlaylist').dialog('open')"><span>Delete</span></a>
+                                        <a class="delete" onclick="$jQ('#confirmDeletePlaylist').data('serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('#confirmDeletePlaylist')"><span>Delete</span></a>
                                     </c:when>
                                     <c:otherwise>
                                         <a class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>"><span>Delete</span></a>
@@ -123,8 +106,19 @@
             
     </div>
         
-    <div id="confirmDeletePlaylist" title="<fmt:message key="confirmDeletePlaylistTitle"/>" style="display:none">
-        <fmt:message key="dialog.confirmDeletePlaylist"><fmt:param><span id="playlistName"></span></fmt:param></fmt:message>
+    <div id="confirmDeletePlaylist" class="dialog">
+        <h2>
+            <fmt:message key="confirmDeletePlaylistTitle"/>
+        </h2>
+        <div>
+            <p>
+                <fmt:message key="dialog.confirmDeletePlaylist"><fmt:param><span id="playlistName"></span></fmt:param></fmt:message>
+            </p>
+            <p align="right">
+                <button onclick="$jQ.modal.close()"><fmt:message key="no"/></button>
+                <button onclick="document.location.href = $jQ('#confirmDeletePlaylist').data('serverCall')"><fmt:message key="yes"/></button>
+            </p>
+        </div>
     </div>
 
 </body>
