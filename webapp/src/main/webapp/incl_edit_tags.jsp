@@ -3,24 +3,25 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="remoteApiSessionId" type="java.lang.String"--%>
 
-<div id="editTagsDialog" style="display:none" title="<fmt:message key="editTagsDialogTitle"/>">
-    <p>
-        <fmt:message key="editTagsDialogInfoPre"/>
-        <span id="editTagsDialog_targetInfo"></span>
-        <fmt:message key="editTagsDialogInfoPost"/>
-    </p>
-    <select id="editTagsDialog_existingTags" multiple="true" size="10" style="width:100%"></select><br />
-    <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="removeTags();"><fmt:message key="removeTags"/></button><br /><br />
-    <input id="editTagsDialog_newTag" style="width:100%" /><br />
-    <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="addTag();"><fmt:message key="addTags"/></button>
+<div id="editTagsDialog" class="dialog">
+    <h2>
+        <fmt:message key="editTagsDialogTitle"/>
+    </h2>
+    <div>
+        <p>
+            <fmt:message key="editTagsDialogInfoPre"/>
+            <span id="editTagsDialog_targetInfo"></span>
+            <fmt:message key="editTagsDialogInfoPost"/>
+        </p>
+        <select id="editTagsDialog_existingTags" multiple="true" size="10" style="width:100%"></select><br />
+        <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="removeTags();"><fmt:message key="removeTags"/></button><br /><br />
+        <input id="editTagsDialog_newTag" style="width:100%" /><br />
+        <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="addTag();"><fmt:message key="addTags"/></button>
+    </div>
 </div>
 
 <script type="text/javascript">
     $jQ("#editTagsDialog_newTag").autocomplete("${servletUrl}/getTagsForAutocomplete");
-    $jQ("#editTagsDialog").dialog({
-        autoOpen:false,
-        modal:true
-    });
     function initExistingTags(json) {
         $jQ("#editTagsDialog_existingTags").empty();
         for (var i = 0; i < json.results.length; i++) {
@@ -29,15 +30,15 @@
     }
     function openEditTagsDialog(json, editTagsType, editTagsId, title) {
         initExistingTags(json);
-        $jQ("#editTagsDialog").dialog("option", "editTagsType", editTagsType);
-        $jQ("#editTagsDialog").dialog("option", "editTagsId", editTagsId);
+        $jQ("#editTagsDialog").data("editTagsType", editTagsType);
+        $jQ("#editTagsDialog").data("editTagsId", editTagsId);
         $jQ("#editTagsDialog_targetInfo").text("\"" + jQuery.trim(title) + "\"");
-        $jQ("#editTagsDialog").dialog("open");
+        openDialog("#editTagsDialog");
     }
     function removeTags() {
         var tagIds = $jQ.map($jQ('#editTagsDialog_existingTags :selected'), function(e) { return $jQ(e).text(); });
-        jsonRpc('${servletUrl}', 'TagService.removeTagsFrom' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId"), tagIds], function() {
-            jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId")], function(json) {
+        jsonRpc('${servletUrl}', 'TagService.removeTagsFrom' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId"), tagIds], function() {
+            jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId")], function(json) {
                 initExistingTags(json);
             } ,'${remoteApiSessionId}');
         } ,'${remoteApiSessionId}');
@@ -45,19 +46,14 @@
     function addTag() {
         var tags = jQuery.trim($jQ("#editTagsDialog_newTag").val());
         if (tags != '') {
-            jsonRpc('${servletUrl}', 'TagService.setTagsTo' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId"), tags.split(" ")], function() {
+            jsonRpc('${servletUrl}', 'TagService.setTagsTo' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId"), tags.split(" ")], function() {
                 $jQ("#editTagsDialog_newTag").val("");
-                jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").dialog("option", "editTagsType"), [$jQ("#editTagsDialog").dialog("option", "editTagsId")], function(json) {
+                jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId")], function(json) {
                     initExistingTags(json);
                 } ,'${remoteApiSessionId}');
             } ,'${remoteApiSessionId}');
         }
     }
-</script>
-
-<div class="tooltip" id="tooltip_edittags"></div>
-
-<script type="text/javascript">
     function showEditTagsTooltip(element, type, id) {
         $jQ(element).removeAttr('title');
         $jQ(element).removeAttr('alt');
@@ -75,3 +71,5 @@
         }, '${remoteApiSessionId}');
     }
 </script>
+
+<div class="tooltip" id="tooltip_edittags"></div>

@@ -78,7 +78,7 @@
     }
     function addOneClickPlaylistDialog_new() {
         if ($jQ("#addOneClickPlaylistDialogPlaylistEnter").val() != '') {
-            document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").dialog("option", "linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
+            document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").data("linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
             $jQ.modal.close();
         } else {
             alert("TODO i18n: enter a name first!")
