@@ -51,7 +51,7 @@
 Section "!MyTunesRSS" MyTunesRSS
 
   SetOutPath "$INSTDIR"
-  File /r /x .svn ..\target\mytunesrss-${VERSION}-windows.dir\mytunesrss-${VERSION}\*
+  File /r /x .svn ..\target\mytunesrss-${VERSION}-windows\mytunesrss-${VERSION}\*
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
