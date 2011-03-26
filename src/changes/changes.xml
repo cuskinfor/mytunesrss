@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.0.14" date="2011-03-xx">
+        <release version="4.0.14" date="2011-03-26">
             <action dev="mdescher" type="fix">
                 Fixed some exceptions during artwork import for missing files.
             </action>
