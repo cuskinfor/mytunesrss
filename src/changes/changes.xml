@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.0.15" date="2011-03-27">
+            <action dev="mdescher" type="fix">
+                Corrected path to xercesImpl-2.9.1.jar after parent pom upgrade.
+            </action>
+        </release>
+
         <release version="4.0.14" date="2011-03-26">
             <action dev="mdescher" type="fix">
                 Fixed some exceptions during artwork import for missing files.
