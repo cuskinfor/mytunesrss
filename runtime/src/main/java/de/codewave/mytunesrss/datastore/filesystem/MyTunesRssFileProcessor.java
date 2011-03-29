@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
+import com.sun.imageio.plugins.jpeg.JPEGMetadata;
 import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v1Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
@@ -18,12 +19,22 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.sanselan.ImageReadException;
+import org.apache.sanselan.Sanselan;
+import org.apache.sanselan.common.IImageMetadata;
+import org.apache.sanselan.common.ImageMetadata;
+import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
+import org.apache.sanselan.formats.tiff.TiffField;
+import org.apache.sanselan.formats.tiff.constants.TagInfo;
+import org.apache.sanselan.formats.tiff.constants.TiffConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,6 +130,24 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             statement.setAlbum(null);
                             statement.setArtist(null);
                             statement.setPhotoAlbum(getPhotoAlbum(file));
+                            try {
+                                IImageMetadata imageMeta = Sanselan.getMetadata(file);
+                                if (imageMeta instanceof JpegImageMetadata) {
+                                    JpegImageMetadata jpegMeta = (JpegImageMetadata) imageMeta;
+                                    TiffField exifCreateDateTiffField = jpegMeta.findEXIFValue(TiffConstants.EXIF_TAG_CREATE_DATE);
+                                    if (exifCreateDateTiffField != null) {
+                                        String value = (String)exifCreateDateTiffField.getValue();
+                                        if (StringUtils.isNotBlank(value) && LOGGER.isDebugEnabled()) {
+                                            LOGGER.debug("EXIF create date for \"" + file.getAbsolutePath() + "\" is \"" + value + "\".");
+                                        }
+                                    }
+                                }
+                            } catch (ImageReadException e) {
+                                if (LOGGER.isWarnEnabled()) {
+                                    LOGGER.warn("Could not read EXIF data from \"" + file.getAbsolutePath() + "\".");
+                                }
+
+                            }
                         }
                         try {
                             myStoreSession.executeStatement(statement);
