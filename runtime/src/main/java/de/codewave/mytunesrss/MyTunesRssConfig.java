@@ -1100,8 +1100,19 @@ public class MyTunesRssConfig {
                                 }
                             }
                             itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
-
                             dataSources.add(itunesDatasourceConfig);
+                            break;
+                        case Iphoto:
+                            IphotoDatasourceConfig iphotoDatasourceConfig = new IphotoDatasourceConfig(definition);
+                            pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                            iphotoDatasourceConfig.clearPathReplacements();
+                            while (pathReplacementsIterator.hasNext()) {
+                                JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                                String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                                String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                                iphotoDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
+                            }
+                            dataSources.add(iphotoDatasourceConfig);
                             break;
                         default:
                             throw new IllegalArgumentException("Unknown datasource type!");
@@ -1372,6 +1383,19 @@ public class MyTunesRssConfig {
                         }
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
+                    break;
+                case Iphoto:
+                    IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);
+                    if (iphotoDatasourceConfig.getPathReplacements() != null && !iphotoDatasourceConfig.getPathReplacements().isEmpty()) {
+                        Element pathReplacementsElement = settings.createElement("path-replacements");
+                        dataSource.appendChild(pathReplacementsElement);
+                        for (PathReplacement pathReplacement : iphotoDatasourceConfig.getPathReplacements()) {
+                            Element pathReplacementElement = settings.createElement("replacement");
+                            pathReplacementsElement.appendChild(pathReplacementElement);
+                            pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
+                            pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
+                        }
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");

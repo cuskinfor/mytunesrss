@@ -6,5 +6,5 @@
 package de.codewave.mytunesrss;
 
 public enum DatasourceType {
-    Itunes(), Watchfolder();
+    Itunes(), Watchfolder(), Iphoto();
 }

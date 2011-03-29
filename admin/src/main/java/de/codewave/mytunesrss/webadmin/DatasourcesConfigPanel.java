@@ -92,7 +92,9 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private Resource getDatasourceImage(Application application, DatasourceType type) {
         if (type == DatasourceType.Itunes) {
-            return new ClassResource("itunes.gif", application);
+            return new ClassResource("itunes.png", application);
+        } else if (type == DatasourceType.Iphoto) {
+            return new ClassResource("iphoto.png", application);
         } else {
             return new ClassResource("folder.gif", application);
         }
@@ -136,6 +138,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                         ItunesDatasourceOptionsPanel itunesOptionsPanel = new ItunesDatasourceOptionsPanel((ItunesDatasourceConfig) datasourceConfig);
                         SinglePanelWindow itunesOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), itunesOptionsPanel);
                         itunesOptionsWindow.show(getWindow());
+                        break;
+                    case Iphoto:
+                        IphotoDatasourceOptionsPanel iphotoOptionsPanel = new IphotoDatasourceOptionsPanel((IphotoDatasourceConfig) datasourceConfig);
+                        SinglePanelWindow iphotoOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), iphotoOptionsPanel);
+                        iphotoOptionsWindow.show(getWindow());
                         break;
                     case Watchfolder:
                         WatchfolderDatasourceOptionsPanel watchfolderOptionsPanel = new WatchfolderDatasourceOptionsPanel((WatchfolderDatasourceConfig) datasourceConfig);

@@ -30,7 +30,7 @@ import java.util.Map;
 public class ItunesLoader {
     private static final Logger LOG = LoggerFactory.getLogger(ItunesLoader.class);
 
-    static String getFileNameForLocation(String location) {
+    public static String getFileNameForLocation(String location) {
         if (StringUtils.isNotBlank(location)) {
             try {
                 return new File(new URI(location).getPath()).getCanonicalPath();
