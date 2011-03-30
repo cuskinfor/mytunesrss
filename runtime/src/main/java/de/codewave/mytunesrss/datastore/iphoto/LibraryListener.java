@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * de.codewave.mytunesrss.datastore.itunes.LibraryListener
+ * de.codewave.mytunesrss.datastore.iphoto.LibraryListener
  */
 public class LibraryListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(LibraryListener.class);

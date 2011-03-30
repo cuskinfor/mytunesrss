@@ -299,7 +299,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     private Map<String, Long> runUpdate(SystemInformation systemInformation, DataStoreSession storeSession)
             throws SQLException, IOException {
         Map<String, Long> missingItunesFiles = new HashMap<String, Long>();
-        Map<String, Long> missingIphotoFiles = new HashMap<String, Long>();
         long timeLastUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : systemInformation
                 .getLastUpdate();
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes
@@ -330,13 +329,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
                             .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds,
                             itunesPlaylistIds));
-                } else if (datasource.getType() == DatasourceType.Iphoto&& !Thread.currentThread().isInterrupted()) {
+                } else if (datasource.getType() == DatasourceType.Iphoto && !Thread.currentThread().isInterrupted()) {
                     myState = State.UpdatingTracksFromIphoto;
                     MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     MyTunesRss.LAST_DATABASE_EVENT = event;
-                    missingIphotoFiles.put(new File(datasource.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME).getCanonicalPath(), IphotoLoader.loadFromIPhoto(Thread
-                            .currentThread(), (IphotoDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds, iphotoAlbumIds));
+                    IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds, iphotoAlbumIds);
                 } else if (datasource.getType() == DatasourceType.Watchfolder && !Thread.currentThread().isInterrupted()) {
                     try {
                         myState = State.UpdatingTracksFromFolder;
@@ -374,6 +372,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         if (!m3uPlaylistIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
             removeObsoletePlaylists(storeSession, m3uPlaylistIds);
         }
+        if (!iphotoAlbumIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
+            removeObsoletePhotoAlbums(storeSession, iphotoAlbumIds);
+        }
         DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");
@@ -391,6 +392,15 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             throws SQLException {
         DeletePlaylistStatement statement = new DeletePlaylistStatement();
         for (String id : databaseIds) {
+            statement.setId(id);
+            storeSession.executeStatement(statement);
+            DatabaseBuilderCallable.doCheckpoint(storeSession, false);
+        }
+    }
+
+    private void removeObsoletePhotoAlbums(DataStoreSession storeSession, Collection<String> photoAlbumIds) throws SQLException {
+        DeletePhotoAlbumStatement statement = new DeletePhotoAlbumStatement();
+        for (String id : photoAlbumIds) {
             statement.setId(id);
             storeSession.executeStatement(statement);
             DatabaseBuilderCallable.doCheckpoint(storeSession, false);

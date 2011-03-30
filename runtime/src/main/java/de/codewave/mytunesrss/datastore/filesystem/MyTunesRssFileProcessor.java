@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
-import com.sun.imageio.plugins.jpeg.JPEGMetadata;
 import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v1Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
@@ -10,6 +9,7 @@ import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.meta.Image;
+import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.TrackMetaData;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
@@ -22,10 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.common.IImageMetadata;
-import org.apache.sanselan.common.ImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
-import org.apache.sanselan.formats.tiff.constants.TagInfo;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +32,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -92,78 +89,95 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
-                        InsertOrUpdateTrackStatement statement;
-                        if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                            statement = existing ? new UpdateTrackAndImageStatement(TrackSource.FileSystem) : new InsertTrackAndImageStatement(TrackSource.FileSystem);
-                        } else {
-                            statement = existing ? new UpdateTrackStatement(TrackSource.FileSystem) : new InsertTrackStatement(TrackSource.FileSystem);
-                        }
-                        statement.clear();
-                        statement.setId(fileId);
-                        TrackMetaData meta = null;
                         FileType type = MyTunesRss.CONFIG.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
-                        if (FileSupportUtils.isMp3(file)) {
-                            meta = parseMp3MetaData(file, statement, fileId, type.getMediaType());
-                        } else if (FileSupportUtils.isMp4(file)) {
-                            meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
-                            if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
-                                myExistingIds.remove(fileId);
-                                DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
-                                return; // early return!!!
-                            }
-                        } else {
-                            setSimpleInfo(statement, file, type.getMediaType());
-                        }
-                        statement.setProtected(type.isProtected());
-                        statement.setMediaType(type.getMediaType());
-                        statement.setFileName(canonicalFilePath);
-                        if (type.getMediaType() == MediaType.Video) {
-                            statement.setAlbum(null);
-                            statement.setArtist(null);
-                            statement.setVideoType(myDatasourceConfig.getVideoType());
-                            if (myDatasourceConfig.getVideoType() == VideoType.TvShow) {
-                                statement.setSeason(getFallbackSeason(file)); // TODO: try meta info first
-                                statement.setSeries(getFallbackSeries(file)); // TODO: try meta info first
-                                statement.setEpisode(getFallbackEpisode(file)); // TODO: try meta info first
-                            }
-                        } else if (type.getMediaType() == MediaType.Image) {
-                            statement.setAlbum(null);
-                            statement.setArtist(null);
-                            statement.setPhotoAlbum(getPhotoAlbum(file));
+                        if (type.getMediaType() == MediaType.Image) {
+                            InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement() : new InsertPhotoStatement();
+                            statement.clear();
+                            statement.setId(fileId);
+                            statement.setName(file.getName());
+                            statement.setFile(canonicalFilePath);
                             try {
                                 IImageMetadata imageMeta = Sanselan.getMetadata(file);
                                 if (imageMeta instanceof JpegImageMetadata) {
                                     JpegImageMetadata jpegMeta = (JpegImageMetadata) imageMeta;
                                     TiffField exifCreateDateTiffField = jpegMeta.findEXIFValue(TiffConstants.EXIF_TAG_CREATE_DATE);
                                     if (exifCreateDateTiffField != null) {
-                                        String value = (String)exifCreateDateTiffField.getValue();
+                                        String value = (String) exifCreateDateTiffField.getValue();
                                         if (StringUtils.isNotBlank(value) && LOGGER.isDebugEnabled()) {
                                             LOGGER.debug("EXIF create date for \"" + file.getAbsolutePath() + "\" is \"" + value + "\".");
                                         }
+                                        Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                                        statement.setDate(createDate != null ? createDate.longValue() : 0);
                                     }
                                 }
                             } catch (ImageReadException e) {
                                 if (LOGGER.isWarnEnabled()) {
                                     LOGGER.warn("Could not read EXIF data from \"" + file.getAbsolutePath() + "\".");
                                 }
-
                             }
-                        }
-                        try {
-                            myStoreSession.executeStatement(statement);
-                            if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
-                                myStoreSession.executeStatement(handleTrackImagesStatement);
-                            } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
-                                myStoreSession.executeStatement(handleTrackImagesStatement);
+                            try {
+                                myStoreSession.executeStatement(statement);
+                                HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, fileId, 0);
+                                myStoreSession.executeStatement(handlePhotoImagesStatement);
+                                myUpdatedCount++;
+                                DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
+                                myExistingIds.add(fileId);
+                            } catch (SQLException e) {
+                                if (LOGGER.isErrorEnabled()) {
+                                    LOGGER.error("Could not insert photo \"" + canonicalFilePath + "\" into database", e);
+                                }
                             }
-                            myUpdatedCount++;
-                            DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
-                            myExistingIds.add(fileId);
-                        } catch (SQLException e) {
-                            if (LOGGER.isErrorEnabled()) {
-                                LOGGER.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                        } else {
+                            InsertOrUpdateTrackStatement statement;
+                            if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                                statement = existing ? new UpdateTrackAndImageStatement(TrackSource.FileSystem) : new InsertTrackAndImageStatement(TrackSource.FileSystem);
+                            } else {
+                                statement = existing ? new UpdateTrackStatement(TrackSource.FileSystem) : new InsertTrackStatement(TrackSource.FileSystem);
+                            }
+                            statement.clear();
+                            statement.setId(fileId);
+                            TrackMetaData meta = null;
+                            if (FileSupportUtils.isMp3(file)) {
+                                meta = parseMp3MetaData(file, statement, fileId, type.getMediaType());
+                            } else if (FileSupportUtils.isMp4(file)) {
+                                meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
+                                if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
+                                    myExistingIds.remove(fileId);
+                                    DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
+                                    return; // early return!!!
+                                }
+                            } else {
+                                setSimpleInfo(statement, file, type.getMediaType());
+                            }
+                            statement.setProtected(type.isProtected());
+                            statement.setMediaType(type.getMediaType());
+                            statement.setFileName(canonicalFilePath);
+                            if (type.getMediaType() == MediaType.Video) {
+                                statement.setAlbum(null);
+                                statement.setArtist(null);
+                                statement.setVideoType(myDatasourceConfig.getVideoType());
+                                if (myDatasourceConfig.getVideoType() == VideoType.TvShow) {
+                                    statement.setSeason(getFallbackSeason(file)); // TODO: try meta info first
+                                    statement.setSeries(getFallbackSeries(file)); // TODO: try meta info first
+                                    statement.setEpisode(getFallbackEpisode(file)); // TODO: try meta info first
+                                }
+                            }
+                            try {
+                                myStoreSession.executeStatement(statement);
+                                if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                                    HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
+                                    myStoreSession.executeStatement(handleTrackImagesStatement);
+                                } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+                                    HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
+                                    myStoreSession.executeStatement(handleTrackImagesStatement);
+                                }
+                                myUpdatedCount++;
+                                DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
+                                myExistingIds.add(fileId);
+                            } catch (SQLException e) {
+                                if (LOGGER.isErrorEnabled()) {
+                                    LOGGER.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
+                                }
                             }
                         }
                     }

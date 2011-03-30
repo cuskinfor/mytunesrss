@@ -9,6 +9,11 @@ import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
+import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
+import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
+import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
+import de.codewave.mytunesrss.datastore.statement.UpdatePhotoStatement;
+import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
@@ -36,6 +41,7 @@ public class PhotoListener implements PListHandlerListener {
     private Thread myWatchdogThread;
     private Set<CompiledPathReplacement> myPathReplacements;
     private IphotoDatasourceConfig myDatasourceConfig;
+    private long myXmlModDate;
 
     public PhotoListener(IphotoDatasourceConfig datasourceConfig, Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId,
                          Collection<String> photoIds) throws SQLException {
@@ -49,6 +55,7 @@ public class PhotoListener implements PListHandlerListener {
         for (PathReplacement pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledPathReplacement(pathReplacement));
         }
+        myXmlModDate = new File(myDatasourceConfig.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME).lastModified();
     }
 
     public int getUpdatedCount() {
@@ -83,21 +90,23 @@ public class PhotoListener implements PListHandlerListener {
         }
         String photoId = calculatePhotoId(key, photo);
         String name = (String) photo.get("Caption");
-        String mediaType = (String) photo.get("Media Type");
+        String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {
-            String filename = applyReplacements(ItunesLoader.getFileNameForLocation((String) photo.get("ImagePath")));
+            String filename = applyReplacements((String) photo.get("ImagePath"));
             if (StringUtils.isNotBlank(filename)) {
-                long date = getTimestamp((Float) photo.get("DateAsTimerInterval"));
-                long modDate = getTimestamp((Float) photo.get("ModDateAsTimerInterval"));
-                long metaModDate = getTimestamp((Float) photo.get("MetaModDateAsTimerInterval"));
-                if (!existing || modDate >= myLibraryListener.getTimeLastUpate() || metaModDate >= myLibraryListener.getTimeLastUpate()) {
+                File file = new File(filename);
+                if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
                     try {
                         InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement() : new InsertPhotoStatement();
                         statement.clear();
                         statement.setId(photoId);
                         statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                        statement.setDate(date);
+                        Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                        statement.setDate(createDate != null ? createDate.longValue() : 0);
+                        statement.setFile(filename);
                         myDataStoreSession.executeStatement(statement);
+                        HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
+                        myDataStoreSession.executeStatement(handlePhotoImagesStatement);
                         return true;
                     } catch (SQLException e) {
                         if (LOG.isErrorEnabled()) {
@@ -110,13 +119,6 @@ public class PhotoListener implements PListHandlerListener {
         }
         myPhotoIdToPersId.remove(key);
         return false;
-    }
-
-    private long getTimestamp(Float timerInterval) {
-        if (timerInterval == null) {
-            return 0;
-        }
-        
     }
 
     private String applyReplacements(String originalFileName) {

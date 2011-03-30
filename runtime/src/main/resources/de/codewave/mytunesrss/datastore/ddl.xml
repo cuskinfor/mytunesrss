@@ -38,8 +38,37 @@
                 lower_series VARCHAR(255),
                 episode INTEGER,
                 season INTEGER,
-                photoalbum VARCHAR(255),
                 UNIQUE (id)
+            )
+        </sql>
+        <sql>
+            {create_table_prefix} photo (
+                id VARCHAR(100) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                lower_name VARCHAR(255) NOT NULL,
+                file VARCHAR(1024) NOT NULL,
+                date NUMERIC(19),
+                image_hash CHAR(24),
+                last_image_update NUMERIC(19),
+                UNIQUE (id)
+            )
+        </sql>
+        <sql>
+            {create_table_prefix} photoalbum (
+                id VARCHAR(100) NOT NULL,
+                name VARCHAR(255) NOT NULL,
+                lower_name VARCHAR(255) NOT NULL,
+                first_date NUMERIC(19),
+                last_date NUMERIC(19),
+                UNIQUE (id)
+            )
+        </sql>
+        <sql>
+            {create_table_prefix} link_photo_album (
+                photo_id VARCHAR(100) NOT NULL,
+                album_id VARCHAR(100) NOT NULL,
+                CONSTRAINT fk_linkphotoalbum_photoid FOREIGN KEY (photo_id) REFERENCES photo (id) ON DELETE CASCADE,
+                CONSTRAINT fk_linkphotoalbum_albumid FOREIGN KEY (album_id) REFERENCES photoalbum (id) ON DELETE CASCADE
             )
         </sql>
         <sql>
@@ -166,7 +195,6 @@
         <sql>CREATE INDEX idx_track_series ON track (series)</sql>
         <sql>CREATE INDEX idx_track_lower_series ON track (lower_series)</sql>
         <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
-        <sql>CREATE INDEX idx_track_photoalbum ON track (photoalbum)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>
@@ -186,6 +214,8 @@
         <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
         <sql>CREATE INDEX idx_tag_track_id ON tag (track_id)</sql>
         <sql>CREATE INDEX idx_tag_tag ON tag (tag)</sql>
+        <sql>CREATE INDEX idx_link_photo_album_photo_id ON link_photo_album (photo_id)</sql>
+        <sql>CREATE INDEX idx_link_photo_album_album_id ON link_photo_album (album_id)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
@@ -202,6 +232,9 @@
         <sql>DROP TABLE system_information</sql>
         <sql>{drop_playlist_id_sequence}</sql>
         <sql>DROP TABLE image</sql>
+        <sql>DROP TABLE link_photo_album</sql>
+        <sql>DROP TABLE photo</sql>
+        <sql>DROP TABLE photoalbum</sql>
     </statement>
 
     <statement name="dropAllTablesForPre30Migration">

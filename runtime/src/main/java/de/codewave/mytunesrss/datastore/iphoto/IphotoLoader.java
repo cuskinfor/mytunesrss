@@ -42,18 +42,18 @@ public class IphotoLoader {
      * @throws java.sql.SQLException
      */
     public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DataStoreSession storeSession, long timeLastUpdate, Collection<String> photoIds, Collection<String> existsingAlbumIds) throws SQLException, MalformedURLException {
-        PhotoListener photoListener = null;
-        AlbumListener albumListener = null;
         URL iPhotoLibraryXml = new File(config.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME).toURL();
         if (iPhotoLibraryXml != null) {
             PListHandler handler = new PListHandler();
             Map<Long, String> photoIdToPersId = new HashMap<Long, String>();
             LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-            photoListener = new PhotoListener(config, executionThread, storeSession, libraryListener, photoIdToPersId, photoIds);
-            albumListener = new AlbumListener(executionThread, storeSession, libraryListener, photoIdToPersId, config);
+            PhotoListener photoListener = new PhotoListener(config, executionThread, storeSession, libraryListener, photoIdToPersId, photoIds);
+            AlbumListener albumListener = new AlbumListener(executionThread, storeSession, libraryListener, photoIdToPersId, config);
+            RollListener rollListener = new RollListener(executionThread, storeSession, libraryListener, photoIdToPersId, config);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
-            handler.addListener("/plist/dict[List of Albums]/array", albumListener);
+            //handler.addListener("/plist/dict[List of Albums]/array/dict", albumListener);
+            //handler.addListener("/plist/dict[List of Rools]/array/dict", rollListener);
             try {
                 LOG.info("Parsing iPhoto: \"" + iPhotoLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
@@ -63,6 +63,5 @@ public class IphotoLoader {
             LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " iPhoto photos.");
             existsingAlbumIds.removeAll(albumListener.getExistingIds());
         }
-        return 0;
     }
 }

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.GetPhotoAlbumsQuery;
+import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -21,7 +22,7 @@ public class BrowsePhotoAlbumCommandHandler extends MyTunesRssCommandHandler {
                     forward(MyTunesRssCommand.ShowPortal);
                 }
             } else {
-                DataStoreQuery.QueryResult<String> photoAlbumsResult = getTransaction().executeQuery(new GetPhotoAlbumsQuery());
+                DataStoreQuery.QueryResult<PhotoAlbum> photoAlbumsResult = getTransaction().executeQuery(new GetPhotoAlbumsQuery());
                 int pageSize = getWebConfig().getEffectivePageSize();
                 if (pageSize > 0 && photoAlbumsResult.getResultSize() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);

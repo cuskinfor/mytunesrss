@@ -131,16 +131,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getPhotos(User user, String photoAlbum) {
-        FindTrackQuery query = new FindTrackQuery();
-        query.mySortOrder = SortOrder.Photos;
-        /*query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();*/
-        query.setMediaTypes(MediaType.Image);
-        query.setPhotoAlbum(photoAlbum);
-        return query;
-    }
-
     private List<String> myIds;
     private String[] myAlbums;
     private String[] myGenres;
@@ -153,7 +143,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private VideoType myVideoType;
     private String mySeries;
     private Integer mySeason;
-    private String myPhotoAlbum;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -177,10 +166,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     public void setSeason(Integer season) {
         mySeason = season;
-    }
-
-    public void setPhotoAlbum(String photoAlbum) {
-        myPhotoAlbum = photoAlbum;
     }
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
@@ -207,7 +192,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("videotype", myVideoType != null);
         conditionals.put("tvshow", mySeries != null);
         conditionals.put("tvshowseason", mySeries != null && mySeason != null);
-        conditionals.put("photo", StringUtils.isNotBlank(myPhotoAlbum));
         conditionals.put("photosort", mySortOrder == SortOrder.Photos);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
@@ -229,7 +213,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         if (mySeason != null) {
             statement.setInt("season", mySeason);
         }
-        statement.setString("photoalbum", myPhotoAlbum);
         return execute(statement, new TrackResultBuilder());
 
     }

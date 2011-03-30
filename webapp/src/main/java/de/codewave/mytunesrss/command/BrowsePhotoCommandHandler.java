@@ -7,7 +7,9 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.Pager;
+import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -25,11 +27,11 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
                 addError(new BundleError("error.illegalAccess"));
                 forward(MyTunesRssCommand.ShowPortal);
             } else {
-                String photoAlbum = MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbum", null));
+                String photoAlbumId = MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbumid", null));
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Getting photos for album \"" + photoAlbum + "\".");
+                    LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\".");
                 }
-                DataStoreQuery.QueryResult<Track> photoResult = getTransaction().executeQuery(FindTrackQuery.getPhotos(getAuthUser(), photoAlbum));
+                DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(photoAlbumId));
                 int pageSize = getWebConfig().getEffectivePhotoPageSize();
                 if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);

@@ -65,11 +65,12 @@
                     <td class="artist">
                         <div class="trackName">
                             <a id="functionsDialogName${fnCount}"
-                               href="${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                               href="${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                onmouseover="showTooltip(this)"
                                onmouseout="hideTooltip(this)"
 							   class="photo">
-                                <c:out value="${photoAlbum}" />
+                                <c:out value="${photoAlbum.name}" />
+                                (TODO from to date)
                             </a>
                         </div>
                     </td>

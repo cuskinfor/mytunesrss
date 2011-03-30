@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2011. Codewave Software Michael Descher.
+ * All rights reserved.
+ */
+
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.IphotoDatasourceConfig;
@@ -19,8 +24,8 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
  */
-public class AlbumListener implements PListHandlerListener {
-    private static final Logger LOG = LoggerFactory.getLogger(AlbumListener.class);
+public class RollListener implements PListHandlerListener {
+    private static final Logger LOG = LoggerFactory.getLogger(RollListener.class);
 
     private DataStoreSession myDataStoreSession;
     private Map<Long, String> myTrackIdToPersId;
@@ -28,7 +33,7 @@ public class AlbumListener implements PListHandlerListener {
     private LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
 
-    public AlbumListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, IphotoDatasourceConfig config) {
+    public RollListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, IphotoDatasourceConfig config) {
         myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
         myTrackIdToPersId = trackIdToPersId;

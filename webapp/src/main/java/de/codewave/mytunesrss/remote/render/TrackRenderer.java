@@ -30,7 +30,6 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         result.put("series", track.getSeries());
         result.put("season", track.getSeason());
         result.put("episode", track.getEpisode());
-        result.put("photoalbum", track.getPhotoAlbum());
         result.put("protected", track.isProtected());
         result.put("name", track.getName());
         result.put("playCount", track.getPlayCount());

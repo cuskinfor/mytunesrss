@@ -72,7 +72,6 @@ public class TrackRetrieveUtils {
         boolean fullAlbums = getBooleanRequestParameter(servletRequest, "fullAlbums", false);
         String series = MyTunesRssBase64Utils.decodeToString(getRequestParameter(servletRequest, "series", null));
         int season = getIntegerRequestParameter(servletRequest, "season", -1);
-        String photoalbum = getRequestParameter(servletRequest, "photoalbum", null);
 
         if (albums != null && albums.length > 0) {
             return FindTrackQuery.getForAlbum(user, albums, sortOrderValue);
@@ -115,8 +114,6 @@ public class TrackRetrieveUtils {
             }
         } else if (series != null) {
             return season > -1 ? FindTrackQuery.getTvShowSeriesSeasonEpisodes(user, series, season) : FindTrackQuery.getTvShowSeriesEpisodes(user, series);
-        } else if (photoalbum != null) {
-            return FindTrackQuery.getPhotos(user, photoalbum);
         }
         return null;
     }

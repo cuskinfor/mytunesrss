@@ -17,13 +17,19 @@ import java.sql.SQLException;
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertImageStatement
  */
-public class GetPhotoAlbumsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<String>> {
+public class GetPhotoAlbumsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<PhotoAlbum>> {
 
-    public QueryResult<String> execute(Connection connection) throws SQLException {
+    public QueryResult<PhotoAlbum> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoAlbums");
-        return execute(statement, new ResultBuilder<String>() {
-            public String create(ResultSet resultSet) throws SQLException {
-                return resultSet.getString(1);
+        return execute(statement, new ResultBuilder<PhotoAlbum>() {
+            public PhotoAlbum create(ResultSet resultSet) throws SQLException {
+                PhotoAlbum photoAlbum = new PhotoAlbum(
+                        resultSet.getString("id"),
+                        resultSet.getString("name"),
+                        resultSet.getLong("first_date"),
+                        resultSet.getLong("last_date")
+                );
+                return photoAlbum;
             }
         });
     }

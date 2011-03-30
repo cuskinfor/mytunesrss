@@ -218,7 +218,6 @@
         <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
         <videotype>AND t.videotype = :videoType</videotype>
         <tvshow>AND t.series = :series</tvshow>
-        <photo>AND t.photoalbum = :photoalbum</photo>
         <tvshowseason>AND t.season = :season</tvshowseason>
         <restricted>
             AND rltp.playlist_id IN (:restrictedPlaylistIds[])
@@ -236,7 +235,6 @@
         <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
         <moviesort>ORDER BY t.name</moviesort>
         <tvshowsort>ORDER BY t.series, t.season, t.episode, t.name</tvshowsort>
-        <photosort>ORDER BY t.photoalbum, t.name</photosort>
         ]]>
       </sql>
     </statement>
@@ -249,7 +247,11 @@
 
     <statement name="deleteOrphanedImages">
         <sql>
-            DELETE FROM image WHERE NOT EXISTS ( SELECT * FROM track t WHERE t.image_hash = hash )
+            DELETE FROM image
+            WHERE NOT EXISTS
+                ( SELECT * FROM track t WHERE t.image_hash = hash )
+            AND NOT EXISTS
+                ( SELECT * FROM photo p WHERE p.image_hash = hash )
         </sql>
     </statement>
 
@@ -334,8 +336,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, photoalbum)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :photoalbum)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
         </sql>
     </statement>
 
@@ -348,8 +350,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, photoalbum)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :photoalbum)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
         </sql>
     </statement>
 
@@ -366,7 +368,7 @@
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
                              lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment), year = :year,
-                             series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype, photoalbum = :photoalbum
+                             series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype
             WHERE id = :id
         </sql>
     </statement>
@@ -391,7 +393,7 @@
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
                              pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
                              lower_comment = LOWER(:comment), year = :year, series = :series, lower_series = LOWER(:series), season = :season, episode = :episode,
-                             videotype = :videotype, photoalbum = :photoalbum
+                             videotype = :videotype
             WHERE id = :id
         </sql>
     </statement>
@@ -411,6 +413,36 @@
 
     <statement name="updatePlaylistAttributes">
         <sql>UPDATE playlist SET name = :name, hidden = :hidden, user_owner = :user_owner, user_private = :user_private WHERE id = :id</sql>
+    </statement>
+
+    <statement name="insertPhoto">
+        <sql>INSERT INTO photo (id, name, lower_name, date, file) VALUES (:id, :name, LOWER(:name), :date, :file)</sql>
+    </statement>
+
+    <statement name="updatePhoto">
+        <sql>UPDATE photo SET name = :name, lower_name = LOWER(:name), date = :date, file = :file WHERE id = :id</sql>
+    </statement>
+
+    <statement name="findPhotoAlbumIds">
+        <sql>SELECT id FROM photoalbum</sql>
+    </statement>
+
+    <statement name="deletePhotoAlbumById">
+        <sql>DELETE FROM photoalbum WHERE id = :id</sql>
+    </statement>
+
+    <statement name="findPhotos">
+        <sql>
+            SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update
+            FROM photo p, link_photo_album lpa
+            WHERE p.id = lpa.photo_id
+            AND lpa.album_id = :album_id
+            ORDER BY date, name
+        </sql>
+    </statement>
+
+    <statement name="updateImageForPhoto">
+        <sql>UPDATE photo SET image_hash = :hash, last_image_update = :updateTime WHERE id = :photo_id</sql>
     </statement>
 
     <statement name="recreateHelpTablesAlbum">
@@ -739,7 +771,7 @@
 
     <statement name="getPhotoAlbums">
         <sql>
-            SELECT DISTINCT(photoalbum) FROM track WHERE mediatype = 'Image' ORDER BY photoalbum
+            SELECT id, name, first_date, last_date FROM photoalbum ORDER BY first_date, last_date, name
         </sql>
     </statement>
 
@@ -762,12 +794,12 @@
         t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.original_artist AS original_artist, t.album AS album, t.time AS time, t.track_number AS track_number,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
         t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
-        t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode, t.photoalbum AS photoalbum
+        t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode
     </fragment>
 
     <fragment name="trackColumnsForGrouping">
         t.source, t.id, t.name, t.artist, t.original_artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
-        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode, t.photoalbum
+        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode
     </fragment>
 
     <fragment name="updatePlaylistCount">
