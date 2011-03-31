@@ -51,7 +51,8 @@ public enum MyTunesRssCommand implements Command {
     GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class),
     HttpLiveStream("httpLiveStream", HttpLiveStreamingCommandHandler.class),
     AddToOneClickPlaylist("addToOneClickPlaylist", AddToOneClickPlaylistCommandHandler.class),
-    OpenSearch("openSearch", OpenSearchCommandHandler.class);
+    OpenSearch("openSearch", OpenSearchCommandHandler.class),
+    ShowPhoto("showPhoto", ShowPhotoCommandHandler.class);
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

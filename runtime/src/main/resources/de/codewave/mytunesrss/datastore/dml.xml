@@ -416,15 +416,19 @@
     </statement>
 
     <statement name="insertPhoto">
-        <sql>INSERT INTO photo (id, name, lower_name, date, file) VALUES (:id, :name, LOWER(:name), :date, :file)</sql>
+        <sql>INSERT INTO photo (id, name, date, file) VALUES (:id, :name, :date, :file)</sql>
     </statement>
 
     <statement name="updatePhoto">
-        <sql>UPDATE photo SET name = :name, lower_name = LOWER(:name), date = :date, file = :file WHERE id = :id</sql>
+        <sql>UPDATE photo SET name = :name, date = :date, file = :file WHERE id = :id</sql>
     </statement>
 
-    <statement name="findPhotoAlbumIds">
+    <statement name="getPhotoAlbumIds">
         <sql>SELECT id FROM photoalbum</sql>
+    </statement>
+
+    <statement name="getPhotoIds">
+        <sql>SELECT id FROM photo</sql>
     </statement>
 
     <statement name="deletePhotoAlbumById">
@@ -441,8 +445,29 @@
         </sql>
     </statement>
 
+    <statement name="getPhoto">
+        <sql>
+            SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update
+            FROM photo p
+            WHERE p.id = :id
+        </sql>
+    </statement>
+
     <statement name="updateImageForPhoto">
         <sql>UPDATE photo SET image_hash = :hash, last_image_update = :updateTime WHERE id = :photo_id</sql>
+    </statement>
+
+    <statement name="insertPhotoAlbum">
+        <sql>INSERT INTO photoalbum (id, name) VALUES (:id, :name)</sql>
+        <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
+        <sql>{updatePhotoAlbumCountAndDates}</sql>
+    </statement>
+
+    <statement name="updatePhotoAlbum">
+        <sql>UPDATE photoalbum SET name = :name WHERE id = :id</sql>
+        <sql>DELETE FROM link_photo_album WHERE album_id = :id</sql>
+        <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
+        <sql>{updatePhotoAlbumCountAndDates}</sql>
     </statement>
 
     <statement name="recreateHelpTablesAlbum">
@@ -481,7 +506,7 @@
         <sql>UPDATE system_information SET music_count = (SELECT COUNT(id) FROM track WHERE mediatype = 'Audio')</sql>
         <sql>UPDATE system_information SET movie_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'Movie')</sql>
         <sql>UPDATE system_information SET tvshow_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'TvShow')</sql>
-        <sql>UPDATE system_information SET photo_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Image')</sql>
+        <sql>UPDATE system_information SET photo_count = (SELECT COUNT(id) FROM photo)</sql>
     </statement>
 
     <statement name="removeTempPlaylistWithId">
@@ -810,6 +835,19 @@
 
     <fragment name="createPlaylistTrackLinks">
         INSERT INTO link_track_playlist (idx, playlist_id, track_id) VALUES (:loopindex_track_id, :id, :loopitem_track_id)
+    </fragment>
+
+    <fragment name="updatePhotoAlbumCountAndDates">
+        UPDATE photoalbum
+        SET
+            photo_count = (SELECT COUNT(*) FROM link_photo_album WHERE album_id = :id),
+            first_date = (SELECT MIN(date) FROM photo p, link_photo_album lpa WHERE lpa.photo_id = p.id AND lpa.album_id = :id),
+            last_date = (SELECT MAX(date) FROM photo p, link_photo_album lpa WHERE lpa.photo_id = p.id AND lpa.album_id = :id)
+        WHERE id = :id
+    </fragment>
+
+    <fragment name="createPhotoAlbumLinks">
+        INSERT INTO link_photo_album (album_id, photo_id) VALUES (:id, :loopitem_photo_id)
     </fragment>
 
     <fragment name="alwaysTrueCondition">

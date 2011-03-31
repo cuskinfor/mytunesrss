@@ -1,11 +1,8 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
-import de.codewave.mytunesrss.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.ShutdownRequestedException;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
-import de.codewave.mytunesrss.datastore.statement.PlaylistType;
-import de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement;
-import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
+import de.codewave.mytunesrss.datastore.statement.FindPhotoAlbumIdsQuery;
+import de.codewave.mytunesrss.datastore.statement.SavePhotoAlbumStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
@@ -23,15 +20,15 @@ public class AlbumListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(AlbumListener.class);
 
     private DataStoreSession myDataStoreSession;
-    private Map<Long, String> myTrackIdToPersId;
     private Set<String> myExistingIds = new HashSet<String>();
-    private LibraryListener myLibraryListener;
+    protected LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
+    private Map<Long, String> myPhotoIdToPersId;
 
-    public AlbumListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, IphotoDatasourceConfig config) {
+    public AlbumListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) {
+        myPhotoIdToPersId = photoIdToPersId;
         myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
-        myTrackIdToPersId = trackIdToPersId;
         myLibraryListener = libraryListener;
     }
 
@@ -40,56 +37,48 @@ public class AlbumListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        insertPlaylist((Map) value);
+        insertAlbum((Map) value);
         return false;
     }
 
-    private void insertPlaylist(Map playlist) {
+    private void insertAlbum(Map album) {
         if (myWatchdogThread.isInterrupted()) {
             throw new ShutdownRequestedException();
         }
 
-        boolean folder = playlist.get("Folder") != null && ((Boolean) playlist.get("Folder")).booleanValue();
-
-        String playlistId = playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
-                "Playlist Persistent ID").toString() :
-                myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();
-        String name = (String) playlist.get("Name");
-        String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
-                "Parent Persistent ID") : null;
-        List<Map> items = (List<Map>) playlist.get("Playlist Items");
-        List<String> tracks = new ArrayList<String>();
-        if (items != null && !items.isEmpty()) {
-            for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
-                Map item = itemIterator.next();
-                Long trackId = (Long) item.get("Track ID");
-                if (trackId != null && StringUtils.isNotEmpty(myTrackIdToPersId.get(trackId))) {
-                    tracks.add(myTrackIdToPersId.get(trackId));
-                }
+        String albumId = getAlbumId(album);
+        String albumName = getAlbumName(album);
+        List<String> photos = new ArrayList<String>();
+        for (String id : (List<String>)album.get("KeyList")) {
+            String persId = myPhotoIdToPersId.get(Long.valueOf(id));
+            if (StringUtils.isNotBlank(persId)) {
+                photos.add(persId);
             }
         }
-        if (!tracks.isEmpty()) {
-            SavePlaylistStatement statement = new SaveITunesPlaylistStatement(folder);
-            statement.setId(playlistId);
-            statement.setName(name);
-            statement.setTrackIds(tracks);
-            statement.setContainerId(containerId);
+        if (!photos.isEmpty()) {
+            SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement();
+            statement.setId(albumId);
+            statement.setName(albumName);
+            statement.setPhotoIds(photos);
             try {
-                if (myDataStoreSession.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder),
-                        playlistId,
-                        null,
-                        true)).getResultSize() > 0) {
-                    statement.setUpdate(true);
-                }
+                statement.setUpdate(myDataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()).contains(albumId));
                 myDataStoreSession.executeStatement(statement);
-                myExistingIds.add(playlistId);
+                myExistingIds.add(albumId);
                 DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
             } catch (SQLException e) {
                 if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);
+                    LOG.error("Could not insert/update photo album \"" + albumName + "\" into database.", e);
                 }
             }
         }
+    }
+
+    protected String getAlbumName(Map album) {
+        return (String) album.get("AlbumName");
+    }
+
+    protected String getAlbumId(Map album) {
+        return myLibraryListener.getLibraryId() + "_" + album.get("AlbumId");
     }
 
     public Collection<String> getExistingIds() {

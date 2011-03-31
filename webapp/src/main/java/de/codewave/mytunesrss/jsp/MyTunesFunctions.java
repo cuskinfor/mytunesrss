@@ -68,7 +68,6 @@ public class MyTunesFunctions {
         return webSafeFileName(track.getArtist() + " - " + track.getName());
     }
 
-
     public static String virtualAlbumName(Album album) {
         if (unknown(album.getArtist()) && unknown(album.getName())) {
             return DEFAULT_NAME;
@@ -195,6 +194,16 @@ public class MyTunesFunctions {
         return format.format(new Date(milliseconds));
     }
 
+    public static String formatDates(HttpServletRequest request, long milliseconds1, long milliseconds2) {
+        LocalizationContext context = (LocalizationContext) request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
+        ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
+                request.getLocale());
+        SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateFormat"));
+        String date1 = format.format(new Date(milliseconds1));
+        String date2 = format.format(new Date(milliseconds2));
+        return date1.equals(date2) ? date1 : date1 + " - " + date2;
+    }
+
     public static String[] splitComments(String comments) {
         return StringUtils.split(comments, '\n');
     }
@@ -245,6 +254,29 @@ public class MyTunesFunctions {
             pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        return builder.toString();
+    }
+
+    public static String photoUrl(PageContext pageContext, Photo photo, String extraPathInfo) {
+        return photoUrl((HttpServletRequest) pageContext.getRequest(), photo, extraPathInfo);
+    }
+
+    public static String photoUrl(HttpServletRequest request, Photo photo, String extraPathInfo) {
+        MyTunesRssCommand command = MyTunesRssCommand.ShowPhoto;
+        HttpSession session = request.getSession();
+        StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
+        String auth = (String) request.getAttribute("auth");
+        if (StringUtils.isBlank(auth)) {
+            auth = (String) session.getAttribute("auth");
+        }
+        builder.append("/").append(command.getName()).append("/").append(auth);
+        StringBuilder pathInfo = new StringBuilder("photo=");
+        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(photo.getId()));
+        if (StringUtils.isNotBlank(extraPathInfo)) {
+            pathInfo.append("/").append(extraPathInfo);
+        }
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(webSafeFileName(FilenameUtils.getName(StringUtils.trimToEmpty(photo.getFile()))));
         return builder.toString();
     }
 

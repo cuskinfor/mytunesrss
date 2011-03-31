@@ -21,7 +21,7 @@
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
-<%--@elvariable id="photoAlbums" type="java.util.List<java.lang.String>"--%>
+<%--@elvariable id="photoAlbums" type="java.util.List<de.codewave.mytunesrss.datastore.statement.PhotoAlbum>"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -70,7 +70,7 @@
                                onmouseout="hideTooltip(this)"
 							   class="photo">
                                 <c:out value="${photoAlbum.name}" />
-                                (TODO from to date)
+                                (${mtfn:dates(pageContext.request, photoAlbum.firstDate, photoAlbum.lastDate)})
                             </a>
                         </div>
                     </td>

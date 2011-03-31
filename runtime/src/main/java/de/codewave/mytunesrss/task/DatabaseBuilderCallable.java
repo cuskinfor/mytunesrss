@@ -307,9 +307,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         itunesPlaylistIds.addAll(storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunesFolder.name())));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile
                 .name()));
-        final Set<String> trackIds = storeSession.executeQuery(new DataStoreQuery<Set<String>>() {
+        final Set<String> photoIds = storeSession.executeQuery(new DataStoreQuery<Set<String>>() {
             public Set<String> execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTrackIds");
+                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoIds");
                 ResultSet rs = statement.executeQuery();
                 Set<String> ids = new HashSet<String>();
                 while (rs.next()) {
@@ -327,14 +327,14 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     MyTunesRss.LAST_DATABASE_EVENT = event;
                     missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
-                            .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds,
+                            .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, photoIds,
                             itunesPlaylistIds));
                 } else if (datasource.getType() == DatasourceType.Iphoto && !Thread.currentThread().isInterrupted()) {
                     myState = State.UpdatingTracksFromIphoto;
                     MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     MyTunesRss.LAST_DATABASE_EVENT = event;
-                    IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds, iphotoAlbumIds);
+                    IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, storeSession, timeLastUpdate, photoIds, iphotoAlbumIds);
                 } else if (datasource.getType() == DatasourceType.Watchfolder && !Thread.currentThread().isInterrupted()) {
                     try {
                         myState = State.UpdatingTracksFromFolder;
@@ -342,7 +342,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         MyTunesRssEventManager.getInstance().fireEvent(event);
                         MyTunesRss.LAST_DATABASE_EVENT = event;
                         FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, storeSession,
-                                timeLastUpdate, trackIds, m3uPlaylistIds);
+                                timeLastUpdate, photoIds, m3uPlaylistIds);
                     } catch (ShutdownRequestedException e) {
                         // intentionally left blank
                     }
@@ -352,9 +352,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
+                LOGGER.info("Trying to remove up to " + photoIds.size() + " tracks from database.");
             }
-            storeSession.executeStatement(new RemoveTrackStatement(trackIds));
+            storeSession.executeStatement(new RemoveTrackStatement(photoIds));
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         }
         if (!Thread.currentThread().isInterrupted()) {

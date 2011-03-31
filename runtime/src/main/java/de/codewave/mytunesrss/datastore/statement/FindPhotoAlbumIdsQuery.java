@@ -22,7 +22,7 @@ import java.util.Collection;
 public class FindPhotoAlbumIdsQuery extends DataStoreQuery<Collection<String>> {
 
     public Collection<String> execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPhotoAlbumIds");
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoAlbumIds");
         return execute(statement, new ResultBuilder<String>() {
             public String create(ResultSet resultSet) throws SQLException {
                 return resultSet.getString("ID");

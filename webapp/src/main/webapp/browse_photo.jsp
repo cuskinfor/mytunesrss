@@ -163,7 +163,7 @@
                 <ul class="thumbwrap">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span class="wrimg"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" longdesc="${mtfn:playbackLink(pageContext, photo, '')}"/></span></div>
+                        <div><span class="wrimg"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" longdesc="${mtfn:photoLink(pageContext, photo, '')}"/></span></div>
                     </li>
                 </c:forEach>
                 </ul>
@@ -184,10 +184,6 @@
         </div>
     
     </div>
-
-    <jsp:include page="incl_select_flashplayer_dialog.jsp"/>
-
-    <jsp:include page="incl_functions_menu.jsp"/>
 
 </body>
 

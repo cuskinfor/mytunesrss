@@ -235,6 +235,19 @@
 
     <function>
         <description>
+            Format two longs (milliseconds since Jan 1, 1970) as a single date or a from - to date.
+        </description>
+        <name>dates</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String formatDates(javax.servlet.http.HttpServletRequest, long, long)
+        </function-signature>
+        <example>
+            &lt;c:out value="${mtfn:dates(long, long)}"/&gt;
+        </example>
+    </function>
+
+    <function>
+        <description>
             Format a long (milliseconds since Jan 1, 1970) as date and time.
         </description>
         <name>dateTime</name>
@@ -294,6 +307,17 @@
         <name>preferredLocale</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.util.Locale preferredLocale(javax.servlet.jsp.PageContext, boolean))
+        </function-signature>
+    </function>
+
+    <function>
+        <description>
+            Get the download link for a photo.
+        </description>
+        <name>photoLink</name>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-signature>java.lang.String photoUrl(javax.servlet.jsp.PageContext,
+            de.codewave.mytunesrss.datastore.statement.Photo, java.lang.String)
         </function-signature>
     </function>
 

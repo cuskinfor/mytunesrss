@@ -139,6 +139,7 @@ public class TrackListener implements PListHandlerListener {
                                 myDataStoreSession.executeStatement(statement);
                                 return true;
                             } catch (SQLException e) {
+                                myTrackIdToPersId.remove((Long)track.get("Track ID"));
                                 if (LOG.isErrorEnabled()) {
                                     LOG.error("Could not insert track \"" + name + "\" into database", e);
                                 }
@@ -149,7 +150,7 @@ public class TrackListener implements PListHandlerListener {
                 }
             }
         }
-        myTrackIdToPersId.remove(track.get("Track ID"));
+        myTrackIdToPersId.remove((Long)track.get("Track ID"));
         return false;
     }
 

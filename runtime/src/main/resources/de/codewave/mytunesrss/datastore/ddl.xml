@@ -45,7 +45,6 @@
             {create_table_prefix} photo (
                 id VARCHAR(100) NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                lower_name VARCHAR(255) NOT NULL,
                 file VARCHAR(1024) NOT NULL,
                 date NUMERIC(19),
                 image_hash CHAR(24),
@@ -57,9 +56,9 @@
             {create_table_prefix} photoalbum (
                 id VARCHAR(100) NOT NULL,
                 name VARCHAR(255) NOT NULL,
-                lower_name VARCHAR(255) NOT NULL,
                 first_date NUMERIC(19),
                 last_date NUMERIC(19),
+                photo_count INTEGER,
                 UNIQUE (id)
             )
         </sql>

@@ -77,7 +77,7 @@ public class PlaylistListener implements PListHandlerListener {
                 for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
                     Map item = itemIterator.next();
                     Long trackId = (Long) item.get("Track ID");
-                    if (trackId != null && StringUtils.isNotEmpty(myTrackIdToPersId.get(trackId))) {
+                    if (trackId != null && StringUtils.isNotBlank(myTrackIdToPersId.get(trackId))) {
                         tracks.add(myTrackIdToPersId.get(trackId));
                     }
                 }
