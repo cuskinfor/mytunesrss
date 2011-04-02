@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
-    <version>4.0.16</version>
+    <version>4.0.17-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Runtime</name>
     <distributionManagement>
         <site>
@@ -425,6 +425,6 @@
         </plugins>
     </build>
     <scm>
-        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/tags/mytunesrss-4.0.16/branches/mytunesrss-4.0.x</developerConnection>
+        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/branches/mytunesrss-4.0.x</developerConnection>
     </scm>
 </project>
