@@ -2,7 +2,7 @@
   <dontWrapJar>true</dontWrapJar>
   <headerType>gui</headerType>
   <jar>data/mytunesrss.jar</jar>
-  <outfile>/Users/mdescher/Projekte/mytunesrss-3.7.x/etc/MyTunesRSS.exe</outfile>
+  <outfile>/Users/mdescher/Projekte/mytunesrss-4.0.x/etc/MyTunesRSS.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
   <chdir>data</chdir>
@@ -12,7 +12,7 @@
   <customProcName>false</customProcName>
   <stayAlive>false</stayAlive>
   <manifest></manifest>
-  <icon>/Users/mdescher/Projekte/mytunesrss-3.7.x/etc/MyTunesRSS.ico</icon>
+  <icon>/Users/mdescher/Projekte/mytunesrss-4.0.x/etc/MyTunesRSS.ico</icon>
   <jre>
     <path></path>
     <minVersion>1.5.0</minVersion>
