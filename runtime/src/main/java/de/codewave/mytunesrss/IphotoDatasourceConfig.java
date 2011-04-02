@@ -13,6 +13,8 @@ import java.util.Set;
 public class IphotoDatasourceConfig extends DatasourceConfig {
 
     private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
+    private boolean myImportRolls = true;
+    private boolean myImportAlbums;
 
     public static final String XML_FILE_NAME = "AlbumData.xml";
 
@@ -42,4 +44,19 @@ public class IphotoDatasourceConfig extends DatasourceConfig {
         myPathReplacements.add(pathReplacement);
     }
 
+    public boolean isImportAlbums() {
+        return myImportAlbums;
+    }
+
+    public void setImportAlbums(boolean importAlbums) {
+        myImportAlbums = importAlbums;
+    }
+
+    public boolean isImportRolls() {
+        return myImportRolls;
+    }
+
+    public void setImportRolls(boolean importRolls) {
+        myImportRolls = importRolls;
+    }
 }

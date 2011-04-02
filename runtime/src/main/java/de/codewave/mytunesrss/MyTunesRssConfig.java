@@ -1112,6 +1112,8 @@ public class MyTunesRssConfig {
                                 String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
                                 iphotoDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
                             }
+                            iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
+                            iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         default:
@@ -1396,6 +1398,8 @@ public class MyTunesRssConfig {
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
                         }
                     }
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importRolls", iphotoDatasourceConfig.isImportRolls()));
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importAlbums", iphotoDatasourceConfig.isImportAlbums()));
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");

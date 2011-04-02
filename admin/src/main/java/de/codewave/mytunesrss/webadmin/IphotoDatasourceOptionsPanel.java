@@ -24,6 +24,9 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Table myPathReplacements;
     private Button myAddPathReplacement;
     private IphotoDatasourceConfig myConfig;
+    private Form myMiscOptionsForm;
+    private CheckBox myImportRolls;
+    private CheckBox myImportAlbums;
 
     public IphotoDatasourceOptionsPanel(IphotoDatasourceConfig config) {
         myConfig = config;
@@ -32,7 +35,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 2, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
@@ -44,10 +47,14 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         replacementsPanel.addComponent(myPathReplacements);
         myAddPathReplacement = getComponentFactory().createButton("datasourceOptionsPanel.addReplacement", this);
         replacementsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddPathReplacement));
-        Panel ignorePlaylistsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.ignoreItunesPlaylists"), getComponentFactory().createVerticalLayout(true, true));
-        addComponent(ignorePlaylistsPanel);
+        myMiscOptionsForm = getComponentFactory().createForm(null, true);
+        myImportRolls = getComponentFactory().createCheckBox("datasourceOptionsPanel.iphotoImportRolls");
+        myImportAlbums = getComponentFactory().createCheckBox("datasourceOptionsPanel.iphotoImportAlbums");
+        myMiscOptionsForm.addField(myImportRolls, myImportRolls);
+        myMiscOptionsForm.addField(myImportAlbums, myImportAlbums);
+        addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 1, 0, 1, false);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }
@@ -58,6 +65,8 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         for (Object itemId : myPathReplacements.getItemIds()) {
             myConfig.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
+        myConfig.setImportAlbums(myImportAlbums.booleanValue());
+        myConfig.setImportRolls(myImportRolls.booleanValue());
     }
 
     @Override
@@ -67,6 +76,8 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
             addPathReplacement(replacement);
         }
         setTablePageLengths();
+        myImportAlbums.setValue(myConfig.isImportAlbums());
+        myImportRolls.setValue(myConfig.isImportRolls());
     }
 
     private void addPathReplacement(PathReplacement replacement) {
@@ -84,6 +95,8 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myPathReplacements)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
+        } else if (!myImportRolls.booleanValue() && !myImportAlbums.booleanValue()) {
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourcesConfigPanel.error.importRollsOrAlbums");
         } else {
             writeToConfig();
             closeWindow();

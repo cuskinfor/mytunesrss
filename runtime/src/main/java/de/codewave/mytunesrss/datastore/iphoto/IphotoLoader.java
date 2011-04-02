@@ -37,11 +37,12 @@ public class IphotoLoader {
      * @throws java.sql.SQLException
      */
     public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DataStoreSession storeSession, long timeLastUpdate, Collection<String> photoIds, Collection<String> existsingAlbumIds) throws SQLException, MalformedURLException {
-        URL iPhotoLibraryXml = new File(config.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME).toURL();
+        File iPhotoLibraryXmlFile = new File(config.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME);
+        URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURL();
         if (iPhotoLibraryXml != null) {
             PListHandler handler = new PListHandler();
             Map<Long, String> photoIdToPersId = new HashMap<Long, String>();
-            LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
+            LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile, timeLastUpdate);
             PhotoListener photoListener = new PhotoListener(config, executionThread, storeSession, libraryListener, photoIdToPersId, photoIds);
             handler.addListener("/plist/dict", libraryListener);
             // first add all photos
@@ -54,10 +55,15 @@ public class IphotoLoader {
             }
             // then add albums and rolls
             handler.removeListener("/plist/dict[Master Image List]/dict");
-            AlbumListener albumListener = new AlbumListener(executionThread, storeSession, libraryListener, photoIdToPersId);
-            RollListener rollListener = new RollListener(executionThread, storeSession, libraryListener, photoIdToPersId);
-            //handler.addListener("/plist/dict[List of Albums]/array", albumListener);
-            handler.addListener("/plist/dict[List of Rolls]/array", rollListener);
+            AlbumListener albumListener = null;
+            if (config.isImportAlbums()) {
+                albumListener = new AlbumListener(executionThread, storeSession, libraryListener, photoIdToPersId);
+                handler.addListener("/plist/dict[List of Albums]/array", albumListener);
+            }
+            if (config.isImportRolls()) {
+                RollListener rollListener = new RollListener(executionThread, storeSession, libraryListener, photoIdToPersId);
+                handler.addListener("/plist/dict[List of Rolls]/array", rollListener);
+            }
             try {
                 LOG.info("Parsing iPhoto (albums/rolls): \"" + iPhotoLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);

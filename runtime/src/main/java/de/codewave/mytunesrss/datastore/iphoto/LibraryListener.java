@@ -6,12 +6,17 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.Base64Utils;
+import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.PListHandlerListener;
+import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -19,12 +24,14 @@ import java.util.Map;
  * de.codewave.mytunesrss.datastore.iphoto.LibraryListener
  */
 public class LibraryListener implements PListHandlerListener {
-    private static final Logger LOG = LoggerFactory.getLogger(LibraryListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LibraryListener.class);
 
     private String myLibraryId;
     private long myTimeLastUpate;
+    private File myIphotoLibraryXml;
 
-    public LibraryListener(long timeLastUpate) {
+    public LibraryListener(File iphotoLibraryXml, long timeLastUpate) {
+        myIphotoLibraryXml = iphotoLibraryXml;
         myTimeLastUpate = timeLastUpate;
     }
 
@@ -42,10 +49,16 @@ public class LibraryListener implements PListHandlerListener {
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
         if ("Archive Path".equals(key)) {
-            myLibraryId = Base64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes((String) value)));
+            try {
+                myLibraryId = IOUtils.getFilenameHash(myIphotoLibraryXml);
+            } catch (IOException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not create library id for file \"" + myIphotoLibraryXml + "\". No files from this library will be imported.");
+                }
+            }
         } else if ("Application Version".equals(key)) {
-            if (LOG.isInfoEnabled()) {
-                LOG.info("iPhoto version " + value);
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("iPhoto version " + value);
             }
         }
         return true;

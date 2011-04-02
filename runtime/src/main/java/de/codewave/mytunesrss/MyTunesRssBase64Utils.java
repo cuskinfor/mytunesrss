@@ -12,8 +12,8 @@ import org.apache.commons.codec.binary.Base64;
 public class MyTunesRssBase64Utils {
     public static String encode(byte[] bytes) {
         if (bytes != null) {
-            byte[] encoded = Base64.encodeBase64(bytes);
-            return MyTunesRssUtils.getUtf8String(encoded).replace('+', '-').replace('/', '_');
+            byte[] encoded = Base64.encodeBase64URLSafe(bytes);
+            return MyTunesRssUtils.getUtf8String(encoded);
         }
         return null;
     }
@@ -27,8 +27,7 @@ public class MyTunesRssBase64Utils {
 
     public static byte[] decode(String base64) {
         if (base64 != null) {
-            String encoded = base64.replace('_', '/').replace('-', '+');
-            return Base64.decodeBase64(MyTunesRssUtils.getUtf8Bytes(encoded));
+            return Base64.decodeBase64(MyTunesRssUtils.getUtf8Bytes(base64));
         }
         return null;
     }

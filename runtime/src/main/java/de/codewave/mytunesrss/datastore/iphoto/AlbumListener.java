@@ -47,27 +47,29 @@ public class AlbumListener implements PListHandlerListener {
         }
 
         String albumId = getAlbumId(album);
-        String albumName = getAlbumName(album);
-        List<String> photos = new ArrayList<String>();
-        for (String id : (List<String>)album.get("KeyList")) {
-            String persId = myPhotoIdToPersId.get(Long.valueOf(id));
-            if (StringUtils.isNotBlank(persId)) {
-                photos.add(persId);
+        if (albumId != null) {
+            String albumName = getAlbumName(album);
+            List<String> photos = new ArrayList<String>();
+            for (String id : (List<String>) album.get("KeyList")) {
+                String persId = myPhotoIdToPersId.get(Long.valueOf(id));
+                if (StringUtils.isNotBlank(persId)) {
+                    photos.add(persId);
+                }
             }
-        }
-        if (!photos.isEmpty()) {
-            SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement();
-            statement.setId(albumId);
-            statement.setName(albumName);
-            statement.setPhotoIds(photos);
-            try {
-                statement.setUpdate(myDataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()).contains(albumId));
-                myDataStoreSession.executeStatement(statement);
-                myExistingIds.add(albumId);
-                DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not insert/update photo album \"" + albumName + "\" into database.", e);
+            if (!photos.isEmpty()) {
+                SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement();
+                statement.setId(albumId);
+                statement.setName(albumName);
+                statement.setPhotoIds(photos);
+                try {
+                    statement.setUpdate(myDataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()).contains(albumId));
+                    myDataStoreSession.executeStatement(statement);
+                    myExistingIds.add(albumId);
+                    DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
+                } catch (SQLException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Could not insert/update photo album \"" + albumName + "\" into database.", e);
+                    }
                 }
             }
         }
@@ -78,6 +80,9 @@ public class AlbumListener implements PListHandlerListener {
     }
 
     protected String getAlbumId(Map album) {
+        if (myLibraryListener.getLibraryId() == null) {
+            return null;
+        }
         return myLibraryListener.getLibraryId() + "_" + album.get("AlbumId");
     }
 

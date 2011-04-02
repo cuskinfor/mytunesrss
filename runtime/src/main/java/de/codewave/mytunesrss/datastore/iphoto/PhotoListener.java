@@ -65,17 +65,22 @@ public class PhotoListener implements PListHandlerListener {
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map photo = (Map) value;
         String photoId = calculatePhotoId(key, photo);
-        myPhotoIdToPersId.put(Long.valueOf(key), photoId);
-        if (processPhoto(key, photo, myPhotoIds.remove(photoId))) {
-            myUpdatedCount++;
+        if (photoId != null) {
+            myPhotoIdToPersId.put(Long.valueOf(key), photoId);
+            if (processPhoto(key, photo, photoId, myPhotoIds.remove(photoId))) {
+                myUpdatedCount++;
+            }
+            DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, false);
         }
-        DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, false);
         return false;
     }
 
     private String calculatePhotoId(String key, Map photo) {
+        if (myLibraryListener.getLibraryId() == null) {
+            return null;
+        }
         String photoId = myLibraryListener.getLibraryId() + "_";
-        photoId += photo.get("GUID") != null ? photo.get("GUID").toString() : "PhotoID" + key;
+        photoId += photo.get("GUID") != null ? MyTunesRssBase64Utils.encode((String) photo.get("GUID")) : "PhotoID" + key;
         return photoId;
     }
 
@@ -83,11 +88,10 @@ public class PhotoListener implements PListHandlerListener {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
 
-    private boolean processPhoto(String key, Map photo, boolean existing) {
+    private boolean processPhoto(String key, Map photo, String photoId, boolean existing) {
         if (myWatchdogThread.isInterrupted()) {
             throw new ShutdownRequestedException();
         }
-        String photoId = calculatePhotoId(key, photo);
         String name = (String) photo.get("Caption");
         String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {

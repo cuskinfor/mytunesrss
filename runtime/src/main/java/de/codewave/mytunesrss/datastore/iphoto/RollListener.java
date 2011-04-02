@@ -29,6 +29,9 @@ public class RollListener extends AlbumListener {
 
     @Override
     protected String getAlbumId(Map roll) {
-        return myLibraryListener.getLibraryId() + "_" + roll.get("RollID");
+        if (myLibraryListener.getLibraryId() != null) {
+            return myLibraryListener.getLibraryId() + "_" + roll.get("RollID");
+        }
+        return null;
     }
 }

@@ -48,9 +48,9 @@ public class PathInfoDecryptionFilter implements Filter {
             String pathInfo = ((HttpServletRequest) getRequest()).getPathInfo();
             if (StringUtils.isNotEmpty(pathInfo)) {
                 String[] splitted = StringUtils.split(pathInfo, "/");
-                for (int i = 0; i < splitted.length; i++) {
-                    splitted[i] = MyTunesRssUtils.getUtf8UrlDecoded(splitted[i]);
-                }
+//                for (int i = 0; i < splitted.length; i++) {
+//                    splitted[i] = MyTunesRssUtils.getUtf8UrlDecoded(splitted[i]);
+//                }
                 try {
                     Cipher cipher = Cipher.getInstance(key.getAlgorithm());
                     cipher.init(Cipher.DECRYPT_MODE, key);
@@ -61,7 +61,7 @@ public class PathInfoDecryptionFilter implements Filter {
                         }
                     }
                     String newPathInfo = "/" + StringUtils.join(splitted, "/");
-                    return URLDecoder.decode(newPathInfo, "UTF-8");
+                    return newPathInfo; // URLDecoder.decode(newPathInfo, "UTF-8");
                 } catch (Exception e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not descrypt path info.", e);
