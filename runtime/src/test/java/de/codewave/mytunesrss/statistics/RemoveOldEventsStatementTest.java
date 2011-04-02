@@ -5,6 +5,7 @@ import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreSession;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ public class RemoveOldEventsStatementTest {
         MyTunesRssTestUtils.initDatabase();
     }
 
+    @Ignore
     @Test
     public void testExecuteStatement() throws SQLException, IOException {
         createEvents();
