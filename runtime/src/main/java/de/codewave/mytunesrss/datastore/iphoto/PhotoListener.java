@@ -67,7 +67,6 @@ public class PhotoListener implements PListHandlerListener {
         String photoId = calculatePhotoId(key, photo);
         if (photoId != null) {
             if (processPhoto(key, photo, photoId, myPhotoIds.remove(photoId))) {
-                myPhotoIdToPersId.put(Long.valueOf(key), photoId);
                 myUpdatedCount++;
             }
             DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, false);
@@ -110,12 +109,15 @@ public class PhotoListener implements PListHandlerListener {
                         myDataStoreSession.executeStatement(statement);
                         HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
                         myDataStoreSession.executeStatement(handlePhotoImagesStatement);
+                        myPhotoIdToPersId.put(Long.valueOf(key), photoId);
                         return true;
                     } catch (SQLException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not insert photo \"" + name + "\" into database", e);
                         }
                     }
+                } else if (existing) {
+                    myPhotoIdToPersId.put(Long.valueOf(key), photoId);
                 }
                 return false;
             }

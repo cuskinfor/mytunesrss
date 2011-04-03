@@ -65,7 +65,6 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
         if (processTrack(track, myTrackIds.remove(trackId))) {
-            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
             myUpdatedCount++;
             DatabaseBuilderCallable.updateHelpTables(myDataStoreSession, myUpdatedCount);
         }
@@ -103,8 +102,7 @@ public class TrackListener implements PListHandlerListener {
                         long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                         Date dateAdded = ((Date) track.get("Date Added"));
                         long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                        if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() ||
-                                dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
+                        if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
                             try {
                                 InsertOrUpdateTrackStatement statement =
                                         existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
@@ -137,12 +135,15 @@ public class TrackListener implements PListHandlerListener {
                                 statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
                                 statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
                                 myDataStoreSession.executeStatement(statement);
+                                myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                                 return true;
                             } catch (SQLException e) {
                                 if (LOG.isErrorEnabled()) {
                                     LOG.error("Could not insert track \"" + name + "\" into database", e);
                                 }
                             }
+                        } else if (existing) {
+                            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                         }
                         return false;
                     }
