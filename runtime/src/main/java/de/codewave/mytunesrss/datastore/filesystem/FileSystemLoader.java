@@ -21,12 +21,12 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds,
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds,
                                           Collection<String> playlistIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
-            fileProcessor = new MyTunesRssFileProcessor(datasource, storeSession, lastUpdateTime, trackIds);
+            fileProcessor = new MyTunesRssFileProcessor(datasource, storeSession, lastUpdateTime, trackIds, photoIds);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }

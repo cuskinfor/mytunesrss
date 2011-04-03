@@ -307,6 +307,17 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         itunesPlaylistIds.addAll(storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunesFolder.name())));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile
                 .name()));
+        final Set<String> trackIds = storeSession.executeQuery(new DataStoreQuery<Set<String>>() {
+            public Set<String> execute(Connection connection) throws SQLException {
+                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTrackIds");
+                ResultSet rs = statement.executeQuery();
+                Set<String> ids = new HashSet<String>();
+                while (rs.next()) {
+                    ids.add(rs.getString("id"));
+                }
+                return ids;
+            }
+        });
         final Set<String> photoIds = storeSession.executeQuery(new DataStoreQuery<Set<String>>() {
             public Set<String> execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoIds");
@@ -342,7 +353,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         MyTunesRssEventManager.getInstance().fireEvent(event);
                         MyTunesRss.LAST_DATABASE_EVENT = event;
                         FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, storeSession,
-                                timeLastUpdate, photoIds, m3uPlaylistIds);
+                                timeLastUpdate, trackIds, photoIds, m3uPlaylistIds);
                     } catch (ShutdownRequestedException e) {
                         // intentionally left blank
                     }
@@ -352,9 +363,16 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Trying to remove up to " + photoIds.size() + " tracks from database.");
+                LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
             }
-            storeSession.executeStatement(new RemoveTrackStatement(photoIds));
+            storeSession.executeStatement(new RemoveTrackStatement(trackIds));
+            DatabaseBuilderCallable.doCheckpoint(storeSession, true);
+        }
+        if (!Thread.currentThread().isInterrupted()) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Trying to remove up to " + photoIds.size() + " photos from database.");
+            }
+            storeSession.executeStatement(new RemovePhotoStatement(photoIds));
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         }
         if (!Thread.currentThread().isInterrupted()) {

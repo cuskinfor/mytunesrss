@@ -307,6 +307,10 @@
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id</sql>
     </statement>
 
+    <statement name="removePhoto">
+        <sql loop="photo_id" loopbatch="10000" loopcommit="10000">DELETE FROM photo WHERE id = :loopitem_photo_id</sql>
+    </statement>
+
     <statement name="findImage">
         <sql>
             SELECT data AS data FROM image WHERE hash = :hash AND size = :size

@@ -28,7 +28,7 @@ public class MyTunesRssFileProcessorTest {
 
     @Before
     public void before() throws URISyntaxException {
-        myProcessor = new MyTunesRssFileProcessor(null, null, 0, null);
+        myProcessor = new MyTunesRssFileProcessor(null, null, 0, null, null);
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());
     }
 
