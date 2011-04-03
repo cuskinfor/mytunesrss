@@ -60,8 +60,9 @@ public class IphotoLoader {
                 albumListener = new AlbumListener(executionThread, storeSession, libraryListener, photoIdToPersId);
                 handler.addListener("/plist/dict[List of Albums]/array", albumListener);
             }
+            RollListener rollListener = null;
             if (config.isImportRolls()) {
-                RollListener rollListener = new RollListener(executionThread, storeSession, libraryListener, photoIdToPersId);
+                rollListener = new RollListener(executionThread, storeSession, libraryListener, photoIdToPersId);
                 handler.addListener("/plist/dict[List of Rolls]/array", rollListener);
             }
             try {
@@ -71,7 +72,12 @@ public class IphotoLoader {
                 LOG.error("Could not read album/roll data from iPhoto xml file.", e);
             }
             LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " iPhoto photos.");
-            existsingAlbumIds.removeAll(albumListener.getExistingIds());
+            if (albumListener != null) {
+                existsingAlbumIds.removeAll(albumListener.getExistingIds());
+            }
+            if (rollListener != null) {
+                existsingAlbumIds.removeAll(rollListener.getExistingIds());
+            }
         }
     }
 }
