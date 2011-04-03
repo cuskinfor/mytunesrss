@@ -338,7 +338,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     MyTunesRssEventManager.getInstance().fireEvent(event);
                     MyTunesRss.LAST_DATABASE_EVENT = event;
                     missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
-                            .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, photoIds,
+                            .currentThread(), (ItunesDatasourceConfig) datasource, storeSession, timeLastUpdate, trackIds,
                             itunesPlaylistIds));
                 } else if (datasource.getType() == DatasourceType.Iphoto && !Thread.currentThread().isInterrupted()) {
                     myState = State.UpdatingTracksFromIphoto;
