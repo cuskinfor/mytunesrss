@@ -234,7 +234,6 @@ public class TrackUtils {
             setEpisode(track.getEpisode());
             setSeason(track.getSeason());
             setSeries(track.getSeries());
-            setPhotoAlbum(track.getPhotoAlbum());
         }
 
         public boolean isNewSection() {

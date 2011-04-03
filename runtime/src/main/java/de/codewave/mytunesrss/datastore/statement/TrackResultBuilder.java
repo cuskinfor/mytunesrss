@@ -44,7 +44,6 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setSeries(resultSet.getString("SERIES"));
         track.setSeason(resultSet.getInt("SEASON"));
         track.setEpisode(resultSet.getInt("EPISODE"));
-        track.setPhotoAlbum(resultSet.getString("PHOTOALBUM"));
         return track;
     }
 }

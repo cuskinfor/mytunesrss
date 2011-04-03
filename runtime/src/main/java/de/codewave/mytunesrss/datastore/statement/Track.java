@@ -41,7 +41,6 @@ public class Track {
     private String mySeries;
     private int mySeason;
     private int myEpisode;
-    private String myPhotoAlbum;
 
     public String getAlbum() {
         return myAlbum;
@@ -266,14 +265,6 @@ public class Track {
 
     public void setEpisode(int episode) {
         myEpisode = episode;
-    }
-
-    public String getPhotoAlbum() {
-        return myPhotoAlbum;
-    }
-
-    public void setPhotoAlbum(String photoAlbum) {
-        myPhotoAlbum = photoAlbum;
     }
 
     @Override
