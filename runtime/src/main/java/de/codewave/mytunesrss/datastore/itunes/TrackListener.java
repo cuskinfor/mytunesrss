@@ -64,8 +64,8 @@ public class TrackListener implements PListHandlerListener {
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
-        myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
         if (processTrack(track, myTrackIds.remove(trackId))) {
+            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
             myUpdatedCount++;
             DatabaseBuilderCallable.updateHelpTables(myDataStoreSession, myUpdatedCount);
         }
@@ -139,7 +139,6 @@ public class TrackListener implements PListHandlerListener {
                                 myDataStoreSession.executeStatement(statement);
                                 return true;
                             } catch (SQLException e) {
-                                myTrackIdToPersId.remove((Long)track.get("Track ID"));
                                 if (LOG.isErrorEnabled()) {
                                     LOG.error("Could not insert track \"" + name + "\" into database", e);
                                 }
@@ -150,7 +149,6 @@ public class TrackListener implements PListHandlerListener {
                 }
             }
         }
-        myTrackIdToPersId.remove((Long)track.get("Track ID"));
         return false;
     }
 
