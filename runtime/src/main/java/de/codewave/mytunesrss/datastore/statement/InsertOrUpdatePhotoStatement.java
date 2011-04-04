@@ -21,7 +21,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
 
     private String myId;
     private String myName;
-    private long myDate;
+    private Long myDate;
     private String myFile;
     private SmartStatement myStatement;
 
@@ -33,16 +33,12 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
         myName = name;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         myDate = date;
     }
 
     public void setFile(String file) {
         myFile = file;
-    }
-
-    public void setStatement(SmartStatement statement) {
-        myStatement = statement;
     }
 
     public synchronized void execute(Connection connection) throws SQLException {
@@ -68,7 +64,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
     public void clear() {
         myId = null;
         myName = null;
-        myDate = 0L;
+        myDate = null;
         myFile = null;
     }
 }

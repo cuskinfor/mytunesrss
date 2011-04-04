@@ -186,7 +186,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         LOGGER.debug("EXIF create date for \"" + file.getAbsolutePath() + "\" is \"" + value + "\".");
                     }
                     Long createDate = MyTunesRssExifUtils.getCreateDate(file);
-                    statement.setDate(createDate != null ? createDate.longValue() : 0);
+                    statement.setDate(createDate);
                 }
             }
         } catch (ImageReadException e) {

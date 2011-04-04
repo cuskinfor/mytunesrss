@@ -104,7 +104,7 @@ public class PhotoListener implements PListHandlerListener {
                         statement.setId(photoId);
                         statement.setName(MyTunesRssUtils.normalize(name.trim()));
                         Long createDate = MyTunesRssExifUtils.getCreateDate(file);
-                        statement.setDate(createDate != null ? createDate.longValue() : 0);
+                        statement.setDate(createDate);
                         statement.setFile(filename);
                         myDataStoreSession.executeStatement(statement);
                         HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);

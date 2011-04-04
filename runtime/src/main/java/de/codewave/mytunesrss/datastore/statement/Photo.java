@@ -9,7 +9,7 @@ public class Photo {
     private String myId;
     private String myName;
     private String myFile;
-    private long myDate;
+    private Long myDate;
     private String imageHash;
     private long lastImageUpdate;
 
@@ -37,11 +37,11 @@ public class Photo {
         myFile = file;
     }
 
-    public long getDate() {
+    public Long getDate() {
         return myDate;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         myDate = date;
     }
 
