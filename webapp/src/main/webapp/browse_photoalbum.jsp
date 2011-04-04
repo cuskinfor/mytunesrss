@@ -70,7 +70,7 @@
                                onmouseout="hideTooltip(this)"
 							   class="photo">
                                 <c:out value="${photoAlbum.name}" />
-                                (${mtfn:dates(pageContext.request, photoAlbum.firstDate, photoAlbum.lastDate)})
+                                ${mtfn:dates(pageContext.request, "(", photoAlbum.firstDate, " - ", photoAlbum.lastDate, ")")}
                             </a>
                         </div>
                     </td>

@@ -465,6 +465,7 @@
         <sql>INSERT INTO photoalbum (id, name) VALUES (:id, :name)</sql>
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
         <sql>{updatePhotoAlbumCountAndDates}</sql>
+        <sql>{correctPhotoAlbumFirstDates}</sql>
     </statement>
 
     <statement name="updatePhotoAlbum">
@@ -472,6 +473,7 @@
         <sql>DELETE FROM link_photo_album WHERE album_id = :id</sql>
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
         <sql>{updatePhotoAlbumCountAndDates}</sql>
+        <sql>{correctPhotoAlbumFirstDates}</sql>
     </statement>
 
     <statement name="recreateHelpTablesAlbum">
@@ -848,6 +850,12 @@
             first_date = (SELECT MIN(date) FROM photo p, link_photo_album lpa WHERE lpa.photo_id = p.id AND lpa.album_id = :id),
             last_date = (SELECT MAX(date) FROM photo p, link_photo_album lpa WHERE lpa.photo_id = p.id AND lpa.album_id = :id)
         WHERE id = :id
+    </fragment>
+
+    <fragment name="correctPhotoAlbumFirstDates">
+        UPDATE photoalbum
+        SET first_date = last_date
+        WHERE first_date = -1
     </fragment>
 
     <fragment name="createPhotoAlbumLinks">
