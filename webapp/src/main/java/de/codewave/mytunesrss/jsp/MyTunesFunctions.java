@@ -21,8 +21,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.MalformedURLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -194,22 +194,14 @@ public class MyTunesFunctions {
         return format.format(new Date(milliseconds));
     }
 
-    public static String formatDates(HttpServletRequest request, String pre, Long milliseconds1, String mid, Long milliseconds2, String post) {
+    public static String formatDates(HttpServletRequest request, long milliseconds1, long milliseconds2) {
         LocalizationContext context = (LocalizationContext) request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         ResourceBundle bundle = context != null ? context.getResourceBundle() : ResourceBundle.getBundle("de/codewave/mytunesrss/MyTunesRssWeb",
                 request.getLocale());
         SimpleDateFormat format = new SimpleDateFormat(bundle.getString("dateFormat"));
-        String date1 = milliseconds1 != null ? format.format(new Date(milliseconds1)) : null;
-        String date2 = milliseconds2 != null ? format.format(new Date(milliseconds2)) : null;
-        if (date1 == null && date2 != null) {
-            return pre + date2 + post;
-        } else if (date1 != null && date2 == null) {
-            return pre + date1 + post;
-        } else if (date1 != null && date2 != null) {
-            return pre + (date1.equals(date2) ? date1 : date1 + mid + date2) + post;
-        } else {
-            return null;
-        }
+        String date1 = format.format(new Date(milliseconds1));
+        String date2 = format.format(new Date(milliseconds2));
+        return date1.equals(date2) ? date1 : date1 + " - " + date2;
     }
 
     public static String[] splitComments(String comments) {

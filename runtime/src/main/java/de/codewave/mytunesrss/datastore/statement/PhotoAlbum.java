@@ -8,10 +8,10 @@ package de.codewave.mytunesrss.datastore.statement;
 public class PhotoAlbum {
     private String myId;
     private String myName;
-    private Long myFirstDate;
-    private Long myLastDate;
+    private long myFirstDate;
+    private long myLastDate;
 
-    public PhotoAlbum(String id, String name, Long firstDate, Long lastDate) {
+    public PhotoAlbum(String id, String name, long firstDate, long lastDate) {
         myId = id;
         myName = name;
         myFirstDate = firstDate;
@@ -26,11 +26,11 @@ public class PhotoAlbum {
         return myName;
     }
 
-    public Long getFirstDate() {
+    public long getFirstDate() {
         return myFirstDate;
     }
 
-    public Long getLastDate() {
+    public long getLastDate() {
         return myLastDate;
     }
 }

@@ -239,8 +239,7 @@
         </description>
         <name>dates</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String formatDates(javax.servlet.http.HttpServletRequest, java.lang.String,
-            java.lang.Long, java.lang.String, java.lang.Long, java.lang.String)
+        <function-signature>java.lang.String formatDates(javax.servlet.http.HttpServletRequest, long, long)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:dates(long, long)}"/&gt;
