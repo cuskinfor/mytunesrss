@@ -40,6 +40,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
         myPathReplacements = new Table();
+        myPathReplacements.setCacheRate(50);
         myPathReplacements.addContainerProperty("search", TextField.class, null, getBundleString("datasourceOptionsPanel.replaceSearch"), null, null);
         myPathReplacements.addContainerProperty("replace", TextField.class, null, getBundleString("datasourceOptionsPanel.replaceReplace"), null, null);
         myPathReplacements.addContainerProperty("delete", Button.class, null, "", null, null);

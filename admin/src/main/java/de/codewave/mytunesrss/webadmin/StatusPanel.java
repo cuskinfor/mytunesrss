@@ -109,9 +109,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         serverButtons.addComponent(myStopServer);
         Panel serverAddresses = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
         myInternalAddresses = new Table();
+        myInternalAddresses.setCacheRate(50);
         myInternalAddresses.addContainerProperty("address", String.class, null, getApplication().getBundleString("statusPanel.internalServerAddresses"), null, null);
         myInternalAddresses.setPageLength(0);
         myExternalAddresses = new Table();
+        myExternalAddresses.setCacheRate(50);
         myExternalAddresses.addContainerProperty("address", String.class, null, getApplication().getBundleString("statusPanel.externalServerAddress"), null, null);
         myExternalAddresses.setPageLength(0);
         serverAddresses.addComponent(myInternalAddresses);
@@ -119,6 +121,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         accordion.addTab(serverAddresses, getApplication().getBundleString("statusPanel.serverAddresses.caption"), null);
         Panel serverConnections = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
         myConnections = new Table();
+        myConnections.setCacheRate(50);
         myConnections.addContainerProperty("remoteAddress", String.class, null, getApplication().getBundleString("statusPanel.connectionRemoteAddress"), null, null);
         myConnections.addContainerProperty("user", String.class, null, getApplication().getBundleString("statusPanel.connectionUser"), null, null);
         myConnections.addContainerProperty("sessions", Long.class, null, getApplication().getBundleString("statusPanel.connectionSessions"), null, null);

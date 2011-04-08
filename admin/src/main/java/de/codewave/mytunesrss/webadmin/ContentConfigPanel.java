@@ -33,6 +33,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         super.attach();
         init(getBundleString("contentsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 2, true, true));
         myPlaylists = new Table();
+        myPlaylists.setCacheRate(50);
         myPlaylists.addContainerProperty("visible", CheckBox.class, null, getBundleString("contentsConfigPanel.playlists.visible"), null, null);
         myPlaylists.addContainerProperty("name", String.class, null, getBundleString("contentsConfigPanel.playlists.name"), null, null);
         myPlaylists.setSortContainerPropertyId("name");

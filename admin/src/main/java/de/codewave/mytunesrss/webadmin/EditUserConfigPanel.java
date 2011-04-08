@@ -13,9 +13,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.User;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.PlaylistType;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.validation.EmailValidator;
@@ -25,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
@@ -56,6 +55,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermPhotos;
     private Table myPermissions;
     private Table myPlaylistsRestrictions;
+    private Table myPhotoAlbumRestrictions;
     private Table myForceTranscoders;
     private SmartTextField mySearchFuzziness;
     private Select myDownloadLimitType;
@@ -81,7 +81,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     public void attach() {
         super.attach();
-        int rows = myUser.getParent() == null ? 6 : 3;
+        int rows = myUser.getParent() == null ? 7 : 4;
         init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, rows, true, true));
         myUsername = getComponentFactory().createTextField("editUserConfigPanel.username", new UniqueUsernameValidator());
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
@@ -123,6 +123,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermPhotos = new CheckBox();
         Panel panel = null;
         myPermissions = new Table();
+        myPermissions.setCacheRate(50);
         myPermissions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPermissions.addContainerProperty("active", CheckBox.class, null, "", null, null);
         myPermissions.addContainerProperty("permission", String.class, null, getBundleString("editUserConfigPanel.permissions.name"), null, null);
@@ -153,6 +154,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             addComponent(panel);
         }
         myPlaylistsRestrictions = new Table();
+        myPlaylistsRestrictions.setCacheRate(50);
         myPlaylistsRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPlaylistsRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.restricted"), null, null);
         myPlaylistsRestrictions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.excluded"), null, null);
@@ -165,7 +167,24 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (myUser.getParent() == null) {
             addComponent(panel);
         }
+        myPhotoAlbumRestrictions = new Table();
+        myPhotoAlbumRestrictions.setCacheRate(50);
+        myPhotoAlbumRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        myPhotoAlbumRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.photoalbum.restricted"), null, null);
+        myPhotoAlbumRestrictions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.photoalbum.excluded"), null, null);
+        myPhotoAlbumRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.photoalbum.name"), null, null);
+        myPhotoAlbumRestrictions.setColumnExpandRatio("name", 1);
+        myPhotoAlbumRestrictions.addContainerProperty("firstDate", AlbumDate.class, null, getBundleString("editUserConfigPanel.photoalbum.firstDate"), null, null);
+        myPhotoAlbumRestrictions.addContainerProperty("lastDate", AlbumDate.class, null, getBundleString("editUserConfigPanel.photoalbum.lastDate"), null, null);
+        myPhotoAlbumRestrictions.setEditable(false);
+        myPhotoAlbumRestrictions.setSortContainerPropertyId("firstDate");
+        panel = new Panel(getBundleString("editUserConfigPanel.caption.restrictedPhotoAlbums"));
+        panel.addComponent(myPhotoAlbumRestrictions);
+        if (myUser.getParent() == null) {
+            addComponent(panel);
+        }
         myForceTranscoders = new Table();
+        myForceTranscoders.setCacheRate(50);
         myForceTranscoders.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myForceTranscoders.addContainerProperty("active", CheckBox.class, null, "", null, null);
         myForceTranscoders.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.forceTranscoders.name"), null, null);
@@ -245,7 +264,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermUpload.setValue(myUser.isUpload());
             myEncryptUrls.setValue(myUser.isUrlEncryption());
             myPlaylistsRestrictions.removeAllItems();
-            List<Playlist> playlists = null;
+            List<Playlist> playlists = Collections.emptyList();
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
             try {
                 playlists = session.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder, PlaylistType.M3uFile, PlaylistType.MyTunes, PlaylistType.MyTunesSmart), null, null, true)).getResults();
@@ -262,11 +281,37 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 }
                 myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not fetch playlists from database.", e);
+                }
                 MyTunesRss.UNHANDLED_EXCEPTION.set(true);
             } finally {
                 session.rollback();
             }
             myPlaylistsRestrictions.setPageLength(Math.min(playlists.size(), 10));
+            myPhotoAlbumRestrictions.removeAllItems();
+            List<PhotoAlbum> photoAlbums = Collections.emptyList();
+            try {
+                photoAlbums = session.executeQuery(new GetPhotoAlbumsQuery()).getResults();
+                for (PhotoAlbum photoAlbum : photoAlbums) {
+                    CheckBox restricted = new CheckBox();
+                    restricted.setValue(myUser.getRestrictedPhotoAlbumIds().contains(photoAlbum.getId()));
+                    CheckBox excluded = new CheckBox();
+                    excluded.setValue(myUser.getExcludedPhotoAlbumIds().contains(photoAlbum.getId()));
+                    AlbumDate firstDate = photoAlbum.getFirstDate() > 0 ? new AlbumDate(photoAlbum.getFirstDate()) : new AlbumDate(photoAlbum.getLastDate());
+                    AlbumDate lastDate = new AlbumDate(photoAlbum.getLastDate());
+                    myPhotoAlbumRestrictions.addItem(new Object[]{restricted, excluded, photoAlbum.getName(), firstDate, lastDate}, photoAlbum);
+                }
+                myPhotoAlbumRestrictions.sort();
+            } catch (SQLException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not fetch photo albums from database.", e);
+                }
+                MyTunesRss.UNHANDLED_EXCEPTION.set(true);
+            } finally {
+                session.rollback();
+            }
+            myPhotoAlbumRestrictions.setPageLength(Math.min(photoAlbums.size(), 10));
             myForceTranscoders.removeAllItems();
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 CheckBox active = new CheckBox();
@@ -343,6 +388,19 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
         myUser.setRestrictedPlaylistIds(restricted);
         myUser.setExcludedPlaylistIds(excluded);
+        restricted = new HashSet<String>();
+        excluded = new HashSet<String>();
+        for (Object itemId : myPhotoAlbumRestrictions.getItemIds()) {
+            PhotoAlbum photoAlbum = (PhotoAlbum) itemId;
+            if ((Boolean) getTableCellPropertyValue(myPhotoAlbumRestrictions, photoAlbum, "restricted")) {
+                restricted.add(photoAlbum.getId());
+            }
+            if ((Boolean) getTableCellPropertyValue(myPhotoAlbumRestrictions, photoAlbum, "excluded")) {
+                excluded.add(photoAlbum.getId());
+            }
+        }
+        myUser.setRestrictedPhotoAlbumIds(restricted);
+        myUser.setExcludedPhotoAlbumIds(excluded);
         myUser.clearForceTranscoders();
         for (Object transcoderName : myForceTranscoders.getItemIds()) {
             if ((Boolean) getTableCellPropertyValue(myForceTranscoders, transcoderName, "active")) {
@@ -400,6 +458,27 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 }
             }
             return true;
+        }
+    }
+
+    public class AlbumDate implements Comparable<AlbumDate> {
+        private long myCompareDate;
+        private String myDisplayDate = "";
+
+        public AlbumDate(long timestamp) {
+            myCompareDate = timestamp;
+            if (timestamp > 0) {
+                myDisplayDate = new SimpleDateFormat(getBundleString("common.dateFormat")).format(new Date(timestamp));
+            }
+        }
+
+        @Override
+        public String toString() {
+            return myDisplayDate;
+        }
+
+        public int compareTo(AlbumDate other) {
+            return (int)Math.signum(myCompareDate - other.myCompareDate);
         }
     }
 }

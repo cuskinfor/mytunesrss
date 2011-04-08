@@ -50,6 +50,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myNoTemplateUser = new User(getBundleString("userConfigPanel.selectTemplateUser.noTemplateOption"));
             myGroupsPanel = new Panel(getBundleString("userConfigPanel.caption.groups"), getComponentFactory().createVerticalLayout(true, true));
             myGroupTable = new Table();
+            myGroupTable.setCacheRate(50);
             myGroupTable.addContainerProperty("name", String.class, null, getBundleString("userConfigPanel.groups.name"), null, null);
             myGroupTable.addContainerProperty("edit", Button.class, null, null, null, null);
             myGroupTable.addContainerProperty("delete", Button.class, null, null, null, null);
@@ -61,6 +62,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             addComponent(myGroupsPanel);
             myUserPanel = new Panel(getBundleString("userConfigPanel.caption.users"), getComponentFactory().createVerticalLayout(true, true));
             myUserTable = new Table();
+            myUserTable.setCacheRate(50);
             myUserTable.addContainerProperty("active", Embedded.class, null, "", null, null);
             myUserTable.addContainerProperty("name", String.class, null, getBundleString("userConfigPanel.users.name"), null, null);
             myUserTable.addContainerProperty("group", Select.class, null, getBundleString("userConfigPanel.users.group"), null, null);

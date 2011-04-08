@@ -802,7 +802,25 @@
 
     <statement name="getPhotoAlbums">
         <sql>
-            SELECT id, name, first_date, last_date FROM photoalbum ORDER BY first_date, last_date, name
+            <![CDATA[
+            SELECT pa.id AS id, pa.name AS name, pa.first_date AS first_date, pa.last_date AS last_date
+            FROM photoalbum pa<restricted>, link_photo_album rlpa</restricted><restricted_or_excluded>, link_photo_album lpa</restricted_or_excluded>
+            WHERE {alwaysTrueCondition}
+            <restricted>
+                AND rlpa.album_id IN (:restrictedPhotoAlbumIds[])
+                AND lpa.photo_id = rlpa.photo_id
+                AND lpa.album_id = pa.id
+            </restricted>
+            <excluded>
+                AND pa.id NOT IN (:excludedPhotoAlbumIds[])
+                AND lpa.album_id = pa.id
+                AND lpa.photo_id NOT IN (
+                    SELECT elpa.photo_id FROM link_photo_album elpa
+                    WHERE elpa.album_id IN (:excludedPhotoAlbumIds[])
+                )
+            </excluded>
+            ORDER BY first_date, last_date, name
+            ]]>
         </sql>
     </statement>
 

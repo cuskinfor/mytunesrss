@@ -22,7 +22,7 @@ public class BrowsePhotoAlbumCommandHandler extends MyTunesRssCommandHandler {
                     forward(MyTunesRssCommand.ShowPortal);
                 }
             } else {
-                DataStoreQuery.QueryResult<PhotoAlbum> photoAlbumsResult = getTransaction().executeQuery(new GetPhotoAlbumsQuery());
+                DataStoreQuery.QueryResult<PhotoAlbum> photoAlbumsResult = getTransaction().executeQuery(new GetPhotoAlbumsQuery(getAuthUser()));
                 int pageSize = getWebConfig().getEffectivePageSize();
                 if (pageSize > 0 && photoAlbumsResult.getResultSize() > pageSize) {
                     int current = getSafeIntegerRequestParameter("index", 0);

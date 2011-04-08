@@ -69,6 +69,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myCurrentDirLabel = new Label();
         panel.addComponent(myCurrentDirLabel);
         myChooser = new Table();
+        myChooser.setCacheRate(50);
         myChooser.setWidth(100f, Sizeable.UNITS_PERCENTAGE);
         myChooser.setSelectable(true);
         myChooser.addContainerProperty("File", String.class, "");

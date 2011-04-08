@@ -39,6 +39,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         Panel typesPanel = new Panel(getBundleString("dataimportConfigPanel.caption.types"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(typesPanel);
         myFileTypes = new Table();
+        myFileTypes.setCacheRate(50);
         myFileTypes.addContainerProperty("active", CheckBox.class, null, getBundleString("dataimportConfigPanel.fileTypes.active"), null, null);
         myFileTypes.addContainerProperty("suffix", TextField.class, null, getBundleString("dataimportConfigPanel.fileTypes.suffix"), null, null);
         myFileTypes.addContainerProperty("mimeType", TextField.class, null, getBundleString("dataimportConfigPanel.fileTypes.mimeType"), null, null);

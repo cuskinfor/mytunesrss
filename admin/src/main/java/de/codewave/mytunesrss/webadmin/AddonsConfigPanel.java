@@ -51,6 +51,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 5, true, true));
         myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
+        myThemesTable.setCacheRate(50);
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
         myThemesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myThemesPanel.addComponent(myThemesTable);
@@ -62,6 +63,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesPanel.addComponent(myUploadTheme);
         myLanguagesPanel = new Panel(getBundleString("addonsConfigPanel.caption.languages"), getComponentFactory().createVerticalLayout(true, true));
         myLanguagesTable = new Table();
+        myLanguagesTable.setCacheRate(50);
         myLanguagesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.languages.code"), null, null);
         myLanguagesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myLanguagesPanel.addComponent(myLanguagesTable);
@@ -73,6 +75,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myLanguagesPanel.addComponent(myUploadLanguage);
         mySitesPanel = new Panel(getBundleString("addonsConfigPanel.caption.sites"), getComponentFactory().createVerticalLayout(true, true));
         mySitesTable = new Table();
+        mySitesTable.setCacheRate(50);
         mySitesTable.addContainerProperty("name", TextField.class, null, getBundleString("addonsConfigPanel.sites.name"), null, null);
         mySitesTable.addContainerProperty("type", Select.class, null, getBundleString("addonsConfigPanel.sites.type"), null, null);
         mySitesTable.addContainerProperty("url", TextField.class, null, getBundleString("addonsConfigPanel.sites.url"), null, null);
@@ -82,6 +85,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         mySitesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddSite));
         myFlashPlayersPanel = new Panel(getBundleString("addonsConfigPanel.caption.flash"), getComponentFactory().createVerticalLayout(true, true));
         myFlashPlayersTable = new Table();
+        myFlashPlayersTable.setCacheRate(50);
         myFlashPlayersTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.flash.name"), null, null);
         myFlashPlayersTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myFlashPlayersTable.addContainerProperty("delete", Button.class, null, "", null, null);

@@ -39,6 +39,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
         myPathReplacements = new Table();
+        myPathReplacements.setCacheRate(50);
         myPathReplacements.addContainerProperty("search", TextField.class, null, getBundleString("datasourceOptionsPanel.replaceSearch"), null, null);
         myPathReplacements.addContainerProperty("replace", TextField.class, null, getBundleString("datasourceOptionsPanel.replaceReplace"), null, null);
         myPathReplacements.addContainerProperty("delete", Button.class, null, "", null, null);
@@ -49,6 +50,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         Panel ignorePlaylistsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.ignoreItunesPlaylists"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(ignorePlaylistsPanel);
         myIgnoreItunesPlaylists = new Table();
+        myIgnoreItunesPlaylists.setCacheRate(50);
         myIgnoreItunesPlaylists.addContainerProperty("check", CheckBox.class, null, "", null, null);
         myIgnoreItunesPlaylists.addContainerProperty("type", ItunesPlaylistType.class, null, getBundleString("datasourceOptionsPanel.ignoreItunesPlaylistType"), null, null);
         myIgnoreItunesPlaylists.setEditable(false);

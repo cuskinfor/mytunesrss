@@ -45,6 +45,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         Panel sourcesPanel = new Panel(getBundleString("datasourcesConfigPanel.caption.sources"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(sourcesPanel);
         myDatasources = new Table();
+        myDatasources.setCacheRate(50);
         myDatasources.addContainerProperty("icon", Embedded.class, null, "", null, null);
         myDatasources.addContainerProperty("path", String.class, null, getBundleString("datasourcesConfigPanel.sourcePath"), null, null);
         myDatasources.addContainerProperty("edit", Button.class, null, "", null, null);

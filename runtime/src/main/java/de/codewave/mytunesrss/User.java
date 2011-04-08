@@ -73,6 +73,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private int myBandwidthLimit;
     private Set<String> myRestrictedPlaylistIds = new HashSet<String>();
     private Set<String> myExcludedPlaylistIds = new HashSet<String>();
+    private Set<String> myRestrictedPhotoAlbumIds = new HashSet<String>();
+    private Set<String> myExcludedPhotoAlbumIds = new HashSet<String>();
     private boolean mySharedUser;
     private Map<String, String> myWebConfigs = new HashMap<String, String>();
     private boolean myCreatePlaylists = true;
@@ -304,6 +306,38 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setExcludedPlaylistIds(Set<String> playlistIds) {
         myExcludedPlaylistIds = new HashSet<String>(playlistIds);
+    }
+    
+    public List<String> getRestrictedPhotoAlbumIds() {
+        return getParent() != null ? getParent().getRestrictedPhotoAlbumIds() : new ArrayList<String>(myRestrictedPhotoAlbumIds);
+    }
+
+    public void addRestrictedPhotoAlbumId(String photoAlbumId) {
+        myRestrictedPhotoAlbumIds.add(photoAlbumId);
+    }
+
+    public void removeRestrictedPhotoAlbumId(String photoAlbumId) {
+        myRestrictedPhotoAlbumIds.remove(photoAlbumId);
+    }
+
+    public void setRestrictedPhotoAlbumIds(Set<String> photoAlbumIds) {
+        myRestrictedPhotoAlbumIds = new HashSet<String>(photoAlbumIds);
+    }
+
+    public List<String> getExcludedPhotoAlbumIds() {
+        return getParent() != null ? getParent().getExcludedPhotoAlbumIds() : new ArrayList<String>(myExcludedPhotoAlbumIds);
+    }
+
+    public void addExcludedPhotoAlbumId(String photoAlbumId) {
+        myExcludedPhotoAlbumIds.add(photoAlbumId);
+    }
+
+    public void removeExcludedPhotoAlbumId(String photoAlbumId) {
+        myExcludedPhotoAlbumIds.remove(photoAlbumId);
+    }
+
+    public void setExcludedPhotoAlbumIds(Set<String> photoAlbumIds) {
+        myExcludedPhotoAlbumIds = new HashSet<String>(photoAlbumIds);
     }
 
     public boolean isSharedUser() {
@@ -576,6 +610,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         while (playlistIdIterator.hasNext()) {
             addExcludedPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
         }
+        Iterator<JXPathContext> photoAlbumIdIterator = JXPathUtils.getContextIterator(settings, "photoalbums/restricted");
+        while (photoAlbumIdIterator.hasNext()) {
+            addRestrictedPhotoAlbumId(JXPathUtils.getStringValue(photoAlbumIdIterator.next(), ".", null));
+        }
+        photoAlbumIdIterator = JXPathUtils.getContextIterator(settings, "photoalbums/excluded");
+        while (photoAlbumIdIterator.hasNext()) {
+            addExcludedPhotoAlbumId(JXPathUtils.getStringValue(photoAlbumIdIterator.next(), ".", null));
+        }
         setSharedUser(JXPathUtils.getBooleanValue(settings, "shared", false));
         Iterator<JXPathContext> webConfigIterator = JXPathUtils.getContextIterator(settings, "webConfigs/config");
         myWebConfigs.clear();
@@ -650,6 +692,16 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             }
             for (String playlistId : getExcludedPlaylistIds()) {
                 playlists.appendChild(DOMUtils.createTextElement(settings, "excluded", playlistId));
+            }
+        }
+        if (!CollectionUtils.isEmpty(getRestrictedPhotoAlbumIds()) || !CollectionUtils.isEmpty(getExcludedPhotoAlbumIds())) {
+            Element photoalbums = settings.createElement("photoalbums");
+            users.appendChild(photoalbums);
+            for (String photoAlbumId : getRestrictedPhotoAlbumIds()) {
+                photoalbums.appendChild(DOMUtils.createTextElement(settings, "restricted", photoAlbumId));
+            }
+            for (String photoAlbumId : getExcludedPhotoAlbumIds()) {
+                photoalbums.appendChild(DOMUtils.createTextElement(settings, "excluded", photoAlbumId));
             }
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "shared", isSharedUser()));
