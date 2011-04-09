@@ -442,9 +442,20 @@
     <statement name="findPhotos">
         <sql>
             SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update
-            FROM photo p, link_photo_album lpa
+            FROM photo p, link_photo_album lpa<restricted>, link_photo_album rlpa</restricted>
             WHERE p.id = lpa.photo_id
             AND lpa.album_id = :album_id
+            <restricted>
+                AND rlpa.album_id IN (:restrictedPhotoAlbumIds[])
+                AND rlpa.photo_id = p.id
+            </restricted>
+            <excluded>
+                AND p.id NOT IN (
+                    SELECT elpa.photo_id FROM link_photo_album elpa
+                    WHERE elpa.album_id IN (:excludedPhotoAlbumIds[])
+                )
+            </excluded>
+            GROUP BY id, name, file, date, image_hash, last_image_update
             ORDER BY date, name
         </sql>
     </statement>
