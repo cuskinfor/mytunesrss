@@ -25,12 +25,6 @@ import java.util.*;
  */
 public class FindPhotoQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Photo>> {
 
-    public static FindPhotoQuery getForAlbum(String photoAlbumId) {
-        FindPhotoQuery query = new FindPhotoQuery();
-        query.myAlbumId = photoAlbumId;
-        return query;
-    }
-
     public static FindPhotoQuery getForAlbum(User user, String photoAlbumId) {
         FindPhotoQuery query = new FindPhotoQuery();
         query.myUser = user;
