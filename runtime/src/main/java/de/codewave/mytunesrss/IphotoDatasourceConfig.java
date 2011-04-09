@@ -25,6 +25,8 @@ public class IphotoDatasourceConfig extends DatasourceConfig {
     public IphotoDatasourceConfig(IphotoDatasourceConfig source) {
         super(source);
         myPathReplacements = new HashSet<PathReplacement>(source.getPathReplacements());
+        myImportRolls = source.isImportRolls();
+        myImportAlbums = source.isImportAlbums();
     }
 
     @Override
