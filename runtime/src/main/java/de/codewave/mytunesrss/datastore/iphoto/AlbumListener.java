@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.datastore.statement.SavePhotoAlbumStatement;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +18,14 @@ import java.util.*;
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
  */
 public class AlbumListener implements PListHandlerListener {
-    private static final Logger LOG = LoggerFactory.getLogger(AlbumListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlbumListener.class);
+
+    private static String[] IGNORE_TYPES = new String[] {
+            "Selected Event Album",
+            "Flagged",
+            "Special Roll",
+            "Special Month"
+    };
 
     private DataStoreSession myDataStoreSession;
     private Set<String> myExistingIds = new HashSet<String>();
@@ -46,32 +54,40 @@ public class AlbumListener implements PListHandlerListener {
             throw new ShutdownRequestedException();
         }
 
-        String albumId = getAlbumId(album);
-        if (albumId != null) {
-            String albumName = getAlbumName(album);
-            List<String> photos = new ArrayList<String>();
-            for (String id : (List<String>) album.get("KeyList")) {
-                String persId = myPhotoIdToPersId.get(Long.valueOf(id));
-                if (StringUtils.isNotBlank(persId)) {
-                    photos.add(persId);
+        String albumType = (String) album.get("Album Type");
+        if (!ArrayUtils.contains(IGNORE_TYPES, albumType)) {
+            String albumId = getAlbumId(album);
+            if (albumId != null) {
+                String albumName = getAlbumName(album);
+                List<String> photos = new ArrayList<String>();
+                for (String id : (List<String>) album.get("KeyList")) {
+                    String persId = myPhotoIdToPersId.get(Long.valueOf(id));
+                    if (StringUtils.isNotBlank(persId)) {
+                        photos.add(persId);
+                    }
                 }
-            }
-            if (!photos.isEmpty()) {
-                SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement();
-                statement.setId(albumId);
-                statement.setName(albumName);
-                statement.setPhotoIds(photos);
-                try {
-                    statement.setUpdate(myDataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()).contains(albumId));
-                    myDataStoreSession.executeStatement(statement);
-                    myExistingIds.add(albumId);
-                    DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
-                } catch (SQLException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not insert/update photo album \"" + albumName + "\" into database.", e);
+                if (!photos.isEmpty()) {
+                    SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement();
+                    statement.setId(albumId);
+                    statement.setName(albumName);
+                    statement.setPhotoIds(photos);
+                    try {
+                        statement.setUpdate(myDataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()).contains(albumId));
+                        myDataStoreSession.executeStatement(statement);
+                        myExistingIds.add(albumId);
+                        DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
+                    } catch (SQLException e) {
+                        if (LOGGER.isErrorEnabled()) {
+                            LOGGER.error("Could not insert/update photo album \"" + albumName + "\" into database.", e);
+                        }
                     }
                 }
             }
+        } else {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Ignoring album of type \"" + albumType + "\".");
+            }
+
         }
     }
 
