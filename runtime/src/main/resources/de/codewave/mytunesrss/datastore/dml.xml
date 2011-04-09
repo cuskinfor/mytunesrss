@@ -819,6 +819,7 @@
                     WHERE elpa.album_id IN (:excludedPhotoAlbumIds[])
                 )
             </excluded>
+            GROUP BY id, name, first_date, last_date
             ORDER BY first_date, last_date, name
             ]]>
         </sql>
