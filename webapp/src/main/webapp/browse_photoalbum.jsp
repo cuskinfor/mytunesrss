@@ -74,13 +74,13 @@
                             </a>
                         </div>
                     </td>
-                    <td class="actions">
+                    <%--td class="actions">
                         <mttag:actions index="${fnCount}"
                                        backUrl="${mtfn:encode64(backUrl)}"
                                        linkFragment="photoalbum=${mtfn:encode64(photoAlbum)}"
                                        filename="${mtfn:webSafeFileName(photoAlbum)}"
                                        defaultPlaylistName="${photoAlbum}" />
-                    </td>
+                    </td--%>
                 </tr>
                 <c:set var="fnCount" value="${fnCount + 1}"/>
                 </c:forEach>
