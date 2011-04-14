@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.1.0-EAP-1" date="2011-xx-xx">
+        <release version="4.1.0-EAP-1" date="2011-04-14">
             <action dev="mdescher" type="add">
                 Remember last chosen jukebox in a cookie for up to 100 days.
             </action>
