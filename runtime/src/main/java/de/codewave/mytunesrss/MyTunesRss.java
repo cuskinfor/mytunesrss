@@ -116,6 +116,7 @@ public class MyTunesRss {
     public static MyTunesRssEvent LAST_DATABASE_EVENT;
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
     public static RouterConfig ROUTER_CONFIG = new RouterConfig();
+    public static ProcessManager PROCESS_MANAGER = new ProcessManager(2500);
 
     public static void main(final String[] args) throws Exception {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
@@ -161,6 +162,7 @@ public class MyTunesRss {
         if (CONFIG.getPort() > 0) {
             startWebserver();
         }
+        PROCESS_MANAGER.init();
         while (true) {
             try {
                 Thread.sleep(3600000); // sleep one hour

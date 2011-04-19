@@ -228,6 +228,11 @@ public class MyTunesRssUtils {
             }
             MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
             MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
+            try {
+                MyTunesRss.PROCESS_MANAGER.destroy();
+            } catch (InterruptedException e) {
+                // intentionally left blank
+            }
         } finally {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Very last log message before shutdown.");
