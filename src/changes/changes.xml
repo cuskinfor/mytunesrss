@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="4.1.0-EAP-2" date="?">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-263] Database update startup takes too long
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-190] External processes (e.g. segmenting) not stopped when stopping MyTunesRSS
+            </action>
+        </release>
+
         <release version="4.1.0-EAP-1" date="2011-04-14">
             <action dev="mdescher" type="add">
                 Remember last chosen jukebox in a cookie for up to 100 days.

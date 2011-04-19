@@ -266,21 +266,33 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myUpdateImages.setEnabled(false);
             myStopDatabaseUpdate.setEnabled(true);
             myResetDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
+            new Thread(new Runnable() {
+                public void run() {
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
+                }
+            }).start();
         } else if (clickEvent.getSource() == myFullUpdateDatabase) {
             myUpdateDatabase.setEnabled(false);
             myFullUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
             myStopDatabaseUpdate.setEnabled(true);
             myResetDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+            new Thread(new Runnable() {
+                public void run() {
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+                }
+            }).start();
         } else if (clickEvent.getSource() == myUpdateImages) {
             myUpdateDatabase.setEnabled(false);
             myFullUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
             myStopDatabaseUpdate.setEnabled(true);
             myResetDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate();
+            new Thread(new Runnable() {
+                public void run() {
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate();
+                }
+            }).start();
         } else if (clickEvent.getSource() == myStopDatabaseUpdate) {
             myUpdateDatabase.setEnabled(false);
             myFullUpdateDatabase.setEnabled(false);
