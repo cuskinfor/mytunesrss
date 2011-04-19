@@ -154,6 +154,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             BufferedReader reader = null;
             try {
                 Process process = Runtime.getRuntime().exec(command);
+                MyTunesRss.PROCESS_MANAGER.addProcess(process);
                 new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                 new StreamCopyThread(myStream, true, process.getOutputStream(), true).start();
                 reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
