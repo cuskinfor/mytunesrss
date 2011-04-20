@@ -12,7 +12,9 @@ import de.codewave.utils.xml.XmlUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -85,7 +87,11 @@ public class ItunesLoader {
             try {
                 LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iTunesLibraryXml, handler);
-            } catch (Exception e) {
+            } catch (IOException e) {
+                LOG.error("Could not read data from iTunes xml file.", e);
+            } catch (ParserConfigurationException e) {
+                LOG.error("Could not read data from iTunes xml file.", e);
+            } catch (SAXException e) {
                 LOG.error("Could not read data from iTunes xml file.", e);
             }
             LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() +

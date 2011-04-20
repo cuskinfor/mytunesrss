@@ -161,49 +161,25 @@ public class MyTunesRssUtils {
             LOGGER.debug("Shutting down gracefully.");
         }
         try {
-            MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseJob();
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Cancelling database jobs.");
+            }
             if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Stopping user interface server.");
+                }
                 MyTunesRss.stopWebserver();
             }
-            if (MyTunesRss.WEBSERVER == null || !MyTunesRss.WEBSERVER.isRunning()) {
-                MyTunesRss.SERVER_RUNNING_TIMER.cancel();
-                if (MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Database still updating... waiting for it to finish.");
-                    }
-                    while (MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            // intentionally left blank
-                        }
-                    }
+            if (MyTunesRss.ADMIN_SERVER != null) {
+                if (LOGGER.isInfoEnabled()) {
+                    LOGGER.info("Stopping admin interface server.");
                 }
-                if (MyTunesRss.STORE != null && MyTunesRss.STORE.isInitialized()) {
-                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
-                    try {
-                        LOGGER.debug("Removing old temporary playlists.");
-                        session.executeStatement(new RemoveOldTempPlaylistsStatement());
-                        session.commit();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not remove old temporary playlists.", e);
-                    } finally {
-                        session.rollback();                    }
-                    try {
-                        LOGGER.debug("Removing old statistic events.");
-                        session.executeStatement(new RemoveOldEventsStatement());
-                        session.commit();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not remove old statistic events.", e);
-                    } finally {
-                        session.rollback();                    }
-                    LOGGER.debug("Destroying store.");
-                    MyTunesRss.STORE.destroy();
-                }
+                MyTunesRss.stopAdminServer();
             }
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Shutting down.");
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Shutting down executor services.");
             }
+            MyTunesRss.EXECUTOR_SERVICE.shutdown();
             if (MyTunesRss.QUARTZ_SCHEDULER != null) {
                 try {
                     if (LOGGER.isInfoEnabled()) {
@@ -216,14 +192,32 @@ public class MyTunesRssUtils {
                     }
                 }
             }
-            if (MyTunesRss.ADMIN_SERVER != null) {
-                MyTunesRss.stopAdminServer();
+            if (MyTunesRss.STORE != null && MyTunesRss.STORE.isInitialized()) {
+                DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                try {
+                    LOGGER.debug("Removing old temporary playlists.");
+                    session.executeStatement(new RemoveOldTempPlaylistsStatement());
+                    session.commit();
+                } catch (SQLException e) {
+                    LOGGER.error("Could not remove old temporary playlists.", e);
+                } finally {
+                    session.rollback();                    }
+                try {
+                    LOGGER.debug("Removing old statistic events.");
+                    session.executeStatement(new RemoveOldEventsStatement());
+                    session.commit();
+                } catch (SQLException e) {
+                    LOGGER.error("Could not remove old statistic events.", e);
+                } finally {
+                    session.rollback();                    }
+                LOGGER.debug("Destroying store.");
+                MyTunesRss.STORE.destroy();
             }
             if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnExit()) {
                 try {
                     new DeleteDatabaseFilesCallable().call();
                 } catch (IOException e) {
-                    LOGGER.error("Could not delete default database files.");
+                    LOGGER.error("Could not delete default database files.", e);
                 }
             }
             MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
@@ -231,8 +225,16 @@ public class MyTunesRssUtils {
             try {
                 MyTunesRss.PROCESS_MANAGER.destroy();
             } catch (InterruptedException e) {
-                // intentionally left blank
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Interrupted while destroying the process manager.", e);
+                }
+
             }
+        } catch (Exception e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Exception during shutdown.", e);
+            }
+
         } finally {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Very last log message before shutdown.");

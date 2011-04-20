@@ -28,6 +28,15 @@ public class MyTunesRssExecutorService {
 
     private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
 
+    public void shutdown() throws InterruptedException {
+        DATABASE_JOB_EXECUTOR.shutdownNow();
+        DATABASE_JOB_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        LUCENE_UPDATE_EXECUTOR.shutdownNow();
+        LUCENE_UPDATE_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        GENERAL_EXECUTOR.shutdownNow();
+        GENERAL_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
+    }
+
     public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
         cancelDatabaseJob();
         DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
@@ -44,26 +53,20 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void cancelDatabaseJob() {
-        if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone() && !DATABASE_UPDATE_FUTURE.isCancelled()) {
+        if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
             DATABASE_UPDATE_FUTURE.cancel(true);
         }
-        if (DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone() && !DATABASE_RESET_FUTURE.isCancelled()) {
+        if (DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone()) {
             DATABASE_RESET_FUTURE.cancel(true);
         }
     }
 
     public synchronized boolean isDatabaseUpdateRunning() {
-        return DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()
-                && !DATABASE_UPDATE_FUTURE.isCancelled();
+        return DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone();
     }
 
     public synchronized boolean isDatabaseResetRunning() {
-        return DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone()
-                && !DATABASE_RESET_FUTURE.isCancelled();
-    }
-
-    public synchronized boolean getDatabaseUpdateResult() throws InterruptedException, ExecutionException {
-        return DATABASE_UPDATE_FUTURE != null ? DATABASE_UPDATE_FUTURE.get() : false;
+        return DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone();
     }
 
     public synchronized void scheduleLuceneAndSmartPlaylistUpdate(String[] trackIds) {

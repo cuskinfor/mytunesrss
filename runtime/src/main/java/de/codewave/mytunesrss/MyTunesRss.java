@@ -90,7 +90,6 @@ public class MyTunesRss {
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG;
     public static WebServer WEBSERVER = new WebServer();
-    public static Timer SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
     public static MessageDigest SHA1_DIGEST;
     public static MessageDigest MD5_DIGEST;
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
@@ -119,6 +118,17 @@ public class MyTunesRss {
     public static ProcessManager PROCESS_MANAGER = new ProcessManager(2500);
 
     public static void main(final String[] args) throws Exception {
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            @Override
+            public void run() {
+                // try to do the best to shutdown the store in a clean way to keep H2 databases intact
+                LOGGER.info("Running shutdown hook.");
+                if (STORE != null && STORE.isInitialized()) {
+                    LOGGER.info("Destroying still initialized store.");
+                    STORE.destroy();
+                }
+            }
+        });
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         processArguments(args);
         copyOldPrefsAndCache();
@@ -664,8 +674,6 @@ public class MyTunesRss {
             if (FORM != null) {
                 FORM.setUserUrl(-1);
             }
-            SERVER_RUNNING_TIMER.cancel();
-            SERVER_RUNNING_TIMER = new Timer("MyTunesRSSServerRunningTimer");
             MulticastService.stopListener();
             EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
         }

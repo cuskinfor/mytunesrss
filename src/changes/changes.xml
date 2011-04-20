@@ -8,6 +8,10 @@
     <body>
 
         <release version="4.1.0-EAP-2" date="?">
+            <action dev="mdescher" type="add">
+                Destroy the store in the shutdown hook if it is still initialized, hopefully reducing
+                H2 database corruption for users.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-263] Database update startup takes too long
             </action>
