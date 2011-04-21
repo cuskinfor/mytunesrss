@@ -115,7 +115,7 @@ public class MyTunesRss {
     public static MyTunesRssEvent LAST_DATABASE_EVENT;
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
     public static RouterConfig ROUTER_CONFIG = new RouterConfig();
-    public static ProcessManager PROCESS_MANAGER = new ProcessManager(2500);
+    public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();
 
     public static void main(final String[] args) throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -153,32 +153,46 @@ public class MyTunesRss {
         logSystemInfo();
         prepareCacheDirs();
         validateWrapperStartSystemProperty();
-        startQuartzScheduler();
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            startQuartzScheduler();
+        }
         initializeCaches();
-        StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
-        EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-        EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-        EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
-        EXECUTOR_SERVICE.scheduleWithFixedDelay(ROUTER_CONFIG, 0, 600, TimeUnit.SECONDS); // try to get gateway device every 10 minutes
-        initializeDatabase();
-        if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
-            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
-            if (!startAdminServer(0)) {
-                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartFailed"));
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
+        }
+
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
+            EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+            EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
+            EXECUTOR_SERVICE.scheduleWithFixedDelay(ROUTER_CONFIG, 0, 600, TimeUnit.SECONDS); // try to get gateway device every 10 minutes
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            initializeDatabase();
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
+                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
+                if (!startAdminServer(0)) {
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartFailed"));
+                }
             }
         }
-        MyTunesRssJobUtils.scheduleStatisticEventsJob();
-        MyTunesRssJobUtils.scheduleDatabaseJob();
-        if (CONFIG.getPort() > 0) {
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            MyTunesRssJobUtils.scheduleStatisticEventsJob();
+            MyTunesRssJobUtils.scheduleDatabaseJob();
+        }
+        if (CONFIG.getPort() > 0 && !SHUTDOWN_IN_PROGRESS.get()) {
             startWebserver();
         }
-        PROCESS_MANAGER.init();
-        while (true) {
-            try {
-                Thread.sleep(3600000); // sleep one hour
-            } catch (InterruptedException e) {
-                LOGGER.debug("Main thread was interrupted.", e);
-                MyTunesRssUtils.shutdownGracefully();
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            while (true) {
+                try {
+                    Thread.sleep(3600000); // sleep one hour
+                } catch (InterruptedException e) {
+                    LOGGER.debug("Main thread was interrupted.", e);
+                    MyTunesRssUtils.shutdownGracefully();
+                }
             }
         }
     }
@@ -253,7 +267,11 @@ public class MyTunesRss {
         } catch (Exception e) {
             // ignore exceptions when deleting log files
         }
-        DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
+        if (COMMAND_LINE_ARGS.get("logConfig") != null && COMMAND_LINE_ARGS.get("logConfig").length == 1 && COMMAND_LINE_ARGS.get("logConfig")[0] != null) {
+            DOMConfigurator.configure(COMMAND_LINE_ARGS.get("logConfig")[0]);
+        } else {
+            DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
+        }
         AppenderSkeleton appender = new AppenderSkeleton() {
             @Override
             protected void append(LoggingEvent event) {

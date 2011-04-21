@@ -152,9 +152,9 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
             }
             BufferedReader reader = null;
+            Process process = null;
             try {
-                Process process = Runtime.getRuntime().exec(command);
-                MyTunesRss.PROCESS_MANAGER.addProcess(process);
+                process = Runtime.getRuntime().exec(command);
                 new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                 new StreamCopyThread(myStream, true, process.getOutputStream(), true).start();
                 reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -191,6 +191,9 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 myPlaylist.setFailed(true);
             } finally {
                 IOUtils.closeQuietly(reader);
+                if (process != null) {
+                    process.destroy();
+                }
             }
         }
 

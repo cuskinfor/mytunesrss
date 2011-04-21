@@ -43,7 +43,7 @@ public class TranscoderStream extends InputStream {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
         }
         myProcess = Runtime.getRuntime().exec(transcoderCommand);
-        MyTunesRss.PROCESS_MANAGER.addProcess(myProcess);
+        // todo: make sure the process is destroyed
         new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
                 .start();
     }

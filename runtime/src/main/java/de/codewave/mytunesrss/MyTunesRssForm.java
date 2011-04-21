@@ -28,7 +28,7 @@ import java.util.Locale;
 public class MyTunesRssForm {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssForm.class);
 
-    private JFrame frame;
+    private JFrame myFrame;
     private JButton myStartAdminBrowser;
     private JTextField myAdminUrl;
     private JButton myQuit;
@@ -93,14 +93,14 @@ public class MyTunesRssForm {
             }
         });
         refreshSupportConfig();
-        frame = new JFrame(MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.title", MyTunesRss.VERSION));
-        final MyTunesRssSystray systray = SystemUtils.IS_OS_WINDOWS ? new MyTunesRssSystray(frame) : null;
-        frame.addWindowListener(new WindowAdapter() {
+        myFrame = new JFrame(MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.title", MyTunesRss.VERSION));
+        final MyTunesRssSystray systray = SystemUtils.IS_OS_WINDOWS ? new MyTunesRssSystray(myFrame) : null;
+        myFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (SystemUtils.IS_OS_MAC_OSX) {
                     LOGGER.debug("Window is being closed on Mac OS X, so the window is hidden now.");
-                    frame.setVisible(false);
+                    myFrame.setVisible(false);
                 } else {
                     LOGGER.debug("Window is being closed, so the application is shut down now.");
                     MyTunesRssUtils.shutdownGracefully();
@@ -110,17 +110,17 @@ public class MyTunesRssForm {
             @Override
             public void windowIconified(WindowEvent e) {
                 if (SystemUtils.IS_OS_WINDOWS && systray.isAvailable()) {
-                    LOGGER.debug("Window has been iconified (state is " + frame.getExtendedState() + ") and systray is available, so we hide the window now!");
-                    frame.setVisible(false);
+                    LOGGER.debug("Window has been iconified (state is " + myFrame.getExtendedState() + ") and systray is available, so we hide the window now!");
+                    myFrame.setVisible(false);
                 }
             }
         });
-        frame.getContentPane().add(myRootPanel);
-        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        frame.setResizable(false);
-        frame.pack();
-        frame.setLocationRelativeTo(null);
-        frame.setVisible(true);
+        myFrame.getContentPane().add(myRootPanel);
+        myFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        myFrame.setResizable(false);
+        myFrame.pack();
+        myFrame.setLocationRelativeTo(null);
+        myFrame.setVisible(true);
         executeApple();
     }
 
@@ -160,13 +160,17 @@ public class MyTunesRssForm {
                 LOGGER.debug("Executing apple specific code.");
                 Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
                 Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
-                activateMethod.invoke(null, new AppleExtensionsEventListener(frame));
+                activateMethod.invoke(null, new AppleExtensionsEventListener(myFrame));
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not activate apple extensions.", e);
                 }
             }
         }
+    }
+
+    public void hide() {
+        myFrame.setVisible(false);
     }
 
     public static class AppleExtensionsEventListener implements EventListener {

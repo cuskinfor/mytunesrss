@@ -157,8 +157,12 @@ public class MyTunesRssUtils {
     }
 
     public static void shutdownGracefully() {
+        MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Shutting down gracefully.");
+        }
+        if (MyTunesRss.FORM != null) {
+            MyTunesRss.FORM.hide();
         }
         try {
             if (LOGGER.isInfoEnabled()) {
@@ -222,14 +226,6 @@ public class MyTunesRssUtils {
             }
             MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
             MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
-            try {
-                MyTunesRss.PROCESS_MANAGER.destroy();
-            } catch (InterruptedException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Interrupted while destroying the process manager.", e);
-                }
-
-            }
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Exception during shutdown.", e);

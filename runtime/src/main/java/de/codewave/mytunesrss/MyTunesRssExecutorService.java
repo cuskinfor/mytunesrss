@@ -11,10 +11,14 @@ import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.mytunesrss.task.ForcedImageUpdateCallable;
 import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
 import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
 public class MyTunesRssExecutorService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssExecutorService.class);
 
     private final ExecutorService DATABASE_JOB_EXECUTOR = Executors.newSingleThreadExecutor();
 
@@ -39,17 +43,29 @@ public class MyTunesRssExecutorService {
 
     public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
         cancelDatabaseJob();
-        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
+        try {
+            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule database update task.", e);
+        }
     }
 
     public void scheduleImageUpdate() {
         cancelDatabaseJob();
-        DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(MyTunesRss.CONFIG.isIgnoreTimestamps()));
+        try {
+            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(MyTunesRss.CONFIG.isIgnoreTimestamps()));
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule image update task.", e);
+        }
     }
 
     public synchronized void scheduleDatabaseReset() {
         cancelDatabaseJob();
-        DATABASE_RESET_FUTURE = DATABASE_JOB_EXECUTOR.submit(new RecreateDatabaseCallable());
+        try {
+            DATABASE_RESET_FUTURE = DATABASE_JOB_EXECUTOR.submit(new RecreateDatabaseCallable());
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule database reset task.", e);
+        }
     }
 
     public synchronized void cancelDatabaseJob() {
@@ -70,15 +86,27 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleLuceneAndSmartPlaylistUpdate(String[] trackIds) {
-        LUCENE_UPDATE_EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
+        try {
+            LUCENE_UPDATE_EXECUTOR.submit(new RefreshSmartPlaylistsAndLuceneIndexCallable(trackIds));
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule lucene and smart playlist update task.", e);
+        }
     }
 
     public synchronized void scheduleMyTunesRssComUpdate() {
-        MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 300, TimeUnit.SECONDS);
+        try {
+            MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 300, TimeUnit.SECONDS);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule mytunesrss.com update task.", e);
+        }
     }
 
     public synchronized void executeMyTunesRssComUpdate() {
-        GENERAL_EXECUTOR.execute(new MyTunesRssComUpdateRunnable());
+        try {
+            GENERAL_EXECUTOR.execute(new MyTunesRssComUpdateRunnable());
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not execute mytunesrss.com update task.", e);
+        }
     }
 
     public synchronized void cancelMyTunesRssComUpdate() {
@@ -88,22 +116,43 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleExternalAddressUpdate() {
-        GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 60, TimeUnit.SECONDS);
+        try {
+            GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 60, TimeUnit.SECONDS);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule external address update task.", e);
+        }
     }
 
     public synchronized void scheduleUpdateCheck() {
-        GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 3600, TimeUnit.SECONDS);
+        try {
+            GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 3600, TimeUnit.SECONDS);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule update check task.", e);
+        }
     }
 
     public synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {
-        GENERAL_EXECUTOR.schedule(runnable, delay, timeUnit);
+        try {
+            GENERAL_EXECUTOR.schedule(runnable, delay, timeUnit);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule task.", e);
+        }
     }
 
     public synchronized <T> ScheduledFuture<T> schedule(Callable<T> callable, int delay, TimeUnit timeUnit) {
-        return GENERAL_EXECUTOR.schedule(callable, delay, timeUnit);
+        try {
+            return GENERAL_EXECUTOR.schedule(callable, delay, timeUnit);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule task.", e);
+        }
+        return null;
     }
 
     public synchronized void scheduleWithFixedDelay(Runnable runnable, int initialDelay, int delay, TimeUnit timeUnit) {
-        GENERAL_EXECUTOR.scheduleWithFixedDelay(runnable, initialDelay, delay, timeUnit);
+        try {
+            GENERAL_EXECUTOR.scheduleWithFixedDelay(runnable, initialDelay, delay, timeUnit);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule task.", e);
+        }
     }
 }
