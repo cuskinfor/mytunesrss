@@ -13,7 +13,7 @@
         <c:if test="${!empty item.comment}">"comment" : "${mtfn:escapeJson(item.comment)}",</c:if>
         <c:if test="${!empty item.genre}">"genre" : "${mtfn:escapeJson(item.genre)}",</c:if>
         <c:if test="${item.time > 0}">"duration" : ${item.time * timefactor},</c:if>
-        <c:if test="${!empty(item.imageHash)}">"image" : "<mt:escapeJson>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(item.imageHash)}</mt:encrypt></mt:escapeJson>",</c:if>
+        <c:if test="${!empty(item.imageHash)}">"image" : "<mt:escapeJson>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${item.imageHash}</mt:encrypt></mt:escapeJson>",</c:if>
         "info" : "<mt:escapeJson>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(item.id)}</mt:encrypt></mt:escapeJson>"
     }<c:if test="${!loopStatus.last}">,</c:if>
 </c:forEach>

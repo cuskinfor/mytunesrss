@@ -110,11 +110,11 @@
                                    <c:choose>
                                        <c:when test="${empty track.id && track.season == -1}">
                                            href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt
-                                               key="${encryptionKey}">series=${cwfn:encodeUrl(mtfn:encode64(track.series))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                                               key="${encryptionKey}">series=${mtfn:encode64(track.series)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                        </c:when>
                                        <c:when test="${empty track.id}">
                                            href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt
-                                               key="${encryptionKey}">series=${cwfn:encodeUrl(mtfn:encode64(track.series))}/season=${track.season}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                                               key="${encryptionKey}">series=${mtfn:encode64(track.series)}/season=${track.season}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                        </c:when>
                                        <c:otherwise>
                                            href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt

@@ -64,8 +64,8 @@ public class MyTunesRssWebUtils {
 
     /**
      * Encrypt the path info. The parts of the path info are expected to be url encoded already.
-     * Any %2F and %5C will be url encoded once again since tomcat does not like those characters in the path info.
-     * So the path info decoder will have to decode the parts once since tomcat only decodes once of course.
+     * Any %2F and %5C will be replaced by %01 and %02 since tomcat does not like those characters in the path info.
+     * So the path info decoder will have to replace %01 and %02 with %2F and %5C.
      *
      * @param request
      * @param pathInfo
@@ -84,8 +84,8 @@ public class MyTunesRssWebUtils {
                 LOGGER.warn("Could not encrypt path info.", e);
             }
         }
-        // re-encode %2F and %5C for the reason specified in the java doc
-        return result.replace("%2F", "%252F").replace("%2f", "%252F").replace("%5C", "%255C").replace("%5c", "%255C");
+        // replace %2F and %5C with %01 and %02 for the reason specified in the java doc
+        return result.replace("%2F", "%01").replace("%2f", "%01").replace("%5C", "%02").replace("%5c", "%02");
     }
 
     public static WebConfig getWebConfig(HttpServletRequest httpServletRequest) {

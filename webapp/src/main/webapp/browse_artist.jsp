@@ -44,7 +44,7 @@
                     <c:set var="artistname" value="${artist.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
         </c:forEach>
     </c:if>
 
@@ -126,22 +126,22 @@
                                         <fmt:message key="unknown"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${artist.name}" /></a>
+                                        <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${artist.name}" /></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
                             <td class="album">
-                                <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.albumCount} </a>
+                                <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.albumCount} </a>
                             </td>
                             <td class="tracks">
-                                <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.trackCount} </a>
+                                <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.trackCount} </a>
                             </td>
                             <td class="actions">
                                 <c:choose>
                                     <c:when test="${!stateEditPlaylist}">
                                         <mttag:actions index="${loopStatus.index}"
                                                        backUrl="${mtfn:encode64(backUrl)}"
-                                                       linkFragment="artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false"
+                                                       linkFragment="artist=${mtfn:encode64(artist.name)}/fullAlbums=false"
                                                        filename="${mtfn:virtualArtistName(artist)}"
                                                        zipFileCount="${artist.trackCount}"
                                                        externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}"
@@ -151,7 +151,7 @@
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${authUser.player && config.showPlayer}">
-                                            <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${cwfn:encodeUrl(mtfn:encode64(artist.name))}/fullAlbums=false/filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                            <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=artist=${mtfn:encode64(artist.name)}/fullAlbums=false/filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                         </c:if>
                                         <a class="add" onclick="addArtistsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(artist.name)}']), false)" title="<fmt:message key="playlist.addArtist"/>"><span><fmt:message key="playlist.addArtist"/></span></a>
                                     </c:otherwise>

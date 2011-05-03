@@ -9,6 +9,9 @@
 
         <release version="4.1.0-EAP-2" date="?">
             <action dev="mdescher" type="update">
+                Bugfix: encrypted path info was not correctly url-decoded anymore.
+            </action>
+            <action dev="mdescher" type="update">
                 Improved startup/shutdown sequences.
             </action>
             <action dev="mdescher" type="add">

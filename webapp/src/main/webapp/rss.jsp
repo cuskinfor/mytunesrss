@@ -6,7 +6,7 @@
         <c:if test="${userAgent != 'Psp'}"><atom:link href="${feedUrl}" rel="self" type="application/rss+xml" /></c:if>
         <c:if test="${!empty imageTrackId}">
             <image>
-                <url>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${cwfn:encodeUrl(imageHash)}</mt:encrypt></url>
+                <url>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${imageHash}</mt:encrypt></url>
                 <title><c:out value="${channel}"/></title>
                 <c:if test="${userAgent != 'Psp'}"><link>${feedUrl}</link></c:if>
             </image>

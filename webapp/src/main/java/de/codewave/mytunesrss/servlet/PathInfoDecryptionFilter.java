@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.servlet;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,29 +47,26 @@ public class PathInfoDecryptionFilter implements Filter {
         public String getPathInfo() {
             SecretKey key = MyTunesRss.CONFIG.getPathInfoKey();
             String pathInfo = ((HttpServletRequest) getRequest()).getPathInfo();
+            String pathInfoToReturn = pathInfo;
             if (StringUtils.isNotEmpty(pathInfo)) {
                 String[] splitted = StringUtils.split(pathInfo, "/");
-//                for (int i = 0; i < splitted.length; i++) {
-//                    splitted[i] = MyTunesRssUtils.getUtf8UrlDecoded(splitted[i]);
-//                }
                 try {
                     Cipher cipher = Cipher.getInstance(key.getAlgorithm());
                     cipher.init(Cipher.DECRYPT_MODE, key);
                     for (int i = 0; i < splitted.length; i++) {
                         if (splitted[i].startsWith("{") && splitted[i].endsWith("}")) {
-                            splitted[i] = new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[i].substring(1, splitted[i].length() - 1))),
-                                    "UTF-8");
+                            splitted[i] = MyTunesRssUtils.getUtf8UrlDecoded(new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[i].substring(1, splitted[i].length() - 1))),
+                                    "UTF-8"));
                         }
                     }
-                    String newPathInfo = "/" + StringUtils.join(splitted, "/");
-                    return newPathInfo; // URLDecoder.decode(newPathInfo, "UTF-8");
+                    pathInfoToReturn = "/" + StringUtils.join(splitted, "/");
                 } catch (Exception e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not descrypt path info.", e);
                     }
                 }
             }
-            return pathInfo;
+            return pathInfoToReturn != null ? pathInfoToReturn.replace((char)1, (char)0x2f).replace((char)2, (char)0x5c) : null;
         }
     }
 }

@@ -44,7 +44,7 @@
                     <c:set var="genrename" value="${genre.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${genrename}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${mtfn:encode64(genre.name)}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${genrename}" />" />
         </c:forEach>
     </c:if>
 
@@ -122,27 +122,27 @@
                                     <c:out value="${genre.name}" />
                                 </td>
                                 <td class="album">
-                                    <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.albumCount} </a>
+                                    <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">genre=${mtfn:encode64(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.albumCount} </a>
                                 </td>
                                 <td class="genreartist">
-                                    <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.artistCount} </a>
+                                    <a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">genre=${mtfn:encode64(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.artistCount} </a>
                                 </td>
                                 <td class="tracks">
-                                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.trackCount} </a>
+                                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">genre=${mtfn:encode64(genre.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${genre.trackCount} </a>
                                 </td>
                                 <td class="actions">
                                     <c:choose>
                                         <c:when test="${!stateEditPlaylist}">
                                             <mttag:actions index="${loopStatus.index}"
                                                            backUrl="${mtfn:encode64(backUrl)}"
-                                                           linkFragment="genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}"
+                                                           linkFragment="genre=${mtfn:encode64(genre.name)}"
                                                            filename="${mtfn:virtualGenreName(genre)}"
                                                            zipFileCount="${genre.trackCount}"
                                                            defaultPlaylistName="${genre.name}" />
                                         </c:when>
                                         <c:otherwise>
                                             <c:if test="${authUser.player && config.showPlayer}">
-                                                <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=genre=${cwfn:encodeUrl(mtfn:encode64(genre.name))}/filename=${mtfn:virtualGenreName(genre)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                                <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=genre=${mtfn:encode64(genre.name)}/filename=${mtfn:virtualGenreName(genre)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                             </c:if>
                                             <a class="add" onclick="addGenresToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(genre.name)}']), false)" title="<fmt:message key="playlist.addGenre"/>"><span><fmt:message key="playlist.addGenre"/></span></a>
                                         </c:otherwise>
