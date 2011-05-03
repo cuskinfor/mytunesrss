@@ -89,7 +89,11 @@ public class MyTunesRssForm {
                 for (Component c : new Component[] {myStartAdminBrowser, myAdminUrl, myStartUserBrowser, myUserUrl, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
                     c.setEnabled(false);
                 }
-                MyTunesRssUtils.shutdownGracefully();
+                new Thread(new Runnable() {
+                    public void run() {
+                        MyTunesRssUtils.shutdownGracefully();
+                    }
+                }, "AsyncSwingFormShutdown").start();
             }
         });
         refreshSupportConfig();
