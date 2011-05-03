@@ -325,11 +325,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                         label.setSizeFull();
                         label.addStyleName("goodbye");
                         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(label);
-                        MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
+                        new Thread(new Runnable() {
                             public void run() {
                                 MyTunesRssUtils.shutdownGracefully();
                             }
-                        }, 2, TimeUnit.SECONDS);
+                        }, "AsyncWebAdminShutdown").start();
                     }
                 }
             }.show(getWindow());
