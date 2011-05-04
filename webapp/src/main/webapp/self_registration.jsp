@@ -70,7 +70,18 @@
 	                                <input class="text" type="password" name="retypepassword" id="retypepassword" value="<c:out value="${param.retypepassword}"/>"/>
 	                            </td>
 	                        </tr>
-	                        <tr>
+                            <tr>
+                                <td class="label">
+                                    <label for="email">
+                                        <fmt:message key="registrationEmail"/>
+                                    </label>
+                                </td>
+                                <td>
+                                    <input class="text" type="text" name="email" id="email"
+                                           value="<c:out value="${param.email}"/>"/>
+                                </td>
+                            </tr>
+                            <tr>
 	                            <td>&nbsp;</td>
 	                            <td>
 	                                <div class="submitBtn">

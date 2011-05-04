@@ -24,7 +24,6 @@ import de.codewave.utils.cache.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.AppenderSkeleton;
@@ -40,8 +39,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -52,7 +49,6 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
-import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -73,6 +69,9 @@ public class MyTunesRss {
 
     // Headless mode (no GUI elements)
     public static final String CMD_HEADLESS = "headless";
+
+    // Alternative log4j configuration location (e.g. -logConfig ../etc/log4j-develop.xml)
+    public static final String CMD_LOGCONFIG = "logConfig";
 
     // Cache directory names
     public static final String CACHEDIR_TEMP = "tmp";
@@ -267,8 +266,8 @@ public class MyTunesRss {
         } catch (Exception e) {
             // ignore exceptions when deleting log files
         }
-        if (COMMAND_LINE_ARGS.get("logConfig") != null && COMMAND_LINE_ARGS.get("logConfig").length == 1 && COMMAND_LINE_ARGS.get("logConfig")[0] != null) {
-            DOMConfigurator.configure(COMMAND_LINE_ARGS.get("logConfig")[0]);
+        if (COMMAND_LINE_ARGS.get(CMD_LOGCONFIG) != null && COMMAND_LINE_ARGS.get(CMD_LOGCONFIG).length == 1 && COMMAND_LINE_ARGS.get(CMD_LOGCONFIG)[0] != null) {
+            DOMConfigurator.configure(COMMAND_LINE_ARGS.get(CMD_LOGCONFIG)[0]);
         } else {
             DOMConfigurator.configure(MyTunesRss.class.getResource("/mytunesrss-log4j.xml"));
         }

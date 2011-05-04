@@ -17,9 +17,10 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void execute() throws Exception {
         String username = StringUtils.trimToEmpty(getRequestParameter("username", null));
+        String email = StringUtils.trimToEmpty(getRequestParameter("email", null));
         String password = StringUtils.trimToEmpty(getRequestParameter("password", null));
         String retypePassword = StringUtils.trimToEmpty(getRequestParameter("retypepassword", null));
-        if (StringUtils.isNotBlank(username)) {
+        if (StringUtils.isBlank(username)) {
             addError(new BundleError("error.registration.emptyUsername"));
         }
         if (StringUtils.isBlank(password)) {
@@ -27,19 +28,30 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
         } else if (!StringUtils.equals(password, retypePassword)) {
             addError(new BundleError("error.registration.retypeFailure"));
         }
+        if (StringUtils.isBlank(email)) {
+            addError(new BundleError("error.registration.emptyEmail"));
+        }
         if (!isError()) {
             User user = (User) MyTunesRss.CONFIG.getUser(MyTunesRss.CONFIG.getSelfRegisterTemplateUser()).clone();
             user.setName(username);
             user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8")));
+            user.setEmail(email);
             if (!MyTunesRss.CONFIG.addUser(user)) {
                 addError(new BundleError("error.registration.duplicateUsername"));
+                forward(MyTunesRssResource.SelfRegistration);
             } else if (MyTunesRss.CONFIG.isSelfRegAdminEmail() && MyTunesRss.CONFIG.isValidMailConfig() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
-                sendAdminMail("New user account registration", "Someone has create a new account with the name \"" + username + "\" on your MyTunesRSS server.\nPlease review the registration and activate the account if necessary.");
+                String subject = "New user account registration";
+                String body = "A new account has been created in the user interface.\n\n" +
+                        "Username: " + username + "\n\n" +
+                        "Email: " + email + "\n\n" +
+                        (user.isActive() ? "User is active (edit your template user to change this)." : "User needs to be activated (edit your template user to change this).\n");
+                sendAdminMail(subject, body);
                 addMessage(new BundleError("info.registration." + (user.isActive() ? "done" : "needsActivation")));
                 forward(MyTunesRssResource.Login);
             }
+        } else {
+            forward(MyTunesRssResource.SelfRegistration);
         }
-        forward(MyTunesRssResource.SelfRegistration);
     }
 
     private void sendAdminMail(String subject, String body) {

@@ -77,7 +77,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             addComponent(userPanel);
             myMiscForm = getComponentFactory().createForm(null, true);
             mySelfRegTemplateUser = getComponentFactory().createSelect("userConfigPanel.selfRegTemplateUser", getUsersSortedByName());
-            mySelfRegAdminEmail = getComponentFactory().createCheckBox("userConfigPanel.selfRegAdminEmail");
+            mySelfRegAdminEmail = getComponentFactory().createCheckBox("userConfigPanel.selfRegNotification");
             myMiscForm.addField("selfRegTemplateUser", mySelfRegTemplateUser);
             myMiscForm.addField("selfRegAdminEmail", mySelfRegAdminEmail);
             addComponent(getComponentFactory().surroundWithPanel(myMiscForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.misc")));
