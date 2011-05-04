@@ -41,9 +41,7 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
                 forward(MyTunesRssResource.SelfRegistration);
             } else if (MyTunesRss.CONFIG.isSelfRegAdminEmail() && MyTunesRss.CONFIG.isValidMailConfig() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
                 String subject = "New user account registration";
-                String body = "A new account has been created in the user interface.\n\n" +
-                        "Username: " + username + "\n\n" +
-                        "Email: " + email + "\n\n" +
+                String body = "A new account has been created in the user interface.\n\nUsername: " + username + "\nEmail: " + email + "\n\n" +
                         (user.isActive() ? "User is active (edit your template user to change this)." : "User needs to be activated (edit your template user to change this).\n");
                 sendAdminMail(subject, body);
                 addMessage(new BundleError("info.registration." + (user.isActive() ? "done" : "needsActivation")));
