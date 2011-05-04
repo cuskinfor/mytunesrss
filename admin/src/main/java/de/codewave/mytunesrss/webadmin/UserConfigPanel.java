@@ -17,6 +17,7 @@ import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -77,6 +78,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             addComponent(userPanel);
             myMiscForm = getComponentFactory().createForm(null, true);
             mySelfRegTemplateUser = getComponentFactory().createSelect("userConfigPanel.selfRegTemplateUser", getUsersSortedByName());
+            mySelfRegTemplateUser.setNullSelectionAllowed(true);
             mySelfRegAdminEmail = getComponentFactory().createCheckBox("userConfigPanel.selfRegNotification");
             myMiscForm.addField("selfRegTemplateUser", mySelfRegTemplateUser);
             myMiscForm.addField("selfRegAdminEmail", mySelfRegAdminEmail);
@@ -91,6 +93,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myLdapSearchTimeout = getComponentFactory().createTextField("userConfigPanel.ldapSearchTimeout");
             myLdapEmailAttribute = getComponentFactory().createTextField("userConfigPanel.ldapEmailAttribute");
             myLdapTemplateUser = getComponentFactory().createSelect("userConfigPanel.ldapTemplateUser", getUsersSortedByName());
+            myLdapTemplateUser.setNullSelectionAllowed(true);
             myLdapForm.addField("ldapHost", myLdapHost);
             myLdapForm.addField("ldapPort", myLdapPort);
             myLdapForm.addField("ldapAuthMethod", myLdapAuthMethod);
@@ -108,11 +111,13 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             initUsersAndGroupsTable();
             Object selectedValue = myLdapTemplateUser.getValue();
             myLdapTemplateUser = getComponentFactory().createSelect("userConfigPanel.ldapTemplateUser", getUsersSortedByName());
+            myLdapTemplateUser.setNullSelectionAllowed(true);
             if (selectedValue != null) {
                 myLdapTemplateUser.setValue(selectedValue);
             }
             selectedValue = mySelfRegTemplateUser.getValue();
             mySelfRegTemplateUser = getComponentFactory().createSelect("userConfigPanel.selfRegTemplateUser", getUsersSortedByName());
+            mySelfRegTemplateUser.setNullSelectionAllowed(true);
             if (selectedValue != null) {
                 mySelfRegTemplateUser.setValue(selectedValue);
             }
@@ -176,9 +181,9 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.getLdapConfig().setSearchTimeout(myLdapSearchTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.getLdapConfig().setMailAttributeName(myLdapEmailAttribute.getStringValue(null));
         User ldapTemplateUser = (User) myLdapTemplateUser.getValue();
-        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(ldapTemplateUser != null ? ldapTemplateUser.getName() : null);
+        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(ldapTemplateUser != null && ldapTemplateUser != myNoTemplateUser ? ldapTemplateUser.getName() : null);
         User selfRegTemplateUser = (User) mySelfRegTemplateUser.getValue();
-        MyTunesRss.CONFIG.setSelfRegisterTemplateUser(selfRegTemplateUser != null ? selfRegTemplateUser.getName() : null);
+        MyTunesRss.CONFIG.setSelfRegisterTemplateUser(selfRegTemplateUser != null && selfRegTemplateUser != myNoTemplateUser ? selfRegTemplateUser.getName() : null);
         MyTunesRss.CONFIG.setSelfRegAdminEmail(mySelfRegAdminEmail.booleanValue());
         MyTunesRss.CONFIG.save();
     }

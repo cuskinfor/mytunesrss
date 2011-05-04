@@ -16,10 +16,10 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void execute() throws Exception {
-        String username = StringUtils.trimToEmpty(getRequestParameter("username", null));
-        String email = StringUtils.trimToEmpty(getRequestParameter("email", null));
-        String password = StringUtils.trimToEmpty(getRequestParameter("password", null));
-        String retypePassword = StringUtils.trimToEmpty(getRequestParameter("retypepassword", null));
+        String username = StringUtils.trimToEmpty(getRequestParameter("reg_username", null));
+        String email = StringUtils.trimToEmpty(getRequestParameter("reg_email", null));
+        String password = StringUtils.trimToEmpty(getRequestParameter("reg_password", null));
+        String retypePassword = StringUtils.trimToEmpty(getRequestParameter("reg_retypepassword", null));
         if (StringUtils.isBlank(username)) {
             addError(new BundleError("error.registration.emptyUsername"));
         }

@@ -42,43 +42,43 @@
 	                    <table cellspacing="0">
 	                        <tr>
 	                            <td class="label">
-	                                <label for="username">
+	                                <label for="reg_username">
 	                                    <fmt:message key="userName"/>
 	                                </label>
 	                            </td>
 	                            <td>
-	                                <input class="text" type="text" name="username" id="username" value="<c:out value="${param.username}"/>"/>
+	                                <input class="text" type="text" name="reg_username" id="reg_username" value="<c:out value="${param.reg_username}"/>"/>
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td class="label">
-	                                <label for="password">
+	                                <label for="reg_password">
 	                                    <fmt:message key="password"/>
 	                                </label>
 	                            </td>
 	                            <td>
-	                                <input class="text" type="password" name="password" id="password" value="<c:out value="${param.password}"/>"/>
+	                                <input class="text" type="password" name="reg_password" id="reg_password" value="<c:out value="${param.reg_password}"/>"/>
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td class="label">
-	                                <label for="retypepassword">
+	                                <label for="reg_retypepassword">
 	                                    <fmt:message key="retypePassword"/>
 	                                </label>
 	                            </td>
 	                            <td>
-	                                <input class="text" type="password" name="retypepassword" id="retypepassword" value="<c:out value="${param.retypepassword}"/>"/>
+	                                <input class="text" type="password" name="reg_retypepassword" id="reg_retypepassword" value="<c:out value="${param.reg_retypepassword}"/>"/>
 	                            </td>
 	                        </tr>
                             <tr>
                                 <td class="label">
-                                    <label for="email">
+                                    <label for="reg_email">
                                         <fmt:message key="registrationEmail"/>
                                     </label>
                                 </td>
                                 <td>
-                                    <input class="text" type="text" name="email" id="email"
-                                           value="<c:out value="${param.email}"/>"/>
+                                    <input class="text" type="text" name="reg_email" id="reg_email"
+                                           value="<c:out value="${param.reg_email}"/>"/>
                                 </td>
                             </tr>
                             <tr>
