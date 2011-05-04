@@ -21,6 +21,7 @@ import java.util.Map;
 
 public enum MyTunesRssResource {
     Login("/login.jsp"),
+    SelfRegistration("/self_registration.jsp"),
     Portal("/portal.jsp"),
     BrowseArtist("/browse_artist.jsp"),
     BrowseAlbum("/browse_album.jsp"),

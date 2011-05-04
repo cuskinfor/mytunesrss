@@ -31,31 +31,15 @@
     
             <div class="content-inner">
     
-                <form id="login" action="${servletUrl}/login" method="post">
+                <form id="registration" action="${servletUrl}/register" method="post">
     
-                    <h2><fmt:message key="loginCaption"/></h2>
+                    <h2><fmt:message key="registrationCaption"/></h2>
                     
                     <jsp:include page="/incl_error.jsp"/>
                     
                     <div class="login">
     
 	                    <table cellspacing="0">
-	                        <tr>
-	                            <td class="label">
-	                                <label for="lc">
-	                                    <fmt:message key="languageSelection"/>
-	                                </label>
-	                            </td>
-	                            <td>
-	                                <select name="lc" id="lc">
-	                                    <option value=""><fmt:message key="languageSelectionDefault"/></option>
-	                                    <c:forEach items="${mtfn:availableLanguages(mtfn:preferredLocale(pageContext, true))}" var="lang">
-	                                    <option value="${lang[0]}" <c:if test="${lang[0] == mtfn:preferredLocale(pageContext, false).language}">selected="selected"</c:if>><c:out value="${lang[1]}"/></option>
-	                                    </c:forEach>
-	                                </select>
-	                            </td>
-	                            <td class="label">&nbsp;</td>
-	                        </tr>
 	                        <tr>
 	                            <td class="label">
 	                                <label for="username">
@@ -65,11 +49,6 @@
 	                            <td>
 	                                <input class="text" type="text" name="username" id="username" value="<c:out value="${param.username}"/>"/>
 	                            </td>
-                                <td>
-                                    <c:if test="${!empty globalConfig.selfRegisterTemplateUser}">
-                                        <a href="${servletUrl}/showSelfRegistration"><fmt:message key="selfRegistrationLink"/></a>
-                                    </c:if>
-                                </td>
 	                        </tr>
 	                        <tr>
 	                            <td class="label">
@@ -80,24 +59,24 @@
 	                            <td>
 	                                <input class="text" type="password" name="password" id="password" value="<c:out value="${param.password}"/>"/>
 	                            </td>
+	                        </tr>
+	                        <tr>
+	                            <td class="label">
+	                                <label for="retypepassword">
+	                                    <fmt:message key="retypePassword"/>
+	                                </label>
+	                            </td>
 	                            <td>
-	                            	<c:if test="${globalConfig.validMailConfig}">
-		                            	<a style="cursor:pointer" onclick="self.document.forms[0].action='${servletUrl}/sendForgottenPassword';self.document.forms[0].submit()"><fmt:message key="forgottenPasswordLink"/></a>
-		                            </c:if>
+	                                <input class="text" type="password" name="retypepassword" id="retypepassword" value="<c:out value="${param.retypepassword}"/>"/>
 	                            </td>
 	                        </tr>
 	                        <tr>
 	                            <td>&nbsp;</td>
 	                            <td>
-	                            	<div class="rememberChk">
-	                                <input type="checkbox" name="rememberLogin" value="true" id="rememberCheck"/>
-	                                <label for="rememberCheck"><fmt:message key="rememberLogin"/></label>
-		                            </div>
 	                                <div class="submitBtn">
-		                                <input class="button" type="submit" value="<fmt:message key="doLogin"/>"/>
+		                                <input class="button" type="submit" value="<fmt:message key="doRegister"/>"/>
 		                            </div>
 	                            </td>
-	                            <td>&nbsp;</td>
 	                        </tr>
 	                    </table>
 	                    

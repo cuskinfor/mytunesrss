@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.1.0-EAP-2" date="?">
+            <action dev="mdescher" type="add">
+                Registration of new accounts through the user interface if the admin has specified a template user.
+            </action>
             <action dev="mdescher" type="update">
                 Bugfix: encrypted path info was not correctly url-decoded anymore.
             </action>

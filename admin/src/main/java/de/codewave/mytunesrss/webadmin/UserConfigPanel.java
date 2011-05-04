@@ -24,12 +24,11 @@ import java.util.*;
 
 public class UserConfigPanel extends MyTunesRssConfigPanel {
 
-    private Panel myUserPanel;
-    private Panel myGroupsPanel;
     private Table myGroupTable;
     private Table myUserTable;
     private Button myAddGroup;
     private Button myAddUser;
+    private Form myMiscForm;
     private Form myLdapForm;
     private SmartTextField myLdapHost;
     private SmartTextField myLdapPort;
@@ -39,16 +38,18 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myLdapSearchExpression;
     private SmartTextField myLdapSearchTimeout;
     private SmartTextField myLdapEmailAttribute;
-    private Select myTemplateUser;
+    private Select myLdapTemplateUser;
+    private Select mySelfRegTemplateUser;
+    private CheckBox mySelfRegAdminEmail;
     private boolean myInitialized;
     private User myNoTemplateUser;
 
     public void attach() {
         super.attach();
         if (!myInitialized) {
-            init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+            init(getBundleString("userConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
             myNoTemplateUser = new User(getBundleString("userConfigPanel.selectTemplateUser.noTemplateOption"));
-            myGroupsPanel = new Panel(getBundleString("userConfigPanel.caption.groups"), getComponentFactory().createVerticalLayout(true, true));
+            Panel groupsPanel = new Panel(getBundleString("userConfigPanel.caption.groups"), getComponentFactory().createVerticalLayout(true, true));
             myGroupTable = new Table();
             myGroupTable.setCacheRate(50);
             myGroupTable.addContainerProperty("name", String.class, null, getBundleString("userConfigPanel.groups.name"), null, null);
@@ -56,11 +57,11 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myGroupTable.addContainerProperty("delete", Button.class, null, null, null, null);
             myGroupTable.setEditable(false);
             myGroupTable.setSortContainerPropertyId("name");
-            myGroupsPanel.addComponent(myGroupTable);
+            groupsPanel.addComponent(myGroupTable);
             myAddGroup = getComponentFactory().createButton("userConfigPanel.addGroup", this);
-            myGroupsPanel.addComponent(myAddGroup);
-            addComponent(myGroupsPanel);
-            myUserPanel = new Panel(getBundleString("userConfigPanel.caption.users"), getComponentFactory().createVerticalLayout(true, true));
+            groupsPanel.addComponent(myAddGroup);
+            addComponent(groupsPanel);
+            Panel userPanel = new Panel(getBundleString("userConfigPanel.caption.users"), getComponentFactory().createVerticalLayout(true, true));
             myUserTable = new Table();
             myUserTable.setCacheRate(50);
             myUserTable.addContainerProperty("active", Embedded.class, null, "", null, null);
@@ -70,10 +71,16 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myUserTable.addContainerProperty("delete", Button.class, null, null, null, null);
             myUserTable.setEditable(false);
             myUserTable.setSortContainerPropertyId("name");
-            myUserPanel.addComponent(myUserTable);
+            userPanel.addComponent(myUserTable);
             myAddUser = getComponentFactory().createButton("userConfigPanel.addUser", this);
-            myUserPanel.addComponent(myAddUser);
-            addComponent(myUserPanel);
+            userPanel.addComponent(myAddUser);
+            addComponent(userPanel);
+            myMiscForm = getComponentFactory().createForm(null, true);
+            mySelfRegTemplateUser = getComponentFactory().createSelect("userConfigPanel.selfRegTemplateUser", getUsersSortedByName());
+            mySelfRegAdminEmail = getComponentFactory().createCheckBox("userConfigPanel.selfRegAdminEmail");
+            myMiscForm.addField("selfRegTemplateUser", mySelfRegTemplateUser);
+            myMiscForm.addField("selfRegAdminEmail", mySelfRegAdminEmail);
+            addComponent(getComponentFactory().surroundWithPanel(myMiscForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.misc")));
             myLdapForm = getComponentFactory().createForm(null, true);
             myLdapHost = getComponentFactory().createTextField("userConfigPanel.ldapHost");
             myLdapPort = getComponentFactory().createTextField("userConfigPanel.ldapPort");
@@ -83,7 +90,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myLdapSearchExpression = getComponentFactory().createTextField("userConfigPanel.ldapSearchExpression");
             myLdapSearchTimeout = getComponentFactory().createTextField("userConfigPanel.ldapSearchTimeout");
             myLdapEmailAttribute = getComponentFactory().createTextField("userConfigPanel.ldapEmailAttribute");
-            myTemplateUser = getComponentFactory().createSelect("userConfigPanel.templateUser", getUsersSortedByName());
+            myLdapTemplateUser = getComponentFactory().createSelect("userConfigPanel.ldapTemplateUser", getUsersSortedByName());
             myLdapForm.addField("ldapHost", myLdapHost);
             myLdapForm.addField("ldapPort", myLdapPort);
             myLdapForm.addField("ldapAuthMethod", myLdapAuthMethod);
@@ -92,18 +99,22 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
             myLdapForm.addField("ldapSearchExpression", myLdapSearchExpression);
             myLdapForm.addField("ldapSearchTimeout", myLdapSearchTimeout);
             myLdapForm.addField("ldapEmailAttribute", myLdapEmailAttribute);
-            myLdapForm.addField("templateUser", myTemplateUser);
+            myLdapForm.addField("ldapTemplateUser", myLdapTemplateUser);
             addComponent(getComponentFactory().surroundWithPanel(myLdapForm, FORM_PANEL_MARGIN_INFO, getBundleString("userConfigPanel.caption.ldap")));
-            addDefaultComponents(0, 3, 0, 3, false);
+            addDefaultComponents(0, 4, 0, 4, false);
             initFromConfig();
             myInitialized = true;
         } else {
             initUsersAndGroupsTable();
-            Object selectedValue = myTemplateUser.getValue();
-            myTemplateUser = getComponentFactory().createSelect("userConfigPanel.templateUser", getUsersSortedByName());
-            String templateUserName = MyTunesRss.CONFIG.getLdapConfig().getTemplateUser();
+            Object selectedValue = myLdapTemplateUser.getValue();
+            myLdapTemplateUser = getComponentFactory().createSelect("userConfigPanel.ldapTemplateUser", getUsersSortedByName());
             if (selectedValue != null) {
-                myTemplateUser.setValue(selectedValue);
+                myLdapTemplateUser.setValue(selectedValue);
+            }
+            selectedValue = mySelfRegTemplateUser.getValue();
+            mySelfRegTemplateUser = getComponentFactory().createSelect("userConfigPanel.selfRegTemplateUser", getUsersSortedByName());
+            if (selectedValue != null) {
+                mySelfRegTemplateUser.setValue(selectedValue);
             }
         }
     }
@@ -129,10 +140,15 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         myLdapSearchExpression.setValue(MyTunesRss.CONFIG.getLdapConfig().getSearchExpression());
         myLdapSearchTimeout.setValue(MyTunesRss.CONFIG.getLdapConfig().getSearchTimeout(), 1, 60000, "");
         myLdapEmailAttribute.setValue(MyTunesRss.CONFIG.getLdapConfig().getMailAttributeName());
-        String templateUserName = MyTunesRss.CONFIG.getLdapConfig().getTemplateUser();
-        if (StringUtils.isNotBlank(templateUserName)) {
-            myTemplateUser.setValue(MyTunesRss.CONFIG.getUser(templateUserName));
+        String ldapTemplateUserName = MyTunesRss.CONFIG.getLdapConfig().getTemplateUser();
+        if (StringUtils.isNotBlank(ldapTemplateUserName)) {
+            myLdapTemplateUser.setValue(MyTunesRss.CONFIG.getUser(ldapTemplateUserName));
         }
+        String selfRegTemplateUserName = MyTunesRss.CONFIG.getSelfRegisterTemplateUser();
+        if (StringUtils.isNotBlank(selfRegTemplateUserName)) {
+            mySelfRegTemplateUser.setValue(MyTunesRss.CONFIG.getUser(selfRegTemplateUserName));
+        }
+        mySelfRegAdminEmail.setValue(MyTunesRss.CONFIG.isSelfRegAdminEmail());
     }
 
     private void initUsersAndGroupsTable() {
@@ -159,14 +175,17 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.getLdapConfig().setSearchExpression(myLdapSearchExpression.getStringValue(null));
         MyTunesRss.CONFIG.getLdapConfig().setSearchTimeout(myLdapSearchTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.getLdapConfig().setMailAttributeName(myLdapEmailAttribute.getStringValue(null));
-        User templateUser = (User) myTemplateUser.getValue();
-        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(templateUser != null ? templateUser.getName() : null);
+        User ldapTemplateUser = (User) myLdapTemplateUser.getValue();
+        MyTunesRss.CONFIG.getLdapConfig().setTemplateUser(ldapTemplateUser != null ? ldapTemplateUser.getName() : null);
+        User selfRegTemplateUser = (User) mySelfRegTemplateUser.getValue();
+        MyTunesRss.CONFIG.setSelfRegisterTemplateUser(selfRegTemplateUser != null ? selfRegTemplateUser.getName() : null);
+        MyTunesRss.CONFIG.setSelfRegAdminEmail(mySelfRegAdminEmail.booleanValue());
         MyTunesRss.CONFIG.save();
     }
 
     @Override
     protected boolean beforeSave() {
-        return VaadinUtils.isValid(myLdapForm);
+        return VaadinUtils.isValid(myMiscForm, myLdapForm);
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {

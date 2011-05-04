@@ -120,6 +120,8 @@ public class MyTunesRssConfig {
     private boolean myUpnpAdmin;
     private boolean myUpnpUserHttp;
     private boolean myUpnpUserHttps;
+    private String mySelfRegisterTemplateUser;
+    private boolean mySelfRegAdminEmail;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -272,7 +274,7 @@ public class MyTunesRssConfig {
         myCodewaveLogLevel = codewaveLogLevel;
     }
 
-    public Collection<User> getUsers() {
+    public synchronized Collection<User> getUsers() {
         Collection<User> users = new HashSet<User>();
         for (User user : myUsers) {
             users.add(user);
@@ -280,7 +282,7 @@ public class MyTunesRssConfig {
         return users;
     }
 
-    public User getUser(String name) {
+    public synchronized User getUser(String name) {
         for (User user : getUsers()) {
             if (user.getName().equalsIgnoreCase(name)) {
                 return user;
@@ -289,7 +291,7 @@ public class MyTunesRssConfig {
         return null;
     }
 
-    public void removeUser(User user) {
+    public synchronized void removeUser(User user) {
         myUsers.remove(user);
         for (User eachUser : myUsers) {
             if (eachUser.getParent() == user) {
@@ -298,8 +300,12 @@ public class MyTunesRssConfig {
         }
     }
 
-    public void addUser(User user) {
+    public synchronized boolean addUser(User user) {
+        if (myUsers.contains(user)) {
+            return false;
+        }
         myUsers.add(user);
+        return true;
     }
 
     public String getSupportEmail() {
@@ -821,6 +827,22 @@ public class MyTunesRssConfig {
         myUpnpUserHttps = upnpUserHttps;
     }
 
+    public String getSelfRegisterTemplateUser() {
+        return mySelfRegisterTemplateUser;
+    }
+
+    public void setSelfRegisterTemplateUser(String selfRegisterTemplateUser) {
+        mySelfRegisterTemplateUser = selfRegisterTemplateUser;
+    }
+
+    public boolean isSelfRegAdminEmail() {
+        return mySelfRegAdminEmail;
+    }
+
+    public void setSelfRegAdminEmail(boolean selfRegAdminEmail) {
+        mySelfRegAdminEmail = selfRegAdminEmail;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1025,12 +1047,14 @@ public class MyTunesRssConfig {
         setUpnpAdmin(JXPathUtils.getBooleanValue(settings, "upnp-admin", false));
         setUpnpUserHttp(JXPathUtils.getBooleanValue(settings, "upnp-user-http", true));
         setUpnpUserHttps(JXPathUtils.getBooleanValue(settings, "upnp-user-https", true));
+        setSelfRegisterTemplateUser(JXPathUtils.getStringValue(settings, "selfreg-template-user", null));
+        setSelfRegAdminEmail(JXPathUtils.getBooleanValue(settings, "selfreg-admin-email", true));
     }
 
     /**
      * Mark all groups users as groups
      */
-    private void markGroupUsers() {
+    private synchronized void markGroupUsers() {
         // mark them
         for (User userToCheck : myUsers) {
             for (User user : myUsers) {
@@ -1172,7 +1196,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    public void save() {
+    public synchronized void save() {
         try {
             LOGGER.info("Saving configuration to \"" + getSettingsFile().getAbsolutePath() + "\".");
             Document settings = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
@@ -1329,6 +1353,8 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-admin", isUpnpAdmin()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-user-http", isUpnpUserHttp()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-user-https", isUpnpUserHttps()));
+            root.appendChild(DOMUtils.createTextElement(settings, "selfreg-template-user", getSelfRegisterTemplateUser()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "selfreg-admin-email", isSelfRegAdminEmail()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

@@ -41,6 +41,8 @@ public enum MyTunesRssCommand implements Command {
     ShowJukebox("showJukebox", ShowJukeboxCommandHandler.class),
     ContinueExistingPlaylist("continueExistingPlaylist", ContinueExistingPlaylistCommandHandler.class),
     SendForgottenPassword("sendForgottenPassword", SendForgottenPasswordCommandHandler.class),
+    ShowSelfRegistration("showSelfRegistration", ShowSelfRegistrationCommandHandler.class),
+    DoSelfRegistration("register", DoSelfRegistrationCommandHandler.class),
     EditSmartPlaylist("editSmartPlaylist", EditSmartPlaylistCommandHandler.class),
     SaveSmartPlaylist("saveSmartPlaylist", SaveSmartPlaylistCommandHandler.class),
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
