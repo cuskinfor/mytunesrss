@@ -471,9 +471,9 @@ public class MyTunesRssWebUtils {
                 conditionals.put("excluded", !user.getExcludedPlaylistIds().isEmpty());
                 conditionals.put("sourceplaylist", StringUtils.isNotBlank(webConfig.getRandomSource()));
                 conditionals.put("mediatype", StringUtils.isNotBlank(webConfig.getRandomMediaType()));
+                conditionals.put("unprotectedonly", !webConfig.isRandomProtected());
                 SmartStatement query = MyTunesRssUtils.createStatement(connection, "findRandomTracks", conditionals, ResultSetType.TYPE_SCROLL_INSENSITIVE);
                 query.setString("mediatype", webConfig.getRandomMediaType());
-                query.setBoolean("protected", webConfig.isRandomProtected());
                 query.setInt("maxCount", webConfig.getRandomPlaylistSize());
                 query.setString("sourcePlaylistId", webConfig.getRandomSource());
                 query.setItems("restrictedPlaylistIds", user.getRestrictedPlaylistIds());

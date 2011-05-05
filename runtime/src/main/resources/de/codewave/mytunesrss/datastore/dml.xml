@@ -177,9 +177,12 @@
         <sql>
             <![CDATA[
             SELECT {trackColumns}
-            FROM track t<restricted>, link_track_playlist rltp
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id</restricted>
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE {alwaysTrueCondition}
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
             <excluded>
                 AND t.id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp
@@ -738,11 +741,15 @@
         <sql>
             <![CDATA[
             {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE (NOT t.protected OR t.protected = :protected)
-            <sourceplaylist>AND EXISTS (SELECT * FROM link_track_playlist ltp WHERE ltp.track_id = t.id AND ltp.playlist_id = :sourcePlaylistId)</sourceplaylist>
+            FROM track t<restricted>, link_track_playlist rltp</restricted><sourceplaylist>, link_track_playlist spltp</sourceplaylist>
+            WHERE {alwaysTrueCondition}
+            <unprotectedonly>AND NOT t.protected</unprotectedonly>
             <mediatype>AND t.mediatype = :mediatype</mediatype>
             <videotype>AND t.videotype = :videotype</videotype>
+            <sourceplaylist>
+                AND spltp.playlist_id = :sourcePlaylistId
+                AND t.id = spltp.track_id
+            </sourceplaylist>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND t.id = rltp.track_id
@@ -762,9 +769,12 @@
         <sql>
             <![CDATA[
             {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id</restricted>
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE {alwaysTrueCondition}
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
             <excluded>
                 AND t.id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp
@@ -780,9 +790,12 @@
         <sql>
             <![CDATA[
             {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp
-            WHERE rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id</restricted>
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE {alwaysTrueCondition}
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND t.id = rltp.track_id
+            </restricted>
             <excluded>
                 AND t.id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp

@@ -56,13 +56,13 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         File mediaFile = new File(getBaseDir(), filename);
         if (mediaFile.isFile()) {
             if (getAuthUser().isQuotaExceeded()) {
-                sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
+                sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
             } else {
                 sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
                 sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
             }
         } else {
-            sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
+            sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
         sender.sendGetResponse(getRequest(), getResponse(), false);
     }
@@ -110,17 +110,17 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 }
                 if (playlist.isFailed() || playlist.getSize() == 0) {
                     cacheItem.removePlaylist(playlistIdentifier);
-                    sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
+                    sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                 } else {
                     byte[] playlistBytes = playlist.getAsString().getBytes("ISO-8859-1");
                     sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
                 }
 
             } else {
-                sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
+                sender = new StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
             }
         } else {
-            sender = new PlayTrackCommandHandler.StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
+            sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
         sender.sendGetResponse(getRequest(), getResponse(), false);
     }

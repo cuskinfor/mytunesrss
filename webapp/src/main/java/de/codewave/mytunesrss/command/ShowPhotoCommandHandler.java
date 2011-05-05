@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
@@ -15,6 +16,8 @@ import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -25,6 +28,9 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowPhotoCommandHandler.class);
+
     @Override
     public void executeAuthorized() throws Exception {
         final String id = getRequestParameter("photo", null);
@@ -41,13 +47,19 @@ public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
                     });
                 }
             }).getResult(0);
-            File photoFile = new File(filename);
-            if (StringUtils.isNotBlank(filename) && photoFile.isFile()) {
-                FileSender sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), photoFile.length());
-                sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
-                sender.sendGetResponse(getRequest(), getResponse(), false);
+            if (!getAuthUser().isQuotaExceeded()) {
+                File photoFile = new File(filename);
+                if (StringUtils.isNotBlank(filename) && photoFile.isFile()) {
+                    FileSender sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), photoFile.length());
+                    sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
+                    sender.sendGetResponse(getRequest(), getResponse(), false);
+                } else {
+                    getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+                }
             } else {
-                getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
+                LOGGER.warn("User limit exceeded, sending response code SC_CONFLICT instead.");
+                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
+                getResponse().sendError(HttpServletResponse.SC_CONFLICT, "QUOTA EXCEEDED");
             }
         } else {
             getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);

@@ -232,7 +232,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     protected void initFromConfig() {
         if (myUser != null) {
             myBandwidthLimit.setValue(myUser.getBandwidthLimit(), 1, Integer.MAX_VALUE, "");
-            myDownloadLimitSize.setValue(myUser.getBytesQuota(), 1, Integer.MAX_VALUE, "");
+            myDownloadLimitSize.setValue(myUser.getBytesQuota() / (1024 * 1024), 1, Integer.MAX_VALUE, "");
             myPermChangeEmail.setValue(myUser.isChangeEmail());
             myPermChangePassword.setValue(myUser.isChangePassword());
             myPermEditPlaylists.setValue(myUser.isCreatePlaylists());
@@ -341,7 +341,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     protected void writeToConfig() {
         myUser.setBandwidthLimit(myBandwidthLimit.getIntegerValue(-1));
-        myUser.setBytesQuota(myDownloadLimitSize.getLongValue(-1));
+        long bytesQuota = myDownloadLimitSize.getLongValue(-1);
+        myUser.setBytesQuota(bytesQuota > 0 ? bytesQuota * (1024 * 1024) : bytesQuota);
         myUser.setChangeEmail(myPermChangeEmail.booleanValue());
         myUser.setChangePassword(myPermChangePassword.booleanValue());
         myUser.setCreatePlaylists(myPermEditPlaylists.booleanValue());

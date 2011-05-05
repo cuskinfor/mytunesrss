@@ -42,7 +42,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         User user = getAuthUser();
-        if (isRequestAuthorized() && user.isDownload() && !user.isQuotaExceeded()) {
+        if (isRequestAuthorized() && user.isDownload()) {
             String baseName = getRequest().getPathInfo();
             baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
             String tracklist = getRequestParameter("tracklist", null);
@@ -95,9 +95,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 createZipArchive(user, outputStream, tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
             }
         } else {
-            if (user.isQuotaExceeded()) {
-                MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(user);
-            }
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
@@ -164,16 +161,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 file.close();
-                // image
-//                if (track.getMediaType() != MediaType.Image && StringUtils.isNotEmpty(track.getImageHash())) {
-//                    byte[] data = getTransaction().executeQuery(new FindImageQuery(track.getImageHash(), 256));
-//                    if (data != null) {
-//                        entry = new ZipEntry(baseName + "/" + entryName + ".jpg");
-//                        zipStream.putNextEntry(entry);
-//                        zipStream.write(data);
-//                        file.close();
-//                    }
-//                }
                 zipStream.closeEntry();
                 playlistBuilder.add(track, trackArtist, trackAlbum, entryName);
                 trackCount++;

@@ -70,10 +70,10 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else {
                 if (LOG.isWarnEnabled()) {
-                    LOG.warn("User limit exceeded, sending response code SC_NO_CONTENT instead.");
+                    LOG.warn("User limit exceeded, sending response code SC_CONFLICT instead.");
                 }
                 MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
-                streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
+                streamSender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
             }
         } else {
             if (LOG.isWarnEnabled()) {
@@ -121,23 +121,4 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         streamSender.sendHeadResponse(getRequest(), getResponse());
     }
 
-    protected static class StatusCodeSender extends StreamSender {
-        private int myStatusCode;
-
-        public StatusCodeSender(int statusCode) throws MalformedURLException {
-            super(null, null, -1);
-            myStatusCode = statusCode;
-        }
-
-        @Override
-        public void sendGetResponse(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse, boolean throwException)
-                throws IOException {
-            httpServletResponse.setStatus(myStatusCode);
-        }
-
-        @Override
-        public void sendHeadResponse(HttpServletRequest servletRequest, HttpServletResponse httpServletResponse) {
-            httpServletResponse.setStatus(myStatusCode);
-        }
-    }
 }
