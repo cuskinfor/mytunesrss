@@ -9,6 +9,9 @@
 
         <release version="4.1.0-EAP-2" date="?">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-266] Download statistics not updated when viewing full sized photos
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-258] Registration request via login screen
             </action>
             <action dev="mdescher" type="update">

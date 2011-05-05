@@ -6,6 +6,9 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.servlet.FileSender;
+import de.codewave.utils.servlet.SessionManager;
+import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -38,16 +41,11 @@ public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
                     });
                 }
             }).getResult(0);
-            if (StringUtils.isNotBlank(filename) && new File(filename).isFile()) {
-                File file = new File(filename);
-                getResponse().setContentType("image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH));
-                getResponse().setContentLength((int) file.length());
-                FileInputStream is = new FileInputStream(file);
-                try {
-                    IOUtils.copyLarge(is, getResponse().getOutputStream());
-                } finally {
-                    is.close();
-                }
+            File photoFile = new File(filename);
+            if (StringUtils.isNotBlank(filename) && photoFile.isFile()) {
+                FileSender sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), photoFile.length());
+                sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
+                sender.sendGetResponse(getRequest(), getResponse(), false);
             } else {
                 getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
             }

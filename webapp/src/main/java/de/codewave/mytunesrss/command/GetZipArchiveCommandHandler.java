@@ -177,9 +177,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 zipStream.closeEntry();
                 playlistBuilder.add(track, trackArtist, trackAlbum, entryName);
                 trackCount++;
-                /*if (counter != null) {
+                if (counter != null) {
                     counter.add((int) entry.getCompressedSize());
-                }*/
+                }
             } else if (user.isQuotaExceeded()) {
                 quotaExceeded = true;
                 MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(user);
@@ -190,18 +190,18 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             zipStream.putNextEntry(m3uPlaylistEntry);
             zipStream.write(playlistBuilder.toString().getBytes("UTF-8"));
             zipStream.closeEntry();
-            /*if (counter != null) {
+            if (counter != null) {
                 counter.add((int) m3uPlaylistEntry.getCompressedSize());
-            }*/
+            }
         }
         if (quotaExceeded) {
             ZipEntry quotaExceededInfoEntry = new ZipEntry(baseName + "/Readme.txt");
             zipStream.putNextEntry(quotaExceededInfoEntry);
             zipStream.write("This archive is not complete since your download limit has been reached!".getBytes("UTF-8"));
             zipStream.closeEntry();
-            /*if (counter != null) {
+            if (counter != null) {
                 counter.add((int) quotaExceededInfoEntry.getCompressedSize());
-            }*/
+            }
         } else if (trackCount == 0) {
             ZipEntry noFilesInfoEntry = new ZipEntry(baseName + "/Readme.txt");
             zipStream.putNextEntry(noFilesInfoEntry);
@@ -209,9 +209,9 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     "This archive does not contain any files from MyTunesRSS! If you think it should, please contact the MyTunesRSS server administrator or - in case you are the administrator - contact Codewave support.".getBytes(
                             "UTF-8"));
             zipStream.closeEntry();
-            /*if (counter != null) {
+            if (counter != null) {
                 counter.add((int) noFilesInfoEntry.getCompressedSize());
-            }*/
+            }
         }
         zipStream.close();
     }
