@@ -14,6 +14,7 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,7 +263,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     public void uploadSucceeded(Upload.SucceededEvent event) {
         if (event.getSource() == myUploadTheme) {
-            AddonsUtils.AddFileResult result = AddonsUtils.addTheme(new File(getUploadDir(), PREFIX + event.getFilename()));
+            AddonsUtils.AddFileResult result = AddonsUtils.addTheme(FilenameUtils.getBaseName(event.getFilename()), new File(getUploadDir(), PREFIX + event.getFilename()));
             if (result == AddonsUtils.AddFileResult.InvalidFile) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.invalidTheme");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {

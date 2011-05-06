@@ -9,6 +9,9 @@
 
         <release version="4.1.0-EAP-2" date="?">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-267] Name of uploaded theme contains temporary upload file prefix
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-254] Option to ignore ID3 tags completely
             </action>
             <action dev="mdescher" type="add">

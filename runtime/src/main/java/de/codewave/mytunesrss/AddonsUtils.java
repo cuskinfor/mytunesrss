@@ -132,15 +132,14 @@ public class AddonsUtils {
         return null;
     }
 
-    public static AddFileResult addTheme(File theme) {
+    public static AddFileResult addTheme(String themeName, File theme) {
         if (isThemeArchive(theme)) {
             File themeDir = null;
             CodewaveZipInputStream zipInputStream = null;
             try {
                 zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
                 for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                    themeDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + FilenameUtils.getBaseName(
-                            theme.getName()));
+                    themeDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + themeName);
                     saveFile(themeDir, entry.getName(), (InputStream) zipInputStream);
                 }
             } catch (IOException e) {
