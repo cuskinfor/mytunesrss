@@ -146,7 +146,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         Collections.sort(themes);
         Button disabledDeleteButton = createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme");
         disabledDeleteButton.setEnabled(false);
-        myThemesTable.addItem(new Object[]{MyTunesRss.CONFIG.getDefaultUserInterfaceTheme() == null, getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme"), disabledDeleteButton}, DEFAULT_UI_THEME_ID);
+        myThemesTable.addItem(new Object[]{StringUtils.isEmpty(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme()), getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme"), disabledDeleteButton}, DEFAULT_UI_THEME_ID);
         for (AddonsUtils.ThemeDefinition theme : themes) {
             myThemesTable.addItem(new Object[]{StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), theme.getName()), theme.getName(), createTableRowButton("button.default", this, theme.getName(), "DefaultTheme"), createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme")}, theme.getName());
         }

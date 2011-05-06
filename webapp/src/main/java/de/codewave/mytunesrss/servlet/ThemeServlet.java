@@ -31,9 +31,9 @@ public class ThemeServlet extends HttpServlet {
 
     protected File getFile(HttpServletRequest httpServletRequest) {
         String resourcePath = httpServletRequest.getRequestURI().substring(StringUtils.trimToEmpty(httpServletRequest.getContextPath()).length());
-        String theme = MyTunesRssWebUtils.getWebConfig(httpServletRequest).getTheme();
+        String theme = StringUtils.defaultIfEmpty(MyTunesRssWebUtils.getWebConfig(httpServletRequest).getTheme(), MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
         if (LOG.isDebugEnabled()) {
-            LOG.debug("File \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + theme + "\" requested.");
+            LOG.debug("File \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + StringUtils.defaultIfEmpty(theme, "BUILT-IN DEFAULT") + "\" requested.");
         }
         try {
             if (StringUtils.isNotEmpty(theme)) {
