@@ -146,7 +146,13 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
 
 
     protected Button createTableRowButton(String textKey, Button.ClickListener listener, Object itemId, Object action) {
-        return new TableRowButton(getBundleString(textKey), listener, itemId, action);
+        return createTableRowButton(textKey, listener, itemId, action, true);
+    }
+
+    protected Button createTableRowButton(String textKey, Button.ClickListener listener, Object itemId, Object action, boolean enabled) {
+        TableRowButton tableRowButton = new TableRowButton(getBundleString(textKey), listener, itemId, action);
+        tableRowButton.setEnabled(enabled);
+        return tableRowButton;
     }
 
     public void refresh(Refresher source) {

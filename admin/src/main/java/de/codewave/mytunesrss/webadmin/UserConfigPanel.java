@@ -7,8 +7,8 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.LdapAuthMethod;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -17,7 +17,6 @@ import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.text.SimpleDateFormat;
@@ -273,10 +272,10 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     private void addUser(User user) {
         Embedded icon = null;
         if (!user.isActive()) {
-            icon = new Embedded("", new ClassResource("inactive_user.png", getApplication()));
+            icon = new Embedded("", new ThemeResource("img/inactive_user.png"));
             icon.setDescription(getBundleString("userConfigPanel.userExpired", new SimpleDateFormat(getBundleString("common.dateFormat")).format(new Date(user.getExpiration()))));
         } else if (user.getExpiration() > 0) {
-            icon = new Embedded("", new ClassResource("expiring_user.png", getApplication()));
+            icon = new Embedded("", new ThemeResource("img/expiring_user.png"));
             icon.setDescription(getBundleString("userConfigPanel.userWillExpire", new SimpleDateFormat(getBundleString("common.dateFormat")).format(new Date(user.getExpiration()))));
         }
         myUserTable.addItem(new Object[]{icon, user.getName(), createGroupSelect(user), getComponentFactory().createButton("button.edit", this), getComponentFactory().createButton("button.delete", this)},

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
@@ -55,7 +56,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
         myThemesTable.setCacheRate(50);
-        myThemesTable.addContainerProperty("defmarker", Boolean.class, null, getBundleString("addonsConfigPanel.themes.defmarker"), null, null);
+        myThemesTable.addContainerProperty("defmarker", Embedded.class, null, getBundleString("addonsConfigPanel.themes.defmarker"), null, Table.ALIGN_CENTER);
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
         myThemesTable.addContainerProperty("default", Button.class, null, "", null, null);
         myThemesTable.addContainerProperty("delete", Button.class, null, "", null, null);
@@ -144,11 +145,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesTable.removeAllItems();
         List<AddonsUtils.ThemeDefinition> themes = new ArrayList<AddonsUtils.ThemeDefinition>(AddonsUtils.getThemes(false));
         Collections.sort(themes);
-        Button disabledDeleteButton = createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme");
-        disabledDeleteButton.setEnabled(false);
-        myThemesTable.addItem(new Object[]{StringUtils.isEmpty(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme()), getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme"), disabledDeleteButton}, DEFAULT_UI_THEME_ID);
+        boolean isDefault = StringUtils.isEmpty(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
+        Embedded checkmark = new Embedded("", new ThemeResource("img/checkmark.png"));
+        myThemesTable.addItem(new Object[]{isDefault ? checkmark : null, getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme", !isDefault), createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme", false)}, DEFAULT_UI_THEME_ID);
         for (AddonsUtils.ThemeDefinition theme : themes) {
-            myThemesTable.addItem(new Object[]{StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), theme.getName()), theme.getName(), createTableRowButton("button.default", this, theme.getName(), "DefaultTheme"), createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme")}, theme.getName());
+            isDefault = StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), theme.getName());
+            myThemesTable.addItem(new Object[]{isDefault ? checkmark : null, theme.getName(), createTableRowButton("button.default", this, theme.getName(), "DefaultTheme", !isDefault), createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme", !isDefault)}, theme.getName());
         }
     }
 

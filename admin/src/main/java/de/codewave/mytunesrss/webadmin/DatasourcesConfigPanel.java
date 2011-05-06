@@ -7,9 +7,9 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.data.Item;
-import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
@@ -93,11 +93,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private Resource getDatasourceImage(Application application, DatasourceType type) {
         if (type == DatasourceType.Itunes) {
-            return new ClassResource("itunes.png", application);
+            return new ThemeResource("img/itunes.png");
         } else if (type == DatasourceType.Iphoto) {
-            return new ClassResource("iphoto.png", application);
+            return new ThemeResource("img/iphoto.png");
         } else {
-            return new ClassResource("folder.gif", application);
+            return new ThemeResource("img/folder.gif");
         }
     }
 
