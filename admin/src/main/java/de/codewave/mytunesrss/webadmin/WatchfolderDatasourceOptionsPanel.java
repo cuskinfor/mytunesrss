@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Select;
@@ -32,6 +33,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private SmartTextField myPhotoAlbumPattern;
     private Form myMiscOptionsForm;
     private Select myVideoType;
+    private CheckBox myIgnoreFileMeta;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
@@ -72,7 +74,9 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
+        myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
         myMiscOptionsForm.addField(myVideoType, myVideoType);
+        myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 3, 0, 3, false);
@@ -92,6 +96,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setSeasonFallback(mySeasonFallback.getStringValue(null));
         myConfig.setEpisodeFallback(myEpisodeFallback.getStringValue(null));
         myConfig.setVideoType(((VideoTypeRepresentation) myVideoType.getValue()).getVideoType());
+        myConfig.setIgnoreFileMeta(myIgnoreFileMeta.booleanValue());
         myConfig.setPhotoAlbumPattern(myPhotoAlbumPattern.getStringValue(null));
     }
 
@@ -115,6 +120,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         mySeasonFallback.setValue(myConfig.getSeasonFallback());
         myEpisodeFallback.setValue(myConfig.getEpisodeFallback());
         myVideoType.setValue(new VideoTypeRepresentation(myConfig.getVideoType()));
+        myIgnoreFileMeta.setValue(myConfig.isIgnoreFileMeta());
         myPhotoAlbumPattern.setValue(myConfig.getPhotoAlbumPattern());
     }
 

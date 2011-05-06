@@ -121,20 +121,28 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem) : new InsertTrackStatement(TrackSource.FileSystem);
         }
         statement.clear();
-        statement.setId(fileId);
+        // never set any statement information here, since they are cleared once again later for MP4 file
+        // if meta data from files should be ignored.
         TrackMetaData meta = null;
-        if (FileSupportUtils.isMp3(file)) {
+        if (!myDatasourceConfig.isIgnoreFileMeta() && FileSupportUtils.isMp3(file)) {
             meta = parseMp3MetaData(file, statement, fileId, type.getMediaType());
         } else if (FileSupportUtils.isMp4(file)) {
+            // we have to fetch meta data even if they should be ignored to get the MP4 codec
             meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
             if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
                 myExistingIds.remove(fileId);
                 DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
                 return true;
             }
+            if (myDatasourceConfig.isIgnoreFileMeta()) {
+                // if we should ignore meta data, clear the statement and use the simple information
+                statement.clear();
+                setSimpleInfo(statement, file, type.getMediaType());
+            }
         } else {
             setSimpleInfo(statement, file, type.getMediaType());
         }
+        statement.setId(fileId);
         statement.setProtected(type.isProtected());
         statement.setMediaType(type.getMediaType());
         statement.setFileName(canonicalFilePath);

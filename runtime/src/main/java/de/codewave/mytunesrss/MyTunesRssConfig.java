@@ -1101,6 +1101,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setEpisodeFallback(JXPathUtils.getStringValue(datasourceContext, "episodeFallback", WatchfolderDatasourceConfig.DEFAULT_EPISODE_FALLBACK));
                             watchfolderDatasourceConfig.setVideoType(VideoType.valueOf(JXPathUtils.getStringValue(datasourceContext, "videoType", VideoType.Movie.name())));
                             watchfolderDatasourceConfig.setPhotoAlbumPattern(JXPathUtils.getStringValue(datasourceContext, "photoAlbumPattern", WatchfolderDatasourceConfig.DEFAULT_PHOTO_ALBUM_PATTERN));
+                            watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1390,6 +1391,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "episodeFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getEpisodeFallback()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "videoType", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getVideoType().name()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photoAlbumPattern", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getPhotoAlbumPattern()));
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "ignoreFileMeta", ((WatchfolderDatasourceConfig) myDatasources.get(i)).isIgnoreFileMeta()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);

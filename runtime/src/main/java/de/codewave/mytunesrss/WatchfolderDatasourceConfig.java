@@ -31,6 +31,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private String myEpisodeFallback = DEFAULT_EPISODE_FALLBACK;
     private VideoType myVideoType = VideoType.Movie;
     private String myPhotoAlbumPattern = DEFAULT_PHOTO_ALBUM_PATTERN;
+    private boolean myIgnoreFileMeta = false;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -45,6 +46,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myEpisodeFallback = source.getEpisodeFallback();
         myVideoType = source.getVideoType();
         myPhotoAlbumPattern = source.getPhotoAlbumPattern();
+        myIgnoreFileMeta = source.isIgnoreFileMeta();
     }
 
     public WatchfolderDatasourceConfig(String definition) {
@@ -158,5 +160,13 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
             }
         }
         return myIncludePattern == null || myIncludePattern.matcher(name).matches();
+    }
+
+    public boolean isIgnoreFileMeta() {
+        return myIgnoreFileMeta;
+    }
+
+    public void setIgnoreFileMeta(boolean ignoreFileMeta) {
+        myIgnoreFileMeta = ignoreFileMeta;
     }
 }
