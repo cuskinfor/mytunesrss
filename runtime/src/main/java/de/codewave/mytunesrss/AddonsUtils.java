@@ -312,6 +312,9 @@ public class AddonsUtils {
     }
 
     public static String deleteTheme(String themeName) {
+        if (StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), themeName)) {
+            MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(null);
+        }
         try {
             File themeDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + themeName);
             if (themeDir.isDirectory()) {

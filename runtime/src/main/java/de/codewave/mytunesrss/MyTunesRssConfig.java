@@ -122,6 +122,7 @@ public class MyTunesRssConfig {
     private boolean myUpnpUserHttps;
     private String mySelfRegisterTemplateUser;
     private boolean mySelfRegAdminEmail;
+    private String myDefaultUserInterfaceTheme;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -843,6 +844,14 @@ public class MyTunesRssConfig {
         mySelfRegAdminEmail = selfRegAdminEmail;
     }
 
+    public String getDefaultUserInterfaceTheme() {
+        return myDefaultUserInterfaceTheme;
+    }
+
+    public void setDefaultUserInterfaceTheme(String defaultUserInterfaceTheme) {
+        myDefaultUserInterfaceTheme = defaultUserInterfaceTheme;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1049,6 +1058,7 @@ public class MyTunesRssConfig {
         setUpnpUserHttps(JXPathUtils.getBooleanValue(settings, "upnp-user-https", true));
         setSelfRegisterTemplateUser(JXPathUtils.getStringValue(settings, "selfreg-template-user", null));
         setSelfRegAdminEmail(JXPathUtils.getBooleanValue(settings, "selfreg-admin-email", true));
+        setDefaultUserInterfaceTheme(JXPathUtils.getStringValue(settings, "default-ui-theme", null));
     }
 
     /**
@@ -1356,6 +1366,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-user-https", isUpnpUserHttps()));
             root.appendChild(DOMUtils.createTextElement(settings, "selfreg-template-user", getSelfRegisterTemplateUser()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "selfreg-admin-email", isSelfRegAdminEmail()));
+            root.appendChild(DOMUtils.createTextElement(settings, "default-ui-theme", getDefaultUserInterfaceTheme()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

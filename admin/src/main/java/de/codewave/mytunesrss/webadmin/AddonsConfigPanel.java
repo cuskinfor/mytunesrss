@@ -34,6 +34,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private static final String PREFIX = "upload_addon_";
 
+    private static final Object DEFAULT_UI_THEME_ID = UUID.randomUUID();
+
     private Panel myThemesPanel;
     private Panel myLanguagesPanel;
     private Panel mySitesPanel;
@@ -53,7 +55,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
         myThemesTable.setCacheRate(50);
+        myThemesTable.addContainerProperty("defmarker", Boolean.class, null, getBundleString("addonsConfigPanel.themes.defmarker"), null, null);
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
+        myThemesTable.addContainerProperty("default", Button.class, null, "", null, null);
         myThemesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myThemesPanel.addComponent(myThemesTable);
         myUploadTheme = new Upload(null, this);
@@ -140,8 +144,11 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesTable.removeAllItems();
         List<AddonsUtils.ThemeDefinition> themes = new ArrayList<AddonsUtils.ThemeDefinition>(AddonsUtils.getThemes(false));
         Collections.sort(themes);
+        Button disabledDeleteButton = createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme");
+        disabledDeleteButton.setEnabled(false);
+        myThemesTable.addItem(new Object[]{MyTunesRss.CONFIG.getDefaultUserInterfaceTheme() == null, getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme"), disabledDeleteButton}, DEFAULT_UI_THEME_ID);
         for (AddonsUtils.ThemeDefinition theme : themes) {
-            myThemesTable.addItem(new Object[]{theme.getName(), createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme")}, theme.getName());
+            myThemesTable.addItem(new Object[]{StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), theme.getName()), theme.getName(), createTableRowButton("button.default", this, theme.getName(), "DefaultTheme"), createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme")}, theme.getName());
         }
     }
 
@@ -207,6 +214,10 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, MyTunesRss.CONFIG.getFlashPlayer((String) tableRowButton.getItemId()));
                 SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
                 flashPlayerEditWindow.show(getWindow());
+            } else if ("DefaultTheme".equals(tableRowButton.getData())) {
+                String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
+                MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
+                refreshThemes();
             } else {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
