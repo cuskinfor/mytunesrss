@@ -36,7 +36,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         super.attach();
         init(null, getComponentFactory().createGridLayout(1, 4, true, true));
 
-        Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
+        Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.itunes.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
         myPathReplacements = new Table();
         myPathReplacements.setCacheRate(50);

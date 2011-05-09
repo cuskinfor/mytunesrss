@@ -37,7 +37,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         super.attach();
         init(null, getComponentFactory().createGridLayout(1, 3, true, true));
 
-        Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
+        Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.iphoto.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
         myPathReplacements = new Table();
         myPathReplacements.setCacheRate(50);
