@@ -129,7 +129,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
                         setTablePageLengths();
                     }
                 }
-            }.show(getWindow());
+            }.show(VaadinUtils.getApplicationWindow(this));
         } else {
             super.buttonClick(clickEvent);
         }
