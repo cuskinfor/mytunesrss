@@ -178,6 +178,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 if (newConfig != null) {
                     if (itemId != null) {
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
+                        myDatasources.getItem(itemId).getItemProperty("icon").setValue(new Embedded("", getDatasourceImage(getApplication(), newConfig.getType())));
                         DatasourceConfig oldConfig = myConfigs.get(itemId);
                         if (oldConfig.getType() == newConfig.getType()) {
                             // same local type
