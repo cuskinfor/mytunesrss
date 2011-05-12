@@ -6,8 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.validator.AbstractStringValidator;
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.terminal.*;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
@@ -16,18 +15,19 @@ import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
 
@@ -37,71 +37,75 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private static final Object DEFAULT_UI_THEME_ID = UUID.randomUUID();
 
-    private Panel myThemesPanel;
-    private Panel myLanguagesPanel;
-    private Panel mySitesPanel;
-    private Panel myFlashPlayersPanel;
     private Table myThemesTable;
     private Table myLanguagesTable;
     private Table mySitesTable;
     private Table myFlashPlayersTable;
     private Upload myUploadTheme;
-    private Upload myUploadLanguage;
     private Button myAddSite;
     private Button myAddFlashPlayer;
+    private Button myExportDefaultLanguage;
 
     public void attach() {
         super.attach();
         init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 5, true, true));
-        myThemesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
+        Panel themesPanel = new Panel(getBundleString("addonsConfigPanel.caption.themes"), getComponentFactory().createVerticalLayout(true, true));
         myThemesTable = new Table();
         myThemesTable.setCacheRate(50);
         myThemesTable.addContainerProperty("defmarker", Embedded.class, null, getBundleString("addonsConfigPanel.themes.defmarker"), null, Table.ALIGN_CENTER);
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
         myThemesTable.addContainerProperty("default", Button.class, null, "", null, null);
         myThemesTable.addContainerProperty("delete", Button.class, null, "", null, null);
-        myThemesPanel.addComponent(myThemesTable);
+        themesPanel.addComponent(myThemesTable);
         myUploadTheme = new Upload(null, this);
         myUploadTheme.setButtonCaption(getBundleString("addonsConfigPanel.addTheme"));
         myUploadTheme.setImmediate(true);
         myUploadTheme.addListener((Upload.SucceededListener) this);
         myUploadTheme.addListener((Upload.FailedListener) this);
-        myThemesPanel.addComponent(myUploadTheme);
-        myLanguagesPanel = new Panel(getBundleString("addonsConfigPanel.caption.languages"), getComponentFactory().createVerticalLayout(true, true));
+        themesPanel.addComponent(myUploadTheme);
+        Panel languagesPanel = new Panel(getBundleString("addonsConfigPanel.caption.languages"), getComponentFactory().createVerticalLayout(true, true));
         myLanguagesTable = new Table();
         myLanguagesTable.setCacheRate(50);
         myLanguagesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.languages.code"), null, null);
+        myLanguagesTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("delete", Button.class, null, "", null, null);
-        myLanguagesPanel.addComponent(myLanguagesTable);
-        myUploadLanguage = new Upload(null, this);
-        myUploadLanguage.setButtonCaption(getBundleString("addonsConfigPanel.addLanguage"));
-        myUploadLanguage.setImmediate(true);
-        myUploadLanguage.addListener((Upload.SucceededListener) this);
-        myUploadLanguage.addListener((Upload.FailedListener) this);
-        myLanguagesPanel.addComponent(myUploadLanguage);
-        mySitesPanel = new Panel(getBundleString("addonsConfigPanel.caption.sites"), getComponentFactory().createVerticalLayout(true, true));
+        myLanguagesTable.addContainerProperty("export", Button.class, null, "", null, null);
+        languagesPanel.addComponent(myLanguagesTable);
+        Upload uploadLanguage = new Upload(null, this);
+        uploadLanguage.setButtonCaption(getBundleString("addonsConfigPanel.addLanguage"));
+        uploadLanguage.setImmediate(true);
+        uploadLanguage.addListener((Upload.SucceededListener) this);
+        uploadLanguage.addListener((Upload.FailedListener) this);
+        Panel languageButtons = new Panel();
+        languageButtons.addStyleName("light");
+        languageButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+        languageButtons.addComponent(uploadLanguage);
+        myExportDefaultLanguage = getComponentFactory().createButton("addonsConfigPanel.exportDefaultLanguage", this);
+        languageButtons.addComponent(myExportDefaultLanguage);
+        languagesPanel.addComponent(languageButtons);
+        Panel sitesPanel = new Panel(getBundleString("addonsConfigPanel.caption.sites"), getComponentFactory().createVerticalLayout(true, true));
         mySitesTable = new Table();
         mySitesTable.setCacheRate(50);
         mySitesTable.addContainerProperty("name", TextField.class, null, getBundleString("addonsConfigPanel.sites.name"), null, null);
         mySitesTable.addContainerProperty("type", Select.class, null, getBundleString("addonsConfigPanel.sites.type"), null, null);
         mySitesTable.addContainerProperty("url", TextField.class, null, getBundleString("addonsConfigPanel.sites.url"), null, null);
         mySitesTable.addContainerProperty("delete", Button.class, null, "", null, null);
-        mySitesPanel.addComponent(mySitesTable);
+        sitesPanel.addComponent(mySitesTable);
         myAddSite = getComponentFactory().createButton("addonsConfigPanel.addSite", this);
-        mySitesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddSite));
-        myFlashPlayersPanel = new Panel(getBundleString("addonsConfigPanel.caption.flash"), getComponentFactory().createVerticalLayout(true, true));
+        sitesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddSite));
+        Panel flashPlayersPanel = new Panel(getBundleString("addonsConfigPanel.caption.flash"), getComponentFactory().createVerticalLayout(true, true));
         myFlashPlayersTable = new Table();
         myFlashPlayersTable.setCacheRate(50);
         myFlashPlayersTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.flash.name"), null, null);
         myFlashPlayersTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myFlashPlayersTable.addContainerProperty("delete", Button.class, null, "", null, null);
-        myFlashPlayersPanel.addComponent(myFlashPlayersTable);
+        flashPlayersPanel.addComponent(myFlashPlayersTable);
         myAddFlashPlayer = getComponentFactory().createButton("addonsConfigPanel.addFlashPlayer", this);
-        myFlashPlayersPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFlashPlayer));
-        addComponent(myThemesPanel);
-        addComponent(myLanguagesPanel);
-        addComponent(mySitesPanel);
-        addComponent(myFlashPlayersPanel);
+        flashPlayersPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFlashPlayer));
+        addComponent(themesPanel);
+        addComponent(languagesPanel);
+        addComponent(sitesPanel);
+        addComponent(flashPlayersPanel);
 
         addDefaultComponents(0, 4, 0, 4, false);
 
@@ -137,7 +141,15 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         List<AddonsUtils.LanguageDefinition> languages = new ArrayList<AddonsUtils.LanguageDefinition>(AddonsUtils.getLanguages(false));
         Collections.sort(languages);
         for (AddonsUtils.LanguageDefinition languageDefinition : languages) {
-            myLanguagesTable.addItem(new Object[]{languageDefinition.getCode(), createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage")}, languageDefinition.getCode());
+            myLanguagesTable.addItem(
+                    new Object[] {
+                        languageDefinition.getCode(),
+                        createTableRowButton("button.edit", this, languageDefinition.getCode(), "EditLanguage"),
+                        createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
+                        createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
+                    },
+                    languageDefinition.getCode()
+            );
         }
     }
 
@@ -220,6 +232,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
                 MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
                 refreshThemes();
+            } else if ("EditLanguage".equals(tableRowButton.getData())) {
+                String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
+                throw new UnsupportedOperationException("Not yet implemented!"); // TODO
+            } else if ("ExportLanguage".equals(tableRowButton.getData())) {
+                String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
+                sendLanguageFile(AddonsUtils.getUserLanguageFile(new Locale(name)));
             } else {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
@@ -256,9 +274,39 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", FlashPlayerConfig.DEFAULT_HTML, PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS));
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
             flashPlayerEditWindow.show(getWindow());
+        } else if (clickEvent.getSource() == myExportDefaultLanguage) {
+            sendLanguageFile(AddonsUtils.getBuiltinLanguageFile(getApplication().getLocale()));
         } else {
             super.buttonClick(clickEvent);
         }
+    }
+
+    private void sendLanguageFile(File languageFile) {
+        LOG.debug("Compression and sending language file \"" + languageFile.getAbsolutePath() + "\".");
+        String baseName = FilenameUtils.getBaseName(languageFile.getName());
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipOutputStream zos = new ZipOutputStream(baos);
+        try {
+            zos.putNextEntry(new ZipEntry(baseName + ".properties"));
+            IOUtils.copy(new FileInputStream(languageFile), zos);
+            zos.closeEntry();
+        } catch (FileNotFoundException e) {
+            LOG.error("Could not find language file \"" + languageFile.getName() + "\".", e);
+        } catch (IOException e) {
+            LOG.error("Could not create zip archive for language file \"" + languageFile.getName() + "\".", e);
+        } finally {
+            try {
+                zos.close();
+            } catch (IOException e) {
+                LOG.error("Could not close zip output stream.", e);
+            }
+        }
+        Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
+            public InputStream getStream() {
+                return new ByteArrayInputStream(baos.toByteArray());
+            }
+        }, baseName + ".zip", getApplication());
+        getWindow().open(streamResource);
     }
 
     public OutputStream receiveUpload(String filename, String mimeType) {

@@ -22,7 +22,6 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
     private Button myReset;
     private Button myCancel;
     protected AtomicLong myItemIdGenerator = new AtomicLong(0);
-    private Refresher myRefresher;
 
     protected void init(String caption, GridLayout content) {
         setCaption(caption);
@@ -47,10 +46,10 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         mainButtons.addComponent(myCancel);
         getGridLayout().addComponent(mainButtons, columnn1, row1, column2, row2);
         getGridLayout().setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
-        myRefresher = new Refresher();
-        addComponent(myRefresher);
-        myRefresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
-        myRefresher.addListener(this);
+        Refresher refresher = new Refresher();
+        addComponent(refresher);
+        refresher.setRefreshInterval(MyTunesRssWebAdmin.ADMIN_REFRESHER_INTERVAL_MILLIS);
+        refresher.addListener(this);
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
     }
 

@@ -202,8 +202,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         Locale locale = StringUtils.isNotBlank(cookieLanguage) ? new Locale(cookieLanguage) : getRequest().getLocale();
         LocalizationContext context = (LocalizationContext) getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         if (context == null || !ObjectUtils.equals(context.getLocale(), locale)) {
-            File language = AddonsUtils.getBestLanguageFile(locale);
-            ResourceBundle bundle = retrieveBundle(language, locale);
+            ResourceBundle bundle = retrieveBundle(AddonsUtils.getBestLanguageFile(locale), locale);
             if (bundle != null) {
                 getSession().setAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session", new LocalizationContext(bundle, bundle.getLocale()));
             } else {
@@ -215,48 +214,16 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private ResourceBundle retrieveBundle(File language, Locale locale) {
         ResourceBundle bundle = (ResourceBundle) getSession().getServletContext().getAttribute("LanguageBundle." + locale.toString());
         if (bundle == null) {
-            if (language != null) {
-                try {
-                    bundle = new PropertyResourceBundle(new FileInputStream(language));
-                } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not read language file \"" + language.getAbsolutePath() + "\".");
-                    }
+            try {
+                bundle = new PropertyResourceBundle(new FileInputStream(language));
+            } catch (IOException e) {
+                if (LOG.isErrorEnabled()) {
+                    LOG.error("Could not read language file \"" + language.getAbsolutePath() + "\".");
                 }
             }
-            if (bundle == null) {
-                try {
-                    bundle = new PropertyResourceBundle(getBestLanguageResource(locale).openStream());
-                } catch (IOException e1) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not get one of the default resource bundles.", e1);
-                    }
-                }
-            }
-            if (bundle != null) {
-                getSession().getServletContext().setAttribute("LanguageBundle." + locale.toString(), bundle);
-            }
+            getSession().getServletContext().setAttribute("LanguageBundle." + locale.toString(), bundle);
         }
         return bundle;
-    }
-
-    private URL getBestLanguageResource(Locale locale) {
-        String[] codes = locale.toString().split("_");
-        List<URL> resources = new ArrayList<URL>();
-        if (codes.length == 3) {
-            resources.add(getClass().getResource("../MyTunesRssWeb_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties"));
-        }
-        if (codes.length >= 2) {
-            resources.add(getClass().getResource("../MyTunesRssWeb_" + codes[0] + "_" + codes[1] + ".properties"));
-        }
-        resources.add(getClass().getResource("../MyTunesRssWeb_" + codes[0] + ".properties"));
-        resources.add(getClass().getResource("../MyTunesRssWeb.properties"));
-        for (URL resource : resources) {
-            if (resource != null) {
-                return resource;
-            }
-        }
-        return null;
     }
 
     protected WebConfig getWebConfig() {

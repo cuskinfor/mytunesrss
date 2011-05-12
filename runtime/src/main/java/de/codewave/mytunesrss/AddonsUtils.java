@@ -356,23 +356,27 @@ public class AddonsUtils {
     }
 
     public static File getBestLanguageFile(Locale locale) {
-        String[] codes = locale.toString().split("_");
-        List<String> fileNames = new ArrayList<String>();
-        if (codes.length == 3) {
-            fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties");
-        }
-        if (codes.length >= 2) {
-            fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + ".properties");
-        }
-        fileNames.add("MyTunesRssWeb_" + codes[0] + ".properties");
+        return getLanguageFile(locale, true, true);
+    }
+
+    public static File getUserLanguageFile(Locale locale) {
+        return getLanguageFile(locale, true, false);
+    }
+
+    public static File getBuiltinLanguageFile(Locale locale) {
+        return getLanguageFile(locale, false, true);
+    }
+
+    private static File getLanguageFile(Locale locale, boolean user, boolean builtin) {
+        List<String> fileNames = getLanguageFileNames(locale);
         for (String fileName : fileNames) {
             try {
                 File languageFile = new File(MyTunesRssUtils.getPreferencesDataPath() + "/languages/" + fileName);
-                if (languageFile.isFile()) {
+                if (user && languageFile.isFile()) {
                     return languageFile;
                 }
                 languageFile = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages/" + fileName);
-                if (languageFile.isFile()) {
+                if (builtin && languageFile.isFile()) {
                     return languageFile;
                 }
             } catch (IOException e) {
@@ -382,6 +386,20 @@ public class AddonsUtils {
             }
         }
         return null;
+    }
+
+    private static List<String> getLanguageFileNames(Locale locale) {
+        String[] codes = locale.toString().split("_");
+        List<String> fileNames = new ArrayList<String>();
+        if (codes.length == 3) {
+            fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties");
+        }
+        if (codes.length >= 2) {
+            fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + ".properties");
+        }
+        fileNames.add("MyTunesRssWeb_" + codes[0] + ".properties");
+        fileNames.add("MyTunesRssWeb_en.properties"); // minimum available default
+        return fileNames;
     }
 
     public static class LanguageDefinition implements Comparable<LanguageDefinition> {
