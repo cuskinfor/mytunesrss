@@ -223,7 +223,7 @@ public class MyTunesFunctions {
         }
         List<String[]> langs = new ArrayList<String[]>(codes.size());
         for (String code : codes) {
-            langs.add(new String[]{code, new Locale(code).getDisplayLanguage(displayLocale)});
+            langs.add(new String[]{code, new Locale(code).getDisplayName(displayLocale)});
         }
         Collections.sort(langs, new Comparator<String[]>() {
             public int compare(String[] o1, String[] o2) {

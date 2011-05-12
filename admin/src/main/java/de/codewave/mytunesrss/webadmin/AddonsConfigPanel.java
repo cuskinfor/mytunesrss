@@ -143,7 +143,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         for (AddonsUtils.LanguageDefinition languageDefinition : languages) {
             myLanguagesTable.addItem(
                     new Object[] {
-                        languageDefinition.getCode(),
+                        new Locale(languageDefinition.getCode()).getDisplayName(getApplication().getLocale()),
                         createTableRowButton("button.edit", this, languageDefinition.getCode(), "EditLanguage"),
                         createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
                         createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
@@ -233,22 +233,21 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
                 refreshThemes();
             } else if ("EditLanguage".equals(tableRowButton.getData())) {
-                String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
-                throw new UnsupportedOperationException("Not yet implemented!"); // TODO
+                String code = tableRowButton.getItemId().toString();
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, new Locale(code)));
             } else if ("ExportLanguage".equals(tableRowButton.getData())) {
-                String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
-                sendLanguageFile(AddonsUtils.getUserLanguageFile(new Locale(name)));
+                String code = tableRowButton.getItemId().toString();
+                sendLanguageFile(AddonsUtils.getUserLanguageFile(new Locale(code)));
             } else {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
-                final String name = tableRowButton.getItem().getItemProperty("name").getValue().toString();
-                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".message", name), yes, no) {
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".message", tableRowButton.getItem().getItemProperty("name").getValue().toString()), yes, no) {
                     public void clicked(Button button) {
                         if (button == yes) {
                             if ("DeleteTheme".equals(tableRowButton.getData().toString())) {
-                                AddonsUtils.deleteTheme(name);
+                                AddonsUtils.deleteTheme(tableRowButton.getItem().getItemProperty("name").getValue().toString());
                             } else if ("DeleteLanguage".equals(tableRowButton.getData().toString())) {
-                                AddonsUtils.deleteLanguage(name);
+                                AddonsUtils.deleteLanguage(tableRowButton.getItemId().toString());
                             } else if ("DeletePlayer".equals(tableRowButton.getData().toString())) {
                                 FlashPlayerConfig removedConfig = MyTunesRss.CONFIG.removeFlashPlayer((String) tableRowButton.getItemId());
                                 if (removedConfig != null) {

@@ -133,9 +133,13 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
             }
         } else if (clickEvent.getButton() == myCancel) {
             if (beforeCancel()) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(getCancelFollowUpComponent());
+                cancelPanel();
             }
         }
+    }
+
+    protected void cancelPanel() {
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(getCancelFollowUpComponent());
     }
 
     protected Field setValue(Field field, Object value) {
