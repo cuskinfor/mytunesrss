@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.0.17" date="2011-04-13">
+            <action dev="mdescher" type="fix">
+                Added missing error text for failed license file upload.
+            </action>
+        </release>
+
         <release version="4.0.16" date="2011-04-03">
             <action dev="mdescher" type="fix">
                 Rebuilt Windows launcher.
