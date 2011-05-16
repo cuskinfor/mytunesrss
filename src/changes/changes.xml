@@ -8,6 +8,12 @@
     <body>
 
         <release version="4.1.0-EAP-3" date="2011-05-16">
+            <action dev="mdescher" type="remove">
+                Removed assemblies for default theme and language.
+            </action>
+            <action dev="mdescher" type="add">
+                Added button for exporting themes (including the default theme).
+            </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-251] User interface language editor in admin
             </action>

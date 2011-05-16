@@ -9,6 +9,8 @@ import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.*;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.io.FileProcessor;
+import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -27,13 +29,14 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
 
-    private static final Logger LOG = LoggerFactory.getLogger(AddonsConfigPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddonsConfigPanel.class);
 
     private static final String PREFIX = "upload_addon_";
 
@@ -59,7 +62,11 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myThemesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.themes.name"), null, null);
         myThemesTable.addContainerProperty("default", Button.class, null, "", null, null);
         myThemesTable.addContainerProperty("delete", Button.class, null, "", null, null);
+        myThemesTable.addContainerProperty("export", Button.class, null, "", null, null);
         themesPanel.addComponent(myThemesTable);
+        Panel themeButtons = new Panel();
+        themeButtons.addStyleName("light");
+        themeButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         myUploadTheme = new Upload(null, this);
         myUploadTheme.setButtonCaption(getBundleString("addonsConfigPanel.addTheme"));
         myUploadTheme.setImmediate(true);
@@ -69,7 +76,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         Panel languagesPanel = new Panel(getBundleString("addonsConfigPanel.caption.languages"), getComponentFactory().createVerticalLayout(true, true));
         myLanguagesTable = new Table();
         myLanguagesTable.setCacheRate(50);
-        myLanguagesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.languages.code"), null, null);
+        myLanguagesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.languages.name"), null, null);
         myLanguagesTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("export", Button.class, null, "", null, null);
@@ -169,10 +176,17 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         Collections.sort(themes);
         boolean isDefault = StringUtils.isEmpty(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
         Embedded checkmark = new Embedded("", new ThemeResource("img/checkmark.png"));
-        myThemesTable.addItem(new Object[]{isDefault ? checkmark : null, getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme", !isDefault), createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme", false)}, DEFAULT_UI_THEME_ID);
+        myThemesTable.addItem(new Object[]{isDefault ? checkmark : null, getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme", !isDefault), createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme", false), createTableRowButton("button.export", this, DEFAULT_UI_THEME_ID, "ExportTheme")}, DEFAULT_UI_THEME_ID);
         for (AddonsUtils.ThemeDefinition theme : themes) {
             isDefault = StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), theme.getName());
-            myThemesTable.addItem(new Object[]{isDefault ? checkmark : null, theme.getName(), createTableRowButton("button.default", this, theme.getName(), "DefaultTheme", !isDefault), createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme", !isDefault)}, theme.getName());
+            myThemesTable.addItem(new Object[] {
+                    isDefault ? checkmark : null,
+                    theme.getName(),
+                    createTableRowButton("button.default", this, theme.getName(), "DefaultTheme", !isDefault),
+                    createTableRowButton("button.delete", this, theme.getName(), "DeleteTheme", !isDefault),
+                    createTableRowButton("button.export", this, theme.getName(), "ExportTheme")
+            },
+            theme.getName());
         }
     }
 
@@ -248,6 +262,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             } else if ("ExportLanguage".equals(tableRowButton.getData())) {
                 String code = tableRowButton.getItemId().toString();
                 sendLanguageFile(AddonsUtils.getUserLanguageFile(new Locale(code)));
+            } else if ("ExportTheme".equals(tableRowButton.getData())) {
+                String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
+                sendThemeFile(name);
             } else {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
@@ -264,9 +281,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                                     try {
                                         FileUtils.deleteQuietly(removedConfig.getBaseDir());
                                     } catch (IOException e) {
-                                        if (LOG.isErrorEnabled()) {
-                                            LOG.error("Could not get flash player base directory.");
-                                        }
+                                        LOGGER.error("Could not get flash player base directory.");
                                     }
                                 }
                             }
@@ -310,7 +325,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     }
 
     private void sendLanguageFile(File languageFile) {
-        LOG.debug("Compression and sending language file \"" + languageFile.getAbsolutePath() + "\".");
+        LOGGER.debug("Compressing and sending language file \"" + languageFile.getAbsolutePath() + "\".");
         String baseName = FilenameUtils.getBaseName(languageFile.getName());
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         ZipOutputStream zos = new ZipOutputStream(baos);
@@ -319,14 +334,14 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             IOUtils.copy(new FileInputStream(languageFile), zos);
             zos.closeEntry();
         } catch (FileNotFoundException e) {
-            LOG.error("Could not find language file \"" + languageFile.getName() + "\".", e);
+            LOGGER.error("Could not find language file \"" + languageFile.getName() + "\".", e);
         } catch (IOException e) {
-            LOG.error("Could not create zip archive for language file \"" + languageFile.getName() + "\".", e);
+            LOGGER.error("Could not create zip archive for language file \"" + languageFile.getName() + "\".", e);
         } finally {
             try {
                 zos.close();
             } catch (IOException e) {
-                LOG.error("Could not close zip output stream.", e);
+                LOGGER.error("Could not close zip output stream.", e);
             }
         }
         Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
@@ -335,6 +350,91 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
         }, baseName + ".zip", getApplication());
         getWindow().open(streamResource);
+    }
+
+    private void sendThemeFile(String theme) {
+        LOGGER.debug("Compressing and sending theme \"" + StringUtils.defaultString(theme, "MYTUNESRSS_DEFAULT") + "\".");
+        File themeDir = null;
+        try {
+            themeDir = getThemeDir(theme);
+        } catch (IOException e) {
+            LOGGER.error("Could not find theme dir for \"" + StringUtils.defaultString(theme, "MYTUNESRSS_DEFAULT") + "\".", e);
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.couldNotExportTheme"); // TODO
+            return;
+        }
+        final File finalThemeDir = themeDir;
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        final ZipOutputStream zos = new ZipOutputStream(baos);
+        final AtomicBoolean error = new AtomicBoolean();
+        try {
+            de.codewave.utils.io.IOUtils.processFiles(themeDir, new FileProcessor() {
+                public void process(File file) {
+                    if (!error.get() && file.isFile()) {
+                        try {
+                            String relativePath = getRelativePath(finalThemeDir, file);
+                            if (relativePath != null) {
+                                zos.putNextEntry(new ZipEntry(relativePath));
+                                IOUtils.copy(new FileInputStream(file), zos);
+                                zos.closeEntry();
+                            } else {
+                                error.set(true);
+                            }
+                        } catch (IOException e) {
+                            LOGGER.error("Could not add file \"" + file.getName() + "\" to archive.", e);
+                            error.set(true);
+                        }
+                    }
+                }
+            }, new FileFilter() {
+                public boolean accept(File file) {
+                    return "images".equals(file.getName()) || "styles".equals(file.getName()) || "images".equals(file.getParentFile().getName()) || "styles".equals(file.getParentFile().getName());
+                }
+            });
+        } finally {
+            try {
+                zos.close();
+            } catch (IOException e) {
+                LOGGER.error("Could not close zip output stream.", e);
+            }
+        }
+        if (!error.get()) {
+            Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
+                public InputStream getStream() {
+                    return new ByteArrayInputStream(baos.toByteArray());
+                }
+            }, "MyTunesRSS_" + StringUtils.defaultString(theme, "DEFAULT_THEME") + ".zip", getApplication());
+            getWindow().open(streamResource);
+        } else {
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.couldNotExportTheme"); // TODO
+        }
+    }
+
+    private String getRelativePath(File dir, File file) {
+        try {
+            String dirName = dir.getCanonicalPath();
+            String fileName = file.getCanonicalPath();
+            if (fileName.startsWith(dirName)) {
+                String relativePath = fileName.substring(dirName.length());
+                return StringUtils.stripStart(relativePath, "/\\");
+            }
+        } catch (IOException e) {
+            LOGGER.error("Could not get canonical path.", e);
+        }
+        return null;
+    }
+
+    private File getThemeDir(String name) throws IOException {
+        File file;
+        if (name == null) {
+            file = new File(getApplication().getContext().getBaseDirectory().getParentFile(), "ROOT");
+        } else {
+            file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + name);
+        }
+        if (file.exists()) {
+            // addon theme found
+            return file;
+        }
+        throw new IOException("Could not find theme dir for \"" + StringUtils.defaultString(name, "MYTUNESRSS_DEFAULT") + "\".");
     }
 
     public OutputStream receiveUpload(String filename, String mimeType) {
