@@ -112,7 +112,8 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
     @Override
     protected boolean beforeSave() {
         for (Object id : myEditorTable.getItemIds()) {
-            if (StringUtils.isBlank((String) ((TextField) myEditorTable.getItem(id).getItemProperty("edit").getValue()).getValue())) {
+            TextField textField = (TextField) myEditorTable.getItem(id).getItemProperty("edit").getValue();
+            if (StringUtils.isBlank((String) textField.getValue())) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editLanguagePanel.error.emptyTranslation");
                 return false;
             }
