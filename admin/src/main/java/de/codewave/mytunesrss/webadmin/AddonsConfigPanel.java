@@ -12,7 +12,9 @@ import de.codewave.mytunesrss.*;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -45,6 +47,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Button myAddSite;
     private Button myAddFlashPlayer;
     private Button myExportDefaultLanguage;
+    private Button myAddLanguage;
 
     public void attach() {
         super.attach();
@@ -71,14 +74,16 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myLanguagesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("export", Button.class, null, "", null, null);
         languagesPanel.addComponent(myLanguagesTable);
+        Panel languageButtons = new Panel();
+        languageButtons.addStyleName("light");
+        languageButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+        myAddLanguage = getComponentFactory().createButton("addonsConfigPanel.addNewLanguage", this);
+        languageButtons.addComponent(myAddLanguage);
         Upload uploadLanguage = new Upload(null, this);
         uploadLanguage.setButtonCaption(getBundleString("addonsConfigPanel.addLanguage"));
         uploadLanguage.setImmediate(true);
         uploadLanguage.addListener((Upload.SucceededListener) this);
         uploadLanguage.addListener((Upload.FailedListener) this);
-        Panel languageButtons = new Panel();
-        languageButtons.addStyleName("light");
-        languageButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         languageButtons.addComponent(uploadLanguage);
         myExportDefaultLanguage = getComponentFactory().createButton("addonsConfigPanel.exportDefaultLanguage", this);
         languageButtons.addComponent(myExportDefaultLanguage);
@@ -273,6 +278,25 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", FlashPlayerConfig.DEFAULT_HTML, PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS));
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
             flashPlayerEditWindow.show(getWindow());
+        } else if (clickEvent.getSource() == myAddLanguage) {
+            List<LocaleRepresentation> localeRepresentations = new ArrayList<LocaleRepresentation>();
+            for (Locale locale : Locale.getAvailableLocales()) {
+                if (AddonsUtils.getUserLanguageFile(locale) == null) {
+                    localeRepresentations.add(new LocaleRepresentation(locale));
+                }
+            }
+            Collections.sort(localeRepresentations, new Comparator<LocaleRepresentation>() {
+                public int compare(LocaleRepresentation o1, LocaleRepresentation o2) {
+                    return o1.toString().compareTo(o2.toString());
+                }
+            });
+            new SelectWindow<LocaleRepresentation>(50, Sizeable.UNITS_EM, localeRepresentations, localeRepresentations.get(0), null, getBundleString("addonsConfigPanel.selectAddNewLanguage.caption"), getBundleString("addonsConfigPanel.selectAddNewLanguage.caption"), getBundleString("addonsConfigPanel.selectAddNewLanguage.buttonCreate"), getBundleString("button.cancel")) {
+                @Override
+                protected void onOk(LocaleRepresentation representation) {
+                    getParent().removeWindow(this);
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale()));
+                }
+            }.show(getWindow());
         } else if (clickEvent.getSource() == myExportDefaultLanguage) {
             sendLanguageFile(AddonsUtils.getBuiltinLanguageFile(getApplication().getLocale()));
         } else {
@@ -387,6 +411,26 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             return MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TEMP;
         } catch (IOException e) {
             throw new RuntimeException("Could not get cache path.");
+        }
+    }
+
+    /**
+     * Representation class for select UI element.
+     */
+    private class LocaleRepresentation {
+        private Locale myLocale;
+
+        private LocaleRepresentation(Locale locale) {
+            myLocale = locale;
+        }
+
+        public Locale getLocale() {
+            return myLocale;
+        }
+
+        @Override
+        public String toString() {
+            return myLocale.getDisplayName(getApplication().getLocale());
         }
     }
 }

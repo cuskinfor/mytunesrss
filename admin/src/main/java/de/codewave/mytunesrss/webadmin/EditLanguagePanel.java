@@ -16,10 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public class EditLanguagePanel extends MyTunesRssConfigPanel {
@@ -63,9 +60,12 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         FileInputStream editInputStream = null;
         try {
             refInputStream = new FileInputStream(AddonsUtils.getBuiltinLanguageFile(getApplication().getLocale()));
-            editInputStream = new FileInputStream(AddonsUtils.getUserLanguageFile(myEditLang));
             refProps.load(refInputStream);
-            editProps.load(editInputStream);
+            File userLanguageFile = AddonsUtils.getUserLanguageFile(myEditLang);
+            if (userLanguageFile != null) {
+                editInputStream = new FileInputStream(userLanguageFile);
+                editProps.load(editInputStream);
+            }
             List<String> keys = new ArrayList(refProps.keySet());
             Collections.sort(keys);
             for (String key : keys) {
@@ -97,7 +97,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         }
         FileOutputStream outputStream = null;
         try {
-            outputStream = new FileOutputStream(AddonsUtils.getUserLanguageFile(myEditLang));
+            outputStream = new FileOutputStream(AddonsUtils.getUserLanguageFile(myEditLang, true));
             props.store(outputStream, "MyTunesRSS user interface language for \"" + myEditLang + "\"");
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
@@ -117,7 +117,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
                 return false;
             }
         }
-        if (AddonsUtils.getUserLanguageFile(myEditLang) == null) {
+        if (AddonsUtils.getUserLanguageFile(myEditLang, true) == null) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editLanguagePanel.error.couldNotWriteFile");
             return false;
         }

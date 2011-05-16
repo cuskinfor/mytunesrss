@@ -356,27 +356,31 @@ public class AddonsUtils {
     }
 
     public static File getBestLanguageFile(Locale locale) {
-        return getLanguageFile(locale, true, true);
+        return getLanguageFile(locale, true, true, false);
     }
 
     public static File getUserLanguageFile(Locale locale) {
-        return getLanguageFile(locale, true, false);
+        return getUserLanguageFile(locale, false);
+    }
+
+    public static File getUserLanguageFile(Locale locale, boolean returnMissig) {
+        return getLanguageFile(locale, true, false, returnMissig);
     }
 
     public static File getBuiltinLanguageFile(Locale locale) {
-        return getLanguageFile(locale, false, true);
+        return getLanguageFile(locale, false, true, false);
     }
 
-    private static File getLanguageFile(Locale locale, boolean user, boolean builtin) {
+    private static File getLanguageFile(Locale locale, boolean user, boolean builtin, boolean returnMissing) {
         List<String> fileNames = getLanguageFileNames(locale);
         for (String fileName : fileNames) {
             try {
                 File languageFile = new File(MyTunesRssUtils.getPreferencesDataPath() + "/languages/" + fileName);
-                if (user && languageFile.isFile()) {
+                if (user && (returnMissing || languageFile.isFile())) {
                     return languageFile;
                 }
                 languageFile = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages/" + fileName);
-                if (builtin && languageFile.isFile()) {
+                if (builtin && (returnMissing || languageFile.isFile())) {
                     return languageFile;
                 }
             } catch (IOException e) {
