@@ -261,8 +261,8 @@ public class MyTunesRssWebUtils {
         if (cookies != null) {
             for (int i = 0; i < cookies.length; i++) {
                 Cookie cookie = cookies[i];
-                if ("MyTunesRSS_Language".equals(cookie.getName())) {
-                    return StringUtils.trimToNull(cookie.getValue());
+                if ((MyTunesRss.APPLICATION_IDENTIFIER + "Language").equals(cookie.getName())) {
+                    return StringUtils.trimToNull(Base64Utils.decodeToString(cookie.getValue()));
                 }
             }
         }

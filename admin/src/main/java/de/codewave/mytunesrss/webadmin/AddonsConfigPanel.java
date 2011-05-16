@@ -144,7 +144,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private void refreshLanguages() {
         myLanguagesTable.removeAllItems();
         List<AddonsUtils.LanguageDefinition> languages = new ArrayList<AddonsUtils.LanguageDefinition>(AddonsUtils.getLanguages(false));
-        Collections.sort(languages);
+        Collections.sort(languages, new Comparator<AddonsUtils.LanguageDefinition>() {
+            public int compare(AddonsUtils.LanguageDefinition languageDefinition1, AddonsUtils.LanguageDefinition languageDefinition2) {
+                Locale adminLocale = AddonsConfigPanel.this.getApplication().getLocale();
+                return new Locale(languageDefinition1.getCode()).getDisplayName(adminLocale).compareTo(new Locale(languageDefinition2.getCode()).getDisplayName(adminLocale));
+            }
+        });
         for (AddonsUtils.LanguageDefinition languageDefinition : languages) {
             myLanguagesTable.addItem(
                     new Object[] {
@@ -294,7 +299,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 @Override
                 protected void onOk(LocaleRepresentation representation) {
                     getParent().removeWindow(this);
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale()));
+                    ((MainWindow) VaadinUtils.getApplicationWindow(AddonsConfigPanel.this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale()));
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myExportDefaultLanguage) {
