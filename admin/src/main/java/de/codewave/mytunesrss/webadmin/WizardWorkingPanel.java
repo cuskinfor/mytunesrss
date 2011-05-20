@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.github.wolfie.refresher.Refresher;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -13,8 +14,6 @@ import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.henrik.refresher.Refresher;
-import sun.util.LocaleServiceProviderPool;
 
 public class WizardWorkingPanel extends Panel implements Refresher.RefreshListener {
 

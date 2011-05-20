@@ -50,9 +50,14 @@
             <artifactId>vaadin</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.vaadin.henrik.refresher</groupId>
+            <groupId>org.vaadin.addons</groupId>
             <artifactId>refresher</artifactId>
-            <version>1.0.0</version>
+            <version>1.1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.vaadin.addons</groupId>
+            <artifactId>vaadin-treetable</artifactId>
+            <version>1.2.0</version>
         </dependency>
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>

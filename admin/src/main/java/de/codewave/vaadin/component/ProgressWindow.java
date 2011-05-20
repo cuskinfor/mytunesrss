@@ -1,8 +1,8 @@
 package de.codewave.vaadin.component;
 
+import com.github.wolfie.refresher.Refresher;
 import com.vaadin.terminal.Resource;
 import com.vaadin.ui.*;
-import org.vaadin.henrik.refresher.Refresher;
 
 public class ProgressWindow extends Window implements Refresher.RefreshListener {
 

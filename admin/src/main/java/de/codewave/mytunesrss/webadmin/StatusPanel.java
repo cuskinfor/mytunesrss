@@ -5,11 +5,11 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.github.wolfie.refresher.Refresher;
 import com.vaadin.Application;
 import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.vaadin.henrik.refresher.Refresher;
 
 import java.net.MalformedURLException;
 import java.sql.SQLException;

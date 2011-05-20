@@ -5,13 +5,13 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.github.wolfie.refresher.Refresher;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.VaadinUtils;
-import org.vaadin.henrik.refresher.Refresher;
 
 import java.util.concurrent.atomic.AtomicLong;
 
