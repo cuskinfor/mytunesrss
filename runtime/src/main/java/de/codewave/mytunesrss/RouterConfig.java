@@ -15,108 +15,107 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
-public class RouterConfig implements Runnable {
+public class RouterConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RouterConfig.class);
 
-    private AtomicReference<GatewayDevice> myGatewayDevice = new AtomicReference<GatewayDevice>();
+    private int myAdminPort;
+    private int myUserHttpPort;
+    private int myUserHttpsPort;
 
-    private AtomicInteger myAdminPort = new AtomicInteger();
-    private AtomicInteger myUserHttpPort = new AtomicInteger();
-    private AtomicInteger myUserHttpsPort = new AtomicInteger();
-
-    public void addAdminPortMapping(int port) {
+    public synchronized void addAdminPortMapping(int port) {
         if (MyTunesRss.CONFIG.isUpnpAdmin()) {
-            myAdminPort.set(port);
+            myAdminPort = port;
             addPortMapping(port, "MyTunesRSS Admin");
         }
     }
 
-    public void addUserPortMappings() {
+    public synchronized void addUserPortMappings() {
         if (MyTunesRss.CONFIG.isUpnpUserHttp()) {
-            myUserHttpPort.set(MyTunesRss.CONFIG.getPort());
-            addPortMapping(myUserHttpPort.get(), "MyTunesRSS User HTTP");
+            myUserHttpPort = MyTunesRss.CONFIG.getPort();
+            addPortMapping(myUserHttpPort, "MyTunesRSS User HTTP");
         }
         if (MyTunesRss.CONFIG.isUpnpUserHttps()) {
-            myUserHttpsPort.set(MyTunesRss.CONFIG.getSslPort());
-            addPortMapping(myUserHttpsPort.get(), "MyTunesRSS User HTTPS");
+            myUserHttpsPort = MyTunesRss.CONFIG.getSslPort();
+            addPortMapping(myUserHttpsPort, "MyTunesRSS User HTTPS");
         }
     }
 
-    public void deleteAdminPortMapping() {
-        int port = myAdminPort.getAndSet(0);
-        if (port > 0) {
-            deletePortMapping(port);
+    public synchronized void deleteAdminPortMapping() {
+        if (myAdminPort > 0) {
+            deletePortMapping(myAdminPort);
         }
+        myAdminPort = 0;
     }
 
-    public void deleteUserPortMappings() {
-        int port = myUserHttpPort.getAndSet(0);
-        if (port > 0) {
-            deletePortMapping(port);
+    public synchronized void deleteUserPortMappings() {
+        if (myUserHttpPort > 0) {
+            deletePortMapping(myUserHttpPort);
         }
-        port = myUserHttpsPort.getAndSet(0);
-        if (port > 0) {
-            deletePortMapping(port);
+        if (myUserHttpsPort > 0) {
+            deletePortMapping(myUserHttpsPort);
         }
+        myUserHttpPort = 0;
+        myUserHttpsPort = 0;
     }
 
-    private void addPortMapping(int port, String name) {
-        GatewayDevice gatewayDevice = myGatewayDevice.get();
-        if (gatewayDevice != null) {
-            InetAddress localAddress = gatewayDevice.getLocalAddress();
-            PortMappingEntry portMapping = new PortMappingEntry();
-            try {
-                if (gatewayDevice.getSpecificPortMappingEntry(port, "TCP", portMapping)) {
-                    gatewayDevice.deletePortMapping(port, "TCP");
-                }
-                gatewayDevice.addPortMapping(port, port, localAddress.getHostAddress(), "TCP", name);
-            } catch (IOException e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Could not add port mapping.", e);
-                }
-            } catch (SAXException e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Could not add port mapping.", e);
+    private void addPortMapping(final int port, final String name) {
+        MyTunesRss.EXECUTOR_SERVICE.submitRouterConfig(new Runnable() {
+            public void run() {
+                GatewayDevice gatewayDevice = getGatewayDevice();
+                if (gatewayDevice != null) {
+                    InetAddress localAddress = gatewayDevice.getLocalAddress();
+                    PortMappingEntry portMapping = new PortMappingEntry();
+                    try {
+                        if (gatewayDevice.getSpecificPortMappingEntry(port, "TCP", portMapping)) {
+                            gatewayDevice.deletePortMapping(port, "TCP");
+                        }
+                        gatewayDevice.addPortMapping(port, port, localAddress.getHostAddress(), "TCP", name);
+                    } catch (IOException e) {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Could not add port mapping.", e);
+                        }
+                    } catch (SAXException e) {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Could not add port mapping.", e);
+                        }
+                    }
                 }
             }
-        }
+        });
     }
 
-    private void deletePortMapping(int port) {
-        GatewayDevice gatewayDevice = myGatewayDevice.get();
-        if (gatewayDevice != null) {
-            PortMappingEntry portMapping = new PortMappingEntry();
-            try {
-                if (gatewayDevice.getSpecificPortMappingEntry(port, "TCP", portMapping)) {
-                    gatewayDevice.deletePortMapping(port, "TCP");
+    private void deletePortMapping(final int port) {
+        MyTunesRss.EXECUTOR_SERVICE.submitRouterConfig(new Runnable() {
+            public void run() {
+                GatewayDevice gatewayDevice = getGatewayDevice();
+                if (gatewayDevice != null) {
+                    PortMappingEntry portMapping = new PortMappingEntry();
+                    try {
+                        if (gatewayDevice.getSpecificPortMappingEntry(port, "TCP", portMapping)) {
+                            gatewayDevice.deletePortMapping(port, "TCP");
+                        }
+                    } catch (IOException e) {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Could not remove port mapping.", e);
+                        }
+                    } catch (SAXException e) {
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Could not remove port mapping.", e);
+                        }
+                    }
                 }
-            } catch (IOException e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Could not remove port mapping.", e);
-                }
-            } catch (SAXException e) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn("Could not remove port mapping.", e);
-                }
+
             }
-        }
+        });
     }
 
-    /**
-     * Runnable worker method which discovers a valid gateway device.
-     */
-    public void run() {
+    private GatewayDevice getGatewayDevice() {
         GatewayDiscover gatewayDiscover = new GatewayDiscover();
         try {
             gatewayDiscover.discover();
-            GatewayDevice validGateway = gatewayDiscover.getValidGateway();
-            if (validGateway != null) {
-                myGatewayDevice.set(validGateway);
-            }
+            return gatewayDiscover.getValidGateway();
         } catch (IOException e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not discover gateway device.", e);
@@ -130,5 +129,6 @@ public class RouterConfig implements Runnable {
                 LOGGER.warn("Could not discover gateway device.", e);
             }
         }
+        return null;
     }
 }

@@ -24,6 +24,8 @@ public class MyTunesRssExecutorService {
 
     private final ExecutorService LUCENE_UPDATE_EXECUTOR = Executors.newSingleThreadExecutor();
 
+    private final ExecutorService ROUTER_CONFIG_EXECUTOR = Executors.newSingleThreadExecutor();
+
     private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(50);
 
     private Future<Boolean> DATABASE_UPDATE_FUTURE;
@@ -39,6 +41,8 @@ public class MyTunesRssExecutorService {
         LUCENE_UPDATE_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
         GENERAL_EXECUTOR.shutdownNow();
         GENERAL_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        ROUTER_CONFIG_EXECUTOR.shutdownNow();
+        ROUTER_CONFIG_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
     }
 
     public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
@@ -151,6 +155,14 @@ public class MyTunesRssExecutorService {
     public synchronized void scheduleWithFixedDelay(Runnable runnable, int initialDelay, int delay, TimeUnit timeUnit) {
         try {
             GENERAL_EXECUTOR.scheduleWithFixedDelay(runnable, initialDelay, delay, timeUnit);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule task.", e);
+        }
+    }
+
+    public synchronized void submitRouterConfig(Runnable runnable) {
+        try {
+            ROUTER_CONFIG_EXECUTOR.submit(runnable);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule task.", e);
         }
