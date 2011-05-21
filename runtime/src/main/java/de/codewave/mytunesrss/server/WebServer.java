@@ -44,8 +44,6 @@ public class WebServer {
 
     private Embedded myEmbeddedTomcat;
     private AtomicBoolean myRunning = new AtomicBoolean(false);
-    private AtomicInteger myUpnpHttp = new AtomicInteger();
-    private AtomicInteger myUpnpHttps = new AtomicInteger();
     private Context myContext;
     private StandardManager mySessionManager;
 
