@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.addon.treetable.TreeTable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Panel;
@@ -27,15 +28,18 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(ContentConfigPanel.class);
 
-    private Table myPlaylists;
+    private TreeTable myPlaylists;
 
     public void attach() {
         super.attach();
         init(getBundleString("contentsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 2, true, true));
-        myPlaylists = new Table();
+        myPlaylists = new TreeTable();
         myPlaylists.setCacheRate(50);
+        myPlaylists.setWidth(100, UNITS_PERCENTAGE);
         myPlaylists.addContainerProperty("visible", CheckBox.class, null, getBundleString("contentsConfigPanel.playlists.visible"), null, null);
         myPlaylists.addContainerProperty("name", String.class, null, getBundleString("contentsConfigPanel.playlists.name"), null, null);
+        myPlaylists.setHierarchyColumn("name");
+        myPlaylists.setColumnExpandRatio("name", 1);
         myPlaylists.setSortContainerPropertyId("name");
         myPlaylists.setEditable(false);
         Panel panel = new Panel(getBundleString("contentsConfigPanel.visiblePlaylists.caption"));
@@ -56,19 +60,16 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
             for (Playlist playlist : playlists) {
                 CheckBox visible = new CheckBox();
                 visible.setValue(!playlist.isHidden());
-                StringBuilder name = new StringBuilder();
-                for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
-                    name.append(" \u21E8 ").append(pathElement.getName());
-                }
-                myPlaylists.addItem(new Object[]{visible, name.substring(3)}, playlist);
+                myPlaylists.addItem(new Object[]{visible, playlist.getName()}, playlist);
             }
         } catch (SQLException e) {
             MyTunesRss.UNHANDLED_EXCEPTION.set(true);
         } finally {
             session.rollback();
         }
+        getApplication().createPlaylistTreeTableHierarchy(myPlaylists, playlists);
         myPlaylists.sort();
-        myPlaylists.setPageLength(Math.min(playlists.size(), 20));
+        myPlaylists.setPageLength(Math.min(MyTunesRssUtils.getRootPlaylistCount(playlists), 20));
     }
 
     protected void writeToConfig() {

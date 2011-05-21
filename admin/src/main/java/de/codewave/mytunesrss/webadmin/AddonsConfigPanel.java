@@ -97,10 +97,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         languagesPanel.addComponent(languageButtons);
         Panel sitesPanel = new Panel(getBundleString("addonsConfigPanel.caption.sites"), getComponentFactory().createVerticalLayout(true, true));
         mySitesTable = new Table();
+        mySitesTable.setWidth(100, UNITS_PERCENTAGE);
         mySitesTable.setCacheRate(50);
         mySitesTable.addContainerProperty("name", TextField.class, null, getBundleString("addonsConfigPanel.sites.name"), null, null);
         mySitesTable.addContainerProperty("type", Select.class, null, getBundleString("addonsConfigPanel.sites.type"), null, null);
         mySitesTable.addContainerProperty("url", TextField.class, null, getBundleString("addonsConfigPanel.sites.url"), null, null);
+        mySitesTable.setColumnExpandRatio("url", 1);
         mySitesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         sitesPanel.addComponent(mySitesTable);
         myAddSite = getComponentFactory().createButton("addonsConfigPanel.addSite", this);
@@ -199,6 +201,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         type.setImmediate(true);
         type.addValidator(new SiteValidator("type", "name"));
         SmartTextField url = new SmartTextField(null, site.getUrl());
+        url.setWidth(100, UNITS_PERCENTAGE);
         url.setImmediate(true);
         url.addValidator(new AbstractStringValidator(getBundleString("addonsConfigPanel.error.invalidSiteUrl")) {
             @Override

@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.addon.treetable.TreeTable;
 import com.vaadin.data.Property;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;
@@ -54,7 +55,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermCreatePublicPlaylists;
     private CheckBox myPermPhotos;
     private Table myPermissions;
-    private Table myPlaylistsRestrictions;
+    private TreeTable myPlaylistsRestrictions;
     private Table myPhotoAlbumRestrictions;
     private Table myForceTranscoders;
     private SmartTextField mySearchFuzziness;
@@ -153,13 +154,14 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (myUser.getParent() == null) {
             addComponent(panel);
         }
-        myPlaylistsRestrictions = new Table();
+        myPlaylistsRestrictions = new TreeTable();
         myPlaylistsRestrictions.setCacheRate(50);
         myPlaylistsRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPlaylistsRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.restricted"), null, null);
         myPlaylistsRestrictions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.excluded"), null, null);
         myPlaylistsRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.playlists.name"), null, null);
         myPlaylistsRestrictions.setColumnExpandRatio("name", 1);
+        myPlaylistsRestrictions.setHierarchyColumn("name");
         myPlaylistsRestrictions.setEditable(false);
         myPlaylistsRestrictions.setSortContainerPropertyId("name");
         panel = new Panel(getBundleString("editUserConfigPanel.caption.restrictedPlaylists"));
@@ -172,10 +174,10 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPhotoAlbumRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPhotoAlbumRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.photoalbum.restricted"), null, null);
         myPhotoAlbumRestrictions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.photoalbum.excluded"), null, null);
-        myPhotoAlbumRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.photoalbum.name"), null, null);
-        myPhotoAlbumRestrictions.setColumnExpandRatio("name", 1);
         myPhotoAlbumRestrictions.addContainerProperty("firstDate", AlbumDate.class, null, getBundleString("editUserConfigPanel.photoalbum.firstDate"), null, null);
         myPhotoAlbumRestrictions.addContainerProperty("lastDate", AlbumDate.class, null, getBundleString("editUserConfigPanel.photoalbum.lastDate"), null, null);
+        myPhotoAlbumRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.photoalbum.name"), null, null);
+        myPhotoAlbumRestrictions.setColumnExpandRatio("name", 1);
         myPhotoAlbumRestrictions.setEditable(false);
         myPhotoAlbumRestrictions.setSortContainerPropertyId("firstDate");
         panel = new Panel(getBundleString("editUserConfigPanel.caption.restrictedPhotoAlbums"));
@@ -273,12 +275,9 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                     restricted.setValue(myUser.getRestrictedPlaylistIds().contains(playlist.getId()));
                     CheckBox excluded = new CheckBox();
                     excluded.setValue(myUser.getExcludedPlaylistIds().contains(playlist.getId()));
-                    StringBuilder name = new StringBuilder();
-                    for (Playlist pathElement : MyTunesRssUtils.getPlaylistPath(playlist, playlists)) {
-                        name.append(" \u21E8 ").append(pathElement.getName());
-                    }
-                    myPlaylistsRestrictions.addItem(new Object[]{restricted, excluded, name.substring(3)}, playlist);
+                    myPlaylistsRestrictions.addItem(new Object[]{restricted, excluded, playlist.getName()}, playlist);
                 }
+                getApplication().createPlaylistTreeTableHierarchy(myPlaylistsRestrictions, playlists);
                 myPlaylistsRestrictions.sort();
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {
@@ -288,7 +287,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             } finally {
                 session.rollback();
             }
-            myPlaylistsRestrictions.setPageLength(Math.min(playlists.size(), 10));
+            myPlaylistsRestrictions.setPageLength(Math.min(MyTunesRssUtils.getRootPlaylistCount(playlists), 10));
             myPhotoAlbumRestrictions.removeAllItems();
             List<PhotoAlbum> photoAlbums = Collections.emptyList();
             try {
@@ -300,7 +299,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                     excluded.setValue(myUser.getExcludedPhotoAlbumIds().contains(photoAlbum.getId()));
                     AlbumDate firstDate = photoAlbum.getFirstDate() > 0 ? new AlbumDate(photoAlbum.getFirstDate()) : new AlbumDate(photoAlbum.getLastDate());
                     AlbumDate lastDate = new AlbumDate(photoAlbum.getLastDate());
-                    myPhotoAlbumRestrictions.addItem(new Object[]{restricted, excluded, photoAlbum.getName(), firstDate, lastDate}, photoAlbum);
+                    myPhotoAlbumRestrictions.addItem(new Object[]{restricted, excluded, firstDate, lastDate, photoAlbum.getName()}, photoAlbum);
                 }
                 myPhotoAlbumRestrictions.sort();
             } catch (SQLException e) {

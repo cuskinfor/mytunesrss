@@ -489,6 +489,32 @@ public class MyTunesRssUtils {
         return null;
     }
 
+    public static Playlist findParentPlaylist(Playlist playlist, List<Playlist> playlists) {
+        if (playlist.getContainerId() == null) {
+            return null;
+        }
+        return findPlaylistWithId(playlists, playlist.getContainerId());
+    }
+
+    public static boolean hasChildPlaylists(Playlist playlist, List<Playlist> playlists) {
+        for (Playlist each : playlists) {
+            if (playlist.getId().equals(each.getContainerId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static int getRootPlaylistCount(List<Playlist> playlists) {
+        int count = 0;
+        for (Playlist playlist : playlists) {
+            if (playlist.getContainerId() == null) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static File createTempFile(String suffix) throws IOException {
         return createTempFile(suffix, 300000); // default timeout is 5 minutes
     }
