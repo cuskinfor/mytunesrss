@@ -7,26 +7,18 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
 import com.vaadin.addon.treetable.TreeTable;
-import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.Terminal;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.ResourceBundleManager;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.utils.swing.components.PasswordHashField;
 import de.codewave.vaadin.ComponentFactory;
-import de.codewave.vaadin.component.MessageWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.MessageFormat;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -109,7 +101,7 @@ public class MyTunesRssWebAdmin extends Application {
     }
 
     public void createPlaylistTreeTableHierarchy(TreeTable treeTable, List<Playlist> playlists) {
-        for (Playlist playlist : (Iterable<Playlist>)treeTable.getItemIds()) {
+        for (Playlist playlist : (Iterable<Playlist>) treeTable.getItemIds()) {
             treeTable.setParent(playlist, MyTunesRssUtils.findParentPlaylist(playlist, playlists));
             treeTable.setChildrenAllowed(playlist, MyTunesRssUtils.hasChildPlaylists(playlist, playlists));
         }
