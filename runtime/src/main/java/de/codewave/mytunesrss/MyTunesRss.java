@@ -487,7 +487,7 @@ public class MyTunesRss {
         try {
             ADMIN_SERVER = new Server(adminPort);
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
-            adminContext.setServerClasses(new String[]{"-org.mortbay.jetty.plus.jaas.", "org.mortbay.jetty."});
+            //adminContext.setServerClasses(new String[]{"org.eclipse.jetty."});
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
             ROUTER_CONFIG.addAdminPortMapping(adminPort);
