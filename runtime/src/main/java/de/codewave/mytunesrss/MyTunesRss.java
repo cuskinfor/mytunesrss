@@ -24,6 +24,7 @@ import de.codewave.utils.cache.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.AppenderSkeleton;
@@ -487,7 +488,7 @@ public class MyTunesRss {
         try {
             ADMIN_SERVER = new Server(adminPort);
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
-            //adminContext.setServerClasses(new String[]{"org.eclipse.jetty."});
+            adminContext.setSystemClasses((String[]) ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
             ROUTER_CONFIG.addAdminPortMapping(adminPort);

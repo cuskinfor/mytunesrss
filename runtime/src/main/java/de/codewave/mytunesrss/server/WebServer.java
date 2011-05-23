@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.RegistrationFeedback;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
@@ -46,7 +47,7 @@ public class WebServer {
                 try {
                     myServer = new Server(MyTunesRss.CONFIG.getPort());
                     myContext = new WebAppContext("webapps/ROOT", "/");
-                    // TODO is this corrent?
+                    myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
                     myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE)  ;
                     myServer.setHandler(myContext);

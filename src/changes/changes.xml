@@ -9,6 +9,9 @@
 
         <release version="4.1.0-EAP-4" date="?">
             <action dev="mdescher" type="update">
+                Jetty 7.4.1.v20110513 for user interface.
+            </action>
+            <action dev="mdescher" type="update">
                 Jetty 7.4.1.v20110513 for admin interface.
             </action>
             <action dev="mdescher" type="update">
