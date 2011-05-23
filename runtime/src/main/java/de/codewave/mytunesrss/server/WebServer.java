@@ -11,28 +11,18 @@ import de.codewave.mytunesrss.RegistrationFeedback;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;
-import org.apache.catalina.Context;
-import org.apache.catalina.Engine;
-import org.apache.catalina.Host;
-import org.apache.catalina.LifecycleException;
-import org.apache.catalina.connector.Connector;
-import org.apache.catalina.core.StandardHost;
-import org.apache.catalina.session.StandardManager;
-import org.apache.catalina.startup.Embedded;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tomcat.util.IntrospectionUtils;
+import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.InetAddress;
 import java.net.URL;
-import java.net.URLDecoder;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * de.codewave.mytunesrss.server.WebServer
@@ -42,10 +32,9 @@ public class WebServer {
     private static final int MIN_PORT = 1;
     private static final int MAX_PORT = 65535;
 
-    private Embedded myEmbeddedTomcat;
+    private Server myServer;
     private AtomicBoolean myRunning = new AtomicBoolean(false);
-    private Context myContext;
-    private StandardManager mySessionManager;
+    private WebAppContext myContext;
 
     public synchronized boolean start() {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
@@ -53,97 +42,47 @@ public class WebServer {
             if (MyTunesRss.CONFIG.getPort() < MIN_PORT || MyTunesRss.CONFIG.getPort() > MAX_PORT) {
                 MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.illegalServerPort"));
             } else {
+
                 try {
-                    final Map<String, Object> contextEntries = new HashMap<String, Object>();
-                    contextEntries.put(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
-                    contextEntries.put(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                    String catalinaBase = getCatalinaBase();
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Using catalina base: \"" + catalinaBase + "\".");
-                    }
-                    myEmbeddedTomcat = createServer("mytunesrss",
-                            null,
-                            MyTunesRss.CONFIG.getPort(),
-                            new File(catalinaBase),
-                            "ROOT",
-                            MyTunesRss.CONFIG.getWebappContext(),
-                            contextEntries);
-                    if (myEmbeddedTomcat != null) {
-                        myEmbeddedTomcat.start();
-                        byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
-                        if (health != CheckHealthResult.OK) {
-                            myEmbeddedTomcat.stop();
-                            myEmbeddedTomcat = null;
-                            if (health == CheckHealthResult.NULL_DATA_STORE) {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverNullDataStore"));
-                            } else {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
-                            }
-                            myEmbeddedTomcat = null;
-                            return false;
+                    myServer = new Server(MyTunesRss.CONFIG.getPort());
+                    myContext = new WebAppContext("webapps/ROOT", "/");
+                    // TODO is this corrent?
+                    myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
+                    myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE)  ;
+                    myServer.setHandler(myContext);
+                    myServer.start();
+                    byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
+                    if (health != CheckHealthResult.OK) {
+                        stop();
+                        myServer = null;
+                        if (health == CheckHealthResult.NULL_DATA_STORE) {
+                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverNullDataStore"));
+                        } else {
+                            MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
                         }
-                        MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
-                        myRunning.set(true);
-                        if (MyTunesRss.QUICKTIME_PLAYER != null) {
-                            MyTunesRss.QUICKTIME_PLAYER.init();
-                        }
-                        return true;
-                    } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
-                        myEmbeddedTomcat = null;
                         return false;
                     }
-                } catch (LifecycleException e) {
-                    if (e.getMessage().contains("BindException")) {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverAddressBind"));
-                    } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart") + e.getMessage());
+                    MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
+                    myRunning.set(true);
+                    if (MyTunesRss.QUICKTIME_PLAYER != null) {
+                        MyTunesRss.QUICKTIME_PLAYER.init();
                     }
-                    myEmbeddedTomcat = null;
-                    return false;
-                } catch (IOException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart") + e.getMessage());
-                    myEmbeddedTomcat = null;
-                    return false;
-                } catch (QuicktimePlayerException e) {
-                    MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart") + e.getMessage());
-                    myEmbeddedTomcat = null;
+                } catch (Exception e) {
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Could start user server.", e);
+                    }
+                    // TODO clear url in gui
                     return false;
                 }
+                int localPort = myServer.getConnectors()[0].getLocalPort();
+                // TODO set url in gui
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Started user server on port " + localPort + ".");
+                }
+                return true;
             }
         }
         return false;
-    }
-
-    private String getCatalinaBase() {
-        String catalinaBase = getCatalinaBase(null);
-        File catalinaBaseFile = new File(catalinaBase);
-        if (!catalinaBaseFile.exists() || !catalinaBaseFile.isDirectory()) {
-            // try UTF-8 in case resulting dir seems to be non-existant, probably fixes MacOSX problems with special characters
-            catalinaBase = getCatalinaBase("UTF-8");
-        }
-        return catalinaBase;
-    }
-
-    private String getCatalinaBase(String encoding) {
-        String catalinaBase = null;
-        try {
-            catalinaBase = encoding != null ? URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile(), encoding) :
-                    URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile());
-        } catch (UnsupportedEncodingException e) {
-            catalinaBase = URLDecoder.decode(WebServer.class.getResource("WebServer.class").getFile());
-        }
-        int index = catalinaBase.toLowerCase().indexOf("mytunesrss.jar");
-        if (index > -1) {
-            // get the directory containing the main jar file and use it as the catalina base directory
-            catalinaBase = catalinaBase.substring(0, index);
-            catalinaBase = catalinaBase.split("file:")[catalinaBase.split("file:").length - 1];
-            catalinaBase = new File(catalinaBase).getAbsolutePath();
-        } else {
-            // not started from a jar file, i.e. development environment, use the current working directory as catalina base
-            catalinaBase = new File(".").getAbsolutePath();
-        }
-        return catalinaBase;
     }
 
     private byte checkServerHealth(int port, boolean logging) {
@@ -192,132 +131,27 @@ public class WebServer {
         }
     }
 
-    private Embedded createServer(String name, InetAddress listenAddress, int listenPort, File catalinaBasePath, String webAppName,
-                                  String webAppContext, Map<String, Object> contextEntries) throws IOException {
-        Embedded server = new Embedded();
-        server.setCatalinaBase(catalinaBasePath.getCanonicalPath());
-        Engine engine = server.createEngine();
-        engine.setName("engine." + name);
-        engine.setDefaultHost("host." + name);
-        Host host = server.createHost("host." + name, new File(catalinaBasePath, "webapps").getCanonicalPath());
-        File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
-        if (workDir.exists()) {
-            MyTunesRssUtils
-                    .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
-        }
-        ((StandardHost) host).setWorkDir(MyTunesRssUtils.getCacheDataPath() + "/tomcat-work");
-        engine.addChild(host);
-        myContext = server.createContext(StringUtils.trimToEmpty(webAppContext), webAppName);
-        mySessionManager = new StandardManager();
-        mySessionManager.setPathname("");
-        myContext.setManager(mySessionManager);
-        host.addChild(myContext);
-        server.addEngine(engine);
-        Connector httpConnector = createConnector(server, listenAddress, listenPort, "http");
-        if (httpConnector != null) {
-            httpConnector.setAttribute("maxThreads", MyTunesRss.CONFIG.getTomcatMaxThreads());
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Setting tomcat HTTP connector maximum threads to " + MyTunesRss.CONFIG.getTomcatMaxThreads() + ".");
-            }
-            httpConnector.setURIEncoding("UTF-8");
-            server.addConnector(httpConnector);
-            if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
-                Connector ajpConnector = null;
-                try {
-                    ajpConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getTomcatAjpPort(), "ajp");
-                    if (ajpConnector != null) {
-                        server.addConnector(ajpConnector);
-                    }
-                } catch (Exception e) {
-                    if (LOGGER.isErrorEnabled()) {
-                        LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
-                    }
-                }
-            }
-            if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
-                Connector sslConnector = null;
-                try {
-                    LOGGER.debug("Adding SSL connector.");
-                    sslConnector = createConnector(server, listenAddress, MyTunesRss.CONFIG.getSslPort(), "https");
-                    if (sslConnector != null) {
-                        LOGGER.debug("Configuring SSL connector.");
-                        sslConnector.setURIEncoding("UTF-8");
-                        if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) ||
-                                !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
-                            // copy default keystore to configured location
-                            LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
-                            File keystore = new File(MyTunesRssUtils.getCacheDataPath(), "mytunesrss.keystore");
-                            IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(keystore));
-                            sslConnector.setAttribute("keystoreFile", keystore);
-                        } else {
-                            sslConnector.setAttribute("keystoreFile", MyTunesRss.CONFIG.getSslKeystoreFile());
-                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
-                                sslConnector.setAttribute("keystorePass", MyTunesRss.CONFIG.getSslKeystorePass());
-                            }
-                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
-                                sslConnector.setAttribute("keyAlias", MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
-                            }
-                        }
-                        server.addConnector(sslConnector);
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("Could not add/configure SSL connector.", e);
-                }
-            }
-            for (Map.Entry<String, Object> contextEntry : contextEntries.entrySet()) {
-                myContext.getServletContext().setAttribute(contextEntry.getKey(), contextEntry.getValue());
-            }
-            return server;
-        }
-        return null;
-    }
-
-    private Connector createConnector(Embedded server, InetAddress listenAddress, int listenPort, String protocol) {
-        Connector connector = server.createConnector(listenAddress, listenPort, protocol);
-        if (connector == null) {
-            // there are quite some internet sites which mention that the above method always returns NULL and
-            // provide the following workaround. The above method seems to work in general but on some systems
-            // it really seems to return NULL for whatever reason, so I provide the workaround as a fallback solution.
+    public synchronized boolean stop() {
+        if (myServer != null) {
             try {
-                connector = new Connector();
-                connector.setSecure(false);
-                connector.setProtocol(protocol);
-                if (listenAddress != null) {
-                    IntrospectionUtils.setProperty(connector, "address", listenAddress.getHostAddress());
-                }
-                IntrospectionUtils.setProperty(connector, "port", Integer.toString(listenPort));
+                MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
+                myServer.stop();
+                myServer.join();
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not create connector for \"" + protocol + "\", \"" + listenAddress + "\", \"" + listenPort + "\".", e);
+                    LOGGER.error("Cannot stop user server.", e);
                 }
-            }
-        }
-        return connector;
-    }
-
-    public synchronized boolean stop() {
-        if (myEmbeddedTomcat != null) {
-            try {
-                myEmbeddedTomcat.stop();
-                myEmbeddedTomcat = null;
-                byte health = CheckHealthResult.OK;
-                while (health != CheckHealthResult.INVALID_HTTP_RESPONSE && health != CheckHealthResult.SERVER_COMMUNICATION_FAILURE) {
-                    health = checkServerHealth(MyTunesRss.CONFIG.getPort(), false);
-                }
-            } catch (LifecycleException e) {
-                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.stopServer") + e.getMessage());
                 return false;
             }
-        }
-        MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
-        myRunning.set(false);
-        try {
-            if (MyTunesRss.QUICKTIME_PLAYER != null) {
-                MyTunesRss.QUICKTIME_PLAYER.stop();
-                MyTunesRss.QUICKTIME_PLAYER.destroy();
+            myRunning.set(false);
+            try {
+                if (MyTunesRss.QUICKTIME_PLAYER != null) {
+                    MyTunesRss.QUICKTIME_PLAYER.stop();
+                    MyTunesRss.QUICKTIME_PLAYER.destroy();
+                }
+            } catch (QuicktimePlayerException e) {
+                LOGGER.error("Could not destroy quicktime player.", e);
             }
-        } catch (QuicktimePlayerException e) {
-            LOGGER.error("Could not destroy quicktime player.", e);
         }
         return true;
     }

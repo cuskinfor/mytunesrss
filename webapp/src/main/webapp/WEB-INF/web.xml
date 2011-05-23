@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<web-app version="2.4"
-         xmlns="http://java.sun.com/xml/ns/j2ee"
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-    <description>MyTunesRSS web application</description>
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">    <description>MyTunesRSS web application</description>
+
     <display-name>MyTunesRSS</display-name>
     <!-- Listener for command handler registry -->
     <listener>
@@ -211,5 +210,9 @@
             <taglib-uri>http://www.codewave.de/mytunesrss/jsp/tags</taglib-uri>
             <taglib-location>/WEB-INF/mytunes-tags.tld</taglib-location>
         </taglib>
+        <jsp-property-group>
+            <url-pattern>/edit_playlist.jsp</url-pattern>
+            <deferred-syntax-allowed-as-literal>true</deferred-syntax-allowed-as-literal>
+        </jsp-property-group>
     </jsp-config>
 </web-app>
