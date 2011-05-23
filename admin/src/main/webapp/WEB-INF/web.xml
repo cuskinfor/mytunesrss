@@ -30,8 +30,8 @@
         <servlet-class>de.codewave.mytunesrss.webadmin.LogServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>org.mortbay.jetty.servlet.DefaultServlet</servlet-name>
-        <servlet-class>org.mortbay.jetty.servlet.DefaultServlet</servlet-class>
+        <servlet-name>org.eclipse.jetty.servlet.DefaultServlet</servlet-name>
+        <servlet-class>org.eclipse.jetty.servlet.DefaultServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>VaadinServlet</servlet-name>
@@ -42,7 +42,7 @@
         <url-pattern>/-system/log</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>org.mortbay.jetty.servlet.DefaultServlet</servlet-name>
+        <servlet-name>org.eclipse.jetty.servlet.DefaultServlet</servlet-name>
         <url-pattern>/jquery.js</url-pattern>
     </servlet-mapping>
 </web-app>
