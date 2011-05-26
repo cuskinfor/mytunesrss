@@ -43,8 +43,8 @@
         </pluginRepository>
     </pluginRepositories>
     <properties>
-        <tomcat.version>5.5.23</tomcat.version>
         <uidesigner />
+        <jetty.version>7.4.1.v20110513</jetty.version>
     </properties>
     <dependencies>
         <dependency>
@@ -270,22 +270,27 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jsp-2.1</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-util</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-ajp</artifactId>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mortbay.jetty</groupId>

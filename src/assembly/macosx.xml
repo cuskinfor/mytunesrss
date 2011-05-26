@@ -88,13 +88,6 @@
             <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
-            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/conf</outputDirectory>
-            <directory>etc/conf</directory>
-            <includes>
-                <include>**</include>
-            </includes>
-        </fileSet>
-        <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>etc</directory>
             <includes>

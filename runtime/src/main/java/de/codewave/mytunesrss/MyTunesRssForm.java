@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.desktop.DesktopWrapper;
 import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
+import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.task.SendSupportRequestRunnable;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -148,7 +149,7 @@ public class MyTunesRssForm {
     }
 
     public void setUserUrl(int port) {
-        myUserUrl.setText(port > 0 ? "http://127.0.0.1:" + port + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext()) : "");
+        myUserUrl.setText(port > 0 ? "http://127.0.0.1:" + port + WebServer.getContext() : "");
         myStartUserBrowser.setEnabled(port > 0 && myQuit.isEnabled());
     }
 

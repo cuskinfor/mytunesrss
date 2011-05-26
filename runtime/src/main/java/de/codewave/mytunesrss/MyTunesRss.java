@@ -489,6 +489,11 @@ public class MyTunesRss {
             ADMIN_SERVER = new Server(adminPort);
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
             adminContext.setSystemClasses((String[]) ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
+            File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/jetty-admin-work");
+            if (workDir.exists()) {
+                MyTunesRssUtils.deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
+            }
+            adminContext.setTempDirectory(workDir);
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
             ROUTER_CONFIG.addAdminPortMapping(adminPort);
@@ -681,6 +686,8 @@ public class MyTunesRss {
             if (CONFIG.isAvailableOnLocalNet()) {
                 MulticastService.startListener();
             }
+        } else if (FORM != null) {
+            FORM.setUserUrl(-1);
         }
     }
 

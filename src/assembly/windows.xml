@@ -55,7 +55,6 @@
             <outputDirectory>data</outputDirectory>
             <directory>etc</directory>
             <includes>
-                <include>conf/**</include>
                 <include>themes/**</include>
                 <include>languages/**</include>
             </includes>

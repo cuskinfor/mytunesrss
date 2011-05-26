@@ -3,11 +3,6 @@
 <project name="mytunesrss" basedir="." xmlns:artifact="antlib:org.apache.maven.artifact.ant">
 
     <target name="idea.after-compile" description="target to execute after compilation in idea">
-        <copy todir="target/idea" overwrite="true">
-            <fileset dir="etc">
-                <include name="conf/**"/>
-            </fileset>
-        </copy>
         <artifact:dependencies filesetid="bootstrap-libs">
             <artifact:dependency groupid="de.codewave" artifactid="codewave-zis" version="1.1"/>
             <artifact:dependency groupid="xerces" artifactid="xercesImpl" version="2.9.1"/>

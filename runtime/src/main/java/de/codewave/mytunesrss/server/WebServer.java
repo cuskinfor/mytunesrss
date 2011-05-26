@@ -11,13 +11,20 @@ import de.codewave.mytunesrss.RegistrationFeedback;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.jetty.ajp.Ajp13SocketConnector;
+import org.eclipse.jetty.http.ssl.SslContextFactory;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -46,7 +53,48 @@ public class WebServer {
 
                 try {
                     myServer = new Server(MyTunesRss.CONFIG.getPort());
-                    myContext = new WebAppContext("webapps/ROOT", "/");
+                    myServer.setThreadPool(new QueuedThreadPool(Integer.parseInt(MyTunesRss.CONFIG.getTomcatMaxThreads())));
+                    if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
+                        SslContextFactory sslContextFactory = new SslContextFactory();
+                        if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
+                            // copy default keystore to configured location
+                            LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
+                            File keystore = new File(MyTunesRssUtils.getCacheDataPath(), "mytunesrss.keystore");
+                            IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(keystore));
+                            sslContextFactory.setKeyStore(keystore.getAbsolutePath());
+                            sslContextFactory.setKeyStorePassword("changeit");
+                        } else {
+                            sslContextFactory.setKeyStore(MyTunesRss.CONFIG.getSslKeystoreFile());
+                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
+                                sslContextFactory.setKeyStorePassword(MyTunesRss.CONFIG.getSslKeystorePass());
+                            }
+                            if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
+                                sslContextFactory.setCertAlias(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
+                            }
+                        }
+                        SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(sslContextFactory);
+                        sslConnector.setPort(MyTunesRss.CONFIG.getSslPort());
+                        myServer.addConnector(sslConnector);
+                    }
+                    if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
+                        Ajp13SocketConnector ajpConnector = null;
+                        try {
+                            ajpConnector = new Ajp13SocketConnector();
+                            ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
+                            myServer.addConnector(ajpConnector);
+                        } catch (Exception e) {
+                            if (LOGGER.isErrorEnabled()) {
+                                LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
+                            }
+                        }
+                    }
+                    myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
+                    File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/jetty-user-work");
+                    if (workDir.exists()) {
+                        MyTunesRssUtils
+                                .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
+                    }
+                    myContext.setTempDirectory(workDir);
                     myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
                     myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
                     myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
@@ -72,11 +120,9 @@ public class WebServer {
                     if (LOGGER.isErrorEnabled()) {
                         LOGGER.error("Could start user server.", e);
                     }
-                    // TODO clear url in gui
                     return false;
                 }
                 int localPort = myServer.getConnectors()[0].getLocalPort();
-                // TODO set url in gui
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Started user server on port " + localPort + ".");
                 }
@@ -89,7 +135,7 @@ public class WebServer {
     private byte checkServerHealth(int port, boolean logging) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext()) + "/mytunesrss/checkHealth?ignoreSession=true");
+            URL targetUrl = new URL("http://127.0.0.1:" + port + getContext() + "/mytunesrss/checkHealth?ignoreSession=true");
             if (LOGGER.isInfoEnabled() && logging) {
                 LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             }
@@ -128,6 +174,19 @@ public class WebServer {
         } finally {
             if (connection != null) {
                 connection.disconnect();
+            }
+        }
+    }
+
+    public static String getContext() {
+        String trimmedContext = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
+        if ("".equals(trimmedContext) || "/".equals(trimmedContext)) {
+            return "";
+        } else {
+            if (trimmedContext.startsWith("/")) {
+                return trimmedContext;
+            } else {
+                return "/" + trimmedContext;
             }
         }
     }
