@@ -247,4 +247,9 @@
         <sql>CREATE INDEX idx_link_photo_album_album_id ON link_photo_album (album_id)</sql>
     </statement>
 
+    <statement name="migrate_4.1.0_eap_4">
+        <sql>ALTER TABLE genre ADD COLUMN hidden BOOLEAN</sql>
+        <sql>ALTER TABLE genre ADD COLUMN updated BOOLEAN</sql>
+    </statement>
+
 </statements>

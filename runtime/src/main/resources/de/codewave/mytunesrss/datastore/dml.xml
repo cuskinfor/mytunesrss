@@ -78,7 +78,7 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count
+            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count, g.hidden AS hidden
             FROM genre g<restricted>, link_track_playlist rltp</restricted><track>, track t</track>
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
@@ -94,7 +94,8 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            GROUP BY g.name, g.track_count, g.artist_count, g.album_count
+            <nohidden>AND (g.hidden IS NULL OR g.hidden = FALSE)</nohidden>
+            GROUP BY g.name, g.track_count, g.artist_count, g.album_count, g.hidden
             ORDER BY g.name
             ]]>
         </sql>
@@ -422,6 +423,10 @@
         <sql>UPDATE playlist SET name = :name, hidden = :hidden, user_owner = :user_owner, user_private = :user_private WHERE id = :id</sql>
     </statement>
 
+    <statement name="updateGenreHiddenAttribute">
+        <sql>UPDATE genre SET hidden = :hidden WHERE name = :name</sql>
+    </statement>
+
     <statement name="insertPhoto">
         <sql>INSERT INTO photo (id, name, date, file) VALUES (:id, :name, :date, :file)</sql>
     </statement>
@@ -508,12 +513,13 @@
         </sql>
     </statement>
 
-    <statement name="recreateHelpTablesGenre">
+    <statement name="#">
         <sql>DELETE FROM genre</sql>
         <sql>
-            INSERT INTO genre (name, lower_name, first_char, track_count, album_count, artist_count)
-            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_artist)) FROM track WHERE genre IS NOT NULL GROUP BY lower_genre
+            INSERT INTO genre (name, lower_name, first_char, track_count, album_count, artist_count, hidden)
+            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_artist), FALSE) FROM track WHERE genre IS NOT NULL GROUP BY lower_genre
         </sql>
+        <sql loop="hidden_genres" loopbatch="1000" loopcommit="1000">UPDATE genre SET hidden = TRUE WHERE name = :loopitem_hidden_genres</sql>
     </statement>
 
     <statement name="findPlaylistIds">

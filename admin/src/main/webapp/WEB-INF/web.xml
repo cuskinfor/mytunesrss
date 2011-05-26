@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.4" xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+    <!-- Session cookie name -->
     <context-param>
-        <param-name>org.mortbay.jetty.servlet.SessionCookie</param-name>
-        <param-value>MTRAI_JSESSIONID</param-value>
-      </context-param>
+        <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
+        <param-value>MyTunesRSSAdminSessionID</param-value>
+    </context-param>
     <context-param>
         <param-name>productionMode</param-name>
         <param-value>true</param-value>

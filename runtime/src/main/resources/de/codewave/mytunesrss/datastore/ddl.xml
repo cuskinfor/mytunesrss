@@ -135,7 +135,9 @@
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER,
-                artist_count INTEGER
+                artist_count INTEGER,
+                hidden BOOLEAN,
+                updated BOOLEAN
             )
         </sql>
         <sql>

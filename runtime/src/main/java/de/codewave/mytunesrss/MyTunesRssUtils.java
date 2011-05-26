@@ -183,6 +183,8 @@ public class MyTunesRssUtils {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Shutting down executor services.");
             }
+            MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
+            MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
             MyTunesRss.EXECUTOR_SERVICE.shutdown();
             if (MyTunesRss.QUARTZ_SCHEDULER != null) {
                 try {
@@ -224,8 +226,6 @@ public class MyTunesRssUtils {
                     LOGGER.error("Could not delete default database files.", e);
                 }
             }
-            MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
-            MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Exception during shutdown.", e);

@@ -49,7 +49,7 @@ public class WebServer {
                     myContext = new WebAppContext("webapps/ROOT", "/");
                     myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
                     myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
-                    myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE)  ;
+                    myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
                     myServer.setHandler(myContext);
                     myServer.start();
                     byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);

@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.1.0-EAP-4" date="?">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-219] Genre filter in contents configuration
+            </action>
             <action dev="mdescher" type="update">
                 Jetty 7.4.1.v20110513 for user interface.
             </action>

@@ -12,6 +12,7 @@ public class Genre {
     private int myAlbumCount;
     private int myTrackCount;
     private int myArtistCount;
+    private boolean myHidden;
 
     public int getAlbumCount() {
         return myAlbumCount;
@@ -43,5 +44,13 @@ public class Genre {
 
     public void setTrackCount(int trackCount) {
         myTrackCount = trackCount;
+    }
+
+    public boolean isHidden() {
+        return myHidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        myHidden = hidden;
     }
 }

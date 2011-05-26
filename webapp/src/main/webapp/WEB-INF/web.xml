@@ -5,6 +5,11 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">    <description>MyTunesRSS web application</description>
 
     <display-name>MyTunesRSS</display-name>
+    <!-- Session cookie name -->
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
+        <param-value>MyTunesRSSUserSessionID</param-value>
+    </context-param>
     <!-- Listener for command handler registry -->
     <listener>
         <description>Command handler registry listener</description>

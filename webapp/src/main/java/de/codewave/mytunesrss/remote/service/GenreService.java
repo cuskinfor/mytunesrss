@@ -17,7 +17,7 @@ public class GenreService {
     public Object getGenres(int letterIndex, int startItem, int maxItems) throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            FindGenreQuery query = new FindGenreQuery(user, letterIndex);
+            FindGenreQuery query = new FindGenreQuery(user, false, letterIndex);
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(query),
                                                                              startItem,
                                                                              maxItems));

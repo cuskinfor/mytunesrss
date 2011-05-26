@@ -26,9 +26,9 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("genrePager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
             DataStoreQuery.QueryResult<Genre> queryResult;
             if (StringUtils.isNotEmpty(page)) {
-                queryResult = getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), Integer.parseInt(page)));
+                queryResult = getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), false, Integer.parseInt(page)));
             } else {
-                queryResult = getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), -1));
+                queryResult = getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), false, -1));
             }
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Genre> genres;
