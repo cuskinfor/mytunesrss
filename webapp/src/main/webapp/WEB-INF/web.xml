@@ -10,6 +10,11 @@
         <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
         <param-value>MyTunesRSSUserSessionID</param-value>
     </context-param>
+    <!-- Allow servlets for welcome files -->
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.Default.welcomeServlets</param-name>
+        <param-value>true</param-value>
+    </context-param>
     <!-- Listener for command handler registry -->
     <listener>
         <description>Command handler registry listener</description>
