@@ -220,7 +220,4 @@
             <deferred-syntax-allowed-as-literal>true</deferred-syntax-allowed-as-literal>
         </jsp-property-group>
     </jsp-config>
-    <welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
-    </welcome-file-list>
 </web-app>

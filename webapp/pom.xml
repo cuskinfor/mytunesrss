@@ -115,6 +115,7 @@
                 <configuration>
                     <webXml>${basedir}/target/web.xml</webXml>
                     <warSourceExcludes>**/*.jsp</warSourceExcludes>
+                    <warSourceIncludes>index.jsp</warSourceIncludes>
                 </configuration>
             </plugin>
             <plugin>
@@ -127,6 +128,9 @@
                         <goals>
                             <goal>jspc</goal>
                         </goals>
+                        <configuration>
+                            <excludes>index.jsp</excludes>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
