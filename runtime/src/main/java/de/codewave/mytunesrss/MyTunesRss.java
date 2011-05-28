@@ -181,9 +181,7 @@ public class MyTunesRss {
             MyTunesRssJobUtils.scheduleStatisticEventsJob();
             MyTunesRssJobUtils.scheduleDatabaseJob();
         }
-        if (CONFIG.getPort() > 0 && !SHUTDOWN_IN_PROGRESS.get()) {
-            startWebserver();
-        }
+        startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             while (true) {
                 try {

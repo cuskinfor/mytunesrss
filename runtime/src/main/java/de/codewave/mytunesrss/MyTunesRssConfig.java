@@ -39,7 +39,7 @@ public class MyTunesRssConfig {
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
     private static final String CREATION_TIME_KEY = "playmode";
 
-    private int myPort = 8080;
+    private int myPort;
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
     private List<DatasourceConfig> myDatasources = new ArrayList<DatasourceConfig>();
