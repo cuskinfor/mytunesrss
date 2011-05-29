@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.1.0-EAP-4" date="?">
+        <release version="4.1.0-EAP-4" date="2011-05-29">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-255] Select first usable port for user interface on first start.
                 Tries 8080, 9090, 10000, 20000, 30000, 40000, 50000, 60000 and then uses any free port.
