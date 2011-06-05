@@ -8,6 +8,12 @@ rm -rf target/mytunesrss-${VERSION}-macosx/mytunesrss-${VERSION}/MyTunesRSS.app/
 rm -rf target/mytunesrss-${VERSION}-system-independent/mytunesrss-${VERSION}/webapps/ADMIN/VAADIN/widgetsets/WEB-INF
 rm -rf target/mytunesrss-${VERSION}-windows/mytunesrss-${VERSION}/data/webapps/ADMIN/VAADIN/widgetsets/WEB-INF
 
+# (re-)build ffmpeg zip
+pushd ./target/mytunesrss-${VERSION}-ffmpeg
+rm ../mytunesrss-${VERSION}-ffmpeg.zip
+zip -r ../mytunesrss-${VERSION}-ffmpeg.zip .
+popd
+
 # (re-)build system independent zip
 pushd ./target/mytunesrss-${VERSION}-system-independent
 rm ../mytunesrss-${VERSION}-system-independent.zip
