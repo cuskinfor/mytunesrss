@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.0-EAP-5" date="2011-xx-xx">
+            <action dev="mdescher" type="fix">
+                Fixed problem with pre-selected jukebox not starting.
+            </action>
+        </release>
+
         <release version="4.1.0-EAP-4" date="2011-05-29">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-255] Select first usable port for user interface on first start.
