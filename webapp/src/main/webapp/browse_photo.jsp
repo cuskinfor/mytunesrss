@@ -161,9 +161,10 @@
                     </tr>
                 </table>
                 <ul class="thumbwrap">
+                <c:set var="sizeParam">size=${config.photoSize}</c:set>
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span class="wrimg"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" longdesc="${mtfn:photoLink(pageContext, photo, '')}"/></span></div>
+                        <div><span class="wrimg"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" longdesc="${mtfn:photoLink(pageContext, photo, sizeParam)}"/></span></div>
                     </li>
                 </c:forEach>
                 </ul>

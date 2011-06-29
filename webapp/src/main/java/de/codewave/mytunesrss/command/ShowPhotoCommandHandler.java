@@ -7,12 +7,15 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.meta.Image;
+import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -20,16 +23,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowPhotoCommandHandler.class);
+    private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
+
+    static {
+        IMAGE_TO_MIME.put("jpg", "image/jpeg");
+        IMAGE_TO_MIME.put("gif", "image/gif");
+        IMAGE_TO_MIME.put("png", "image/png");
+    }
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -50,7 +63,17 @@ public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
             if (!getAuthUser().isQuotaExceeded()) {
                 File photoFile = new File(filename);
                 if (StringUtils.isNotBlank(filename) && photoFile.isFile()) {
-                    FileSender sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), photoFile.length());
+                    int size = getIntegerRequestParameter("size", 0);
+                    String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
+                    StreamSender sender = null;
+                    if (mimeType != null && size > 0) {
+                        Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
+                        byte[] imageData = ImageUtils.resizeImageWithMaxSize(image.getData(), Math.min(size, ImageUtils.getMaxSize(image.getData())));
+                        sender = new StreamSender(new ByteArrayInputStream(imageData), "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), imageData.length);
+                        // no need to close the byte array input stream later
+                    } else {
+                        sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), photoFile.length());
+                    }
                     sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
                     sender.sendGetResponse(getRequest(), getResponse(), false);
                 } else {

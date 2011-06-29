@@ -56,13 +56,15 @@ public class WebConfig {
     private static final String CFG_SHOW_EXTERNAL_SITES = "showExtSites";
     private static final String CFG_SHOW_EDIT_TAGS = "showEditTags";
     private static final String CFG_SHOW_ADD_TO_PLAYLIST = "showAddToPlaylist";
+    private static final String CFG_PHOTO_SIZE = "photoSize";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
-            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS, CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST};
+            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS,
+            CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -142,6 +144,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_EXTERNAL_SITES, "false");
         myConfigValues.put(CFG_SHOW_EDIT_TAGS, "false");
         myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, "false");
+        myConfigValues.put(CFG_PHOTO_SIZE, "800");
     }
 
     private void initWithIphoneDefaults() {
@@ -152,6 +155,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FLASH_PLAYER, FlashPlayerConfig.HTML5.getId());
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
+        myConfigValues.put(CFG_PHOTO_SIZE, "600");
     }
 
     private void initWithPspDefaults() {
@@ -160,6 +164,7 @@ public class WebConfig {
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "false");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
+        myConfigValues.put(CFG_PHOTO_SIZE, "600");
     }
 
     private void initWithNintendoWiiDefaults() {
@@ -169,6 +174,7 @@ public class WebConfig {
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_FLASH_PLAYER, FlashPlayerConfig.SIMPLE.getId());
+        myConfigValues.put(CFG_PHOTO_SIZE, "600");
     }
 
     /**
@@ -563,4 +569,13 @@ public class WebConfig {
     public void setShowAddToPlaylist(boolean showAddToPlaylist) {
         myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, Boolean.toString(showAddToPlaylist));
     }
+
+    public int getPhotoSize() {
+        return Integer.parseInt(myConfigValues.get(CFG_PHOTO_SIZE));
+    }
+
+    public void setPhotoSize(int photoSize) {
+        myConfigValues.put(CFG_PHOTO_SIZE, Integer.toString(photoSize));
+    }
+
 }
