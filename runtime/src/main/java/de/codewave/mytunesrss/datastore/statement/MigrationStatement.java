@@ -236,6 +236,7 @@ public class MigrationStatement implements DataStoreStatement {
                         LOG.info("Migrating database to 4.1.0-EAP-5.");
                         MyTunesRssUtils.createStatement(connection, "migrate_4.1.0_eap_5_part_1").execute();
                         MyTunesRssUtils.createStatement(connection, "migrate_4.1.0_eap_5_part_2").execute();
+                        MyTunesRssUtils.createStatement(connection, "migrate_4.1.0_eap_5_part_3").execute();
                         databaseVersion = new Version("4.1.0-EAP-5");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
