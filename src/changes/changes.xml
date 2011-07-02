@@ -15,7 +15,7 @@
                 [MYTUNESRSS-140] Facebook integration
             </action>
             <action dev="mdescher" type="update">
-                [MYTUNESRSS-117] Improve artist and album handling
+                [MYTUNESRSS-117] Improve artist and album handling (MUST RE-CREATE DATABASE)
             </action>
             <action dev="mdescher" type="fix">
                 Genre help tables were not generated due to a naming problem in the DML file.
