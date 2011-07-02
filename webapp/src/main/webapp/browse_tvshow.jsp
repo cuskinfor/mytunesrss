@@ -204,7 +204,8 @@
 
             <c:if test="${!empty pager}">
                 <c:set var="pagerCommand"
-                       scope="request">${servletUrl}/browseTvShow/${auth}/index={index}/backUrl=${param.backUrl}</c:set>
+                       scope="request">${servletUrl}/browseTvShow/${auth}/<mt:encrypt
+                        key="${encryptionKey}">series=${cwfn:encodeUrl(param.series)}/season=${cwfn:encodeUrl(param.season)}/backUrl=${param.backUrl}</mt:encrypt>/index={index}</c:set>
                 <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}"/>
                 <jsp:include page="incl_bottomPager.jsp"/>
             </c:if>
