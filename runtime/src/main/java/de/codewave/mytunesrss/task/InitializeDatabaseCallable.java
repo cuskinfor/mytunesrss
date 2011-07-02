@@ -51,7 +51,7 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                     MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
                 }
                 session.commit();
-                LOGGER.debug("Database now has version \"" + myVersion + "\".");
+                LOGGER.debug("Database successfully migrated.");
             } finally {
                 session.rollback();
             }
