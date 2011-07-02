@@ -17,6 +17,9 @@
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
+<%--@elvariable id="msgUnknownArtist" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownAlbum" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownTrack" type="java.lang.String"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -93,7 +96,8 @@
                                                    zipFileCount="${fn:length(tracks)}"
                                                    editTagsType="Playlist"
                                                    editTagsId="${param.playlist}"
-                                                   defaultPlaylistName="${mtfn:webSafeFileName(filename)}"/>
+                                                   defaultPlaylistName="${mtfn:webSafeFileName(filename)}"
+                                                   shareText="${filename}"/>
 
                                 </c:when>
                                 <c:otherwise>
@@ -128,38 +132,38 @@
                             <c:choose>
                                 <c:when test="${sortOrder == 'Album'}">
                                     <c:if test="${track.simple}">
-                                        <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)} -</c:set>
+                                        <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)} -</c:set>
                                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(track.artist)}</mt:encrypt>">
-                                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
+                                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" />
                                         </a> -</c:if>
-                                    <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}</c:set>
+                                    <c:set var="sectionFileName">${sectionFileName} ${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}</c:set>
                                     <c:choose>
                                         <c:when test="${empty param.album}">
                                             <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
+                                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" />
                                             </a>
                                         </c:when>
                                         <c:otherwise>
-                                            <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
+                                            <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" />
                                         </c:otherwise>
                                     </c:choose>
                                 </c:when>
                                 <c:otherwise>
                                     <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(track.artist)}</mt:encrypt>">
-                                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
+                                        <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" />
                                     </a>
-                                    <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
+                                    <c:set var="sectionFileName" value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" />
                                     <c:if test="${track.simple}">
-                                        <c:set var="sectionFileName">${sectionFileName} - ${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}</c:set>
+                                        <c:set var="sectionFileName">${sectionFileName} - ${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}</c:set>
                                         -
                                         <c:choose>
                                             <c:when test="${empty param.album}">
                                                 <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
+                                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" />
                                                 </a>
                                             </c:when>
                                             <c:otherwise>
-                                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}" />
+                                                <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" />
                                             </c:otherwise>
                                         </c:choose>
                                     </c:if>
@@ -177,8 +181,9 @@
                                                    zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
                                                    editTagsType="${cwfn:choose(empty track.sectionPlaylistId, 'Track', 'Playlist')}"
                                                    editTagsId="${cwfn:choose(empty track.sectionPlaylistId, cwfn:encodeUrl(track.sectionIds), track.sectionPlaylistId)}"
-                                                   defaultPlaylistName="${sectionFileName}" />
-                
+                                                   defaultPlaylistName="${sectionFileName}"
+                                                   shareText="${sectionFileName}" />
+
                                 </c:when>
                                 <c:otherwise>
                                     <c:if test="${authUser.player && config.showPlayer}">
@@ -209,16 +214,16 @@
                                 <c:choose>
                                     <c:when test="${!empty param['playlist']}">
                                         <c:if test="${!mtfn:unknown(track.artist)}"><c:out value="${track.artist}"/> -</c:if>
-                                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
+                                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />
                                     </c:when>
                                     <c:when test="${sortOrder == 'Album'}">
                                         <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
+                                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${!track.simple && !mtfn:unknown(track.album)}"><c:out value="${track.album}" /> -</c:if>
                                         <c:if test="${track.trackNumber > 0}">${track.trackNumber} -</c:if>
-                                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
+                                        <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />
                                     </c:otherwise>
                                 </c:choose>
                                 <c:if test="${!empty track.comment}">
@@ -235,13 +240,14 @@
                     <c:if test="${sortOrder == 'Album' && !track.simple}">
                         <td>
                             <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(track.artist)}</mt:encrypt>">
-                                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" />
+                                <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" />
                             </a>
                         </td>
                     </c:if>
                     <td class="actions">
                         <c:choose>
                             <c:when test="${!stateEditPlaylist}">
+                                <c:set var="shareText"><c:choose><c:when test="${mtfn:unknown(track.artist)}">${track.name}</c:when><c:otherwise>${track.artist} - ${track.name}</c:otherwise></c:choose></c:set>
                                 <mttag:actions index="${fnCount}"
                                                backUrl="${mtfn:encode64(backUrl)}"
                                                linkFragment="track=${track.id}"
@@ -250,7 +256,8 @@
                                                externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
                                                editTagsType="Track"
                                                editTagsId="${track.id}"
-                                               defaultPlaylistName="${track.name}" />
+                                               defaultPlaylistName="${track.name}"
+                                               shareText="${shareText}" />
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${authUser.player && config.showPlayer}">

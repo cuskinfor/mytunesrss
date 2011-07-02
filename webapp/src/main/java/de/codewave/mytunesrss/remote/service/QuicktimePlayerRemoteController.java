@@ -25,8 +25,8 @@ public class QuicktimePlayerRemoteController implements RemoteController {
         MyTunesRss.QUICKTIME_PLAYER.setTracks(tracks);
     }
 
-    public void loadAlbum(String albumName) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, SortOrder.Album);
+    public void loadAlbum(String albumName) throws SQLException, QuicktimePlayerException { // TODO album artist
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, new String[0], SortOrder.Album);
         loadItems(query);
     }
 

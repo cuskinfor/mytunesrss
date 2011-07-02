@@ -8,7 +8,22 @@
     <body>
 
         <release version="4.1.0-EAP-5" date="2011-xx-xx">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-139] Twitter integration
+            </action>
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-140] Facebook integration
+            </action>
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-117] Improve artist and album handling
+            </action>
             <action dev="mdescher" type="fix">
+                Genre help tables were not generated due to a naming problem in the DML file.
+            </action>
+            <action dev="mdescher" type="fix">
+                Using the pager in a list of TV show episodes jumped to the movies list.
+            </action>
+            <action dev="mdescher" type="add">
                 Configurable maximum photo display size in user interface settings.
             </action>
             <action dev="mdescher" type="fix">

@@ -54,7 +54,8 @@ public enum MyTunesRssCommand implements Command {
     HttpLiveStream("httpLiveStream", HttpLiveStreamingCommandHandler.class),
     AddToOneClickPlaylist("addToOneClickPlaylist", AddToOneClickPlaylistCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class),
-    ShowPhoto("showPhoto", ShowPhotoCommandHandler.class);
+    ShowPhoto("showPhoto", ShowPhotoCommandHandler.class),
+    ShowShareLink("showShareLink", ShowShareLinkCommandHandler.class);
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

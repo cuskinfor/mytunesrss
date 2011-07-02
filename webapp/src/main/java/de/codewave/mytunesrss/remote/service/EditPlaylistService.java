@@ -126,11 +126,11 @@ public class EditPlaylistService {
      * @throws IllegalAccessException Unauthorized access.
      * @throws java.sql.SQLException  Any database related exception.
      */
-    public Object addAlbums(String[] albums) throws IllegalAccessException, SQLException {
+    public Object addAlbums(String[] albums) throws IllegalAccessException, SQLException { // TODO album artist
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, SortOrder.Album) : null);
+            return addTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, new String[0], SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
     }
@@ -239,11 +239,11 @@ public class EditPlaylistService {
      * @throws IllegalAccessException Unauthorized access.
      * @throws java.sql.SQLException  Any database related exception.
      */
-    public Object removeAlbums(String[] albums) throws IllegalAccessException, SQLException {
+    public Object removeAlbums(String[] albums) throws IllegalAccessException, SQLException { // TODO album artist
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, SortOrder.Album) : null);
+            return removeTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, new String[0], SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
     }

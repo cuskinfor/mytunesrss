@@ -11,6 +11,9 @@
                 artist VARCHAR(255) NOT NULL,
                 original_artist VARCHAR(255) NOT NULL,
                 lower_artist VARCHAR(255) NOT NULL,
+                album_artist VARCHAR(255) NOT NULL,
+                original_album_artist VARCHAR(255) NOT NULL,
+                lower_album_artist VARCHAR(255) NOT NULL,
                 album VARCHAR(255) NOT NULL,
                 lower_album VARCHAR(255) NOT NULL,
                 time INTEGER,
@@ -185,6 +188,8 @@
         <sql>CREATE INDEX idx_track_lower_name ON track (lower_name)</sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
+        <sql>CREATE INDEX idx_track_album_artist ON track (album_artist)</sql>
+        <sql>CREATE INDEX idx_track_lower_album_artist ON track (lower_album_artist)</sql>
         <sql>CREATE INDEX idx_track_album ON track (album)</sql>
         <sql>CREATE INDEX idx_track_lower_album ON track (lower_album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>

@@ -252,4 +252,15 @@
         <sql>ALTER TABLE genre ADD COLUMN updated BOOLEAN</sql>
     </statement>
 
+    <statement name="migrate_4.1.0_eap_5_part_1">
+        <sql>ALTER TABLE track ADD COLUMN album_artist VARCHAR(255) NOT NULL</sql>
+        <sql>ALTER TABLE track ADD COLUMN original_album_artist VARCHAR(255) NOT NULL</sql>
+        <sql>ALTER TABLE track ADD COLUMN lower_album_artist VARCHAR(255) NOT NULL</sql>
+        <sql>CREATE INDEX idx_track_album_artist ON track (album_artist)</sql>
+        <sql>CREATE INDEX idx_track_lower_album_artist ON track (lower_album_artist)</sql>
+    </statement>
+    <statement name="migrate_4.1.0_eap_5_part_2">
+        <sql>UPDATE track SET album_artist = artist, original_album_artist = original_artist, lower_album_artist = lower_artist</sql>
+    </statement>
+
 </statements>

@@ -6,8 +6,8 @@
         <c:forEach items="${tracks}" var="item">
             <track>
                 <location><c:out value="${mtfn:playbackLink(pageContext, item, null)}"/></location>
-                <creator><c:out value="${cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknown, item.originalArtist)}" /></creator>
-                <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), msgUnknown, item.album)}" /></album>
+                <creator><c:out value="${cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknownArtist, item.originalArtist)}" /></creator>
+                <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), msgUnknownAlbum, item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>
                 <c:if test="${!empty item.genre}"><annotation><c:out value="${item.genre}"/></annotation></c:if>
                 <c:if test="${item.time > 0}"><duration>${item.time * timefactor}</duration></c:if>

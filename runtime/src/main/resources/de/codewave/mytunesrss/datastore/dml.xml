@@ -11,7 +11,7 @@
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
             <filter>AND a.lower_name LIKE :filter {likeEscape}</filter>
-            <artist>AND t.lower_artist = :artist AND t.album = a.name</artist>
+            <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album = a.name</artist>
             <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             <restricted>
@@ -42,8 +42,8 @@
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
             <filter>AND a.lower_name LIKE :filter {likeEscape}</filter>
-            <album>AND t.lower_album = :album AND t.artist = a.name</album>
-            <genre>AND t.lower_genre = :genre AND t.artist = a.name</genre>
+            <album>AND t.lower_album = :album AND (t.artist = a.name OR t.album_artist = a.name)</album>
+            <genre>AND t.lower_genre = :genre AND (t.artist = a.name OR t.album_artist = a.name)</genre>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND rltp.track_id = t.id
@@ -217,7 +217,8 @@
         FROM track t<restricted>, link_track_playlist rltp</restricted><temptables>, temp_lucene_tracks tluc</temptables>
         WHERE {alwaysTrueCondition}
         <genre>AND t.lower_genre IN (:genre[])</genre>
-        <artist>AND t.lower_artist IN (:artist[])</artist>
+        <artist>AND (t.lower_artist IN (:artist[]) OR t.lower_album_artist IN (:artist[]))</artist>
+        <albumartist>AND t.lower_album_artist IN (:albumartist[])</albumartist>
         <album>AND t.lower_album IN (:album[])</album>
         <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
         <videotype>AND t.videotype = :videoType</videotype>
@@ -344,8 +345,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
         </sql>
     </statement>
 
@@ -358,8 +359,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype)
         </sql>
     </statement>
 
@@ -376,7 +377,8 @@
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
                              lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment), year = :year,
-                             series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype
+                             series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
+                             album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist
             WHERE id = :id
         </sql>
     </statement>
@@ -401,7 +403,7 @@
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
                              pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
                              lower_comment = LOWER(:comment), year = :year, series = :series, lower_series = LOWER(:series), season = :season, episode = :episode,
-                             videotype = :videotype
+                             videotype = :videotype, album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist
             WHERE id = :id
         </sql>
     </statement>
@@ -501,7 +503,7 @@
         <sql>DELETE FROM album</sql>
         <sql>
             INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash, year)
-            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(artist), COUNT(id), COUNT(DISTINCT(lower_artist)), MAX(image_hash), MAX(year) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album
+            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album, lower_album_artist
         </sql>
     </statement>
 
@@ -509,7 +511,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_artist
+            SELECT MAX(artist), lower_album_artist, SUBSTRING(MAX(lower_album_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
         </sql>
     </statement>
 
@@ -517,7 +519,7 @@
         <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO genre (name, lower_name, first_char, track_count, album_count, artist_count, hidden)
-            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_artist), FALSE) FROM track WHERE genre IS NOT NULL GROUP BY lower_genre
+            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_album_artist)), FALSE FROM track WHERE genre IS NOT NULL GROUP BY lower_genre
         </sql>
         <sql loop="hidden_genres" loopbatch="1000" loopcommit="1000">UPDATE genre SET hidden = TRUE WHERE name = :loopitem_hidden_genres</sql>
     </statement>

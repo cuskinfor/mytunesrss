@@ -4,8 +4,8 @@
 <c:forEach items="${tracks}" var="item" varStatus="loopStatus">
     {
         "location" : "${mtfn:escapeJson(mtfn:playbackLink(pageContext, item, null))}",
-        "artist" : "${mtfn:escapeJson(cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknown, item.originalArtist))}",
-        "album" : "${mtfn:escapeJson(cwfn:choose(mtfn:unknown(item.album), msgUnknown, item.album))}",
+        "artist" : "${mtfn:escapeJson(cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknownArtist, item.originalArtist))}",
+        "album" : "${mtfn:escapeJson(cwfn:choose(mtfn:unknown(item.album), msgUnknownAlbum, item.album))}",
         "name" : "${mtfn:escapeJson(item.name)}",
         "contentLength" : ${item.contentLength},
         <c:if test="${!empty item.mediaType}">"mediaType" : "${mtfn:escapeJson(item.mediaType)}",</c:if>

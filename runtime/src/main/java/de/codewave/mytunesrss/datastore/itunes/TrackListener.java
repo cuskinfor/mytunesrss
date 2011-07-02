@@ -110,6 +110,7 @@ public class TrackListener implements PListHandlerListener {
                                 statement.setId(trackId);
                                 statement.setName(MyTunesRssUtils.normalize(name.trim()));
                                 statement.setArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist"))));
+                                statement.setAlbumArtist(MyTunesRssUtils.normalize(StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist")))));
                                 statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
                                 statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
                                 statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));

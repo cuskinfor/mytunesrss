@@ -87,7 +87,7 @@
                                onmouseover="showTooltip(this)"
                                onmouseout="hideTooltip(this)"
 							   title="<fmt:message key="video"/>" class="movie">
-                                <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />
+                                <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />
                                 <c:if test="${!empty track.comment}">
                                     <div class="tooltip" id="tooltip_functionsDialogName${fnCount}">
                                         <c:forEach var="comment" varStatus="loopStatus" items="${mtfn:splitComments(track.comment)}">
@@ -110,7 +110,8 @@
                                                externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
                                                editTagsType="Track"
                                                editTagsId="${track.id}"
-                                               defaultPlaylistName="${track.name}" />
+                                               defaultPlaylistName="${track.name}"
+                                               shareText="${track.name}" />
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${authUser.player && config.showPlayer}">

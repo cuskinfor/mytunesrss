@@ -18,7 +18,6 @@
 
 <%--@elvariable id="track" type="de.codewave.mytunesrss.datastore.statement.Track"--%>
 <%--@elvariable id="tags" type="java.util.Collection"--%>
-<%--@elvariable id="msgUnknown" type="java.lang.String"--%>
 <%--@elvariable id="mp3info" type="java.lang.Boolean"--%>
 <%--@elvariable id="avgBitRate" type="java.lang.Integer"--%>
 <%--@elvariable id="avgSampleRate" type="java.lang.Integer"--%>
@@ -64,7 +63,7 @@
                 <table cellspacing="0" class="settings">
                     <tr>
                         <th colspan="2" class="active">
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}" />
+                            <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}" />
                             -
                             <c:out value="${track.name}" />
                         </th>
@@ -85,7 +84,7 @@
                                     <fmt:message key="album"/>:
                                 </td>
                                 <td>
-                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknown, track.album)}"/>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}"/>
                                 </td>
                             </tr>
                             <c:if test="${track.posNumber > 0}">
@@ -109,7 +108,7 @@
                                     <fmt:message key="artist"/>:
                                 </td>
                                 <td>
-                                    <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknown, track.originalArtist)}"/>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}"/>
                                 </td>
                             </tr>
                         </c:when>
@@ -119,7 +118,7 @@
                                     <fmt:message key="series"/>:
                                 </td>
                                 <td>
-                                    <c:out value="${cwfn:choose(mtfn:unknown(track.series), msgUnknown, track.series)}"/>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.series), msgUnknownSeries, track.series)}"/>
                                 </td>
                             </tr>
                             <tr <mt:flipFlop/>>

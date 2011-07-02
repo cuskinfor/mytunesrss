@@ -2,6 +2,7 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
@@ -11,6 +12,7 @@
     <div id="functions" class="actionsMenu">
         <a id="functions_externalsites" class="links" onclick="functionMenuClick('externalsites');">dummy</a>
         <a id="functions_edittags" class="tags" onclick="functionMenuClick('edittags');">dummy</a>
+        <a id="functions_share" class="share" onclick="functionMenuClick('share');">dummy</a>
         <a id="functions_remotecontrol" class="remote" onclick="functionMenuClick('remotecontrol');">dummy</a>
         <a id="functions_rss" class="rss" onclick="functionMenuClick('rss');">dummy</a>
         <a id="functions_playlist" class="playlist" onclick="functionMenuClick('playlist');">dummy</a>
@@ -26,6 +28,7 @@
         $jQ('#functions').data('title', title);
         $jQ('#functions_externalsites').text($jQ('#fn_externalsites' + index).attr('title'));
         $jQ('#functions_edittags').text($jQ('#fn_edittags' + index).attr('title'));
+        $jQ('#functions_share').text($jQ('#fn_share' + index).attr('title'));
         $jQ('#functions_remotecontrol').text($jQ('#fn_remotecontrol' + index).attr('title'));
         $jQ('#functions_rss').text($jQ('#fn_rss' + index).attr('title'));
         $jQ('#functions_playlist').text($jQ('#fn_playlist' + index).attr('title'));
@@ -34,6 +37,7 @@
         $jQ('#functions_oneclickplaylist').text($jQ('#fn_oneclickplaylist' + index).attr('title'));
         showHideLink("externalsites");
         showHideLink("edittags");
+        showHideLink("share");
         showHideLink("remotecontrol");
         showHideLink("rss");
         showHideLink("playlist");
@@ -61,3 +65,22 @@
     }
 
 </script>
+
+<script type="text/javascript">
+    function showShareLink(index, text) {
+        $jQ("#showShareFormShareText").val(text);
+        $jQ("#showShareFormRss").val($jQ("#fn_rss" + index).attr('href'));
+        $jQ("#showShareFormPlaylist").val($jQ("#fn_playlist" + index).attr('href'));
+        $jQ("#showShareFormPlayer").val();
+        $jQ("#showShareFormDownload").val($jQ("#fn_download" + index).attr('href'));
+        $jQ("#showShareForm").submit();
+    }
+</script>
+<form id="showShareForm" action="${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/backUrl=${backUrl}</mt:encrypt>" method="post">
+    <input type="hidden" id="showShareFormShareText" name="text" value="" />
+    <input type="hidden" id="showShareFormRss" name="rss" value="" />
+    <input type="hidden" id="showShareFormPlaylist" name="playlist" value="" />
+    <input type="hidden" id="showShareFormPlayer" name="player" value="" />
+    <input type="hidden" id="showShareFormDownload" name="download" value="" />
+</form>
+

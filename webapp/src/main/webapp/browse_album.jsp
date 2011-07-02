@@ -25,7 +25,7 @@
 <%--@elvariable id="indexPager" type="de.codewave.mytunesrss.Pager"--%>
 <%--@elvariable id="singleArtist" type="de.codewave.mytunesrss.Pager"--%>
 <%--@elvariable id="singleGenre" type="de.codewave.mytunesrss.Pager"--%>
-<%--@elvariable id="msgUnknown" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownArtist" type="java.lang.String"--%>
 <%--@elvariable id="allArtistGenreTrackCount" type="java.lang.Integer"--%>
 <%--@elvariable id="allAlbumsTrackCount" type="java.lang.Integer"--%>
 
@@ -43,7 +43,7 @@
         <c:forEach items="${albums}" var="album">
             <c:choose>
                 <c:when test="${mtfn:unknown(album.name)}">
-                    <c:set var="albumName"><fmt:message key="unknown"/></c:set>
+                    <c:set var="albumName"><fmt:message key="unknownAlbum"/></c:set>
                 </c:when>
                 <c:otherwise>
                     <c:set var="albumName" value="${album.name}"/>
@@ -121,7 +121,7 @@
             <th class="active">
                 <c:if test="${!empty param.genre}">${mtfn:capitalize(mtfn:decode64(param.genre))}</c:if>
                 <fmt:message key="albums"/>
-                <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknown, mtfn:decode64(param.artist))}"</c:if>
+                <c:if test="${!empty param.artist}"> <fmt:message key="with"/> "${cwfn:choose(mtfn:unknown(mtfn:decode64(param.artist)), msgUnknownArtist, mtfn:decode64(param.artist))}"</c:if>
             </th>
             <th><fmt:message key="artist"/></th>
             <th><fmt:message key="tracks"/></th>
@@ -139,7 +139,7 @@
                         </c:if>
                         <c:choose>
                             <c:when test="${mtfn:unknown(album.name)}">
-                                <fmt:message key="unknown"/>
+                                <fmt:message key="unknownAlbum"/>
                             </c:when>
                             <c:otherwise>
                                 <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${album.name}"/></a>
@@ -152,11 +152,11 @@
                         <c:when test="${album.artistCount == 1}">
                             <c:choose>
                                 <c:when test="${singleArtist}">
-                                    <c:out value="${cwfn:choose(mtfn:unknown(album.artist), msgUnknown, album.artist)}" />
+                                    <c:out value="${cwfn:choose(mtfn:unknown(album.artist), msgUnknownArtist, album.artist)}" />
                                 </c:when>
                                 <c:otherwise>
                                     <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(album.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
-                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), msgUnknown, album.artist)}" /></a>
+                                        <c:out value="${cwfn:choose(mtfn:unknown(album.artist), msgUnknownArtist, album.artist)}" /></a>
                                 </c:otherwise>
                             </c:choose>
                         </c:when>
@@ -164,25 +164,26 @@
                     </c:choose>
                 </td>
                 <td class="tracks">
-                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${album.trackCount} </a>
+                    <a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(album.name)}/albumartist=${mtfn:encode64(album.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${album.trackCount} </a>
                 </td>
                 <td class="actions">
                     <c:choose>
                         <c:when test="${!stateEditPlaylist}">
                             <mttag:actions index="${loopStatus.index}"
                                            backUrl="${mtfn:encode64(backUrl)}"
-                                           linkFragment="album=${mtfn:encode64(album.name)}"
+                                           linkFragment="album=${mtfn:encode64(album.name)}/albumartist=${mtfn:encode64(album.artist)}"
                                            filename="${mtfn:virtualAlbumName(album)}"
                                            zipFileCount="${album.trackCount}"
                                            externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}"
                                            editTagsType="Album"
                                            editTagsId="${album.name}"
-                                           defaultPlaylistName="${album.name}" />
+                                           defaultPlaylistName="${album.name}"
+                                           shareText="${album.name}" />
 
                         </c:when>
                         <c:otherwise>
                             <c:if test="${authUser.player && config.showPlayer}">
-                                <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=album=${mtfn:encode64(album.name)}/filename=${mtfn:virtualAlbumName(album)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                <a class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=album=${mtfn:encode64(album.name)}/albumartist=${mtfn:encode64(album.artist)}/filename=${mtfn:virtualAlbumName(album)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <a class="add" onclick="addAlbumsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(album.name)}']))" title="<fmt:message key="playlist.addAlbum"/>"><span><fmt:message key="playlist.addAlbum"/></span></a>
                         </c:otherwise>
@@ -206,7 +207,8 @@
                                            linkFragment="fullAlbums=true/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}"
                                            filename="${mtfn:webSafeFileName(mtfn:decode64(param.artist))}"
                                            zipFileCount="${allAlbumsTrackCount}"
-                                           defaultPlaylistName="${param.artist}" />
+                                           defaultPlaylistName="${cwfn:choose(singleArtist, param.artist, param.genre)}"
+                                           shareText="${cwfn:choose(singleArtist, param.artist, param.genre)}" />
                         </c:when>
                         <c:otherwise>
                             <c:if test="${authUser.player && config.showPlayer}">
@@ -246,7 +248,8 @@
                                            linkFragment="artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/fullAlbums=false"
                                            filename="${mtfn:webSafeFileName(mtfn:decode64(param.artist))}"
                                            zipFileCount="${allArtistGenreTrackCount}"
-                                           defaultPlaylistName="${param.artist}" />
+                                           defaultPlaylistName="${cwfn:choose(singleArtist, param.artist, param.genre)}"
+                                           shareText="${cwfn:choose(singleArtist, param.artist, param.genre)}" />
                         </c:when>
                         <c:otherwise>
                             <c:if test="${authUser.player && config.showPlayer}">

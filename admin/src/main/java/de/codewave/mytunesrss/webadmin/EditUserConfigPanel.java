@@ -54,6 +54,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermEditPlaylists;
     private CheckBox myPermCreatePublicPlaylists;
     private CheckBox myPermPhotos;
+    private CheckBox myPermShare;
     private Table myPermissions;
     private TreeTable myPlaylistsRestrictions;
     private Table myPhotoAlbumRestrictions;
@@ -122,6 +123,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermEditPlaylists = new CheckBox();
         myPermCreatePublicPlaylists = new CheckBox();
         myPermPhotos = new CheckBox();
+        myPermShare = new CheckBox();
         Panel panel = null;
         myPermissions = new Table();
         myPermissions.setCacheRate(50);
@@ -148,6 +150,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.addItem(new Object[]{myPermEditPlaylists, getBundleString("editUserConfigPanel.permEditPlaylists")}, myPermEditPlaylists);
         myPermissions.addItem(new Object[]{myPermCreatePublicPlaylists, getBundleString("editUserConfigPanel.permCreatePublicPlaylists")}, myPermCreatePublicPlaylists);
         myPermissions.addItem(new Object[]{myPermPhotos, getBundleString("editUserConfigPanel.permPhotos")}, myPermPhotos);
+        myPermissions.addItem(new Object[]{myPermShare, getBundleString("editUserConfigPanel.permShare")}, myPermShare);
         myPermissions.setPageLength(Math.min(myPermissions.size(), 10));
         panel = new Panel(getBundleString("editUserConfigPanel.caption.permissions"));
         panel.addComponent(myPermissions);
@@ -240,6 +243,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermEditPlaylists.setValue(myUser.isCreatePlaylists());
             myPermCreatePublicPlaylists.setValue(myUser.isCreatePublicPlaylists());
             myPermPhotos.setValue(myUser.isPhotos());
+            myPermShare.setValue(myUser.isShare());
             myPermDownload.setValue(myUser.isDownload());
             myPermYahooPlayer.setValue(myUser.isYahooPlayer());
             myPermEditLastFm.setValue(myUser.isEditLastFmAccount());
@@ -347,6 +351,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setCreatePlaylists(myPermEditPlaylists.booleanValue());
         myUser.setCreatePublicPlaylists(myPermCreatePublicPlaylists.booleanValue());
         myUser.setPhotos(myPermPhotos.booleanValue());
+        myUser.setShare(myPermShare.booleanValue());
         //myUser.setDownBytes();
         myUser.setDownload(myPermDownload.booleanValue());
         myUser.setYahooPlayer(myPermYahooPlayer.booleanValue());

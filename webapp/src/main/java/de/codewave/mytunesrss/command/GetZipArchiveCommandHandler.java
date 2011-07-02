@@ -131,11 +131,11 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             if (track.getFile().exists() && !user.isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
                 if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
-                    trackArtist = "unknown";
+                    trackArtist = "Unknown artist";
                 }
                 String trackAlbum = track.getAlbum();
                 if (trackAlbum.equals(InsertTrackStatement.UNKNOWN)) {
-                    trackAlbum = "unknown";
+                    trackAlbum = "Unknown Album";
                 }
                 int number = 1;
                 String entryNameWithoutSuffix = StringUtils.strip(MyTunesFunctions.getLegalFileName(trackArtist), ".") + "/" + StringUtils.strip(

@@ -38,7 +38,7 @@
         <c:forEach items="${artists}" var="artist">
             <c:choose>
                 <c:when test="${mtfn:unknown(artist.name)}">
-                    <c:set var="artistname"><fmt:message key="unknown"/></c:set>
+                    <c:set var="artistname"><fmt:message key="unknownArtist"/></c:set>
                 </c:when>
                 <c:otherwise>
                     <c:set var="artistname" value="${artist.name}"/>
@@ -123,7 +123,7 @@
                             <td id="functionsDialogName${loopStatus.index}" class="artist">
                                 <c:choose>
                                     <c:when test="${mtfn:unknown(artist.name)}">
-                                        <fmt:message key="unknown"/>
+                                        <fmt:message key="unknownArtist"/>
                                     </c:when>
                                     <c:otherwise>
                                         <a href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${artist.name}" /></a>
@@ -147,7 +147,8 @@
                                                        externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}"
                                                        editTagsType="Artist"
                                                        editTagsId="${artist.name}"
-                                                       defaultPlaylistName="${artist.name}" />
+                                                       defaultPlaylistName="${artist.name}"
+                                                       shareText="${artist.name}" />
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${authUser.player && config.showPlayer}">

@@ -36,6 +36,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     private String myId;
     private String myName;
     private String myArtist;
+    private String myAlbumArtist;
     private String myAlbum;
     private int myTime;
     private int myTrackNumber;
@@ -65,6 +66,10 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
 
     public void setArtist(String artist) {
         myArtist = artist;
+    }
+
+    public void setAlbumArtist(String albumArtist) {
+        myAlbumArtist = albumArtist;
     }
 
     public void setFileName(String fileName) {
@@ -135,7 +140,9 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     public synchronized void execute(Connection connection) throws SQLException {
         try {
             String originalArtist = myArtist;
+            String originalAlbumArtist = myAlbumArtist;
             myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
+            myAlbumArtist = UpdateTrackStatement.dropWordsFromArtist(myAlbumArtist);
             if (myStatement == null) {
                 myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
             }
@@ -144,6 +151,8 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
             myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
             myStatement.setString("original_artist", StringUtils.isNotEmpty(originalArtist) ? originalArtist : UNKNOWN);
+            myStatement.setString("album_artist", StringUtils.isNotEmpty(myAlbumArtist) ? myAlbumArtist : UNKNOWN);
+            myStatement.setString("original_album_artist", StringUtils.isNotEmpty(originalAlbumArtist) ? originalAlbumArtist : UNKNOWN);
             myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
             myStatement.setInt("time", myTime);
             myStatement.setInt("track_number", myTrackNumber);
@@ -178,6 +187,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myId = null;
         myName = null;
         myArtist = null;
+        myAlbumArtist = null;
         myAlbum = null;
         myTime = 0;
         myTrackNumber = 0;

@@ -49,12 +49,16 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForAlbum(User user, String[] albums, SortOrder sortOrder) {
+    public static FindTrackQuery getForAlbum(User user, String[] albums, String[] albumArtists, SortOrder sortOrder) {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myAlbums = new String[albums.length];
         for (int i = 0; i < albums.length; i++) {
             query.myAlbums[i] = albums[i].toLowerCase();
+        }
+        query.myAlbumArtists = new String[albumArtists.length];
+        for (int i = 0; i < albumArtists.length; i++) {
+            query.myAlbumArtists[i] = albumArtists[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
@@ -135,6 +139,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private String[] myAlbums;
     private String[] myGenres;
     private String[] myArtists;
+    private String[] myAlbumArtists;
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
@@ -187,6 +192,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("tvshowsort", mySortOrder == SortOrder.TvShow);
         conditionals.put("album", myAlbums != null && myAlbums.length > 0);
         conditionals.put("artist", myArtists != null && myArtists.length > 0);
+        conditionals.put("albumartist", myAlbumArtists != null && myAlbumArtists.length > 0);
         conditionals.put("genre", myGenres != null && myGenres.length > 0);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("videotype", myVideoType != null);
@@ -196,6 +202,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);
+        statement.setItems("albumartist", myAlbumArtists);
         statement.setItems("genre", myGenres);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);

@@ -18,6 +18,8 @@
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 <%--@elvariable id="tracks" type="java.util.List<de.codewave.mytunesrss.TrackUtils.TvShowEpisode>"--%>
+<%--@elvariable id="msgUnknownSeries" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownTrack" type="java.lang.String"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">series=${cwfn:encodeUrl(param.series)}/season=${cwfn:encodeUrl(param.season)}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -79,10 +81,10 @@
                         <th class="active" colspan="2">
                             <c:choose>
                                 <c:when test="${empty tracks[0].id}">
-                                    <c:out value="${cwfn:choose(mtfn:unknown(tracks[0].series), msgUnknown, tracks[0].series)}"/>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(tracks[0].series), msgUnknownSeries, tracks[0].series)}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:out value="${cwfn:choose(mtfn:unknown(tracks[0].series), msgUnknown, tracks[0].series)}"/> - <fmt:message key="season"/> ${tracks[0].season}
+                                    <c:out value="${cwfn:choose(mtfn:unknown(tracks[0].series), msgUnknownSeries, tracks[0].series)}"/> - <fmt:message key="season"/> ${tracks[0].season}
                                 </c:otherwise>
                             </c:choose>
                         </th>
@@ -126,13 +128,13 @@
                                    title="<fmt:message key="video"/>" class="tvshow">
                                     <c:choose>
                                         <c:when test="${empty track.id && track.season == -1}">
-                                            <c:out value="${cwfn:choose(mtfn:unknown(track.series), msgUnknown, track.series)}"/>
+                                            <c:out value="${cwfn:choose(mtfn:unknown(track.series), msgUnknownSeries, track.series)}"/>
                                         </c:when>
                                         <c:when test="${empty track.id}">
                                             <fmt:message key="season"/> ${track.season}
                                         </c:when>
                                         <c:otherwise>
-                                            <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}"/>
+                                            <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}"/>
                                         </c:otherwise>
                                     </c:choose>
                                     <c:if test="${!empty track.id && !empty track.comment}">
@@ -182,7 +184,8 @@
                                                    externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
                                                    editTagsType="${editTagsType}"
                                                    editTagsId="${editTagsId}"
-                                                   defaultPlaylistName="${playlistName}"/>
+                                                   defaultPlaylistName="${playlistName}"
+                                                   shareText="${playlistName}"/>
                                 </c:when>
                                 <c:otherwise>
                                     <c:if test="${authUser.player && config.showPlayer}">

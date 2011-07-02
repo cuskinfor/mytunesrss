@@ -79,7 +79,8 @@
                                        backUrl="${mtfn:encode64(backUrl)}"
                                        linkFragment="photoalbum=${mtfn:encode64(photoAlbum)}"
                                        filename="${mtfn:webSafeFileName(photoAlbum)}"
-                                       defaultPlaylistName="${photoAlbum}" />
+                                       defaultPlaylistName="${photoAlbum}"
+                                       shareText="${photoAlbum}" />
                     </td--%>
                 </tr>
                 <c:set var="fnCount" value="${fnCount + 1}"/>

@@ -115,20 +115,20 @@ public class TagService {
         }
     }
 
-    public void setTagsToAlbum(String album, String[] tags) throws IllegalAccessException, SQLException, IOException {
+    public void setTagsToAlbum(String album, String[] tags) throws IllegalAccessException, SQLException, IOException { // TODO album artist
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, SortOrder.KeepOrder)).getResults();
+            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, new String[0], SortOrder.KeepOrder)).getResults();
             setTagsToTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
             throw new IllegalAccessException("UNAUTHORIZED");
         }
     }
 
-    public void removeTagsFromAlbum(String album, String[] tags) throws IllegalAccessException, SQLException, IOException {
+    public void removeTagsFromAlbum(String album, String[] tags) throws IllegalAccessException, SQLException, IOException { // TODO album artist
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, SortOrder.KeepOrder)).getResults();
+            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(user, new String[]{album}, new String[0], SortOrder.KeepOrder)).getResults();
             removeTagsFromTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
             throw new IllegalAccessException("UNAUTHORIZED");

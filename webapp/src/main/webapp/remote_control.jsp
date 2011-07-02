@@ -21,7 +21,7 @@
 
         var trackNames = new Array(
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
-                "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknown, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknown, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
+                "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
             </c:forEach>
         );
 

@@ -20,7 +20,7 @@
     <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 
     <script type="text/javascript">
-        var unknownName = "<fmt:message key="unknown"/>";
+        var unknownArtist = "<fmt:message key="unknownArtist"/>";
         var firstItem = 0;
         var itemsPerPage = ${config.effectivePageSize};
         var pagesPerPager = 10;
@@ -68,7 +68,7 @@
                 displayProtected : (track.protected ? "inline" : "none"),
                 displayVideo : (track.mediaType == "Video" ? "inline" : "none"),
                 trackName : track.name,
-                trackArtist : track.artist != "!" ? track.artist : unknownName,
+                trackArtist : track.artist != "!" ? track.artist : unknownArtist^,
                 displayMoveUp : firstItem + i > 0 ? "inline" : "none",
                 displayMoveDown : firstItem + i + 1 < totalCount ? "inline" : "none"
             });

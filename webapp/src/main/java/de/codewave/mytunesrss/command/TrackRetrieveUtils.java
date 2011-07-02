@@ -65,6 +65,8 @@ public class TrackRetrieveUtils {
         decodeBase64(albums);
         String[] artists = getNonEmptyParameterValues(servletRequest, "artist");
         decodeBase64(artists);
+        String[] albumArtists = getNonEmptyParameterValues(servletRequest, "albumartist");
+        decodeBase64(albumArtists);
         String genre = MyTunesRssBase64Utils.decodeToString(getRequestParameter(servletRequest, "genre", null));
         String playlistId = getRequestParameter(servletRequest, "playlist", null);
         String sortOrderName = getRequestParameter(servletRequest, "sortOrder", SortOrder.Album.name());
@@ -74,7 +76,7 @@ public class TrackRetrieveUtils {
         int season = getIntegerRequestParameter(servletRequest, "season", -1);
 
         if (albums != null && albums.length > 0) {
-            return FindTrackQuery.getForAlbum(user, albums, sortOrderValue);
+            return FindTrackQuery.getForAlbum(user, albums, albumArtists != null ? albumArtists : new String[0], sortOrderValue);
         } else if (artists != null && artists.length > 0) {
             if (fullAlbums) {
                 Collection<String> albumNames = new HashSet<String>();
@@ -87,7 +89,7 @@ public class TrackRetrieveUtils {
                     }
                 }
                 return FindTrackQuery.getForAlbum(user,
-                                                  albumNames.toArray(new String[albumNames.size()]),
+                                                  albumNames.toArray(new String[albumNames.size()]), new String[0],
                                                   sortOrderValue);
             } else {
                 return FindTrackQuery.getForArtist(user, artists, sortOrderValue);
@@ -101,7 +103,7 @@ public class TrackRetrieveUtils {
                     albumNames.add(albumWithGenre.getName());
                 }
                 return FindTrackQuery.getForAlbum(user,
-                                                  albumNames.toArray(new String[albumNames.size()]),
+                                                  albumNames.toArray(new String[albumNames.size()]), new String[0],
                                                   sortOrderValue);
             } else {
                 return FindTrackQuery.getForGenre(user, new String[] {genre}, sortOrderValue);

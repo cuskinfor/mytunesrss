@@ -389,6 +389,11 @@ table.navigation {
     background: url("../images/action-tags.png") left top no-repeat;
 }
 
+.actions .share,
+.actionsMenu .share {
+    background: url("../images/action-share.png") left top no-repeat;
+}
+
 .actions .links,
 .actionsMenu .links {
     background: url("../images/action-links.png") left top no-repeat;

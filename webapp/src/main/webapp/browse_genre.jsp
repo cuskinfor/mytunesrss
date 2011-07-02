@@ -38,7 +38,7 @@
         <c:forEach items="${genres}" var="genre">
             <c:choose>
                 <c:when test="${mtfn:unknown(genre.name)}">
-                    <c:set var="genrename"><fmt:message key="unknown"/></c:set>
+                    <c:set var="genrename"><fmt:message key="unknownGenre"/></c:set>
                 </c:when>
                 <c:otherwise>
                     <c:set var="genrename" value="${genre.name}"/>
@@ -138,7 +138,8 @@
                                                            linkFragment="genre=${mtfn:encode64(genre.name)}"
                                                            filename="${mtfn:virtualGenreName(genre)}"
                                                            zipFileCount="${genre.trackCount}"
-                                                           defaultPlaylistName="${genre.name}" />
+                                                           defaultPlaylistName="${genre.name}"
+                                                           shareText="${genre.name}" />
                                         </c:when>
                                         <c:otherwise>
                                             <c:if test="${authUser.player && config.showPlayer}">

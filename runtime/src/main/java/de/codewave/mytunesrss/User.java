@@ -99,6 +99,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myGroup = false;
     private boolean myCreatePublicPlaylists = false;
     private boolean myPhotos = true;
+    private boolean myShare = true;
 
     public User(String name) {
         myName = name;
@@ -492,6 +493,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myPhotos = photos;
     }
 
+    public boolean isShare() {
+        return myShare;
+    }
+
+    public void setShare(boolean share) {
+        myShare = share;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -651,6 +660,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setGroup(JXPathUtils.getBooleanValue(settings, "group", myGroup));
         setCreatePublicPlaylists(JXPathUtils.getBooleanValue(settings, "createPublicPlaylists", myCreatePublicPlaylists));
         setPhotos(JXPathUtils.getBooleanValue(settings, "featurePhotos", myPhotos));
+        setPhotos(JXPathUtils.getBooleanValue(settings, "featureShare", myShare));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -740,6 +750,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "group", isGroup()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "createPublicPlaylists", isCreatePublicPlaylists()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePhotos", isPhotos()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureShare", isShare()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {
