@@ -513,7 +513,7 @@
         </sql>
     </statement>
 
-    <statement name="#">
+    <statement name="recreateHelpTablesGenre">
         <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO genre (name, lower_name, first_char, track_count, album_count, artist_count, hidden)
