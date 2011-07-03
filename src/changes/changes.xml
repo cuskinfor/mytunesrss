@@ -9,6 +9,9 @@
 
         <release version="4.1.0-EAP-5" date="2011-xx-xx">
             <action dev="mdescher" type="add">
+                Extended EAP license to 2011-09-30
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-139] Twitter integration
             </action>
             <action dev="mdescher" type="add">
