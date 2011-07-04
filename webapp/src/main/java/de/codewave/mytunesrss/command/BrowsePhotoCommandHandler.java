@@ -22,29 +22,26 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        if (isSessionAuthorized()) {
-            if (!getAuthUser().isPhotos()) {
-                addError(new BundleError("error.illegalAccess"));
-                forward(MyTunesRssCommand.ShowPortal);
-            } else {
-                String photoAlbumId = MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbumid", null));
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\".");
-                }
-                DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
-                int pageSize = getWebConfig().getEffectivePhotoPageSize();
-                if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
-                    int current = getSafeIntegerRequestParameter("index", 0);
-                    Pager pager = createPager(photoResult.getResultSize(), pageSize, current);
-                    getRequest().setAttribute("pager", pager);
-                    getRequest().setAttribute("photos", photoResult.getResults(current * pageSize, pageSize));
-                } else {
-                    getRequest().setAttribute("photos", photoResult.getResults());
-                }
-                forward(MyTunesRssResource.BrowsePhoto);
-            }
+        if (!getAuthUser().isPhotos()) {
+            addError(new BundleError("error.illegalAccess"));
+            forward(MyTunesRssCommand.ShowPortal);
         } else {
-            forward(MyTunesRssResource.Login);
+            String photoAlbumId = MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbumid", null));
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\".");
+            }
+            DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
+            int pageSize = getWebConfig().getEffectivePhotoPageSize();
+            if (pageSize > 0 && photoResult.getResultSize() > pageSize) {
+                int current = getSafeIntegerRequestParameter("index", 0);
+                Pager pager = createPager(photoResult.getResultSize(), pageSize, current);
+                getRequest().setAttribute("pager", pager);
+                getRequest().setAttribute("photos", photoResult.getResults(current * pageSize, pageSize));
+            } else {
+                getRequest().setAttribute("photos", photoResult.getResults());
+            }
+            getRequest().setAttribute("sessionAuthorized", isSessionAuthorized());
+            forward(MyTunesRssResource.BrowsePhoto);
         }
     }
 }

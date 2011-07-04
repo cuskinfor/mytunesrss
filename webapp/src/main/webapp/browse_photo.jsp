@@ -41,7 +41,7 @@
         });
     </script>
 
-    <!-- stolen code starts here -->
+    <%-- stolen code starts here --%>
 
     <style type="text/css">
 
@@ -117,7 +117,6 @@
     }
     .thumbwrap li .wrimg {
         display: block;
-        /* evita hasLayout per background position */
         width: auto;
         height: auto;
     }
@@ -128,7 +127,7 @@
     }
     </style><![endif]-->
 
-    <!-- stolen code ends here -->
+    <%-- stolen code ends here --%>
 
 </head>
 
@@ -138,7 +137,9 @@
     
         <div class="head">    
             <h1 class="browse">
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <c:if test="${sessionAuthorized}">
+                    <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                </c:if>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
@@ -146,13 +147,15 @@
         <div class="content">
             
             <div class="content-inner">
-                
-                <ul class="menu">
-                    <li class="back">
-                        <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
-                    </li>
-                </ul>
-                
+
+                <c:if test="${sessionAuthorized}">
+                    <ul class="menu">
+                        <li class="back">
+                            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+                        </li>
+                    </ul>
+                </c:if>
+
                 <jsp:include page="/incl_error.jsp" />
 
                 <table cellspacing="0" class="tracklist searchResult">
