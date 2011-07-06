@@ -3,9 +3,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
+<%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
-
-<%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 
 <div id="functionsmenu" class="dialog">
     <h2>MyTunesRSS</h2>
@@ -71,16 +70,16 @@
         $jQ("#showShareFormShareText").val(text);
         $jQ("#showShareFormRss").val($jQ("#fn_rss" + index).attr('href'));
         $jQ("#showShareFormPlaylist").val($jQ("#fn_playlist" + index).attr('href'));
-        $jQ("#showShareFormPlayer").val();
+        $jQ("#showShareFormJukebox").val($jQ("#fn_player" + index).attr("onclick").toString().replace(/\n/g, "").replace(/\r/g, "").replace(/.*\(\"/, "").replace(/\"\);.*/, ""));
         $jQ("#showShareFormDownload").val($jQ("#fn_download" + index).attr('href'));
         $jQ("#showShareForm").submit();
     }
 </script>
-<form id="showShareForm" action="${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/backUrl=${backUrl}</mt:encrypt>" method="post">
+<form id="showShareForm" action="${servletUrl}/showShareLink/<mt:encrypt key="${encryptionKey}">${auth}/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>" method="post">
     <input type="hidden" id="showShareFormShareText" name="text" value="" />
     <input type="hidden" id="showShareFormRss" name="rss" value="" />
     <input type="hidden" id="showShareFormPlaylist" name="playlist" value="" />
-    <input type="hidden" id="showShareFormPlayer" name="player" value="" />
+    <input type="hidden" id="showShareFormJukebox" name="jukebox" value="" />
     <input type="hidden" id="showShareFormDownload" name="download" value="" />
 </form>
 

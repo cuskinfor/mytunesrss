@@ -24,6 +24,25 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script type="text/javascript">
+        var links = new Array();
+
+        function displayLink() {
+            $jQ("#linkDisplay").text(links[$jQ("#linkSelect option:selected")[0].index]);
+        }
+
+        $jQ(document).ready(function() {
+            links[0] = "${rss}";
+            links[1] = "${playlist}";
+            links[2] = "${download}";
+            <c:forEach var="jukebox" items="${jukeboxes}" varStatus="loopStatus">
+            links[${3 + loopStatus.index}] = "${jukebox.value}";
+            </c:forEach>
+
+            displayLink();
+        });
+    </script>
+
 </head>
 
 <body class="trackinfo">
@@ -51,16 +70,21 @@
     </c:if>
 </ul>
 
-    Info: "${param.text}"<br />
+    <textarea id="comment" style="width: 100%">Listening to "${text}"</textarea><br />
+    Twitter tweets will have an additional "#MyTunesRSS" at the end. Facebook comments will have a link to
+    the MyTunesRSS product page.<br />
 
-    Facebook<br/>
+    <button>Twitter</button><button>Facebook</button><br />
 
-    Twitter<br/>
-
-    Playlist: ${param.playlist}<br />
-    Jukebox: ${param.player}<br />
-    Download: ${param.download}<br />
-    RSS: ${param.rss}<br />
+    <select id="linkSelect" onchange="displayLink()">
+        <option>RSS Feed</option>
+        <option>Playlist</option>
+        <option>Download</option>
+        <c:forEach var="jukebox" items="${jukeboxes}">
+            <option>${jukebox.key}</option>
+        </c:forEach>
+    </select><br />
+    <div id="linkDisplay"></div>
 
 </div>
 

@@ -216,7 +216,7 @@
                                     <a class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${cwfn:encodeUrl(playlistParams)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
-                                    <a class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+                                    <a class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
                             </c:if>
                         </td>
                     </tr>

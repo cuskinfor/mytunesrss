@@ -56,7 +56,7 @@
     <c:if test="${!config.showPlaylist}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.player}">
-	<a id="fn_player${index}" class="flash" <c:if test="${!config.showPlayer}">style="display:none"</c:if> onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+	<a id="fn_player${index}" class="flash" <c:if test="${!config.showPlayer}">style="display:none"</c:if> onclick="openPlayer('${servletUrl}/showJukebox/playerId=#ID#/<mt:encrypt key="${encryptionKey}">${auth}/playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
     <c:if test="${!config.showPlayer}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:choose>
@@ -67,7 +67,7 @@
         </a>
     </c:when>
     <c:when test="${!empty track && authUser.download}">
-        <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+        <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
     </c:when>
     <c:when test="${empty track && authUser.download && (authUser.maximumZipEntries <= 0 || zipFileCount <= authUser.maximumZipEntries)}">
         <a id="fn_download${index}" class="download" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
