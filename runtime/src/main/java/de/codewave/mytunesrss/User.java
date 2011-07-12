@@ -100,6 +100,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myCreatePublicPlaylists = false;
     private boolean myPhotos = true;
     private boolean myShare = true;
+    private String myTwitterAuthAccessToken;
+    private String myTwitterAuthTokenSecret;
 
     public User(String name) {
         myName = name;
@@ -499,6 +501,23 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setShare(boolean share) {
         myShare = share;
+    }
+
+    public String getTwitterAuthAccessToken() {
+        return myTwitterAuthAccessToken;
+    }
+    public String getTwitterAuthTokenSecret() {
+        return myTwitterAuthTokenSecret;
+    }
+
+    public void setTwitterAuth(String token, String secret) {
+        myTwitterAuthAccessToken = token;
+        myTwitterAuthTokenSecret = secret;
+    }
+
+    public void clearTwitterAuth() {
+        myTwitterAuthAccessToken = null;
+        myTwitterAuthTokenSecret = null;
     }
 
     @Override

@@ -55,7 +55,10 @@ public enum MyTunesRssCommand implements Command {
     AddToOneClickPlaylist("addToOneClickPlaylist", AddToOneClickPlaylistCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class),
     ShowPhoto("showPhoto", ShowPhotoCommandHandler.class),
-    ShowShareLink("showShareLink", ShowShareLinkCommandHandler.class);
+    ShowShareLink("showShareLink", ShowShareLinkCommandHandler.class),
+    ShareTwitter("shareTwitter", ShareTwitterCommandHandler.class),
+    ClearTwitterAuth("clearTwitterAuth", ClearTwitterAuthCommandHandler.class);
+
 
     private String myName;
     private Class<? extends CommandHandler> myCommandHandlerClass;

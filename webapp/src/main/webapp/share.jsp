@@ -41,6 +41,12 @@
 
             displayLink();
         });
+
+        function postForm(action) {
+            $jQ("#socialForm").attr("action", action);
+            $jQ("#socialForm").submit();
+        }
+
     </script>
 
 </head>
@@ -63,18 +69,22 @@
 <jsp:include page="/incl_error.jsp"/>
 
 <ul class="menu">
-    <c:if test="${!empty param.backUrl}">
-        <li class="back">
-            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
-        </li>
-    </c:if>
+    <li class="back">
+        <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+    </li>
 </ul>
 
-    <textarea id="comment" style="width: 100%">Listening to "${text}"</textarea><br />
+    <form id="socialForm" method="POST">
+        <textarea id="comment" name="comment" style="width: 100%">Listening to "${text}"</textarea><br/>
+        <input type="hidden" name="initial" value="true" />
+        <input type="hidden" name="backUrl" value="${selfLink}" />
+    </form>
     Twitter tweets will have an additional "#MyTunesRSS" at the end. Facebook comments will have a link to
     the MyTunesRSS product page.<br />
 
-    <button>Twitter</button><button>Facebook</button><br />
+    <button onclick="postForm('${servletUrl}/shareTwitter/${auth}')">Twitter</button>
+    <c:if test="${!empty authUser.twitterAuthAccessToken && !empty authUser.twitterAuthTokenSecret}"><button onclick="postForm('${servletUrl}/clearTwitterAuth/${auth}')">Clear Twitter Auth</button></c:if>
+    <button onClick="postForm('${servletUrl}/shareFacebook/${auth}')">Facebook</button><br />
 
     <select id="linkSelect" onchange="displayLink()">
         <option>RSS Feed</option>
