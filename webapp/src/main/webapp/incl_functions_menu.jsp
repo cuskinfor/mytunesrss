@@ -75,7 +75,7 @@
         $jQ("#showShareForm").submit();
     }
 </script>
-<form id="showShareForm" action="${servletUrl}/showShareLink/<mt:encrypt key="${encryptionKey}">${auth}/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>" method="post">
+<form id="showShareForm" action="${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>" method="post">
     <input type="hidden" id="showShareFormShareText" name="text" value="" />
     <input type="hidden" id="showShareFormRss" name="rss" value="" />
     <input type="hidden" id="showShareFormPlaylist" name="playlist" value="" />
