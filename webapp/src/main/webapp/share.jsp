@@ -24,11 +24,21 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+
     <script type="text/javascript">
+
         var links = new Array();
+        var facebookMessage = '${mtfn:escapeJs(facebookText)}';
 
         function displayLink() {
-            $jQ("#linkDisplay").text(links[$jQ("#linkSelect option:selected")[0].index]);
+            var selectedLink = links[$jQ("#linkSelect option:selected")[0].index];
+            $jQ("#linkDisplay").text(selectedLink);
+            for (var i = 0; i < links.length; i++) {
+                $jQ("#twitterButton" + i).css("display", "none");
+            }
+            $jQ("#twitterButton" + $jQ("#linkSelect option:selected")[0].index).css("display", "block");
+            $jQ("#facebookMessage").val(facebookMessage + "\r\n\r\n" + selectedLink);
         }
 
         $jQ(document).ready(function() {
@@ -41,11 +51,6 @@
 
             displayLink();
         });
-
-        function postForm(action) {
-            $jQ("#socialForm").attr("action", action);
-            $jQ("#socialForm").submit();
-        }
 
     </script>
 
@@ -66,35 +71,66 @@
 
 <div class="content-inner">
 
-<jsp:include page="/incl_error.jsp"/>
+    <jsp:include page="/incl_error.jsp"/>
 
-<ul class="menu">
-    <li class="back">
-        <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
-    </li>
-</ul>
-
-    <form id="socialForm" method="POST">
-        <textarea id="comment" name="comment" style="width: 100%">Listening to "${text}"</textarea><br/>
-        <input type="hidden" name="initial" value="true" />
-        <input type="hidden" name="backUrl" value="${selfLink}" />
-    </form>
-    Twitter tweets will have an additional "#MyTunesRSS" at the end. Facebook comments will have a link to
-    the MyTunesRSS product page.<br />
-
-    <button onclick="postForm('${servletUrl}/shareTwitter/${auth}')">Twitter</button>
-    <c:if test="${!empty authUser.twitterAuthAccessToken && !empty authUser.twitterAuthTokenSecret}"><button onclick="postForm('${servletUrl}/clearTwitterAuth/${auth}')">Clear Twitter Auth</button></c:if>
-    <button onClick="postForm('${servletUrl}/shareFacebook/${auth}')">Facebook</button><br />
+    <ul class="menu">
+        <li class="back">
+            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+        </li>
+    </ul>
 
     <select id="linkSelect" onchange="displayLink()">
-        <option>RSS Feed</option>
-        <option>Playlist</option>
-        <option>Download</option>
+        <option><fmt:message key="tooltip.rssfeed"/></option>
+        <option><fmt:message key="tooltip.playlist"/></option>
+        <option><fmt:message key="tooltip.playtrack"/></option>
         <c:forEach var="jukebox" items="${jukeboxes}">
             <option>${jukebox.key}</option>
         </c:forEach>
     </select><br />
+
     <div id="linkDisplay"></div>
+
+    <div id="twitterButton0">
+        <div>
+            <a href="http://twitter.com/share" class="twitter-share-button" data-text="<c:out value="${twitterText}"/>"
+               data-related="mytunesrss:MyTunesRSS Media Server" data-url="${rss}" data-count="none">Tweet</a>
+        </div>
+    </div>
+    <div id="twitterButton1" style="display:none">
+        <div>
+            <a href="http://twitter.com/share" class="twitter-share-button" data-text="<c:out value="${twitterText}"/>"
+               data-related="mytunesrss:MyTunesRSS Media Server" data-url="${playlist}" data-count="none">Tweet</a>
+        </div>
+    </div>
+    <div id="twitterButton2" style="display:none">
+        <div>
+            <a href="http://twitter.com/share" class="twitter-share-button" data-text="<c:out value="${twitterText}"/>"
+               data-related="mytunesrss:MyTunesRSS Media Server" data-url="${download}" data-count="none">Tweet</a>
+        </div>
+    </div>
+    <c:forEach var="jukebox" items="${jukeboxes}" varStatus="loopStatus">
+        <div id="twitterButton${3 + loopStatus.index}" style="display:none">
+            <div>
+                <a href="http://twitter.com/share" class="twitter-share-button" data-text="<c:out value="${twitterText}"/>"
+                   data-related="mytunesrss:MyTunesRSS Media Server" data-url="${jukebox.value}" data-count="none">Tweet</a>
+            </div>
+        </div>
+    </c:forEach>
+
+    <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="post">
+        <input type="hidden" name="app_id" value="102138059883364"/>
+        <input type="hidden" name="link" value="http://www.codewave.de/products/mytunesrss"/>
+        <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
+        <input type="hidden" name="name" value="MyTunesRSS"/>
+        <input type="hidden" name="caption" value="Your personal Media Server"/>
+        <input type="hidden" name="description" value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
+        <input id="facebookMessage" type="hidden" name="message" value=""/>
+        <input type="hidden" name="redirect_uri" value="${mtfn:decode64(param.backUrl)}"/>
+    </form>
+
+    <div>
+        <button onclick="$jQ('#facebookForm').submit()">Facebook</button>
+    </div>
 
 </div>
 
