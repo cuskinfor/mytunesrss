@@ -96,7 +96,7 @@
 
 <div id="shareLinkDialog" class="dialog">
     <h2>
-        <fmt:message key="shareLinkDialogTitle"/>
+        <fmt:message key="tooltip.share"/>
     </h2>
 
     <div id="shareLinkDialogContent">
