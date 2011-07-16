@@ -52,6 +52,29 @@
             displayLink();
         });
 
+        function shareFacebook() {
+            showLoading("<fmt:message key="facebook.shorteningUrl"/>");
+            new $jQ.ajax({
+                url : "${servletUrl}/shortenUrl/${auth}",
+                type : "POST",
+                contentType : "application/x-www-form-urlencoded",
+                processData : true,
+                data : {
+                    "url" : links[$jQ("#linkSelect option:selected")[0].index]
+                },
+                success : function(data) {
+                    $jQ("#facebookMessage").val(facebookMessage + "\r\n" + data);
+                    hideLoading();
+                    $jQ('#facebookForm').submit();
+                },
+                error : function() {
+                    $jQ("#facebookMessage").val(facebookMessage + "\r\n" + links[$jQ("#linkSelect option:selected")[0].index]);
+                    hideLoading();
+                    $jQ('#facebookForm').submit();
+                }
+            });
+        }
+
     </script>
 
 </head>
@@ -129,7 +152,7 @@
     </form>
 
     <div>
-        <button onclick="$jQ('#facebookForm').submit()">Facebook</button>
+        <button onclick="shareFacebook()">Facebook</button>
     </div>
 
 </div>
