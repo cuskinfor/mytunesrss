@@ -123,6 +123,7 @@ public class MyTunesRssConfig {
     private String mySelfRegisterTemplateUser;
     private boolean mySelfRegAdminEmail;
     private String myDefaultUserInterfaceTheme;
+    private String myFacebookApiKey;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -852,6 +853,14 @@ public class MyTunesRssConfig {
         myDefaultUserInterfaceTheme = defaultUserInterfaceTheme;
     }
 
+    public String getFacebookApiKey() {
+        return myFacebookApiKey;
+    }
+
+    public void setFacebookApiKey(String facebookApiKey) {
+        myFacebookApiKey = facebookApiKey;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1059,6 +1068,7 @@ public class MyTunesRssConfig {
         setSelfRegisterTemplateUser(JXPathUtils.getStringValue(settings, "selfreg-template-user", null));
         setSelfRegAdminEmail(JXPathUtils.getBooleanValue(settings, "selfreg-admin-email", true));
         setDefaultUserInterfaceTheme(JXPathUtils.getStringValue(settings, "default-ui-theme", null));
+        setFacebookApiKey(JXPathUtils.getStringValue(settings, "facebook-api-key", null));
     }
 
     /**
@@ -1367,6 +1377,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "selfreg-template-user", getSelfRegisterTemplateUser()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "selfreg-admin-email", isSelfRegAdminEmail()));
             root.appendChild(DOMUtils.createTextElement(settings, "default-ui-theme", getDefaultUserInterfaceTheme()));
+            root.appendChild(DOMUtils.createTextElement(settings, "facebook-api-key", getFacebookApiKey()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

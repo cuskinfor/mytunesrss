@@ -20,6 +20,7 @@
 <%--@elvariable id="msgUnknownArtist" type="java.lang.String"--%>
 <%--@elvariable id="msgUnknownAlbum" type="java.lang.String"--%>
 <%--@elvariable id="msgUnknownTrack" type="java.lang.String"--%>
+<%--@elvariable id="tracks" type="java.util.Collection<de.codewave.mytunesrss.TrackUtils.EnhancedTrack>"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -288,7 +289,7 @@
             </div>
             
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>

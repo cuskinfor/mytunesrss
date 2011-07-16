@@ -38,7 +38,6 @@
                 $jQ("#twitterButton" + i).css("display", "none");
             }
             $jQ("#twitterButton" + $jQ("#linkSelect option:selected")[0].index).css("display", "block");
-            $jQ("#facebookMessage").val(facebookMessage + "\r\n\r\n" + selectedLink);
         }
 
         $jQ(document).ready(function() {
@@ -140,20 +139,22 @@
         </div>
     </c:forEach>
 
-    <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="post">
-        <input type="hidden" name="app_id" value="102138059883364"/>
-        <input type="hidden" name="link" value="http://www.codewave.de/products/mytunesrss"/>
-        <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
-        <input type="hidden" name="name" value="MyTunesRSS"/>
-        <input type="hidden" name="caption" value="Your personal Media Server"/>
-        <input type="hidden" name="description" value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
-        <input id="facebookMessage" type="hidden" name="message" value=""/>
-        <input type="hidden" name="redirect_uri" value="${mtfn:decode64(param.backUrl)}"/>
-    </form>
-
-    <div>
-        <button onclick="shareFacebook()">Facebook</button>
-    </div>
+    <c:if test="${!empty globalConfig.facebookApiKey}">
+        <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="post">
+            <input type="hidden" name="app_id" value="${globalConfig.facebookApiKey}"/>
+            <input type="hidden" name="link" value="http://www.codewave.de/products/mytunesrss"/>
+            <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
+            <input type="hidden" name="name" value="MyTunesRSS"/>
+            <input type="hidden" name="caption" value="Your personal Media Server"/>
+            <input type="hidden" name="description"
+                   value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
+            <input id="facebookMessage" type="hidden" name="message" value=""/>
+            <input type="hidden" name="redirect_uri" value="${mtfn:decode64(param.backUrl)}"/>
+        </form>
+        <div>
+            <button onclick="shareFacebook()">Facebook</button>
+        </div>
+    </c:if>
 
 </div>
 
