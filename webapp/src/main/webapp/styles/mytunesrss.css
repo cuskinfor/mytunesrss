@@ -20,6 +20,14 @@ div.body {
     text-align: left;
 }
 
+div.linkDisplay {
+    height: 50px;
+    background-color: #FFFFFF;
+    border-color: #000000;
+    border: 1px solid;
+    padding: 5px;
+    overflow: auto;
+}
 
 /* Common */
 

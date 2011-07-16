@@ -16,8 +16,6 @@
 <%@ attribute name="defaultPlaylistName" required="false" type="java.lang.String" %>
 <%@ attribute name="shareText" required="false" type="java.lang.String" %>
 
-<%@ variable scope="AT_END" name-given="yahoo" %>
-
 <%--@elvariable id="appUrl" type="java.lang.String"--%>
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
@@ -65,6 +63,7 @@
         <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
             <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
         </a>
+        <a style="display:none" id="fn_download${index}" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>"></a>
     </c:when>
     <c:when test="${!empty track && authUser.download}">
         <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>

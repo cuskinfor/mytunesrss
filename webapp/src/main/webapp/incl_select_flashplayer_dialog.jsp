@@ -31,7 +31,7 @@
 <script type="text/javascript">
 
     function doOpenPlayerWithParams(url, width, height) {
-        var flashPlayer = window.open(url, "MyTunesRssFlashPlayer", "width=" + width + ",height=" + height + ",resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
+        var flashPlayer = centerPopupWindow(url, "MyTunesRssFlashPlayer", width, height, "resizable=no,location=no,menubar=no,scrollbars=no,status=no,toolbar=no,hotkeys=no");
         flashPlayer.onload = function() {
             flashPlayer.document.title = self.document.title;
         }

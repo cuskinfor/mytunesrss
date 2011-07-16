@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.command;
 import de.codewave.utils.servlet.Command;
 import de.codewave.utils.servlet.CommandHandler;
 
+import java.nio.channels.ClosedSelectorException;
+
 public enum MyTunesRssCommand implements Command {
     Login("login", DoLoginCommandHandler.class),
     ShowFatalError("showFatalError", ShowFatalErrorCommandHandler.class),
@@ -56,7 +58,8 @@ public enum MyTunesRssCommand implements Command {
     OpenSearch("openSearch", OpenSearchCommandHandler.class),
     ShowPhoto("showPhoto", ShowPhotoCommandHandler.class),
     ShowShareLink("showShareLink", ShowShareLinkCommandHandler.class),
-    ShortenUrl("shortenUrl", ShortenUrlCommandHandler.class);
+    ShortenUrl("shortenUrl", ShortenUrlCommandHandler.class),
+    CloseWindow("closeWindow", CloseWindowCommandHandler.class);
 
 
     private String myName;

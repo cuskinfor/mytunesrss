@@ -47,7 +47,8 @@ public enum MyTunesRssResource {
     BrowseTvShow("/browse_tvshow.jsp"),
     BrowsePhotoAlbum("/browse_photoalbum.jsp"),
     BrowsePhoto("/browse_photo.jsp"),
-    ShareLink("/share.jsp");
+    ShareLink("/share.jsp"),
+    CloseWindow("/close_window.jsp");
 
     private String myValue;
 

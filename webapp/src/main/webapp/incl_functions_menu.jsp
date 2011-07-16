@@ -67,19 +67,39 @@
 
 <script type="text/javascript">
     function showShareLink(index, text) {
+        new $jQ.ajax({
+            url : "${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>",
+            type : "POST",
+            contentType : "application/x-www-form-urlencoded",
+            processData : true,
+            data : {
+                "text" : text,
+                "rss" : $jQ("#fn_rss" + index).attr('href'),
+                "playlist" : $jQ("#fn_playlist" + index).attr('href'),
+                "jukebox" : $jQ("#fn_player" + index).attr("onclick").toString().replace(/\n/g, "").replace(/\r/g, "").replace(/.*\(\"/, "").replace(/\"\);.*/, ""),
+                "download" : $jQ("#fn_download" + index).attr('href')
+            },
+            success : function(data) {
+                $jQ("#shareLinkDialogContent").html(data);
+                openDialog("#shareLinkDialog");
+            }
+        });
+
         $jQ("#showShareFormShareText").val(text);
-        $jQ("#showShareFormRss").val($jQ("#fn_rss" + index).attr('href'));
-        $jQ("#showShareFormPlaylist").val($jQ("#fn_playlist" + index).attr('href'));
-        $jQ("#showShareFormJukebox").val($jQ("#fn_player" + index).attr("onclick").toString().replace(/\n/g, "").replace(/\r/g, "").replace(/.*\(\"/, "").replace(/\"\);.*/, ""));
-        $jQ("#showShareFormDownload").val($jQ("#fn_download" + index).attr('href'));
+        $jQ("#showShareFormRss").val();
+        $jQ("#showShareFormPlaylist").val();
+        $jQ("#showShareFormJukebox").val();
+        $jQ("#showShareFormDownload").val();
         $jQ("#showShareForm").submit();
     }
 </script>
-<form id="showShareForm" action="${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>" method="post">
-    <input type="hidden" id="showShareFormShareText" name="text" value="" />
-    <input type="hidden" id="showShareFormRss" name="rss" value="" />
-    <input type="hidden" id="showShareFormPlaylist" name="playlist" value="" />
-    <input type="hidden" id="showShareFormJukebox" name="jukebox" value="" />
-    <input type="hidden" id="showShareFormDownload" name="download" value="" />
-</form>
 
+<div id="shareLinkDialog" class="dialog">
+    <h2>
+        <fmt:message key="shareLinkDialogTitle"/>
+    </h2>
+
+    <div id="shareLinkDialogContent">
+    </div>
+
+</div>
