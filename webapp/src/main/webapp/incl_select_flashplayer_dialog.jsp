@@ -42,8 +42,8 @@
         var url = $jQ('#selectFlashPlayerDialog').data("url").replace(/#ID#/, val[0]);
         var width = val[1];
         var height = val[2];
-        doOpenPlayerWithParams(url, width, height);
         $jQ.modal.close();
+        doOpenPlayerWithParams(url, width, height);
     }
 
     function openPlayer(url) {
