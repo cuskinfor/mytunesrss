@@ -27,6 +27,7 @@ div.linkDisplay {
     border: 1px solid;
     padding: 5px;
     overflow: auto;
+    margin: 10px 0 10px 0;
 }
 
 /* Common */
@@ -1236,11 +1237,15 @@ div.dialog h2 {
 }
 
 
-div.dialog div {
+div.dialog > div {
     margin: 10px
 }
 
 #simplemodal-overlay {
     background-color: #000;
     cursor: wait;
+}
+
+div.shareLinkDialogContent {
+    text-align: left;
 }

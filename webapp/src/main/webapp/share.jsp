@@ -77,6 +77,7 @@
 
 </script>
 
+<fmt:message key="share.selectLink"/>:
 <select id="linkSelect" onchange="displayLink()">
     <option><fmt:message key="tooltip.rssfeed"/></option>
     <option><fmt:message key="tooltip.playlist"/></option>
@@ -88,15 +89,16 @@
 
 <div class="linkDisplay" id="linkDisplay"></div>
 
+<button onclick="shareTwitter()">Twitter</button>
+<c:if test="${!empty globalConfig.facebookApiKey}">
+    <button onclick="shareFacebook()">Facebook</button>
+</c:if>
+
 <form id="twitterForm" action="http://twitter.com/share" method="post" target="MyTunesRssTwitter">
     <input type="hidden" id="twitterUrl" name="url" value=""/>
     <input type="hidden" id="twitterMessage" name="text" value=""/>
     <input type="hidden" name="related" value="mytunesrss:MyTunesRSS Media Server"/>
 </form>
-<div>
-    <button onclick="shareTwitter()">Twitter</button>
-</div>
-
 <c:if test="${!empty globalConfig.facebookApiKey}">
     <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="post" target="MyTunesRssFacebook">
         <input type="hidden" name="app_id" value="${globalConfig.facebookApiKey}"/>
@@ -109,7 +111,4 @@
         <input id="facebookMessage" type="hidden" name="message" value=""/>
         <input type="hidden" name="redirect_uri" value="${servletUrl}/closeWindow"/>
     </form>
-    <div>
-        <button onclick="shareFacebook()">Facebook</button>
-    </div>
 </c:if>
