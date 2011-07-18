@@ -9,6 +9,9 @@
 
         <release version="4.1.0-EAP-5" date="2011-xx-xx">
             <action dev="mdescher" type="add">
+                Added Yahoo Media Player jukebox.
+            </action>
+            <action dev="mdescher" type="add">
                 Allow viewing a single photo album with an authorized request only (no authorized session).
             </action>
             <action dev="mdescher" type="add">

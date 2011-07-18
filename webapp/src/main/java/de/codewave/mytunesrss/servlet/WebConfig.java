@@ -152,7 +152,6 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
-        myConfigValues.put(CFG_FLASH_PLAYER, FlashPlayerConfig.HTML5.getId());
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
         myConfigValues.put(CFG_PHOTO_SIZE, "600");

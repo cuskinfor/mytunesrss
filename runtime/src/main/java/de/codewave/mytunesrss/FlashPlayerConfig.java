@@ -5,7 +5,6 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     public static final FlashPlayerConfig JW46 = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", DEFAULT_PRE + "<embed src=\"mediaplayer-4-6.swf\" width=\"600\" height=\"276\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
     public static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", DEFAULT_PRE + "<embed src=\"mediaplayer-4-6.swf\" width=\"600\" height=\"276\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list&amp;shuffle=true\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
     public static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", DEFAULT_PRE + "<embed src=\"xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url={PLAYLIST_URL}\" width=\"600\" height=\"450\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"displaywidth=256\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 450, TimeUnit.MILLISECONDS);
-    public static final FlashPlayerConfig HTML5 = new FlashPlayerConfig("mytunesrss_html5", "iPhone Player", "", PlaylistFileType.Json, 320, 480, TimeUnit.SECONDS);
+    public static final FlashPlayerConfig YAHOO = new FlashPlayerConfig("yahoo", "Yahoo Media Player", getPlayerCode("/de/codewave/mytunesrss/yahoo_media_player.html"), PlaylistFileType.Xspf, 700, 340, TimeUnit.SECONDS);
 
     public static final FlashPlayerConfig ABSOLUTE_DEFAULT = JW46;
 
@@ -39,23 +38,27 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
         DEFAULTS.add(JW46);
         DEFAULTS.add(JW46_SHUFFLE);
         DEFAULTS.add(SIMPLE);
-        InputStream stream = FlashPlayerConfig.class.getResourceAsStream("/de/codewave/mytunesrss/html5_player.html");
+        DEFAULTS.add(YAHOO);
+    }
+
+    private static final String getPlayerCode(String file) {
+        InputStream stream = FlashPlayerConfig.class.getResourceAsStream(file);
         try {
-            HTML5.setHtml(StringUtils.join((List<String>) IOUtils.readLines(stream), System.getProperty("line.separator")));
-            DEFAULTS.add(HTML5);
+            return StringUtils.join((List<String>) IOUtils.readLines(stream), System.getProperty("line.separator"));
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not read from stream.");
+                LOGGER.error("Could not read stream from \"" + file + "\".");
             }
         } finally {
             try {
                 stream.close();
             } catch (IOException e) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not close stream.");
+                    LOGGER.error("Could not close stream from \"" + file + "\".");
                 }
             }
         }
+        return "<html><body><h1>Jukebox could not be loaded!</h1></body></html>";
     }
 
     public static Set<FlashPlayerConfig> getDefaults() {
