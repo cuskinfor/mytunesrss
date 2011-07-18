@@ -50,7 +50,7 @@
     function centerPopupWindow(url, name, width, height, params) {
         var centerWidth = (window.screen.width - width) / 2;
         var centerHeight = (window.screen.height - height) / 2;
-        window.open(url, name, "left=" + centerWidth + ",top=" + centerHeight + ",width=" + width + ",height=" + height + (params === undefined ? "" : "," + params));
+        return window.open(url, name, "left=" + centerWidth + ",top=" + centerHeight + ",width=" + width + ",height=" + height + (params === undefined ? "" : "," + params));
     }
 
 </script>
