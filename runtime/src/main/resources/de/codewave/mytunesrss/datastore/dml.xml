@@ -511,7 +511,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(artist), lower_album_artist, SUBSTRING(MAX(lower_album_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
+            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_artist
         </sql>
     </statement>
 
