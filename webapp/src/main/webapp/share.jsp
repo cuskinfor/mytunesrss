@@ -109,6 +109,6 @@
         <input type="hidden" name="description"
                value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
         <input id="facebookMessage" type="hidden" name="message" value=""/>
-        <input type="hidden" name="redirect_uri" value="${servletUrl}/closeWindow"/>
+        <input type="hidden" name="redirect_uri" value="http://mytunesrss.com/tools/close_window.php"/>
     </form>
 </c:if>
