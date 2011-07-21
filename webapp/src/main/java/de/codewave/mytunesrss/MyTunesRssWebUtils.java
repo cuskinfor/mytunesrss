@@ -74,7 +74,7 @@ public class MyTunesRssWebUtils {
     public static String encryptPathInfo(HttpServletRequest request, String pathInfo) {
         String result = pathInfo;
         try {
-            if (MyTunesRss.CONFIG.getPathInfoKey() != null && (getAuthUser(request) == null || getAuthUser(request).isUrlEncryption())) {
+            if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
                 Cipher cipher = Cipher.getInstance(MyTunesRss.CONFIG.getPathInfoKey().getAlgorithm());
                 cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
                 result = "%7B" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "%7D";

@@ -85,7 +85,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private int myLastFmHardFailureCount;
     private long myLastFmHandshakeTime;
     private long myLastFmHandshakeWaitTime;
-    private boolean myUrlEncryption = true;
     private String myEmail;
     private boolean myChangeEmail = true;
     private boolean myRemoteControl = true;
@@ -385,14 +384,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         return StringUtils.isNotEmpty(getLastFmUsername()) && getLastFmPasswordHash() != null && getLastFmPasswordHash().length > 0;
     }
 
-    public boolean isUrlEncryption() {
-        return getParent() != null ? getParent().isUrlEncryption() : myUrlEncryption;
-    }
-
-    public void setUrlEncryption(boolean urlEncryption) {
-        myUrlEncryption = urlEncryption;
-    }
-
     public String getEmail() {
         return myEmail;
     }
@@ -636,7 +627,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
         setLastFmUsername(JXPathUtils.getStringValue(settings, "lastFmUser", myLastFmUsername));
         setLastFmPasswordHash(JXPathUtils.getByteArray(settings, "lastFmPassword", myLastFmPasswordHash));
-        setUrlEncryption(JXPathUtils.getBooleanValue(settings, "urlEncryption", myUrlEncryption));
         setEmail(JXPathUtils.getStringValue(settings, "email", myEmail));
         setRemoteControl(JXPathUtils.getBooleanValue(settings, "remoteControl", myRemoteControl));
         myParent = new UserProxy(JXPathUtils.getStringValue(settings, "parent", null));
@@ -729,7 +719,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             users.appendChild(DOMUtils.createTextElement(settings, "lastFmUser", getLastFmUsername()));
             users.appendChild(DOMUtils.createByteArrayElement(settings, "lastFmPassword", getLastFmPasswordHash()));
         }
-        users.appendChild(DOMUtils.createBooleanElement(settings, "urlEncryption", isUrlEncryption()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "remoteControl", isRemoteControl()));
         users.appendChild(DOMUtils.createTextElement(settings, "parent", getParent() != null ? getParent().getName() : null));
         users.appendChild(DOMUtils.createBooleanElement(settings, "externalSites", isExternalSites()));

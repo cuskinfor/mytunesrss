@@ -68,7 +68,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox mySharedUser;
     private SmartTextField myLastFmUsername;
     private SmartTextField myLastFmPassword;
-    private CheckBox myEncryptUrls;
     private User myUser;
     private UserConfigPanel myUserConfigPanel;
     private CheckBox myExpire;
@@ -211,7 +210,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         mySharedUser = getComponentFactory().createCheckBox("editUserConfigPanel.sharedUser");
         myLastFmUsername = getComponentFactory().createTextField("editUserConfigPanel.lastFmUsername");
         myLastFmPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.lastFmPassword");
-        myEncryptUrls = getComponentFactory().createCheckBox("editUserConfigPanel.encryptUrls");
         myOptionsForm = getComponentFactory().createForm(null, true);
         if (myUser.getParent() == null) {
             myOptionsForm.addField("searchFuzziness", mySearchFuzziness);
@@ -221,7 +219,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myOptionsForm.addField("sessionTimeout", mySessionTimeout);
             myOptionsForm.addField("bandwidthLimit", myBandwidthLimit);
             myOptionsForm.addField("sharedUser", mySharedUser);
-            myOptionsForm.addField("encryptUrls", myEncryptUrls);
         }
         if (!myUser.isGroup()) {
             myOptionsForm.addField("lastFmUsername", myLastFmUsername);
@@ -268,7 +265,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myPermStandardPlaylist.setValue(myUser.isSpecialPlaylists());
             myPermTranscoder.setValue(myUser.isTranscoder());
             myPermUpload.setValue(myUser.isUpload());
-            myEncryptUrls.setValue(myUser.isUrlEncryption());
             myPlaylistsRestrictions.removeAllItems();
             List<Playlist> playlists = Collections.emptyList();
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -352,7 +348,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setCreatePublicPlaylists(myPermCreatePublicPlaylists.booleanValue());
         myUser.setPhotos(myPermPhotos.booleanValue());
         myUser.setShare(myPermShare.booleanValue());
-        //myUser.setDownBytes();
         myUser.setDownload(myPermDownload.booleanValue());
         myUser.setYahooPlayer(myPermYahooPlayer.booleanValue());
         myUser.setEditLastFmAccount(myPermEditLastFm.booleanValue());
@@ -367,11 +362,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
         myUser.setPlayer(myPermFlashPlayer.booleanValue());
         myUser.setPlaylist(myPermPlaylist.booleanValue());
-        //myUser.setQuotaDownBytes();
-        //myUser.setQuotaResetTime();
         myUser.setQuotaType((User.QuotaType) myDownloadLimitType.getValue());
         myUser.setRemoteControl(myPermRemote.booleanValue());
-        //myUser.setResetTime();
         myUser.setRss(myPermRss.booleanValue());
         myUser.setSharedUser(mySharedUser.booleanValue());
         myUser.setSearchFuzziness(mySearchFuzziness.getIntegerValue(-1));
@@ -379,7 +371,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setSpecialPlaylists(myPermStandardPlaylist.booleanValue());
         myUser.setTranscoder(myPermTranscoder.booleanValue());
         myUser.setUpload(myPermUpload.booleanValue());
-        myUser.setUrlEncryption(myEncryptUrls.booleanValue());
         Set<String> restricted = new HashSet<String>();
         Set<String> excluded = new HashSet<String>();
         for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
