@@ -1,0 +1,31 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="h2" type="Application" factoryName="Application">
+    <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
+    <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
+    <option name="VM_PARAMETERS" value="-Xms32m -Xmx256m -Xbootclasspath/p:lib/codewave-zis-1.1.jar:lib/xercesImpl-2.9.1.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=4.1.0-EAP-5 -Dde.codewave.mytunesrss -Dde.codewave.mytunesrss.addons.builtin=../../etc -Dde.codewave.mytunesrss.native=../../etc/ffmpeg/mac " />
+    <option name="PROGRAM_PARAMETERS" value="-cacheDataPath $USER_HOME$/Library/Caches/MyTunesRSS41/h2 -prefsDataPath $USER_HOME$/Library/Preferences/MyTunesRSS41/h2" />
+    <option name="WORKING_DIRECTORY" value="file://$PROJECT_DIR$/target/idea" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+    <option name="ALTERNATIVE_JRE_PATH" value="" />
+    <option name="ENABLE_SWING_INSPECTOR" value="false" />
+    <option name="ENV_VARIABLES" />
+    <option name="PASS_PARENT_ENVS" value="true" />
+    <module name="runtime" />
+    <envs />
+    <RunnerSettings RunnerId="Debug">
+      <option name="DEBUG_PORT" value="54699" />
+      <option name="TRANSPORT" value="0" />
+      <option name="LOCAL" value="true" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Profile ">
+      <option name="myExternalizedOptions" value="&#10;additional-options2=onexit\=snapshot&#10;" />
+    </RunnerSettings>
+    <RunnerSettings RunnerId="Run" />
+    <ConfigurationWrapper RunnerId="Debug" />
+    <ConfigurationWrapper RunnerId="Profile " />
+    <ConfigurationWrapper RunnerId="Run" />
+    <method>
+      <option name="Make" enabled="false" />
+    </method>
+  </configuration>
+</component>

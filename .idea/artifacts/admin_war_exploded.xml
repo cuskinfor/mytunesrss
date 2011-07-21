@@ -1,0 +1,18 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" build-on-make="true" name="admin:war exploded">
+    <output-path>$PROJECT_DIR$/admin/target/admin-4.1.0-EAP-5-SNAPSHOT</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="admin/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="admin" />
+        </element>
+        <element id="directory" name="lib">
+          <element id="library" level="project" name="Maven: com.vaadin:vaadin:6.6.0" />
+          <element id="library" level="project" name="Maven: org.vaadin.addons:refresher:1.1.0" />
+          <element id="library" level="project" name="Maven: org.vaadin.addons:vaadin-treetable:1.2.0" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
