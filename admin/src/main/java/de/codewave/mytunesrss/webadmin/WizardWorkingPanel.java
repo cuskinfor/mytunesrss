@@ -41,6 +41,16 @@ public class WizardWorkingPanel extends Panel implements Refresher.RefreshListen
                 LOGGER.info("Forwarding to user interface URL \"" + url + "\".");
             }
             VaadinUtils.getApplicationWindow(this).open(new ExternalResource(url));
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        Thread.sleep(2000);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    ((MainWindow) VaadinUtils.getApplicationWindow(WizardWorkingPanel.this)).showComponent(new StatusPanel());
+                }
+            }).start();
         }
     }
 }
