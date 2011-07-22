@@ -47,13 +47,13 @@
     }
     function functionMenuClick(name) {
         $jQ.modal.close();
-        if ($jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).attr('href') == undefined) {
+        //if ($jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).attr('href') == undefined) {
             setTimeout(function() {
                 $jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).trigger('click')
             }, 10);
-        } else {
-            self.document.location.href = $jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).attr('href');
-        }
+        //} else {
+        //    self.document.location.href = $jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).attr('href');
+        //}
     }
     function showHideLink(name) {
         if ($jQ("#fn_" + name + $jQ('#functions').data('functionIndex')).length == 0) {
@@ -76,7 +76,7 @@
                 "text" : text,
                 "rss" : $jQ("#fn_rss" + index).attr('href'),
                 "playlist" : $jQ("#fn_playlist" + index).attr('href'),
-                "jukebox" : $jQ("#fn_player" + index).attr("onclick").toString().replace(/\n/g, "").replace(/\r/g, "").replace(/.*\(\"/, "").replace(/\"\);.*/, ""),
+                "jukebox" : $jQ("#fn_player" + index).attr("href"),
                 "download" : $jQ("#fn_download" + index).attr('href')
             },
             success : function(data) {
