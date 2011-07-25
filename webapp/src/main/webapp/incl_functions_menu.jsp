@@ -47,13 +47,9 @@
     }
     function functionMenuClick(name) {
         $jQ.modal.close();
-        //if ($jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).attr('href') == undefined) {
-            setTimeout(function() {
-                $jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).trigger('click')
-            }, 10);
-        //} else {
-        //    self.document.location.href = $jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).attr('href');
-        //}
+        setTimeout(function() {
+            $jQ('#fn_' + name + $jQ('#functions').data('functionIndex')).trigger('click')
+        }, 10);
     }
     function showHideLink(name) {
         if ($jQ("#fn_" + name + $jQ('#functions').data('functionIndex')).length == 0) {
