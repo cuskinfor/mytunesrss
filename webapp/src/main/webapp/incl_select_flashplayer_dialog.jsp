@@ -54,7 +54,7 @@
                 openDialog("#selectFlashPlayerDialog");
             </c:when>
             <c:otherwise>
-                doOpenPlayerWithParams(url.replace(/#ID#/, "${config.flashplayer}"), ${mtfn:flashPlayerConfig(config.flashplayer).width}, ${mtfn:flashPlayerConfig(config.flashplayer).height});
+                doOpenPlayerWithParams(url.replace("#ID#", "${config.flashplayer}"), ${mtfn:flashPlayerConfig(config.flashplayer).width}, ${mtfn:flashPlayerConfig(config.flashplayer).height});
             </c:otherwise>
         </c:choose>
     }
