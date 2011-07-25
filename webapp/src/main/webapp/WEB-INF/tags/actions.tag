@@ -54,7 +54,8 @@
     <c:if test="${!config.showPlaylist}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.player}">
-	<a id="fn_player${index}" class="flash" <c:if test="${!config.showPlayer}">style="display:none"</c:if> href="${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt>" onclick="openPlayer($jQ('#fn_player${index}').attr('href')); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+    <c:set var="jukeboxUrl">${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${filename}.xspf</mt:encrypt></c:set>
+	<a id="fn_player${index}" class="flash" <c:if test="${!config.showPlayer}">style="display:none"</c:if> href="${jukeboxUrl}" onclick="openPlayer('${jukeboxUrl}'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
     <c:if test="${!config.showPlayer}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:choose>
