@@ -21,16 +21,12 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private String getPlaylistUrl(PlaylistFileType playlistFileType, TimeUnit timeUnit) {
-        StringBuilder playlistUrl = new StringBuilder(MyTunesRssWebUtils.getServletUrl(getRequest()));
-        String auth = (String) getRequest().getAttribute("auth");
-        if (StringUtils.isBlank(auth)) {
-            auth = (String) getSession().getAttribute("auth");
-        }
-        playlistUrl.append("/").append(MyTunesRssCommand.CreatePlaylist.getName()).append("/").append(auth);
-        playlistUrl.append("/fpr=1");
-        playlistUrl.append("/timeunit=").append(timeUnit.name());
-        playlistUrl.append("/").append(MyTunesRssWebUtils.encryptPathInfo(getRequest(), getRequestParameter("playlistParams", null) + "/type=" + convertPlaylistType(playlistFileType).name()));
-        return playlistUrl.toString();
+        MyTunesRssCommandCallBuilder builder = new MyTunesRssCommandCallBuilder(MyTunesRssCommand.CreatePlaylist);
+        builder.addParam("fpr", "1");
+        builder.addParam("timeunit", timeUnit.name());
+        builder.addParam("type", convertPlaylistType(playlistFileType).name());
+        builder.addPathInfoSegment(getRequestParameter("playlistParams", null));
+        return builder.getCall(getRequest());
     }
 
     private WebConfig.PlaylistType convertPlaylistType(PlaylistFileType playlistFileType) {
