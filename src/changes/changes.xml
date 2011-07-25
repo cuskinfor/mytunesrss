@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.0-EAP-6" date="2011-xx-xx">
+            <action dev="mdescher" type="fix">
+                Flash player open javascript did not work on the Wii.
+            </action>
+        </release>
+
         <release version="4.1.0-EAP-5" date="2011-07-23">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-277] Sharing pane: links for Jukebox broken
