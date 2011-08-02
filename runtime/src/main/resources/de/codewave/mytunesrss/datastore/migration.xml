@@ -268,4 +268,9 @@
         <sql>ALTER TABLE track ALTER COLUMN lower_album_artist SET NOT NULL</sql>
     </statement>
 
+    <statement name="migrate_4.1.0_eap_6">
+        <sql>ALTER TABLE track ADD COLUMN composer VARCHAR(1024)</sql>
+        <sql>ALTER TABLE smart_info ADD COLUMN composer_pattern VARCHAR(100)</sql>
+    </statement>
+
 </statements>

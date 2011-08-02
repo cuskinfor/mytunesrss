@@ -44,6 +44,8 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setSeries(resultSet.getString("SERIES"));
         track.setSeason(resultSet.getInt("SEASON"));
         track.setEpisode(resultSet.getInt("EPISODE"));
+        track.setAlbumArtist(resultSet.getString("ALBUM_ARTIST"));
+        track.setComposer(resultSet.getString("COMPOSER"));
         return track;
     }
 }

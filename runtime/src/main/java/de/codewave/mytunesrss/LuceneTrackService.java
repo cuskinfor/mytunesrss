@@ -115,8 +115,14 @@ public class LuceneTrackService {
         if (StringUtils.isNotBlank(track.getComment())) {
             document.add(new Field("comment", StringUtils.lowerCase(track.getComment()), Field.Store.NO, Field.Index.ANALYZED));
         }
+        if (StringUtils.isNotBlank(track.getAlbumArtist())) {
+            document.add(new Field("album_artist", StringUtils.lowerCase(track.getAlbumArtist()), Field.Store.NO, Field.Index.ANALYZED));
+        }
         if (StringUtils.isNotBlank(track.getGenre())) {
             document.add(new Field("genre", StringUtils.lowerCase(track.getGenre()), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        if (StringUtils.isNotBlank(track.getComposer())) {
+            document.add(new Field("composer", StringUtils.lowerCase(track.getComposer()), Field.Store.NO, Field.Index.ANALYZED));
         }
         if (trackTagMap.get(track.getId()) != null) {
             document.add(new Field("tags", StringUtils.lowerCase(StringUtils.join(trackTagMap.get(track.getId()), " ")), Field.Store.NO, Field.Index.ANALYZED));
@@ -241,7 +247,7 @@ public class LuceneTrackService {
         BooleanQuery andQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
             BooleanQuery orQuery = new BooleanQuery();
-            for (String field : new String[]{"name", "album", "artist", "series", "comment", "tags"}) {
+            for (String field : new String[]{"name", "album", "artist", "series", "comment", "tags", "album_artist", "composer"}) {
                 String escapedSearchTerm = QueryParser.escape(searchTerm);
                 orQuery.add(new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*")), BooleanClause.Occur.SHOULD);
                 if (fuzziness > 0) {
@@ -287,6 +293,8 @@ public class LuceneTrackService {
         addToAndQuery(andQuery, "name", StringUtils.lowerCase(smartInfo.getTitlePattern()), fuzziness);
         addToAndQuery(andQuery, "comment", StringUtils.lowerCase(smartInfo.getCommentPattern()), fuzziness);
         addToAndQuery(andQuery, "filename", StringUtils.lowerCase(smartInfo.getFilePattern()), fuzziness);
+        addToAndQuery(andQuery, "album_artist", StringUtils.lowerCase(smartInfo.getArtistPattern()), fuzziness);
+        addToAndQuery(andQuery, "composer", StringUtils.lowerCase(smartInfo.getComposerPattern()), fuzziness);
         return andQuery;
     }
 

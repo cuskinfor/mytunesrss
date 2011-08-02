@@ -247,12 +247,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (StringUtils.isEmpty(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
-                String yearString;
-                if (tag.isId3v1()) {
-                    yearString = StringUtils.defaultIfEmpty(((Id3v1Tag) tag).getYear(), "-1");
-                } else {
-                    yearString = StringUtils.defaultIfEmpty(((Id3v2Tag) tag).getFrameBodyToString("TYE", "TYER"), "-1");
-                }
+                String yearString = StringUtils.defaultIfEmpty(tag.getYear(), "-1");
                 try {
                     statement.setYear(Integer.parseInt(yearString));
                 } catch (NumberFormatException e) {
@@ -265,7 +260,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
-                    String pos = id3v2Tag.getFrameBodyToString("TPA", "TPOS");
+                    String pos = id3v2Tag.getPos();
                     try {
                         if (StringUtils.isNotEmpty(pos)) {
                             String[] posParts = pos.split("/");
@@ -284,6 +279,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
                 statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull(createComment(tag))));
+                statement.setComposer(tag.isId3v2() ? ((Id3v2Tag)tag).getComposer() : null);
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);

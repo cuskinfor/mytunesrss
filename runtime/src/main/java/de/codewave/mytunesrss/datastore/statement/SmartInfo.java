@@ -21,6 +21,7 @@ public class SmartInfo {
     private Boolean myProtected;
     private MediaType myMediaType;
     private VideoType myVideoType;
+    private String myComposerPattern;
 
     public String getAlbumPattern() {
         return myAlbumPattern;
@@ -126,7 +127,15 @@ public class SmartInfo {
         myVideoType = videoType;
     }
 
+    public String getComposerPattern() {
+        return myComposerPattern;
+    }
+
+    public void setComposerPattern(String composerPattern) {
+        myComposerPattern = composerPattern;
+    }
+
     public boolean isLuceneCriteria() {
-        return StringUtils.isNotEmpty(myAlbumPattern) || StringUtils.isNotEmpty(myArtistPattern) || StringUtils.isNotEmpty(myCommentPattern) || StringUtils.isNotEmpty(myFilePattern) || StringUtils.isNotEmpty(myGenrePattern) || StringUtils.isNotEmpty(myTagPattern) || StringUtils.isNotEmpty(myTitlePattern) || StringUtils.isNotEmpty(mySeriesPattern);
+        return StringUtils.isNotEmpty(myAlbumPattern) || StringUtils.isNotEmpty(myArtistPattern) || StringUtils.isNotEmpty(myCommentPattern) || StringUtils.isNotEmpty(myFilePattern) || StringUtils.isNotEmpty(myGenrePattern) || StringUtils.isNotEmpty(myTagPattern) || StringUtils.isNotEmpty(myTitlePattern) || StringUtils.isNotEmpty(mySeriesPattern) || StringUtils.isNotEmpty(myComposerPattern);
     }
 }

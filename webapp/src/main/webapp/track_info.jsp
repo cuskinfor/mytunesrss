@@ -111,6 +111,14 @@
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}"/>
                                 </td>
                             </tr>
+                            <c:if test="${!empty track.composer}">
+                                <tr <mt:flipFlop/>>
+                                    <td class="label">
+                                        <fmt:message key="composer"/>:
+                                    </td>
+                                    <td><c:out value="${track.composer}"/></td>
+                                </tr>
+                            </c:if>
                         </c:when>
                         <c:when test="${track.mediaType == 'Video' && track.videoType == 'TvShow'}">
                             <tr <mt:flipFlop/>>

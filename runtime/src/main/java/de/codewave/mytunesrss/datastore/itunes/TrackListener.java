@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
+import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
@@ -130,6 +131,7 @@ public class TrackListener implements PListHandlerListener {
                                     }
                                 }
                                 statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
+                                statement.setComposer(StringUtils.trimToNull((String)track.get("Composer")));
                                 statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
                                 statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                         (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));

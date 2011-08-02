@@ -207,33 +207,7 @@ public class TrackUtils {
         private String mySectionPlaylistId;
 
         private EnhancedTrack(Track track) {
-            setSource(track.getSource());
-            setId(track.getId());
-            setName(track.getName());
-            setAlbum(track.getAlbum());
-            setArtist(track.getArtist());
-            setOriginalArtist(track.getOriginalArtist());
-            setTime(track.getTime());
-            setTrackNumber(track.getTrackNumber());
-            setFilename(track.getFilename());
-            setFile(track.getFile());
-            setProtected(track.isProtected());
-            setMediaType(track.getMediaType());
-            setGenre(track.getGenre());
-            setMp4Codec(track.getMp4Codec());
-            setTsPlayed(track.getTsPlayed());
-            setTsUpdated(track.getTsUpdated());
-            setLastImageUpdate(track.getLastImageUpdate());
-            setPlayCount(track.getPlayCount());
-            setImageHash(track.getImageHash());
-            setComment(track.getComment());
-            setPosNumber(track.getPosNumber());
-            setPosSize(track.getPosSize());
-            setYear(track.getYear());
-            setVideoType(track.getVideoType());
-            setEpisode(track.getEpisode());
-            setSeason(track.getSeason());
-            setSeries(track.getSeries());
+            super(track);
         }
 
         public boolean isNewSection() {
@@ -287,33 +261,7 @@ public class TrackUtils {
         private String mySeasonSectionPlaylistId;
 
         private TvShowEpisode(Track track) {
-            setSource(track.getSource());
-            setId(track.getId());
-            setName(track.getName());
-            setAlbum(track.getAlbum());
-            setArtist(track.getArtist());
-            setOriginalArtist(track.getOriginalArtist());
-            setTime(track.getTime());
-            setTrackNumber(track.getTrackNumber());
-            setFilename(track.getFilename());
-            setFile(track.getFile());
-            setProtected(track.isProtected());
-            setMediaType(track.getMediaType());
-            setGenre(track.getGenre());
-            setMp4Codec(track.getMp4Codec());
-            setTsPlayed(track.getTsPlayed());
-            setTsUpdated(track.getTsUpdated());
-            setLastImageUpdate(track.getLastImageUpdate());
-            setPlayCount(track.getPlayCount());
-            setImageHash(track.getImageHash());
-            setComment(track.getComment());
-            setPosNumber(track.getPosNumber());
-            setPosSize(track.getPosSize());
-            setYear(track.getYear());
-            setVideoType(track.getVideoType());
-            setEpisode(track.getEpisode());
-            setSeason(track.getSeason());
-            setSeries(track.getSeries());
+            super(track);
         }
 
         public boolean isNewSeries() {

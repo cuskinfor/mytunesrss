@@ -41,6 +41,44 @@ public class Track {
     private String mySeries;
     private int mySeason;
     private int myEpisode;
+    private String myAlbumArtist;
+    private String myComposer;
+
+    public Track() {
+        // default constructor
+    }
+
+    public Track(Track source) {
+        setSource(source.getSource());
+        setId(source.getId());
+        setName(source.getName());
+        setAlbum(source.getAlbum());
+        setArtist(source.getArtist());
+        setOriginalArtist(source.getOriginalArtist());
+        setTime(source.getTime());
+        setTrackNumber(source.getTrackNumber());
+        setFilename(source.getFilename());
+        setFile(source.getFile());
+        setProtected(source.isProtected());
+        setMediaType(source.getMediaType());
+        setGenre(source.getGenre());
+        setMp4Codec(source.getMp4Codec());
+        setTsPlayed(source.getTsPlayed());
+        setTsUpdated(source.getTsUpdated());
+        setLastImageUpdate(source.getLastImageUpdate());
+        setPlayCount(source.getPlayCount());
+        setImageHash(source.getImageHash());
+        setComment(source.getComment());
+        setPosNumber(source.getPosNumber());
+        setPosSize(source.getPosSize());
+        setYear(source.getYear());
+        setVideoType(source.getVideoType());
+        setEpisode(source.getEpisode());
+        setSeason(source.getSeason());
+        setSeries(source.getSeries());
+        setAlbumArtist(source.getAlbumArtist());
+        setComposer(source.getComposer());
+    }
 
     public String getAlbum() {
         return myAlbum;
@@ -265,6 +303,22 @@ public class Track {
 
     public void setEpisode(int episode) {
         myEpisode = episode;
+    }
+
+    public String getAlbumArtist() {
+        return myAlbumArtist;
+    }
+
+    public void setAlbumArtist(String albumArtist) {
+        myAlbumArtist = albumArtist;
+    }
+
+    public String getComposer() {
+        return myComposer;
+    }
+
+    public void setComposer(String composer) {
+        myComposer = composer;
     }
 
     @Override
