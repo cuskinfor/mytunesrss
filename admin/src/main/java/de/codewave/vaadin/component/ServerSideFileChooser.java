@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public abstract class ServerSideFileChooser extends CustomComponent implements Button.ClickListener, ItemClickEvent.ItemClickListener {
@@ -76,6 +77,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myChooser.addContainerProperty("Date", String.class, null);
         myChooser.setColumnExpandRatio("File", 1f);
         myChooser.addListener(this);
+        myChooser.setSortContainerPropertyId("File");
         myOk = new Button("Ok", this); // TODO i18n
         myOk.setEnabled(false);
         myCancel = new Button("Cancel", this); // TODO i18n
@@ -135,6 +137,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
                 myChooser.addItem(new Object[]{file.getName(), new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(file.lastModified()))}, file);
             }
         }
+        myChooser.sort();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {

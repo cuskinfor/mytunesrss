@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -42,13 +41,20 @@ import java.util.regex.Pattern;
 public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
     private static final String ATOM_ALBUM = "moov.udta.meta.ilst.\u00a9alb.data";
-    private static final String ATOM_ARTIST = "moov.udta.meta.ilst.\u00a9ART.data";
+    private static final String ATOM_ARTIST = "moov.udta.meta.ilst.\u00a9art.data";
+    private static final String ATOM_ALBUM_ARTIST = "moov.udta.meta.ilst.aART.data";
     private static final String ATOM_TITLE = "moov.udta.meta.ilst.\u00a9nam.data";
     private static final String ATOM_TRACK_NUMBER = "moov.udta.meta.ilst.trkn.data";
     private static final String ATOM_DISK_NUMBER = "moov.udta.meta.ilst.disk.data";
     private static final String ATOM_GENRE = "moov.udta.meta.ilst.\u00a9gen.data";
     private static final String ATOM_STSD = "moov.trak.mdia.minf.stbl.stsd";
     private static final String ATOM_COVER = "moov.udta.meta.ilst.covr.data";
+    private static final String ATOM_COMPOSER = "moov.udta.meta.ilst.\u00a9wrt.data";
+    private static final String ATOM_COMMENT = "moov.udta.meta.ilst.\u00a9cmt.data";
+    private static final String ATOM_YEAR = "moov.udta.meta.ilst.\u00a9day.data";
+    private static final String ATOM_SERIES = "moov.udta.meta.ilst.tvsh.data";
+    private static final String ATOM_SEASON = "moov.udta.meta.ilst.tvsn.data";
+    private static final String ATOM_EPISODE = "moov.udta.meta.ilst.tves.data";
 
     private long myLastUpdateTime;
     private DataStoreSession myStoreSession;
@@ -257,6 +263,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.setName(MyTunesRssUtils.normalize(name));
                 if (tag.isId3v2()) {
                     Id3v2Tag id3v2Tag = ((Id3v2Tag) tag);
+                    String albumArtist = id3v2Tag.getAlbumArtist();
+                    if (StringUtils.isEmpty(albumArtist)) {
+                        albumArtist = artist;
+                    }
+                    String composer = id3v2Tag.getComposer();
+                    statement.setComposer(MyTunesRssUtils.normalize(composer));
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
@@ -342,7 +354,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_DISK_NUMBER, ATOM_GENRE, ATOM_STSD, ATOM_COVER));
+            atoms = Mp4Utils.getAtoms(file, Arrays.asList(ATOM_ALBUM, ATOM_ARTIST, ATOM_TITLE, ATOM_TRACK_NUMBER, ATOM_DISK_NUMBER, ATOM_GENRE, ATOM_STSD, ATOM_COVER, ATOM_COMMENT, ATOM_YEAR, ATOM_ALBUM_ARTIST, ATOM_COMPOSER));
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -354,19 +366,28 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             try {
                 Mp4Atom atom = atoms.get(ATOM_ALBUM);
                 String album = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
-                if (StringUtils.isEmpty(album)) {
+                if (StringUtils.isBlank(album)) {
                     album = getFallbackAlbumName(file);
                 }
                 statement.setAlbum(MyTunesRssUtils.normalize(album));
                 atom = atoms.get(ATOM_ARTIST);
                 String artist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
-                if (StringUtils.isEmpty(artist)) {
+                if (StringUtils.isBlank(artist)) {
                     artist = getFallbackArtistName(file);
                 }
                 statement.setArtist(MyTunesRssUtils.normalize(artist));
+                atom = atoms.get(ATOM_ALBUM_ARTIST);
+                String albumArtist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                if (StringUtils.isBlank(albumArtist)) {
+                    albumArtist = artist;
+                }
+                statement.setAlbumArtist(MyTunesRssUtils.normalize(albumArtist));
+                atom = atoms.get(ATOM_COMPOSER);
+                String composer = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                statement.setComposer(MyTunesRssUtils.normalize(composer));
                 atom = atoms.get(ATOM_TITLE);
                 String name = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
-                if (StringUtils.isEmpty(name)) {
+                if (StringUtils.isBlank(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
                 statement.setName(MyTunesRssUtils.normalize(name));
@@ -387,9 +408,37 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
                 atom = atoms.get(ATOM_GENRE);
                 String genre = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
-                if (genre != null) {
-                    statement.setGenre(StringUtils.trimToNull(genre));
+                if (StringUtils.isNotBlank(genre)) {
+                    statement.setGenre(MyTunesRssUtils.normalize(genre));
                 }
+                atom = atoms.get(ATOM_COMMENT);
+                String comment = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                if (StringUtils.isNotBlank(comment)) {
+                    statement.setComment(MyTunesRssUtils.normalize(comment));
+                }
+                atom = atoms.get(ATOM_YEAR);
+                String year = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                if (StringUtils.isNotBlank(year)) {
+                    try {
+                        statement.setYear(Integer.parseInt(StringUtils.trimToEmpty(year)));
+                    } catch (NumberFormatException e) {
+                        LOGGER.info("Ignoring unparsable year \"" + year + "\" of track \"" + file.getAbsolutePath() + "\".");
+                    }
+                }
+                atom = atoms.get(ATOM_SERIES);
+                String tvShow = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                if (StringUtils.isNotBlank(tvShow)) {
+                    statement.setSeries(MyTunesRssUtils.normalize(tvShow));
+                }
+                atom = atoms.get(ATOM_SEASON);
+                if (atom != null) {
+                    statement.setSeason(atom.getData()[11]);
+                }
+                atom = atoms.get(ATOM_EPISODE);
+                if (atom != null) {
+                    statement.setEpisode(atom.getData()[11]);
+                }
+
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);

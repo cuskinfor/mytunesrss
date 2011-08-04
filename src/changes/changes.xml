@@ -9,6 +9,13 @@
 
         <release version="4.1.0-EAP-6" date="2011-xx-xx">
             <action dev="mdescher" type="fix">
+                Sort server side file choser files alphabetcially on initial display of a folder.
+            </action>
+            <action dev="mdescher" type="fix">
+                Read ID3 tags and MP4 atoms for album artist, composer, comment, tv show, season and episode
+                when parsing watch folder files.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-179] Import composer info
             </action>
             <action dev="mdescher" type="fix">
