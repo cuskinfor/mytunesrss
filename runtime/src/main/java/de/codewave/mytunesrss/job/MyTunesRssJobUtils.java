@@ -47,7 +47,8 @@ public class MyTunesRssJobUtils {
                 MyTunesRss.QUARTZ_SCHEDULER.unscheduleJob(trigger, "DatabaseUpdate");
             }
             MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(DatabaseUpdateJob.class.getSimpleName(), null, DatabaseUpdateJob.class), true);
-            for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseCronTriggers()) {
+            for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseUpdateTriggers()) {
+                LOG.info("Adding database update trigger \"" + cronTrigger + "\".");
                 try {
                     Trigger trigger = new CronTrigger("crontrigger[" + cronTrigger + "]",
                             "DatabaseUpdate",
@@ -65,9 +66,34 @@ public class MyTunesRssJobUtils {
                     }
                 }
             }
+            for (String trigger : MyTunesRss.QUARTZ_SCHEDULER.getTriggerNames("DatabaseBackup")) {
+                MyTunesRss.QUARTZ_SCHEDULER.unscheduleJob(trigger, "DatabaseBackup");
+            }
+            if (MyTunesRss.CONFIG.isDefaultDatabase()) {
+                MyTunesRss.QUARTZ_SCHEDULER.addJob(new JobDetail(DatabaseBackupJob.class.getSimpleName(), null, DatabaseBackupJob.class), true);
+                for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseBackupTriggers()) {
+                    LOG.info("Adding database backup trigger \"" + cronTrigger + "\".");
+                    try {
+                        Trigger trigger = new CronTrigger("crontrigger[" + cronTrigger + "]",
+                                "DatabaseBackup",
+                                DatabaseBackupJob.class.getSimpleName(),
+                                null,
+                                cronTrigger);
+                        MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
+                    } catch (ParseException e) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Could not schedule database backup job for cron expression \"" + cronTrigger + "\".", e);
+                        }
+                    } catch (SchedulerException e) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Could not schedule database backup job for cron expression \"" + cronTrigger + "\".", e);
+                        }
+                    }
+                }
+            }
         } catch (SchedulerException e) {
             if (LOG.isErrorEnabled()) {
-                LOG.error("Could not schedule database update job.", e);
+                LOG.error("Could not schedule database update or backup job.", e);
             }
         }
     }

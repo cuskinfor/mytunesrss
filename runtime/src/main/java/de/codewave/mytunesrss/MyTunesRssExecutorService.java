@@ -45,7 +45,7 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
-        cancelDatabaseJob();
+        cancelDatabaseUpdateAndResetJob();
         try {
             DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
         } catch (RejectedExecutionException e) {
@@ -54,7 +54,7 @@ public class MyTunesRssExecutorService {
     }
 
     public void scheduleImageUpdate() {
-        cancelDatabaseJob();
+        cancelDatabaseUpdateAndResetJob();
         try {
             DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(MyTunesRss.CONFIG.isIgnoreTimestamps()));
         } catch (RejectedExecutionException e) {
@@ -63,7 +63,7 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleDatabaseReset() {
-        cancelDatabaseJob();
+        cancelDatabaseUpdateAndResetJob();
         try {
             DATABASE_RESET_FUTURE = DATABASE_JOB_EXECUTOR.submit(new RecreateDatabaseCallable());
         } catch (RejectedExecutionException e) {
@@ -72,7 +72,6 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleDatabaseBackup() {
-        cancelDatabaseJob();
         try {
             DATABASE_BACKUP_FUTURE = DATABASE_JOB_EXECUTOR.submit(new BackupDatabaseCallable());
         } catch (RejectedExecutionException e) {
@@ -80,7 +79,7 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public synchronized void cancelDatabaseJob() {
+    public synchronized void cancelDatabaseUpdateAndResetJob() {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
             DATABASE_UPDATE_FUTURE.cancel(true);
         }

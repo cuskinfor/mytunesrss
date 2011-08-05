@@ -70,7 +70,8 @@ public class MyTunesRssConfig {
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
     private String myUpdateIgnoreVersion;
-    private List<String> myDatabaseCronTriggers = new ArrayList<String>();
+    private List<String> myDatabaseUpdateTriggers = new ArrayList<String>();
+    private List<String> myDatabaseBackupTriggers = new ArrayList<String>();
     private String myDatabaseType;
     private String myDatabaseConnection;
     private String myDatabaseUser;
@@ -124,6 +125,8 @@ public class MyTunesRssConfig {
     private boolean mySelfRegAdminEmail;
     private String myDefaultUserInterfaceTheme;
     private String myFacebookApiKey = "102138059883364";
+    private int myNumberKeepDatabaseBackups;
+    private boolean myBackupDatabaseAfterInit;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -402,12 +405,20 @@ public class MyTunesRssConfig {
         myUpdateIgnoreVersion = updateIgnoreVersion;
     }
 
-    public List<String> getDatabaseCronTriggers() {
-        return myDatabaseCronTriggers;
+    public List<String> getDatabaseUpdateTriggers() {
+        return myDatabaseUpdateTriggers;
     }
 
-    public void setDatabaseCronTriggers(List<String> databaseCronTriggers) {
-        myDatabaseCronTriggers = databaseCronTriggers;
+    public void setDatabaseUpdateTriggers(List<String> databaseCronTriggers) {
+        myDatabaseUpdateTriggers = databaseCronTriggers;
+    }
+
+    public List<String> getDatabaseBackupTriggers() {
+        return myDatabaseBackupTriggers;
+    }
+
+    public void setDatabaseBackupTriggers(List<String> databaseBackupTriggers) {
+        myDatabaseBackupTriggers = databaseBackupTriggers;
     }
 
     public String getDatabaseConnection() {
@@ -861,6 +872,22 @@ public class MyTunesRssConfig {
         myFacebookApiKey = facebookApiKey;
     }
 
+    public int getNumberKeepDatabaseBackups() {
+        return myNumberKeepDatabaseBackups;
+    }
+
+    public void setNumberKeepDatabaseBackups(int numberKeepDatabaseBackups) {
+        myNumberKeepDatabaseBackups = numberKeepDatabaseBackups;
+    }
+
+    public boolean isBackupDatabaseAfterInit() {
+        return myBackupDatabaseAfterInit;
+    }
+
+    public void setBackupDatabaseAfterInit(boolean backupDatabaseAfterInit) {
+        myBackupDatabaseAfterInit = backupDatabaseAfterInit;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -976,10 +1003,15 @@ public class MyTunesRssConfig {
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
-        Iterator<JXPathContext> cronTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
-        myDatabaseCronTriggers = new ArrayList<String>();
-        while (cronTriggerIterator.hasNext()) {
-            myDatabaseCronTriggers.add(JXPathUtils.getStringValue(cronTriggerIterator.next(), ".", ""));
+        Iterator<JXPathContext> updateTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
+        myDatabaseUpdateTriggers = new ArrayList<String>();
+        while (updateTriggerIterator.hasNext()) {
+            myDatabaseUpdateTriggers.add(JXPathUtils.getStringValue(updateTriggerIterator.next(), ".", ""));
+        }
+        Iterator<JXPathContext> backupTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database-backup");
+        myDatabaseBackupTriggers = new ArrayList<String>();
+        while (backupTriggerIterator.hasNext()) {
+            myDatabaseBackupTriggers.add(JXPathUtils.getStringValue(backupTriggerIterator.next(), ".", ""));
         }
         loadDatabaseSettings(settings);
         setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
@@ -1069,6 +1101,8 @@ public class MyTunesRssConfig {
         setSelfRegAdminEmail(JXPathUtils.getBooleanValue(settings, "selfreg-admin-email", true));
         setDefaultUserInterfaceTheme(JXPathUtils.getStringValue(settings, "default-ui-theme", null));
         //setFacebookApiKey(JXPathUtils.getStringValue(settings, "facebook-api-key", null));
+        setNumberKeepDatabaseBackups(JXPathUtils.getIntValue(settings, "database-backup-max", 5));
+        setBackupDatabaseAfterInit(JXPathUtils.getBooleanValue(settings, "database-backup-after-init", true));
     }
 
     /**
@@ -1281,11 +1315,18 @@ public class MyTunesRssConfig {
             root.appendChild(window);
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
-            if (myDatabaseCronTriggers != null && myDatabaseCronTriggers.size() > 0) {
+            if ((myDatabaseUpdateTriggers != null && myDatabaseUpdateTriggers.size() > 0) || (myDatabaseBackupTriggers != null && myDatabaseBackupTriggers.size() > 0)) {
                 Element cronTriggers = settings.createElement("crontriggers");
                 root.appendChild(cronTriggers);
-                for (String databaseCronTrigger : myDatabaseCronTriggers) {
-                    cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database", databaseCronTrigger));
+                if (myDatabaseUpdateTriggers != null && myDatabaseUpdateTriggers.size() > 0) {
+                    for (String trigger : myDatabaseUpdateTriggers) {
+                        cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database", trigger));
+                    }
+                }
+                if (myDatabaseBackupTriggers != null && myDatabaseBackupTriggers.size() > 0) {
+                    for (String trigger : myDatabaseBackupTriggers) {
+                        cronTriggers.appendChild(DOMUtils.createTextElement(settings, "database-backup", trigger));
+                    }
                 }
             }
             // for default h2 database we shoud not save anything to the config
@@ -1378,6 +1419,8 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "selfreg-admin-email", isSelfRegAdminEmail()));
             root.appendChild(DOMUtils.createTextElement(settings, "default-ui-theme", getDefaultUserInterfaceTheme()));
             //root.appendChild(DOMUtils.createTextElement(settings, "facebook-api-key", getFacebookApiKey()));
+            root.appendChild(DOMUtils.createIntElement(settings, "database-backup-max", getNumberKeepDatabaseBackups()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "database-backup-after-init", isBackupDatabaseAfterInit()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

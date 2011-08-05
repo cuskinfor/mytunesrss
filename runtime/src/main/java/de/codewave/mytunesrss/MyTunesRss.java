@@ -405,10 +405,10 @@ public class MyTunesRss {
                 MyTunesRssUtils.shutdownGracefully();
             }
 
-            if (backupAfterSuccessfulInit) {
-                MyTunesRssUtils.backupDatabase(); // TODO config: option to enable/disable backup after successful startup
-                MyTunesRssUtils.removeAllButLatestDatabaseBackups(3); // TODO config: number of backups to keep
+            if (backupAfterSuccessfulInit && MyTunesRss.CONFIG.isBackupDatabaseAfterInit()) {
+                MyTunesRssUtils.backupDatabase();
             }
+            MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
             break; // ok, continue with main flow
         }
     }

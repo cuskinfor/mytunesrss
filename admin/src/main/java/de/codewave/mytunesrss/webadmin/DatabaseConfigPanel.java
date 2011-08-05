@@ -24,31 +24,46 @@ import java.util.List;
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
 
     private Form myDatabaseTypeForm;
+    private Form myDatabaseBackupForm;
     private Select myDatabaseType;
     private SmartTextField myDatabaseDriver;
     private SmartTextField myDatabaseConnection;
     private SmartTextField myDatabaseUser;
     private SmartTextField myDatabasePassword;
-    private Table myCronTriggers;
-    private Button myAddSchedule;
+    private Table myUpdateTriggers;
+    private Table myBackupTriggers;
+    private Button myAddUpdateTrigger;
+    private Button myAddBackupTrigger;
+    private SmartTextField myNumberKeepBackups;
+    private CheckBox myBackupAfterInit;
 
     public void attach() {
         super.attach();
-        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
+        init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
         myDatabaseUser = getComponentFactory().createTextField("databaseConfigPanel.databaseUser");
         myDatabasePassword = getComponentFactory().createPasswordTextField("databaseConfigPanel.databasePassword");
-        myCronTriggers = new Table();
-        myCronTriggers.setCacheRate(50);
-        myCronTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
-        myCronTriggers.addContainerProperty("hour", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
-        myCronTriggers.addContainerProperty("minute", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.minute"), null, null);
-        myCronTriggers.addContainerProperty("delete", Button.class, null, "", null, null);
-        myCronTriggers.setEditable(true);
-        myAddSchedule = getComponentFactory().createButton("databaseConfigPanel.addSchedule", this);
+        myUpdateTriggers = new Table();
+        myUpdateTriggers.setCacheRate(50);
+        myUpdateTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
+        myUpdateTriggers.addContainerProperty("hour", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
+        myUpdateTriggers.addContainerProperty("minute", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.minute"), null, null);
+        myUpdateTriggers.addContainerProperty("delete", Button.class, null, "", null, null);
+        myUpdateTriggers.setEditable(true);
+        myBackupTriggers = new Table();
+        myBackupTriggers.setCacheRate(50);
+        myBackupTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
+        myBackupTriggers.addContainerProperty("hour", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.hour"), null, null);
+        myBackupTriggers.addContainerProperty("minute", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.minute"), null, null);
+        myBackupTriggers.addContainerProperty("delete", Button.class, null, "", null, null);
+        myBackupTriggers.setEditable(true);
+        myAddUpdateTrigger = getComponentFactory().createButton("databaseConfigPanel.addSchedule", this);
+        myAddBackupTrigger = getComponentFactory().createButton("databaseConfigPanel.addSchedule", this);
+        myNumberKeepBackups = getComponentFactory().createTextField("databaseConfigPanel.numberKeepBackup", getValidatorFactory().createMinMaxValidator(1, 25));
+        myBackupAfterInit = getComponentFactory().createCheckBox("databaseConfigPanel.backupAfterInit");
 
         myDatabaseTypeForm = getComponentFactory().createForm(null, true);
         myDatabaseTypeForm.addField(myDatabaseType, myDatabaseType);
@@ -58,12 +73,22 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseTypeForm.addField(myDatabasePassword, myDatabasePassword);
         addComponent(getComponentFactory().surroundWithPanel(myDatabaseTypeForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.database")));
 
-        Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.cronTriggers"), getComponentFactory().createVerticalLayout(true, true));
-        schedulesPanel.addComponent(myCronTriggers);
-        schedulesPanel.addComponent(myAddSchedule);
+        Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.updateTriggers"), getComponentFactory().createVerticalLayout(true, true));
+        schedulesPanel.addComponent(myUpdateTriggers);
+        schedulesPanel.addComponent(myAddUpdateTrigger);
         addComponent(schedulesPanel);
 
-        addDefaultComponents(0, 2, 0, 2, false);
+        schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.backupTriggers"), getComponentFactory().createVerticalLayout(true, true));
+        schedulesPanel.addComponent(myBackupTriggers);
+        schedulesPanel.addComponent(myAddBackupTrigger);
+        addComponent(schedulesPanel);
+
+        myDatabaseBackupForm = getComponentFactory().createForm(null, true);
+        myDatabaseBackupForm.addField(myNumberKeepBackups, myNumberKeepBackups);
+        myDatabaseBackupForm.addField(myBackupAfterInit, myBackupAfterInit);
+        addComponent(getComponentFactory().surroundWithPanel(myDatabaseBackupForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.databaseBackupOptions")));
+
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }
@@ -75,19 +100,31 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
         myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
         showHideDatabaseDetails(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
-        refreshCronTriggers();
+        showHideDatabaseBackup(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
+        refreshUpdateTriggers();
+        refreshBackupTriggers();
+        myNumberKeepBackups.setValue(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
+        myBackupAfterInit.setValue(MyTunesRss.CONFIG.isBackupDatabaseAfterInit());
     }
 
-    private void refreshCronTriggers() {
-        myCronTriggers.removeAllItems();
-        for (String cronTrigger : MyTunesRss.CONFIG.getDatabaseCronTriggers()) {
-            addCronTrigger(cronTrigger);
+    private void refreshUpdateTriggers() {
+        myUpdateTriggers.removeAllItems();
+        for (String trigger : MyTunesRss.CONFIG.getDatabaseUpdateTriggers()) {
+            addTrigger(trigger, myUpdateTriggers);
         }
-        setCronTriggersPageLength();
+        setTriggersPageLength(myUpdateTriggers);
     }
 
-    private void addCronTrigger(String cronTrigger) {
-        String[] cronTriggerParts = cronTrigger.split(" ");
+    private void refreshBackupTriggers() {
+        myBackupTriggers.removeAllItems();
+        for (String trigger : MyTunesRss.CONFIG.getDatabaseBackupTriggers()) {
+            addTrigger(trigger, myBackupTriggers);
+        }
+        setTriggersPageLength(myBackupTriggers);
+    }
+
+    private void addTrigger(String trigger, Table table) {
+        String[] cronTriggerParts = trigger.split(" ");
         Select daySelect = getComponentFactory().createSelect(null, Arrays.asList(MyTunesRssJobUtils.getDays()));
         daySelect.select(new MyTunesRssJobUtils.TriggerItem(cronTriggerParts[5], null));
         Select hourSelect = getComponentFactory().createSelect(null, Arrays.asList(MyTunesRssJobUtils.getHours()));
@@ -95,12 +132,19 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         Select minuteSelect = getComponentFactory().createSelect(null, Arrays.asList(MyTunesRssJobUtils.getMinutes()));
         minuteSelect.select(new MyTunesRssJobUtils.TriggerItem(cronTriggerParts[1], null));
         Button deleteButton = new Button(getBundleString("button.delete"), this);
-        myCronTriggers.addItem(new Object[]{daySelect, hourSelect, minuteSelect, deleteButton}, myItemIdGenerator.getAndIncrement());
-        setCronTriggersPageLength();
+        table.addItem(new Object[]{daySelect, hourSelect, minuteSelect, deleteButton}, myItemIdGenerator.getAndIncrement());
+        setTriggersPageLength(table);
     }
 
-    private void setCronTriggersPageLength() {
-        myCronTriggers.setPageLength(Math.min(myCronTriggers.getItemIds().size(), 10));
+    private void setTriggersPageLength(Table table) {
+        table.setPageLength(Math.min(table.getItemIds().size(), 10));
+    }
+
+    private void showHideDatabaseBackup(DatabaseType type) {
+        myBackupTriggers.setEnabled(type == DatabaseType.h2);
+        myAddBackupTrigger.setEnabled(type == DatabaseType.h2);
+        myNumberKeepBackups.setEnabled(type == DatabaseType.h2);
+        myBackupAfterInit.setEnabled(type == DatabaseType.h2);
     }
 
     private void showHideDatabaseDetails(DatabaseType type) {
@@ -128,34 +172,49 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
         MyTunesRss.CONFIG.setDatabasePassword(myDatabasePassword.getStringValue(null));
-        List<String> databaseCronTriggers = new ArrayList<String>();
-        for (Object itemId : myCronTriggers.getItemIds()) {
-            databaseCronTriggers.add("0 " + getTableCellString(itemId, "minute") + " " + getTableCellString(itemId, "hour") + " ? * " + getTableCellString(itemId, "day"));
+        List<String> updateTriggers = new ArrayList<String>();
+        for (Object itemId : myUpdateTriggers.getItemIds()) {
+            updateTriggers.add("0 " + getTableCellString(myUpdateTriggers, itemId, "minute") + " " + getTableCellString(myUpdateTriggers, itemId, "hour") + " ? * " + getTableCellString(myUpdateTriggers, itemId, "day"));
         }
-        MyTunesRss.CONFIG.setDatabaseCronTriggers(databaseCronTriggers);
+        MyTunesRss.CONFIG.setDatabaseUpdateTriggers(updateTriggers);
+        List<String> backupTriggers = new ArrayList<String>();
+        for (Object itemId : myBackupTriggers.getItemIds()) {
+            backupTriggers.add("0 " + getTableCellString(myBackupTriggers, itemId, "minute") + " " + getTableCellString(myBackupTriggers, itemId, "hour") + " ? * " + getTableCellString(myBackupTriggers, itemId, "day"));
+        }
+        MyTunesRss.CONFIG.setDatabaseBackupTriggers(backupTriggers);
+        MyTunesRss.CONFIG.setNumberKeepDatabaseBackups(myNumberKeepBackups.getIntegerValue(5));
+        MyTunesRss.CONFIG.setBackupDatabaseAfterInit(myBackupAfterInit.booleanValue());
         MyTunesRssJobUtils.scheduleDatabaseJob();
         MyTunesRss.CONFIG.save();
     }
 
-    private String getTableCellString(Object itemId, String property) {
-        Select select = (Select) myCronTriggers.getItem(itemId).getItemProperty(property).getValue();
+    private String getTableCellString(Table table, Object itemId, String property) {
+        Select select = (Select) table.getItem(itemId).getItemProperty(property).getValue();
         MyTunesRssJobUtils.TriggerItem triggerItem = (MyTunesRssJobUtils.TriggerItem) select.getValue();
         return triggerItem.getKey();
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        if (clickEvent.getSource() == myAddSchedule) {
-            addCronTrigger("0 0 0 ? * SUN-SAT");
+        if (clickEvent.getSource() == myAddUpdateTrigger) {
+            addTrigger("0 0 0 ? * SUN-SAT", myUpdateTriggers);
+        } else if (clickEvent.getSource() == myAddBackupTrigger) {
+            addTrigger("0 0 0 ? * SUN-SAT", myBackupTriggers);
         } else {
-            final Object cronTriggerToDelete = getCronTriggerToDelete(clickEvent.getSource());
-            if (cronTriggerToDelete != null) {
+            final Object updateTriggerToDelete = getTriggerToDelete(clickEvent.getSource(), myUpdateTriggers);
+            final Object backupTriggerToDelete = getTriggerToDelete(clickEvent.getSource(), myBackupTriggers);
+            if (updateTriggerToDelete != null || backupTriggerToDelete != null) {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("databaseConfigDialog.optionWindowDeleteCronTrigger.caption"), getBundleString("databaseConfigDialog.optionWindowDeleteCronTrigger.message"), yes, no) {
                     public void clicked(Button button) {
                         if (button == yes) {
-                            myCronTriggers.removeItem(cronTriggerToDelete);
-                            setCronTriggersPageLength();
+                            if (updateTriggerToDelete != null) {
+                                myUpdateTriggers.removeItem(updateTriggerToDelete);
+                                setTriggersPageLength(myUpdateTriggers);
+                            } else {
+                                myBackupTriggers.removeItem(backupTriggerToDelete);
+                                setTriggersPageLength(myBackupTriggers);
+                            }
                         }
                     }
                 }.show(getWindow());
@@ -177,9 +236,9 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         return false;
     }
 
-    private Object getCronTriggerToDelete(Object source) {
-        for (Object itemId : myCronTriggers.getItemIds()) {
-            if (source == myCronTriggers.getItem(itemId).getItemProperty("delete").getValue()) {
+    private Object getTriggerToDelete(Object source, Table table) {
+        for (Object itemId : table.getItemIds()) {
+            if (source == table.getItem(itemId).getItemProperty("delete").getValue()) {
                 return itemId;
             }
         }
@@ -189,6 +248,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
         if (((EventObject) valueChangeEvent).getSource() == myDatabaseType) {
             showHideDatabaseDetails((DatabaseType) valueChangeEvent.getProperty().getValue());
+            showHideDatabaseBackup((DatabaseType) valueChangeEvent.getProperty().getValue());
         }
     }
 
