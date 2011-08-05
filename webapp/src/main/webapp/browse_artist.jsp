@@ -105,7 +105,7 @@
                 <c:set var="filterToggle" scope="request" value="true" />
                 <jsp:include page="incl_pager.jsp" />
                 
-                <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
+                <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
                 <jsp:include page="/incl_display_filter.jsp"/>
             
                 <table class="tracklist" cellspacing="0">

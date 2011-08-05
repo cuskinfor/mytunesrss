@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
 import org.apache.commons.lang.StringUtils;
 import de.codewave.mytunesrss.MediaType;
 
@@ -16,6 +17,7 @@ public class DisplayFilter {
     private Protection myProtection;
     private int myMinYear = -1;
     private int myMaxYear = -1;
+    private FindAlbumQuery.AlbumType myAlbumType = FindAlbumQuery.AlbumType.ALL;
 
     public Protection getProtection() {
         return myProtection;
@@ -55,5 +57,13 @@ public class DisplayFilter {
 
     public void setMaxYear(int maxYear) {
         myMaxYear = Math.max(maxYear, -1);
+    }
+
+    public FindAlbumQuery.AlbumType getAlbumType() {
+        return myAlbumType;
+    }
+
+    public void setAlbumType(FindAlbumQuery.AlbumType albumType) {
+        myAlbumType = albumType;
     }
 }

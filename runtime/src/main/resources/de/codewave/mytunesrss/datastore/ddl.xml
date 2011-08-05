@@ -42,6 +42,7 @@
                 episode INTEGER,
                 season INTEGER,
                 composer VARCHAR(1024),
+                compilation INTEGER,
                 UNIQUE (id)
             )
         </sql>
@@ -120,6 +121,7 @@
                 artist_count INTEGER,
                 artist VARCHAR(255),
                 image_hash CHAR(24),
+                compilation INTEGER,
                 year INTEGER
             )
         </sql>

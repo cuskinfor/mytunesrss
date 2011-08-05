@@ -55,6 +55,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private static final String ATOM_SERIES = "moov.udta.meta.ilst.tvsh.data";
     private static final String ATOM_SEASON = "moov.udta.meta.ilst.tvsn.data";
     private static final String ATOM_EPISODE = "moov.udta.meta.ilst.tves.data";
+    private static final String ATOM_COMPILATION = "moov.udta.meta.ilst.cpil.data";
 
     private long myLastUpdateTime;
     private DataStoreSession myStoreSession;
@@ -261,9 +262,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setYear(-1);
                 }
                 statement.setName(MyTunesRssUtils.normalize(name));
+                String albumArtist = artist;
                 if (tag.isId3v2()) {
                     Id3v2Tag id3v2Tag = ((Id3v2Tag) tag);
-                    String albumArtist = id3v2Tag.getAlbumArtist();
+                    albumArtist = id3v2Tag.getAlbumArtist();
                     if (StringUtils.isEmpty(albumArtist)) {
                         albumArtist = artist;
                     }
@@ -271,6 +273,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setComposer(MyTunesRssUtils.normalize(composer));
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
+                    statement.setCompilation(!StringUtils.equalsIgnoreCase(artist, albumArtist));
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
                     String pos = id3v2Tag.getPos();
                     try {
@@ -286,12 +289,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         LOGGER.warn("Illegal TPA/TPOS value \"" + pos + "\" in \"" + file + "\".");
                     }
                 }
+                statement.setAlbumArtist(albumArtist);
                 String genre = tag.getGenreAsString();
                 if (genre != null) {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
                 statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull(createComment(tag))));
-                statement.setComposer(tag.isId3v2() ? ((Id3v2Tag)tag).getComposer() : null);
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -438,7 +441,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (atom != null) {
                     statement.setEpisode(atom.getData()[11]);
                 }
-
+                atom = atoms.get(ATOM_COMPILATION);
+                if (atom != null) {
+                    statement.setCompilation(atom.getData()[11] > 0 || !StringUtils.equalsIgnoreCase(artist, albumArtist));
+                }
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);

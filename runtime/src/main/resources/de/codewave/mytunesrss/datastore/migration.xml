@@ -271,6 +271,8 @@
     <statement name="migrate_4.1.0_eap_6">
         <sql>ALTER TABLE track ADD COLUMN composer VARCHAR(1024)</sql>
         <sql>ALTER TABLE smart_info ADD COLUMN composer_pattern VARCHAR(100)</sql>
+        <sql>ALTER TABLE track ADD COLUMN compilation BOOLEAN</sql>
+        <sql>ALTER TABLE album ADD COLUMN compilation BOOLEAN</sql>
     </statement>
 
 </statements>

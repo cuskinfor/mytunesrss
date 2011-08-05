@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.Collator;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,6 +30,29 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     public static Pattern PATTERN_ALL = Pattern.compile("^.*$");
 
     private static File theLastSelectedDir = new File(System.getProperty("user.home"));
+
+    public static class TableEntry implements Comparable<TableEntry> {
+
+        private String name;
+        private int order;
+
+        public TableEntry(int order, String name) {
+            this.order = order;
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            return name;
+        }
+
+        public int compareTo(TableEntry tableEntry) {
+            if (order != tableEntry.order) {
+                return order - tableEntry.order;
+            }
+            return Collator.getInstance().compare(name, tableEntry.name);
+        }
+    }
 
     private Table myChooser;
     private File myCurrentDir;
@@ -73,7 +97,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myChooser.setCacheRate(50);
         myChooser.setWidth(100f, Sizeable.UNITS_PERCENTAGE);
         myChooser.setSelectable(true);
-        myChooser.addContainerProperty("File", String.class, "");
+        myChooser.addContainerProperty("File", TableEntry.class, "");
         myChooser.addContainerProperty("Date", String.class, null);
         myChooser.setColumnExpandRatio("File", 1f);
         myChooser.addListener(this);
@@ -129,12 +153,12 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myOk.setEnabled(false);
         myChooser.removeAllItems();
         if (myCurrentDir.getParentFile() != null) {
-            myChooser.addItem(new Object[]{"[..]", null}, myCurrentDir.getParentFile());
+            myChooser.addItem(new Object[]{new TableEntry(0, "[..]"), null}, myCurrentDir.getParentFile());
         }
         File[] files = myCurrentDir.listFiles();
         if (files != null) {
             for (File file : files) {
-                myChooser.addItem(new Object[]{file.getName(), new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(file.lastModified()))}, file);
+                myChooser.addItem(new Object[]{new TableEntry(1, file.getName()), new SimpleDateFormat("dd.MM.yyyy HH:mm").format(new Date(file.lastModified()))}, file);
             }
         }
         myChooser.sort();

@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -334,6 +335,9 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         if (getRequest().getParameter("filterMaxYear") != null) {
             filter.setMaxYear(getIntegerRequestParameter("filterMaxYear", -1));
+        }
+        if (getRequest().getParameter("filterAlbumType") != null) {
+            filter.setAlbumType(FindAlbumQuery.AlbumType.valueOf(getRequestParameter("filterAlbumType", FindAlbumQuery.AlbumType.ALL.name())));
         }
     }
 

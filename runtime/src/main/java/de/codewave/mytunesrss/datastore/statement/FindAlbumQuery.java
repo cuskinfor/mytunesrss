@@ -24,6 +24,10 @@ import java.util.Map;
  */
 public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Album>> {
 
+    public enum AlbumType {
+        COMPILATIONS(), ALBUMS(), ALL();
+    }
+
     private String myFilter;
     private String myArtist;
     private String myGenre;
@@ -32,10 +36,10 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private int myMaxYear;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
-    ;
+    private AlbumType myType;
     private boolean mySortByYear;
 
-    public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear, boolean sortByYear) {
+    public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear, boolean sortByYear, AlbumType type) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myArtist = artist;
         myGenre = genre;
@@ -45,6 +49,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         mySortByYear = sortByYear;
+        myType = type;
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
@@ -59,6 +64,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("yearorder", mySortByYear);
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("compilation", myType != AlbumType.ALL);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", StringUtils.lowerCase(myFilter));
         statement.setString("artist", StringUtils.lowerCase(myArtist));
@@ -68,6 +74,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         statement.setInt("max_year", myMaxYear);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
+        statement.setInt("compilation", myType == AlbumType.COMPILATIONS ? 1 : 0);
         return execute(statement, new AlbumResultBuilder());
     }
 

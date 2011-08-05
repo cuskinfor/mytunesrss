@@ -55,6 +55,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     private int myEpisode;
     private TrackSource mySource;
     private String myComposer;
+    private boolean myCompilation;
     private SmartStatement myStatement;
 
     protected InsertOrUpdateTrackStatement(TrackSource source) {
@@ -142,6 +143,10 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myComposer = composer;
     }
 
+    public void setCompilation(boolean compilation) {
+        myCompilation = compilation;
+    }
+
     public synchronized void execute(Connection connection) throws SQLException {
         try {
             String originalArtist = myArtist;
@@ -179,6 +184,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setInt("episode", myEpisode);
             myStatement.setInt("year", myYear);
             myStatement.setString("composer", myComposer);
+            myStatement.setInt("compilation", myCompilation ? 1 : 0);
             myStatement.execute();
         } catch (SQLException e) {
             logError(myId, e);
@@ -207,5 +213,6 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         mySeason = 0;
         myEpisode = 0;
         myComposer = null;
+        myCompilation = false;
     }
 }

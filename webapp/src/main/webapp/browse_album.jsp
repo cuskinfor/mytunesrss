@@ -112,8 +112,9 @@
                     <jsp:include page="incl_pager.jsp" />
                 </c:if>
                 
-				<c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index=${param.index}/backUrl=${param.backUrl}</c:set>
+				<c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 				<c:set var="filterYearActive" scope="request" value="true"/>
+				<c:set var="filterAlbumTypeActive" scope="request" value="true"/>
 				<jsp:include page="/incl_display_filter.jsp"/>
 
     <table class="tracklist" cellspacing="0">

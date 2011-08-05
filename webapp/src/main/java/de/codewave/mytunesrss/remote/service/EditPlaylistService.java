@@ -152,7 +152,7 @@ public class EditPlaylistService {
                 if (artists.length != 1) {
                     throw new IllegalArgumentException("Only one artist supported for full albums!");
                 }
-                return addAlbumsFromQuery(new FindAlbumQuery(user, null, artists[0], null, -1, -1, -1, false));
+                return addAlbumsFromQuery(new FindAlbumQuery(user, null, artists[0], null, -1, -1, -1, false, FindAlbumQuery.AlbumType.ALL));
             } else {
                 return addTracks(artists.length > 0 ? FindTrackQuery.getForArtist(user, artists, SortOrder.Album) : null);
             }
@@ -193,7 +193,7 @@ public class EditPlaylistService {
                 if (genres.length != 1) {
                     throw new IllegalArgumentException("Only one genre supported for full albums!");
                 }
-                return addAlbumsFromQuery(new FindAlbumQuery(user, null, null, genres[0], -1, -1, -1, false));
+                return addAlbumsFromQuery(new FindAlbumQuery(user, null, null, genres[0], -1, -1, -1, false, FindAlbumQuery.AlbumType.ALL));
             } else {
                 return addTracks(genres.length > 0 ? FindTrackQuery.getForGenre(user, genres, SortOrder.Album) : null);
             }
