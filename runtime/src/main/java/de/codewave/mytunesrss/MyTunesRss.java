@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
+import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -51,6 +52,7 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -333,23 +335,47 @@ public class MyTunesRss {
     }
 
     private static void initializeDatabase() throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+        boolean backupAfterSuccessfulInit = true;
         while (true) {
             registerDatabaseDriver();
             InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
             callable.call();
             if (callable.getException() != null) {
                 if (!COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && CONFIG.isDefaultDatabase()) {
-                    int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
-                    if (result == JOptionPane.YES_OPTION) {
-                        LOGGER.info("Recreating default database.");
-                        CONFIG.setDefaultDatabaseSettings();
-                        try {
-                            new DeleteDatabaseFilesCallable().call();
-                            LOGGER.info("Starting retry.");
-                            continue; // retry
-                        } catch (IOException e) {
-                            LOGGER.error("Could not delete database files.");
-                            CONFIG.setDeleteDatabaseOnExit(true);
+                    List<DatabaseBackup> backups = MyTunesRssUtils.findDatabaseBackups();
+                    if (MyTunesRss.CONFIG.isDefaultDatabase() && !backups.isEmpty()) {
+                        DatabaseBackup backup = (DatabaseBackup)JOptionPane.showInputDialog(
+                                null,
+                                MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorRestore"),
+                                MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"),
+                                JOptionPane.ERROR_MESSAGE,
+                                null,
+                                backups.toArray(new Object[backups.size()]),
+                                null
+                        );
+                        if (backup != null) {
+                            try {
+                                MyTunesRssUtils.restoreDatabaseBackup(backup);
+                                backupAfterSuccessfulInit = false;
+                                LOGGER.info("Starting retry.");
+                                continue; // retry
+                            } catch (IOException e) {
+                                LOGGER.error("Could not restore database backup.");
+                            }
+                        }
+                    } else {
+                        int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION) {
+                            LOGGER.info("Recreating default database.");
+                            CONFIG.setDefaultDatabaseSettings();
+                            try {
+                                new DeleteDatabaseFilesCallable().call();
+                                LOGGER.info("Starting retry.");
+                                continue; // retry
+                            } catch (IOException e) {
+                                LOGGER.error("Could not delete database files.");
+                                CONFIG.setDeleteDatabaseOnExit(true);
+                            }
                         }
                     }
                 } else {
@@ -378,8 +404,11 @@ public class MyTunesRss {
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
-            MyTunesRssUtils.backupDatabase(); // TODO config: option to enable/disable backup after successful startup
-            MyTunesRssUtils.removeAllButLatestDatabaseBackups(10); // TODO config: number of backups to keep
+
+            if (backupAfterSuccessfulInit) {
+                MyTunesRssUtils.backupDatabase(); // TODO config: option to enable/disable backup after successful startup
+                MyTunesRssUtils.removeAllButLatestDatabaseBackups(3); // TODO config: number of backups to keep
+            }
             break; // ok, continue with main flow
         }
     }

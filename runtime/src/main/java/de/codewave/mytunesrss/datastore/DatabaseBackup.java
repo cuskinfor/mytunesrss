@@ -6,17 +6,19 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class DatabaseBackup implements Comparable<DatabaseBackup> {
 
     public static boolean isBackupFile(File file) {
-        return !file.isFile() && file.getName().startsWith("h2-backup-") && file.getName().endsWith(".zip");
+        return file.isFile() && file.getName().startsWith("h2-backup-") && file.getName().endsWith(".zip");
     }
 
     public static File createBackupFile() throws IOException {
@@ -32,7 +34,7 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
         }
         myFile = file;
         try {
-            myDate = new SimpleDateFormat("'h2-backup-'yyyy-MM-dd_HH-mm-ss'.zip").parse(file.getName()).getTime();
+            myDate = new SimpleDateFormat("'h2-backup-'yyyy-MM-dd_HH-mm-ss'.zip'").parse(file.getName()).getTime();
         } catch (ParseException e) {
             throw new IOException("Could not parse data from database backup file name \"" + file.getName() + "\".");
         }
@@ -47,7 +49,11 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
     }
 
     public int compareTo(DatabaseBackup databaseBackup) {
-        return (int) Math.signum(myDate - databaseBackup.myDate);
+        return (int) Math.signum(databaseBackup.myDate - myDate);
     }
 
+    @Override
+    public String toString() {
+        return new SimpleDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "backupDateFormat")).format(new Date(myDate));
+    }
 }
