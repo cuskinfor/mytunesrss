@@ -49,6 +49,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -377,6 +378,8 @@ public class MyTunesRss {
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
+            MyTunesRssUtils.backupDatabase(); // TODO config: option to enable/disable backup after successful startup
+            MyTunesRssUtils.removeAllButLatestDatabaseBackups(10); // TODO config: number of backups to keep
             break; // ok, continue with main flow
         }
     }

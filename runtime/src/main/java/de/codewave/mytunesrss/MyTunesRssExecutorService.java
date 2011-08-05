@@ -7,10 +7,7 @@
  */
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
-import de.codewave.mytunesrss.task.ForcedImageUpdateCallable;
-import de.codewave.mytunesrss.task.RecreateDatabaseCallable;
-import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
+import de.codewave.mytunesrss.task.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +28,8 @@ public class MyTunesRssExecutorService {
     private Future<Boolean> DATABASE_UPDATE_FUTURE;
 
     private Future<Void> DATABASE_RESET_FUTURE;
+
+    private Future<Void> DATABASE_BACKUP_FUTURE;
 
     private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
 
@@ -72,6 +71,15 @@ public class MyTunesRssExecutorService {
         }
     }
 
+    public synchronized void scheduleDatabaseBackup() {
+        cancelDatabaseJob();
+        try {
+            DATABASE_BACKUP_FUTURE = DATABASE_JOB_EXECUTOR.submit(new BackupDatabaseCallable());
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule database backup task.", e);
+        }
+    }
+
     public synchronized void cancelDatabaseJob() {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
             DATABASE_UPDATE_FUTURE.cancel(true);
@@ -87,6 +95,10 @@ public class MyTunesRssExecutorService {
 
     public synchronized boolean isDatabaseResetRunning() {
         return DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone();
+    }
+
+    public synchronized boolean isDatabaseBackupRunning() {
+        return DATABASE_BACKUP_FUTURE != null && !DATABASE_BACKUP_FUTURE.isDone();
     }
 
     public synchronized void scheduleLuceneAndSmartPlaylistUpdate(String[] trackIds) {

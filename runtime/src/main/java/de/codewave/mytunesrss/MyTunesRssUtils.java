@@ -1,22 +1,28 @@
 package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
+import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.PrefsUtils;
+import de.codewave.utils.io.IOUtils;
+import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
+import org.h2.tools.Backup;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,9 +49,11 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.zip.ZipOutputStream;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -545,6 +553,69 @@ public class MyTunesRssUtils {
             return fullList.subList(first, Math.min(first + count, fullList.size()));
         } else {
             return fullList.subList(first, fullList.size());
+        }
+    }
+
+    public static void backupDatabase() throws IOException, SQLException {
+        LOGGER.info("Creating database backup.");
+        if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
+            throw new IllegalStateException("Cannot backup non-default database.");
+        }
+        if (!MyTunesRss.STORE.isInitialized()) {
+            throw new IllegalStateException("Database must already be initialized for starting a backup.");
+        }
+        LOGGER.debug("Destroying store before backup.");
+        MyTunesRss.STORE.destroy();
+        try {
+            File databaseDir = new File(MyTunesRssUtils.getCacheDataPath() + "/" + "h2");
+            File backupFile = DatabaseBackup.createBackupFile();
+            LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
+            ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(backupFile));
+            try {
+                ZipUtils.addFilesToZipRecursively("", databaseDir, null, zipOutputStream);
+            } finally {
+                zipOutputStream.close();
+            }
+        } finally {
+            LOGGER.debug("Restarting store after backup.");
+            MyTunesRss.STORE.init();
+        }
+    }
+
+    public static void restoreDatabaseBackup(DatabaseBackup backup) throws IOException {
+        LOGGER.info("Restoring database backup from file \"" + backup.getFile().getAbsolutePath() + "\".");
+        if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
+            throw new IllegalStateException("Cannot restore non-default database.");
+        }
+        if (MyTunesRss.STORE.isInitialized()) {
+            throw new IllegalStateException("Database must not be initialized for restoring a backup.");
+        }
+        File databaseDir = new File(MyTunesRssUtils.getCacheDataPath() + "/" + "h2");
+        FileUtils.deleteDirectory(databaseDir);
+        databaseDir.mkdir();
+        ZipUtils.unzip(backup.getFile(), databaseDir);
+    }
+
+    public static List<DatabaseBackup> findDatabaseBackups() throws IOException {
+        List<DatabaseBackup> backups = new ArrayList<DatabaseBackup>();
+        for (File file : new File(getCacheDataPath()).listFiles()) {
+            if (DatabaseBackup.isBackupFile(file)) {
+                LOGGER.debug("Found backup file \"" + file + "\".");
+                backups.add(new DatabaseBackup(file));
+            }
+        }
+        Collections.sort(backups);
+        return backups;
+    }
+
+    public static void removeAllButLatestDatabaseBackups(int numberOfBackupsToKeep) throws IOException {
+        List<DatabaseBackup> backups = findDatabaseBackups();
+        if (backups.size() > numberOfBackupsToKeep) {
+            LOGGER.info("Deleting " + (backups.size() - numberOfBackupsToKeep) + " old database backup files.");
+            for (int i = numberOfBackupsToKeep; i < backups.size(); i++) {
+                LOGGER.debug("Deleting backup file \"" + backups.get(i).getFile() + "\".");
+                backups.get(i).getFile().delete();
+            }
         }
     }
 }
