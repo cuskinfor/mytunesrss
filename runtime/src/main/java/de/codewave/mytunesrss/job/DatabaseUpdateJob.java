@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.job;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -13,10 +12,6 @@ import org.slf4j.LoggerFactory;
  * started only if a database update is necessary according to the task.
  */
 public class DatabaseUpdateJob implements Job {
-    /**
-     * Logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(DatabaseUpdateJob.class);
 
     /**
      * Execute the job.
@@ -25,15 +20,7 @@ public class DatabaseUpdateJob implements Job {
      * @throws JobExecutionException
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            DatabaseBuilderCallable callable = new DatabaseBuilderCallable(MyTunesRss.CONFIG.isIgnoreTimestamps());
-            if (callable.needsUpdate()) {
-                callable.call();
-            }
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not automatically update database.", e);
-            }
-        }
+        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
     }
+
 }

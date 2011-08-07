@@ -18,10 +18,6 @@ import org.slf4j.LoggerFactory;
  * Job implementation for database backups. This job simply runs the backup function.
  */
 public class DatabaseBackupJob implements Job {
-    /**
-     * Logger.
-     */
-    private static final Logger LOG = LoggerFactory.getLogger(DatabaseBackupJob.class);
 
     /**
      * Execute the job.
@@ -30,12 +26,7 @@ public class DatabaseBackupJob implements Job {
      * @throws org.quartz.JobExecutionException
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        try {
-            new BackupDatabaseCallable().call();
-        } catch (Exception e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not automatically backup database.", e);
-            }
-        }
+        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseBackup();
     }
+
 }

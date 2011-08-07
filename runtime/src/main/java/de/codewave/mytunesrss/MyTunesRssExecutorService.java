@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.task.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.concurrent.*;
 
 public class MyTunesRssExecutorService {
@@ -45,11 +46,20 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
-        cancelDatabaseUpdateAndResetJob();
+        DatabaseBuilderCallable databaseBuilderCallable = new DatabaseBuilderCallable(ignoreTimestamps);
+        boolean needsUpdate = true;
         try {
-            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
-        } catch (RejectedExecutionException e) {
-            LOGGER.error("Could not schedule database update task.", e);
+            needsUpdate = databaseBuilderCallable.needsUpdate();
+        } catch (SQLException e) {
+            LOGGER.warn("Could not determine if database needs an update, forcing update.", e);
+        }
+        if (needsUpdate) {
+            cancelDatabaseUpdateAndResetJob();
+            try {
+                DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(databaseBuilderCallable);
+            } catch (RejectedExecutionException e) {
+                LOGGER.error("Could not schedule database update task.", e);
+            }
         }
     }
 
@@ -72,6 +82,7 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleDatabaseBackup() {
+        cancelDatabaseBackupJob();
         try {
             DATABASE_BACKUP_FUTURE = DATABASE_JOB_EXECUTOR.submit(new BackupDatabaseCallable());
         } catch (RejectedExecutionException e) {
@@ -85,6 +96,12 @@ public class MyTunesRssExecutorService {
         }
         if (DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone()) {
             DATABASE_RESET_FUTURE.cancel(true);
+        }
+    }
+
+    public synchronized void cancelDatabaseBackupJob() {
+        if (DATABASE_BACKUP_FUTURE != null && !DATABASE_BACKUP_FUTURE.isDone()) {
+            DATABASE_BACKUP_FUTURE.cancel(true);
         }
     }
 
