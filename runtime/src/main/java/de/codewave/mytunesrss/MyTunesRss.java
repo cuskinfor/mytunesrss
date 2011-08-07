@@ -405,7 +405,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.shutdownGracefully();
             }
 
-            if (backupAfterSuccessfulInit && MyTunesRss.CONFIG.isBackupDatabaseAfterInit()) {
+            if (backupAfterSuccessfulInit && MyTunesRss.CONFIG.isBackupDatabaseAfterInit() && MyTunesRss.CONFIG.isDefaultDatabase()) {
                 MyTunesRssUtils.backupDatabase();
             }
             MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
