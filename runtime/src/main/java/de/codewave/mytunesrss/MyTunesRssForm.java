@@ -132,6 +132,7 @@ public class MyTunesRssForm {
 
     public void setAdminUrl(int port) {
         myAdminUrl.setText(port > 0 ? "http://127.0.0.1:" + port : "");
+        myAdminUrl.setToolTipText(myAdminUrl.getText());
         myStartAdminBrowser.setEnabled(port > 0 && myQuit.isEnabled());
         if (port > 0 && myQuit.isEnabled() && MyTunesRss.CONFIG.isShowInitialWizard()) {
             DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
@@ -148,9 +149,23 @@ public class MyTunesRssForm {
         }
     }
 
+    public void setAdminUrl(Exception e) {
+        myAdminUrl.setText(e != null ? e.getMessage() : "");
+        myAdminUrl.setToolTipText(myAdminUrl.getText());
+        myStartAdminBrowser.setEnabled(false);
+    }
+
+
     public void setUserUrl(int port) {
         myUserUrl.setText(port > 0 ? "http://127.0.0.1:" + port + WebServer.getContext() : "");
+        myUserUrl.setToolTipText(myUserUrl.getText());
         myStartUserBrowser.setEnabled(port > 0 && myQuit.isEnabled());
+    }
+
+    public void setUserUrl(Exception e) {
+        myUserUrl.setText(e != null ? e.getMessage() : "");
+        myUserUrl.setToolTipText(myUserUrl.getText());
+        myStartUserBrowser.setEnabled(false);
     }
 
     public void refreshSupportConfig() {

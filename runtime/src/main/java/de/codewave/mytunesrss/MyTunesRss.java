@@ -532,7 +532,7 @@ public class MyTunesRss {
                 LOGGER.error("Could start admin server.", e);
             }
             if (FORM != null) {
-                FORM.setAdminUrl(-1);
+                FORM.setAdminUrl(e);
             }
             return false;
         }
@@ -705,20 +705,26 @@ public class MyTunesRss {
         }
     }
 
-    public static void startWebserver() {
-        WEBSERVER.start();
-        if (WEBSERVER.isRunning()) {
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
-            if (FORM != null) {
-                FORM.setUserUrl(CONFIG.getPort());
+    public static Exception startWebserver() {
+        try {
+            WEBSERVER.start();
+            if (WEBSERVER.isRunning()) {
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.SERVER_STARTED));
+                if (FORM != null) {
+                    FORM.setUserUrl(CONFIG.getPort());
+                }
+                EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
+                if (CONFIG.isAvailableOnLocalNet()) {
+                    MulticastService.startListener();
+                }
+            } else if (FORM != null) {
+                FORM.setUserUrl(-1);
             }
-            EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
-            if (CONFIG.isAvailableOnLocalNet()) {
-                MulticastService.startListener();
-            }
-        } else if (FORM != null) {
-            FORM.setUserUrl(-1);
+        } catch (Exception e) {
+            FORM.setUserUrl(e);
+            return e;
         }
+        return null;
     }
 
     public static void stopWebserver() {

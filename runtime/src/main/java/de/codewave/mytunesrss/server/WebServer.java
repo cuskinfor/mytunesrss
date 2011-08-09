@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.server;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssConfig;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.RegistrationFeedback;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;
@@ -45,91 +42,84 @@ public class WebServer {
     private AtomicBoolean myRunning = new AtomicBoolean(false);
     private WebAppContext myContext;
 
-    public synchronized boolean start() {
+    public synchronized void start() throws Exception {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if (!myRunning.get() && (feedback == null || feedback.isValid())) {
-            try {
-                ensureValidHttpPortInConfig();
-                myServer = new Server();
-                myServer.setThreadPool(new QueuedThreadPool(Integer.parseInt(MyTunesRss.CONFIG.getTomcatMaxThreads())));
-                if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
-                    SslContextFactory sslContextFactory = new SslContextFactory();
-                    if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
-                        // copy default keystore to configured location
-                        LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
-                        File keystore = new File(MyTunesRssUtils.getCacheDataPath(), "mytunesrss.keystore");
-                        IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(keystore));
-                        sslContextFactory.setKeyStore(keystore.getAbsolutePath());
-                        sslContextFactory.setKeyStorePassword("changeit");
-                    } else {
-                        sslContextFactory.setKeyStore(MyTunesRss.CONFIG.getSslKeystoreFile());
-                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
-                            sslContextFactory.setKeyStorePassword(MyTunesRss.CONFIG.getSslKeystorePass());
-                        }
-                        if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
-                            sslContextFactory.setCertAlias(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
-                        }
+        if (feedback != null && !feedback.isValid()) {
+            throw new RegistrationException(feedback.getMessage());
+        }
+        if (!myRunning.get()) {
+            ensureValidHttpPortInConfig();
+            myServer = new Server();
+            myServer.setThreadPool(new QueuedThreadPool(Integer.parseInt(MyTunesRss.CONFIG.getTomcatMaxThreads())));
+            if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
+                SslContextFactory sslContextFactory = new SslContextFactory();
+                if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
+                    // copy default keystore to configured location
+                    LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
+                    File keystore = new File(MyTunesRssUtils.getCacheDataPath(), "mytunesrss.keystore");
+                    IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(keystore));
+                    sslContextFactory.setKeyStore(keystore.getAbsolutePath());
+                    sslContextFactory.setKeyStorePassword("changeit");
+                } else {
+                    sslContextFactory.setKeyStore(MyTunesRss.CONFIG.getSslKeystoreFile());
+                    if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
+                        sslContextFactory.setKeyStorePassword(MyTunesRss.CONFIG.getSslKeystorePass());
                     }
-                    SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(sslContextFactory);
-                    sslConnector.setPort(MyTunesRss.CONFIG.getSslPort());
-                    myServer.addConnector(sslConnector);
-                }
-                if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
-                    Ajp13SocketConnector ajpConnector = null;
-                    try {
-                        ajpConnector = new Ajp13SocketConnector();
-                        ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
-                        myServer.addConnector(ajpConnector);
-                    } catch (Exception e) {
-                        if (LOGGER.isErrorEnabled()) {
-                            LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
-                        }
+                    if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystoreKeyAlias())) {
+                        sslContextFactory.setCertAlias(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
                     }
                 }
-                myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
-                File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/jetty-user-work");
-                if (workDir.exists()) {
-                    MyTunesRssUtils
-                            .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
-                }
-                myContext.setTempDirectory(workDir);
-                myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
-                myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
-                myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-                myServer.setHandler(myContext);
-                SelectChannelConnector httpConnector = new SelectChannelConnector();
-                httpConnector.setPort(MyTunesRss.CONFIG.getPort());
-                myServer.addConnector(httpConnector);
-                myServer.start();
-                byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
-                if (health != CheckHealthResult.OK) {
-                    stop();
-                    myServer = null;
-                    if (health == CheckHealthResult.NULL_DATA_STORE) {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverNullDataStore"));
-                    } else {
-                        MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
+                SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(sslContextFactory);
+                sslConnector.setPort(MyTunesRss.CONFIG.getSslPort());
+                myServer.addConnector(sslConnector);
+            }
+            if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
+                Ajp13SocketConnector ajpConnector = null;
+                try {
+                    ajpConnector = new Ajp13SocketConnector();
+                    ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
+                    myServer.addConnector(ajpConnector);
+                } catch (Exception e) {
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                     }
-                    return false;
                 }
-                MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
-                myRunning.set(true);
-                if (MyTunesRss.QUICKTIME_PLAYER != null) {
-                    MyTunesRss.QUICKTIME_PLAYER.init();
+            }
+            myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
+            File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/jetty-user-work");
+            if (workDir.exists()) {
+                MyTunesRssUtils
+                        .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
+            }
+            myContext.setTempDirectory(workDir);
+            myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
+            myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
+            myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
+            myServer.setHandler(myContext);
+            SelectChannelConnector httpConnector = new SelectChannelConnector();
+            httpConnector.setPort(MyTunesRss.CONFIG.getPort());
+            myServer.addConnector(httpConnector);
+            myServer.start();
+            byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
+            if (health != CheckHealthResult.OK) {
+                stop();
+                myServer = null;
+                if (health == CheckHealthResult.NULL_DATA_STORE) {
+                    throw new NoDatabaseException(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverNullDataStore"));
+                } else {
+                    throw new ServerStartException(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
                 }
-            } catch (Exception e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could start user server.", e);
-                }
-                return false;
+            }
+            MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
+            myRunning.set(true);
+            if (MyTunesRss.QUICKTIME_PLAYER != null) {
+                MyTunesRss.QUICKTIME_PLAYER.init();
             }
             int localPort = myServer.getConnectors()[0].getLocalPort();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Started user server on port " + localPort + ".");
             }
-            return true;
         }
-        return false;
     }
 
     private void ensureValidHttpPortInConfig() throws IOException {

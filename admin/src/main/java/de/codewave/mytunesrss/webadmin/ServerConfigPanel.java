@@ -176,11 +176,15 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         if (musicServerConfigChanged) {
             MyTunesRss.stopWebserver();
             if (!MyTunesRss.WEBSERVER.isRunning()) {
-                MyTunesRss.startWebserver();
+                Exception e = MyTunesRss.startWebserver();
                 if (MyTunesRss.WEBSERVER.isRunning()) {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.serverRestarted");
                 } else {
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStartFailed");
+                    if (e != null) {
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStartFailedWithException", e.getMessage());
+                    } else {
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStartFailed");
+                    }
                 }
             } else {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.error.serverStopFailed");

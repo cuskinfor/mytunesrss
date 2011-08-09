@@ -31,7 +31,7 @@ public class MyTunesRssComUpdateRunnable implements Runnable {
             PostMethod postMethod = new PostMethod(System.getProperty("MyTunesRSS.mytunesrsscomUrl", MYTUNESRSSCOM_URL));
             postMethod.addParameter("user", username);
             postMethod.addParameter("pass", base64Hash);
-            if (MyTunesRss.CONFIG.isMyTunesRssComSsl()) {
+            if (MyTunesRss.CONFIG.isMyTunesRssComSsl() && MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
                 postMethod.addParameter("https", "true");
                 postMethod.addParameter("port", Integer.toString(MyTunesRss.CONFIG.getSslPort()));
                 if (LOG.isDebugEnabled()) {

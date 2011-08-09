@@ -86,7 +86,8 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myMyTunesRssComUser.setValue(MyTunesRss.CONFIG.getMyTunesRssComUser());
         myMyTunesRssComPassword.setValue(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
-        myMyTunesRssComSsl.setValue(MyTunesRss.CONFIG.isMyTunesRssComSsl());
+        myMyTunesRssComSsl.setValue(MyTunesRss.CONFIG.isMyTunesRssComSsl() && MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536);
+        myMyTunesRssComSsl.setEnabled(MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536);
         myWebLoginMessage.setValue(MyTunesRss.CONFIG.getWebLoginMessage());
         myWebWelcomeMessage.setValue(MyTunesRss.CONFIG.getWebWelcomeMessage());
         myServerBrowserActive.setValue(MyTunesRss.CONFIG.isServerBrowserActive());
@@ -103,7 +104,9 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setMyTunesRssComUser(myMyTunesRssComUser.getStringValue(null));
         MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myMyTunesRssComPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
-        MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.booleanValue());
+        if (myMyTunesRssComSsl.isEnabled()) {
+            MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.booleanValue());
+        }
         MyTunesRss.CONFIG.setWebLoginMessage(myWebLoginMessage.getStringValue(null));
         MyTunesRss.CONFIG.setWebWelcomeMessage(myWebWelcomeMessage.getStringValue(null));
         MyTunesRss.CONFIG.setServerBrowserActive(myServerBrowserActive.booleanValue());

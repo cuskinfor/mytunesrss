@@ -9,6 +9,13 @@
 
         <release version="4.1.0-EAP-6" date="2011-xx-xx">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-273] Improve error messages when server cannot be started
+            </action>
+            <action dev="mdescher" type="update">
+                Disable mytunesrss.com SSL checkbox if no SSL port is configured and only update mytunesrss.com
+                with the SSL settings if the option is checked *AND* an SSL port is configured.
+            </action>
+            <action dev="mdescher" type="update">
                 New icons for jukebox and playlist.
             </action>
             <action dev="mdescher" type="add">
