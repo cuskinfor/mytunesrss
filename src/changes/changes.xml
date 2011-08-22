@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.0" date="___D___">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-284] At least RSS and Playlist links do not work from menu
+            </action>
+        </release>
+
         <release version="4.1.0-EAP-6" date="2011-08-12">
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-273] Improve error messages when server cannot be started

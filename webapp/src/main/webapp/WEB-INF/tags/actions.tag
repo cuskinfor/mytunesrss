@@ -42,15 +42,15 @@
     <c:if test="${!config.showAddToPlaylist}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl}">
-	<a id="fn_remotecontrol${index}" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/backUrl=${backUrl}</mt:encrypt>" <c:if test="${!config.remoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote</span></a>
+	<a id="fn_remotecontrol${index}" class="remote" onclick="self.document.location.href='${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/backUrl=${backUrl}</mt:encrypt>'" <c:if test="${!config.remoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote</span></a>
     <c:if test="${!config.remoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.rss}">
-	<a id="fn_rss${index}" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+	<a id="fn_rss${index}" class="rss" onclick="self.document.location.href='${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml'" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
     <c:if test="${!config.showRss}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.playlist}">
-	<a id="fn_playlist${index}" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" <c:if test="${!config.showPlaylist}">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
+	<a id="fn_playlist${index}" class="playlist" onclick="self.document.location.href='${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}'" <c:if test="${!config.showPlaylist}">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
     <c:if test="${!config.showPlaylist}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.player}">
@@ -63,16 +63,16 @@
         <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
             <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
         </a>
-        <a style="display:none" id="fn_download${index}" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>"></a>
+        <a style="display:none" id="fn_download${index}" class="download" onclick="self.document.location.href='<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>'"></a>
     </c:when>
     <c:when test="${!empty track && authUser.download}">
-        <a id="fn_download${index}" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+        <a id="fn_download${index}" class="download" onclick="self.document.location.href='<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>'" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
     </c:when>
     <c:when test="${empty track && authUser.download && (authUser.maximumZipEntries <= 0 || zipFileCount <= authUser.maximumZipEntries)}">
-        <a id="fn_download${index}" class="download" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
+        <a id="fn_download${index}" class="download" onclick="self.document.location.href='${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip'" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
     </c:when>
     <c:when test="${empty track && authUser.download && authUser.maximumZipEntries > 0 && zipFileCount > authUser.maximumZipEntries}">
-        <a id="fn_download${index}" class="download" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
+        <a id="fn_download${index}" class="download" onclick="self.document.location.href='${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip'" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
     </c:when>
 </c:choose>
 <c:if test="${displayMenu}">
