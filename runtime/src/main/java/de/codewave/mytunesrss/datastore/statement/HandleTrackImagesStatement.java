@@ -121,13 +121,19 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private Image getLocalFileImage() throws IOException {
         Image image = null;
+        // look for special image file
         File imageFile = findImageFile(myFile);
         if (imageFile != null) {
+            // okay, use special image file
             return readImageFromImageFile(imageFile);
         } else {
-            image = readImageFromTrackFile(image);
-            if (image == null && mySource == TrackSource.ITunes) {
+            if (mySource == TrackSource.ITunes) {
+                // prefer itunes artwork for performance reasons
                 image = findItunesArtwork();
+            }
+            if (image == null) {
+                // no itunes artwork or no itunes data source
+                image = readImageFromTrackFile(image);
             }
         }
         return image;

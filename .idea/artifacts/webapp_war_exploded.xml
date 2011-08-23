@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="webapp:war exploded">
-    <output-path>$PROJECT_DIR$/webapp/target/webapp-4.1.0-EAP-6-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/webapp/target/webapp-4.1.0-EAP-7-SNAPSHOT</output-path>
     <properties id="ant-postprocessing">
       <options>
         <file>file://$PROJECT_DIR$/build.xml</file>

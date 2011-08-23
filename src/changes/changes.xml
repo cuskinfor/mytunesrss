@@ -8,7 +8,10 @@
     <body>
 
         <release version="4.1.0" date="___D___">
-            <action dev="mdescher" type="fix">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-285] No file parsing if iTunes artwork found
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-284] At least RSS and Playlist links do not work from menu
             </action>
         </release>
