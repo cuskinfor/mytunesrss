@@ -68,7 +68,7 @@
                 displayProtected : (track.protected ? "inline" : "none"),
                 displayVideo : (track.mediaType == "Video" ? "inline" : "none"),
                 trackName : track.name,
-                trackArtist : track.artist != "!" ? track.artist : unknownArtist^,
+                trackArtist : track.artist != "!" ? track.artist : unknownArtist,
                 displayMoveUp : firstItem + i > 0 ? "inline" : "none",
                 displayMoveDown : firstItem + i + 1 < totalCount ? "inline" : "none"
             });
@@ -176,24 +176,24 @@
 	        <span><fmt:message key="myTunesRss" /></span>
 	    </h1>
 	</div>
-	
+
 	<div class="content">
-	
+
 		<div class="content-inner">
 
 		    <ul class="menu">
 		    	<li>
 					<a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
 						<fmt:message key="addMoreSongs" />
-					</a>		    	
+					</a>
 		    	</li>
 		        <li class="back">
 		            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
 		        </li>
 		    </ul>
-		
+
 		    <jsp:include page="/incl_error.jsp" />
-		    
+
 		    <table class="settings" cellspacing="0">
 		    	<tr>
 		    		<td>
@@ -219,18 +219,18 @@
 		            </c:otherwise> </c:choose>
 		        </tr>
 		    </table>
-		
+
 		    <div id="pager" class="pager"></div>
-		
+
 		    <div class="buttons">
 		        <input type="button" onclick="savePlaylist()" value="<fmt:message key="savePlaylist"/>" />
 		        <input type="button" onclick="cancelEditPlaylist()" value="<fmt:message key="doCancel"/>" />
 		    </div>
-		    
+
 		</div>
-		
+
 	</div>
-	
+
 	<div class="footer">
 		<div class="inner"></div>
 	</div>
