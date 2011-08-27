@@ -63,11 +63,11 @@
 	                                </label>
 	                            </td>
 	                            <td>
-	                                <input class="text" type="text" name="username" id="username" value="<c:out value="${param.username}"/>"/>
+	                                <input class="text" type="text" name="username" id="username" value="<c:out value="${param.username}"/>" tabindex="1"/>
 	                            </td>
                                 <td>
                                     <c:if test="${!empty globalConfig.selfRegisterTemplateUser}">
-                                        <a href="${servletUrl}/showSelfRegistration"><fmt:message key="selfRegistrationLink"/></a>
+                                        <a id="linkSelfReg" href="${servletUrl}/showSelfRegistration"><fmt:message key="selfRegistrationLink"/></a>
                                     </c:if>
                                 </td>
 	                        </tr>
@@ -78,11 +78,11 @@
 	                                </label>
 	                            </td>
 	                            <td>
-	                                <input class="text" type="password" name="password" id="password" value="<c:out value="${param.password}"/>"/>
+	                                <input class="text" type="password" name="password" id="password" value="<c:out value="${param.password}"/>" tabindex="2"/>
 	                            </td>
 	                            <td>
 	                            	<c:if test="${globalConfig.validMailConfig}">
-		                            	<a style="cursor:pointer" onclick="self.document.forms[0].action='${servletUrl}/sendForgottenPassword';self.document.forms[0].submit()"><fmt:message key="forgottenPasswordLink"/></a>
+		                            	<a id="linkForgotPassword" style="cursor:pointer" onclick="self.document.forms[0].action='${servletUrl}/sendForgottenPassword';self.document.forms[0].submit()"><fmt:message key="forgottenPasswordLink"/></a>
 		                            </c:if>
 	                            </td>
 	                        </tr>
@@ -90,11 +90,11 @@
 	                            <td>&nbsp;</td>
 	                            <td>
 	                            	<div class="rememberChk">
-	                                <input type="checkbox" name="rememberLogin" value="true" id="rememberCheck"/>
+	                                <input type="checkbox" name="rememberLogin" value="true" id="rememberCheck" tabindex="3"/>
 	                                <label for="rememberCheck"><fmt:message key="rememberLogin"/></label>
 		                            </div>
 	                                <div class="submitBtn">
-		                                <input class="button" type="submit" value="<fmt:message key="doLogin"/>"/>
+		                                <input id="linkSubmitLogin" class="button" type="submit" value="<fmt:message key="doLogin"/>" tabindex="4"/>
 		                            </div>
 	                            </td>
 	                            <td>&nbsp;</td>

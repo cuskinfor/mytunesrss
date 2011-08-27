@@ -60,7 +60,7 @@
 <c:choose>
     <c:when test="${!empty track && authUser.yahooPlayer && config.yahooMediaPlayer && mtfn:lowerSuffix(config, authUser, track) eq 'mp3'}">
         <c:set var="yahoo" scope="request" value="true"/>
-        <a class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
+        <a id="fn_yahoo${index}" class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>">
             <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
         </a>
         <a style="display:none" id="fn_download${index}" class="download" onclick="self.document.location.href='<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>'"></a>
@@ -76,5 +76,5 @@
     </c:when>
 </c:choose>
 <c:if test="${displayMenu}">
-    <a onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>"><span>Menu</span></a>
+    <a id="functionsMenu${index}" onclick="openFunctionsMenu(${index}, $jQ('#functionsDialogName${index}').text());" class="menu" title="<fmt:message key="tooltip.functionsMenu"/>"><span>Menu</span></a>
 </c:if>

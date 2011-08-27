@@ -17,7 +17,7 @@
                 <c:choose>
                     <%-- <c:when test="${page.userData > 0}"> --%>
                     <c:when test="${true}">
-                        <a href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}"
+                        <a id="linkSection${page.key}" href="${cwfn:choose(pagerCurrent == page.key, '#', mtfn:replace(pagerCommand, '{index}', page.key))}"
                                 <c:if test="${pagerCurrent == page.key}">class="active"</c:if>>
                             <c:out value="${page.value}" />
                         </a>
@@ -29,14 +29,14 @@
             </td>
         </c:forEach>
         <td <c:if test="${!filterToggle}">class="last"</c:if>>
-            <a href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
+            <a id="linkSectionAll" href="${cwfn:choose(empty pagerCurrent, '#', mtfn:replace(pagerCommand, '{index}', ''))}"
                     <c:if test="${empty pagerCurrent}">class="active"</c:if>>
                 <fmt:message key="alphabetPagerAll"/>
             </a>
         </td>
         <c:if test="${filterToggle}">
             <td class="filter">
-                <a onclick="$jQ('#displayfilter').slideToggle();" title="<fmt:message key="filter.title"/>">Filter</a>
+                <a id="linkFilter" onclick="$jQ('#displayfilter').slideToggle();" title="<fmt:message key="filter.title"/>">Filter</a>
             </td>
         </c:if>
     </tr>

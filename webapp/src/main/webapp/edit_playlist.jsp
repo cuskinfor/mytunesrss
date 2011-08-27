@@ -172,7 +172,7 @@
 
 	<div class="head">
 	    <h1 class="manager">
-	        <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
+	        <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
 	        <span><fmt:message key="myTunesRss" /></span>
 	    </h1>
 	</div>
@@ -183,12 +183,12 @@
 
 		    <ul class="menu">
 		    	<li>
-					<a href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
+					<a id="linkBrowseArtist" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
 						<fmt:message key="addMoreSongs" />
 					</a>
 		    	</li>
 		        <li class="back">
-		            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
+		            <a id="linkBack" href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
 		        </li>
 		    </ul>
 
@@ -223,8 +223,8 @@
 		    <div id="pager" class="pager"></div>
 
 		    <div class="buttons">
-		        <input type="button" onclick="savePlaylist()" value="<fmt:message key="savePlaylist"/>" />
-		        <input type="button" onclick="cancelEditPlaylist()" value="<fmt:message key="doCancel"/>" />
+		        <input id="linkSave" type="button" onclick="savePlaylist()" value="<fmt:message key="savePlaylist"/>" />
+		        <input id="linkCancel" type="button" onclick="cancelEditPlaylist()" value="<fmt:message key="doCancel"/>" />
 		    </div>
 
 		</div>
@@ -240,8 +240,8 @@
 <textarea id="templatePlaylistRow" style="display:none">
     <tr id="trackTableRow#{index}" class="#{rowClass}">
         <td class="iconleft">
-            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img src="${appUrl}/images/move_up.png" alt="U"/></a>
-            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img src="${appUrl}/images/move_down.png" alt="D"/></a>
+            <a id="linkUp#{index}" style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img src="${appUrl}/images/move_up.png" alt="U"/></a>
+            <a id="linkDown#{index}" style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img src="${appUrl}/images/move_down.png" alt="D"/></a>
         </td>
         <td>
             <img src="${appUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
@@ -250,21 +250,21 @@
         </td>
         <td>#{trackArtist}</td>
         <td class="actions">
-            <a class="delete" onclick="removeTrack(#{index}, '#{trackId}')"><span>Delete</span></a>
+            <a id="linkDelete#{index}" class="delete" onclick="removeTrack(#{index}, '#{trackId}')"><span>Delete</span></a>
         </td>
     </tr>
 </textarea>
 
 <textarea id="templatePager" style="display:none">
-    <a style="cursor:pointer;#{displayPreviousControls}" onclick="firstItem=pagerGetIndexFirst();loadView()" class="first">First</a>
-    <a style="cursor:pointer;#{displayPreviousControls}" onclick="firstItem=pagerGetIndexPrevious();loadView()" class="previous">Previous</a>
+    <a id="linkPageFirst" style="cursor:pointer;#{displayPreviousControls}" onclick="firstItem=pagerGetIndexFirst();loadView()" class="first">First</a>
+    <a id="linkPagePrev" style="cursor:pointer;#{displayPreviousControls}" onclick="firstItem=pagerGetIndexPrevious();loadView()" class="previous">Previous</a>
     #{pagerPages}
-    <a style="cursor:pointer;#{displayNextControls}" onclick="firstItem=pagerGetIndexNext();loadView()" class="next">Next</a>
-    <a style="cursor:pointer;#{displayNextControls}" onclick="firstItem=pagerGetIndexLast();loadView()" class="last">Last</a>
+    <a id="linkPageNext" style="cursor:pointer;#{displayNextControls}" onclick="firstItem=pagerGetIndexNext();loadView()" class="next">Next</a>
+    <a id="linnkPageLast" style="cursor:pointer;#{displayNextControls}" onclick="firstItem=pagerGetIndexLast();loadView()" class="last">Last</a>
 </textarea>
 
 <textarea id="templatePagerPage" style="display:none">
-    <a style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
+    <a id="linkPage#{pageName}" style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
 </textarea>
 
 <div id="errordialog" class="dialog">
@@ -272,7 +272,7 @@
     <div>
         <p>this is the error message</p>
         <p align="right">
-            <button onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
+            <button id="linkCloseError" onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
         </p>
     </div>
 </div>
