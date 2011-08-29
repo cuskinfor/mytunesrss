@@ -10,7 +10,7 @@
     </h2>
     <div>
         <c:forEach items="${externalSiteDefinitions}" var="externalSite" varStatus="siteLoopStatus">
-            <p><a style="cursor:pointer;text-decoration:underline"
+            <p><a id="linkExternalSite${siteLoopStatus.index}" style="cursor:pointer;text-decoration:underline"
                   onclick="openExternalSite('${externalSite.value}', $jQ('#externalSites').data('keyword'));$jQ.modal.close()"><c:out
                     value="${externalSite.key}"/></a></p>
         </c:forEach>

@@ -20,31 +20,31 @@
 <body class="smartPlaylist">
 
 	<div class="body">
-	
+
 		<div class="head">
 		    <h1 class="manager">
-		        <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
+		        <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
 		        <span><fmt:message key="myTunesRss" /></span>
 		    </h1>
 		</div>
-	   
+
 		<div class="content">
-	   
+
 			<div class="content-inner">
-	
+
 			    <jsp:include page="/incl_error.jsp" />
-			
+
 			    <form id="playlist" action="${servletUrl}/saveSmartPlaylist/${auth}" method="post">
-			
+
 			        <input type="hidden" name="smartPlaylist.playlist.id" value="${smartPlaylist.playlist.id}" />
-			
+
 			        <table class="settings" cellspacing="0">
-			
+
 			            <tr>
 			                <th class="active" colspan="2"><fmt:message key="editSmartPlaylistTitle" /></th>
 			            </tr>
 			            <mt:initFlipFlop value1="" value2="class=\"odd\""/>
-			
+
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><fmt:message key="playlistName" /></td>
 			                <td><input type="text" name="smartPlaylist.playlist.name" value="<c:out value="${smartPlaylist.playlist.name}"/>" /></td>
@@ -71,7 +71,7 @@
 			                    <td><input type="text" name="${field}" value="<c:out value="${value}"/>" /></td>
 			                </tr>
 			            </c:forEach>
-			
+
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><fmt:message key="smartPlaylist.smartInfo.protected" /></td>
 			                <td>
@@ -82,7 +82,7 @@
 			                    </select>
 			                </td>
 			            </tr>
-			
+
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><fmt:message key="smartPlaylist.smartInfo.mediatype" /></td>
 			                <td>
@@ -106,22 +106,22 @@
 			            </tr>
 
 			        </table>
-			
+
 			        <div class="buttons">
 			            <input type="submit" value="<fmt:message key="doSave"/>" />
 			            <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPlaylistManager/${auth}'" />
 			        </div>
-			
+
 			    </form>
 
-			</div>			    
+			</div>
 
 		</div>
-		
+
 		<div class="footer">
 			<div class="inner"></div>
 		</div>
-	
+
 	</div>
 
 </body>

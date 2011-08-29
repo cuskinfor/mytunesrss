@@ -28,20 +28,20 @@
 <body class="upload">
 
     <div class="body">
-    
-        <div class="head">    
+
+        <div class="head">
             <h1 class="upload">
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
-        
+
         <div class="content">
-        
+
             <div class="content-inner">
-    
+
                 <jsp:include page="/incl_error.jsp" />
-            
+
                 <table cellspacing="0" class="settings">
                     <tr>
                         <th class="active"><fmt:message key="fileUpload"/></th>
@@ -58,25 +58,25 @@
                         </td>
                     </tr>
                 </table>
-            
+
                 <div id="progressDiv">
                     <div id="progressBackground">
                         <div id="progressBar">0%</div>
                     </div>
                 </div>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-    
+
     </div>
-    
+
     <iframe name="progressFrame" style="visibility:hidden" src=""></iframe>
-    
+
     <iframe name="resultFrame" style="visibility:hidden" src=""></iframe>
 
 </body>

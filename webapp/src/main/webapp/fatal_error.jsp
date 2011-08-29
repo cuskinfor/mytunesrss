@@ -17,37 +17,37 @@
 <body class="errorPage">
 
 	<div class="body">
-	
+
 		<div class="head">
 		    <h1><span><fmt:message key="myTunesRss"/></span></h1>
 		</div>
-		
+
 		<div class="content">
-		
+
 			<div class="content-inner">
-	
+
 				<form id="login" action="${servletUrl}/login/${auth}" method="post">
-				
+
 					<h2 class="fatalError"><fmt:message key="fatalError"/></h2>
-					
+
 					<div class="fatalError">
-						
+
 						<fmt:message key="error.fatal"/>
-						
-						<p><a href="${servletUrl}/showPortal/${auth}"><fmt:message key="gotoPortal"/></a></p>
-					
+
+						<p><a id="linkPortal" href="${servletUrl}/showPortal/${auth}"><fmt:message key="gotoPortal"/></a></p>
+
 					</div>
-				
+
 				</form>
-	
+
 			</div>
-	
+
 		</div>
-		
+
 		<div class="footer">
 			<div class="inner"></div>
 		</div>
-	
+
 	</div>
 
 </body>

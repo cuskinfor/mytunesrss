@@ -22,28 +22,28 @@
 <body class="browse">
 
     <div class="body">
-    
-        <div class="head">        
+
+        <div class="head">
             <h1 class="serverbrowser">
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
-        
+
         <div class="content">
-        
+
             <div class="content-inner">
-    
+
                 <jsp:include page="/incl_error.jsp" />
-                
+
                 <jsp:include page="incl_playlist.jsp" />
-                
+
                 <form id="browse" action="" method="post">
-                
+
                 	<fieldset>
                         <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
                 	</fieldset>
-                
+
                     <table class="tracklist" cellspacing="0">
                         <tr>
                             <th class="active">
@@ -54,32 +54,32 @@
                         <c:forEach items="${servers}" var="server" varStatus="loopStatus">
                             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                                 <td>
-                                    <a href="http://${server.address}:${server.port}"><c:out value="${server.name}" /></a>
+                                    <a id="linkServerName${loopStatus.index}" href="http://${server.address}:${server.port}"><c:out value="${server.name}" /></a>
                                 </td>
                                 <td>
-                                    <a href="http://${server.address}:${server.port}">${server.address}</a>
+                                    <a id="linkServerAddress${loopStatus.index}" href="http://${server.address}:${server.port}">${server.address}</a>
                                 </td>
                             </tr>
                         </c:forEach>
                     </table>
-                
+
                     <c:if test="${!empty indexPager}">
                         <c:set var="pager" scope="request" value="${indexPager}" />
                         <c:set var="pagerCommand" scope="request">${servletUrl}/browseServers/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>/index={index}</c:set>
                         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                         <jsp:include page="incl_bottomPager.jsp" />
                     </c:if>
-                
+
                 </form>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-    
+
     </div>
 
 </body>

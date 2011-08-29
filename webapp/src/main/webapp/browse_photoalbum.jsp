@@ -38,26 +38,26 @@
 <body class="browse">
 
     <div class="body">
-    
-        <div class="head">    
+
+        <div class="head">
             <h1 class="browse">
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
-        
+
         <div class="content">
-            
+
             <div class="content-inner">
-                
+
                 <ul class="menu">
                     <li class="back">
-                        <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+                        <a id="linkBack" href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
                     </li>
                 </ul>
-                
+
                 <jsp:include page="/incl_error.jsp" />
-                
+
                 <table cellspacing="0" class="tracklist searchResult">
                 <c:set var="fnCount" value="0" />
                 <c:forEach items="${photoAlbums}" var="photoAlbum" varStatus="loopStatus">
@@ -86,22 +86,22 @@
                 <c:set var="fnCount" value="${fnCount + 1}"/>
                 </c:forEach>
                 </table>
-                
+
                 <c:if test="${!empty pager}">
                     <c:set var="pagerCommand"
                            scope="request">${servletUrl}/browsePhotoAlbum/${auth}/index={index}/backUrl=${param.backUrl}</c:set>
                     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                     <jsp:include page="incl_bottomPager.jsp" />
                 </c:if>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-    
+
     </div>
 
     <jsp:include page="incl_select_flashplayer_dialog.jsp"/>

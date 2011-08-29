@@ -134,24 +134,24 @@
 <body class="browse">
 
     <div class="body">
-    
-        <div class="head">    
+
+        <div class="head">
             <h1 class="browse">
                 <c:if test="${sessionAuthorized}">
-                    <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                    <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
                 </c:if>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
-        
+
         <div class="content">
-            
+
             <div class="content-inner">
 
                 <c:if test="${sessionAuthorized}">
                     <ul class="menu">
                         <li class="back">
-                            <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+                            <a id="linkBack" href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
                         </li>
                     </ul>
                 </c:if>
@@ -178,15 +178,15 @@
                     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                     <jsp:include page="incl_bottomPager.jsp" />
                 </c:if>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-    
+
     </div>
 
 </body>

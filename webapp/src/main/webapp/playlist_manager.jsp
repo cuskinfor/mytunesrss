@@ -33,26 +33,26 @@
 <body class="plmanager">
 
     <div class="body">
-    
+
         <div class="head">
             <h1 class="manager">
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
-        
+
         <div class="content">
-        
+
             <div class="content-inner">
-    
+
                 <ul class="menu">
-                    <li class="first"><a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${cwfn:encode64(browseArtistUrl)}"><fmt:message key="newPlaylist"/></a></li>
-                    <li><a href="${servletUrl}/editSmartPlaylist/${auth}"><fmt:message key="newSmartPlaylist"/></a></li>
+                    <li class="first"><a id="linkStartNewPlaylist" href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${cwfn:encode64(browseArtistUrl)}"><fmt:message key="newPlaylist"/></a></li>
+                    <li><a id="linkEditSmartPlayist" href="${servletUrl}/editSmartPlaylist/${auth}"><fmt:message key="newSmartPlaylist"/></a></li>
                     <li class="spacer">&nbsp;</li>
                 </ul>
-            
+
                 <jsp:include page="/incl_error.jsp" />
-            
+
                 <table cellspacing="0" class="tracklist">
                     <tr>
                         <th class="active"><fmt:message key="playlists"/></th>
@@ -64,22 +64,22 @@
                     <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
                         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                             <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
-                            <td class="tracks"><a href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
+                            <td class="tracks"><a id="linkTracks${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
                             <td class="actions">
                                 <c:choose>
                                     <c:when test="${playlist.type == 'MyTunesSmart'}">
-                                        <a class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Edit</span></a>
+                                        <a id="linkEditSmart${loopStatus.index}" class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Edit</span></a>
                                         </c:when>
                                     <c:otherwise>
-                                        <a class="edit" onclick="loadAndEditPlaylist('${playlist.id}')"><span>Edit</span></a>
+                                        <a id="linkEdit${loopStatus.index}" class="edit" onclick="loadAndEditPlaylist('${playlist.id}')"><span>Edit</span></a>
                                     </c:otherwise>
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="${deleteConfirmation}">
-                                        <a class="delete" onclick="$jQ('#confirmDeletePlaylist').data('serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('#confirmDeletePlaylist')"><span>Delete</span></a>
+                                        <a id="deleteWithConfirmation${loopStatus.index}" class="delete" onclick="$jQ('#confirmDeletePlaylist').data('serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('#confirmDeletePlaylist')"><span>Delete</span></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>"><span>Delete</span></a>
+                                        <a id="deleteWithoutConfirmation${loopStatus.index}" class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>"><span>Delete</span></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
@@ -89,23 +89,23 @@
                         <tr><td colspan="3" class="empty"><fmt:message key="noPlaylists"/></td></tr>
                     </c:if>
                 </table>
-            
+
                 <c:if test="${!empty pager}">
                     <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPlaylistManager/${auth}/index={index}" />
                     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                     <jsp:include page="incl_bottomPager.jsp" />
                 </c:if>
-                
+
             </div>
-            
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-            
+
     </div>
-        
+
     <div id="confirmDeletePlaylist" class="dialog">
         <h2>
             <fmt:message key="confirmDeletePlaylistTitle"/>

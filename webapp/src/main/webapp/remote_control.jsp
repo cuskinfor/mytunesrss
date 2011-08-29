@@ -228,28 +228,28 @@
 <body class="remote" onload="init()">
 
     <div id="body" class="body">
-    
+
     	<div class="head">
 	        <h1>
-		        <a class="portal" href="${servletUrl}/showPortal/${auth}">
+		        <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}">
 		            <span><fmt:message key="portal" /></span>
 		        </a>
 		        <span><fmt:message key="myTunesRss" /></span>
 	        </h1>
 	    </div>
-	    
+
 	    <div class="content">
-	    
+
 	    	<div class="content-inner">
 
 		        <ul class="menu">
-		            <li class="back"><a style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
+		            <li class="back"><a id="linkBack" style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
 		                <fmt:message key="back" />
 		            </a></li>
 		        </ul>
-		        
+
 		        <div class="navigation">
-		        
+
 			        <div class="remotecontrolPanel">
 			            <img src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
 			            <img id="rc_play" src="${appUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
@@ -259,7 +259,7 @@
 			            <img src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
 			            <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
 			        </div>
-			        
+
 			        <div class="volumeContainer">
 				        Volume<br />
 				        <div id="volume"></div>
@@ -268,39 +268,39 @@
 						Progress<br />
 						<div id="progress"></div>
 	        		</div>
-			        
-		        </div>		        
-	
+
+		        </div>
+
 		        <table cellspacing="0" class="tracklist">
-		
+
 		            <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
 		                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
 		                    <td id="cover${itemLoopStatus.index}" class="remotecontrolTrackImage">&nbsp;</td>
 		                    <td style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
 		                </tr>
 		            </c:forEach>
-		
+
 		        </table>
-		
+
                 <div id="pager" class="pager">
-		
+
 		            <a id="pager_first" onclick="currentPage = 0;createPlaylist()" class="first">First</a>
 		            <a id="pager_previous" onclick="currentPage--;createPlaylist()" class="previous">Previous</a>
-		
+
 		            <c:forEach begin="0" end="9" varStatus="status">
 		                <a id="pager_active_${status.index}" class="active">&nbsp;</a>
 		                <a id="pager_inactive_${status.index}" style="cursor:pointer" onclick="currentPage = (Math.floor(currentPage / pagesPerPager) * pagesPerPager) + ${status.index};createPlaylist()">&nbsp;</a>
 		            </c:forEach>
-		
+
 		            <a id="pager_next" onclick="currentPage++;createPlaylist()" class="next">Next</a>
 		            <a id="pager_last" onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()" class="last">Last</a>
-		
+
 		        </div>
-		
+
 			</div>
 
 		</div>
-		
+
 		<div class="footer">
 			<div class="inner"></div>
 		</div>

@@ -39,7 +39,7 @@
 
     <div class="head">
         <h1 class="browse">
-            <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+            <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
             <span><fmt:message key="myTunesRss"/></span>
         </h1>
     </div>
@@ -53,11 +53,11 @@
                     <li class="first">
                         <c:choose>
                             <c:when test="${empty editablePlaylists || simpleNewPlaylist}">
-                                <a href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message
+                                <a id="linkNewPlaylist" href="${servletUrl}/startNewPlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}"><fmt:message
                                         key="newPlaylist"/></a>
                             </c:when>
                             <c:otherwise>
-                                <a style="cursor:pointer"
+                                <a id="linkEditPlaylist" style="cursor:pointer"
                                    onclick="openDialog('#editPlaylistDialog')"><fmt:message
                                         key="editExistingPlaylist"/></a>
                             </c:otherwise>
@@ -66,7 +66,7 @@
                 </c:if>
                 <li class="spacer">&nbsp;</li>
                 <li class="back">
-                    <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
+                    <a id="linkBack" href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back"/></a>
                 </li>
             </ul>
 
@@ -189,11 +189,11 @@
                                 </c:when>
                                 <c:otherwise>
                                     <c:if test="${authUser.player && config.showPlayer}">
-                                        <a class="flash"
+                                        <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash"
                                            onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${linkFragment}/filename=${filename}.xspf</mt:encrypt>'); return false;"
                                            title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                     </c:if>
-                                    <a class="add"
+                                    <a id="linkAddToPlaylist${loopStatus.index}" class="add"
                                        onclick="addTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.id)}']))"
                                        title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
                                             key="playlist.addToPlaylist"/></span></a>

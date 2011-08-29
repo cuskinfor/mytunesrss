@@ -38,28 +38,28 @@
 <body class="trackinfo">
 
     <div class="body">
-    
-        <div class="head">    
+
+        <div class="head">
             <h1>
-                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
+                <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
                 <span><fmt:message key="myTunesRss" /></span>
             </h1>
         </div>
-        
+
         <div class="content">
-        
+
             <div class="content-inner">
-    
+
                 <jsp:include page="/incl_error.jsp" />
-            
+
               <ul class="menu">
                 <c:if test="${!empty param.backUrl}">
                   <li class="back">
-                    <a href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
+                    <a id="linkBack" href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
                   </li>
                 </c:if>
               </ul>
-            
+
                 <table cellspacing="0" class="settings">
                     <tr>
                         <th colspan="2" class="active">
@@ -211,20 +211,20 @@
                         <td>&nbsp;</td>
                         <td class="actions">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                                <a class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote Control</span></a>
+                                <a id="linkRemoteControl" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote Control</span></a>
                             </c:if>
                             <c:if test="${authUser.rss && config.showRss}">
-                                    <a class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+                                    <a id="linkRssFeed" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
-                                    <a class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
+                                    <a id="linkPlaylist" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <c:set var="playlistParams">track=${track.id}</c:set>
-                                    <a class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${cwfn:encodeUrl(playlistParams)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${cwfn:encodeUrl(playlistParams)}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
-                                    <a class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+                                    <a id="linkDownload" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
                             </c:if>
                         </td>
                     </tr>
@@ -232,7 +232,7 @@
                         <tr <mt:flipFlop/>>
                             <td>&nbsp;</td>
                             <td>
-                                <a href="<c:out value="${mtfn:downloadLink(pageContext, track, 'notranscode=true')}"/>" class="original" title="<fmt:message key="tooltip.originalDownload"/>">
+                                <a id="linkDownloadOriginal" href="<c:out value="${mtfn:downloadLink(pageContext, track, 'notranscode=true')}"/>" class="original" title="<fmt:message key="tooltip.originalDownload"/>">
                                     <fmt:message key="originalDownload"/>
                                 </a>
                             </td>
@@ -308,13 +308,13 @@
                     </table>
 
             </div>
-                    
+
         </div>
-        
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-    
+
     </div>
 
     <jsp:include page="incl_select_flashplayer_dialog.jsp"/>
