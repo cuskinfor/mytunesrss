@@ -23,10 +23,8 @@
 </c:if>
 
 <script type="text/javascript">
-    function addToPlaylist(albums, artists, genres, tracks, fullAlbums) {
-        if (albums != null && albums.length > 0 && albums[0] != '') {
-            addAlbumsToPlaylist(albums);
-        } else if (artists != null && artists.length > 0 && artists[0] != '') {
+    function addToPlaylist(artists, genres, tracks, fullAlbums) {
+        if (artists != null && artists.length > 0 && artists[0] != '') {
             addArtistsToPlaylist(artists, fullAlbums);
         } else if (genres != null && genres.length > 0 && genres[0] != '') {
             addGenresToPlaylist(genres, fullAlbums);
@@ -34,8 +32,8 @@
             addTracksToPlaylist(tracks);
         }
     }
-    function addAlbumsToPlaylist(albums) {
-        jsonRpc('${servletUrl}', 'EditPlaylistService.addAlbums', [albums], updateEditPlaylistCount, '${remoteApiSessionId}');
+    function addAlbumsToPlaylist(albums, albumArtists) {
+        jsonRpc('${servletUrl}', 'EditPlaylistService.addAlbums', [albums, albumArtists], updateEditPlaylistCount, '${remoteApiSessionId}');
     }
     function addArtistsToPlaylist(artists, fullAlbums) {
         jsonRpc('${servletUrl}', 'EditPlaylistService.addArtists', [artists, fullAlbums], updateEditPlaylistCount, '${remoteApiSessionId}');

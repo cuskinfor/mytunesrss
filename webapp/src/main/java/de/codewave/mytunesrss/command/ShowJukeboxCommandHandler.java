@@ -25,7 +25,7 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         builder.addParam("fpr", "1");
         builder.addParam("timeunit", timeUnit.name());
         builder.addParam("type", convertPlaylistType(playlistFileType).name());
-        builder.addPathInfoSegment(getRequestParameter("playlistParams", null));
+        builder.addPathInfoSegment(MyTunesRssBase64Utils.decodeToString(getRequestParameter("playlistParams", null)));
         return builder.getCall(getRequest());
     }
 

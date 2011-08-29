@@ -121,16 +121,17 @@ public class EditPlaylistService {
     /**
      * Add all tracks from the specified albums to the currently edited playist.
      *
-     * @param albums IDs of the albums to add.
+     * @param albums Names of the albums to add.
+     * @param albumArtists Names of the album artists to add.
      * @return The playlist and list of tracks after adding the new tracks from the albums.
      * @throws IllegalAccessException Unauthorized access.
      * @throws java.sql.SQLException  Any database related exception.
      */
-    public Object addAlbums(String[] albums) throws IllegalAccessException, SQLException { // TODO album artist
+    public Object addAlbums(String[] albums, String[] albumArtists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return addTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, new String[0], SortOrder.Album) : null);
+            return addTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, albumArtists, SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
     }
@@ -171,10 +172,12 @@ public class EditPlaylistService {
     private Object addAlbumsFromQuery(FindAlbumQuery albumQuery) throws SQLException, IllegalAccessException {
         List<Album> albums = TransactionFilter.getTransaction().executeQuery(albumQuery).getResults();
         String[] albumNames = new String[albums.size()];
+        String[] albumArtists = new String[albums.size()];
         for (int i = 0; i < albums.size(); i++) {
             albumNames[i] = albums.get(i).getName();
+            albumArtists[i] = albums.get(i).getArtist();
         }
-        return addAlbums(albumNames);
+        return addAlbums(albumNames, albumArtists);
     }
 
     /**
@@ -234,16 +237,17 @@ public class EditPlaylistService {
     /**
      * Remove all tracks of the specified albums from the currently edited playist.
      *
-     * @param albums IDs of the albums to remove.
+     * @param albums Names of the albums to remove.
+     * @param albumArtists Names of the album artists to remove.
      * @return The playlist and list of tracks after removing the tracks of the albums.
      * @throws IllegalAccessException Unauthorized access.
      * @throws java.sql.SQLException  Any database related exception.
      */
-    public Object removeAlbums(String[] albums) throws IllegalAccessException, SQLException { // TODO album artist
+    public Object removeAlbums(String[] albums, String[] albumArtists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
         if (user != null) {
-            return removeTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, new String[0], SortOrder.Album) : null);
+            return removeTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, albumArtists, SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
     }
