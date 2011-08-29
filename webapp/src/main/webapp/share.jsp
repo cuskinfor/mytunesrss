@@ -89,9 +89,9 @@
 
 <div class="linkDisplay" id="linkDisplay"></div>
 
-<button onclick="shareTwitter()">Twitter</button>
+<button id="linkTwitter" onclick="shareTwitter()">Twitter</button>
 <c:if test="${!empty globalConfig.facebookApiKey}">
-    <button onclick="shareFacebook()">Facebook</button>
+    <button id="linkFacebook" onclick="shareFacebook()">Facebook</button>
 </c:if>
 
 <form id="twitterForm" action="http://twitter.com/share" method="post" target="MyTunesRssTwitter">

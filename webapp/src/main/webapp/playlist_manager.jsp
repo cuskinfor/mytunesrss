@@ -115,8 +115,8 @@
                 <fmt:message key="dialog.confirmDeletePlaylist"><fmt:param><span id="playlistName"></span></fmt:param></fmt:message>
             </p>
             <p align="right">
-                <button onclick="$jQ.modal.close()"><fmt:message key="no"/></button>
-                <button onclick="document.location.href = $jQ('#confirmDeletePlaylist').data('serverCall')"><fmt:message key="yes"/></button>
+                <button id="linkConfirmDelPlaylistNo" onclick="$jQ.modal.close()"><fmt:message key="no"/></button>
+                <button id="linkConfirmDelPlaylistYes" onclick="document.location.href = $jQ('#confirmDeletePlaylist').data('serverCall')"><fmt:message key="yes"/></button>
             </p>
         </div>
     </div>

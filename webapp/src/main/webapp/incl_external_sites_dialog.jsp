@@ -15,7 +15,7 @@
                     value="${externalSite.key}"/></a></p>
         </c:forEach>
         <p align="right">
-            <button onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
+            <button id="linkExternalSitesCloseDialog" onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
         </p>
     </div>
 </div>

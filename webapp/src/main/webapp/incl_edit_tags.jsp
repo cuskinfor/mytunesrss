@@ -14,9 +14,9 @@
             <fmt:message key="editTagsDialogInfoPost"/>
         </p>
         <select id="editTagsDialog_existingTags" multiple="true" size="10" style="width:100%"></select><br />
-        <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="removeTags();"><fmt:message key="removeTags"/></button><br /><br />
+        <button id="linkEditTagsRemove" class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="removeTags();"><fmt:message key="removeTags"/></button><br /><br />
         <input id="editTagsDialog_newTag" style="width:100%" /><br />
-        <button class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="addTag();"><fmt:message key="addTags"/></button>
+        <button id="linkEditTagsAdd" class="ui-state-default ui-corner-all" style="margin-top:3px" onclick="addTag();"><fmt:message key="addTags"/></button>
     </div>
 </div>
 

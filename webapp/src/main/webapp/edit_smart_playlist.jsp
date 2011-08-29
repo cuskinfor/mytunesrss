@@ -108,8 +108,8 @@
 			        </table>
 
 			        <div class="buttons">
-			            <input type="submit" value="<fmt:message key="doSave"/>" />
-			            <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPlaylistManager/${auth}'" />
+			            <input id="linkSubmit" type="submit" value="<fmt:message key="doSave"/>" />
+			            <input id="linkCancel" type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPlaylistManager/${auth}'" />
 			        </div>
 
 			    </form>

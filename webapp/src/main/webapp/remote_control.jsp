@@ -251,13 +251,13 @@
 		        <div class="navigation">
 
 			        <div class="remotecontrolPanel">
-			            <img src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
+			            <img id="linkPrevious" src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
 			            <img id="rc_play" src="${appUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
 			            <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
-			            <img src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
-			            <img src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
-			            <img src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
-			            <img src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
+			            <img id="linkStop" src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
+			            <img id="linkNext" src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
+			            <img id="linkShuffle" src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
+			            <img id="linkFullscreen" src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
 			        </div>
 
 			        <div class="volumeContainer">
@@ -276,7 +276,7 @@
 		            <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
 		                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
 		                    <td id="cover${itemLoopStatus.index}" class="remotecontrolTrackImage">&nbsp;</td>
-		                    <td style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
+		                    <td id="linkStart${itemLoopStatus.index}" style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
 		                </tr>
 		            </c:forEach>
 

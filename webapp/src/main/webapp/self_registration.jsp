@@ -22,23 +22,23 @@
 <body onload="document.forms[0].elements['username'].focus()" class="loginpage">
 
     <div class="body">
-    
+
         <div class="head">
             <h1><span><fmt:message key="myTunesRss" /></span></h1>
         </div>
-    
+
         <div class="content">
-    
+
             <div class="content-inner">
-    
+
                 <form id="registration" action="${servletUrl}/register" method="post">
-    
+
                     <h2><fmt:message key="registrationCaption"/></h2>
-                    
+
                     <jsp:include page="/incl_error.jsp"/>
-                    
+
                     <div class="login">
-    
+
 	                    <table cellspacing="0">
 	                        <tr>
 	                            <td class="label">
@@ -85,24 +85,24 @@
 	                            <td>&nbsp;</td>
 	                            <td>
 	                                <div class="submitBtn">
-		                                <input class="button" type="submit" value="<fmt:message key="doRegister"/>"/>
+		                                <input id="linkSubmit" class="button" type="submit" value="<fmt:message key="doRegister"/>"/>
 		                            </div>
 	                            </td>
 	                        </tr>
 	                    </table>
-	                    
+
 	            	</div>
-            
+
                 </form>
-        
+
             </div>
-        
+
         </div>
-      
+
         <div class="footer">
             <div class="inner"></div>
         </div>
-    
+
     </div>
 
 </body>

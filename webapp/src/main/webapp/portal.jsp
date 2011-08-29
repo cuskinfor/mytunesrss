@@ -45,7 +45,7 @@
 <div class="body">
 
     <div class="head">
-        <h1 onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
+        <h1 id="linkCodewaveSite" onclick="window.open('http://www.codewave.de')" style="cursor: pointer"><span><fmt:message key="myTunesRss" /></span></h1>
     </div>
 
     <div class="content">
@@ -93,7 +93,7 @@
                         </c:otherwise>
                     </c:choose>
                     <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
-                    <input class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
+                    <input id="linkDoSearch" class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
 	                </td>
 
                     <mttag:portalLink test="${!globalConfig.disableBrowser && (statistics.albumCount > 0 || statistics.artistCount > 0 || statistics.genreCount > 0)}">

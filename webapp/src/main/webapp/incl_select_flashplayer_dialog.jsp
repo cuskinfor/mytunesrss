@@ -22,8 +22,8 @@
             </select>
         </p>
         <p align="right">
-            <button onclick="doOpenPlayer()"><fmt:message key="doOpenFlashPlayer"/></button>
-            <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+            <button id="linkSelectFlashPlayerOpen" onclick="doOpenPlayer()"><fmt:message key="doOpenFlashPlayer"/></button>
+            <button id="linkSelectFlashPlayerCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
         </p>
     </div>
 </div>

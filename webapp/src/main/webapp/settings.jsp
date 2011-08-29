@@ -437,8 +437,8 @@
                         </c:if>
                     </table>
                     <div class="buttons">
-                        <input type="submit" value="<fmt:message key="doSave"/>" />
-                        <input type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal/${auth}'" />
+                        <input id="linkSave" type="submit" value="<fmt:message key="doSave"/>" />
+                        <input id="linkCancel" type="button" value="<fmt:message key="doCancel"/>" onclick="document.location.href='${servletUrl}/showPortal/${auth}'" />
                     </div>
                 </form>
 

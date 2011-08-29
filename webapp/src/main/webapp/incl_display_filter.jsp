@@ -15,8 +15,8 @@
 
 <div id="displayfilter" class="displayfilter" style="display:${cwfn:choose(empty displayFilter.textFilter && ((displayFilter.minYear == -1 && displayFilter.maxYear == -1) || !filterYearActive) && (displayFilter.albumType == 'ALL' || !filterAlbumTypeActive), 'none', 'block')}">
 
-	<input type="button" value="<fmt:message key="filter.apply"/>" onclick="self.document.location.href='${displayFilterUrl}/' + getElementParams('filterText,filterType,filterProtected,filterMinYear,filterMaxYear,filterAlbumType', '/');"/>
-    
+	<input id="linkApplyFilter" type="button" value="<fmt:message key="filter.apply"/>" onclick="self.document.location.href='${displayFilterUrl}/' + getElementParams('filterText,filterType,filterProtected,filterMinYear,filterMaxYear,filterAlbumType', '/');"/>
+
     <fmt:message key="filter.text"/>:
     <input id="filterText" type="text" name="filterText" value="${displayFilter.textFilter}"/>
 

@@ -21,9 +21,9 @@
                 </select>
             </p>
             <p align="right">
-                <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
-                <button onclick="editPlaylistDialog_edit()"><fmt:message key="edit"/></button>
-                <button onclick="editPlaylistDialog_new()"><fmt:message key="new"/></button>
+                <button id="linkPlaylistDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+                <button id="linkPlaylistDialogEdit" onclick="editPlaylistDialog_edit()"><fmt:message key="edit"/></button>
+                <button id="linkPlaylistDialogNew" onclick="editPlaylistDialog_new()"><fmt:message key="new"/></button>
             </p>
         </div>
     </div>
@@ -65,9 +65,9 @@
             <input id="addOneClickPlaylistDialogPlaylistEnter" style="width:100%" type="text" />
         </p>
         <p align="right">
-            <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
-            <button onclick="addOneClickPlaylistDialog_add"><fmt:message key="addToPlaylistOneClick"/></button>
-            <button onclick="addOneClickPlaylistDialog_new"><fmt:message key="createPlaylistOneClick"/></button>
+            <button id="linkOneClickPlaylistDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+            <button id="linkOneClickPlaylistDialogAdd" onclick="addOneClickPlaylistDialog_add"><fmt:message key="addToPlaylistOneClick"/></button>
+            <button id="linkOneClickPlaylistDialogNew" onclick="addOneClickPlaylistDialog_new"><fmt:message key="createPlaylistOneClick"/></button>
         </p>
     </div>
 </div>
