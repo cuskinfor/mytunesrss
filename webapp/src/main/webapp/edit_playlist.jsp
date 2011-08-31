@@ -172,7 +172,7 @@
 
 	<div class="head">
 	    <h1 class="manager">
-	        <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal" /></span></a>
+	        <a class="portal" href="${servletUrl}/showPortal/${auth}"><span id="linkPortal"><fmt:message key="portal" /></span></a>
 	        <span><fmt:message key="myTunesRss" /></span>
 	    </h1>
 	</div>
@@ -240,8 +240,8 @@
 <textarea id="templatePlaylistRow" style="display:none">
     <tr id="trackTableRow#{index}" class="#{rowClass}">
         <td class="iconleft">
-            <a id="linkUp#{index}" style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img src="${appUrl}/images/move_up.png" alt="U"/></a>
-            <a id="linkDown#{index}" style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img src="${appUrl}/images/move_down.png" alt="D"/></a>
+            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img id="linkUp#{index}" src="${appUrl}/images/move_up.png" alt="U"/></a>
+            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img id="linkDown#{index}" src="${appUrl}/images/move_down.png" alt="D"/></a>
         </td>
         <td>
             <img src="${appUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />

@@ -61,7 +61,7 @@
 
         <div class="head">
             <h1 class="artists">
-                <a id="linkPortal" class="portal" href="${servletUrl}/showPortal/${auth}"><span><fmt:message key="portal"/></span></a>
+                <a class="portal" href="${servletUrl}/showPortal/${auth}"><span id="linkPortal"><fmt:message key="portal"/></span></a>
                 <span><fmt:message key="myTunesRss"/></span>
             </h1>
         </div>
