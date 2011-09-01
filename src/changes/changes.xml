@@ -9,6 +9,9 @@
 
         <release version="4.1.0" date="___D___">
             <action dev="mdescher" type="fix">
+                Added missing forward after self registration with no admin email.
+            </action>
+            <action dev="mdescher" type="fix">
                 Correct tab order for login page.
             </action>
             <action dev="mdescher" type="fix">

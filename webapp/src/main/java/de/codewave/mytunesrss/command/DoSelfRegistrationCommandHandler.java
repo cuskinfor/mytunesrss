@@ -46,6 +46,8 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
                 sendAdminMail(subject, body);
                 addMessage(new BundleError("info.registration." + (user.isActive() ? "done" : "needsActivation")));
                 forward(MyTunesRssResource.Login);
+            } else {
+                forward(MyTunesRssResource.Login);
             }
         } else {
             forward(MyTunesRssResource.SelfRegistration);
