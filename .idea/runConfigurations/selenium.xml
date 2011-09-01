@@ -2,8 +2,8 @@
   <configuration default="false" name="selenium" type="Application" factoryName="Application">
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
     <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
-    <option name="VM_PARAMETERS" value="-Xms32m -Xmx256m -Xbootclasspath/p:lib/codewave-zis-1.1.jar -Xbootclasspath/p:lib/xercesImpl-2.9.1.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=4.1.0-EAP-6 -Dde.codewave.mytunesrss -Dde.codewave.mytunesrss.addons.builtin=$MODULE_DIR$/../etc -Dde.codewave.mytunesrss.native=$MODULE_DIR$/../etc/ffmpeg/m64  " />
-    <option name="PROGRAM_PARAMETERS" value="-cacheDataPath $MODULE_DIR$/../target/idea/selenium -prefsDataPath $MODULE_DIR$/../target/idea/selenium -logConfig $MODULE_DIR$/../etc/log4j-devel.xml" />
+    <option name="VM_PARAMETERS" value="-Xms32m -Xmx256m -Xbootclasspath/p:lib/codewave-zis-1.1.jar -Xbootclasspath/p:lib/xercesImpl-2.9.1.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.version=4.1.0-EAP-6 -Dde.codewave.mytunesrss -Dde.codewave.mytunesrss.addons.builtin=../../etc -Dde.codewave.mytunesrss.native=../../etc/ffmpeg/m64  " />
+    <option name="PROGRAM_PARAMETERS" value="-cacheDataPath ../../target/idea/selenium -prefsDataPath ../../target/idea/selenium -logConfig ../../etc/log4j-devel.xml" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$/../target/idea" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />
