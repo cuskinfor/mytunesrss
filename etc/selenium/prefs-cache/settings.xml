@@ -52,7 +52,14 @@
             <bandwidthLimit>-1</bandwidthLimit>
             <email/>
             <shared>false</shared>
-            <webConfigs/>
+            <webConfigs>
+                <config>
+                    <userAgent>default</userAgent>
+                    <config>
+                        cm1DdHJsPWZhbHNlO3JlY2VudGx5UGxheWVkUGxheWxpc3RTaXplPTI1O2ZlZWRUeXBlUGxheWxpc3Q9dHJ1ZTtybmRQcm90PXRydWU7cm5kTWVkaWE9O3Nob3dEb3dubG9hZD10cnVlO2ZlZWRUeXBlUnNzPXRydWU7cGhvdG9TaXplPTgwMDttb3N0UGxheWVkUGxheWxpc3RTaXplPTI1O3JhbmRvbVBsYXlsaXN0U2l6ZT0yNTtsYXN0VXBkYXRlZFBsYXlsaXN0U2l6ZT0yNTt5YWhvb01lZGlhUGxheWVyPWZhbHNlO3Nob3dUcmFja1RodW1icz1mYWxzZTtteVR1bmVzUnNzQ29tQWRkcmVzcz1mYWxzZTtyc3NMaW1pdD0wO2ZsYXNocGxheWVyPW15dHVuZXNyc3NfandtZWRpYXBsYXllcjticm93c2VyU3RhcnRJbmRleD0xO3BhZ2VTaXplPTIwO2tlZXBBbGl2ZT1mYWxzZTtwbGF5bGlzdFR5cGU9TTN1O3Bob3RvUGFnZVNpemU9MjA7cm5kU3JjPTtzaG93RXh0U2l0ZXM9ZmFsc2U7c2hvd1BsYXllcj10cnVlO3Nob3dBZGRUb1BsYXlsaXN0PWZhbHNlO3NlYXJjaEZ1enppbmVzcz01MDthbGJJbWdTaXplPTEyODtzaG93RWRpdFRhZ3M9ZmFsc2U7c2hvd0FsYnVtVGh1bWJzPWZhbHNl
+                    </config>
+                </config>
+            </webConfigs>
             <remoteControl>true</remoteControl>
             <parent/>
             <externalSites>true</externalSites>
