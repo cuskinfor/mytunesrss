@@ -46,20 +46,11 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
-        DatabaseBuilderCallable databaseBuilderCallable = new DatabaseBuilderCallable(ignoreTimestamps);
-        boolean needsUpdate = true;
+        cancelDatabaseUpdateAndResetJob();
         try {
-            needsUpdate = databaseBuilderCallable.needsUpdate();
-        } catch (SQLException e) {
-            LOGGER.warn("Could not determine if database needs an update, forcing update.", e);
-        }
-        if (needsUpdate) {
-            cancelDatabaseUpdateAndResetJob();
-            try {
-                DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(databaseBuilderCallable);
-            } catch (RejectedExecutionException e) {
-                LOGGER.error("Could not schedule database update task.", e);
-            }
+            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule database update task.", e);
         }
     }
 

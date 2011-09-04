@@ -36,7 +36,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 DatabaseBuilderCallable.doCheckpoint(session, false);
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not recreate help tables..", e);
+                    LOGGER.error("Could not recreate help tables.", e);
                 }
             }
         }
@@ -115,38 +115,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
             myFileDatasources.add(datasource);
         }
-    }
-
-    public boolean needsUpdate() throws SQLException {
-        if (myFileDatasources != null) {
-            for (DatasourceConfig datasource : myFileDatasources) {
-                if (datasource.getType() == DatasourceType.Watchfolder) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Database update needed.");
-                    }
-                    return true;
-                } else if (datasource.getType() == DatasourceType.Itunes || datasource.getType() == DatasourceType.Iphoto) {
-                    SystemInformation systemInformation;
-                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
-                    try {
-                        systemInformation = session.executeQuery(new GetSystemInformationQuery());
-                    } finally {
-                        DatabaseBuilderCallable.doCheckpoint(session, true);
-                    }
-                    File file = datasource.getType() == DatasourceType.Itunes ? new File(datasource.getDefinition()) : new File(datasource.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME);
-                    if (myIgnoreTimestamps || file.lastModified() > systemInformation.getLastUpdate()) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Database update needed (file datasource changed).");
-                        }
-                        return true;
-                    }
-                }
-            }
-        }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Database update not necessary.");
-        }
-        return false;
     }
 
     public Boolean call() throws Exception {

@@ -103,7 +103,8 @@ public class PhotoListener implements PListHandlerListener {
                         statement.clear();
                         statement.setId(photoId);
                         statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                        Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                        //Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                        Long createDate = (((Double)photo.get("DateAsTimerInterval")).longValue() * 1000) + 978303600000L;
                         statement.setDate(createDate != null ? createDate.longValue() : -1);
                         statement.setFile(filename);
                         myDataStoreSession.executeStatement(statement);
