@@ -1266,7 +1266,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
-            root.appendChild(DOMUtils.createIntElement(settings, "baseDirCount", myDatasources.size()));
             writeDataSources(settings, root);
             root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));
@@ -1311,8 +1310,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "bandwidthLimitFactor", myBandwidthLimitFactor.toString()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreArtwork", myIgnoreArtwork));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
-            Element window = settings.createElement("window");
-            root.appendChild(window);
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
             if ((myDatabaseUpdateTriggers != null && myDatabaseUpdateTriggers.size() > 0) || (myDatabaseBackupTriggers != null && myDatabaseBackupTriggers.size() > 0)) {

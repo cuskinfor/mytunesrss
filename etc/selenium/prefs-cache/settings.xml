@@ -10,7 +10,6 @@
     <availableOnLocalNet>false</availableOnLocalNet>
     <checkUpdateOnStart>false</checkUpdateOnStart>
     <ignoreTimestamps>false</ignoreTimestamps>
-    <baseDirCount>1</baseDirCount>
     <datasources>
         <datasource>
             <type>Itunes</type>
@@ -213,7 +212,6 @@
     <bandwidthLimitFactor>0</bandwidthLimitFactor>
     <ignoreArtwork>true</ignoreArtwork>
     <codewaveLogLevel>DEBUG</codewaveLogLevel>
-    <window/>
     <lastNewVersionInfo>0</lastNewVersionInfo>
     <updateIgnoreVersion>4.1.0-EAP-6</updateIgnoreVersion>
     <id3v2-track-comment/>

@@ -7,7 +7,6 @@
 <autoStartServer>true</autoStartServer>
 <updateDatabaseOnServerStart>true</updateDatabaseOnServerStart>
 <ignoreTimestamps>false</ignoreTimestamps>
-<baseDirCount>0</baseDirCount>
 <datasources>
 <definition><!-- CFG_ITUNES_XML_PATH --></definition>
 </datasources>
