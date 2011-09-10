@@ -49,6 +49,7 @@
         <module>runtime</module>
         <module>webapp</module>
         <module>admin</module>
+        <module>selenium</module>
     </modules>
     <dependencies>
         <dependency>

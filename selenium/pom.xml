@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>de.codewave.mytunesrss</groupId>
+    <artifactId>selenium</artifactId>
+    <version>4.1.0-EAP-7-SNAPSHOT</version>
+    <name>Codewave MyTunesRSS Selenium Integration Tests</name>
+    <distributionManagement>
+        <site>
+            <url>/Users/mdescher/Sites/java-projects/mytunesrss/selenium</url>
+        </site>
+    </distributionManagement>
+    <inceptionYear>2011</inceptionYear>
+    <parent>
+        <groupId>de.codewave</groupId>
+        <artifactId>codewave-maven2-base</artifactId>
+        <version>3.14.0</version>
+    </parent>
+    <repositories>
+        <repository>
+            <id>codewave-nexus</id>
+            <name>Codewave Maven Repository</name>
+            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codewave-nexus</id>
+            <name>Codewave Maven Repository</name>
+            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </pluginRepository>
+    </pluginRepositories>
+    <dependencies>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>2.5.0</version>
+        </dependency>
+    </dependencies>
+    <scm>
+        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk/selenium</developerConnection>
+    </scm>
+</project>

@@ -25,7 +25,7 @@
         <delete dir="target/idea/selenium"/>
         <mkdir dir="target/idea/selenium"/>
         <copy todir="target/idea/selenium">
-            <fileset dir="etc/selenium/prefs-cache" />
+            <fileset dir="selenium/etc/prefs-cache" />
         </copy>
     </target>
 

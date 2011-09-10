@@ -356,6 +356,6 @@
         </plugins>
     </build>
     <scm>
-        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk</developerConnection>
+        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk/runtime</developerConnection>
     </scm>
 </project>
