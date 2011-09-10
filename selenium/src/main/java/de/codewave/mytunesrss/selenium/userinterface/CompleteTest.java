@@ -5,32 +5,39 @@ import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.Select;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.rmi.runtime.Log;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class CompleteTest {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(CompleteTest.class);
     private static final int WAIT_INTERVAL = 100;
     private static final int TIMEOUT = 60000;
     private static final String BASE_URL = "http://localhost:47110";
+    private static final int MAX_THREADS = 1;
 
     public static void main(String[] args) throws Exception {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 1; i <= MAX_THREADS; i++) {
+            final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + i;
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        runLoop(UUID.randomUUID().toString(), "selenium", 1000);
+                        runLoop(UUID.randomUUID().toString(), "selenium", threadName, 1000);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
-            }).start();
+            }, threadName).start();
         }
     }
 
-    private static void runLoop(String username, String password, int times) throws Exception {
+    private static void runLoop(String username, String password, String threadName, int times) throws Exception {
         WebDriver driver = new FirefoxDriver();
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.get(BASE_URL + "/mytunesrss/");
@@ -44,7 +51,8 @@ public class CompleteTest {
         driver.findElement(By.id("reg_email")).clear();
         driver.findElement(By.id("reg_email")).sendKeys("mdescher@codewave.de");
         driver.findElement(By.id("linkSubmit")).click();
-        for (int i = 0; i < times; i++) {
+        for (int i = 1; i <= times; i++) {
+            LOGGER.debug("Starting {} of {} for thread {}.", new Object[] {i, times, threadName});
             testComplete(driver, BASE_URL, username, password);
         }
     }
