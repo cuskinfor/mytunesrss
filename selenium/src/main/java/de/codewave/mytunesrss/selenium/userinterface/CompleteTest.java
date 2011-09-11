@@ -1,9 +1,6 @@
 package de.codewave.mytunesrss.selenium.userinterface;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.TimeoutException;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.support.ui.Select;
@@ -38,7 +35,17 @@ public class CompleteTest {
     }
 
     private static void runLoop(String username, String password, String threadName, int times) throws Exception {
-        WebDriver driver = new FirefoxDriver();
+        WebDriver driver = new FirefoxDriver() {
+            @Override
+            public WebElement findElement(By by) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    // ignore
+                }
+                return super.findElement(by);
+            }
+        };
         driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         driver.get(BASE_URL + "/mytunesrss/");
         driver.findElement(By.id("linkSelfReg")).click();
