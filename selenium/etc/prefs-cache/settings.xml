@@ -218,7 +218,7 @@
     <bandwidthLimit>false</bandwidthLimit>
     <bandwidthLimitFactor>0</bandwidthLimitFactor>
     <ignoreArtwork>true</ignoreArtwork>
-    <codewaveLogLevel>DEBUG</codewaveLogLevel>
+    <codewaveLogLevel>WARN</codewaveLogLevel>
     <lastNewVersionInfo>0</lastNewVersionInfo>
     <updateIgnoreVersion>4.1.0-EAP-6</updateIgnoreVersion>
     <id3v2-track-comment/>

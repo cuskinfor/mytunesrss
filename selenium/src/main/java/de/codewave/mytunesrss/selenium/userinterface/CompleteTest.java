@@ -39,7 +39,7 @@ public class CompleteTest {
             @Override
             public WebElement findElement(By by) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(200);
                 } catch (InterruptedException e) {
                     // ignore
                 }
