@@ -21,11 +21,19 @@
         </copy>
     </target>
 
-    <target name="selenium.prepare" description="prepare preferences and cache folder for selenium run configuration" depends="app.prepare">
+    <target name="selenium.h2.prepare" description="prepare preferences and cache folder for selenium h2 run configuration" depends="app.prepare">
         <delete dir="target/idea/selenium"/>
         <mkdir dir="target/idea/selenium"/>
         <copy todir="target/idea/selenium">
-            <fileset dir="selenium/etc/prefs-cache" />
+            <fileset dir="selenium/etc/prefs-cache-h2" />
+        </copy>
+    </target>
+
+    <target name="selenium.postgres.prepare" description="prepare preferences and cache folder for selenium postgres run configuration" depends="app.prepare">
+        <delete dir="target/idea/selenium"/>
+        <mkdir dir="target/idea/selenium"/>
+        <copy todir="target/idea/selenium">
+            <fileset dir="selenium/etc/prefs-cache-postgres" />
         </copy>
     </target>
 

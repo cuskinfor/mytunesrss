@@ -67,6 +67,33 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>sql-maven-plugin</artifactId>
+                <version>1.5</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>postgresql</groupId>
+                        <artifactId>postgresql</artifactId>
+                        <version>8.4-702.jdbc4</version>
+                    </dependency>
+                </dependencies>
+                <configuration>
+                    <driver>org.postgresql.Driver</driver>
+                    <url>jdbc:postgresql://macmini.local/mytunesrss_selenium</url>
+                    <username>postgres</username>
+                    <password>postgres</password>
+                    <onError>continue</onError>
+                    <srcFiles>
+                        <srcFile>etc/postgres-clean.sql</srcFile>
+                        <srcFile>etc/postgres-import.sql</srcFile>
+                    </srcFiles>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
     <scm>
         <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk/selenium</developerConnection>
     </scm>

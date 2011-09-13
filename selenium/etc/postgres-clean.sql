@@ -1,0 +1,15 @@
+DROP TABLE tag;
+DROP TABLE statistics;
+DROP TABLE smart_info;
+DROP TABLE link_track_playlist;
+DROP TABLE playlist;
+DROP TABLE album;
+DROP TABLE artist;
+DROP TABLE genre;
+DROP TABLE track;
+DROP TABLE system_information;
+DROP SEQUENCE playlist_id_sequence;
+DROP TABLE image;
+DROP TABLE link_photo_album;
+DROP TABLE photo;
+DROP TABLE photoalbum;
