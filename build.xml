@@ -21,7 +21,7 @@
         </copy>
     </target>
 
-    <target name="selenium.h2.prepare" description="prepare preferences and cache folder for selenium h2 run configuration" depends="app.prepare">
+    <target name="selenium.h2.prepare" description="prepare preferences and cache folder for selenium h2 run configuration">
         <delete dir="target/idea/selenium"/>
         <mkdir dir="target/idea/selenium"/>
         <copy todir="target/idea/selenium">
@@ -29,7 +29,7 @@
         </copy>
     </target>
 
-    <target name="selenium.postgres.prepare" description="prepare preferences and cache folder for selenium postgres run configuration" depends="app.prepare">
+    <target name="selenium.postgres.prepare" description="prepare preferences and cache folder for selenium postgres run configuration">
         <delete dir="target/idea/selenium"/>
         <mkdir dir="target/idea/selenium"/>
         <copy todir="target/idea/selenium">
@@ -37,7 +37,7 @@
         </copy>
     </target>
 
-    <target name="selenium.mysql.prepare" description="prepare preferences and cache folder for selenium mysql run configuration" depends="app.prepare">
+    <target name="selenium.mysql.prepare" description="prepare preferences and cache folder for selenium mysql run configuration">
         <delete dir="target/idea/selenium"/>
         <mkdir dir="target/idea/selenium"/>
         <copy todir="target/idea/selenium">
