@@ -190,7 +190,7 @@
                                 <c:otherwise>
                                     <c:if test="${authUser.player && config.showPlayer}">
                                         <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash"
-                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=<cw:encode64>${linkFragment}/filename=${filename}.xspf</cw:encode64></mt:encrypt>'); return false;"
+                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${linkFragment}/filename=${filename}.xspf</mt:encode64></mt:encrypt>'); return false;"
                                            title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                     </c:if>
                                     <a id="linkAddToPlaylist${loopStatus.index}" class="add"

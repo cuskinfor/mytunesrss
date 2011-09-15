@@ -220,7 +220,7 @@
                                     <a id="linkPlaylist" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
-                                <c:set var="playlistParams"><cw:encode64>track=${track.id}</cw:encode64></c:set>
+                                <c:set var="playlistParams"><mt:encode64>track=${track.id}</mt:encode64></c:set>
                                     <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">

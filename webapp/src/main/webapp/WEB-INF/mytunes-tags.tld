@@ -55,6 +55,15 @@
 
     <tag>
         <description>
+            Base64 encode the tag body.
+        </description>
+        <name>encode64</name>
+        <tag-class>de.codewave.mytunesrss.jsp.EncodeBase64Tag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <description>
             Create an array of elements in the page context.
         </description>
         <name>array</name>

@@ -9,6 +9,9 @@
 
         <release version="4.1.0" date="___D___">
             <action dev="mdescher" type="fix">
+                Jukebox links not working.
+            </action>
+            <action dev="mdescher" type="fix">
                 Share links not working.
             </action>
             <action dev="mdescher" type="fix">
