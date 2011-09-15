@@ -31,11 +31,12 @@
     }
 
     $jQ(document).ready(function() {
-        links[0] = "${rss}";
-        links[1] = "${playlist}";
-        links[2] = "${download}";
+        var idx = 0;
+        <c:if test="${!empty rss}">links[idx++] = "${rss}";</c:if>
+        <c:if test="${!empty playlist}">links[idx++] = "${playlist}";</c:if>
+        <c:if test="${!empty download}">links[idx++] = "${download}";</c:if>
         <c:forEach var="jukebox" items="${jukeboxes}" varStatus="loopStatus">
-        links[${3 + loopStatus.index}] = "${jukebox.value}";
+        links[idx++] = "${jukebox.value}";
         </c:forEach>
         displayLink();
     });
@@ -79,9 +80,9 @@
 
 <fmt:message key="share.selectLink"/>:
 <select id="linkSelect" onchange="displayLink()">
-    <option><fmt:message key="tooltip.rssfeed"/></option>
-    <option><fmt:message key="tooltip.playlist"/></option>
-    <option><fmt:message key="tooltip.playtrack"/></option>
+    <c:if test="${!empty rss}"><option><fmt:message key="tooltip.rssfeed"/></option></c:if>
+    <c:if test="${!empty playlist}"><option><fmt:message key="tooltip.playlist"/></option></c:if>
+    <c:if test="${!empty download}"><option><fmt:message key="tooltip.playtrack"/></option></c:if>
     <c:forEach var="jukebox" items="${jukeboxes}">
         <option>${jukebox.key}</option>
     </c:forEach>

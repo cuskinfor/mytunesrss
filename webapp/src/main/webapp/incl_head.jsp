@@ -42,8 +42,7 @@
     function openDialog(element) {
         $jQ(element).modal({
             overlayCss : "background-color: #000",
-            overlayClose : true,
-            maxWidth : $jQ("div.body").css("width")
+            overlayClose : true
         });
     }
 

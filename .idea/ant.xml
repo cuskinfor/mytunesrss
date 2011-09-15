@@ -11,7 +11,7 @@
       <maximumHeapSize value="128" />
       <maximumStackSize value="32" />
       <properties />
-      <executeOn event="afterCompilation" target="idea.after-compile" />
+      <executeOn event="afterCompilation" target="app.prepare" />
     </buildFile>
   </component>
 </project>

@@ -9,6 +9,12 @@
 
         <release version="4.1.0" date="___D___">
             <action dev="mdescher" type="fix">
+                Share links not working.
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-289] Edit playlist dialog not high enough
+            </action>
+            <action dev="mdescher" type="fix">
                 Added missing forward after self registration with no admin email.
             </action>
             <action dev="mdescher" type="fix">

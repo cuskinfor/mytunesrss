@@ -546,7 +546,7 @@ table.navigation {
 	position: absolute;
     width: 16px;
     height: 16px;
-    background: url("../images/cover-row.png");	
+    background: url("../images/cover-row.png");
 	margin: 0;
 	top: 3px;
 	left: 3px;
@@ -1217,6 +1217,8 @@ h2.fatalError {
 }
 
 div.dialog {
+    max-width: 780px;
+    min-width: 480px;
     display: none;
     border: solid 1px black;
     border-radius: 5px;

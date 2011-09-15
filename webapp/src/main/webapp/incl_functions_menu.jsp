@@ -99,3 +99,14 @@
     </div>
 
 </div>
+
+<div id="messageTooManyFilesInZip" class="dialog">
+    <h2>
+        <fmt:message key="error.title" />
+    </h2>
+    <div>
+        <p>
+            <fmt:message key="error.zipLimit" />
+        </p>
+    </div>
+</div>
