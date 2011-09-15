@@ -104,7 +104,7 @@
                                 <c:otherwise>
                                     <c:if test="${authUser.player && config.showPlayer}">
                                         <a id="linkEditPlaylistFlashPlaylistHeader" class="flash"
-                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=<Fmt:encode64>${linkFragment}/filename=${mtfn:webSafeFileName(filename)}.xspf</mt:encode64></mt:encrypt>'); return false;"
+                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${linkFragment}/filename=${mtfn:webSafeFileName(filename)}.xspf</mt:encode64></mt:encrypt>'); return false;"
                                            title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                     </c:if>
                                     <a id="linkAddToPlaylistPlaylistHeader" class="add"
