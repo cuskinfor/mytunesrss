@@ -82,8 +82,8 @@ public class MyTunesRss {
     public static final String CACHEDIR_TRANSCODER = "transcoder";
     public static final String CACHEDIR_HTTP_LIVE_STREAMING = "http_live_streaming";
 
-    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS410EAP";
-    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS4", "MyTunesRSS3"};
+    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS4";
+    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";

@@ -4,7 +4,7 @@
     <adminPassword>2jmj7l5rSw0yVb/vlWAYkK/YBwk=</adminPassword>
     <adminPort>47111</adminPort>
     <importOriginalImageSize>false</importOriginalImageSize>
-    <version>4.1.0-EAP-6</version>
+    <version>4.1.0</version>
     <serverPort>47110</serverPort>
     <serverName>MyTunesRSS</serverName>
     <availableOnLocalNet>false</availableOnLocalNet>
@@ -220,7 +220,7 @@
     <ignoreArtwork>true</ignoreArtwork>
     <codewaveLogLevel>WARN</codewaveLogLevel>
     <lastNewVersionInfo>0</lastNewVersionInfo>
-    <updateIgnoreVersion>4.1.0-EAP-6</updateIgnoreVersion>
+    <updateIgnoreVersion>4.1.0</updateIgnoreVersion>
     <id3v2-track-comment/>
     <tomcat>
         <max-threads>200</max-threads>
