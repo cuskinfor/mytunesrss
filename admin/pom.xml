@@ -111,13 +111,13 @@
                         <groupId>com.vaadin</groupId>
                         <artifactId>vaadin-maven-plugin</artifactId>
                         <version>1.0.2</version>
-                        <executions>
+                        <!--executions>
                             <execution>
                                 <goals>
                                     <goal>update-widgetset</goal>
                                 </goals>
                             </execution>
-                        </executions>
+                        </executions-->
                     </plugin>
                     <!-- Compiles your custom GWT components with the GWT compiler -->
                     <plugin>
@@ -129,14 +129,14 @@
                             <extraJvmArgs>-Xmx512M -Xss1024k</extraJvmArgs>
                             <style>PRETTY</style>
                         </configuration>
-                        <executions>
+                        <!--executions>
                             <execution>
                                 <goals>
                                     <goal>resources</goal>
                                     <goal>compile</goal>
                                 </goals>
                             </execution>
-                        </executions>
+                        </executions-->
                         <dependencies>
                             <dependency>
                                 <groupId>com.google.gwt</groupId>
