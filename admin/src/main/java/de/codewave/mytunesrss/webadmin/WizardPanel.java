@@ -67,7 +67,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddDatasourceButton) {
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), null, ServerSideFileChooser.PATTERN_ALL, DatasourcesConfigPanel.XML_FILE_PATTERN, false, "Roots") { // TODO i18n
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), null, ServerSideFileChooser.PATTERN_ALL, DatasourcesConfigPanel.XML_FILE_PATTERN, false, getApplication().getServerSideFileChooserLabels()) {
                 @Override
                 protected void onFileSelected(File file) {
                     myDatasourcePath.setValue(file.getAbsolutePath());

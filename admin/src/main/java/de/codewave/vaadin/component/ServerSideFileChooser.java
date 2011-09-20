@@ -54,6 +54,36 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         }
     }
 
+    public static class Labels {
+        private String myRoots;
+        private String myOk;
+        private String myCancel;
+        private String myCreateDir;
+
+        public Labels(String roots, String ok, String cancel, String createDir) {
+            myRoots = roots;
+            myOk = ok;
+            myCancel = cancel;
+            myCreateDir = createDir;
+        }
+
+        public String getRoots() {
+            return myRoots;
+        }
+
+        public String getOk() {
+            return myOk;
+        }
+
+        public String getCancel() {
+            return myCancel;
+        }
+
+        public String getCreateDir() {
+            return myCreateDir;
+        }
+    }
+
     private Table myChooser;
     private File myCurrentDir;
     private Button myOk;
@@ -66,7 +96,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
     private File[] myRootFiles;
     private Property.ValueChangeListener myRootSelectionListener;
 
-    public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir, String rootsLabel) {
+    public ServerSideFileChooser(File currentDir, Pattern allowedDirPattern, Pattern allowedFilePattern, boolean allowCreateDir, Labels labels) {
         myAllowedDirPattern = allowedDirPattern;
         myAllowedFilePattern = allowedFilePattern;
         if (currentDir != null && currentDir.exists()) {
@@ -80,7 +110,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myRootFiles = File.listRoots();
         //myRootFiles = new File[] {new File("/Applications"), new File("/Users"), new File("/Volumes")};
         if (myRootFiles != null && myRootFiles.length > 1) {
-            myRootsInput = new Select(rootsLabel, Arrays.asList(myRootFiles));
+            myRootsInput = new Select(labels.getRoots(), Arrays.asList(myRootFiles));
             myRootsInput.setNullSelectionAllowed(false);
             myRootSelectionListener = new Property.ValueChangeListener() {
                 public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
@@ -102,10 +132,10 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myChooser.setColumnExpandRatio("File", 1f);
         myChooser.addListener(this);
         myChooser.setSortContainerPropertyId("File");
-        myOk = new Button("Ok", this); // TODO i18n
+        myOk = new Button(labels.getOk(), this);
         myOk.setEnabled(false);
-        myCancel = new Button("Cancel", this); // TODO i18n
-        myCreateDir = new Button("Create folder", this); // TODO i18n
+        myCancel = new Button(labels.getCancel(), this);
+        myCreateDir = new Button(labels.getCreateDir(), this);
         panel.addComponent(myChooser);
         Panel buttonPanel = new Panel(new HorizontalLayout());
         ((Layout.SpacingHandler) buttonPanel.getContent()).setSpacing(true);

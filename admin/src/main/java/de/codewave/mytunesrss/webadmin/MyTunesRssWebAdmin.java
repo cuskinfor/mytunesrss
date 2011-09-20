@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.ResourceBundleManager;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.vaadin.ComponentFactory;
+import de.codewave.vaadin.component.ServerSideFileChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,5 +106,14 @@ public class MyTunesRssWebAdmin extends Application {
             treeTable.setParent(playlist, MyTunesRssUtils.findParentPlaylist(playlist, playlists));
             treeTable.setChildrenAllowed(playlist, MyTunesRssUtils.hasChildPlaylists(playlist, playlists));
         }
+    }
+
+    public ServerSideFileChooser.Labels getServerSideFileChooserLabels() {
+        return new ServerSideFileChooser.Labels(
+                getBundleString("serverSideFileChooser.roots"),
+                getBundleString("serverSideFileChooser.ok"),
+                getBundleString("serverSideFileChooser.cancel"),
+                getBundleString("serverSideFileChooser.mkdir")
+        );
     }
 }

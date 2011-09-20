@@ -280,7 +280,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             final Form buttonForm = (Form) clickEvent.getButton().getData();
             if (buttonForm.getField("selectBinary") == clickEvent.getButton()) {
                 File dir = StringUtils.isNotBlank((String) buttonForm.getField("binary").getValue()) ? new File((String) buttonForm.getField("binary").getValue()) : null;
-                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, "Roots") { // TODO i18n
+                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
                     @Override
                     protected void onFileSelected(File file) {
                         buttonForm.getField("binary").setValue(file.getAbsolutePath());

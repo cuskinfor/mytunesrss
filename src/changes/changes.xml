@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.1" date="___D___">
+            <action dev="mdescher" type="fix">
+                Corrected some i18n issues.
+            </action>
+        </release>
+
         <release version="4.1.0" date="2011-09-18">
             <action dev="mdescher" type="fix">
                 Removed additional web languages FR, JA and NB.

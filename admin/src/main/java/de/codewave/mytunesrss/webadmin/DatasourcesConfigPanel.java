@@ -156,7 +156,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
             }
         } else if (clickEvent.getSource() == mySelectUploadDir) {
             File dir = StringUtils.isNotBlank((String) myUploadDir.getValue()) ? new File((String) myUploadDir.getValue()) : null;
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), dir, ServerSideFileChooser.PATTERN_ALL, null, true, "Roots") { // TODO i18n
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), dir, ServerSideFileChooser.PATTERN_ALL, null, true, getApplication().getServerSideFileChooserLabels()) {
 
                 @Override
                 protected void onFileSelected(File file) {
@@ -170,7 +170,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private void addOrEditLocalDataSource(final Object itemId, File file) {
-        new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), file, ServerSideFileChooser.PATTERN_ALL, XML_FILE_PATTERN, false, "Roots") { // TODO i18n
+        new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), file, ServerSideFileChooser.PATTERN_ALL, XML_FILE_PATTERN, false, getApplication().getServerSideFileChooserLabels()) {
 
             @Override
             protected void onFileSelected(File file) {

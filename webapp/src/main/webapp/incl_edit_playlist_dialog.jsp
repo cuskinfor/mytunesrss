@@ -66,11 +66,12 @@
         </p>
         <p align="right">
             <button id="linkOneClickPlaylistDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
-            <button id="linkOneClickPlaylistDialogAdd" onclick="addOneClickPlaylistDialog_add"><fmt:message key="addToPlaylistOneClick"/></button>
-            <button id="linkOneClickPlaylistDialogNew" onclick="addOneClickPlaylistDialog_new"><fmt:message key="createPlaylistOneClick"/></button>
+            <button id="linkOneClickPlaylistDialogAdd" onclick="addOneClickPlaylistDialog_add()"><fmt:message key="addToPlaylistOneClick"/></button>
+            <button id="linkOneClickPlaylistDialogNew" onclick="addOneClickPlaylistDialog_new()"><fmt:message key="createPlaylistOneClick"/></button>
         </p>
     </div>
 </div>
+
 <script type="text/javascript">
     function addOneClickPlaylistDialog_add() {
         document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/" + $jQ("#addOneClickPlaylistDialog").data("linkFragment") + "/playlistId=" + $jQ("#addOneClickPlaylistDialogPlaylistSelection option:selected").val() + "/backUrl=${mtfn:encode64(backUrl)}";
@@ -81,7 +82,7 @@
             document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").data("linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
             $jQ.modal.close();
         } else {
-            alert("TODO i18n: enter a name first!")
+            alert("<fmt:message key="addOneClickPlaylist.missingName"/>")
         }
     }
     function openAddOneClickPlaylistDialog(linkFragment, newPlaylistName) {
