@@ -249,7 +249,30 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (((EventObject) valueChangeEvent).getSource() == myDatabaseType) {
             showHideDatabaseDetails((DatabaseType) valueChangeEvent.getProperty().getValue());
             showHideDatabaseBackup((DatabaseType) valueChangeEvent.getProperty().getValue());
+            fillDefaultDatabaseProperties();
         }
+    }
+
+    private void fillDefaultDatabaseProperties() {
+        switch ((DatabaseType) myDatabaseType.getValue()) {
+            case h2custom:
+                myDatabaseDriver.setValue("org.h2.Driver");
+                myDatabaseConnection.setValue("jdbc:h2:file:{path_to_folder}");
+                break;
+            case mysql:
+                myDatabaseDriver.setValue("com.mysql.jdbc.Driver");
+                myDatabaseConnection.setValue("jdbc:mysql://{database server host}/{database_name}");
+                break;
+            case postgres:
+                myDatabaseDriver.setValue("org.postgresql.Driver");
+                myDatabaseConnection.setValue("jdbc:postgresql://{database server host}/{database name}");
+                break;
+            default:
+                myDatabaseDriver.setValue(null);
+                myDatabaseConnection.setValue(null);
+        }
+        myDatabaseUser.setValue(null);
+        myDatabasePassword.setValue(null);
     }
 
     private boolean isDatabaseChanged() {

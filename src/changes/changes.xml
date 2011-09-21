@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.1.1" date="___D___">
+            <action dev="mdescher" type="add">
+                Default database driver class name and template connect string in input fields when changing database type in admin interface.
+            </action>
             <action dev="mdescher" type="fix">
                 One-click playlists ("create new" and "add to existing") did not work.
             </action>
