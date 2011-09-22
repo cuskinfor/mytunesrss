@@ -94,13 +94,13 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void initFromConfig() {
-        myDatabaseType.select(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
+        myDatabaseType.select(MyTunesRss.CONFIG.getDatabaseType());
         myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
         myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
         myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
         myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
-        showHideDatabaseDetails(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
-        showHideDatabaseBackup(DatabaseType.valueOf(MyTunesRss.CONFIG.getDatabaseType()));
+        showHideDatabaseDetails(MyTunesRss.CONFIG.getDatabaseType());
+        showHideDatabaseBackup(MyTunesRss.CONFIG.getDatabaseType());
         refreshUpdateTriggers();
         refreshBackupTriggers();
         myNumberKeepBackups.setValue(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
@@ -167,7 +167,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     protected void writeToConfig() {
         //noinspection OverlyStrongTypeCast
-        MyTunesRss.CONFIG.setDatabaseType(((DatabaseType) myDatabaseType.getValue()).name());
+        MyTunesRss.CONFIG.setDatabaseType((DatabaseType) myDatabaseType.getValue());
         MyTunesRss.CONFIG.setDatabaseDriver(myDatabaseDriver.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));

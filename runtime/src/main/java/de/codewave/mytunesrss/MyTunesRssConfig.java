@@ -72,7 +72,7 @@ public class MyTunesRssConfig {
     private String myUpdateIgnoreVersion;
     private List<String> myDatabaseUpdateTriggers = new ArrayList<String>();
     private List<String> myDatabaseBackupTriggers = new ArrayList<String>();
-    private String myDatabaseType;
+    private DatabaseType myDatabaseType;
     private String myDatabaseConnection;
     private String myDatabaseUser;
     private String myDatabasePassword;
@@ -437,11 +437,11 @@ public class MyTunesRssConfig {
         myDatabasePassword = databasePassword;
     }
 
-    public String getDatabaseType() {
+    public DatabaseType getDatabaseType() {
         return myDatabaseType;
     }
 
-    public void setDatabaseType(String databaseType) {
+    public void setDatabaseType(DatabaseType databaseType) {
         myDatabaseType = databaseType;
     }
 
@@ -1211,9 +1211,9 @@ public class MyTunesRssConfig {
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
         setDefaultDatabaseSettings();
-        setDatabaseType(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType()));
+        setDatabaseType(DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType().name())));
         // for default h2, always use calculated defaults
-        if (!StringUtils.equals(myDatabaseType, DatabaseType.h2.name())) {
+        if (getDatabaseType() != DatabaseType.h2) {
             setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
             setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
             setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
@@ -1222,7 +1222,7 @@ public class MyTunesRssConfig {
     }
 
     public void setDefaultDatabaseSettings() throws IOException {
-        setDatabaseType("h2");
+        setDatabaseType(DatabaseType.h2);
         setDatabaseDriver("org.h2.Driver");
         setDatabaseConnection("jdbc:h2:file:" + MyTunesRssUtils.getCacheDataPath() + "/" + "h2/MyTunesRSS");
         setDatabaseUser("sa");
@@ -1327,10 +1327,10 @@ public class MyTunesRssConfig {
                 }
             }
             // for default h2 database we shoud not save anything to the config
-            if (!StringUtils.equals(getDatabaseType(), DatabaseType.h2.name())) {
+            if (getDatabaseType() != DatabaseType.h2) {
                 Element database = settings.createElement("database");
                 root.appendChild(database);
-                database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType()));
+                database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType().name()));
                 database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
                 database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
                 database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
@@ -1521,7 +1521,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isDefaultDatabase() {
-        return StringUtils.isEmpty(myDatabaseType) || "h2".equalsIgnoreCase(myDatabaseType);
+        return getDatabaseType() == null || getDatabaseType() == DatabaseType.h2;
     }
 
     public boolean isRemoteControl() {

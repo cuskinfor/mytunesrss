@@ -10,9 +10,19 @@ import java.util.Locale;
 public enum DatabaseType {
     h2(), h2custom(), postgres(), mysql();
 
-
     @Override
     public String toString() {
         return MyTunesRssUtils.getBundleString(Locale.getDefault(), "settings.database.type." + name());
+    }
+
+    public String getDialect() {
+        switch (this) {
+            case mysql:
+                return "mysql";
+            case postgres:
+                return "postgres";
+            default:
+                return "h2";
+        }
     }
 }

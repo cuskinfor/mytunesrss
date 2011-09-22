@@ -18,7 +18,7 @@ public class MyTunesRssTestUtils {
     }
 
     public static void initDatabase() throws ClassNotFoundException, IOException, SQLException {
-        MyTunesRss.CONFIG.setDatabaseType("h2");
+        MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);
         MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:mem:mytunesrss;DB_CLOSE_DELAY=-1");
         MyTunesRss.CONFIG.setDatabaseUser("sa");
         MyTunesRss.CONFIG.setDatabasePassword("");

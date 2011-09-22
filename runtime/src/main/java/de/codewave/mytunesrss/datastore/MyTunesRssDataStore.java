@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.datastore;
 
+import de.codewave.mytunesrss.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.utils.sql.DataStore;
 import de.codewave.utils.sql.SmartStatementFactory;
@@ -88,23 +89,20 @@ public class MyTunesRssDataStore extends DataStore {
         }
     }
 
-    private void initSmartStatementFactory(String databaseType) {
-        if (databaseType.startsWith("h2")) {
-            databaseType = "h2"; // h2 and h2custom => h2 database dialect
-        }
-        LOG.info("Using DML/DDL for database type \"" + databaseType + "\".");
+    private void initSmartStatementFactory(DatabaseType databaseType) {
+        LOG.info("Using DML/DDL for database type \"" + databaseType.name() + "\" with dialect \"" + databaseType.getDialect() + "\".");
         JXPathContext[] contexts =
                 new JXPathContext[]{JXPathUtils.getContext(getClass().getResource("ddl.xml")), JXPathUtils.getContext(getClass().getResource(
                         "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};
-        URL url = getClass().getResource("ddl_" + databaseType + ".xml");
+        URL url = getClass().getResource("ddl_" + databaseType.getDialect() + ".xml");
         if (url != null) {
             contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
-        url = getClass().getResource("dml_" + databaseType + ".xml");
+        url = getClass().getResource("dml_" + databaseType.getDialect() + ".xml");
         if (url != null) {
             contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
-        url = getClass().getResource("migration_" + databaseType + ".xml");
+        url = getClass().getResource("migration_" + databaseType.getDialect() + ".xml");
         if (url != null) {
             contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
