@@ -177,11 +177,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     }
 
     private String getUploadDir() {
-        try {
-            return MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TEMP;
-        } catch (IOException e) {
-            throw new RuntimeException("Could not get cache path.");
-        }
+        return MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TEMP;
     }
 
     public OutputStream receiveUpload(String filename, String MIMEType) {
@@ -196,7 +192,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         try {
             File uploadFile = new File(getUploadDir(), event.getFilename());
             File targetDir = myFlashPlayerConfig.getBaseDir();
-            targetDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myFlashPlayerConfig.getId());
+            targetDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer", myFlashPlayerConfig.getId());
             targetDir.mkdirs();
             if (event.getFilename().toLowerCase().endsWith(".zip")) {
                 if (!ZipUtils.unzip(uploadFile, targetDir)) {

@@ -50,7 +50,7 @@ public class SendSupportRequestRunnable implements Runnable {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             zipOutput = new ZipOutputStream(baos);
             String archiveName = "MyTunesRSS_" + MyTunesRss.VERSION + "_Support" + (StringUtils.isNotBlank(myName) ? "_" + StringUtils.trim(myName) : "");
-            ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.log"), zipOutput);
+            ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.log"), zipOutput);
             if (myIncludeItunesXml) {
                 int index = 0;
                 for (DatasourceConfig dataSource : MyTunesRss.CONFIG.getDatasources()) {

@@ -179,7 +179,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     }
 
     public File getBaseDir() throws IOException {
-        return new File(MyTunesRssUtils.getPreferencesDataPath() + "/flashplayer", myId);
+        return new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer", myId);
     }
 
 }

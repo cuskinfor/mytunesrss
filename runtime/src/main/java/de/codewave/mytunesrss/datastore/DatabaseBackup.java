@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.datastore;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.lang.builder.ToStringBuilder;
 
@@ -22,7 +23,7 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
     }
 
     public static File createBackupFile() throws IOException {
-        return new File(MyTunesRssUtils.getCacheDataPath(), "h2-backup-" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".zip");
+        return new File(MyTunesRss.CACHE_DATA_PATH, "h2-backup-" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".zip");
     }
 
     private long myDate;

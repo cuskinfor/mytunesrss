@@ -119,6 +119,8 @@ public class MyTunesRss {
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
     public static RouterConfig ROUTER_CONFIG = new RouterConfig();
     public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();
+    public static String CACHE_DATA_PATH;
+    public static String PREFERENCES_DATA_PATH;
 
     public static void main(final String[] args) throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread() {
@@ -134,6 +136,8 @@ public class MyTunesRss {
         });
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         processArguments(args);
+        CACHE_DATA_PATH = getCacheDataPath();
+        PREFERENCES_DATA_PATH = getPreferencesDataPath();
         copyOldPrefsAndCache();
         createMissingPrefDirs();
         createDigests();
@@ -203,7 +207,7 @@ public class MyTunesRss {
 
     private static void createMissingPrefDirs() throws IOException {
         for (String dir : new String[] {"native", "lib", "themes", "languages", "flashplayer"}) {
-            File file = new File(MyTunesRssUtils.getPreferencesDataPath(), dir);
+            File file = new File(MyTunesRss.PREFERENCES_DATA_PATH, dir);
             if (!file.exists()) {
                 file.mkdirs();
             }
@@ -211,9 +215,9 @@ public class MyTunesRss {
     }
 
     private static void prepareCacheDirs() throws IOException {
-        File tempDir = new File(MyTunesRssUtils.getCacheDataPath(), CACHEDIR_TEMP);
-        File transcoderDir = new File(MyTunesRssUtils.getCacheDataPath(), CACHEDIR_TRANSCODER);
-        File httpLiveStreamingDir = new File(MyTunesRssUtils.getCacheDataPath(), CACHEDIR_HTTP_LIVE_STREAMING);
+        File tempDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_TEMP);
+        File transcoderDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_TRANSCODER);
+        File httpLiveStreamingDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_HTTP_LIVE_STREAMING);
 
         FileUtils.deleteQuietly(tempDir);
         FileUtils.deleteQuietly(transcoderDir);
@@ -233,7 +237,7 @@ public class MyTunesRss {
 
     private static void loadSystemProperties() {
         try {
-            File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/system.properties");
+            File file = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/system.properties");
             if (file.isFile()) {
                 Properties properties = new Properties();
                 properties.load(new FileInputStream(file));
@@ -252,14 +256,10 @@ public class MyTunesRss {
     }
 
     private static void prepareLogging() {
-        try {
-            System.setProperty("MyTunesRSS.logDir", MyTunesRssUtils.getCacheDataPath());
-        } catch (IOException e) {
-            System.setProperty("MyTunesRSS.logDir", ".");
-        }
+        System.setProperty("MyTunesRSS.logDir", MyTunesRss.CACHE_DATA_PATH);
         try {
             for (Iterator<File> iter =
-                    (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRssUtils.getCacheDataPath()),
+                    (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRss.CACHE_DATA_PATH),
                             new String[]{"log"},
                             false); iter.hasNext();) {
                 iter.next().delete();
@@ -312,8 +312,8 @@ public class MyTunesRss {
 
     private static void copyOldPrefsAndCache() {
         try {
-            File cacheDataPath = new File(MyTunesRssUtils.getCacheDataPath());
-            File prefsDataPath = new File(MyTunesRssUtils.getPreferencesDataPath());
+            File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
+            File prefsDataPath = new File(MyTunesRss.PREFERENCES_DATA_PATH);
             String[] prefsDataPathContents = prefsDataPath.list();
             if (prefsDataPathContents == null || prefsDataPathContents.length == 0) {
                 for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
@@ -460,8 +460,8 @@ public class MyTunesRss {
             LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
             LOGGER.info("Maximum heap size: " + MyTunesRssUtils.getMemorySizeForDisplay(Runtime.getRuntime().maxMemory()));
             LOGGER.info("Application version: " + VERSION);
-            LOGGER.info("Cache data path: " + MyTunesRssUtils.getCacheDataPath());
-            LOGGER.info("Preferences data path: " + MyTunesRssUtils.getPreferencesDataPath());
+            LOGGER.info("Cache data path: " + MyTunesRss.CACHE_DATA_PATH);
+            LOGGER.info("Preferences data path: " + MyTunesRss.PREFERENCES_DATA_PATH);
             LOGGER.info("--------------------------------------------------------------------------------");
             for (Map.Entry<Object, Object> entry : System.getProperties().entrySet()) {
                 LOGGER.info(entry.getKey() + "=" + entry.getValue());
@@ -519,7 +519,7 @@ public class MyTunesRss {
             ADMIN_SERVER = new Server(adminPort);
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
             adminContext.setSystemClasses((String[]) ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
-            File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/jetty-admin-work");
+            File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-admin-work");
             if (workDir.exists()) {
                 MyTunesRssUtils.deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
             }
@@ -541,7 +541,7 @@ public class MyTunesRss {
             FORM.setAdminUrl(localPort);
         }
         try {
-            FileUtils.writeStringToFile(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"), localPort + "\n");
+            FileUtils.writeStringToFile(new File(MyTunesRss.CACHE_DATA_PATH, "adminport"), localPort + "\n");
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not write admin port to file.", e);
@@ -576,7 +576,7 @@ public class MyTunesRss {
             ROUTER_CONFIG.deleteAdminPortMapping();
             ADMIN_SERVER.stop();
             ADMIN_SERVER.join();
-            FileUtils.deleteQuietly(new File(MyTunesRssUtils.getCacheDataPath(), "adminport"));
+            FileUtils.deleteQuietly(new File(MyTunesRss.CACHE_DATA_PATH, "adminport"));
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Cannot stop admin server.", e);
@@ -600,27 +600,19 @@ public class MyTunesRss {
     }
 
     private static void checkHttpLiveStreamingSupport() {
-        try {
-            File libDir = new File(MyTunesRssUtils.getPreferencesDataPath(), "native");
+        File libDir = new File(MyTunesRss.PREFERENCES_DATA_PATH, "native");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Checking native libs for http live streaming support: \"" + libDir.getAbsolutePath() + "\".");
+        }
+        HTTP_LIVE_STREAMING_AVAILABLE = libDir.isDirectory() && HttpLiveStreamingSegmenter.isAvailable(libDir);
+        if (!HTTP_LIVE_STREAMING_AVAILABLE) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Checking native libs for http live streaming support: \"" + libDir.getAbsolutePath() + "\".");
+                LOGGER.debug("Checking native libs for http live streaming support: \"" + MyTunesRssUtils.getNativeLibPath().getAbsolutePath() + "\".");
             }
-            HTTP_LIVE_STREAMING_AVAILABLE = libDir.isDirectory() && HttpLiveStreamingSegmenter.isAvailable(libDir);
-            if (!HTTP_LIVE_STREAMING_AVAILABLE) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Checking native libs for http live streaming support: \"" + MyTunesRssUtils.getNativeLibPath().getAbsolutePath() + "\".");
-                }
-                HTTP_LIVE_STREAMING_AVAILABLE = MyTunesRssUtils.getNativeLibPath().isDirectory() && HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
-            }
-        } catch (IOException e) {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Could not get prefs data path, assuming no http live streaming available.");
-            }
-            HTTP_LIVE_STREAMING_AVAILABLE = false;
-        } finally {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Http live streaming status is \"" + HTTP_LIVE_STREAMING_AVAILABLE + "\".");
-            }
+            HTTP_LIVE_STREAMING_AVAILABLE = MyTunesRssUtils.getNativeLibPath().isDirectory() && HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
+        }
+        if (LOGGER.isWarnEnabled()) {
+            LOGGER.warn("Http live streaming status is \"" + HTTP_LIVE_STREAMING_AVAILABLE + "\".");
         }
     }
 
@@ -642,7 +634,7 @@ public class MyTunesRss {
 
     private static void registerDatabaseDriver()
             throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        File libDir = new File(MyTunesRssUtils.getPreferencesDataPath() + "/lib");
+        File libDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/lib");
         ClassLoader classLoader = createExtraClassloader(libDir);
         String driverClassName = CONFIG.getDatabaseDriver();
         LOGGER.info("Using database driver class \"" + driverClassName + "\".");
@@ -736,6 +728,22 @@ public class MyTunesRss {
             }
             MulticastService.stopListener();
             EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
+        }
+    }
+
+    private static String getCacheDataPath() throws IOException {
+        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_CACHE_PATH)) {
+            return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_CACHE_PATH)[0];
+        } else {
+            return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+        }
+    }
+
+    private static String getPreferencesDataPath() throws IOException {
+        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_PREFS_PATH)) {
+            return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_PREFS_PATH)[0];
+        } else {
+            return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
         }
     }
 }

@@ -442,7 +442,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         if (name == null) {
             file = new File(getApplication().getContext().getBaseDirectory().getParentFile(), "ROOT");
         } else {
-            file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + name);
+            file = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes/" + name);
         }
         if (file.exists()) {
             // addon theme found
@@ -481,6 +481,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.invalidLanguage");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.extractFailed");
+            } else if (result == AddonsUtils.AddFileResult.SaveFailed) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.saveFailed");
             } else {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.languageOk");
                 refreshLanguages();
@@ -526,11 +528,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     }
 
     private String getUploadDir() {
-        try {
-            return MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TEMP;
-        } catch (IOException e) {
-            throw new RuntimeException("Could not get cache path.");
-        }
+        return MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TEMP;
     }
 
     /**

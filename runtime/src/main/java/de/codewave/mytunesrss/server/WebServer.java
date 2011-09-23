@@ -56,7 +56,7 @@ public class WebServer {
                 if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
                     // copy default keystore to configured location
                     LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
-                    File keystore = new File(MyTunesRssUtils.getCacheDataPath(), "mytunesrss.keystore");
+                    File keystore = new File(MyTunesRss.CACHE_DATA_PATH, "mytunesrss.keystore");
                     IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(keystore));
                     sslContextFactory.setKeyStore(keystore.getAbsolutePath());
                     sslContextFactory.setKeyStorePassword("changeit");
@@ -86,7 +86,7 @@ public class WebServer {
                 }
             }
             myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
-            File workDir = new File(MyTunesRssUtils.getCacheDataPath() + "/jetty-user-work");
+            File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-user-work");
             if (workDir.exists()) {
                 MyTunesRssUtils
                         .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff

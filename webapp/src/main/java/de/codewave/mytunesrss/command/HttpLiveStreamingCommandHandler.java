@@ -68,11 +68,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private File getBaseDir() {
-        try {
-            return new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING);
-        } catch (IOException e) {
-            throw new RuntimeException("Could not get cache data path.");
-        }
+        return new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING);
     }
 
     private void sendPlaylist(String trackId) throws SQLException, IOException {
@@ -139,11 +135,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         public void run() {
             String[] command = new String[6];
             command[0] = getJavaExecutablePath();
-            try {
-                command[1] = "-Djna.library.path=" + MyTunesRssUtils.getPreferencesDataPath() + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath();
-            } catch (IOException e) {
-                throw new RuntimeException("Could not get prefs data path.", e);
-            }
+            command[1] = "-Djna.library.path=" + MyTunesRss.PREFERENCES_DATA_PATH + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath();
             command[2] = "-cp";
             command[3] = getClasspath();
             command[4] = "de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter";

@@ -35,26 +35,20 @@ public class ThemeServlet extends HttpServlet {
         if (LOG.isDebugEnabled()) {
             LOG.debug("File \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + StringUtils.defaultIfEmpty(theme, "BUILT-IN DEFAULT") + "\" requested.");
         }
-        try {
-            if (StringUtils.isNotEmpty(theme)) {
-                File file = new File(MyTunesRssUtils.getPreferencesDataPath() + "/themes/" + theme + resourcePath);
-                if (file.exists()) {
-                    // addon theme found
-                    return file;
-                }
-                file = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes/" + theme + resourcePath);
-                if (file.exists()) {
-                    // built-in theme found
-                    return file;
-                }
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Could not find file \"" + resourcePath + "\" for theme \"" + theme +
-                            "\". Using default resource.");
-                }
+        if (StringUtils.isNotEmpty(theme)) {
+            File file = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes/" + theme + resourcePath);
+            if (file.exists()) {
+                // addon theme found
+                return file;
             }
-        } catch (IOException e) {
+            file = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes/" + theme + resourcePath);
+            if (file.exists()) {
+                // built-in theme found
+                return file;
+            }
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not find file \"" + resourcePath + "\" for theme \"" + theme + "\". Using default resource.", e);
+                LOG.debug("Could not find file \"" + resourcePath + "\" for theme \"" + theme +
+                        "\". Using default resource.");
             }
         }
         return new File(getServletContext().getRealPath(resourcePath));

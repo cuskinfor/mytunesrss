@@ -40,7 +40,7 @@ public class MyTunesRssRegistration {
                 } else if (!registration.myValid) {
                     throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.InvalidFile);
                 } else {
-                    copyFile(registrationFile, new File(MyTunesRssUtils.getPreferencesDataPath() + "/MyTunesRSS.key"));
+                    copyFile(registrationFile, new File(MyTunesRss.PREFERENCES_DATA_PATH + "/MyTunesRSS.key"));
                     return registration;
                 }
             } else {
@@ -105,7 +105,7 @@ public class MyTunesRssRegistration {
             }
         }
 
-        String path = MyTunesRssUtils.getPreferencesDataPath();
+        String path = MyTunesRss.PREFERENCES_DATA_PATH;
         String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(),
                 getPublicKey());
         if (registration != null) {

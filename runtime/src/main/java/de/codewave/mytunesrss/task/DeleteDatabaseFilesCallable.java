@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.task;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.io.FileUtils;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.Callable;
 public class DeleteDatabaseFilesCallable implements Callable<Void> {
     public Void call() throws IOException {
         String filename = "h2";
-        String pathname = MyTunesRssUtils.getCacheDataPath();
+        String pathname = MyTunesRss.CACHE_DATA_PATH;
         FileUtils.deleteQuietly(new File(pathname + "/" + filename));
         return null;
     }

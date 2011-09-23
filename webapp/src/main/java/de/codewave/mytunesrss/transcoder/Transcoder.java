@@ -37,7 +37,7 @@ public class Transcoder {
     }
 
     public File getTranscodedFile() throws IOException {
-        File file = File.createTempFile("mytunesrss_", null, new File(MyTunesRssUtils.getCacheDataPath() + "/" + MyTunesRss.CACHEDIR_TRANSCODER));
+        File file = File.createTempFile("mytunesrss_", null, new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             InputStream inputStream = getStream();

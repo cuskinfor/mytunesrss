@@ -354,26 +354,10 @@ public class MyTunesRssUtils {
         return systemInfo.toString();
     }
 
-    public static String getCacheDataPath() throws IOException {
-        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_CACHE_PATH)) {
-            return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_CACHE_PATH)[0];
-        } else {
-            return PrefsUtils.getCacheDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        }
-    }
-
-    public static String getPreferencesDataPath() throws IOException {
-        if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_PREFS_PATH)) {
-            return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_PREFS_PATH)[0];
-        } else {
-            return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
-        }
-    }
-
     public static boolean isOtherInstanceRunning(long timeoutMillis) {
         RandomAccessFile lockFile;
         try {
-            File file = new File(MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.lck");
+            File file = new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.lck");
             lockFile = new RandomAccessFile(file, "rw");
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
@@ -530,7 +514,7 @@ public class MyTunesRssUtils {
     private static AtomicLong TEMP_FILE_COUNTER = new AtomicLong();
 
     public static File createTempFile(String suffix, long timeout) throws IOException {
-        File tmpDir = new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_TEMP);
+        File tmpDir = new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP);
         if (!tmpDir.exists()) {
             tmpDir.mkdirs();
         }
@@ -567,7 +551,7 @@ public class MyTunesRssUtils {
         LOGGER.debug("Destroying store before backup.");
         MyTunesRss.STORE.destroy();
         try {
-            File databaseDir = new File(MyTunesRssUtils.getCacheDataPath() + "/" + "h2");
+            File databaseDir = new File(MyTunesRss.CACHE_DATA_PATH + "/" + "h2");
             File backupFile = DatabaseBackup.createBackupFile();
             LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
             ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(backupFile));
@@ -590,7 +574,7 @@ public class MyTunesRssUtils {
         if (MyTunesRss.STORE.isInitialized()) {
             throw new IllegalStateException("Database must not be initialized for restoring a backup.");
         }
-        File databaseDir = new File(MyTunesRssUtils.getCacheDataPath() + "/" + "h2");
+        File databaseDir = new File(MyTunesRss.CACHE_DATA_PATH + "/" + "h2");
         FileUtils.deleteDirectory(databaseDir);
         databaseDir.mkdir();
         ZipUtils.unzip(backup.getFile(), databaseDir);
@@ -598,7 +582,7 @@ public class MyTunesRssUtils {
 
     public static List<DatabaseBackup> findDatabaseBackups() throws IOException {
         List<DatabaseBackup> backups = new ArrayList<DatabaseBackup>();
-        for (File file : new File(getCacheDataPath()).listFiles()) {
+        for (File file : new File(MyTunesRss.CACHE_DATA_PATH).listFiles()) {
             if (DatabaseBackup.isBackupFile(file)) {
                 LOGGER.debug("Found backup file \"" + file + "\".");
                 backups.add(new DatabaseBackup(file));

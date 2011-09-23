@@ -142,7 +142,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
 
     public OutputStream receiveUpload(String filename, String MIMEType) {
         try {
-            myUploadDir = new File(MyTunesRssUtils.getCacheDataPath() + "/license-upload");
+            myUploadDir = new File(MyTunesRss.CACHE_DATA_PATH + "/license-upload");
             if (!myUploadDir.isDirectory()) {
                 myUploadDir.mkdir();
             }

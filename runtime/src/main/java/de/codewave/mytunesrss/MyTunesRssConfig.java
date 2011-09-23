@@ -1224,14 +1224,14 @@ public class MyTunesRssConfig {
     public void setDefaultDatabaseSettings() throws IOException {
         setDatabaseType(DatabaseType.h2);
         setDatabaseDriver("org.h2.Driver");
-        setDatabaseConnection("jdbc:h2:file:" + MyTunesRssUtils.getCacheDataPath() + "/" + "h2/MyTunesRSS");
+        setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS");
         setDatabaseUser("sa");
         setDatabasePassword("");
     }
 
     private static File getSettingsFile() throws IOException {
         String filename = "settings.xml";
-        return new File(MyTunesRssUtils.getPreferencesDataPath() + "/" + filename);
+        return new File(MyTunesRss.PREFERENCES_DATA_PATH + "/" + filename);
     }
 
     private void readPathInfoEncryptionKey(JXPathContext settings) {

@@ -34,18 +34,12 @@ public class FlashPlayerServlet extends HttpServlet {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Flash player file \"" + httpServletRequest.getPathInfo() + "\" requested.");
         }
-        try {
-            File file = new File(MyTunesRssUtils.getPreferencesDataPath() + resourcePath);
-            if (file.exists()) {
-                return file;
-            }
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not find user flash player file \"" + resourcePath + "\". Using default resource.");
-            }
-        } catch (IOException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not find user flash player file \"" + resourcePath + "\". Using default resource.");
-            }
+        File file = new File(MyTunesRss.PREFERENCES_DATA_PATH + resourcePath);
+        if (file.exists()) {
+            return file;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Could not find user flash player file \"" + resourcePath + "\". Using default resource.");
         }
         return new File(getServletContext().getRealPath(resourcePath));
     }

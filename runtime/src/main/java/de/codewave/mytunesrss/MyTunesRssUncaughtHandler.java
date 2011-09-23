@@ -27,10 +27,6 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
     }
 
     private String getLogFilePath() {
-        try {
-            return MyTunesRssUtils.getCacheDataPath() + "/MyTunesRSS.log";
-        } catch (IOException e) {
-            return "MyTunesRSS.log";
-        }
+        return MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.log";
     }
 }

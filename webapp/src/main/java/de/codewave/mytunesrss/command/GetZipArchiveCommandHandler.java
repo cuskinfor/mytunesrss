@@ -68,7 +68,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 try {
                     if (cachedFile == null || !cachedFile.isFile()) {
                         LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
-                        tempFile = File.createTempFile("mytunesrss_", ".zip", new File(MyTunesRssUtils.getCacheDataPath(), MyTunesRss.CACHEDIR_TEMP));
+                        tempFile = File.createTempFile("mytunesrss_", ".zip", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP));
                         try {
                             createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
                         } catch (Exception e) {
