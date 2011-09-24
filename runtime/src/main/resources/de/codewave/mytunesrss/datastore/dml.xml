@@ -483,6 +483,11 @@
         </sql>
     </statement>
 
+    <statement name="removeObsoletePhotoAlbumsAndPlaylists">
+        <sql>DELETE FROM photoalbum pa WHERE NOT EXISTS (SELECT album_id FROM link_photo_album WHERE album_id = pa.id)</sql>
+        <sql>DELETE FROM playlist pl WHERE pl.type != 'MyTunesSmart' AND NOT EXISTS (SELECT playlist_id FROM link_track_playlist WHERE playlist_id = pl.id)</sql>
+    </statement>
+
     <statement name="updateImageForPhoto">
         <sql>UPDATE photo SET image_hash = :hash, last_image_update = :updateTime WHERE id = :photo_id</sql>
     </statement>

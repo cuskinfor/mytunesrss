@@ -13,12 +13,12 @@
     <datasources>
         <datasource>
             <type>Itunes</type>
-            <definition>../../etc/selenium/iTunes/iTunes Library.xml</definition>
+            <definition>../../selenium/etc/iTunes/iTunes Library.xml</definition>
             <deleteMissingFiles>false</deleteMissingFiles>
         </datasource>
         <datasource>
             <type>Iphoto</type>
-            <definition>../../etc/selenium/iPhoto</definition>
+            <definition>../../selenium/etc/iPhoto</definition>
             <importRolls>true</importRolls>
             <importAlbums>false</importAlbums>
         </datasource>

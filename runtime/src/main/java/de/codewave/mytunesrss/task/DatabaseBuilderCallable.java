@@ -346,19 +346,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             // ensure the help tables are created with all the data
             updateHelpTables(storeSession, 0);
             DatabaseBuilderCallable.doCheckpoint(storeSession, true);
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Removing " + (itunesPlaylistIds.size() + m3uPlaylistIds.size())
-                        + " playlists from database.");
-            }
-        }
-        if (!itunesPlaylistIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
-            removeObsoletePlaylists(storeSession, itunesPlaylistIds);
-        }
-        if (!m3uPlaylistIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
-            removeObsoletePlaylists(storeSession, m3uPlaylistIds);
-        }
-        if (!photoAlbumIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
-            removeObsoletePhotoAlbums(storeSession, photoAlbumIds);
+            storeSession.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    MyTunesRssUtils.createStatement(connection, "removeObsoletePhotoAlbumsAndPlaylists").execute();
+                }
+            });
+            DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         }
         DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         if (LOGGER.isInfoEnabled()) {
@@ -371,25 +364,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
         }
         return missingItunesFiles;
-    }
-
-    private void removeObsoletePlaylists(DataStoreSession storeSession, Collection<String> databaseIds)
-            throws SQLException {
-        DeletePlaylistStatement statement = new DeletePlaylistStatement();
-        for (String id : databaseIds) {
-            statement.setId(id);
-            storeSession.executeStatement(statement);
-            DatabaseBuilderCallable.doCheckpoint(storeSession, false);
-        }
-    }
-
-    private void removeObsoletePhotoAlbums(DataStoreSession storeSession, Collection<String> photoAlbumIds) throws SQLException {
-        DeletePhotoAlbumStatement statement = new DeletePhotoAlbumStatement();
-        for (String id : photoAlbumIds) {
-            statement.setId(id);
-            storeSession.executeStatement(statement);
-            DatabaseBuilderCallable.doCheckpoint(storeSession, false);
-        }
     }
 
     public static State getState() {
