@@ -149,8 +149,7 @@
         function savePlaylist() {
             jsonRpc('${servletUrl}', "EditPlaylistService.savePlaylist", [$jQ("#playlistName").val(), $jQ("#privatePlaylist:checked").size() == 1], function(result, error) {
                 if (error) {
-                    $jQ("#errordialog p:first").empty().append(serviceMessages[error.msg]);
-                    openDialog("#errordialog");
+                    displayError(serviceMessages[error.msg]);
                 } else {
                     document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
                 }
@@ -266,16 +265,6 @@
 <textarea id="templatePagerPage" style="display:none">
     <a id="linkPage#{pageName}" style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
 </textarea>
-
-<div id="errordialog" class="dialog">
-    <h2>MyTunesRSS</h2>
-    <div>
-        <p>this is the error message</p>
-        <p align="right">
-            <button id="linkCloseError" onclick="$jQ.modal.close()"><fmt:message key="dialog.button.close"/></button>
-        </p>
-    </div>
-</div>
 
 </body>
 

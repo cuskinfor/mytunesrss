@@ -82,7 +82,7 @@
             document.location.href = "${servletUrl}/addToOneClickPlaylist/${auth}/playlistName=" + escape($jQ("#addOneClickPlaylistDialogPlaylistEnter").val()) + "/" + $jQ("#addOneClickPlaylistDialog").data("linkFragment") + "/backUrl=${mtfn:encode64(backUrl)}";
             $jQ.modal.close();
         } else {
-            alert("<fmt:message key="addOneClickPlaylist.missingName"/>")
+            displayError("<fmt:message key="addOneClickPlaylist.missingName"/>");
         }
     }
     function openAddOneClickPlaylistDialog(linkFragment, newPlaylistName) {

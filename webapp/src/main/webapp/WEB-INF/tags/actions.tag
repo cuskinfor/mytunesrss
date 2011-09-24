@@ -72,7 +72,7 @@
         <a id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('#fn_download${index}').attr('href'); return false" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
     </c:when>
     <c:when test="${empty track && authUser.download && authUser.maximumZipEntries > 0 && zipFileCount > authUser.maximumZipEntries}">
-        <a id="fn_download${index}" class="download" onclick="openDialog('#messageTooManyFilesInZip');" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
+        <a id="fn_download${index}" class="download" onclick="displayError('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>');" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
     </c:when>
 </c:choose>
 <c:if test="${displayMenu}">
