@@ -270,7 +270,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 .getLastUpdate();
         Collection<String> itunesPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunes
                 .name()));
-        Collection<String> iphotoAlbumIds = storeSession.executeQuery(new FindPhotoAlbumIdsQuery());
+        Collection<String> photoAlbumIds = storeSession.executeQuery(new FindPhotoAlbumIdsQuery());
         itunesPlaylistIds.addAll(storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.ITunesFolder.name())));
         Collection<String> m3uPlaylistIds = storeSession.executeQuery(new FindPlaylistIdsQuery(PlaylistType.M3uFile
                 .name()));
@@ -313,14 +313,14 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
                         MyTunesRssEventManager.getInstance().fireEvent(event);
                         MyTunesRss.LAST_DATABASE_EVENT = event;
-                        IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, storeSession, timeLastUpdate, photoIds, iphotoAlbumIds);
+                        IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, storeSession, timeLastUpdate, photoIds, photoAlbumIds);
                     } else if (datasource.getType() == DatasourceType.Watchfolder && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");
                         MyTunesRssEventManager.getInstance().fireEvent(event);
                         MyTunesRss.LAST_DATABASE_EVENT = event;
                         FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, storeSession,
-                                timeLastUpdate, trackIds, photoIds, m3uPlaylistIds);
+                                timeLastUpdate, trackIds, photoIds, m3uPlaylistIds, photoAlbumIds);
                     }
                 }
             } catch (ShutdownRequestedException e) {
@@ -357,8 +357,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         if (!m3uPlaylistIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
             removeObsoletePlaylists(storeSession, m3uPlaylistIds);
         }
-        if (!iphotoAlbumIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
-            removeObsoletePhotoAlbums(storeSession, iphotoAlbumIds);
+        if (!photoAlbumIds.isEmpty() && !Thread.currentThread().isInterrupted()) {
+            removeObsoletePhotoAlbums(storeSession, photoAlbumIds);
         }
         DatabaseBuilderCallable.doCheckpoint(storeSession, true);
         if (LOGGER.isInfoEnabled()) {

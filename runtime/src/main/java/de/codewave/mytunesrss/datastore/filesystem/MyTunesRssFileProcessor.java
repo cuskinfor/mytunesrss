@@ -15,7 +15,10 @@ import de.codewave.mytunesrss.meta.TrackMetaData;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
+import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -33,6 +36,8 @@ import java.io.File;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -83,6 +88,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     public Set<String> getExistingIds() {
         return myExistingIds;
+    }
+
+    public Set<String> getExistingPhotoAlbumIds() {
+        return myPhotoAlbumIds;
     }
 
     public int getUpdatedCount() {
@@ -188,7 +197,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return false;
     }
 
-    private void insertOrUpdateImage(File photoFile, String photoFileId, boolean existingPhoto) throws IOException {
+    private void insertOrUpdateImage(File photoFile, final String photoFileId, boolean existingPhoto) throws IOException {
         String canonicalFilePath = photoFile.getCanonicalPath();
         InsertOrUpdatePhotoStatement statement = existingPhoto ? new UpdatePhotoStatement() : new InsertPhotoStatement();
         statement.clear();
@@ -220,16 +229,35 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             myStoreSession.executeStatement(handlePhotoImagesStatement);
             String albumName = getPhotoAlbum(photoFile);
             try {
-                String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
-                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
-                savePhotoAlbumStatement.setId(albumId);
-                savePhotoAlbumStatement.setName(albumName);
+                final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
                 boolean update = myPhotoAlbumIds.contains(albumId);
-                savePhotoAlbumStatement.setUpdate(update);
-                savePhotoAlbumStatement.setAdd(update);
-                savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
-                myStoreSession.executeStatement(savePhotoAlbumStatement);
-                if (!update) {
+                if (update) {
+                    if (myStoreSession.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Boolean>>() {
+                        @Override
+                        public QueryResult<Boolean> execute(Connection connection) throws SQLException {
+                            SmartStatement checkPhotoAlbumLinkStatement = MyTunesRssUtils.createStatement(connection, "checkPhotoAlbumLink");
+                            checkPhotoAlbumLinkStatement.setString("album", albumId);
+                            checkPhotoAlbumLinkStatement.setString("photo", photoFileId);
+                            return execute(checkPhotoAlbumLinkStatement, new ResultBuilder<Boolean>() {
+                                public Boolean create(ResultSet resultSet) throws SQLException {
+                                    return true;
+                                }
+                            });
+                        }
+                    }).getResultSize() == 0) {
+                        SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                        savePhotoAlbumStatement.setId(albumId);
+                        savePhotoAlbumStatement.setUpdate(true);
+                        savePhotoAlbumStatement.setAdd(true);
+                        savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
+                        myStoreSession.executeStatement(savePhotoAlbumStatement);
+                    }
+                } else {
+                    SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                    savePhotoAlbumStatement.setId(albumId);
+                    savePhotoAlbumStatement.setName(albumName);
+                    savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
+                    myStoreSession.executeStatement(savePhotoAlbumStatement);
                     myPhotoAlbumIds.add(albumId);
                 }
             } catch (NoSuchAlgorithmException e) {

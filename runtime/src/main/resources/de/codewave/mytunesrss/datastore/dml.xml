@@ -508,6 +508,10 @@
         <sql>{correctPhotoAlbumFirstDates}</sql>
     </statement>
 
+    <statement name="checkPhotoAlbumLink">
+        <sql>SELECT 0 FROM link_photo_album WHERE album_id = :album AND photo_id = :photo</sql>
+    </statement>
+
     <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
         <sql>
