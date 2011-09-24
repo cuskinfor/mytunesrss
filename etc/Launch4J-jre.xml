@@ -17,10 +17,10 @@
     <path>data/jre</path>
     <minVersion></minVersion>
     <maxVersion></maxVersion>
-    <jdkPreference>preferJre</jdkPreference>
+    <jdkPreference>jreOnly</jdkPreference>
     <initialHeapSize>16</initialHeapSize>
-    <maxHeapSize>256</maxHeapSize>
-    <opt>-Xbootclasspath/p:lib/codewave-zis-1.1.jar;lib/xercesImpl-2.9.1.jar</opt>
+    <maxHeapSize>512</maxHeapSize>
+    <opt>-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar</opt>
     <opt>-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl</opt>
     <opt>-Dde.codewave.mytunesrss</opt>
   </jre>

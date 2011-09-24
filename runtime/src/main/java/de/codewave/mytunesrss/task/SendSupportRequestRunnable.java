@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.DatasourceType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.io.ZipUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.*;
@@ -20,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.ZipOutputStream;
 
 public class SendSupportRequestRunnable implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(SendSupportRequestRunnable.class);
@@ -44,11 +44,11 @@ public class SendSupportRequestRunnable implements Runnable {
     }
 
     public void run() {
-        ZipOutputStream zipOutput = null;
+        ZipArchiveOutputStream zipOutput = null;
         PostMethod postMethod = null;
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            zipOutput = new ZipOutputStream(baos);
+            zipOutput = new ZipArchiveOutputStream(baos);
             String archiveName = "MyTunesRSS_" + MyTunesRss.VERSION + "_Support" + (StringUtils.isNotBlank(myName) ? "_" + StringUtils.trim(myName) : "");
             ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.log"), zipOutput);
             if (myIncludeItunesXml) {

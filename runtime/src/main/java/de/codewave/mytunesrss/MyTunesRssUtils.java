@@ -13,6 +13,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
@@ -53,7 +54,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.zip.ZipOutputStream;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -554,7 +554,7 @@ public class MyTunesRssUtils {
             File databaseDir = new File(MyTunesRss.CACHE_DATA_PATH + "/" + "h2");
             File backupFile = DatabaseBackup.createBackupFile();
             LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
-            ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(backupFile));
+            ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(backupFile);
             try {
                 ZipUtils.addFilesToZipRecursively("", databaseDir, null, zipOutputStream);
             } finally {

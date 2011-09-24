@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.1.1" date="2011-09-24">
+            <action dev="mdescher" type="update">
+                Upated codewave-utils to 1.2.0, added commons-compress in favour of java zip and codewave-zis and removed codewave-zis dependency.
+            </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-297] Allow import of properties file for language packs
             </action>

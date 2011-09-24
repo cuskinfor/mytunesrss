@@ -17,6 +17,8 @@ import de.codewave.utils.servlet.SessionManager.SessionInfo;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreQuery.QueryResult;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
@@ -26,8 +28,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 import java.sql.SQLException;
 
 /**
@@ -118,8 +118,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
 
     private void createZipArchive(User user, OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
                                   FileSender.ByteSentCounter counter) throws IOException, SQLException {
-        ZipOutputStream zipStream = new ZipOutputStream(outputStream);
-        zipStream.setLevel(ZipOutputStream.STORED);
+        ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(outputStream);
+        zipStream.setLevel(ZipArchiveOutputStream.STORED);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
         byte[] buffer = new byte[102400];
         Set<String> entryNames = new HashSet<String>();
@@ -152,8 +152,8 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 }
                 // media file
                 entryNames.add(entryName);
-                ZipEntry entry = new ZipEntry(baseName + "/" + entryName);
-                zipStream.putNextEntry(entry);
+                ZipArchiveEntry entry = new ZipArchiveEntry(baseName + "/" + entryName);
+                zipStream.putArchiveEntry(entry);
                 InputStream file = new FileInputStream(track.getFile());
                 for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
                     if (length > 0) {
@@ -161,7 +161,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
                 file.close();
-                zipStream.closeEntry();
+                zipStream.closeArchiveEntry();
                 playlistBuilder.add(track, trackArtist, trackAlbum, entryName);
                 trackCount++;
                 if (counter != null) {
@@ -173,29 +173,29 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
             }
         }
         if (trackCount > 0) {
-            ZipEntry m3uPlaylistEntry = new ZipEntry(baseName + "/" + baseName + "." + playlistBuilder.getSuffix());
-            zipStream.putNextEntry(m3uPlaylistEntry);
+            ZipArchiveEntry m3uPlaylistEntry = new ZipArchiveEntry(baseName + "/" + baseName + "." + playlistBuilder.getSuffix());
+            zipStream.putArchiveEntry(m3uPlaylistEntry);
             zipStream.write(playlistBuilder.toString().getBytes("UTF-8"));
-            zipStream.closeEntry();
+            zipStream.closeArchiveEntry();
             if (counter != null) {
                 counter.add((int) m3uPlaylistEntry.getCompressedSize());
             }
         }
         if (quotaExceeded) {
-            ZipEntry quotaExceededInfoEntry = new ZipEntry(baseName + "/Readme.txt");
-            zipStream.putNextEntry(quotaExceededInfoEntry);
+            ZipArchiveEntry quotaExceededInfoEntry = new ZipArchiveEntry(baseName + "/Readme.txt");
+            zipStream.putArchiveEntry(quotaExceededInfoEntry);
             zipStream.write("This archive is not complete since your download limit has been reached!".getBytes("UTF-8"));
-            zipStream.closeEntry();
+            zipStream.closeArchiveEntry();
             if (counter != null) {
                 counter.add((int) quotaExceededInfoEntry.getCompressedSize());
             }
         } else if (trackCount == 0) {
-            ZipEntry noFilesInfoEntry = new ZipEntry(baseName + "/Readme.txt");
-            zipStream.putNextEntry(noFilesInfoEntry);
+            ZipArchiveEntry noFilesInfoEntry = new ZipArchiveEntry(baseName + "/Readme.txt");
+            zipStream.putArchiveEntry(noFilesInfoEntry);
             zipStream.write(
                     "This archive does not contain any files from MyTunesRSS! If you think it should, please contact the MyTunesRSS server administrator or - in case you are the administrator - contact Codewave support.".getBytes(
                             "UTF-8"));
-            zipStream.closeEntry();
+            zipStream.closeArchiveEntry();
             if (counter != null) {
                 counter.add((int) noFilesInfoEntry.getCompressedSize());
             }

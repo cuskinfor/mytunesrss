@@ -10,6 +10,8 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.ProgressRequestWrapper;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.statistics.UploadEvent;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -26,9 +28,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.zip.CodewaveZipInputStream;
-import java.util.zip.CodewaveZipInputStreamFactory;
-import java.util.zip.ZipEntry;
 
 /**
  * de.codewave.mytunesrss.command.UploadCommandHandler
@@ -63,11 +62,11 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Extracting zip file \"" + item.getName() + "\".");
                     }
-                    CodewaveZipInputStream zipInputStream = CodewaveZipInputStreamFactory.newInstance(item.getInputStream());
+                    ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(item.getInputStream());
                     String lineSeparator = System.getProperty("line.separator");
                     StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
-                    for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
-                        if (saveFile(entry.getName(), (InputStream)zipInputStream)) {
+                    for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
+                        if (saveFile(entry.getName(), zipInputStream)) {
                             m3uPlaylist.append(entry.getName().replace('\\', '/')).append(lineSeparator);
                         }
                     }

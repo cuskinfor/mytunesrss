@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss;
 
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -13,9 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.*;
-import java.util.zip.CodewaveZipInputStream;
-import java.util.zip.CodewaveZipInputStreamFactory;
-import java.util.zip.ZipEntry;
 
 /**
  * de.codewave.mytunesrss.AddonsUtils
@@ -135,10 +134,10 @@ public class AddonsUtils {
     public static AddFileResult addTheme(String themeName, File theme) {
         if (isThemeArchive(theme)) {
             File themeDir = null;
-            CodewaveZipInputStream zipInputStream = null;
+            ZipArchiveInputStream zipInputStream = null;
             try {
-                zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
-                for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+                zipInputStream = new ZipArchiveInputStream(new FileInputStream(theme));
+                for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
                     themeDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes/" + themeName);
                     saveFile(themeDir, entry.getName(), (InputStream) zipInputStream);
                 }
@@ -171,12 +170,12 @@ public class AddonsUtils {
     }
 
     private static boolean isThemeArchive(File theme) {
-        CodewaveZipInputStream zipInputStream = null;
+        ZipArchiveInputStream zipInputStream = null;
         boolean stylesFound = false;
         boolean imagesFound = false;
         try {
-            zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(theme));
-            for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+            zipInputStream = new ZipArchiveInputStream(new FileInputStream(theme));
+            for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
                 String entryName = entry.getName();
                 if ("styles".equals(entryName) || entryName.startsWith("styles/") || entryName.startsWith("styles\\")) {
                     stylesFound = true;
@@ -235,12 +234,12 @@ public class AddonsUtils {
     public static AddFileResult addLanguage(File language, String originalFilename) {
         File languageDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages");
         if (language.isFile() && isLanguageArchive(language)) {
-            CodewaveZipInputStream zipInputStream = null;
+            ZipArchiveInputStream zipInputStream = null;
             try {
-                zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(language));
-                for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+                zipInputStream = new ZipArchiveInputStream(new FileInputStream(language));
+                for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
                     if (isLanguageFilename(entry.getName())) {
-                        saveFile(languageDir, entry.getName(), (InputStream) zipInputStream);
+                        saveFile(languageDir, entry.getName(), zipInputStream);
                     }
                 }
             } catch (IOException e) {
@@ -283,10 +282,10 @@ public class AddonsUtils {
     }
 
     private static boolean isLanguageArchive(File language) {
-        CodewaveZipInputStream zipInputStream = null;
+        ZipArchiveInputStream zipInputStream = null;
         try {
-            zipInputStream = CodewaveZipInputStreamFactory.newInstance(new FileInputStream(language));
-            for (ZipEntry entry = zipInputStream.getNextEntry(); entry != null; entry = zipInputStream.getNextEntry()) {
+            zipInputStream = new ZipArchiveInputStream(new FileInputStream(language));
+            for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
                 if (isLanguageFilename(entry.getName())) {
                     return true;
                 }

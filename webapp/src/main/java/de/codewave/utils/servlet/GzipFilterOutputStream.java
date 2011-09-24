@@ -1,11 +1,11 @@
 package de.codewave.utils.servlet;
 
+import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * Servlet output stream used with the GZIP filter.
@@ -13,11 +13,11 @@ import java.util.zip.GZIPOutputStream;
 public class GzipFilterOutputStream extends ServletOutputStream {
     private static final Logger LOGGER = LoggerFactory.getLogger(GzipFilterOutputStream.class);
 
-    private GZIPOutputStream myZipOutputStream;
+    private GzipCompressorOutputStream myZipOutputStream;
 
     public GzipFilterOutputStream(ServletOutputStream delegate) throws IOException {
         LOGGER.debug("Creating GZIP output stream.");
-        myZipOutputStream = new GZIPOutputStream(delegate);
+        myZipOutputStream = new GzipCompressorOutputStream(delegate);
     }
 
     public void write(int b) throws IOException {

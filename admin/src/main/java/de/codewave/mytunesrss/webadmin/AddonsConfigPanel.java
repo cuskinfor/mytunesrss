@@ -17,6 +17,8 @@ import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -30,9 +32,6 @@ import java.net.URL;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
 
@@ -342,11 +341,11 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         LOGGER.debug("Compressing and sending language file \"" + languageFile.getAbsolutePath() + "\".");
         String baseName = FilenameUtils.getBaseName(languageFile.getName());
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipOutputStream zos = new ZipOutputStream(baos);
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(baos);
         try {
-            zos.putNextEntry(new ZipEntry(baseName + ".properties"));
+            zos.putArchiveEntry(new ZipArchiveEntry(baseName + ".properties"));
             IOUtils.copy(new FileInputStream(languageFile), zos);
-            zos.closeEntry();
+            zos.closeArchiveEntry();
         } catch (FileNotFoundException e) {
             LOGGER.error("Could not find language file \"" + languageFile.getName() + "\".", e);
         } catch (IOException e) {
@@ -378,7 +377,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         }
         final File finalThemeDir = themeDir;
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        final ZipOutputStream zos = new ZipOutputStream(baos);
+        final ZipArchiveOutputStream zos = new ZipArchiveOutputStream(baos);
         final AtomicBoolean error = new AtomicBoolean();
         try {
             de.codewave.utils.io.IOUtils.processFiles(themeDir, new FileProcessor() {
@@ -387,9 +386,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                         try {
                             String relativePath = getRelativePath(finalThemeDir, file);
                             if (relativePath != null) {
-                                zos.putNextEntry(new ZipEntry(relativePath));
+                                zos.putArchiveEntry(new ZipArchiveEntry(relativePath));
                                 IOUtils.copy(new FileInputStream(file), zos);
-                                zos.closeEntry();
+                                zos.closeArchiveEntry();
                             } else {
                                 error.set(true);
                             }

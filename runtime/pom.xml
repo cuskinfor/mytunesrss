@@ -140,14 +140,8 @@
         </dependency>
         <dependency>
             <groupId>de.codewave</groupId>
-            <artifactId>codewave-zis</artifactId>
-            <version>1.1</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.codewave</groupId>
             <artifactId>codewave-utils</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
@@ -330,6 +324,11 @@
         <dependency>
             <groupId>commons-collections</groupId>
             <artifactId>commons-collections</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.2</version>
         </dependency>
     </dependencies>
     <build>

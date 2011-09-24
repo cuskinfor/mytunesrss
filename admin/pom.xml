@@ -97,6 +97,11 @@
             <classifier>sources</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.2</version>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>

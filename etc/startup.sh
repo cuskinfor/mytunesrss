@@ -23,7 +23,7 @@
 #
 
 VM_OPTIONS='-Xms256m -Xmx256m'
-BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar:lib/codewave-zis-1.1.jar'
+BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar'
 XML_PARSER='-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl'
 MYTUNESRSS_PROPS='-Dde.codewave.mytunesrss'
 

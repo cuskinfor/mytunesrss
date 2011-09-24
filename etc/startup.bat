@@ -21,7 +21,7 @@ REM Make sure your current directory is the MyTunesRSS installation dir
 REM
 
 SET VM_OPTIONS='-Xms256m -Xmx256m'
-SET BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar;lib/codewave-zis-1.1.jar'
+SET BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar'
 SET XML_PARSER='-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl'
 SET MYTUNESRSS_PROPS='-Dde.codewave.mytunesrss'
 
