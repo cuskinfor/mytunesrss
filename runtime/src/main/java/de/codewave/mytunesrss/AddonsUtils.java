@@ -232,7 +232,7 @@ public class AddonsUtils {
         return !(StringUtils.isEmpty(fileName) || fileName.endsWith("/") || fileName.endsWith("\\")) && !fileName.contains("__MACOSX/");
     }
 
-    public static AddFileResult addLanguage(File language) {
+    public static AddFileResult addLanguage(File language, String originalFilename) {
         File languageDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages");
         if (language.isFile() && isLanguageArchive(language)) {
             CodewaveZipInputStream zipInputStream = null;
@@ -265,11 +265,11 @@ public class AddonsUtils {
                     }
                 }
             }
-        } else if (language.isFile() && isLanguageFilename(language.getName())) {
+        } else if (language.isFile() && isLanguageFilename(originalFilename)) {
             try {
                 FileInputStream languageInputStream = new FileInputStream(language);
                 try {
-                    saveFile(languageDir, language.getName(), languageInputStream);
+                    saveFile(languageDir, originalFilename, languageInputStream);
                 } finally {
                     languageInputStream.close();
                 }

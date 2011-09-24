@@ -476,7 +476,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 refreshThemes();
             }
         } else {
-            AddonsUtils.AddFileResult result = AddonsUtils.addLanguage(new File(getUploadDir(), PREFIX + event.getFilename()));
+            AddonsUtils.AddFileResult result = AddonsUtils.addLanguage(new File(getUploadDir(), PREFIX + event.getFilename()), event.getFilename());
             if (result == AddonsUtils.AddFileResult.InvalidFile) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.invalidLanguage");
             } else if (result == AddonsUtils.AddFileResult.ExtractFailed) {
