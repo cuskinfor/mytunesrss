@@ -448,10 +448,6 @@
         <sql>SELECT id FROM photo</sql>
     </statement>
 
-    <statement name="deletePhotoAlbumById">
-        <sql>DELETE FROM photoalbum WHERE id = :id</sql>
-    </statement>
-
     <statement name="findPhotos">
         <sql>
             <![CDATA[
