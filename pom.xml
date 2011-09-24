@@ -12,6 +12,7 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
+        <connection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk</connection>
         <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk</developerConnection>
     </scm>
     <parent>

@@ -98,9 +98,6 @@
             <scope>provided</scope>
         </dependency>
     </dependencies>
-    <scm>
-        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk/admin</developerConnection>
-    </scm>
     <profiles>
         <profile>
             <id>compile-widgetsets</id>
