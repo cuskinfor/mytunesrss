@@ -16,6 +16,7 @@ import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -66,14 +69,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private String[] myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myDatasourceConfig;
     private Map<String, Pattern> myPatterns = new HashMap<String, Pattern>();
+    private Set<String> myPhotoAlbumIds;
 
-    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) {
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myStoreSession = storeSession;
         myLastUpdateTime = lastUpdateTime;
         myTrackIds = trackIds;
         myPhotoIds = photoIds;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
+        myPhotoAlbumIds = new HashSet<String>(myStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
     public Set<String> getExistingIds() {
@@ -183,39 +188,58 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return false;
     }
 
-    private void insertOrUpdateImage(File file, String fileId, boolean existingPhoto) throws IOException {
-        String canonicalFilePath = file.getCanonicalPath();
+    private void insertOrUpdateImage(File photoFile, String photoFileId, boolean existingPhoto) throws IOException {
+        String canonicalFilePath = photoFile.getCanonicalPath();
         InsertOrUpdatePhotoStatement statement = existingPhoto ? new UpdatePhotoStatement() : new InsertPhotoStatement();
         statement.clear();
-        statement.setId(fileId);
-        statement.setName(file.getName());
+        statement.setId(photoFileId);
+        statement.setName(photoFile.getName());
         statement.setFile(canonicalFilePath);
         try {
-            IImageMetadata imageMeta = Sanselan.getMetadata(file);
+            IImageMetadata imageMeta = Sanselan.getMetadata(photoFile);
             if (imageMeta instanceof JpegImageMetadata) {
                 JpegImageMetadata jpegMeta = (JpegImageMetadata) imageMeta;
                 TiffField exifCreateDateTiffField = jpegMeta.findEXIFValue(TiffConstants.EXIF_TAG_CREATE_DATE);
                 if (exifCreateDateTiffField != null) {
                     String value = (String) exifCreateDateTiffField.getValue();
                     if (StringUtils.isNotBlank(value) && LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("EXIF create date for \"" + file.getAbsolutePath() + "\" is \"" + value + "\".");
+                        LOGGER.debug("EXIF create date for \"" + photoFile.getAbsolutePath() + "\" is \"" + value + "\".");
                     }
-                    Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                    Long createDate = MyTunesRssExifUtils.getCreateDate(photoFile);
                     statement.setDate(createDate != null ? createDate.longValue() : -1);
                 }
             }
         } catch (ImageReadException e) {
             if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Could not read EXIF data from \"" + file.getAbsolutePath() + "\".");
+                LOGGER.warn("Could not read EXIF data from \"" + photoFile.getAbsolutePath() + "\".");
             }
         }
         try {
             myStoreSession.executeStatement(statement);
-            HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, fileId, 0);
+            HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
             myStoreSession.executeStatement(handlePhotoImagesStatement);
+            String albumName = getPhotoAlbum(photoFile);
+            try {
+                String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
+                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                savePhotoAlbumStatement.setId(albumId);
+                savePhotoAlbumStatement.setName(albumName);
+                boolean update = myPhotoAlbumIds.contains(albumId);
+                savePhotoAlbumStatement.setUpdate(update);
+                savePhotoAlbumStatement.setAdd(update);
+                savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
+                myStoreSession.executeStatement(savePhotoAlbumStatement);
+                if (!update) {
+                    myPhotoAlbumIds.add(albumId);
+                }
+            } catch (NoSuchAlgorithmException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not create message digest.", e);
+                }
+            }
             myUpdatedCount++;
             DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
-            myExistingIds.add(fileId);
+            myExistingIds.add(photoFileId);
         } catch (SQLException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not insert photo \"" + canonicalFilePath + "\" into database", e);

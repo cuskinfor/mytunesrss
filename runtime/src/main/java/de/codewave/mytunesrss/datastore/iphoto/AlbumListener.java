@@ -28,16 +28,17 @@ public class AlbumListener implements PListHandlerListener {
     };
 
     private DataStoreSession myDataStoreSession;
-    private Set<String> myExistingIds = new HashSet<String>();
     protected LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
     private Map<Long, String> myPhotoIdToPersId;
+    private Set<String> myPhotoAlbumIds;
 
-    public AlbumListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) {
+    public AlbumListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
         myPhotoIdToPersId = photoIdToPersId;
         myWatchdogThread = watchdogThread;
         myDataStoreSession = dataStoreSession;
         myLibraryListener = libraryListener;
+        myPhotoAlbumIds = new HashSet<String>(dataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -72,9 +73,12 @@ public class AlbumListener implements PListHandlerListener {
                     statement.setName(albumName);
                     statement.setPhotoIds(photos);
                     try {
-                        statement.setUpdate(myDataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()).contains(albumId));
+                        boolean update = myPhotoAlbumIds.contains(albumId);
+                        statement.setUpdate(update);
                         myDataStoreSession.executeStatement(statement);
-                        myExistingIds.add(albumId);
+                        if (!update) {
+                            myPhotoAlbumIds.add(albumId);
+                        }
                         DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
                     } catch (SQLException e) {
                         if (LOGGER.isErrorEnabled()) {
@@ -103,6 +107,6 @@ public class AlbumListener implements PListHandlerListener {
     }
 
     public Collection<String> getExistingIds() {
-        return myExistingIds;
+        return myPhotoAlbumIds;
     }
 }

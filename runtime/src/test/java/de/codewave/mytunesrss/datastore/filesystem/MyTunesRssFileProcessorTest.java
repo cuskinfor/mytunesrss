@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -27,7 +28,7 @@ public class MyTunesRssFileProcessorTest {
     private File myFile;
 
     @Before
-    public void before() throws URISyntaxException {
+    public void before() throws URISyntaxException, SQLException {
         myProcessor = new MyTunesRssFileProcessor(null, null, 0, null, null);
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());
     }

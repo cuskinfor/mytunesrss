@@ -502,6 +502,12 @@
         <sql>{correctPhotoAlbumFirstDates}</sql>
     </statement>
 
+    <statement name="addPhotosToAlbum">
+        <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
+        <sql>{updatePhotoAlbumCountAndDates}</sql>
+        <sql>{correctPhotoAlbumFirstDates}</sql>
+    </statement>
+
     <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
         <sql>

@@ -26,6 +26,7 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
     private String myName;
     private List<String> myPhotoIds;
     private boolean myUpdate;
+    private boolean myAdd;
 
     protected String getId() {
         return myId;
@@ -39,20 +40,16 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
         myName = name;
     }
 
-    protected boolean isUpdate() {
-        return myUpdate;
-    }
-
     public void setUpdate(boolean update) {
         myUpdate = update;
     }
 
-    public List<String> getPhotoIds() {
-        return myPhotoIds;
-    }
-
     public void setPhotoIds(List<String> photoIds) {
         myPhotoIds = photoIds;
+    }
+
+    public void setAdd(boolean add) {
+        myAdd = add;
     }
 
     public void execute(Connection connection) throws SQLException {
@@ -73,11 +70,19 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
     }
 
     protected void executeUpdate(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePhotoAlbum");
-        statement.setString("id", myId);
-        statement.setString("name", myName);
-        statement.setObject("photo_id", myPhotoIds);
-        LOG.debug("Updating photo album \"" + myName + "\" with " + myPhotoIds.size() + " photos.");
+        SmartStatement statement;
+        if (myAdd) {
+            statement = MyTunesRssUtils.createStatement(connection, "addPhotosToAlbum");
+            statement.setString("id", myId);
+            statement.setObject("photo_id", myPhotoIds);
+            LOG.debug("Adding " + myPhotoIds.size() + " photo(s) to photo album \"" + myName + "\".");
+        } else {
+            statement = MyTunesRssUtils.createStatement(connection, "updatePhotoAlbum");
+            statement.setString("id", myId);
+            statement.setString("name", myName);
+            statement.setObject("photo_id", myPhotoIds);
+            LOG.debug("Updating photo album \"" + myName + "\" with " + myPhotoIds.size() + " photo(s).");
+        }
         statement.execute(new ExceptionHandler());
     }
 

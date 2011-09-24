@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.2" date="2011-10-01">
+            <action dev="mdescher" type="fix^">
+                Photos imported from watch folders did not create any albums.
+            </action>
+        </release>
+
         <release version="4.1.1" date="2011-09-24">
             <action dev="mdescher" type="update">
                 Upated codewave-utils to 1.2.0, added commons-compress in favour of java zip and codewave-zis and removed codewave-zis dependency.
