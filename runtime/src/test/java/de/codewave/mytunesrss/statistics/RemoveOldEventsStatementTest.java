@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,8 +22,12 @@ import static org.junit.Assert.assertEquals;
 public class RemoveOldEventsStatementTest {
     @Before
     public void setUp() throws SQLException, IOException, ClassNotFoundException {
-        MyTunesRssTestUtils.initMyTunesRss();
-        MyTunesRssTestUtils.initDatabase();
+        MyTunesRssTestUtils.before();
+    }
+
+    @After
+    public void after() {
+        MyTunesRssTestUtils.after();
     }
 
     @Test

@@ -7,11 +7,15 @@ package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssConfig;
+import de.codewave.mytunesrss.MyTunesRssTestUtils;
+import de.codewave.utils.sql.DataStoreSession;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 
@@ -19,18 +23,19 @@ import static org.junit.Assert.assertEquals;
 
 public class MyTunesRssFileProcessorTest {
 
-    @BeforeClass
-    public static void beforeClass() {
-        MyTunesRss.CONFIG = new MyTunesRssConfig();
-    }
-
     private MyTunesRssFileProcessor myProcessor;
     private File myFile;
 
     @Before
-    public void before() throws URISyntaxException, SQLException {
-        myProcessor = new MyTunesRssFileProcessor(null, null, 0, null, null);
+    public void before() throws URISyntaxException, SQLException, IOException, ClassNotFoundException {
+        MyTunesRssTestUtils.before();
+        myProcessor = new MyTunesRssFileProcessor(null, MyTunesRss.STORE.getTransaction(), 0, null, null);
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());
+    }
+
+    @After
+    public void after() {
+        MyTunesRssTestUtils.after();
     }
 
     @Test

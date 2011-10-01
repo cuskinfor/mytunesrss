@@ -6,20 +6,18 @@ import de.codewave.utils.sql.DataStoreSession;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.UUID;
 
 /**
  * de.codewave.mytunesrss.datastore.MyTunesRssDatastoreTestUtils
  */
 public class MyTunesRssTestUtils {
 
-    public static void initMyTunesRss() {
+    public static void before() throws ClassNotFoundException, IOException, SQLException {
         MyTunesRss.VERSION = "1.0.0";
         MyTunesRss.CONFIG = new MyTunesRssConfig();
-    }
-
-    public static void initDatabase() throws ClassNotFoundException, IOException, SQLException {
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);
-        MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:mem:mytunesrss;DB_CLOSE_DELAY=-1");
+        MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
         MyTunesRss.CONFIG.setDatabaseUser("sa");
         MyTunesRss.CONFIG.setDatabasePassword("");
         Class.forName("org.h2.Driver");
@@ -33,4 +31,9 @@ public class MyTunesRssTestUtils {
             session.rollback();
         }
     }
+
+    public static void after() {
+        MyTunesRss.STORE.destroy();
+    }
+
 }

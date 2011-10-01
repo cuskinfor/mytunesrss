@@ -107,16 +107,17 @@
                                     <goal>generate-project</goal>
                                 </goals>
                             </execution>
-                            <!--execution>
+                            <execution>
                                 <id>nsis-compile</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>compile</goal>
                                 </goals>
                                 <configuration>
+                                    <makensisBin>makensis</makensisBin>
                                     <setupScript>etc/windows-installer.nsi</setupScript>
                                 </configuration>
-                            </execution-->
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
