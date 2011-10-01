@@ -307,7 +307,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     public void setExcludedPlaylistIds(Set<String> playlistIds) {
         myExcludedPlaylistIds = new HashSet<String>(playlistIds);
     }
-    
+
     public List<String> getRestrictedPhotoAlbumIds() {
         return getParent() != null ? getParent().getRestrictedPhotoAlbumIds() : new ArrayList<String>(myRestrictedPhotoAlbumIds);
     }
@@ -650,7 +650,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setGroup(JXPathUtils.getBooleanValue(settings, "group", myGroup));
         setCreatePublicPlaylists(JXPathUtils.getBooleanValue(settings, "createPublicPlaylists", myCreatePublicPlaylists));
         setPhotos(JXPathUtils.getBooleanValue(settings, "featurePhotos", myPhotos));
-        setPhotos(JXPathUtils.getBooleanValue(settings, "featureShare", myShare));
+        setShare(JXPathUtils.getBooleanValue(settings, "featureShare", myShare));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
