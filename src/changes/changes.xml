@@ -8,10 +8,10 @@
     <body>
 
         <release version="4.1.2" date="2011-10-01">
-            <action dev="mdescher" type="fix^">
+            <action dev="mdescher" type="fix">
                 Much better SQL for removing obsolete playlists and photo albums.
             </action>
-            <action dev="mdescher" type="fix^">
+            <action dev="mdescher" type="fix">
                 Photos imported from watch folders did not create any albums.
             </action>
         </release>
