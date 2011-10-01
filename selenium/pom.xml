@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>selenium</artifactId>
-    <version>4.1.3</version>
+    <version>4.1.4-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Selenium Integration Tests</name>
     <distributionManagement>
         <site>
@@ -94,8 +94,4 @@
             </plugin>
         </plugins>
     </build>
-
-  <scm>
-    <developerConnection>scm:svn:svn://svn.codewave.biz/codewave-maven2-base/tags/mytunesrss-4.1.3/codewave-maven2-base-3.14.0/selenium</developerConnection>
-  </scm>
 </project>
