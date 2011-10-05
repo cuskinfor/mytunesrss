@@ -50,8 +50,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Button myAddFlashPlayer;
     private Button myExportDefaultLanguage;
     private Button myAddLanguage;
-    private Form mySocialForm;
-    //private SmartTextField myFacebookApiKey;
 
     public void attach() {
         super.attach();
@@ -117,17 +115,10 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         flashPlayersPanel.addComponent(myFlashPlayersTable);
         myAddFlashPlayer = getComponentFactory().createButton("addonsConfigPanel.addFlashPlayer", this);
         flashPlayersPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFlashPlayer));
-
-        /*myFacebookApiKey = getComponentFactory().createTextField("addonsConfigPanel.social.facebookApiKey");
-        mySocialForm = getComponentFactory().createForm(null, true);
-        mySocialForm.addField(myFacebookApiKey, myFacebookApiKey);
-        Panel socialPanel = getComponentFactory().surroundWithPanel(mySocialForm, FORM_PANEL_MARGIN_INFO, getBundleString("addonsConfigPanel.caption.social"));*/
-
         addComponent(themesPanel);
         addComponent(languagesPanel);
         addComponent(sitesPanel);
         addComponent(flashPlayersPanel);
-        //addComponent(socialPanel);
 
         addDefaultComponents(0, 4, 0, 4, false);
 
@@ -140,7 +131,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         refreshExternalSites();
         refreshFlashPlayers();
         setTablePageLengths();
-        //myFacebookApiKey.setValue(MyTunesRss.CONFIG.getFacebookApiKey(), "");
     }
 
     private void refreshExternalSites() {
@@ -245,13 +235,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         for (Object itemId : mySitesTable.getItemIds()) {
             MyTunesRss.CONFIG.addExternalSite(new ExternalSiteDefinition((String) getTableCellPropertyValue(mySitesTable, itemId, "type"), (String) getTableCellPropertyValue(mySitesTable, itemId, "name"), (String) getTableCellPropertyValue(mySitesTable, itemId, "url")));
         }
-        //MyTunesRss.CONFIG.setFacebookApiKey(myFacebookApiKey.getStringValue(null));
         MyTunesRss.CONFIG.save();
     }
 
     @Override
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(mySitesTable, mySocialForm)) {
+        if (!VaadinUtils.isValid(mySitesTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }
