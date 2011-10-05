@@ -533,7 +533,7 @@
         <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO genre (name, lower_name, first_char, track_count, album_count, artist_count, hidden)
-            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_album_artist)), FALSE FROM track WHERE genre IS NOT NULL GROUP BY lower_genre
+            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_album_artist)), FALSE FROM track WHERE genre IS NOT NULL AND mediatype = 'Audio' GROUP BY lower_genre
         </sql>
         <sql loop="hidden_genres" loopbatch="1000" loopcommit="1000">UPDATE genre SET hidden = TRUE WHERE name = :loopitem_hidden_genres</sql>
     </statement>

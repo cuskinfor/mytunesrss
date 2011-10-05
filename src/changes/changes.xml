@@ -9,6 +9,9 @@
 
         <release version="4.1.4" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-299] Remove empty genres after import / do not import movie genres
+            </action>
+            <action dev="mdescher" type="fix">
                 Removed validation for social form in addons panel which causes an NPE.
             </action>
         </release>
