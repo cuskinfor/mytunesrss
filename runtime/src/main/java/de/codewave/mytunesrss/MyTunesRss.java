@@ -24,7 +24,10 @@ import de.codewave.utils.Version;
 import de.codewave.utils.cache.ExpiringCache;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
+import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -44,6 +47,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.MessageDigest;
@@ -499,11 +504,25 @@ public class MyTunesRss {
         CONFIG.load();
     }
 
-    private static void readVersion() {
+    private static void readVersion() throws IOException {
+        LOGGER.info("Trying to get version from runtime pom.");
         VERSION = MavenUtils.getVersion("de.codewave.mytunesrss", "runtime");
         if (StringUtils.isEmpty(VERSION)) {
-            VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
+            String versionFileURI = System.getProperty("MyTunesRSS.versionFileURI");
+            if (versionFileURI != null) {
+                LOGGER.info("Trying to get version from \"" + versionFileURI + "\".");
+                InputStream is = new URL(versionFileURI).openStream();
+                try {
+                    VERSION = IOUtils.toString(is).trim();
+                } finally {
+                    is.close();
+                }
+            } else {
+                LOGGER.info("Trying to get version from system property \"MyTunesRSS.version\".");
+                VERSION = System.getProperty("MyTunesRSS.version", "0.0.0");
+            }
         }
+        LOGGER.info("Got version \"" + VERSION + "\".");
     }
 
     private static void processArguments(String[] args) {
