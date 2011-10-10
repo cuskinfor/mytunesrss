@@ -161,6 +161,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPlaylistsRestrictions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
         myPlaylistsRestrictions.addContainerProperty("restricted", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.restricted"), null, null);
         myPlaylistsRestrictions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.excluded"), null, null);
+        myPlaylistsRestrictions.addContainerProperty("hidden", CheckBox.class, null, getBundleString("editUserConfigPanel.playlists.hidden"), null, null);
         myPlaylistsRestrictions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.playlists.name"), null, null);
         myPlaylistsRestrictions.setColumnExpandRatio("name", 1);
         myPlaylistsRestrictions.setHierarchyColumn("name");
@@ -275,7 +276,10 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                     restricted.setValue(myUser.getRestrictedPlaylistIds().contains(playlist.getId()));
                     CheckBox excluded = new CheckBox();
                     excluded.setValue(myUser.getExcludedPlaylistIds().contains(playlist.getId()));
-                    myPlaylistsRestrictions.addItem(new Object[]{restricted, excluded, playlist.getName()}, playlist);
+                    CheckBox hidden = new CheckBox();
+                    hidden.setValue(myUser.getHiddenPlaylistIds().contains(playlist.getId()) || playlist.isHidden() || (playlist.isUserPrivate() && !playlist.getUserOwner().equals(myUser.getName())));
+                    hidden.setEnabled(!playlist.isHidden() && !playlist.isUserPrivate());
+                    myPlaylistsRestrictions.addItem(new Object[]{restricted, excluded, hidden, playlist.getName()}, playlist);
                 }
                 getApplication().createPlaylistTreeTableHierarchy(myPlaylistsRestrictions, playlists);
                 myPlaylistsRestrictions.sort();
@@ -373,6 +377,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setUpload(myPermUpload.booleanValue());
         Set<String> restricted = new HashSet<String>();
         Set<String> excluded = new HashSet<String>();
+        Set<String> hidden = new HashSet<String>();
         for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
             Playlist playlist = (Playlist) itemId;
             if ((Boolean) getTableCellPropertyValue(myPlaylistsRestrictions, playlist, "restricted")) {
@@ -381,9 +386,14 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             if ((Boolean) getTableCellPropertyValue(myPlaylistsRestrictions, playlist, "excluded")) {
                 excluded.add(playlist.getId());
             }
+            CheckBox hiddenCheckbox = (CheckBox) getTableCellItemValue(myPlaylistsRestrictions, playlist, "hidden");
+            if (hiddenCheckbox.isEnabled() && (Boolean)hiddenCheckbox.getValue()) {
+                hidden.add(playlist.getId());
+            }
         }
         myUser.setRestrictedPlaylistIds(restricted);
         myUser.setExcludedPlaylistIds(excluded);
+        myUser.setHiddenPlaylistIds(hidden);
         restricted = new HashSet<String>();
         excluded = new HashSet<String>();
         for (Object itemId : myPhotoAlbumRestrictions.getItemIds()) {

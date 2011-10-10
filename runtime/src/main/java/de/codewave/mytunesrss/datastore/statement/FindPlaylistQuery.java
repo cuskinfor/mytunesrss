@@ -25,6 +25,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     private List<PlaylistType> myTypes;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
+    private List<String> myHiddenPlaylistIds = Collections.emptyList();
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
@@ -40,6 +41,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         this(types, id, containerId, includeHidden);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        myHiddenPlaylistIds = user.getHiddenPlaylistIds();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
     }
@@ -53,6 +55,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         conditionals.put("user", !myMatchingOwnerOnly && StringUtils.isNotBlank(myUserName));
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("hidden", !myHiddenPlaylistIds.isEmpty());
         conditionals.put("restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
@@ -68,6 +71,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         statement.setString("containerId", myContainerId);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
+        statement.setItems("hiddenPlaylistIds", myHiddenPlaylistIds);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
         return execute(statement, new PlaylistResultBuilder());

@@ -73,6 +73,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private int myBandwidthLimit;
     private Set<String> myRestrictedPlaylistIds = new HashSet<String>();
     private Set<String> myExcludedPlaylistIds = new HashSet<String>();
+    private Set<String> myHiddenPlaylistIds = new HashSet<String>();
     private Set<String> myRestrictedPhotoAlbumIds = new HashSet<String>();
     private Set<String> myExcludedPhotoAlbumIds = new HashSet<String>();
     private boolean mySharedUser;
@@ -306,6 +307,22 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setExcludedPlaylistIds(Set<String> playlistIds) {
         myExcludedPlaylistIds = new HashSet<String>(playlistIds);
+    }
+
+    public List<String> getHiddenPlaylistIds() {
+        return getParent() != null ? getParent().getHiddenPlaylistIds() : new ArrayList<String>(myHiddenPlaylistIds);
+    }
+
+    public void addHiddenPlaylistId(String playlistId) {
+        myHiddenPlaylistIds.add(playlistId);
+    }
+
+    public void removeHiddenPlaylistId(String playlistId) {
+        myHiddenPlaylistIds.remove(playlistId);
+    }
+
+    public void setHiddenPlaylistIds(Set<String> playlistIds) {
+        myHiddenPlaylistIds = new HashSet<String>(playlistIds);
     }
 
     public List<String> getRestrictedPhotoAlbumIds() {
@@ -610,6 +627,10 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         while (playlistIdIterator.hasNext()) {
             addExcludedPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
         }
+        playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/hidden");
+        while (playlistIdIterator.hasNext()) {
+            addHiddenPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
+        }
         Iterator<JXPathContext> photoAlbumIdIterator = JXPathUtils.getContextIterator(settings, "photoalbums/restricted");
         while (photoAlbumIdIterator.hasNext()) {
             addRestrictedPhotoAlbumId(JXPathUtils.getStringValue(photoAlbumIdIterator.next(), ".", null));
@@ -684,7 +705,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
         users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
         users.appendChild(DOMUtils.createTextElement(settings, "email", getEmail()));
-        if (!CollectionUtils.isEmpty(getRestrictedPlaylistIds()) || !CollectionUtils.isEmpty(getExcludedPlaylistIds())) {
+        if (!CollectionUtils.isEmpty(getRestrictedPlaylistIds()) || !CollectionUtils.isEmpty(getExcludedPlaylistIds()) || !CollectionUtils.isEmpty(getHiddenPlaylistIds())) {
             Element playlists = settings.createElement("playlists");
             users.appendChild(playlists);
             for (String playlistId : getRestrictedPlaylistIds()) {
@@ -692,6 +713,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             }
             for (String playlistId : getExcludedPlaylistIds()) {
                 playlists.appendChild(DOMUtils.createTextElement(settings, "excluded", playlistId));
+            }
+            for (String playlistId : getHiddenPlaylistIds()) {
+                playlists.appendChild(DOMUtils.createTextElement(settings, "hidden", playlistId));
             }
         }
         if (!CollectionUtils.isEmpty(getRestrictedPhotoAlbumIds()) || !CollectionUtils.isEmpty(getExcludedPhotoAlbumIds())) {

@@ -124,6 +124,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
+            <hidden>
+                AND p.id NOT IN (:hiddenPlaylistIds[])
+            </hidden>
             <types>AND p.type IN (:types[])</types>
             <id>AND p.id = :id</id>
             <container>AND container_id = :containerId</container>
