@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.5" date="___V___">
+            <action dev="mdescher" type="fix">
+                Destroy datastore before retrying after initialization failure.
+            </action>
+        </release>
+
         <release version="4.1.4" date="2011-10-08">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-299] Remove empty genres after import / do not import movie genres

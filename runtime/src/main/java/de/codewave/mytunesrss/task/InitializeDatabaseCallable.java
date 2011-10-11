@@ -57,9 +57,11 @@ public class InitializeDatabaseCallable implements Callable<Void> {
             }
         } catch (IOException e) {
             LOGGER.error("Could not initialize database.", e);
+            MyTunesRss.STORE.destroy();
             MyTunesRss.STORE = new MyTunesRssDataStore();
             myException = e;
         } catch (SQLException e) {
+            MyTunesRss.STORE.destroy();
             MyTunesRss.STORE = new MyTunesRssDataStore();
             LOGGER.error("Could not initialize database.", e);
             myException = e;
