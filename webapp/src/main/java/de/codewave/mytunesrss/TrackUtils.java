@@ -37,16 +37,14 @@ public class TrackUtils {
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
-            if ((sortOrder == SortOrder.Album && newAlbum) ||
-                    (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
+            if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
                 sectionCount++;
                 enhancedTrack.setNewSection(true);
                 finishSection(transaction, sectionTracks, variousPerSection);
                 sectionTracks.clear();
-                variousPerSection = false;
+                variousPerSection = sortOrder == SortOrder.Album && !track.getArtist().equals(track.getAlbumArtist());
             } else {
-                if ((sortOrder == SortOrder.Album && newArtist) ||
-                        (sortOrder == SortOrder.Artist && newAlbum)) {
+                if ((sortOrder == SortOrder.Album && !track.getArtist().equals(track.getAlbumArtist())) || (sortOrder == SortOrder.Artist && newAlbum)) {
                     variousPerSection = true;
                 }
             }
