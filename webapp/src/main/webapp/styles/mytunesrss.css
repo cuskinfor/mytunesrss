@@ -1251,3 +1251,32 @@ div.dialog > div {
 div.shareLinkDialogContent {
     text-align: left;
 }
+
+img.singlephoto {
+    padding: 20px;
+    max-width: 722px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+div.photoback {
+    width: 100%;
+    position: relative;
+}
+
+div.leftphotobutton {
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 50%;
+    bottom: 0;
+}
+
+div.rightphotobutton {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}

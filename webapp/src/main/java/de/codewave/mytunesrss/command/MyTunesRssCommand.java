@@ -20,6 +20,7 @@ public enum MyTunesRssCommand implements Command {
     BrowseMovie("browseMovie", BrowseMovieCommandHandler.class),
     BrowsePhotoAlbum("browsePhotoAlbum", BrowsePhotoAlbumCommandHandler.class),
     BrowsePhoto("browsePhoto", BrowsePhotoCommandHandler.class),
+    BrowseSinglePhoto("browseSinglePhoto", BrowseSinglePhotoCommandHandler.class),
     BrowseTvShowEpisodes("browseTvShow", BrowseTvShowCommandHandler.class),
     StartNewPlaylist("startNewPlaylist", StartNewPlaylistCommandHandler.class),
     CancelCreatePlaylist("cancelCreatePlaylist", CancelCreatePlaylistCommandHandler.class),

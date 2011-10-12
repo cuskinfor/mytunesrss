@@ -315,18 +315,6 @@
                                 </select>
                             </td>
                         </tr>
-                        <c:if test="${authUser.photos}">
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.photoSize" /></td>
-                                <td>
-                                    <input class="number"
-                                           type="text"
-                                           name="photoSize"
-                                           maxlength="5"
-                                           value="<c:out value="${cwfn:choose(config.photoSize > 0, config.photoSize, '')}"/>"/>
-                                </td>
-                            </tr>
-                        </c:if>
                         <c:if test="${authUser.rss}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.playlistTypes.rss" /></td>

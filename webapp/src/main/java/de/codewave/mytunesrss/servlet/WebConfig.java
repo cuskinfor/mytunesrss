@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -144,7 +145,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_EXTERNAL_SITES, "false");
         myConfigValues.put(CFG_SHOW_EDIT_TAGS, "false");
         myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, "false");
-        myConfigValues.put(CFG_PHOTO_SIZE, "800");
+        myConfigValues.put(CFG_PHOTO_SIZE, "50");
     }
 
     private void initWithIphoneDefaults() {
@@ -570,7 +571,15 @@ public class WebConfig {
     }
 
     public int getPhotoSize() {
-        return Integer.parseInt(myConfigValues.get(CFG_PHOTO_SIZE));
+        int size = Integer.parseInt(myConfigValues.get(CFG_PHOTO_SIZE));
+        switch (size) {
+            case 25:
+            case 50:
+            case 75:
+                return size;
+            default:
+                return 100;
+        }
     }
 
     public void setPhotoSize(int photoSize) {

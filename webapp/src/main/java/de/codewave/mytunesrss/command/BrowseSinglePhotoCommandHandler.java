@@ -6,11 +6,10 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -18,8 +17,8 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BrowsePhotoCommandHandler.class);
+public class BrowseSinglePhotoCommandHandler extends MyTunesRssCommandHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BrowseSinglePhotoCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -32,19 +31,14 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
                 LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\".");
             }
             DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
-            int current = getSafeIntegerRequestParameter("index", 0);
-            int pageSize = getWebConfig().getEffectivePhotoPageSize();
-            if (StringUtils.isBlank(getRequestParameter("photoIndex", null)) && pageSize > 0 && photoResult.getResultSize() > pageSize) {
-                Pager pager = createPager(photoResult.getResultSize(), pageSize, current);
-                getRequest().setAttribute("pager", pager);
-                getRequest().setAttribute("photos", photoResult.getResults(current * pageSize, pageSize));
-                getRequest().setAttribute("firstPhotoIndex", current * pageSize);
-            } else {
-                getRequest().setAttribute("photos", photoResult.getResults());
-                getRequest().setAttribute("firstPhotoIndex", 0);
+            getRequest().setAttribute("photos", photoResult.getResults());
+            getRequest().setAttribute("photoPage", getSafeIntegerRequestParameter("photoIndex", 0) / getWebConfig().getEffectivePhotoPageSize());
+            int size = getSafeIntegerRequestParameter("size", 0);
+            if (size > 0 && size < 101) {
+                getWebConfig().setPhotoSize(size);
+                MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), getWebConfig());
             }
-            getRequest().setAttribute("sessionAuthorized", isSessionAuthorized());
-            forward(MyTunesRssResource.BrowsePhoto);
+            forward(MyTunesRssResource.BrowseSinglePhoto);
         }
     }
 }
