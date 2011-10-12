@@ -54,12 +54,12 @@
                     <th class="active">
                         <span><c:out value="${mtfn:decode64(param.photoalbum)}"/></span>
                         <span style="float:right">
-                            Size:
+                            <fmt:message key="photos.size" />:
                             <select id="photoSizeSelector" name="photoSize" onchange="resize()">
-                                <option value="25">small</option>
-                                <option <c:if test="${config.photoSize == 50}">selected="selected"</c:if> value="50">medium</option>
-                                <option <c:if test="${config.photoSize == 75}">selected="selected"</c:if> value="75">large</option>
-                                <option <c:if test="${config.photoSize == 100}">selected="selected"</c:if> value="100">full</option>
+                                <option value="25"><fmt:message key="photos.size.25" /></option>
+                                <option <c:if test="${config.photoSize == 50}">selected="selected"</c:if> value="50"><fmt:message key="photos.size.50" /></option>
+                                <option <c:if test="${config.photoSize == 75}">selected="selected"</c:if> value="75"><fmt:message key="photos.size.75" /></option>
+                                <option <c:if test="${config.photoSize == 100}">selected="selected"</c:if> value="100"><fmt:message key="photos.size.100" /></option>
                             </select>
                         </span>
                     </th>
