@@ -9,9 +9,6 @@
 
         <release version="4.2.0" date="___D___">
             <action dev="mdescher" type="add">
-                [MYTUNESRSS-303] Missing and incorrect validation for user config
-            </action>
-            <action dev="mdescher" type="add">
                 [MYTUNESRSS-296] Photo sharing improvements
             </action>
             <action dev="mdescher" type="add">
@@ -20,6 +17,9 @@
         </release>
 
         <release version="4.1.5" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-303] Missing and incorrect validation for user config
+            </action>
             <action dev="mdescher" type="fix">
                 Destroy datastore before retrying after initialization failure.
             </action>
