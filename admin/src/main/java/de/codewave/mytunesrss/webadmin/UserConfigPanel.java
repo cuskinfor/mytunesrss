@@ -189,7 +189,11 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeSave() {
-        return VaadinUtils.isValid(myMiscForm, myLdapForm);
+        boolean valid = VaadinUtils.isValid(myMiscForm, myLdapForm);
+        if (!valid) {
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
+        }
+        return valid;
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {

@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.EmailValidator;
 import de.codewave.vaadin.validation.SameValidator;
 import org.apache.commons.lang.StringUtils;
@@ -336,6 +337,15 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 myExpiration.setValue(calendar.getTime());
             }
         }
+    }
+
+    @Override
+    protected boolean beforeSave() {
+        boolean valid = VaadinUtils.isValid(myIdentificationForm, myOptionsForm);
+        if (!valid) {
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
+        }
+        return valid;
     }
 
     protected void writeToConfig() {
