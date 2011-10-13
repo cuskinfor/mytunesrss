@@ -75,7 +75,7 @@
                         </div>
                     </td>
                     <td class="actions">
-                        <c:if test="${true}"> <%-- TODO: authUser.downloadPhotoAlbum --%>
+                        <c:if test="${authUser.downloadPhotoAlbum}">
                             <a class="download" onclick="self.document.location.href=''; return false"></a>
                         </c:if>
                     </td>

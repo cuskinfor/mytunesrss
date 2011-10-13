@@ -100,6 +100,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myCreatePublicPlaylists = false;
     private boolean myPhotos = true;
     private boolean myShare = true;
+    private boolean myDownloadPhotoAlbum = true;
 
     public User(String name) {
         myName = name;
@@ -509,6 +510,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myShare = share;
     }
 
+    public boolean isDownloadPhotoAlbum() {
+        return myDownloadPhotoAlbum;
+    }
+
+    public void setDownloadPhotoAlbum(boolean downloadPhotoAlbum) {
+        myDownloadPhotoAlbum = downloadPhotoAlbum;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -672,6 +681,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setCreatePublicPlaylists(JXPathUtils.getBooleanValue(settings, "createPublicPlaylists", myCreatePublicPlaylists));
         setPhotos(JXPathUtils.getBooleanValue(settings, "featurePhotos", myPhotos));
         setShare(JXPathUtils.getBooleanValue(settings, "featureShare", myShare));
+        setDownloadPhotoAlbum(JXPathUtils.getBooleanValue(settings, "featureDownloadPhotoAlbum", myDownloadPhotoAlbum));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -764,6 +774,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "createPublicPlaylists", isCreatePublicPlaylists()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePhotos", isPhotos()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureShare", isShare()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownloadPhotoAlbum", isDownloadPhotoAlbum()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {
