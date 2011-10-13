@@ -49,15 +49,15 @@
             /*  Moz: NO border qui altrimenti difficolta' con width, table altrimenti problemi a text resize (risolubili con refresh) */
         .thumbwrap li>div {
             /*\*/ display: table; table-layout: fixed; /**/
-            width: 128px;
+            width: 130px;
         }
             /*\*/
         .thumbwrap>li .wrimg {
             display: table-cell;
             text-align: center;
             vertical-align: middle;
-            width: 128px;
-            height: 128px;
+            width: 130px;
+            height: 130px;
         }
             /**/
         .thumbwrap img {
@@ -96,7 +96,6 @@
     <!--[if lt IE 8]><style>
     .thumbwrap li {
         width: 130px;
-        w\idth: 128px;
         display: inline;
     }
     .thumbwrap {
@@ -111,7 +110,7 @@
     }
     .thumbwrap .wrimg span {
         vertical-align: middle;
-        height: 128px;
+        height: 130px;
         zoom: 1;
     }
 </style><![endif]-->
@@ -156,7 +155,7 @@
             <ul class="thumbwrap">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span class="wrimg"><span></span><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}'"></span></div>
+                        <div><span class="wrimg"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}'"></span></div>
                     </li>
                 </c:forEach>
             </ul>

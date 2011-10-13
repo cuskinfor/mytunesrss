@@ -74,14 +74,11 @@
                             </a>
                         </div>
                     </td>
-                    <%--td class="actions">
-                        <mttag:actions index="${fnCount}"
-                                       backUrl="${mtfn:encode64(backUrl)}"
-                                       linkFragment="photoalbum=${mtfn:encode64(photoAlbum)}"
-                                       filename="${mtfn:webSafeFileName(photoAlbum)}"
-                                       defaultPlaylistName="${photoAlbum}"
-                                       shareText="${photoAlbum}" />
-                    </td--%>
+                    <td class="actions">
+                        <c:if test="${true}"> <%-- TODO: authUser.downloadPhotoAlbum --%>
+                            <a class="download" onclick="self.document.location.href=''; return false"></a>
+                        </c:if>
+                    </td>
                 </tr>
                 <c:set var="fnCount" value="${fnCount + 1}"/>
                 </c:forEach>
