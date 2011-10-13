@@ -34,6 +34,7 @@ public enum MyTunesRssCommand implements Command {
     ShowTrackInfo("showTrackInfo", ShowTrackInfoCommandHandler.class),
     GetZipArchive("getZipArchive", GetZipArchiveCommandHandler.class),
     DownloadTrack("downloadTrack", DownloadTrackCommandHandler.class),
+    DownloadPhotoAlbum("downloadPhotoAlbum", DownloadPhotoAlbumCommandHandler.class),
     PlayTrack("playTrack", PlayTrackCommandHandler.class),
     ShowUpload("showUpload", ShowUploadCommandHandler.class),
     BrowseServers("browseServers", BrowseServersCommandHandler.class),

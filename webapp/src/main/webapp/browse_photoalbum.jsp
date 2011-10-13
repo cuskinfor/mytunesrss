@@ -76,7 +76,7 @@
                     </td>
                     <td class="actions">
                         <c:if test="${authUser.downloadPhotoAlbum}">
-                            <a class="download" onclick="self.document.location.href=''; return false"></a>
+                            <a class="download" onclick="self.document.location.href='${servletUrl}/downloadPhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>'; return false"></a>
                         </c:if>
                     </td>
                 </tr>
