@@ -11,6 +11,9 @@
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-296] Photo sharing improvements
             </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-301] Track listing has several minor glitches
+            </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-287] Hide playlists per user
             </action>
