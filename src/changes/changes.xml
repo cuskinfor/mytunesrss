@@ -8,6 +8,12 @@
     <body>
 
         <release version="4.1.5" date="___D___">
+            <action dev="mdescher" type="fix">
+                Fixed reason tvshow name, season and episode number from MP4 atoms when using watch folders.
+            </action>
+            <action dev="mdescher" type="add">
+                Update to camel-1.3.0.
+            </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-303] Missing and incorrect validation for user config
             </action>
