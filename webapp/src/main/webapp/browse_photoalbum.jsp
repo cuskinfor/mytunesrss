@@ -33,6 +33,16 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script type="text/javascript">
+        function downloadAlbum(params, size) {
+            self.document.location.href='${servletUrl}/downloadPhotoAlbum/${auth}/' + params + "/size=" + size;
+        }
+        function openSizeSelectionDialog(params) {
+            $jQ("#sizeSelectionDialog").data("uriParams", params);
+            openDialog("#sizeSelectionDialog");
+        }
+    </script>
+
 </head>
 
 <body class="browse">
@@ -74,11 +84,11 @@
                             </a>
                         </div>
                     </td>
-                    <td class="actions">
-                        <c:if test="${authUser.downloadPhotoAlbum}">
-                            <a class="download" onclick="self.document.location.href='${servletUrl}/downloadPhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>'; return false"></a>
-                        </c:if>
-                    </td>
+                    <c:if test="${authUser.downloadPhotoAlbum}">
+                        <td class="actions">
+                            <a class="download" onclick="openSizeSelectionDialog('<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>')"></a>
+                        </td>
+                    </c:if>
                 </tr>
                 <c:set var="fnCount" value="${fnCount + 1}"/>
                 </c:forEach>
@@ -104,6 +114,29 @@
     <jsp:include page="incl_select_flashplayer_dialog.jsp"/>
 
     <jsp:include page="incl_functions_menu.jsp"/>
+
+    <div id="sizeSelectionDialog" class="dialog">
+        <h2>
+            <fmt:message key="dialog.selectPhotoSizeForAlbumDownload.title" />
+        </h2>
+        <div>
+            <p>
+                <fmt:message key="dialog.selectPhotoSizeForAlbumDownload.message" />
+            </p>
+            <p>
+                <select id="photoSizeSelector" name="photoSize" onchange="resize()">
+                    <option value="25"><fmt:message key="photos.size.25" /></option>
+                    <option <c:if test="${config.photoSize == 50}">selected="selected"</c:if> value="50"><fmt:message key="photos.size.50" /></option>
+                    <option <c:if test="${config.photoSize == 75}">selected="selected"</c:if> value="75"><fmt:message key="photos.size.75" /></option>
+                    <option <c:if test="${config.photoSize == 100}">selected="selected"</c:if> value="100"><fmt:message key="photos.size.100" /></option>
+                </select>
+            </p>
+            <p align="right">
+                <button onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+                <button onclick="downloadAlbum($jQ('#sizeSelectionDialog').data('uriParams'), $jQ('#sizeSelectionDialog select option:selected').val())"><fmt:message key="dialog.selectPhotoSizeForAlbumDownload.ok"/></button>
+            </p>
+        </div>
+    </div>
 
 </body>
 
