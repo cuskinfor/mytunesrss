@@ -35,6 +35,7 @@
 
     <script type="text/javascript">
         function downloadAlbum(params, size) {
+            $jQ.modal.close();
             self.document.location.href='${servletUrl}/downloadPhotoAlbum/${auth}/' + params + "/size=" + size;
         }
         function openSizeSelectionDialog(params) {
