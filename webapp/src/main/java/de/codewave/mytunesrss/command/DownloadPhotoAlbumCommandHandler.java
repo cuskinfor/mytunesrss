@@ -52,37 +52,41 @@ public class DownloadPhotoAlbumCommandHandler extends MyTunesRssCommandHandler {
 
     private void createZipArchive(OutputStream outputStream, List<Photo> results, MyTunesRssSendCounter sendCounter) throws IOException {
         ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(outputStream);
-        zipStream.setLevel(ZipArchiveOutputStream.STORED);
-        zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
-        for (Photo photo : results) {
-            File photoFile = new File(photo.getFile());
-            if (photoFile.isFile()) {
-                FileInputStream inputStream = null;
-                try {
-                    inputStream = new FileInputStream(photoFile);
-                    ZipArchiveEntry archiveEntry = new ZipArchiveEntry(photoFile.getName());
-                    archiveEntry.setSize(photoFile.length());
-                    archiveEntry.setTime(photoFile.lastModified());
+        try {
+            zipStream.setLevel(ZipArchiveOutputStream.STORED);
+            zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
+            for (Photo photo : results) {
+                File photoFile = new File(photo.getFile());
+                if (photoFile.isFile()) {
+                    FileInputStream inputStream = null;
+                    try {
+                        inputStream = new FileInputStream(photoFile);
+                        ZipArchiveEntry archiveEntry = new ZipArchiveEntry(photoFile.getName());
+                        archiveEntry.setSize(photoFile.length());
+                        archiveEntry.setTime(photoFile.lastModified());
+                        zipStream.putArchiveEntry(archiveEntry);
+                        IOUtils.copy(inputStream, zipStream);
+                        zipStream.closeArchiveEntry();
+                        if (sendCounter != null) {
+                            sendCounter.add((int) archiveEntry.getCompressedSize());
+                        }
+                    } finally {
+                        if (inputStream != null) {
+                            inputStream.close();
+                        }
+                    }
+                } else {
+                    byte[] textFile = "Image file was not found!".getBytes("UTF-8");
+                    ZipArchiveEntry archiveEntry = new ZipArchiveEntry(photoFile.getName() + ".txt");
+                    archiveEntry.setSize(textFile.length);
+                    archiveEntry.setTime(System.currentTimeMillis());
                     zipStream.putArchiveEntry(archiveEntry);
-                    IOUtils.copy(inputStream, zipStream);
+                    zipStream.write(textFile);
                     zipStream.closeArchiveEntry();
-                    if (sendCounter != null) {
-                        sendCounter.add((int) archiveEntry.getCompressedSize());
-                    }
-                } finally {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
                 }
-            } else {
-                byte[] textFile = "Image file was not found!".getBytes("UTF-8");
-                ZipArchiveEntry archiveEntry = new ZipArchiveEntry(photoFile.getName() + ".txt");
-                archiveEntry.setSize(textFile.length);
-                archiveEntry.setTime(System.currentTimeMillis());
-                zipStream.putArchiveEntry(archiveEntry);
-                zipStream.write(textFile);
-                zipStream.closeArchiveEntry();
             }
+        } finally {
+            zipStream.close();
         }
     }
 }
