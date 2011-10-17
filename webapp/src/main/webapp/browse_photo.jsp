@@ -38,6 +38,7 @@
             padding: 15px 8px 0 8px;
             background-color: #f4f4f4;
             margin: 0;
+            text-align: center;
         }
         .thumbwrap li {
             display: -moz-inline-box;

@@ -23,11 +23,15 @@
             var newSize = $jQ("#photoSizeSelector").val();
             self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}/size=' + newSize;
         }
+        function setMaxWidth() {
+            $jQ("#photoimage").css("max-width", ($jQ("div.photoback").width() - $jQ("#photoimage").css("padding-left").replace("px", "") - $jQ("#photoimage").css("padding-right").replace("px", "")) + "px");
+            //$jQ("#photoimage").css("max-width", ($jQ("div.photoback").width() - (2 * $jQ("#photoimage").css("padding"))) + "px");
+        }
     </script>
 
 </head>
 
-<body class="browse">
+<body class="browse" onload="setMaxWidth()">
 
 <div class="body">
 
