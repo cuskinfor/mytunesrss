@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.camel.mp3.Id3v2Tag;
+import de.codewave.camel.mp4.CodecAtom;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
@@ -208,10 +209,9 @@ public class TrackListener implements PListHandlerListener {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, Arrays.asList("moov.trak.mdia.minf.stbl.stsd"));
-            Mp4Atom atom = atoms.get("moov.trak.mdia.minf.stbl.stsd");
+            CodecAtom atom = (CodecAtom)MyTunesRss.MP4_PARSER.parse(file, "moov.trak.mdia.minf.stbl.stsd");
             if (atom != null) {
-                return atom.getDataAsString(12, 4, "UTF-8");
+                return atom.getCodec();
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {

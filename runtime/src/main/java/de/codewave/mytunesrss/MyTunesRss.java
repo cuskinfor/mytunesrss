@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.camel.mp4.Mp4Parser;
 import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
@@ -126,6 +127,7 @@ public class MyTunesRss {
     public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();
     public static String CACHE_DATA_PATH;
     public static String PREFERENCES_DATA_PATH;
+    public static final Mp4Parser MP4_PARSER = new Mp4Parser();
 
     public static void main(final String[] args) throws Exception {
         Runtime.getRuntime().addShutdownHook(new Thread() {

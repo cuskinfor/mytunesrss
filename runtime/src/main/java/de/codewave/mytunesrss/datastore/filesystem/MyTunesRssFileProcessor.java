@@ -4,8 +4,9 @@ import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v1Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4Utils;
+import de.codewave.camel.mp4.CoverAtom;
+import de.codewave.camel.mp4.DiskAtom;
+import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.camel.mp4.StikAtom;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -49,43 +50,6 @@ import java.util.regex.Pattern;
  */
 public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
-
-    private static enum Atom {
-        Album("moov.udta.meta.ilst.\u00a9alb.data"),
-        Artist("moov.udta.meta.ilst.\u00a9art.data"),
-        AlbumArtist("moov.udta.meta.ilst.aART.data"),
-        Title("moov.udta.meta.ilst.\u00a9nam.data"),
-        TrackNumber("moov.udta.meta.ilst.trkn.data"),
-        DiskNumber("moov.udta.meta.ilst.disk.data"),
-        Genre("moov.udta.meta.ilst.\u00a9gen.data"),
-        Stsd("moov.trak.mdia.minf.stbl.stsd"),
-        Cover("moov.udta.meta.ilst.covr.data"),
-        Composer("moov.udta.meta.ilst.\u00a9wrt.data"),
-        Comment("moov.udta.meta.ilst.\u00a9cmt.data"),
-        Year("moov.udta.meta.ilst.\u00a9day.data"),
-        Series("moov.udta.meta.ilst.tvsh.data"),
-        Season("moov.udta.meta.ilst.tvsn.data"),
-        Episode("moov.udta.meta.ilst.tves.data"),
-        Compilation("moov.udta.meta.ilst.cpil.data"),
-        Stik("moov.udta.meta.ilst.stik");
-
-        private String myPath;
-
-        Atom(String path) {
-            myPath = path;
-        }
-
-        public String getPath() {
-            return myPath;
-        }
-    }
-
-    private static final Collection<String> ALL_ATOM_NAMES = new ArrayList<String>();
-    static {
-        for (Atom atom : Atom.values()) {
-            ALL_ATOM_NAMES.add(atom.getPath());
-        }
-    }
 
     private long myLastUpdateTime;
     private DataStoreSession myStoreSession;
@@ -411,113 +375,91 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private TrackMetaData parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {
         TrackMetaData meta = new TrackMetaData();
-        Map<String, Mp4Atom> atoms = null;
+        MoovAtom moov = null;
         try {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, ALL_ATOM_NAMES);
+            moov = (MoovAtom) MyTunesRss.MP4_PARSER.parse(file, "moov");
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
-        if (atoms == null || atoms.isEmpty()) {
+        if (moov == null) {
             setSimpleInfo(statement, file, mediaType);
         } else {
             try {
-                Mp4Atom atom = atoms.get(Atom.Title.getPath());
-                String name = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                String name = moov.getTitle();
                 if (StringUtils.isBlank(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
                 statement.setName(MyTunesRssUtils.normalize(name));
-                atom = atoms.get(Atom.Stsd.getPath());
-                if (atom != null) {
-                    String mp4Codec = atom.getDataAsString(12, 4, "UTF-8");
-                    meta.setMp4Codec(mp4Codec);
-                    statement.setMp4Codec(mp4Codec);
-                }
-                atom = atoms.get(Atom.Genre.getPath());
-                String genre = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                meta.setMp4Codec(moov.getMp4Codec());
+                statement.setMp4Codec(moov.getMp4Codec());
+                String genre = moov.getGenre();
                 if (StringUtils.isNotBlank(genre)) {
                     statement.setGenre(MyTunesRssUtils.normalize(genre));
                 }
-                atom = atoms.get(Atom.Comment.getPath());
-                String comment = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                String comment = moov.getComment();
                 if (StringUtils.isNotBlank(comment)) {
                     statement.setComment(MyTunesRssUtils.normalize(comment));
                 }
-                atom = atoms.get(Atom.Year.getPath());
-                String year = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
-                if (StringUtils.isNotBlank(year)) {
-                    try {
-                        statement.setYear(Integer.parseInt(StringUtils.trimToEmpty(year)));
-                    } catch (NumberFormatException e) {
-                        LOGGER.info("Ignoring unparsable year \"" + year + "\" of track \"" + file.getAbsolutePath() + "\".");
-                    }
+                Integer year = moov.getYear();
+                if (year != null) {
+                    statement.setYear(year);
                 }
                 if (mediaType == MediaType.Audio) {
-                    atom = atoms.get(Atom.Album.getPath());
-                    String album = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                    String album = moov.getAlbum();
                     if (StringUtils.isBlank(album)) {
                         album = getFallbackAlbumName(file);
                     }
                     statement.setAlbum(MyTunesRssUtils.normalize(album));
-                    atom = atoms.get(Atom.Artist.getPath());
-                    String artist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                    String artist = moov.getArtist();
                     if (StringUtils.isBlank(artist)) {
                         artist = getFallbackArtistName(file);
                     }
                     statement.setArtist(MyTunesRssUtils.normalize(artist));
-                    atom = atoms.get(Atom.AlbumArtist.getPath());
-                    String albumArtist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                    String albumArtist = moov.getAlbumArtist();
                     if (StringUtils.isBlank(albumArtist)) {
                         albumArtist = artist;
                     }
                     statement.setAlbumArtist(MyTunesRssUtils.normalize(albumArtist));
-                    atom = atoms.get(Atom.Compilation.getPath());
-                    if (atom != null) {
-                        statement.setCompilation(atom.getData()[11] > 0 || !StringUtils.equalsIgnoreCase(artist, albumArtist));
-                    }
-                    atom = atoms.get(Atom.Composer.getPath());
-                    String composer = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                    statement.setCompilation(moov.isCompilation() || !StringUtils.equalsIgnoreCase(artist, albumArtist));
+                    String composer = moov.getComposer();
                     statement.setComposer(MyTunesRssUtils.normalize(composer));
-                    atom = atoms.get(Atom.TrackNumber.getPath());
-                    if (atom != null) {
-                        statement.setTrackNumber(atom.getData()[11]);
+                    Long trackNumer = moov.getTrackNumber();
+                    if (trackNumer != null) {
+                        statement.setTrackNumber(trackNumer.intValue());
                     }
-                    atom = atoms.get(Atom.DiskNumber.getPath());
-                    if (atom != null) {
-                        statement.setPos(atom.getData()[11], atom.getData()[13]);
+                    DiskAtom diskAtom = moov.getDiskAtom();
+                    if (diskAtom != null) {
+                        statement.setPos(diskAtom.getNumber(), diskAtom.getSize());
                     }
                 } else if (mediaType == MediaType.Video) {
-                    atom = atoms.get(Atom.Stik.getPath());
-                    VideoType videoType;
-                    if (atom != null) {
-                        videoType = ((StikAtom) atom).getType() == StikAtom.Type.TvShow ? VideoType.TvShow : VideoType.Movie;
-                        statement.setVideoType(videoType);
-                    } else {
-                        videoType = myDatasourceConfig.getVideoType();
-                        statement.setVideoType(videoType);
+                    VideoType videoType = myDatasourceConfig.getVideoType();
+                    if (moov.getMediaType() == StikAtom.Type.TvShow) {
+                        videoType = VideoType.TvShow;
+                    } else if (moov.getMediaType() == StikAtom.Type.Movie) {
+                        videoType = VideoType.Movie;
                     }
+                    statement.setVideoType(videoType);
                     if (videoType == VideoType.TvShow) {
-                        atom = atoms.get(Atom.Series.getPath());
-                        String tvShow = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
+                        String tvShow = moov.getTvShow();
                         if (StringUtils.isNotBlank(tvShow)) {
                             statement.setSeries(MyTunesRssUtils.normalize(tvShow));
                         } else {
                             statement.setSeries(getFallbackSeries(file));
                         }
-                        atom = atoms.get(Atom.Season.getPath());
-                        if (atom != null) {
-                            statement.setSeason(atom.getData()[11]);
+                        Long season = moov.getTvSeason();
+                        if (season!= null) {
+                            statement.setSeason(season.intValue());
                         } else {
                             statement.setSeason(getFallbackSeason(file));
                         }
-                        atom = atoms.get(Atom.Episode.getPath());
-                        if (atom != null) {
-                            statement.setEpisode(atom.getData()[11]);
+                        Long episode = moov.getTvEpisode();
+                        if (episode != null) {
+                            statement.setEpisode(episode.intValue());
                         } else {
                             statement.setEpisode(getFallbackEpisode(file));
                         }
@@ -531,11 +473,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.setId(fileId);
                 setSimpleInfo(statement, file, mediaType);
             }
-        }
-        Mp4Atom atom = atoms.get(Atom.Cover.getPath());
-        if (atom != null) {
-            byte type = atom.getData()[3];
-            meta.setImage(new Image(type == 0x0d ? "image/jpeg" : "image/png", ArrayUtils.subarray(atom.getData(), 8, atom.getData().length - 8)));
+            CoverAtom coverAtom = moov.getCoverAtom();
+            if (coverAtom != null) {
+                try {
+                    meta.setImage(new Image(coverAtom.getMimeType(), coverAtom.getDataStream()));
+                } catch (IOException e) {
+                    LOGGER.warn("Could not extract image from MP4 file.", e);
+                }
+            }
         }
         return meta;
     }

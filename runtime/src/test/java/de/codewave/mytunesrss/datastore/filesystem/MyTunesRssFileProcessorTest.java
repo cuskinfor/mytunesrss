@@ -6,12 +6,9 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssConfig;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
-import de.codewave.utils.sql.DataStoreSession;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;

@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
+import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
@@ -601,5 +602,14 @@ public class MyTunesRssUtils {
                 backups.get(i).getFile().delete();
             }
         }
+    }
+
+    public static Map<String, Mp4Atom> toMap(Collection<Mp4Atom> atoms) {
+        Map<String, Mp4Atom> result = new HashMap<String, Mp4Atom>();
+        for (Mp4Atom atom : atoms) {
+            result.put(atom.getPath(), atom);
+            result.putAll(toMap(atom.getChildren()));
+        }
+        return result;
     }
 }
