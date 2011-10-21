@@ -80,9 +80,7 @@ public class WebServer {
                     ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
                     myServer.addConnector(ajpConnector);
                 } catch (Exception e) {
-                    if (LOGGER.isErrorEnabled()) {
-                        LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
-                    }
+                    LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                 }
             }
             myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
@@ -100,7 +98,7 @@ public class WebServer {
             httpConnector.setPort(MyTunesRss.CONFIG.getPort());
             myServer.addConnector(httpConnector);
             myServer.start();
-            byte health = checkServerHealth(MyTunesRss.CONFIG.getPort(), true);
+            byte health = checkServerHealth(MyTunesRss.CONFIG.getPort());
             if (health != CheckHealthResult.OK) {
                 stop();
                 myServer = null;
@@ -116,9 +114,7 @@ public class WebServer {
                 MyTunesRss.QUICKTIME_PLAYER.init();
             }
             int localPort = myServer.getConnectors()[0].getLocalPort();
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Started user server on port " + localPort + ".");
-            }
+            LOGGER.debug("Started user server on port " + localPort + ".");
         }
     }
 
@@ -159,18 +155,14 @@ public class WebServer {
         }
     }
 
-    private byte checkServerHealth(int port, boolean logging) {
+    private byte checkServerHealth(int port) {
         HttpURLConnection connection = null;
         try {
             URL targetUrl = new URL("http://127.0.0.1:" + port + getContext() + "/mytunesrss/checkHealth?ignoreSession=true");
-            if (LOGGER.isInfoEnabled() && logging) {
-                LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
-            }
+            LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             connection = (HttpURLConnection) targetUrl.openConnection();
             int responseCode = connection.getResponseCode();
-            if (LOGGER.isInfoEnabled() && logging) {
-                LOGGER.info("HTTP response code is " + responseCode);
-            }
+            LOGGER.info("HTTP response code is " + responseCode);
             if (responseCode == HttpURLConnection.HTTP_OK) {
                 InputStream inputStream = connection.getInputStream();
                 int result = -1;
@@ -186,17 +178,13 @@ public class WebServer {
                         }
                     }
                 }
-                if (LOGGER.isInfoEnabled() && logging) {
-                    LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
-                }
+                LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
                 return result != -1 ? (byte) result : CheckHealthResult.EOF;
             } else {
                 return CheckHealthResult.INVALID_HTTP_RESPONSE;
             }
         } catch (IOException e) {
-            if (LOGGER.isErrorEnabled() && logging) {
-                LOGGER.error("Could not get a proper server health status.", e);
-            }
+            LOGGER.error("Could not get a proper server health status.", e);
             return CheckHealthResult.SERVER_COMMUNICATION_FAILURE;
         } finally {
             if (connection != null) {
@@ -225,9 +213,7 @@ public class WebServer {
                 myServer.stop();
                 myServer.join();
             } catch (Exception e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Cannot stop user server.", e);
-                }
+                LOGGER.error("Cannot stop user server.", e);
                 return false;
             }
             myRunning.set(false);

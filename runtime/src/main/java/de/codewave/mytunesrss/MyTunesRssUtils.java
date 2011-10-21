@@ -121,9 +121,7 @@ public class MyTunesRssUtils {
     }
 
     public static void showErrorMessageWithDialog(String message) {
-        if (LOGGER.isErrorEnabled()) {
-            LOGGER.error(message);
-        }
+        LOGGER.error(message);
         if (!MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
             JOptionPane.showMessageDialog(null, message);
         } else {
@@ -132,9 +130,7 @@ public class MyTunesRssUtils {
     }
 
     public static void showErrorMessage(String message) {
-        if (LOGGER.isErrorEnabled()) {
-            LOGGER.error(message);
-        }
+        LOGGER.error(message);
         System.err.println(message);
     }
 
@@ -166,44 +162,30 @@ public class MyTunesRssUtils {
 
     public static void shutdownGracefully() {
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Shutting down gracefully.");
-        }
+        LOGGER.debug("Shutting down gracefully.");
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();
         }
         try {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Cancelling database jobs.");
-            }
+            LOGGER.info("Cancelling database jobs.");
             if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Stopping user interface server.");
-                }
+                LOGGER.info("Stopping user interface server.");
                 MyTunesRss.stopWebserver();
             }
             if (MyTunesRss.ADMIN_SERVER != null) {
-                if (LOGGER.isInfoEnabled()) {
-                    LOGGER.info("Stopping admin interface server.");
-                }
+                LOGGER.info("Stopping admin interface server.");
                 MyTunesRss.stopAdminServer();
             }
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Shutting down executor services.");
-            }
+            LOGGER.info("Shutting down executor services.");
             MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
             MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
             MyTunesRss.EXECUTOR_SERVICE.shutdown();
             if (MyTunesRss.QUARTZ_SCHEDULER != null) {
                 try {
-                    if (LOGGER.isInfoEnabled()) {
-                        LOGGER.info("Shutting down quartz scheduler.");
-                    }
+                    LOGGER.info("Shutting down quartz scheduler.");
                     MyTunesRss.QUARTZ_SCHEDULER.shutdown();
                 } catch (SchedulerException e) {
-                    if (LOGGER.isErrorEnabled()) {
-                        LOGGER.error("Could not shutdown quartz scheduler.", e);
-                    }
+                    LOGGER.error("Could not shutdown quartz scheduler.", e);
                 }
             }
             if (MyTunesRss.STORE != null && MyTunesRss.STORE.isInitialized()) {
@@ -235,14 +217,10 @@ public class MyTunesRssUtils {
                 }
             }
         } catch (Exception e) {
-            if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Exception during shutdown.", e);
-            }
 
         } finally {
-            if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Very last log message before shutdown.");
-            }
             System.exit(0);
         }
     }
@@ -448,6 +426,8 @@ public class MyTunesRssUtils {
     public static RegistrationFeedback getRegistrationFeedback(Locale locale) {
         if (MyTunesRss.REGISTRATION.isExpiredPreReleaseVersion()) {
             return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.preReleaseVersionExpired"), false);
+        } else if (MyTunesRss.REGISTRATION.isExpiredVersion()) {
+            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.registrationExpiredVersion"), false);
         } else if (MyTunesRss.REGISTRATION.isExpired()) {
             return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.registrationExpired"), false);
         } else if (MyTunesRss.REGISTRATION.isExpirationDate() && !MyTunesRss.REGISTRATION.isReleaseVersion()) {

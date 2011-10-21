@@ -115,12 +115,7 @@ public class MyTunesRssRegistration {
             handleRegistration(registration);
             if (isExpired() || isUnregistered()) {
                 if (LOG.isInfoEnabled()) {
-                    LOG.info("License expired or UNREGISTERED license. Using default registration data.");
-                }
-                if (allowDefaultLicense) {
-                    handleRegistration(RegistrationUtils.getRegistrationData(getDefaultLicenseFile(), getPublicKey()));
-                    myExpiration = MyTunesRss.CONFIG.getConfigCreationTime() + TRIAL_PERIOD_MILLIS;
-                    LOG.info("Set expiration to " + new SimpleDateFormat("yyyy-MM-dd").format(new Date(myExpiration)));
+                    LOG.info("License expired or unregistered license.");
                 }
             }
         } else if (allowDefaultLicense) {
@@ -213,7 +208,7 @@ public class MyTunesRssRegistration {
         return mySettings;
     }
 
-    private boolean isExpiredVersion() {
+    public boolean isExpiredVersion() {
         return myMaxVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0;
     }
 
