@@ -446,6 +446,9 @@ public class MyTunesRss {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback != null && feedback.getMessage() != null) {
             MyTunesRssUtils.showErrorMessageWithDialog(feedback.getMessage());
+            if (!feedback.isValid()) {
+                MyTunesRssUtils.shutdownGracefully();
+            }
         }
     }
 

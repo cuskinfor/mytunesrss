@@ -21,7 +21,10 @@
 
         <release version="4.1.5" date="___D___">
             <action dev="mdescher" type="fix">
-                Fixed reason tvshow name, season and episode number from MP4 atoms when using watch folders.
+                MYTUNESRSS-304 - Refuse startup with an expired (version) license
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed reading tvshow name, season and episode number from MP4 atoms when using watch folders.
             </action>
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-305] Use STIK atom (mp4) to determine media type
