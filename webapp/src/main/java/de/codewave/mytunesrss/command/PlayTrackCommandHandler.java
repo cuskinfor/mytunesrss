@@ -8,6 +8,7 @@ import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp3.exception.IllegalHeaderException;
+import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -16,6 +17,7 @@ import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.servlet.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,13 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     if (transcoder != null) {
                         streamSender = transcoder.getStreamSender();
                     } else {
-                        streamSender = new FileSender(file, contentType, file.length());
+                        if (Mp4Utils.isMp4File(file)) {
+                            // qt-faststart
+                            LOG.info("Using QT-FASTSTART utility.");
+                            streamSender = new StreamSender(Mp4Utils.getFastStartInputStream(file), contentType, file.length());
+                        } else {
+                            streamSender = new FileSender(file, contentType, file.length());
+                        }
                     }
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                     streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
