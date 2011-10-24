@@ -380,7 +380,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            moov = (MoovAtom) MyTunesRss.MP4_PARSER.parse(file, "moov");
+            moov = (MoovAtom) MyTunesRss.MP4_PARSER.parseAndGet(file, "moov");
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);

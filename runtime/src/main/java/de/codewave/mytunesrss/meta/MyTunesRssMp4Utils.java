@@ -29,7 +29,7 @@ public class MyTunesRssMp4Utils {
     public static Image getImage(File file) {
         if (FileSupportUtils.isMp4(file)) {
             try {
-                CoverAtom atom = (CoverAtom) MyTunesRss.MP4_PARSER.parse(file, "moov.udta.meta.ilst.covr");
+                CoverAtom atom = (CoverAtom) MyTunesRss.MP4_PARSER.parseAndGet(file, "moov.udta.meta.ilst.covr");
                 if (atom != null) {
                     return new Image(atom.getMimeType(), atom.getDataStream());
                 }

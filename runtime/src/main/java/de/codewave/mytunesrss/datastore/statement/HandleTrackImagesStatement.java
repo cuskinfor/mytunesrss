@@ -215,7 +215,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                             }
                             if (itcFile.isFile() && itcFile.lastModified() >= myLastUpdateTime) {
                                 LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                Mp4Atom itemAtom = MyTunesRss.MP4_PARSER.parse(itcFile, "item");
+                                Mp4Atom itemAtom = MyTunesRss.MP4_PARSER.parseAndGet(itcFile, "item");
                                 if (itemAtom != null) {
                                     LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
                                     int offset = CamelUtils.getIntValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
