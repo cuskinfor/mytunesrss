@@ -89,32 +89,8 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
         if (ServletUtils.isHeadRequest(getRequest())) {
             sendHeadResponse(streamSender);
         } else {
-            handleBandwidthLimit(streamSender, track);
             sendGetResponse(streamSender);
         }
-    }
-
-    protected void handleBandwidthLimit(StreamSender streamSender, Track track) throws IOException {
-        int bitrate = 0;
-        int dataOffset = 0;
-        if (track != null && track.getFile().exists() && FileSupportUtils.isMp3(track.getFile())) {
-            bitrate = Mp3Utils.getMp3Info(new FileInputStream(track.getFile())).getAvgBitrate();
-            Id3Tag tag = null;
-            try {
-                tag = Mp3Utils.readId3Tag(track.getFile());
-                if (tag != null && tag.isId3v2()) {
-                    dataOffset = ((Id3v2Tag)tag).getHeader().getBodySize();
-                }
-            } catch (IllegalHeaderException e) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not read ID3 information.", e);
-                }
-            }
-        }
-        double factor = MyTunesRss.CONFIG.isBandwidthLimit() ? MyTunesRss.CONFIG.getBandwidthLimitFactor().doubleValue() : 0;
-        streamSender.setOutputStreamWrapper(getAuthUser().getOutputStreamWrapper((int)(bitrate * factor),
-                                                                                 dataOffset,
-                                                                                 new RangeHeader(getRequest())));
     }
 
     protected void sendGetResponse(StreamSender streamSender) throws IOException {

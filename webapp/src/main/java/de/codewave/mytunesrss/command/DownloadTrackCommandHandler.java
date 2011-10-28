@@ -56,7 +56,6 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
             if (ServletUtils.isHeadRequest(getRequest())) {
                 sendHeadResponse(streamSender);
             } else {
-                handleBandwidthLimit(streamSender, track);
                 sendGetResponse(streamSender);
             }
         }

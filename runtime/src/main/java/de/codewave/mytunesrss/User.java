@@ -70,7 +70,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private int mySessionTimeout = 20;
     private boolean mySpecialPlaylists = true;
     private boolean myTranscoder = true;
-    private int myBandwidthLimit;
     private Set<String> myRestrictedPlaylistIds = new HashSet<String>();
     private Set<String> myExcludedPlaylistIds = new HashSet<String>();
     private Set<String> myHiddenPlaylistIds = new HashSet<String>();
@@ -268,14 +267,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setTranscoder(boolean transcoder) {
         myTranscoder = transcoder;
-    }
-
-    public int getBandwidthLimit() {
-        return getParent() != null ? getParent().getBandwidthLimit() : myBandwidthLimit;
-    }
-
-    public void setBandwidthLimit(int bandwidthLimit) {
-        myBandwidthLimit = bandwidthLimit;
     }
 
     public List<String> getRestrictedPlaylistIds() {
@@ -575,25 +566,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         }
     }
 
-    public StreamSender.OutputStreamWrapper getOutputStreamWrapper(final int bitrate) {
-        return getOutputStreamWrapper(bitrate, 0, null);
-    }
-
-    public StreamSender.OutputStreamWrapper getOutputStreamWrapper(int bitrate, int dataOffset, RangeHeader rangeHeader) {
-        final int limit = Math.min(bitrate, getBandwidthLimit() > 0 ? getBandwidthLimit() : Integer.MAX_VALUE);
-        if (limit > 0) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Using bandwidth limited output stream with " + limit + " kbit.");
-            }
-            return new MyTunesRSSOutputStreamWrapper(bitrate, dataOffset, rangeHeader.getRangeFrom(), 2);
-        }
-        return new StreamSender.OutputStreamWrapper() {
-            public OutputStream wrapStream(OutputStream stream) {
-                return stream;
-            }
-        };
-    }
-
     public String getWebConfig(UserAgent userAgent) {
         return myWebConfigs.get(userAgent.toConfigKey());
     }
@@ -627,7 +599,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setMaximumZipEntries(JXPathUtils.getIntValue(settings, "maximumZipEntries", myMaximumZipEntries));
         setTranscoder(JXPathUtils.getBooleanValue(settings, "featureTranscoder", myTranscoder));
         setSessionTimeout(JXPathUtils.getIntValue(settings, "sessionTimeout", mySessionTimeout));
-        setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", myBandwidthLimit));
         Iterator<JXPathContext> playlistIdIterator = JXPathUtils.getContextIterator(settings, "playlists/restricted");
         while (playlistIdIterator.hasNext()) {
             addRestrictedPlaylistId(JXPathUtils.getStringValue(playlistIdIterator.next(), ".", null));
@@ -713,7 +684,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createIntElement(settings, "maximumZipEntries", getMaximumZipEntries()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureTranscoder", isTranscoder()));
         users.appendChild(DOMUtils.createIntElement(settings, "sessionTimeout", getSessionTimeout()));
-        users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
         users.appendChild(DOMUtils.createTextElement(settings, "email", getEmail()));
         if (!CollectionUtils.isEmpty(getRestrictedPlaylistIds()) || !CollectionUtils.isEmpty(getExcludedPlaylistIds()) || !CollectionUtils.isEmpty(getHiddenPlaylistIds())) {
             Element playlists = settings.createElement("playlists");

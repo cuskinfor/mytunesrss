@@ -77,7 +77,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         if (tracks.getResultSize() > 0) {
             Track track = tracks.nextResult();
             if (track.getMediaType() == MediaType.Video) {
-                Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track, null);
+                Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
                 String playlistIdentifier = transcoder != null ? transcoder.getTranscoderId() : "";
                 HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
                 if (cacheItem == null) {

@@ -63,8 +63,6 @@ public class MyTunesRssConfig {
     private String myWebLoginMessage = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
-    private boolean myBandwidthLimit;
-    private BigDecimal myBandwidthLimitFactor;
     private boolean myIgnoreArtwork;
     private Level myCodewaveLogLevel;
     private String myLastNewVersionInfo;
@@ -245,22 +243,6 @@ public class MyTunesRssConfig {
 
     public void setStreamingCacheMaxFiles(int streamingCacheMaxFiles) {
         myStreamingCacheMaxFiles = streamingCacheMaxFiles;
-    }
-
-    public boolean isBandwidthLimit() {
-        return myBandwidthLimit;
-    }
-
-    public void setBandwidthLimit(boolean bandwidthLimit) {
-        myBandwidthLimit = bandwidthLimit;
-    }
-
-    public BigDecimal getBandwidthLimitFactor() {
-        return myBandwidthLimitFactor;
-    }
-
-    public void setBandwidthLimitFactor(BigDecimal bandwidthLimitFactor) {
-        myBandwidthLimitFactor = bandwidthLimitFactor;
     }
 
     public boolean isIgnoreArtwork() {
@@ -997,8 +979,6 @@ public class MyTunesRssConfig {
         readPathInfoEncryptionKey(settings);
         setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
-        setBandwidthLimit(JXPathUtils.getBooleanValue(settings, "bandwidthLimit", false));
-        setBandwidthLimitFactor(new BigDecimal(JXPathUtils.getStringValue(settings, "bandwidthLimitFactor", "0")));
         setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
@@ -1306,8 +1286,6 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "bandwidthLimit", myBandwidthLimit));
-            root.appendChild(DOMUtils.createTextElement(settings, "bandwidthLimitFactor", myBandwidthLimitFactor.toString()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreArtwork", myIgnoreArtwork));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));

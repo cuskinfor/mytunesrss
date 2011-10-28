@@ -66,7 +66,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private SmartTextField myDownloadLimitSize;
     private SmartTextField myMaxFilesPerArchive;
     private SmartTextField mySessionTimeout;
-    private SmartTextField myBandwidthLimit;
     private CheckBox mySharedUser;
     private SmartTextField myLastFmUsername;
     private SmartTextField myLastFmPassword;
@@ -211,7 +210,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDownloadLimitSize = getComponentFactory().createTextField("editUserConfigPanel.downloadLimitSize", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
         myMaxFilesPerArchive = getComponentFactory().createTextField("editUserConfigPanel.maxFilesPerArchive", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
         mySessionTimeout = getComponentFactory().createTextField("editUserConfigPanel.sessionTimeout", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
-        myBandwidthLimit = getComponentFactory().createTextField("editUserConfigPanel.bandwidthLimit", getApplication().getValidatorFactory().createMinMaxValidator(1, Integer.MAX_VALUE));
         mySharedUser = getComponentFactory().createCheckBox("editUserConfigPanel.sharedUser");
         myLastFmUsername = getComponentFactory().createTextField("editUserConfigPanel.lastFmUsername");
         myLastFmPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.lastFmPassword");
@@ -222,7 +220,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myOptionsForm.addField("downloadLimitSize", myDownloadLimitSize);
             myOptionsForm.addField("maxFilesPerArchive", myMaxFilesPerArchive);
             myOptionsForm.addField("sessionTimeout", mySessionTimeout);
-            myOptionsForm.addField("bandwidthLimit", myBandwidthLimit);
             myOptionsForm.addField("sharedUser", mySharedUser);
         }
         if (!myUser.isGroup()) {
@@ -238,7 +235,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     protected void initFromConfig() {
         if (myUser != null) {
-            myBandwidthLimit.setValue(myUser.getBandwidthLimit(), 1, Integer.MAX_VALUE, "");
             myDownloadLimitSize.setValue(myUser.getBytesQuota() / (1024 * 1024), 1, Integer.MAX_VALUE, "");
             myPermChangeEmail.setValue(myUser.isChangeEmail());
             myPermChangePassword.setValue(myUser.isChangePassword());
@@ -357,7 +353,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void writeToConfig() {
-        myUser.setBandwidthLimit(myBandwidthLimit.getIntegerValue(-1));
         long bytesQuota = myDownloadLimitSize.getLongValue(-1);
         myUser.setBytesQuota(bytesQuota > 0 ? bytesQuota * (1024 * 1024) : bytesQuota);
         myUser.setChangeEmail(myPermChangeEmail.booleanValue());

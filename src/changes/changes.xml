@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.2.0" date="___D___">
+            <action dev="mdescher" type="remove">
+                Removed bandwidth limit.
+            </action>
             <action dev="mdescher" type="add">
                 Transcoder binaries now must read from stdin, the "{infile}" token is no longer supported.
             </action>

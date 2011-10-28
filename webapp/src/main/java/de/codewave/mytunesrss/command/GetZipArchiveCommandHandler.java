@@ -82,7 +82,6 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                     File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;
                     FileSender fileSender = new FileSender(sendFile, "application/zip", sendFile.length());
                     fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
-                    fileSender.setOutputStreamWrapper(user.getOutputStreamWrapper(0));
                     fileSender.sendGetResponse(getRequest(), getResponse(), false);
                 } finally {
                     /*if (tempFile != null && tempFile.isFile()) {
@@ -91,8 +90,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 }
             } else {
                 getResponse().setContentType("application/zip");
-                OutputStream outputStream = user.getOutputStreamWrapper(0).wrapStream(getResponse().getOutputStream());
-                createZipArchive(user, outputStream, tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
+                createZipArchive(user, getResponse().getOutputStream(), tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
             }
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);

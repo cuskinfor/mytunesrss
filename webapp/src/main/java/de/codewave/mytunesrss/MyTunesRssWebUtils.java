@@ -306,26 +306,26 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static Transcoder getTranscoder(HttpServletRequest request, Track track, InputStream inputStream) {
+    public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
         boolean notranscode = "true".equals(request.getParameter("notranscode"));
         boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
         User authUser = getAuthUser(request);
-        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, inputStream, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
+        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
     }
 
     public static InputStream getMediaStream(HttpServletRequest request, Track track, InputStream inputStream) throws IOException {
-        Transcoder transcoder = getTranscoder(request, track, inputStream);
+        Transcoder transcoder = getTranscoder(request, track);
         if (transcoder != null) {
-            return transcoder.getStream();
+            return transcoder.getStream(inputStream);
         } else {
             return inputStream;
         }
     }
 
     public static StreamSender getMediaStreamSender(HttpServletRequest request, Track track, InputStream inputStream) throws IOException {
-        Transcoder transcoder = getTranscoder(request, track, inputStream);
+        Transcoder transcoder = getTranscoder(request, track);
         if (transcoder != null) {
-            return transcoder.getStreamSender();
+            return transcoder.getStreamSender(inputStream);
         } else {
             return new StreamSender(inputStream, track.getContentType(), track.getContentLength());
         }
@@ -345,7 +345,7 @@ public class MyTunesRssWebUtils {
                 }
                 return true;
             }
-            Transcoder transcoder = getTranscoder(request, track, null);
+            Transcoder transcoder = getTranscoder(request, track);
             if (transcoder != null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Transcoder content type is \"" + transcoder.getTargetContentType() + "\".");

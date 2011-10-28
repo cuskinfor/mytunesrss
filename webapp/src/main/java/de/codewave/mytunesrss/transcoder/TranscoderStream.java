@@ -13,10 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.SQLException;
 
 /**
@@ -29,7 +26,7 @@ public class TranscoderStream extends InputStream {
     private TranscoderConfig myTranscoderConfig;
     private File myImageFile;
 
-    public TranscoderStream(TranscoderConfig transcoderConfig, Track track, final InputStream inputStream) throws IOException {
+    TranscoderStream(TranscoderConfig transcoderConfig, Track track, final InputStream inputStream) throws IOException {
         myTranscoderConfig = transcoderConfig;
         final String[] transcoderCommand = new String[getArguments().split(" ").length + 1];
         transcoderCommand[0] = transcoderConfig.getBinary();
@@ -42,7 +39,6 @@ public class TranscoderStream extends InputStream {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
         }
         myProcess = Runtime.getRuntime().exec(transcoderCommand);
-        // todo: make sure the process is destroyed
         new Thread() {
             @Override
             public void run() {
@@ -50,6 +46,12 @@ public class TranscoderStream extends InputStream {
                     IOUtils.copy(inputStream, myProcess.getOutputStream());
                 } catch (IOException e) {
                     LOG.warn("Could not copy input file to stdin of transcoder process.", e);
+                } finally {
+                    try {
+                        inputStream.close();
+                    } catch (IOException e) {
+                        LOG.warn("Could not close original input stream.", e);
+                    }
                 }
             }
         }.start();
@@ -62,6 +64,41 @@ public class TranscoderStream extends InputStream {
     }
 
     @Override
+    public int read(byte[] bytes) throws IOException {
+        return myProcess.getInputStream().read(bytes);
+    }
+
+    @Override
+    public int read(byte[] bytes, int start, int length) throws IOException {
+        return myProcess.getInputStream().read(bytes, start, length);
+    }
+
+    @Override
+    public long skip(long l) throws IOException {
+        return myProcess.getInputStream().skip(l);
+    }
+
+    @Override
+    public int available() throws IOException {
+        return myProcess.getInputStream().available();
+    }
+
+    @Override
+    public void mark(int i) {
+        myProcess.getInputStream().mark(i);
+    }
+
+    @Override
+    public void reset() throws IOException {
+        myProcess.getInputStream().reset();
+    }
+
+    @Override
+    public boolean markSupported() {
+        return myProcess.getInputStream().markSupported();
+    }
+
+    @Override
     public void close() throws IOException {
         if (myImageFile != null) {
             myImageFile.delete();
@@ -69,7 +106,6 @@ public class TranscoderStream extends InputStream {
         if (myProcess != null) {
             myProcess.destroy();
         }
-        super.close();
     }
 
     protected String getName() {
