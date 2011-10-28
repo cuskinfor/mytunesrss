@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 
 /**
@@ -60,17 +61,12 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                     streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
                 } else {
-                    Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
-                    if (transcoder != null) {
-                        streamSender = transcoder.getStreamSender();
+                    if (Mp4Utils.isMp4File(file)) {
+                        // qt-faststart
+                        LOG.info("Using QT-FASTSTART utility.");
+                        streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, Mp4Utils.getFastStartInputStream(file));
                     } else {
-                        if (Mp4Utils.isMp4File(file)) {
-                            // qt-faststart
-                            LOG.info("Using QT-FASTSTART utility.");
-                            streamSender = new StreamSender(Mp4Utils.getFastStartInputStream(file), contentType, file.length());
-                        } else {
-                            streamSender = new FileSender(file, contentType, file.length());
-                        }
+                        streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, new FileInputStream(file));
                     }
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                     streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));

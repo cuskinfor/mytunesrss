@@ -19,21 +19,23 @@ public class Transcoder {
     private boolean myTempFile;
     private Track myTrack;
     private TranscoderConfig myTranscoderConfig;
+    private InputStream myInputStream;
 
-    public static Transcoder createTranscoder(Track track, User user, String activeTranscoders, boolean tempFile) {
+    public static Transcoder createTranscoder(Track track, InputStream inputStream, User user, String activeTranscoders, boolean tempFile) {
         TranscoderConfig transcoderConfig = user != null ? user.getForceTranscoder(track) : null;
-        Transcoder transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() ? new Transcoder(transcoderConfig, track, tempFile) : null;
+        Transcoder transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() ? new Transcoder(transcoderConfig, track, inputStream, tempFile) : null;
         if (transcoder == null) {
             transcoderConfig = MyTunesRssWebUtils.getTranscoder(activeTranscoders, track);
-            transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track, tempFile) : null;
+            transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track, inputStream, tempFile) : null;
         }
         return transcoder;
     }
 
-    protected Transcoder(TranscoderConfig transcoderConfig, Track track, boolean tempFile) {
-        myTrack = track;
-        myTempFile = tempFile;
+    protected Transcoder(TranscoderConfig transcoderConfig, Track track, InputStream inputStream, boolean tempFile) {
         myTranscoderConfig = transcoderConfig;
+        myTrack = track;
+        myInputStream = inputStream;
+        myTempFile = tempFile;
     }
 
     public File getTranscodedFile() throws IOException {
@@ -71,12 +73,8 @@ public class Transcoder {
         }
     }
 
-    protected Track getTrack() {
-        return myTrack;
-    }
-
     public InputStream getStream() throws IOException {
-        return new TranscoderStream(myTranscoderConfig, getTrack());
+        return new TranscoderStream(myTranscoderConfig, myTrack, myInputStream);
     }
 
     public String getTranscoderId() {

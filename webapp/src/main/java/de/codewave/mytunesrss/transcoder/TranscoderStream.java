@@ -29,8 +29,7 @@ public class TranscoderStream extends InputStream {
     private TranscoderConfig myTranscoderConfig;
     private File myImageFile;
 
-    public TranscoderStream(TranscoderConfig transcoderConfig, Track track)
-            throws IOException {
+    public TranscoderStream(TranscoderConfig transcoderConfig, Track track, final InputStream inputStream) throws IOException {
         myTranscoderConfig = transcoderConfig;
         final String[] transcoderCommand = new String[getArguments().split(" ").length + 1];
         transcoderCommand[0] = transcoderConfig.getBinary();
@@ -44,6 +43,16 @@ public class TranscoderStream extends InputStream {
         }
         myProcess = Runtime.getRuntime().exec(transcoderCommand);
         // todo: make sure the process is destroyed
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    IOUtils.copy(inputStream, myProcess.getOutputStream());
+                } catch (IOException e) {
+                    LOG.warn("Could not copy input file to stdin of transcoder process.", e);
+                }
+            }
+        }.start();
         new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
                 .start();
     }
@@ -93,13 +102,6 @@ public class TranscoderStream extends InputStream {
                 command[i] = Integer.toString(track.getTrackNumber());
             } else if ("{info.image.file}".equals(command[i])) {
                 replaceImageToken(track, command, i);
-            } else if ("{infile}".equals(command[i])) {
-                try {
-                    command[i] = track.getFile().getCanonicalPath();
-                } catch (IOException e) {
-                    LOG.warn("Could not get canonical path for track file \"" + track.getFile().getName() + "\", trying absolute path instead.");
-                    command[i] = track.getFile().getAbsolutePath();
-                }
             }
         }
     }

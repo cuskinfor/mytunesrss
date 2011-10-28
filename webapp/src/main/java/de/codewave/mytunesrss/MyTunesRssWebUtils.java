@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.Base64Utils;
 import de.codewave.utils.servlet.ServletUtils;
+import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.*;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ArrayUtils;
@@ -305,19 +306,28 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
+    public static Transcoder getTranscoder(HttpServletRequest request, Track track, InputStream inputStream) {
         boolean notranscode = "true".equals(request.getParameter("notranscode"));
         boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
         User authUser = getAuthUser(request);
-        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
+        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, inputStream, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
     }
 
-    public static InputStream getMediaStream(HttpServletRequest request, Track track) throws IOException {
-        Transcoder transcoder = getTranscoder(request, track);
+    public static InputStream getMediaStream(HttpServletRequest request, Track track, InputStream inputStream) throws IOException {
+        Transcoder transcoder = getTranscoder(request, track, inputStream);
         if (transcoder != null) {
             return transcoder.getStream();
         } else {
-            return new FileInputStream(track.getFile());
+            return inputStream;
+        }
+    }
+
+    public static StreamSender getMediaStreamSender(HttpServletRequest request, Track track, InputStream inputStream) throws IOException {
+        Transcoder transcoder = getTranscoder(request, track, inputStream);
+        if (transcoder != null) {
+            return transcoder.getStreamSender();
+        } else {
+            return new StreamSender(inputStream, track.getContentType(), track.getContentLength());
         }
     }
 
@@ -335,7 +345,7 @@ public class MyTunesRssWebUtils {
                 }
                 return true;
             }
-            Transcoder transcoder = getTranscoder(request, track);
+            Transcoder transcoder = getTranscoder(request, track, null);
             if (transcoder != null) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Transcoder content type is \"" + transcoder.getTargetContentType() + "\".");

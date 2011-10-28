@@ -77,7 +77,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         if (tracks.getResultSize() > 0) {
             Track track = tracks.nextResult();
             if (track.getMediaType() == MediaType.Video) {
-                Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
+                Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track, null);
                 String playlistIdentifier = transcoder != null ? transcoder.getTranscoderId() : "";
                 HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
                 if (cacheItem == null) {
@@ -86,7 +86,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 }
                 HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(playlistIdentifier);
                 if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist())) {
-                    InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track);
+                    InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track, new FileInputStream(track.getFile()));
                     MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream), 0, TimeUnit.MILLISECONDS);
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
