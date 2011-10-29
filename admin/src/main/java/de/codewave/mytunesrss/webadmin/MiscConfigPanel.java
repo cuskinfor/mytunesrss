@@ -15,10 +15,12 @@ import java.util.Arrays;
 
 public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
+    private Form myMainWindowForm;
     private Form myMyTunesRssComForm;
     private Form myWebInterfaceForm;
     private Form myProxyForm;
     private Form mySmtpForm;
+    private CheckBox myHeadless;
     private SmartTextField myMyTunesRssComUser;
     private SmartTextField myMyTunesRssComPassword;
     private CheckBox myMyTunesRssComSsl;
@@ -36,7 +38,8 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
     public void attach() {
         super.attach();
-        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
+        myMainWindowForm = getComponentFactory().createForm(null, true);
         myMyTunesRssComForm = getComponentFactory().createForm(null, true);
         myWebInterfaceForm = getComponentFactory().createForm(null, true);
         myProxyForm = getComponentFactory().createForm(null, true);
@@ -55,6 +58,10 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMailLogin = getComponentFactory().createTextField("miscConfigPanel.mailLogin");
         myMailPassword = getComponentFactory().createPasswordTextField("miscConfigPanel.mailPassword");
         myMailSender = getComponentFactory().createTextField("miscConfigPanel.mailSender", getApplication().getValidatorFactory().createEmailValidator());
+        myHeadless = getComponentFactory().createCheckBox("miscConfigPanel.headless");
+        myMainWindowForm.addField(myHeadless, myHeadless);
+        Panel mainWindowPanel = getComponentFactory().surroundWithPanel(myMainWindowForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.mainWindow"));
+        addComponent(mainWindowPanel);
         myMyTunesRssComForm.addField(myMyTunesRssComUser, myMyTunesRssComUser);
         myMyTunesRssComForm.addField(myMyTunesRssComPassword, myMyTunesRssComPassword);
         myMyTunesRssComForm.addField(myMyTunesRssComSsl, myMyTunesRssComSsl);
@@ -78,7 +85,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         Panel webInterfacePanel = getComponentFactory().surroundWithPanel(myWebInterfaceForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.webInterface"));
         addComponent(webInterfacePanel);
 
-        addDefaultComponents(0, 4, 0, 4, false);
+        addDefaultComponents(0, 5, 0, 5, false);
 
         initFromConfig();
     }
@@ -99,6 +106,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMailLogin.setValue(MyTunesRss.CONFIG.getMailLogin());
         myMailPassword.setValue(MyTunesRss.CONFIG.getMailPassword());
         myMailSender.setValue(MyTunesRss.CONFIG.getMailSender());
+        myHeadless.setValue(MyTunesRss.CONFIG.isHeadless());
     }
 
     protected void writeToConfig() {
@@ -118,14 +126,19 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setMailLogin(myMailLogin.getStringValue(null));
         MyTunesRss.CONFIG.setMailPassword(myMailPassword.getStringValue(null));
         MyTunesRss.CONFIG.setMailSender(myMailSender.getStringValue(null));
+        MyTunesRss.CONFIG.setHeadless(myHeadless.booleanValue());
         MyTunesRss.CONFIG.save();
     }
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
+        boolean valid = VaadinUtils.isValid(myMainWindowForm, myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
+        } else {
+            if (MyTunesRss.CONFIG.isHeadless() != myHeadless.booleanValue()) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("miscConfigPanel.warning.headlessChanged");
+            }
         }
         return valid;
     }

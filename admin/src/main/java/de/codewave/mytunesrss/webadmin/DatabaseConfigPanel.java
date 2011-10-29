@@ -276,8 +276,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     private boolean isDatabaseChanged() {
-        DatabaseType databaseType = (DatabaseType) myDatabaseType.getValue();
-        String newType = StringUtils.trimToEmpty(databaseType.name());
+        DatabaseType newType = (DatabaseType) myDatabaseType.getValue();
         String newDriver = StringUtils.trimToEmpty((String) myDatabaseDriver.getValue());
         String newConnect = StringUtils.trimToEmpty((String) myDatabaseConnection.getValue());
         String newUser = StringUtils.trimToEmpty((String) myDatabaseUser.getValue());

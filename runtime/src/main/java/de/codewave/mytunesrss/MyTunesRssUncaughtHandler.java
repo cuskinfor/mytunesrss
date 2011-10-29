@@ -17,7 +17,7 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
     public void uncaughtException(Thread t, final Throwable e) {
         try {
             LOGGER.error("Uncaught exception in thread \"" + t.getName() + "\".", e);
-            if (!MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+            if (!MyTunesRss.CONFIG.isHeadless() && !MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.message", getLogFilePath()), MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.title"), JOptionPane.ERROR_MESSAGE);
             }
             MyTunesRss.ADMIN_NOTIFY.notifyInternalError(e);

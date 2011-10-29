@@ -123,7 +123,7 @@ public class MyTunesRssUtils {
 
     public static void showErrorMessageWithDialog(String message) {
         LOGGER.error(message);
-        if (!MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+        if (!MyTunesRss.CONFIG.isHeadless() && !MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
             JOptionPane.showMessageDialog(null, message);
         } else {
             System.err.println(message);

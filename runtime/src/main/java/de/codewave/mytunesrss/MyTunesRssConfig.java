@@ -126,6 +126,7 @@ public class MyTunesRssConfig {
     private String myFacebookApiKey = "102138059883364";
     private int myNumberKeepDatabaseBackups;
     private boolean myBackupDatabaseAfterInit;
+    private boolean myHeadless = false;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -879,6 +880,14 @@ public class MyTunesRssConfig {
         myBackupDatabaseAfterInit = backupDatabaseAfterInit;
     }
 
+    public boolean isHeadless() {
+        return myHeadless;
+    }
+
+    public void setHeadless(boolean headless) {
+        myHeadless = headless;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1093,6 +1102,7 @@ public class MyTunesRssConfig {
         //setFacebookApiKey(JXPathUtils.getStringValue(settings, "facebook-api-key", null));
         setNumberKeepDatabaseBackups(JXPathUtils.getIntValue(settings, "database-backup-max", 5));
         setBackupDatabaseAfterInit(JXPathUtils.getBooleanValue(settings, "database-backup-after-init", true));
+        setHeadless(JXPathUtils.getBooleanValue(settings, "headless", false));
     }
 
     /**
@@ -1407,6 +1417,7 @@ public class MyTunesRssConfig {
             //root.appendChild(DOMUtils.createTextElement(settings, "facebook-api-key", getFacebookApiKey()));
             root.appendChild(DOMUtils.createIntElement(settings, "database-backup-max", getNumberKeepDatabaseBackups()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "database-backup-after-init", isBackupDatabaseAfterInit()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "headless", isHeadless()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
