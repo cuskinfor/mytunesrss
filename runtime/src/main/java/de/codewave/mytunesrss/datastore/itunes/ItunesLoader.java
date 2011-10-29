@@ -4,7 +4,9 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
+import de.codewave.mytunesrss.AdminNotifier;
 import de.codewave.mytunesrss.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
@@ -74,7 +76,15 @@ public class ItunesLoader {
                                       Collection<String> existingPlaylistIds) throws SQLException, MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
-        URL iTunesLibraryXml = new File(config.getDefinition()).toURL();
+        File iTunesXmlFile = new File(config.getDefinition());
+        File iTunesMasterFile = new File(iTunesXmlFile.getParentFile(), "iTunes Library.itl");
+        if (!iTunesMasterFile.isFile()) {
+            iTunesMasterFile = new File(iTunesXmlFile.getParentFile(), "iTunes Library");
+        }
+        if (iTunesXmlFile.isFile() && iTunesMasterFile.isFile() && iTunesMasterFile.lastModified() - iTunesXmlFile.lastModified() > 2000) {
+            MyTunesRss.ADMIN_NOTIFY.notifyOutdatedItunesXml(iTunesMasterFile, iTunesXmlFile);
+        }
+        URL iTunesLibraryXml = iTunesXmlFile.toURL();
         if (iTunesLibraryXml != null) {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();

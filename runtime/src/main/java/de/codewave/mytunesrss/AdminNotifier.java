@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
 
+import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Map;
@@ -56,6 +57,14 @@ public class AdminNotifier {
         if (MyTunesRss.CONFIG.isNotifyOnLoginFailure() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Login failure";
             String body = "There was an unsuccessful login attempt for user name \"" + username + "\" from remote address \"" + remoteAddress + "\".";
+            sendAdminMail(subject, body);
+        }
+    }
+
+    public void notifyOutdatedItunesXml(File iTunesMaster, File iTunesXml) {
+        if (MyTunesRss.CONFIG.isNotifyOnOutdatedItunesXml() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
+            String subject = "Outdated iTunes XML file";
+            String body = "The iTunes XML file \"" + iTunesXml.getAbsolutePath() + "\" is older than the corresponding iTunes master file \"" + iTunesMaster.getAbsolutePath() + "\". Deleting the XML file, then starting and stopping iTunes should correct the issue. The problem are most likely characters in the name/author/album/etc information in your iTunes library which cause iTunes to stop updating the XML file. Unless you find and change to offending character(s) in your library, deleting the XML file will fix the problem only once but not permanently.";
             sendAdminMail(subject, body);
         }
     }

@@ -100,6 +100,7 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnInternalError;
     private boolean myNotifyOnDatabaseUpdate;
     private boolean myNotifyOnMissingFile;
+    private boolean myNotifyOnOutdatedItunesXml;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
     private String myDisabledMp4Codecs;
@@ -646,6 +647,14 @@ public class MyTunesRssConfig {
         myNotifyOnMissingFile = notifyOnMissingFile;
     }
 
+    public boolean isNotifyOnOutdatedItunesXml() {
+        return myNotifyOnOutdatedItunesXml;
+    }
+
+    public void setNotifyOnOutdatedItunesXml(boolean notifyOnOutdatedItunesXml) {
+        myNotifyOnOutdatedItunesXml = notifyOnOutdatedItunesXml;
+    }
+
     public int getStatisticKeepTime() {
         return myStatisticKeepTime;
     }
@@ -1019,6 +1028,7 @@ public class MyTunesRssConfig {
         setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
         setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
         setNotifyOnMissingFile(JXPathUtils.getBooleanValue(settings, "admin-notify/missing-file", false));
+        setNotifyOnOutdatedItunesXml(JXPathUtils.getBooleanValue(settings, "admin-notify/outdated-itunesxml", false));
         if (myFileTypes.isEmpty()) {
             myFileTypes = FileType.getDefaults();
         }
@@ -1348,6 +1358,7 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "transcoding-failure", isNotifyOnTranscodingFailure()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "outdated-itunesxml", isNotifyOnOutdatedItunesXml()));
             root.appendChild(DOMUtils.createIntElement(settings, "statistics-keep-time", getStatisticKeepTime()));
             root.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", getDisabledMp4Codecs()));
             Element transcoderConfigs = settings.createElement("transcoders");
