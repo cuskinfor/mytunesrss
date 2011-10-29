@@ -6,14 +6,13 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.HashSet;
 import java.util.Set;
 
 public class ItunesDatasourceConfig extends DatasourceConfig {
 
-    private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
+    private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
 
@@ -23,7 +22,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
 
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {
         super(source);
-        myPathReplacements = new HashSet<PathReplacement>(source.getPathReplacements());
+        myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
         myIgnorePlaylists = new HashSet<ItunesPlaylistType>(source.getIgnorePlaylists());
         myDeleteMissingFiles = source.isDeleteMissingFiles();
     }
@@ -33,15 +32,15 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
         return DatasourceType.Itunes;
     }
 
-    public Set<PathReplacement> getPathReplacements() {
-        return new HashSet<PathReplacement>(myPathReplacements);
+    public Set<ReplacementRule> getPathReplacements() {
+        return new HashSet<ReplacementRule>(myPathReplacements);
     }
 
     public void clearPathReplacements() {
         myPathReplacements.clear();
     }
 
-    public void addPathReplacement(PathReplacement pathReplacement) {
+    public void addPathReplacement(ReplacementRule pathReplacement) {
         myPathReplacements.add(pathReplacement);
     }
 

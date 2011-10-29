@@ -1,13 +1,13 @@
 package de.codewave.mytunesrss;
 
 /**
- * de.codewave.mytunesrss.PathReplacement
+ * de.codewave.mytunesrss.ReplacementRule
  */
-public class PathReplacement {
+public class ReplacementRule {
     private String mySearchPattern;
     private String myReplacement;
 
-    public PathReplacement(String searchPattern, String replacement) {
+    public ReplacementRule(String searchPattern, String replacement) {
         mySearchPattern = searchPattern;
         myReplacement = replacement;
     }
@@ -35,6 +35,6 @@ public class PathReplacement {
 
     @Override
     public boolean equals(Object obj) {
-        return obj != null && obj instanceof PathReplacement && mySearchPattern.equals(((PathReplacement) obj).getSearchPattern());
+        return obj != null && obj instanceof ReplacementRule && mySearchPattern.equals(((ReplacementRule) obj).getSearchPattern());
     }
 }

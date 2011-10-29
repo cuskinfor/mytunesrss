@@ -5,25 +5,19 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.UpdatePhotoStatement;
-import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -39,7 +33,7 @@ public class PhotoListener implements PListHandlerListener {
     private Map<Long, String> myPhotoIdToPersId;
     private Collection<String> myPhotoIds;
     private Thread myWatchdogThread;
-    private Set<CompiledPathReplacement> myPathReplacements;
+    private Set<CompiledReplacementRule> myPathReplacements;
     private IphotoDatasourceConfig myDatasourceConfig;
     private long myXmlModDate;
 
@@ -51,9 +45,9 @@ public class PhotoListener implements PListHandlerListener {
         myLibraryListener = libraryListener;
         myPhotoIdToPersId = photoIdToPersId;
         myPhotoIds = photoIds;
-        myPathReplacements = new HashSet<CompiledPathReplacement>();
-        for (PathReplacement pathReplacement : myDatasourceConfig.getPathReplacements()) {
-            myPathReplacements.add(new CompiledPathReplacement(pathReplacement));
+        myPathReplacements = new HashSet<CompiledReplacementRule>();
+        for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
+            myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
         }
         myXmlModDate = new File(myDatasourceConfig.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME).lastModified();
     }
@@ -127,7 +121,7 @@ public class PhotoListener implements PListHandlerListener {
     }
 
     private String applyReplacements(String originalFileName) {
-        for (CompiledPathReplacement pathReplacement : myPathReplacements) {
+        for (CompiledReplacementRule pathReplacement : myPathReplacements) {
             if (pathReplacement.matches(originalFileName)) {
                 return pathReplacement.replace(originalFileName);
             }

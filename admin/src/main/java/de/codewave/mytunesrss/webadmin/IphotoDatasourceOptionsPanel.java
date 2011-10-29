@@ -5,19 +5,14 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.IphotoDatasourceConfig;
-import de.codewave.mytunesrss.ItunesDatasourceConfig;
-import de.codewave.mytunesrss.PathReplacement;
-import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
+import de.codewave.mytunesrss.ReplacementRule;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
-
-import java.util.*;
 
 public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
@@ -64,7 +59,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected void writeToConfig() {
         myConfig.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
-            myConfig.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
+            myConfig.addPathReplacement(new ReplacementRule((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
         myConfig.setImportAlbums(myImportAlbums.booleanValue());
         myConfig.setImportRolls(myImportRolls.booleanValue());
@@ -73,7 +68,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     protected void initFromConfig() {
         myPathReplacements.removeAllItems();
-        for (PathReplacement replacement : myConfig.getPathReplacements()) {
+        for (ReplacementRule replacement : myConfig.getPathReplacements()) {
             addPathReplacement(replacement);
         }
         setTablePageLengths();
@@ -81,7 +76,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myImportRolls.setValue(myConfig.isImportRolls());
     }
 
-    private void addPathReplacement(PathReplacement replacement) {
+    private void addPathReplacement(ReplacementRule replacement) {
         SmartTextField searchTextField = new SmartTextField();
         searchTextField.setValue(replacement.getSearchPattern());
         searchTextField.addValidator(new ValidRegExpValidator("datasourcesConfigPanel.error.invalidSearchExpression"));
@@ -117,7 +112,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddPathReplacement) {
-            addPathReplacement(new PathReplacement("^.*$", "\\0"));
+            addPathReplacement(new ReplacementRule("^.*$", "\\0"));
             setTablePageLengths();
         } else if (findTableItemWithObject(myPathReplacements, clickEvent.getSource()) != null) {
             final Button yes = new Button(getBundleString("button.yes"));

@@ -27,7 +27,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -127,6 +126,7 @@ public class MyTunesRssConfig {
     private int myNumberKeepDatabaseBackups;
     private boolean myBackupDatabaseAfterInit;
     private boolean myHeadless = false;
+    private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -888,6 +888,14 @@ public class MyTunesRssConfig {
         myHeadless = headless;
     }
 
+    public List<ReplacementRule> getTrackImageMappings() {
+        return new ArrayList<ReplacementRule>(trackImageMappings);
+    }
+
+    public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
+        this.trackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1103,6 +1111,12 @@ public class MyTunesRssConfig {
         setNumberKeepDatabaseBackups(JXPathUtils.getIntValue(settings, "database-backup-max", 5));
         setBackupDatabaseAfterInit(JXPathUtils.getBooleanValue(settings, "database-backup-after-init", true));
         setHeadless(JXPathUtils.getBooleanValue(settings, "headless", false));
+        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
+        Iterator<JXPathContext> trackImageMappingIterator = JXPathUtils.getContextIterator(settings, "track-image-mappings/mapping");
+        while (trackImageMappingIterator.hasNext()) {
+            JXPathContext mappingContext = trackImageMappingIterator.next();
+            mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
+        }
     }
 
     /**
@@ -1166,7 +1180,7 @@ public class MyTunesRssConfig {
                                 JXPathContext pathReplacementContext = pathReplacementsIterator.next();
                                 String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
                                 String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-                                itunesDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
+                                itunesDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
                             }
                             Iterator<JXPathContext> ignorePlaylistsIterator = JXPathUtils.getContextIterator(datasourceContext, "ignore-playlists/type");
                             itunesDatasourceConfig.clearIgnorePlaylists();
@@ -1189,7 +1203,7 @@ public class MyTunesRssConfig {
                                 JXPathContext pathReplacementContext = pathReplacementsIterator.next();
                                 String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
                                 String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-                                iphotoDatasourceConfig.addPathReplacement(new PathReplacement(search, replacement));
+                                iphotoDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
                             }
                             iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
@@ -1418,6 +1432,16 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "database-backup-max", getNumberKeepDatabaseBackups()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "database-backup-after-init", isBackupDatabaseAfterInit()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "headless", isHeadless()));
+            if (!getTrackImageMappings().isEmpty()) {
+                Element trackImageMappingsElement = settings.createElement("track-image-mappings");
+                root.appendChild(trackImageMappingsElement);
+                for (ReplacementRule rule : trackImageMappings) {
+                    Element mappingElement = settings.createElement("mapping");
+                    trackImageMappingsElement.appendChild(mappingElement);
+                    mappingElement.appendChild(DOMUtils.createTextElement(settings, "search-pattern", rule.getSearchPattern()));
+                    mappingElement.appendChild(DOMUtils.createTextElement(settings, "replacement", rule.getReplacement()));
+                }
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
@@ -1460,7 +1484,7 @@ public class MyTunesRssConfig {
                     if (itunesDatasourceConfig.getPathReplacements() != null && !itunesDatasourceConfig.getPathReplacements().isEmpty()) {
                         Element pathReplacementsElement = settings.createElement("path-replacements");
                         dataSource.appendChild(pathReplacementsElement);
-                        for (PathReplacement pathReplacement : itunesDatasourceConfig.getPathReplacements()) {
+                        for (ReplacementRule pathReplacement : itunesDatasourceConfig.getPathReplacements()) {
                             Element pathReplacementElement = settings.createElement("replacement");
                             pathReplacementsElement.appendChild(pathReplacementElement);
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
@@ -1481,7 +1505,7 @@ public class MyTunesRssConfig {
                     if (iphotoDatasourceConfig.getPathReplacements() != null && !iphotoDatasourceConfig.getPathReplacements().isEmpty()) {
                         Element pathReplacementsElement = settings.createElement("path-replacements");
                         dataSource.appendChild(pathReplacementsElement);
-                        for (PathReplacement pathReplacement : iphotoDatasourceConfig.getPathReplacements()) {
+                        for (ReplacementRule pathReplacement : iphotoDatasourceConfig.getPathReplacements()) {
                             Element pathReplacementElement = settings.createElement("replacement");
                             pathReplacementsElement.appendChild(pathReplacementElement);
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));

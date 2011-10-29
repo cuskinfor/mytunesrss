@@ -4,15 +4,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * de.codewave.mytunesrss.CompiledPathReplacement
+ * de.codewave.mytunesrss.CompiledReplacementRule
  */
-public class CompiledPathReplacement {
+public class CompiledReplacementRule {
     private Pattern myPattern;
     private String myReplacement;
 
-    public CompiledPathReplacement(PathReplacement pathReplacement) {
-        myPattern = Pattern.compile(pathReplacement.getSearchPattern());
-        myReplacement = pathReplacement.getReplacement();
+    public CompiledReplacementRule(ReplacementRule replacementRule) {
+        myPattern = Pattern.compile(replacementRule.getSearchPattern());
+        myReplacement = replacementRule.getReplacement();
     }
 
     public boolean matches(String input) {

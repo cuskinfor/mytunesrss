@@ -9,7 +9,7 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ItunesDatasourceConfig;
-import de.codewave.mytunesrss.PathReplacement;
+import de.codewave.mytunesrss.ReplacementRule;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -81,7 +81,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setDeleteMissingFiles(myDeleteMissingFiles.booleanValue());
         myConfig.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
-            myConfig.addPathReplacement(new PathReplacement((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
+            myConfig.addPathReplacement(new ReplacementRule((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
         myConfig.clearIgnorePlaylists();
         for (Object itemId : myIgnoreItunesPlaylists.getItemIds()) {
@@ -97,7 +97,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myDeleteMissingFiles.setValue(myConfig.isDeleteMissingFiles());
         myPathReplacements.removeAllItems();
-        for (PathReplacement replacement : myConfig.getPathReplacements()) {
+        for (ReplacementRule replacement : myConfig.getPathReplacements()) {
             addPathReplacement(replacement);
         }
         Set<ItunesPlaylistType> itunesPlaylists = myConfig.getIgnorePlaylists();
@@ -110,7 +110,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         setTablePageLengths();
     }
 
-    private void addPathReplacement(PathReplacement replacement) {
+    private void addPathReplacement(ReplacementRule replacement) {
         SmartTextField searchTextField = new SmartTextField();
         searchTextField.setValue(replacement.getSearchPattern());
         searchTextField.addValidator(new ValidRegExpValidator("datasourcesConfigPanel.error.invalidSearchExpression"));
@@ -145,7 +145,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddPathReplacement) {
-            addPathReplacement(new PathReplacement("^.*$", "\\0"));
+            addPathReplacement(new ReplacementRule("^.*$", "\\0"));
             setTablePageLengths();
         } else if (findTableItemWithObject(myPathReplacements, clickEvent.getSource()) != null) {
             final Button yes = new Button(getBundleString("button.yes"));

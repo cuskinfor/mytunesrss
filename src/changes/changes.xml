@@ -8,10 +8,13 @@
     <body>
 
         <release version="4.2.0" date="___D___">
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="add">
+                MYTUNESRSS-167 - Option for track to image file mapping
+            </action>
+            <action dev="mdescher" type="add">
                 MYTUNESRSS-308 - Headless mode option in admin interface
             </action>
-            <action dev="mdescher" type="remove">
+            <action dev="mdescher" type="add">
                 MYTUNESRSS-281 - Admin warning if iTunes XML is older than iTunes master file
             </action>
             <action dev="mdescher" type="remove">

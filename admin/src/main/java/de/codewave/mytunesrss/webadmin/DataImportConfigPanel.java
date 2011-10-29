@@ -10,10 +10,13 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.FileType;
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.ReplacementRule;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.validation.ValidRegExpValidator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,10 +35,12 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myImportOriginalImageSize;
     private CheckBox myIgnoreTimestamps;
     private Form myMiscForm;
+    private Table myTrackImageMappingsTable;
+    private Button myAddTrackImageMapping;
 
     public void attach() {
         super.attach();
-        init(getBundleString("dataimportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
+        init(getBundleString("dataimportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         Panel typesPanel = new Panel(getBundleString("dataimportConfigPanel.caption.types"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(typesPanel);
         myFileTypes = new Table();
@@ -66,10 +71,28 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm.addField(myIgnoreArtwork, myIgnoreArtwork);
         myMiscForm.addField(myImportOriginalImageSize, myImportOriginalImageSize);
         myMiscForm.addField(myIgnoreTimestamps, myIgnoreTimestamps);
-
-        addDefaultComponents(0, 2, 0, 2, false);
+        Panel imageMappingsPanel = new Panel(getBundleString("dataimportConfigPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
+        addComponent(imageMappingsPanel);
+        myTrackImageMappingsTable = new Table();
+        myTrackImageMappingsTable.setCacheRate(50);
+        myTrackImageMappingsTable.addContainerProperty("search", TextField.class, null, getBundleString("dataimportConfigPanel.imageMappingSearch"), null, null);
+        myTrackImageMappingsTable.addContainerProperty("replace", TextField.class, null, getBundleString("dataimportConfigPanel.imageMappingReplace"), null, null);
+        myTrackImageMappingsTable.addContainerProperty("delete", Button.class, null, "", null, null);
+        myTrackImageMappingsTable.setEditable(false);
+        imageMappingsPanel.addComponent(myTrackImageMappingsTable);
+        myAddTrackImageMapping = getComponentFactory().createButton("dataimportConfigPanel.addImageMapping", this);
+        imageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
+    }
+
+    private void addTrackImageMapping(ReplacementRule replacement) {
+        SmartTextField searchTextField = new SmartTextField();
+        searchTextField.setValue(replacement.getSearchPattern());
+        searchTextField.addValidator(new ValidRegExpValidator("dataimportConfigPanel.error.invalidSearchExpression"));
+        searchTextField.setImmediate(true);
+        myTrackImageMappingsTable.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     protected void initFromConfig() {
@@ -80,6 +103,10 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myIgnoreArtwork.setValue(MyTunesRss.CONFIG.isIgnoreArtwork());
         myImportOriginalImageSize.setValue(MyTunesRss.CONFIG.isImportOriginalImageSize());
         myIgnoreTimestamps.setValue(MyTunesRss.CONFIG.isIgnoreTimestamps());
+        myTrackImageMappingsTable.removeAllItems();
+        for (ReplacementRule mapping : MyTunesRss.CONFIG.getTrackImageMappings()) {
+            addTrackImageMapping(mapping);
+        }
         setTablePageLength();
     }
 
@@ -109,6 +136,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
     private void setTablePageLength() {
         myFileTypes.setPageLength(Math.min(myFileTypes.size(), 10));
+        myTrackImageMappingsTable.setPageLength(Math.min(myTrackImageMappingsTable.getItemIds().size(), 5));
     }
 
     protected void writeToConfig() {
@@ -127,6 +155,11 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtwork.booleanValue());
         MyTunesRss.CONFIG.setImportOriginalImageSize(myImportOriginalImageSize.booleanValue());
         MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestamps.booleanValue());
+        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
+        for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
+            mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
+        }
+        MyTunesRss.CONFIG.setTrackImageMappings(mappings);
         MyTunesRss.CONFIG.save();
     }
 
@@ -157,13 +190,27 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
                     }
                 }
             }.show(getWindow());
+        } else if (clickEvent.getSource() == myAddTrackImageMapping) {
+            addTrackImageMapping(new ReplacementRule("^.*$", "\\0"));
+            setTablePageLength();
+        } else if (findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()) != null) {
+            final Button yes = new Button(getBundleString("button.yes"));
+            Button no = new Button(getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("dataimportConfigDialog.optionWindowDeleteTrackImageMapping.caption"), getBundleString("dataimportConfigDialog.optionWindowDeleteTrackImageMapping.message"), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        myTrackImageMappingsTable.removeItem(findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()));
+                        setTablePageLength();
+                    }
+                }
+            }.show(VaadinUtils.getApplicationWindow(this));
         } else {
             super.buttonClick(clickEvent);
         }
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFileTypes, myMiscForm)) {
+        if (!VaadinUtils.isValid(myTrackImageMappingsTable, myFileTypes, myMiscForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

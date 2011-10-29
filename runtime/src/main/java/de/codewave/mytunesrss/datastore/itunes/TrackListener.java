@@ -1,9 +1,7 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp4.CodecAtom;
 import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
@@ -37,7 +35,7 @@ public class TrackListener implements PListHandlerListener {
     private long myMissingFiles;
     private String[] myDisabledMp4Codecs;
     private Thread myWatchdogThread;
-    private Set<CompiledPathReplacement> myPathReplacements;
+    private Set<CompiledReplacementRule> myPathReplacements;
     private ItunesDatasourceConfig myDatasourceConfig;
 
     public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
@@ -49,9 +47,9 @@ public class TrackListener implements PListHandlerListener {
         myTrackIdToPersId = trackIdToPersId;
         myTrackIds = trackIds;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
-        myPathReplacements = new HashSet<CompiledPathReplacement>();
-        for (PathReplacement pathReplacement : myDatasourceConfig.getPathReplacements()) {
-            myPathReplacements.add(new CompiledPathReplacement(pathReplacement));
+        myPathReplacements = new HashSet<CompiledReplacementRule>();
+        for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
+            myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
         }
     }
 
@@ -162,7 +160,7 @@ public class TrackListener implements PListHandlerListener {
     }
 
     private String applyReplacements(String originalFileName) {
-        for (CompiledPathReplacement pathReplacement : myPathReplacements) {
+        for (CompiledReplacementRule pathReplacement : myPathReplacements) {
             if (pathReplacement.matches(originalFileName)) {
                 return pathReplacement.replace(originalFileName);
             }

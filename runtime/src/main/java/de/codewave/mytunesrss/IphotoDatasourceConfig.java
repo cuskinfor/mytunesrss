@@ -5,14 +5,12 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
-
 import java.util.HashSet;
 import java.util.Set;
 
 public class IphotoDatasourceConfig extends DatasourceConfig {
 
-    private Set<PathReplacement> myPathReplacements = new HashSet<PathReplacement>();
+    private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myImportRolls = true;
     private boolean myImportAlbums;
 
@@ -24,7 +22,7 @@ public class IphotoDatasourceConfig extends DatasourceConfig {
 
     public IphotoDatasourceConfig(IphotoDatasourceConfig source) {
         super(source);
-        myPathReplacements = new HashSet<PathReplacement>(source.getPathReplacements());
+        myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
         myImportRolls = source.isImportRolls();
         myImportAlbums = source.isImportAlbums();
     }
@@ -34,15 +32,15 @@ public class IphotoDatasourceConfig extends DatasourceConfig {
         return DatasourceType.Iphoto;
     }
 
-    public Set<PathReplacement> getPathReplacements() {
-        return new HashSet<PathReplacement>(myPathReplacements);
+    public Set<ReplacementRule> getPathReplacements() {
+        return new HashSet<ReplacementRule>(myPathReplacements);
     }
 
     public void clearPathReplacements() {
         myPathReplacements.clear();
     }
 
-    public void addPathReplacement(PathReplacement pathReplacement) {
+    public void addPathReplacement(ReplacementRule pathReplacement) {
         myPathReplacements.add(pathReplacement);
     }
 
