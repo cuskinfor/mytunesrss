@@ -65,7 +65,7 @@
 
     <statement name="findArtistTrackCount">
         <sql>
-            SELECT track_count AS count FROM artist WHERE lower_name = LOWER(:name)
+            SELECT COUNT(id) AS count FROM track WHERE lower_artist = LOWER(:name)
         </sql>
     </statement>
 
@@ -528,7 +528,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(artist), lower_artist, SUBSTRING(MAX(lower_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_artist
+            SELECT MAX(album_artist), lower_album_artist, SUBSTRING(MAX(lower_album_artist) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
         </sql>
     </statement>
 
