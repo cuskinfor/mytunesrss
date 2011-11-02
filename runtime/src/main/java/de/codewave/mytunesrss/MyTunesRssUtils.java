@@ -614,10 +614,10 @@ public class MyTunesRssUtils {
                 return source; // original does not exceed max size
             }
             if (width > height) {
-                height = height * (maxSize / width);
+                height = (height * maxSize) / width;
                 width = maxSize;
             } else {
-                width = width * (maxSize / height);
+                width = (width * maxSize) / height;
                 height = maxSize;
             }
             Image scaledImage = original.getScaledInstance(width, height, Image.SCALE_SMOOTH);

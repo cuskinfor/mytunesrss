@@ -296,7 +296,7 @@
     </statement>
 
     <statement name="insertImage">
-        <sql>INSERT INTO image (hash, size, mimetype, data) VALUES (:hash, :size, ;mimetype, :data)</sql>
+        <sql>INSERT INTO image (hash, size, mimetype, data) VALUES (:hash, :size, :mimetype, :data)</sql>
     </statement>
 
     <statement name="updateImageForTrack">
