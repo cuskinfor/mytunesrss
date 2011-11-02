@@ -296,7 +296,7 @@
     </statement>
 
     <statement name="insertImage">
-        <sql>INSERT INTO image (hash, size, data) VALUES (:hash, :size, :data)</sql>
+        <sql>INSERT INTO image (hash, size, mimetype, data) VALUES (:hash, :size, ;mimetype, :data)</sql>
     </statement>
 
     <statement name="updateImageForTrack">
@@ -322,13 +322,13 @@
 
     <statement name="findImage">
         <sql>
-            SELECT data AS data FROM image WHERE hash = :hash AND size = :size
+            SELECT mimetype, data AS data FROM image WHERE hash = :hash AND size = :size
         </sql>
     </statement>
 
     <statement name="findMaxSizeImage">
         <sql>
-            SELECT im1.data AS data FROM image im1
+            SELECT im1.mimetype, im1.data AS data FROM image im1
             LEFT OUTER JOIN image im2 ON (im1.hash = im2.hash AND im1.size &lt; im2.size)
             WHERE im1.hash = :hash AND im2.hash IS NULL
         </sql>
@@ -336,7 +336,7 @@
 
     <statement name="findTrackImage">
         <sql>
-            SELECT i.data AS data FROM image AS i, track AS t WHERE i.hash = t.image_hash AND size = :size AND t.id = :track_id
+            SELECT i.mimetype, i.data AS data FROM image AS i, track AS t WHERE i.hash = t.image_hash AND size = :size AND t.id = :track_id
         </sql>
     </statement>
 

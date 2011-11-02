@@ -69,7 +69,8 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }
-                    new InsertImageStatement(imageHash, 128, MyTunesRssUtils.resizeImageWithMaxSize(image, 128).getData()).execute(connection);
+                    Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128);
+                    new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
                 new UpdateImageForPhotoStatement(myPhotoId, imageHash).execute(connection);
             }

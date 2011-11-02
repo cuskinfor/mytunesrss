@@ -16,32 +16,22 @@ public class InsertImageStatement {
 
     private String myHash;
     private int mySize;
+    private String myMimeType;
     private byte[] myData;
     private SmartStatement myStatement;
 
-    public InsertImageStatement(String hash, int size, byte[] data) {
+    public InsertImageStatement(String hash, int size, String mimeType,  byte[] data) {
         myHash = hash;
         mySize = size;
+        myMimeType = mimeType;
         myData = data;
         if (LOG.isDebugEnabled()) {
             if (data != null) {
-                LOG.debug("Image data size is " + data.length + " bytes.");
+                LOG.debug("Image data size for \"" + mimeType + "\" is " + data.length + " bytes.");
             } else {
                 LOG.debug("Image data is NULL.");
             }
         }
-    }
-
-    public void setData(byte[] data) {
-        myData = data;
-    }
-
-    public void setSize(int size) {
-        mySize = size;
-    }
-
-    public void setHash(String hash) {
-        myHash = hash;
     }
 
     public synchronized void execute(Connection connection) throws SQLException {
@@ -53,6 +43,7 @@ public class InsertImageStatement {
                 myStatement.clearParameters();
                 myStatement.setString("hash", myHash);
                 myStatement.setInt("size", mySize);
+                myStatement.setString("mimetype", myMimeType);
                 myStatement.setObject("data", myData);
                 myStatement.execute();
             } catch (SQLException e) {
@@ -67,6 +58,8 @@ public class InsertImageStatement {
 
     public void clear() {
         mySize = 0;
+        myHash = null;
+        myMimeType = null;
         myData = null;
     }
 }

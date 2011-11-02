@@ -275,4 +275,8 @@
         <sql>ALTER TABLE album ADD COLUMN compilation BOOLEAN</sql>
     </statement>
 
+    <statement name="migrate_4.2.0">
+        <sql>ALTER TABLE image ADD COLUMN mimetype VARCHAR(50) NOT NULL DEFAULT 'image/jpg'</sql>
+    </statement>
+
 </statements>

@@ -150,6 +150,7 @@
             {create_table_prefix} image (
                 hash CHAR(24) NOT NULL,
                 size INTEGER NOT NULL,
+                mimetype VARCHAR(50) NOT NULL,
                 data {image_datatype} NOT NULL,
                 UNIQUE (hash, size)
             )

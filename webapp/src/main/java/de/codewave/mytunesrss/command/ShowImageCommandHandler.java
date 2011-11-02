@@ -81,8 +81,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             }
         } else {
             if (StringUtils.isNotEmpty(hash)) {
-                byte[] data = getTransaction().executeQuery(new FindImageQuery(hash, size));
-                image = data != null ? new Image("image/jpeg", data) : null;
+                image = getTransaction().executeQuery(new FindImageQuery(hash, size));
             }
         }
         if (image == null) {
