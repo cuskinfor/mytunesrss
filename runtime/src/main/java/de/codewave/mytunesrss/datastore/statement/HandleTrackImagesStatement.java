@@ -182,7 +182,15 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(suffix)) {
                 imageFile = file;
             } else {
-                imageFile = new File(file.getAbsolutePath() + "." + suffix);
+                String basePath = file.getAbsolutePath();
+                for (ReplacementRule rule : MyTunesRss.CONFIG.getTrackImageMappings()) {
+                    CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
+                    if (compiledReplacementRule.matches(basePath)) {
+                        basePath = compiledReplacementRule.replace(basePath);
+                        break;
+                    }
+                }
+                imageFile = new File(basePath + "." + suffix);
             }
             if (imageFile.isFile()) {
                 return imageFile;
