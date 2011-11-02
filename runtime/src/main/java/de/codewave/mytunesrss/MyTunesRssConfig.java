@@ -1117,6 +1117,7 @@ public class MyTunesRssConfig {
             JXPathContext mappingContext = trackImageMappingIterator.next();
             mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
         }
+        setTrackImageMappings(mappings);
     }
 
     /**
