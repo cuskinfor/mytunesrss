@@ -5,15 +5,13 @@ import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
+import de.codewave.mytunesrss.meta.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
-import de.codewave.utils.PrefsUtils;
-import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -24,11 +22,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
-import org.h2.tools.Backup;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.naming.AuthenticationException;
@@ -40,6 +38,8 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -51,7 +51,6 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -591,5 +590,48 @@ public class MyTunesRssUtils {
             result.putAll(toMap(atom.getChildren()));
         }
         return result;
+    }
+
+    public static int getMaxImageSize(de.codewave.mytunesrss.meta.Image source) throws IOException {
+        ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
+        try {
+            BufferedImage original = ImageIO.read(imageInputStream);
+            int width = original.getWidth();
+            int height = original.getHeight();
+            return Math.max(width, height);
+        } finally {
+            imageInputStream.close();
+        }
+    }
+
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize) throws IOException {
+        ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
+        try {
+            BufferedImage original = ImageIO.read(imageInputStream);
+            int width = original.getWidth();
+            int height = original.getHeight();
+            if (Math.max(width, height) <= maxSize) {
+                return source; // original does not exceed max size
+            }
+            if (width > height) {
+                height = height * (maxSize / width);
+                width = maxSize;
+            } else {
+                width = width * (maxSize / height);
+                height = maxSize;
+            }
+            Image scaledImage = original.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+            BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            targetImage.getGraphics().drawImage(scaledImage, 0, 0, null);
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            try {
+                ImageIO.write(targetImage, "png", byteArrayOutputStream);
+                return new de.codewave.mytunesrss.meta.Image("image/png", byteArrayOutputStream.toByteArray());
+            } finally {
+                byteArrayOutputStream.close();
+            }
+        } finally {
+            imageInputStream.close();
+        }
     }
 }

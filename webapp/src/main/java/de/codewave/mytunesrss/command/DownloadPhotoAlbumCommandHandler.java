@@ -4,15 +4,10 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssSendCounter;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.meta.Image;
-import de.codewave.utils.graphics.ImageUtils;
-import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
@@ -84,7 +79,7 @@ public class DownloadPhotoAlbumCommandHandler extends MyTunesRssCommandHandler {
                         } else {
                             String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
                             Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
-                            byte[] imageData = ImageUtils.resizeImageWithMaxSize(image.getData(), (photoSize * ImageUtils.getMaxSize(image.getData())) / 100);
+                            byte[] imageData = MyTunesRssUtils.resizeImageWithMaxSize(image, (photoSize * MyTunesRssUtils.getMaxImageSize(image)) / 100).getData();
                             zipStream.write(imageData);
                             archiveEntry.setSize(imageData.length);
                         }

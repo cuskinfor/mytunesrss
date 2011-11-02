@@ -1,19 +1,19 @@
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.meta.Image;
-import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.Map;
-import java.util.HashMap;
-import java.io.InputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler
@@ -21,9 +21,9 @@ import java.io.IOException;
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
 
-    private Map<Integer, byte[]> myDefaultImages = new HashMap<Integer, byte[]>();
+    private Map<Integer, Image> myDefaultImages = new HashMap<Integer, Image>();
 
-    private byte[] getDefaultImage(int size) {
+    private Image getDefaultImage(int size) {
         if (myDefaultImages.get(size) == null) {
             synchronized (myDefaultImages) {
                 if (myDefaultImages.get(size) == null) {
@@ -34,7 +34,8 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                         for (int dataByte = inputStream.read(); dataByte > -1 && dataByte < 256; dataByte = inputStream.read()) {
                             outputStream.write(dataByte);
                         }
-                        myDefaultImages.put(size, ImageUtils.resizeImageWithMaxSize(outputStream.toByteArray(), size));
+                        Image image = new Image("image/png", outputStream.toByteArray());
+                        myDefaultImages.put(size, MyTunesRssUtils.resizeImageWithMaxSize(image, size));
                     } catch (IOException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not copy default image data into byte array.", e);
@@ -50,11 +51,11 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     }
 
     protected void sendDefaultImage(int size) throws IOException {
-        byte[] defaultImage = getDefaultImage(size);
+        Image defaultImage = getDefaultImage(size);
         if (defaultImage != null) {
-            getResponse().setContentType("image/jpeg");
-            getResponse().setContentLength(defaultImage.length);
-            getResponse().getOutputStream().write(defaultImage);
+            getResponse().setContentType(defaultImage.getMimeType());
+            getResponse().setContentLength(defaultImage.getData().length);
+            getResponse().getOutputStream().write(defaultImage.getData());
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

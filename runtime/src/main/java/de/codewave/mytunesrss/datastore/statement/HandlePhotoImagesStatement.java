@@ -5,32 +5,23 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.camel.CamelUtils;
-import de.codewave.camel.Endianness;
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4Utils;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.meta.Image;
-import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
-import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
-import de.codewave.utils.graphics.ImageUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.MemoryCacheImageInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
@@ -78,7 +69,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }
-                    new InsertImageStatement(imageHash, 128, ImageUtils.resizeImageWithMaxSize(image.getData(), 128)).execute(connection);
+                    new InsertImageStatement(imageHash, 128, MyTunesRssUtils.resizeImageWithMaxSize(image, 128).getData()).execute(connection);
                 }
                 new UpdateImageForPhotoStatement(myPhotoId, imageHash).execute(connection);
             }

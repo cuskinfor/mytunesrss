@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.2.0" date="___D___">
+            <action dev="mdescher" type="update">
+                Better image handling (fixed some issues).
+            </action>
             <action dev="mdescher" type="add">
                 MYTUNESRSS-167 - Option for track to image file mapping
             </action>
