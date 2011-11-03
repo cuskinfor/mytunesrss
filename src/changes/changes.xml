@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="4.1.6" date="___D___">
+            <action dev="mdescher" type="update">
+                Updated to codewave-maven2-base to get version 2.2.1 of release plugin which tags correctly again.
+            </action>
+            <action dev="mdescher" type="fix">
+                Updated to camel 1.5.0 to fix loading MP4 files.
+            </action>
+        </release>
+
         <release version="4.1.5" date="2011-10-21">
             <action dev="mdescher" type="fix">
                 MYTUNESRSS-304 - Refuse startup with an expired (version) license

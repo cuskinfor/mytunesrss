@@ -938,7 +938,7 @@
                   <option value="svn://codewave.dyn-o-saur.com/mytunesrss/tags" />
                 </list>
               </option>
-              <option name="trunkUrl" value="svn://codewave.dyn-o-saur.com/mytunesrss/trunk" />
+              <option name="trunkUrl" value="svn://svn.codewave.biz/mytunesrss/trunk" />
             </SvnBranchConfiguration>
           </value>
         </entry>

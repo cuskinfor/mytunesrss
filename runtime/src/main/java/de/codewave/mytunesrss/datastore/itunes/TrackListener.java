@@ -208,8 +208,7 @@ public class TrackListener implements PListHandlerListener {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, Arrays.asList("moov.trak.mdia.minf.stbl.stsd"));
-            Mp4Atom atom = atoms.get("moov.trak.mdia.minf.stbl.stsd");
+            Mp4Atom atom = MyTunesRss.MP4_PARSER.parseAndGet(file, "moov.trak.mdia.minf.stbl.stsd");
             if (atom != null) {
                 return atom.getDataAsString(12, 4, "UTF-8");
             }

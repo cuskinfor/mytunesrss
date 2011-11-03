@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.camel.CamelUtils;
 import de.codewave.camel.Endianness;
 import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4AtomList;
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.meta.Image;
@@ -215,11 +216,10 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                             }
                             if (itcFile.isFile() && itcFile.lastModified() >= myLastUpdateTime) {
                                 LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                Map<String, Mp4Atom> atoms = Mp4Utils.getAtoms(itcFile, Collections.<String>singletonList("item"));
-                                Mp4Atom itemAtom = atoms.get("item");
+                                Mp4Atom itemAtom = MyTunesRss.MP4_PARSER.parseAndGet(itcFile, "item");
                                 if (itemAtom != null) {
                                     LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                    int offset = CamelUtils.getValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
+                                    int offset = CamelUtils.getIntValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
                                     Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8))));
                                     if (iter.hasNext()) {
                                         ImageReader reader = iter.next();

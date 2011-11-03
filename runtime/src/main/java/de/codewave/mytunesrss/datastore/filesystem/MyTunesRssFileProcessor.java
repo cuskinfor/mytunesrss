@@ -5,6 +5,7 @@ import de.codewave.camel.mp3.Id3v1Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.Mp4AtomList;
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.camel.mp4.StikAtom;
 import de.codewave.mytunesrss.*;
@@ -411,44 +412,44 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private TrackMetaData parseMp4MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {
         TrackMetaData meta = new TrackMetaData();
-        Map<String, Mp4Atom> atoms = null;
+        Mp4AtomList atoms = null;
         try {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            atoms = Mp4Utils.getAtoms(file, ALL_ATOM_NAMES);
+            atoms = MyTunesRss.MP4_PARSER.parse(file, ALL_ATOM_NAMES.toArray(new String[ALL_ATOM_NAMES.size()]));
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
-        if (atoms == null || atoms.isEmpty()) {
+        if (atoms == null || atoms.toList().isEmpty()) {
             setSimpleInfo(statement, file, mediaType);
         } else {
             try {
-                Mp4Atom atom = atoms.get(Atom.Title.getPath());
+                Mp4Atom atom = atoms.getFirst(Atom.Title.getPath());
                 String name = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isBlank(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
                 statement.setName(MyTunesRssUtils.normalize(name));
-                atom = atoms.get(Atom.Stsd.getPath());
+                atom = atoms.getFirst(Atom.Stsd.getPath());
                 if (atom != null) {
                     String mp4Codec = atom.getDataAsString(12, 4, "UTF-8");
                     meta.setMp4Codec(mp4Codec);
                     statement.setMp4Codec(mp4Codec);
                 }
-                atom = atoms.get(Atom.Genre.getPath());
+                atom = atoms.getFirst(Atom.Genre.getPath());
                 String genre = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isNotBlank(genre)) {
                     statement.setGenre(MyTunesRssUtils.normalize(genre));
                 }
-                atom = atoms.get(Atom.Comment.getPath());
+                atom = atoms.getFirst(Atom.Comment.getPath());
                 String comment = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isNotBlank(comment)) {
                     statement.setComment(MyTunesRssUtils.normalize(comment));
                 }
-                atom = atoms.get(Atom.Year.getPath());
+                atom = atoms.getFirst(Atom.Year.getPath());
                 String year = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                 if (StringUtils.isNotBlank(year)) {
                     try {
@@ -458,41 +459,41 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                 }
                 if (mediaType == MediaType.Audio) {
-                    atom = atoms.get(Atom.Album.getPath());
+                    atom = atoms.getFirst(Atom.Album.getPath());
                     String album = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                     if (StringUtils.isBlank(album)) {
                         album = getFallbackAlbumName(file);
                     }
                     statement.setAlbum(MyTunesRssUtils.normalize(album));
-                    atom = atoms.get(Atom.Artist.getPath());
+                    atom = atoms.getFirst(Atom.Artist.getPath());
                     String artist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                     if (StringUtils.isBlank(artist)) {
                         artist = getFallbackArtistName(file);
                     }
                     statement.setArtist(MyTunesRssUtils.normalize(artist));
-                    atom = atoms.get(Atom.AlbumArtist.getPath());
+                    atom = atoms.getFirst(Atom.AlbumArtist.getPath());
                     String albumArtist = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                     if (StringUtils.isBlank(albumArtist)) {
                         albumArtist = artist;
                     }
                     statement.setAlbumArtist(MyTunesRssUtils.normalize(albumArtist));
-                    atom = atoms.get(Atom.Compilation.getPath());
+                    atom = atoms.getFirst(Atom.Compilation.getPath());
                     if (atom != null) {
                         statement.setCompilation(atom.getData()[11] > 0 || !StringUtils.equalsIgnoreCase(artist, albumArtist));
                     }
-                    atom = atoms.get(Atom.Composer.getPath());
+                    atom = atoms.getFirst(Atom.Composer.getPath());
                     String composer = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                     statement.setComposer(MyTunesRssUtils.normalize(composer));
-                    atom = atoms.get(Atom.TrackNumber.getPath());
+                    atom = atoms.getFirst(Atom.TrackNumber.getPath());
                     if (atom != null) {
                         statement.setTrackNumber(atom.getData()[11]);
                     }
-                    atom = atoms.get(Atom.DiskNumber.getPath());
+                    atom = atoms.getFirst(Atom.DiskNumber.getPath());
                     if (atom != null) {
                         statement.setPos(atom.getData()[11], atom.getData()[13]);
                     }
                 } else if (mediaType == MediaType.Video) {
-                    atom = atoms.get(Atom.Stik.getPath());
+                    atom = atoms.getFirst(Atom.Stik.getPath());
                     VideoType videoType;
                     if (atom != null) {
                         videoType = ((StikAtom) atom).getType() == StikAtom.Type.TvShow ? VideoType.TvShow : VideoType.Movie;
@@ -502,20 +503,20 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         statement.setVideoType(videoType);
                     }
                     if (videoType == VideoType.TvShow) {
-                        atom = atoms.get(Atom.Series.getPath());
+                        atom = atoms.getFirst(Atom.Series.getPath());
                         String tvShow = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
                         if (StringUtils.isNotBlank(tvShow)) {
                             statement.setSeries(MyTunesRssUtils.normalize(tvShow));
                         } else {
                             statement.setSeries(getFallbackSeries(file));
                         }
-                        atom = atoms.get(Atom.Season.getPath());
+                        atom = atoms.getFirst(Atom.Season.getPath());
                         if (atom != null) {
                             statement.setSeason(atom.getData()[11]);
                         } else {
                             statement.setSeason(getFallbackSeason(file));
                         }
-                        atom = atoms.get(Atom.Episode.getPath());
+                        atom = atoms.getFirst(Atom.Episode.getPath());
                         if (atom != null) {
                             statement.setEpisode(atom.getData()[11]);
                         } else {
@@ -532,7 +533,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 setSimpleInfo(statement, file, mediaType);
             }
         }
-        Mp4Atom atom = atoms.get(Atom.Cover.getPath());
+        Mp4Atom atom = atoms.getFirst(Atom.Cover.getPath());
         if (atom != null) {
             byte type = atom.getData()[3];
             meta.setImage(new Image(type == 0x0d ? "image/jpeg" : "image/png", ArrayUtils.subarray(atom.getData(), 8, atom.getData().length - 8)));
