@@ -22,7 +22,7 @@
 
 <script type="text/javascript">
     function openExternalSite(urlTemplate, keyword) {
-        var newWindow = window.open(urlTemplate.replace(/\\{KEYWORD\\}/, $jQ.trim(keyword)), "_blank");
+        var newWindow = window.open(urlTemplate.replace(/\{KEYWORD\}/, $jQ.trim(keyword)), "_blank");
         newWindow.focus();
     }
     function openExternalSitesDialog(keyword) {
