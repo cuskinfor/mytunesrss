@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.7" date="___D___">
+            <action dev="mdescher" type="update">
+                MYTUNESRSS-310 - Links to external sites don't work
+            </action>
+        </release>
+
         <release version="4.1.6" date="2011-11-04">
             <action dev="mdescher" type="update">
                 Updated to codewave-maven2-base to get version 2.2.1 of release plugin which tags correctly again.
