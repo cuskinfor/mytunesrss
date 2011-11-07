@@ -20,45 +20,38 @@ public class DatabaseUpdateQueue {
             public void run() {
                 long txBegin = System.currentTimeMillis();
                 DataStoreSession tx = null;
-                boolean terminate = false;
-                while (!terminate) {
-                    long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
-                    try {
-                        LOGGER.debug("Polling queue with a timeout of "  + pollTimeoutMillis + " ms.");
-                        DatabaseUpdateEvent event = myQueue.poll(pollTimeoutMillis, TimeUnit.MILLISECONDS);
+                try {
+                    DatabaseUpdateEvent event;
+                    do {
+                        long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
+                        LOGGER.debug("Polling queue with a timeout of " + pollTimeoutMillis + " ms.");
+                        event = myQueue.poll(pollTimeoutMillis, TimeUnit.MILLISECONDS);
                         if (event != null) {
                             LOGGER.debug("Received \"" + event.getClass().getName() + "\" event.");
-                            if (event instanceof TerminateEvent) {
-                                terminate = true;
-                            } else if (event instanceof TransactionalEvent) {
-                                if (tx == null && !((TransactionalEvent)event).isIgnoreWithoutTransaction()) {
-                                    LOGGER.debug("Starting new transaction.");
-                                    tx = MyTunesRss.STORE.getTransaction();
-                                    txBegin = System.currentTimeMillis();
-                                }
+                            if (tx == null && event.isStartTransaction()) {
+                                LOGGER.debug("Starting new transaction.");
+                                tx = MyTunesRss.STORE.getTransaction();
+                                txBegin = System.currentTimeMillis();
                             }
-                            if (event instanceof TransactionalEvent && tx != null) {
-                                tx = ((TransactionalEvent)event).execute(tx);
-                            } else if (event instanceof NonTransactionalEvent) {
-                                ((NonTransactionalEvent)event).execute();
+                            if (!event.execute(tx)) {
+                                tx = null;
                             }
                         }
                         if (tx != null) {
                             long txDurationMillis = System.currentTimeMillis() - txBegin;
-                            if (txDurationMillis > maxTxDurationMillis) {
+                            if (txDurationMillis > maxTxDurationMillis || event == null) {
                                 LOGGER.debug("Committing transaction after " + txDurationMillis + " ms.");
                                 tx.commit();
                                 tx = null;
                             }
                         }
-                    } catch (InterruptedException e) {
-                        LOGGER.info("Interrupted while waiting for event.");
-                        terminate = true;
-                    }
+                    } while (event == null || !event.isTerminate());
+                } catch (InterruptedException e) {
+                    LOGGER.info("Interrupted while waiting for event.");
                 }
                 LOGGER.info("Terminating database update queue thread.");
             }
-        }).start();
+        }, "DatabaseUpdateQueueWorker").start();
     }
 
     public void offer(DatabaseUpdateEvent event) {

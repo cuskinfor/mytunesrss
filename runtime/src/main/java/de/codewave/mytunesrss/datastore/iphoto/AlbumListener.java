@@ -4,11 +4,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoAlbumIdsQuery;
 import de.codewave.mytunesrss.datastore.statement.SavePhotoAlbumStatement;
-import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -82,7 +79,6 @@ public class AlbumListener implements PListHandlerListener {
                     if (!update) {
                         myPhotoAlbumIds.add(albumId);
                     }
-                    myQueue.offer(new CommitEvent());
                 }
             }
         } else {

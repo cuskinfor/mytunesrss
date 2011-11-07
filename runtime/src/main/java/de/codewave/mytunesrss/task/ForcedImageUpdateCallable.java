@@ -5,15 +5,11 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.TerminateEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.MyTunesRssEventEvent;
-import de.codewave.mytunesrss.datastore.updatequeue.TerminateEvent;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,19 +33,15 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
                 LOGGER.info("Invalidating all existing images.");
             }
             resetLastImageUpdateForAllTracks();
-            myQueue.offer(new CommitEvent());
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Starting forced image update.");
             }
             runImageUpdate(System.currentTimeMillis());
-            myQueue.offer(new CommitEvent());
             updateHelpTables(myQueue, 0); // update image references for albums
-            myQueue.offer(new CommitEvent());
             deleteOrphanedImages();
-            myQueue.offer(new CommitEvent());
         } finally {
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
-            myQueue.offer(new TerminateEvent() { });
+            myQueue.offer(new TerminateEvent());
         }
         return true;
     }

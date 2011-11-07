@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
-public class DataStoreStatementEvent implements TransactionalEvent {
+public class DataStoreStatementEvent extends DataStoreEvent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataStoreStatementEvent.class);
 
@@ -24,7 +24,7 @@ public class DataStoreStatementEvent implements TransactionalEvent {
         myExLogMsg = exLogMsg;
     }
 
-    public DataStoreSession execute(DataStoreSession session) {
+    public boolean execute(DataStoreSession session) {
         try {
             session.executeStatement(myStatement);
         } catch (SQLException e) {
@@ -34,10 +34,6 @@ public class DataStoreStatementEvent implements TransactionalEvent {
                 LOGGER.warn(myExLogMsg, e);
             }
         }
-        return session;
-    }
-
-    public boolean isIgnoreWithoutTransaction() {
-        return false;
+        return true;
     }
 }

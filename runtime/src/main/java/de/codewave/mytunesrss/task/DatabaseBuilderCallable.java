@@ -70,24 +70,15 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 if (eachDatasource.getType() == DatasourceType.Watchfolder && eachFile.exists()) {
                     try {
                         if (de.codewave.utils.io.IOUtils.isContainedOrSame(eachFile, file)) {
-                            if (LOGGER.isInfoEnabled()) {
-                                LOGGER
-                                        .info("Not adding \"" + file.getAbsolutePath()
-                                                + "\" to database update sources.");
-                            }
+                            LOGGER.info("Not adding \"" + file.getAbsolutePath() + "\" to database update sources.");
                             return; // new dir is already scanned through other dir
                         } else if (de.codewave.utils.io.IOUtils.isContained(file, eachFile)) {
                             // existing one will be scanned by adding new one, so remove existing one
-                            if (LOGGER.isInfoEnabled()) {
-                                LOGGER.info("Removing folder \"" + eachFile.getAbsolutePath()
-                                        + "\" from database update sources.");
-                            }
+                            LOGGER.info("Removing folder \"" + eachFile.getAbsolutePath() + "\" from database update sources.");
                             iter.remove();
                         }
                     } catch (IOException e) {
-                        if (LOGGER.isErrorEnabled()) {
-                            LOGGER.error("Could not check whether or not folder may be added, so adding it.", e);
-                        }
+                        LOGGER.error("Could not check whether or not folder may be added, so adding it.", e);
                     }
                 }
             }
@@ -124,7 +115,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         } finally {
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
-            myQueue.offer(new TerminateEvent() { });
+            myQueue.offer(new TerminateEvent());
         }
         return result;
     }
@@ -145,26 +136,24 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                                 "UPDATE system_information SET lastupdate = " + timeUpdateStart);
                     }
                 }));
-                myQueue.offer(new CommitEvent());
             }
             if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
                 runImageUpdate(timeUpdateStart);
             }
             updateHelpTables(myQueue, 0); // update image references for albums
-            myQueue.offer(new CommitEvent());
             if (!Thread.currentThread().isInterrupted()) {
                 deleteOrphanedImages();
-                myQueue.offer(new CommitEvent());
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
                 }
-                myQueue.offer(new DatabaseUpdateEvent() {
-                    public void execute(DataStoreSession session) {
+                myQueue.offer(new DataStoreEvent() {
+                    public boolean execute(DataStoreSession session) {
                         try {
                             MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), missingItunesFiles, MyTunesRss.STORE.getTransaction().executeQuery(new GetSystemInformationQuery()));
                         } catch (SQLException e) {
                             LOGGER.warn("Could not notify admin of finished database update.", e);
                         }
+                        return true;
                     }
                 });
             }
@@ -194,22 +183,22 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
             DataStoreQuery.QueryResult<Track> result = tx.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
-                        public QueryResult<Track> execute(Connection connection) throws SQLException {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection,
-                                    "findAllTracksForImageUpdate");
-                            statement.setLong("timeUpdateStart", timeUpdateStart);
-                            return execute(statement, new ResultBuilder<Track>() {
-                                public Track create(ResultSet resultSet) throws SQLException {
-                                    Track track = new Track();
-                                    track.setId(resultSet.getString("ID"));
-                                    track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
-                                    track.setFile(new File(resultSet.getString("FILE")));
-                                    track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
-                                    return track;
-                                }
-                            });
+                public QueryResult<Track> execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection,
+                            "findAllTracksForImageUpdate");
+                    statement.setLong("timeUpdateStart", timeUpdateStart);
+                    return execute(statement, new ResultBuilder<Track>() {
+                        public Track create(ResultSet resultSet) throws SQLException {
+                            Track track = new Track();
+                            track.setId(resultSet.getString("ID"));
+                            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
+                            track.setFile(new File(resultSet.getString("FILE")));
+                            track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
+                            return track;
                         }
                     });
+                }
+            });
             for (Track track = result.nextResult(); track != null && !Thread.currentThread().isInterrupted(); track = result
                     .nextResult()) {
                 long timeLastImageUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : track.getLastImageUpdate();
@@ -289,34 +278,28 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             } catch (ShutdownRequestedException e) {
                 // intentionally left blank
             }
-            myQueue.offer(new CommitEvent());
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
             }
             myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds)));
-            myQueue.offer(new CommitEvent());
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + photoIds.size() + " photos from database.");
             }
             myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds)));
-            myQueue.offer(new CommitEvent());
         }
         if (!Thread.currentThread().isInterrupted()) {
             // ensure the help tables are created with all the data
             updateHelpTables(myQueue, 0);
-            myQueue.offer(new CommitEvent());
             myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     MyTunesRssUtils.createStatement(connection, "removeObsoletePhotoAlbumsAndPlaylists").execute();
                 }
             }));
-            myQueue.offer(new CommitEvent());
         }
-        myQueue.offer(new CommitEvent());
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");
         }

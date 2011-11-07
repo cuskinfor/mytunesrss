@@ -10,6 +10,7 @@ import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.camel.mp4.StikAtom;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
@@ -194,8 +195,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
             boolean update = myPhotoAlbumIds.contains(albumId);
             if (update) {
-                myQueue.offer(new DatabaseUpdateEvent() {
-                    public void execute(DataStoreSession session) {
+                myQueue.offer(new DataStoreEvent() {
+                    public boolean execute(DataStoreSession session) {
                         try {
                             if (session.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Boolean>>() {
                                 @Override
@@ -220,6 +221,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         } catch (SQLException e) {
                             LOGGER.warn("Could not insert photo \"" + canonicalFilePath + "\" into database", e);
                         }
+                        return true;
                     }
                 });
             } else {

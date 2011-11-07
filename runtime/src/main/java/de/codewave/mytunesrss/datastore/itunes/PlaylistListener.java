@@ -1,15 +1,14 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
-import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -97,7 +96,6 @@ public class PlaylistListener implements PListHandlerListener {
                     }
                     myQueue.offer(new DataStoreStatementEvent(statement));
                     myExistingIds.add(playlistId);
-                    myQueue.offer(new CommitEvent());
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);

@@ -1,18 +1,13 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveM3uFilePlaylistStatement;
-import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
@@ -67,7 +62,6 @@ public class PlaylistFileProcessor implements FileProcessor {
                     }
                     myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert/update playlist from \"" + playlistFile + "\" into database."));
                     myExistingIds.add(id);
-                    myQueue.offer(new CommitEvent());
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {
