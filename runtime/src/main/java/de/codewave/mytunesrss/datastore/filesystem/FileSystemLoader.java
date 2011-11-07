@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
@@ -21,12 +22,12 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds,
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds,
                                           Collection<String> playlistIds, Collection<String> photoAlbumIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
-            fileProcessor = new MyTunesRssFileProcessor(datasource, storeSession, lastUpdateTime, trackIds, photoIds);
+            fileProcessor = new MyTunesRssFileProcessor(datasource, queue, lastUpdateTime, trackIds, photoIds);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }
@@ -38,7 +39,7 @@ public class FileSystemLoader {
                     return file.isDirectory() || (datasource.isIncluded(file) && FileSupportUtils.isSupported(file.getName()));
                 }
             });
-            PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(storeSession, fileProcessor.getExistingIds());
+            PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(queue, fileProcessor.getExistingIds());
             IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                 public boolean accept(File file) {
                     if (watchdogThread.isInterrupted()) {

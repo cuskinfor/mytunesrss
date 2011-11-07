@@ -1,8 +1,12 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoAlbumIdsQuery;
 import de.codewave.mytunesrss.datastore.statement.SavePhotoAlbumStatement;
+import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
@@ -27,18 +31,18 @@ public class AlbumListener implements PListHandlerListener {
             "Special Month"
     };
 
-    private DataStoreSession myDataStoreSession;
+    private DatabaseUpdateQueue myQueue;
     protected LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
     private Map<Long, String> myPhotoIdToPersId;
     private Set<String> myPhotoAlbumIds;
 
-    public AlbumListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
+    public AlbumListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
         myPhotoIdToPersId = photoIdToPersId;
         myWatchdogThread = watchdogThread;
-        myDataStoreSession = dataStoreSession;
+        myQueue = queue;
         myLibraryListener = libraryListener;
-        myPhotoAlbumIds = new HashSet<String>(dataStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()));
+        myPhotoAlbumIds = new HashSet<String>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -72,19 +76,13 @@ public class AlbumListener implements PListHandlerListener {
                     statement.setId(albumId);
                     statement.setName(albumName);
                     statement.setPhotoIds(photos);
-                    try {
-                        boolean update = myPhotoAlbumIds.contains(albumId);
-                        statement.setUpdate(update);
-                        myDataStoreSession.executeStatement(statement);
-                        if (!update) {
-                            myPhotoAlbumIds.add(albumId);
-                        }
-                        DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
-                    } catch (SQLException e) {
-                        if (LOGGER.isErrorEnabled()) {
-                            LOGGER.error("Could not insert/update photo album \"" + albumName + "\" into database.", e);
-                        }
+                    boolean update = myPhotoAlbumIds.contains(albumId);
+                    statement.setUpdate(update);
+                    myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert/update photo album \"" + albumName + "\" into database."));
+                    if (!update) {
+                        myPhotoAlbumIds.add(albumId);
                     }
+                    myQueue.offer(new CommitEvent());
                 }
             }
         } else {

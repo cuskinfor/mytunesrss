@@ -1,13 +1,13 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.ItunesDatasourceConfig;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
-import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
+import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
@@ -24,16 +24,16 @@ import java.util.*;
 public class PlaylistListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(PlaylistListener.class);
 
-    private DataStoreSession myDataStoreSession;
+    private DatabaseUpdateQueue myQueue;
     private Map<Long, String> myTrackIdToPersId;
     private Set<String> myExistingIds = new HashSet<String>();
     private LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
     private Set<ItunesPlaylistType> myIgnores;
 
-    public PlaylistListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, ItunesDatasourceConfig config) {
+    public PlaylistListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, ItunesDatasourceConfig config) {
         myWatchdogThread = watchdogThread;
-        myDataStoreSession = dataStoreSession;
+        myQueue = queue;
         myTrackIdToPersId = trackIdToPersId;
         myLibraryListener = libraryListener;
         myIgnores = config.getIgnorePlaylists();
@@ -89,15 +89,15 @@ public class PlaylistListener implements PListHandlerListener {
                 statement.setTrackIds(tracks);
                 statement.setContainerId(containerId);
                 try {
-                    if (myDataStoreSession.executeQuery(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder),
+                    if (MyTunesRss.STORE.getQueryResultSize(new FindPlaylistQuery(Arrays.asList(PlaylistType.ITunes, PlaylistType.ITunesFolder),
                             playlistId,
                             null,
-                            true)).getResultSize() > 0) {
+                            true)) > 0) {
                         statement.setUpdate(true);
                     }
-                    myDataStoreSession.executeStatement(statement);
+                    myQueue.offer(new DataStoreStatementEvent(statement));
                     myExistingIds.add(playlistId);
-                    DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, true);
+                    myQueue.offer(new CommitEvent());
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);

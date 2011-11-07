@@ -9,6 +9,10 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.updatequeue.CommitEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.MyTunesRssEventEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.TerminateEvent;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
@@ -27,40 +31,34 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
 
     @Override
     public Boolean call() throws Exception {
-        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateInvalidatingImages");
-        MyTunesRssEventManager.getInstance().fireEvent(event);
-        MyTunesRss.LAST_DATABASE_EVENT = event;
-        DataStoreSession storeSession = MyTunesRss.STORE.getTransaction();
         try {
+            myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateInvalidatingImages")));
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Invalidating all existing images.");
             }
-            resetLastImageUpdateForAllTracks(storeSession);
-            doCheckpoint(storeSession, true);
+            resetLastImageUpdateForAllTracks();
+            myQueue.offer(new CommitEvent());
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Starting forced image update.");
             }
-            runImageUpdate(storeSession, System.currentTimeMillis());
-            doCheckpoint(storeSession, true);
-            updateHelpTables(storeSession, 0); // update image references for albums
-            doCheckpoint(storeSession, true);
-            deleteOrphanedImages(storeSession);
-            doCheckpoint(storeSession, true);
-            return true;
-        } catch (Exception e) {
-            throw e;
+            runImageUpdate(System.currentTimeMillis());
+            myQueue.offer(new CommitEvent());
+            updateHelpTables(myQueue, 0); // update image references for albums
+            myQueue.offer(new CommitEvent());
+            deleteOrphanedImages();
+            myQueue.offer(new CommitEvent());
         } finally {
-            storeSession.rollback();
-            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
+            myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
+            myQueue.offer(new TerminateEvent() { });
         }
+        return true;
     }
 
-    private void resetLastImageUpdateForAllTracks(DataStoreSession storeSession) throws SQLException {
-        storeSession.executeStatement(new DataStoreStatement() {
+    private void resetLastImageUpdateForAllTracks() {
+        myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
                 MyTunesRssUtils.createStatement(connection, "resetLastImageUpdateForAllTracks").execute();
             }
-        });
-
+        }));
     }
 }

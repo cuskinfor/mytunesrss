@@ -7,6 +7,8 @@ import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
@@ -27,7 +29,7 @@ public class TrackListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(TrackListener.class);
     private static final String MP4_CODEC_NOT_CHECKED = new String();
 
-    private DataStoreSession myDataStoreSession;
+    private DatabaseUpdateQueue myQueue;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
@@ -38,11 +40,11 @@ public class TrackListener implements PListHandlerListener {
     private Set<CompiledReplacementRule> myPathReplacements;
     private ItunesDatasourceConfig myDatasourceConfig;
 
-    public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
+    public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
                          Collection<String> trackIds) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
-        myDataStoreSession = dataStoreSession;
+        myQueue = queue;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
         myTrackIds = trackIds;
@@ -66,9 +68,8 @@ public class TrackListener implements PListHandlerListener {
         String trackId = calculateTrackId(track);
         if (processTrack(track, myTrackIds.remove(trackId))) {
             myUpdatedCount++;
-            DatabaseBuilderCallable.updateHelpTables(myDataStoreSession, myUpdatedCount);
+            DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
         }
-        DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, false);
         return false;
     }
 
@@ -103,51 +104,45 @@ public class TrackListener implements PListHandlerListener {
                         Date dateAdded = ((Date) track.get("Date Added"));
                         long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
                         if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
-                            try {
-                                InsertOrUpdateTrackStatement statement =
-                                        existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
-                                statement.clear();
-                                statement.setId(trackId);
-                                statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                                String artist = MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist")));
-                                statement.setArtist(artist);
-                                String albumArtist = MyTunesRssUtils.normalize(StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist"))));
-                                statement.setAlbumArtist(albumArtist);
-                                statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
-                                statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
-                                statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
-                                statement.setFileName(filename);
-                                statement.setProtected(FileSupportUtils.isProtected(filename));
-                                boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
-                                statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
-                                if (video) {
-                                    statement.setAlbum(null);
-                                    statement.setArtist(null);
-                                    boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
-                                    statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
-                                    if (tvshow) {
-                                        statement.setSeries(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Series"))));
-                                        statement.setSeason((int) (track.get("Season") != null ? (Long) track.get("Season") : 0));
-                                        statement.setEpisode((int) (track.get("Episode Order") != null ? (Long) track.get("Episode Order") : 0));
-                                    }
-                                }
-                                statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
-                                statement.setComposer(StringUtils.trimToNull((String) track.get("Composer")));
-                                boolean compilation = track.get("Compilation") != null && ((Boolean) track.get("Compilation")).booleanValue();
-                                statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, albumArtist));
-                                statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
-                                statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
-                                        (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
-                                statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
-                                statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
-                                myDataStoreSession.executeStatement(statement);
-                                myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
-                                return true;
-                            } catch (SQLException e) {
-                                if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not insert track \"" + name + "\" into database", e);
+                            InsertOrUpdateTrackStatement statement =
+                                    existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
+                            statement.clear();
+                            statement.setId(trackId);
+                            statement.setName(MyTunesRssUtils.normalize(name.trim()));
+                            String artist = MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist")));
+                            statement.setArtist(artist);
+                            String albumArtist = MyTunesRssUtils.normalize(StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist"))));
+                            statement.setAlbumArtist(albumArtist);
+                            statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
+                            statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
+                            statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
+                            statement.setFileName(filename);
+                            statement.setProtected(FileSupportUtils.isProtected(filename));
+                            boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
+                            statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
+                            if (video) {
+                                statement.setAlbum(null);
+                                statement.setArtist(null);
+                                boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
+                                statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
+                                if (tvshow) {
+                                    statement.setSeries(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Series"))));
+                                    statement.setSeason((int) (track.get("Season") != null ? (Long) track.get("Season") : 0));
+                                    statement.setEpisode((int) (track.get("Episode Order") != null ? (Long) track.get("Episode Order") : 0));
                                 }
                             }
+                            statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
+                            statement.setComposer(StringUtils.trimToNull((String) track.get("Composer")));
+                            boolean compilation = track.get("Compilation") != null && ((Boolean) track.get("Compilation")).booleanValue();
+                            statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, albumArtist));
+                            statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
+                            statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
+                                    (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
+                            statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
+                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
+                            myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert track \"" + name + "\" into database."));
+                            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
+                            return true;
                         } else if (existing) {
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                         }

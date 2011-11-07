@@ -10,6 +10,8 @@ import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.UpdatePhotoStatement;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
@@ -27,7 +29,7 @@ import java.util.*;
 public class PhotoListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(PhotoListener.class);
 
-    private DataStoreSession myDataStoreSession;
+    private DatabaseUpdateQueue myQueue;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<Long, String> myPhotoIdToPersId;
@@ -37,11 +39,11 @@ public class PhotoListener implements PListHandlerListener {
     private IphotoDatasourceConfig myDatasourceConfig;
     private long myXmlModDate;
 
-    public PhotoListener(IphotoDatasourceConfig datasourceConfig, Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId,
+    public PhotoListener(IphotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> photoIdToPersId,
                          Collection<String> photoIds) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
-        myDataStoreSession = dataStoreSession;
+        myQueue = queue;
         myLibraryListener = libraryListener;
         myPhotoIdToPersId = photoIdToPersId;
         myPhotoIds = photoIds;
@@ -63,7 +65,6 @@ public class PhotoListener implements PListHandlerListener {
             if (processPhoto(key, photo, photoId, myPhotoIds.remove(photoId))) {
                 myUpdatedCount++;
             }
-            DatabaseBuilderCallable.doCheckpoint(myDataStoreSession, false);
         }
         return false;
     }
@@ -92,25 +93,19 @@ public class PhotoListener implements PListHandlerListener {
             if (StringUtils.isNotBlank(filename)) {
                 File file = new File(filename);
                 if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
-                    try {
-                        InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement() : new InsertPhotoStatement();
-                        statement.clear();
-                        statement.setId(photoId);
-                        statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                        //Long createDate = MyTunesRssExifUtils.getCreateDate(file);
-                        Long createDate = (((Double)photo.get("DateAsTimerInterval")).longValue() * 1000) + 978303600000L;
-                        statement.setDate(createDate != null ? createDate.longValue() : -1);
-                        statement.setFile(filename);
-                        myDataStoreSession.executeStatement(statement);
-                        HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
-                        myDataStoreSession.executeStatement(handlePhotoImagesStatement);
-                        myPhotoIdToPersId.put(Long.valueOf(key), photoId);
-                        return true;
-                    } catch (SQLException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not insert photo \"" + name + "\" into database", e);
-                        }
-                    }
+                    InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement() : new InsertPhotoStatement();
+                    statement.clear();
+                    statement.setId(photoId);
+                    statement.setName(MyTunesRssUtils.normalize(name.trim()));
+                    //Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                    Long createDate = (((Double)photo.get("DateAsTimerInterval")).longValue() * 1000) + 978303600000L;
+                    statement.setDate(createDate != null ? createDate.longValue() : -1);
+                    statement.setFile(filename);
+                    myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert photo \"" + name + "\" into database"));
+                    HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
+                    myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, "Could not insert photo \"" + name + "\" into database"));
+                    myPhotoIdToPersId.put(Long.valueOf(key), photoId);
+                    return true;
                 } else if (existing) {
                     myPhotoIdToPersId.put(Long.valueOf(key), photoId);
                 }

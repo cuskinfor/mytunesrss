@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.AdminNotifier;
 import de.codewave.mytunesrss.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
@@ -65,14 +66,14 @@ public class ItunesLoader {
      * Load tracks from an iTunes XML file.
      *
      * @param config
-     * @param storeSession
+     * @param queue
      * @param timeLastUpdate
      * @param trackIds
      * @param existingPlaylistIds
      * @return Number of missing files.
      * @throws SQLException
      */
-    public static long loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DataStoreSession storeSession, long timeLastUpdate, Collection<String> trackIds,
+    public static long loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> trackIds,
                                       Collection<String> existingPlaylistIds) throws SQLException, MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
@@ -89,8 +90,8 @@ public class ItunesLoader {
             PListHandler handler = new PListHandler();
             Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
             LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-            trackListener = new TrackListener(config, executionThread, storeSession, libraryListener, trackIdToPersId, trackIds);
-            playlistListener = new PlaylistListener(executionThread, storeSession, libraryListener, trackIdToPersId, config);
+            trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackIds);
+            playlistListener = new PlaylistListener(executionThread, queue, libraryListener, trackIdToPersId, config);
             handler.addListener("/plist/dict", libraryListener);
             handler.addListener("/plist/dict[Tracks]/dict", trackListener);
             handler.addListener("/plist/dict[Playlists]/array", playlistListener);

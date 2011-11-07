@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.datastore;
 import de.codewave.mytunesrss.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.utils.sql.DataStore;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatementFactory;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
@@ -117,5 +119,23 @@ public class MyTunesRssDataStore extends DataStore {
     public synchronized void destroy() {
         super.destroy();
         myInitialized = false;
+    }
+
+    public synchronized <T> T executeQuery(DataStoreQuery<T> query) throws SQLException {
+        DataStoreSession transaction = getTransaction();
+        try {
+            return transaction.executeQuery(query);
+        } finally {
+            transaction.rollback();
+        }
+    }
+
+    public synchronized int getQueryResultSize(DataStoreQuery<? extends DataStoreQuery.QueryResult> query) throws SQLException {
+        DataStoreSession transaction = getTransaction();
+        try {
+            return transaction.executeQuery(query).getResultSize();
+        } finally {
+            transaction.rollback();
+        }
     }
 }

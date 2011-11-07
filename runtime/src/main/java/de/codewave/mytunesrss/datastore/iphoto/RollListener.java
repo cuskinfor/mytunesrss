@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,10 +17,9 @@ import java.util.Map;
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
  */
 public class RollListener extends AlbumListener {
-    private static final Logger LOG = LoggerFactory.getLogger(RollListener.class);
 
-    public RollListener(Thread watchdogThread, DataStoreSession dataStoreSession, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
-        super(watchdogThread, dataStoreSession, libraryListener, photoIdToPersId);
+    public RollListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
+        super(watchdogThread, queue, libraryListener, photoIdToPersId);
     }
 
 

@@ -10,6 +10,9 @@ import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.camel.mp4.StikAtom;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
@@ -17,10 +20,7 @@ import de.codewave.mytunesrss.meta.TrackMetaData;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -52,7 +52,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
 
     private long myLastUpdateTime;
-    private DataStoreSession myStoreSession;
+    private DatabaseUpdateQueue myQueue;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
     private Collection<String> myTrackIds;
@@ -62,14 +62,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private Map<String, Pattern> myPatterns = new HashMap<String, Pattern>();
     private Set<String> myPhotoAlbumIds;
 
-    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DataStoreSession storeSession, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) throws SQLException {
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) throws SQLException {
         myDatasourceConfig = datasourceConfig;
-        myStoreSession = storeSession;
+        myQueue = queue;
         myLastUpdateTime = lastUpdateTime;
         myTrackIds = trackIds;
         myPhotoIds = photoIds;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
-        myPhotoAlbumIds = new HashSet<String>(myStoreSession.executeQuery(new FindPhotoAlbumIdsQuery()));
+        myPhotoAlbumIds = new HashSet<String>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
     public Set<String> getExistingIds() {
@@ -107,7 +107,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
                         }
                     }
-                    DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
                 }
             }
         } catch (IOException e) {
@@ -138,7 +137,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
             if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
                 myExistingIds.remove(fileId);
-                DatabaseBuilderCallable.doCheckpoint(myStoreSession, false);
                 return true;
             }
         } else {
@@ -148,28 +146,22 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setProtected(type.isProtected());
         statement.setMediaType(type.getMediaType());
         statement.setFileName(canonicalFilePath);
-        try {
-            myStoreSession.executeStatement(statement);
-            if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
-                myStoreSession.executeStatement(handleTrackImagesStatement);
-            } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-                HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
-                myStoreSession.executeStatement(handleTrackImagesStatement);
-            }
-            myUpdatedCount++;
-            DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
-            myExistingIds.add(fileId);
-        } catch (SQLException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not insert track \"" + canonicalFilePath + "\" into database", e);
-            }
+        myQueue.offer(new DataStoreStatementEvent(statement));
+        if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+            HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
+            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, "Could not insert track \"" + canonicalFilePath + "\" into database"));
+        } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+            HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
+            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, "Could not insert track \"" + canonicalFilePath + "\" into database"));
         }
+        myUpdatedCount++;
+        DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
+        myExistingIds.add(fileId);
         return false;
     }
 
     private void insertOrUpdateImage(File photoFile, final String photoFileId, boolean existingPhoto) throws IOException {
-        String canonicalFilePath = photoFile.getCanonicalPath();
+        final String canonicalFilePath = photoFile.getCanonicalPath();
         InsertOrUpdatePhotoStatement statement = existingPhoto ? new UpdatePhotoStatement() : new InsertPhotoStatement();
         statement.clear();
         statement.setId(photoFileId);
@@ -194,56 +186,58 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.warn("Could not read EXIF data from \"" + photoFile.getAbsolutePath() + "\".");
             }
         }
+        myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+        HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
+        myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+        String albumName = getPhotoAlbum(photoFile);
         try {
-            myStoreSession.executeStatement(statement);
-            HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
-            myStoreSession.executeStatement(handlePhotoImagesStatement);
-            String albumName = getPhotoAlbum(photoFile);
-            try {
-                final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
-                boolean update = myPhotoAlbumIds.contains(albumId);
-                if (update) {
-                    if (myStoreSession.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Boolean>>() {
-                        @Override
-                        public QueryResult<Boolean> execute(Connection connection) throws SQLException {
-                            SmartStatement checkPhotoAlbumLinkStatement = MyTunesRssUtils.createStatement(connection, "checkPhotoAlbumLink");
-                            checkPhotoAlbumLinkStatement.setString("album", albumId);
-                            checkPhotoAlbumLinkStatement.setString("photo", photoFileId);
-                            return execute(checkPhotoAlbumLinkStatement, new ResultBuilder<Boolean>() {
-                                public Boolean create(ResultSet resultSet) throws SQLException {
-                                    return true;
+            final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
+            boolean update = myPhotoAlbumIds.contains(albumId);
+            if (update) {
+                myQueue.offer(new DatabaseUpdateEvent() {
+                    public void execute(DataStoreSession session) {
+                        try {
+                            if (session.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Boolean>>() {
+                                @Override
+                                public QueryResult<Boolean> execute(Connection connection) throws SQLException {
+                                    SmartStatement checkPhotoAlbumLinkStatement = MyTunesRssUtils.createStatement(connection, "checkPhotoAlbumLink");
+                                    checkPhotoAlbumLinkStatement.setString("album", albumId);
+                                    checkPhotoAlbumLinkStatement.setString("photo", photoFileId);
+                                    return execute(checkPhotoAlbumLinkStatement, new ResultBuilder<Boolean>() {
+                                        public Boolean create(ResultSet resultSet) throws SQLException {
+                                            return true;
+                                        }
+                                    });
                                 }
-                            });
+                            }).getResultSize() == 0) {
+                                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                                savePhotoAlbumStatement.setId(albumId);
+                                savePhotoAlbumStatement.setUpdate(true);
+                                savePhotoAlbumStatement.setAdd(true);
+                                savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
+                                session.executeStatement(savePhotoAlbumStatement);
+                            }
+                        } catch (SQLException e) {
+                            LOGGER.warn("Could not insert photo \"" + canonicalFilePath + "\" into database", e);
                         }
-                    }).getResultSize() == 0) {
-                        SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
-                        savePhotoAlbumStatement.setId(albumId);
-                        savePhotoAlbumStatement.setUpdate(true);
-                        savePhotoAlbumStatement.setAdd(true);
-                        savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
-                        myStoreSession.executeStatement(savePhotoAlbumStatement);
                     }
-                } else {
-                    SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
-                    savePhotoAlbumStatement.setId(albumId);
-                    savePhotoAlbumStatement.setName(albumName);
-                    savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
-                    myStoreSession.executeStatement(savePhotoAlbumStatement);
-                    myPhotoAlbumIds.add(albumId);
-                }
-            } catch (NoSuchAlgorithmException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not create message digest.", e);
-                }
+                });
+            } else {
+                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                savePhotoAlbumStatement.setId(albumId);
+                savePhotoAlbumStatement.setName(albumName);
+                savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
+                myQueue.offer(new DataStoreStatementEvent(savePhotoAlbumStatement, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+                myPhotoAlbumIds.add(albumId);
             }
-            myUpdatedCount++;
-            DatabaseBuilderCallable.updateHelpTables(myStoreSession, myUpdatedCount);
-            myExistingIds.add(photoFileId);
-        } catch (SQLException e) {
+        } catch (NoSuchAlgorithmException e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not insert photo \"" + canonicalFilePath + "\" into database", e);
+                LOGGER.error("Could not create message digest.", e);
             }
         }
+        myUpdatedCount++;
+        DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
+        myExistingIds.add(photoFileId);
     }
 
     private TrackMetaData parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {

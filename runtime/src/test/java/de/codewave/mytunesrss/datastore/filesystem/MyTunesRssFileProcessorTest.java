@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
+import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class MyTunesRssFileProcessorTest {
     @Before
     public void before() throws URISyntaxException, SQLException, IOException, ClassNotFoundException {
         MyTunesRssTestUtils.before();
-        myProcessor = new MyTunesRssFileProcessor(null, MyTunesRss.STORE.getTransaction(), 0, null, null);
+        myProcessor = new MyTunesRssFileProcessor(null, new DatabaseUpdateQueue(2500), 0, null, null);
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());
     }
 

@@ -40,13 +40,13 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                 if (myVersion == null) {
                     LOGGER.debug("No version found. Creating all tables.");
                     session.executeStatement(new CreateAllTablesStatement());
-                    DatabaseBuilderCallable.doCheckpoint(session, true);
+                    session.commit();
                     loadVersion(session);
                 } else {
                     LOGGER.debug("Version found.");
                     if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
                         session.executeStatement(new MigrationStatement());
-                        DatabaseBuilderCallable.doCheckpoint(session, true);
+                        session.commit();
                     }
                     MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
                 }
@@ -97,7 +97,7 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                 }
             });
         } finally {
-            DatabaseBuilderCallable.doCheckpoint(session, true);
+            session.commit();
         }
     }
 
