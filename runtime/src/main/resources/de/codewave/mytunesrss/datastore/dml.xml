@@ -300,7 +300,7 @@
     </statement>
 
     <statement name="updateImageForTrack">
-            <sql>UPDATE track SET image_hash = :hash WHERE id = :track_id</sql>
+        <sql>UPDATE track SET image_hash = :hash WHERE id = :track_id</sql>
         <sql>
             UPDATE track SET last_image_update = :updateTime WHERE id = :track_id
         </sql>
@@ -661,6 +661,10 @@
     </statement>
 
     <statement name="refreshSmartPlaylist">
+        <!-- lock playlist table first -->
+        <sql>
+            SELECT id FROM playlist FOR UPDATE
+        </sql>
         <sql>
             DELETE FROM
                 link_track_playlist

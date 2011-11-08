@@ -40,7 +40,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
                     getRequest().setAttribute("avgBitRate", info.getAvgBitrate());
                     getRequest().setAttribute("avgSampleRate", info.getAvgSampleRate());
                 } catch (IOException e) {
-                    LOGGER.error("Could not get MP3 info from track.", e);
+                    LOGGER.info("Could not get MP3 info from track.", e);
                 }
             }
         }
