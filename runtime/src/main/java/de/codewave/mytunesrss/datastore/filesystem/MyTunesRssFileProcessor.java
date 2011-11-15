@@ -4,10 +4,7 @@ import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v1Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4AtomList;
-import de.codewave.camel.mp4.Mp4Utils;
-import de.codewave.camel.mp4.StikAtom;
+import de.codewave.camel.mp4.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.meta.Image;
@@ -67,7 +64,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         Series("moov.udta.meta.ilst.tvsh.data"),
         Season("moov.udta.meta.ilst.tvsn.data"),
         Episode("moov.udta.meta.ilst.tves.data"),
-        Compilation("moov.udta.meta.ilst.cpil.data"),
+        Compilation("moov.udta.meta.ilst.cpil"),
         Stik("moov.udta.meta.ilst.stik");
 
         private String myPath;
@@ -479,7 +476,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setAlbumArtist(MyTunesRssUtils.normalize(albumArtist));
                     atom = atoms.getFirst(Atom.Compilation.getPath());
                     if (atom != null) {
-                        statement.setCompilation(atom.getData()[11] > 0 || !StringUtils.equalsIgnoreCase(artist, albumArtist));
+                        statement.setCompilation(((CompilationAtom)atom).isCompilation() || !StringUtils.equalsIgnoreCase(artist, albumArtist));
                     }
                     atom = atoms.getFirst(Atom.Composer.getPath());
                     String composer = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
