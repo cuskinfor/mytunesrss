@@ -9,6 +9,12 @@
 
         <release version="4.1.7" date="___D___">
             <action dev="mdescher" type="update">
+                Updated to codewave-maven2-base-3.16.0 (autoVersionSubmodules=true for release plugin).
+            </action>
+            <action dev="mdescher" type="update">
+                Updated to camel-1.6.0 (MP4 parsing fix).
+            </action>
+            <action dev="mdescher" type="update">
                 MYTUNESRSS-310 - Links to external sites don't work
             </action>
             <action dev="mdescher" type="update">
