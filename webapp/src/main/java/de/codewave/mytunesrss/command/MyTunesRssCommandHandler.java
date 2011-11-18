@@ -24,13 +24,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.*;
@@ -65,7 +63,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         LOG.debug("Checking authorization with local users.");
         MyTunesRssConfig config = getMyTunesRssConfig();
         User user = config.getUser(userName);
-        return user != null && !user.isGroup() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
+        return user != null && !user.isGroup() && user.getPasswordHash() != null && user.getPasswordHash().length > 0 && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
+    }
+
+    protected boolean isActiveUser(String userName) {
+        LOG.debug("Checking users state.");
+        MyTunesRssConfig config = getMyTunesRssConfig();
+        User user = config.getUser(userName);
+        return user != null && !user.isGroup() && user.isActive();
     }
 
     protected void authorize(WebAppScope scope, String userName) {
