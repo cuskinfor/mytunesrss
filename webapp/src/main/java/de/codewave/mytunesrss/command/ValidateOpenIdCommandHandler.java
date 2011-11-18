@@ -16,7 +16,7 @@ import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.Identifier;
 import org.openid4java.message.ParameterList;
 
-public class ValidateOpenIdCommandHandler extends DoLoginCommandHandler {
+public class ValidateOpenIdCommandHandler extends DoLoginWithOpenIdCommandHandler {
     @Override
     public void execute() throws Exception {
         ConsumerManager manager = (ConsumerManager) getSession().getAttribute("openIdConsumerManager");
@@ -30,12 +30,12 @@ public class ValidateOpenIdCommandHandler extends DoLoginCommandHandler {
         VerificationResult verification = manager.verify(receivingURL.toString(), openidResp, discovered);
         Identifier verified = verification.getVerifiedId();
         if (verified != null && isActiveUser(verified.getIdentifier())) {
-            doLoginUser(verified.getIdentifier(), null, (String) getSession().getAttribute("login.lc"), (Boolean) getSession().getAttribute("login.rememberLogin"));
+            doLoginUser(verified.getIdentifier(), getRequest().getParameter("lc"), getBooleanRequestParameter("rememberLogin", false));
         } else if (verified != null) {
             handleLoginError(verified.getIdentifier());
         } else {
             addError(new BundleError("error.loginDenied"));
-            MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure((String) getSession().getAttribute("login.openId"), ServletUtils.getBestRemoteAddress(getRequest()));
+            MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(getRequest().getParameter("openId"), ServletUtils.getBestRemoteAddress(getRequest()));
             redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
         }
         removeLoginSessionAttributes();

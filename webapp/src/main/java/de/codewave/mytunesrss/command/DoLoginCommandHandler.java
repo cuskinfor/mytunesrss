@@ -30,24 +30,20 @@ import java.util.List;
  */
 public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DoLoginCommandHandler.class);
-
     public void execute() throws Exception {
-        if (!isOpenIdLogin()) {
-            String userName = getRequest().getParameter("username");
-            String password = getRequest().getParameter("password");
-            if (!MyTunesRss.CONFIG.isDisableWebLogin() && password != null && !isSessionAuthorized()) {
-                byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
-                if (isAuthorized(userName, password, passwordHash)) {
-                    doLoginUser(userName, passwordHash, getRequest().getParameter("lc"), getBooleanRequestParameter("rememberLogin", false));
-                } else {
-                    handleLoginError(userName);
-                }
-            } else if (!isSessionAuthorized()) {
-                redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
+        String userName = getRequest().getParameter("username");
+        String password = getRequest().getParameter("password");
+        if (!MyTunesRss.CONFIG.isDisableWebLogin() && password != null && !isSessionAuthorized()) {
+            byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
+            if (isAuthorized(userName, password, passwordHash)) {
+                doLoginUser(userName, getRequest().getParameter("lc"), getBooleanRequestParameter("rememberLogin", false));
             } else {
-                redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
+                handleLoginError(userName);
             }
+        } else if (!isSessionAuthorized()) {
+            redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
+        } else {
+            redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
         }
     }
 
@@ -62,11 +58,11 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
     }
 
-    protected void doLoginUser(String userName, byte[] passwordHash, String lc, Boolean rememberLogin) throws IOException {
+    protected void doLoginUser(String userName, String lc, Boolean rememberLogin) throws IOException {
         authorize(WebAppScope.Session, userName);
         WebConfig webConfig = getWebConfig();
-        if (rememberLogin && passwordHash != null) {
-            MyTunesRssWebUtils.rememberLogin(getRequest(), getResponse(), userName, passwordHash);
+        if (rememberLogin) {
+            MyTunesRssWebUtils.rememberLogin(getRequest(), getResponse(), userName, getAuthUser().getPasswordHash());
         } else {
             MyTunesRssWebUtils.forgetLogin(getRequest(), getResponse());
         }
@@ -78,42 +74,5 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         } else {
             redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
         }
-    }
-
-    private boolean isOpenIdLogin() {
-        if (!MyTunesRss.CONFIG.isDisableWebLogin()) {
-            String openId = getRequest().getParameter("username");
-            try {
-                ConsumerManager manager = new ConsumerManager();
-                List discoveries = manager.discover(openId);
-                DiscoveryInformation discovered = manager.associate(discoveries);
-                getSession().setAttribute("openIdConsumerManager", manager);
-                getSession().setAttribute("openidDiscovered", discovered);
-                getSession().setAttribute("login.openId", openId);
-                getSession().setAttribute("login.lc", getRequest().getParameter("lc"));
-                getSession().setAttribute("login.rememberLogin", getBooleanRequestParameter("rememberLogin", false));
-                AuthRequest authReq = manager.authenticate(discovered, MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ValidateOpenId));
-                redirect(authReq.getDestinationUrl(true));
-                return true;
-            } catch (DiscoveryException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
-            } catch (MessageException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
-            } catch (ConsumerException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
-            } catch (IOException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
-            }
-        }
-        removeLoginSessionAttributes();
-        return false;
-    }
-
-    protected void removeLoginSessionAttributes() {
-        getSession().removeAttribute("openIdConsumerManager");
-        getSession().removeAttribute("openidDiscovered");
-        getSession().removeAttribute("login.openId");
-        getSession().removeAttribute("login.lc");
-        getSession().removeAttribute("login.rememberLogin");
     }
 }

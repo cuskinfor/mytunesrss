@@ -52,7 +52,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     private String myName;
-    private byte[] myPasswordHash;
+    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(UUID.randomUUID().toString()));
+    private boolean myEmptyPassword = true;
     private boolean myDownload = true;
     private boolean myRss = true;
     private boolean myPlaylist = true;
@@ -127,6 +128,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setPasswordHash(byte[] passwordHash) {
         myPasswordHash = passwordHash;
+    }
+
+    public boolean isEmptyPassword() {
+        return myEmptyPassword;
+    }
+
+    public void setEmptyPassword(boolean emptyPassword) {
+        myEmptyPassword = emptyPassword;
     }
 
     public boolean isDownload() {
@@ -580,6 +589,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void loadFromPreferences(JXPathContext settings) {
         setPasswordHash(JXPathUtils.getByteArray(settings, "password", myPasswordHash));
+        setEmptyPassword(JXPathUtils.getBooleanValue(settings, "emptyPassword", myEmptyPassword));
         setRss(JXPathUtils.getBooleanValue(settings, "featureRss", myRss));
         setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", myPlaylist));
         setDownload(JXPathUtils.getBooleanValue(settings, "featureDownload", myDownload));
@@ -665,6 +675,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         if (getPasswordHash() != null && getPasswordHash().length > 0) {
             users.appendChild(DOMUtils.createByteArrayElement(settings, "password", getPasswordHash()));
         }
+        users.appendChild(DOMUtils.createBooleanElement(settings, "emptyPassword", isEmptyPassword()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureRss", isRss()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlaylist", isPlaylist()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownload", isDownload()));
