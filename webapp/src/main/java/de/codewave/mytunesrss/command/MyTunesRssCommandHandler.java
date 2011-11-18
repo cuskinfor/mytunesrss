@@ -63,7 +63,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         LOG.debug("Checking authorization with local users.");
         MyTunesRssConfig config = getMyTunesRssConfig();
         User user = config.getUser(userName);
-        return user != null && !user.isGroup() && user.getPasswordHash() != null && user.getPasswordHash().length > 0 && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
+        return user != null && !user.isGroup() && !user.isEmptyPassword() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
     }
 
     protected boolean isActiveUser(String userName) {

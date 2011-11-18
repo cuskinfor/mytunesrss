@@ -26,7 +26,7 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
         if (StringUtils.isNotEmpty(userName)) {
             User user = getMyTunesRssConfig().getUser(userName);
             if (user != null) {
-                if (user.isChangePassword()) {
+                if (user.isChangePassword() && !user.isEmptyPassword()) {
                     if (StringUtils.isNotEmpty(user.getEmail())) {
                         StringBuilder password = new StringBuilder();
                         for (int i = 0; i < 10; i++) {

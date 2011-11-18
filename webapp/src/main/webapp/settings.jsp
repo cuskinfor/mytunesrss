@@ -82,7 +82,7 @@
                             <th colspan="2"><fmt:message key="settings" /></th>
                         </tr>
                         <mt:initFlipFlop value1="" value2="class=\"odd\""/>
-                        <c:if test="${authUser.changePassword}">
+                        <c:if test="${authUser.changePassword && !authUser.emptyPassword}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.password" /></td>
                                 <td>
