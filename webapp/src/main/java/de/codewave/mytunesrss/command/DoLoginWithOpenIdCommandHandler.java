@@ -21,6 +21,10 @@ import org.openid4java.discovery.DiscoveryException;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.MessageException;
+import org.openid4java.message.Parameter;
+import org.openid4java.message.ParameterList;
+import org.openid4java.message.ax.FetchRequest;
+import org.openid4java.message.sreg.SRegRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +52,9 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
                 callBuilder.addParam("openId", StringUtils.trimToNull(getRequest().getParameter("openId")));
                 callBuilder.addParam("rememberLogin", StringUtils.trimToNull(getRequest().getParameter("rememberLogin")));
                 AuthRequest authReq = manager.authenticate(discovered, callBuilder.getCall(getRequest()));
+                FetchRequest fetchRequest = FetchRequest.createFetchRequest();
+                fetchRequest.addAttribute("email", "http://schema.openid.net/contact/email", true, 1);
+                authReq.addExtension(fetchRequest);
                 redirect(authReq.getDestinationUrl(true));
                 return; // done
             } catch (DiscoveryException e) {

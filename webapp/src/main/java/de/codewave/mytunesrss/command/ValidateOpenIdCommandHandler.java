@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.servlet.ServletUtils;
@@ -14,7 +15,12 @@ import org.openid4java.consumer.ConsumerManager;
 import org.openid4java.consumer.VerificationResult;
 import org.openid4java.discovery.DiscoveryInformation;
 import org.openid4java.discovery.Identifier;
+import org.openid4java.message.AuthSuccess;
 import org.openid4java.message.ParameterList;
+import org.openid4java.message.ax.AxMessage;
+import org.openid4java.message.ax.FetchResponse;
+
+import java.util.List;
 
 public class ValidateOpenIdCommandHandler extends DoLoginWithOpenIdCommandHandler {
     @Override
@@ -29,15 +35,23 @@ public class ValidateOpenIdCommandHandler extends DoLoginWithOpenIdCommandHandle
         }
         VerificationResult verification = manager.verify(receivingURL.toString(), openidResp, discovered);
         Identifier verified = verification.getVerifiedId();
-        if (verified != null && isActiveUser(verified.getIdentifier())) {
-            doLoginUser(verified.getIdentifier(), getRequest().getParameter("lc"), getBooleanRequestParameter("rememberLogin", false));
-        } else if (verified != null) {
-            handleLoginError(verified.getIdentifier());
-        } else {
-            addError(new BundleError("error.loginDenied"));
-            MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(getRequest().getParameter("openId"), ServletUtils.getBestRemoteAddress(getRequest()));
-            redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
+        try {
+            if (verified != null) {
+                AuthSuccess authSuccess = (AuthSuccess) verification.getAuthResponse();
+                if (authSuccess.hasExtension(AxMessage.OPENID_NS_AX)) {
+                    FetchResponse fetchResp = (FetchResponse) authSuccess.getExtension(AxMessage.OPENID_NS_AX);
+                    String email = fetchResp.getAttributeValue("email");
+                    for (User user : MyTunesRss.CONFIG.getUsers()) {
+                        if (email.equalsIgnoreCase(user.getName()) && user.isActive()) {
+                            doLoginUser(user.getName(), getRequest().getParameter("lc"), getBooleanRequestParameter("rememberLogin", false));
+                            return; // done
+                        }
+                    }
+                }
+            }
+            handleLoginError(getRequest().getParameter("openId"));
+        } finally {
+            removeLoginSessionAttributes();
         }
-        removeLoginSessionAttributes();
     }
 }
