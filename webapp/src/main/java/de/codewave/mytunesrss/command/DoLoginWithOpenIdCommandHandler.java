@@ -25,6 +25,8 @@ import org.openid4java.message.Parameter;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.FetchRequest;
 import org.openid4java.message.sreg.SRegRequest;
+import org.openid4java.util.HttpClientFactory;
+import org.openid4java.util.ProxyProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,15 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
         if (!MyTunesRss.CONFIG.isDisableWebLogin() && !isSessionAuthorized()) {
             String openId = getRequest().getParameter("openId");
             try {
+                // TODO this should be set each time the proxy config changes but the http4 client is in the web app only at the moment
+                if (MyTunesRss.CONFIG.isProxyServer()) {
+                    ProxyProperties proxyProps = new ProxyProperties();
+                    proxyProps.setProxyHostName(MyTunesRss.CONFIG.getProxyHost());
+                    proxyProps.setProxyPort(MyTunesRss.CONFIG.getProxyPort());
+                    HttpClientFactory.setProxyProperties(proxyProps);
+                } else {
+                    HttpClientFactory.setProxyProperties(null);
+                }
                 ConsumerManager manager = new ConsumerManager();
                 List discoveries = manager.discover(openId);
                 DiscoveryInformation discovered = manager.associate(discoveries);

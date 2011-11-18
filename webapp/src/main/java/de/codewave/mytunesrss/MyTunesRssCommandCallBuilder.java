@@ -52,7 +52,9 @@ public class MyTunesRssCommandCallBuilder {
         if (StringUtils.isBlank(auth)) {
             auth = (String) request.getSession().getAttribute("auth");
         }
-        builder.append("/").append(auth);
+        if (StringUtils.isNotBlank(auth)) {
+            builder.append("/").append(auth);
+        }
         StringBuilder pathInfo = new StringBuilder();
         if (!myParams.isEmpty()) {
             for (Map.Entry<String, String> param : myParams.entrySet()) {
