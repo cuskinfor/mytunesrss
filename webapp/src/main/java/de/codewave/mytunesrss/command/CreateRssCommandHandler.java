@@ -32,7 +32,7 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             if (channel != null) {
                 channel = StringUtils.trimToNull(StringUtils.substringBeforeLast(channel, "."));
             }
-            getRequest().setAttribute("channel", channel != null ? MiscUtils.decodeUrl(channel.replace('_', ' ')) : "MyTunesRSS");
+            getRequest().setAttribute("channel", channel != null ? MiscUtils.getUtf8UrlDecoded(channel.replace('_', ' ')) : "MyTunesRSS");
             getRequest().setAttribute("feedUrl", feedUrl);
             Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {

@@ -35,7 +35,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         String password = getRequest().getParameter("password");
         if (!MyTunesRss.CONFIG.isDisableWebLogin() && password != null && !isSessionAuthorized()) {
             byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
-            if (isAuthorized(userName, password, passwordHash)) {
+            if (isAuthorized(userName, password, passwordHash) && !MyTunesRss.CONFIG.getUser(userName).isEmptyPassword()) {
                 doLoginUser(userName, getRequest().getParameter("lc"), getBooleanRequestParameter("rememberLogin", false));
             } else {
                 handleLoginError(userName);

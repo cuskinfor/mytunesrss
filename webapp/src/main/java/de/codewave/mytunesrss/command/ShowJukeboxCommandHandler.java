@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.concurrent.TimeUnit;
@@ -17,7 +18,7 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         if (flashPlayerConfig == null) {
             flashPlayerConfig = FlashPlayerConfig.getDefault(playerId);
         }
-        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MyTunesRssUtils.getUtf8UrlEncoded(getPlaylistUrl(flashPlayerConfig.getPlaylistFileType(), flashPlayerConfig.getTimeUnit())));
+        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MiscUtils.getUtf8UrlEncoded(getPlaylistUrl(flashPlayerConfig.getPlaylistFileType(), flashPlayerConfig.getTimeUnit())));
     }
 
     private String getPlaylistUrl(PlaylistFileType playlistFileType, TimeUnit timeUnit) {

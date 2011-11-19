@@ -8,6 +8,7 @@ package de.codewave.vaadin;
 import com.vaadin.data.Property;
 import com.vaadin.ui.TextField;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -97,7 +98,7 @@ public class SmartTextField extends TextField {
         } else if (o instanceof byte[]) {
             return (byte[])o;
         } else {
-            return digest.digest(MyTunesRssUtils.getUtf8Bytes(StringUtils.trimToEmpty(o.toString())));
+            return digest.digest(MiscUtils.getUtf8Bytes(StringUtils.trimToEmpty(o.toString())));
         }
     }
 

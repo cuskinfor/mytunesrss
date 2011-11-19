@@ -61,38 +61,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class MyTunesRssUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
 
-    public static byte[] getUtf8Bytes(String s) {
-        try {
-            return s.getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not found.", e);
-        }
-    }
-
-    public static String getUtf8String(byte[] bytes) {
-        try {
-            return new String(bytes, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not found.", e);
-        }
-    }
-
-    public static String getUtf8UrlEncoded(String s) {
-        try {
-            return URLEncoder.encode(s, "UTF-8").replace("+", "%20");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not found.", e);
-        }
-    }
-
-    public static String getUtf8UrlDecoded(String s) {
-        try {
-            return URLDecoder.decode(s, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new RuntimeException("UTF-8 not found.", e);
-        }
-    }
-
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {
             return true;

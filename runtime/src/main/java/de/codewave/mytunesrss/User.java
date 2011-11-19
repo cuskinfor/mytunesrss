@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.lastfm.LastFmSession;
 import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.lastfm.LastFmUtils;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.RangeHeader;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
@@ -52,7 +53,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     private String myName;
-    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(UUID.randomUUID().toString()));
+    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString()));
     private boolean myEmptyPassword = true;
     private boolean myDownload = true;
     private boolean myRss = true;

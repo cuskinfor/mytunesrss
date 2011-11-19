@@ -38,7 +38,7 @@ public class MyTunesFunctions {
 
     public static String webSafeFileName(String name) {
         name = getLegalFileName(name);
-        return MiscUtils.encodeUrl(name);
+        return MiscUtils.getUtf8UrlEncoded(name);
     }
 
     public static String getLegalFileName(String name) {
@@ -252,7 +252,7 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
-        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
+        pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         User user = MyTunesRssWebUtils.getAuthUser(request);
         String tcParam = tcParamValue(request, user);
         if (StringUtils.isNotBlank(tcParam)) {
@@ -279,7 +279,7 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("photo=");
-        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(photo.getId()));
+        pathInfo.append(MiscUtils.getUtf8UrlEncoded(photo.getId()));
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
@@ -305,7 +305,7 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
-        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
+        pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         User user = MyTunesRssWebUtils.getAuthUser(request);
         String tcParam = tcParamValue(request, user);
         if (StringUtils.isNotBlank(tcParam)) {
@@ -333,7 +333,7 @@ public class MyTunesFunctions {
         }
         builder.append("/").append(command.getName()).append("/").append(auth);
         StringBuilder pathInfo = new StringBuilder("track=");
-        pathInfo.append(MyTunesRssUtils.getUtf8UrlEncoded(track.getId()));
+        pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }

@@ -55,8 +55,8 @@ public class PathInfoDecryptionFilter implements Filter {
                     cipher.init(Cipher.DECRYPT_MODE, key);
                     for (int i = 0; i < splitted.length; i++) {
                         if (splitted[i].startsWith("{") && splitted[i].endsWith("}")) {
-                            splitted[i] = MyTunesRssUtils.getUtf8UrlDecoded(new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[i].substring(1, splitted[i].length() - 1))),
-                                    "UTF-8"));
+                            splitted[i] = new String(cipher.doFinal(MyTunesRssBase64Utils.decode(splitted[i].substring(1, splitted[i].length() - 1))),
+                                    "UTF-8");
                         }
                     }
                     pathInfoToReturn = "/" + StringUtils.join(splitted, "/");

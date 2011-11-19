@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SaveTempPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.SmartStatement;
@@ -127,7 +128,7 @@ public class TrackUtils {
 
     private static String createTemporarySectionPlaylist(DataStoreSession transaction, String sectionIds) {
         try {
-            final String sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(sectionIds)));
+            final String sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(sectionIds)));
             LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
             transaction.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {

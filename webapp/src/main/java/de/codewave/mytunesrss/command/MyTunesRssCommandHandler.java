@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.CommandHandler;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreSession;
@@ -52,18 +53,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     protected boolean isAuthorized(String userName, byte[] passwordHash) {
-        if (StringUtils.isNotBlank(userName) && passwordHash != null && passwordHash.length > 0) {
-            return isAuthorizedLocalUsers(userName, passwordHash);
-        } else {
-            return false;
-        }
+        return StringUtils.isNotBlank(userName) && passwordHash != null && passwordHash.length > 0 && isAuthorizedLocalUsers(userName, passwordHash);
     }
 
     private boolean isAuthorizedLocalUsers(String userName, byte[] passwordHash) {
         LOG.debug("Checking authorization with local users.");
         MyTunesRssConfig config = getMyTunesRssConfig();
         User user = config.getUser(userName);
-        return user != null && !user.isGroup() && !user.isEmptyPassword() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
+        return user != null && !user.isGroup() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
     }
 
     protected boolean isActiveUser(String userName) {
@@ -94,7 +91,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected String createAuthToken(User user) {
         return MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                "auth=" + MyTunesRssUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
+                "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
     }
 

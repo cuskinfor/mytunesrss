@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
@@ -752,7 +753,7 @@ public class MyTunesRssConfig {
     }
 
     public byte[] getAdminPasswordHash() {
-        return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(""));
+        return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(""));
     }
 
     public void setAdminPasswordHash(byte[] adminPasswordHash) {

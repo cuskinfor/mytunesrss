@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -58,11 +59,11 @@ public class MyTunesRssCommandCallBuilder {
         StringBuilder pathInfo = new StringBuilder();
         if (!myParams.isEmpty()) {
             for (Map.Entry<String, String> param : myParams.entrySet()) {
-                pathInfo.append("/").append(param.getKey()).append("=").append(MyTunesRssUtils.getUtf8UrlEncoded(param.getValue()));
+                pathInfo.append("/").append(param.getKey()).append("=").append(MiscUtils.getUtf8UrlEncoded(param.getValue()));
             }
         }
         for (String segment : myPathInfoSegments) {
-            pathInfo.append("/").append(MyTunesRssUtils.getUtf8UrlEncoded(segment));
+            pathInfo.append("/").append(segment);
         }
         if (pathInfo.length() > 1) {
             builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.substring(1)));

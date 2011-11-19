@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.remote.service.SessionService;
 import de.codewave.mytunesrss.servlet.WebConfig;
+import de.codewave.utils.MiscUtils;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -68,7 +69,7 @@ public class MyTunesRssRemoteEnv {
     private static String getAuth() {
         User user = getSession().getUser();
         if (user != null) {
-            return MyTunesRssWebUtils.encryptPathInfo(getRequest(), "auth=" + MyTunesRssUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(
+            return MyTunesRssWebUtils.encryptPathInfo(getRequest(), "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " + MyTunesRssBase64Utils.encode(
                     user.getPasswordHash())));
         }
         return null;
@@ -99,7 +100,7 @@ public class MyTunesRssRemoteEnv {
     }
 
     public static String createSessionId() {
-        return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(UUID.randomUUID().toString() + System.currentTimeMillis()))));
+        return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString() + System.currentTimeMillis()))));
     }
 
     public static void initRequestWebConfig() {

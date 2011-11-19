@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TranscoderConfig;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -379,7 +380,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setMaximumZipEntries(myMaxFilesPerArchive.getIntegerValue(-1));
         myUser.setName((String) myUsername.getValue());
         if (StringUtils.isBlank(myPassword.getStringValue("")) && !myUser.isEmptyPassword()) {
-            myUser.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(MyTunesRssUtils.getUtf8Bytes(UUID.randomUUID().toString())));
+            myUser.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString())));
             myUser.setEmptyPassword(true);
         } else if (StringUtils.isNotBlank(myPassword.getStringValue(""))) {
             myUser.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));

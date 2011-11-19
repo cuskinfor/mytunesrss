@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.utils.MiscUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
@@ -27,7 +28,7 @@ public class MyTunesRssComUpdateRunnable implements Runnable {
     public void run() {
         if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
             String username = MyTunesRss.CONFIG.getMyTunesRssComUser();
-            String base64Hash = MyTunesRssUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()));
+            String base64Hash = MiscUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()));
             PostMethod postMethod = new PostMethod(System.getProperty("MyTunesRSS.mytunesrsscomUrl", MYTUNESRSSCOM_URL));
             postMethod.addParameter("user", username);
             postMethod.addParameter("pass", base64Hash);
