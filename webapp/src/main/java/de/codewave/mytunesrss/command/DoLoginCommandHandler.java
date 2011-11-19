@@ -47,7 +47,7 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    protected void handleLoginError(String userName) throws IOException {
+    private void handleLoginError(String userName) throws IOException {
         if (MyTunesRss.CONFIG.getUser(userName) != null && !MyTunesRss.CONFIG.getUser(userName).isActive()) {
             addError(new BundleError("error.loginExpired"));
             MyTunesRss.ADMIN_NOTIFY.notifyLoginExpired(userName, ServletUtils.getBestRemoteAddress(getRequest()));

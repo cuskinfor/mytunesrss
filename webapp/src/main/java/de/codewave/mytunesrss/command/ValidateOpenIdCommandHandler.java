@@ -20,6 +20,7 @@ import org.openid4java.message.ParameterList;
 import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 public class ValidateOpenIdCommandHandler extends DoLoginWithOpenIdCommandHandler {
@@ -47,11 +48,24 @@ public class ValidateOpenIdCommandHandler extends DoLoginWithOpenIdCommandHandle
                             return; // done
                         }
                     }
+                    handleLoginError(email);
+                    return; // done
                 }
             }
             handleLoginError(getRequest().getParameter("openId"));
         } finally {
             removeLoginSessionAttributes();
         }
+    }
+
+    private void handleLoginError(String userName) throws IOException {
+        if (MyTunesRss.CONFIG.getUser(userName) != null && !MyTunesRss.CONFIG.getUser(userName).isActive()) {
+            addError(new BundleError("error.loginExpired"));
+            MyTunesRss.ADMIN_NOTIFY.notifyLoginExpired(userName, ServletUtils.getBestRemoteAddress(getRequest()));
+        } else {
+            addError(new BundleError("error.loginDeniedOpenId"));
+            MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(userName, ServletUtils.getBestRemoteAddress(getRequest()));
+        }
+        redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
     }
 }

@@ -62,21 +62,23 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
                 callBuilder.addParam("lc", StringUtils.trimToNull(getRequest().getParameter("lc")));
                 callBuilder.addParam("openId", StringUtils.trimToNull(getRequest().getParameter("openId")));
                 callBuilder.addParam("rememberLogin", StringUtils.trimToNull(getRequest().getParameter("rememberLogin")));
-                AuthRequest authReq = manager.authenticate(discovered, callBuilder.getCall(getRequest()));
+                AuthRequest authReq = manager.authenticate(discovered, callBuilder.getCall(getRequest()), MyTunesRssWebUtils.getServletUrl(getRequest()));
                 FetchRequest fetchRequest = FetchRequest.createFetchRequest();
                 fetchRequest.addAttribute("email", "http://schema.openid.net/contact/email", true, 1);
                 authReq.addExtension(fetchRequest);
                 redirect(authReq.getDestinationUrl(true));
                 return; // done
             } catch (DiscoveryException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
+                LOGGER.debug("No open id login possible with username \"" + openId, e);
             } catch (MessageException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
+                LOGGER.debug("No open id login possible with username \"" + openId, e);
             } catch (ConsumerException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
+                LOGGER.debug("No open id login possible with username \"" + openId, e);
             } catch (IOException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId);
+                LOGGER.debug("No open id login possible with username \"" + openId, e);
             }
+            addError(new BundleError("error.openIdProviderFailure"));
+            MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(StringUtils.trimToEmpty(getRequest().getParameter("openId")), ServletUtils.getBestRemoteAddress(getRequest()));
             removeLoginSessionAttributes();
         }
         redirect(MyTunesRssWebUtils.getResourceCommandCall(getRequest(), MyTunesRssResource.Login));
