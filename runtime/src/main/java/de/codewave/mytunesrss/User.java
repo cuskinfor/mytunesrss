@@ -588,8 +588,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void loadFromPreferences(JXPathContext settings) {
-        setPasswordHash(JXPathUtils.getByteArray(settings, "password", myPasswordHash));
-        setEmptyPassword(JXPathUtils.getBooleanValue(settings, "emptyPassword", myEmptyPassword));
+        setPasswordHash(JXPathUtils.getByteArray(settings, "password", null));
+        setEmptyPassword(JXPathUtils.getBooleanValue(settings, "emptyPassword", false));
         setRss(JXPathUtils.getBooleanValue(settings, "featureRss", myRss));
         setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", myPlaylist));
         setDownload(JXPathUtils.getBooleanValue(settings, "featureDownload", myDownload));
