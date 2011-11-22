@@ -9,6 +9,9 @@
 
         <release version="4.1.7" date="___D___">
             <action dev="mdescher" type="update">
+                Fixed sql syntax problem for mysql databases.
+            </action>
+            <action dev="mdescher" type="update">
                 Updated to codewave-maven2-base-3.16.0 (autoVersionSubmodules=true for release plugin).
             </action>
             <action dev="mdescher" type="update">
@@ -18,7 +21,7 @@
                 MYTUNESRSS-310 - Links to external sites don't work
             </action>
             <action dev="mdescher" type="update">
-                Fixed parsing of COMPILATION atom if MP4 files.
+                Fixed parsing of COMPILATION atom in MP4 files.
             </action>
         </release>
 

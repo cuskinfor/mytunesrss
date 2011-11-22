@@ -523,7 +523,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
+                    LOGGER.error("Could not parse MP4 ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
                 }
                 statement.clear();
                 statement.setId(fileId);
