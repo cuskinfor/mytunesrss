@@ -483,8 +483,8 @@
     </statement>
 
     <statement name="removeObsoletePhotoAlbumsAndPlaylists">
-        <sql>DELETE FROM photoalbum pa WHERE NOT EXISTS (SELECT album_id FROM link_photo_album WHERE album_id = pa.id)</sql>
-        <sql>DELETE FROM playlist pl WHERE pl.type != 'MyTunesSmart' AND NOT EXISTS (SELECT playlist_id FROM link_track_playlist WHERE playlist_id = pl.id)</sql>
+        <sql>DELETE FROM photoalbum WHERE NOT EXISTS (SELECT * FROM link_photo_album WHERE link_photo_album.album_id = photoalbum.id)</sql>
+        <sql>DELETE FROM playlist WHERE type != 'MyTunesSmart' AND NOT EXISTS (SELECT * FROM link_track_playlist WHERE link_track_playlist.playlist_id = playlist.id)</sql>
     </statement>
 
     <statement name="updateImageForPhoto">

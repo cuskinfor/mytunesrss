@@ -9,6 +9,9 @@
 
         <release version="4.2.0" date="___D___">
             <action dev="mdescher" type="update">
+                Fixed sql syntax problem for mysql databases.
+            </action>
+            <action dev="mdescher" type="update">
                 Login with no password not allowed anymore.
             </action>
             <action dev="mdescher" type="add">
