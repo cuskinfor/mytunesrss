@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.1.7" date="___D___">
+            <action dev="mdescher" type="fix">
+                Update to camel-1.7 for better year (@day atom) parsing.
+            </action>
             <action dev="mdescher" type="update">
                 Fixed sql syntax problem for mysql databases.
             </action>
