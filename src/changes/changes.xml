@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.1.7" date="___D___">
+        <release version="4.1.7" date="2011-11-23">
             <action dev="mdescher" type="fix">
                 Update to camel-1.7 for better year (@day atom) parsing.
             </action>
