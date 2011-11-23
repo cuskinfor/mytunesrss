@@ -4,7 +4,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>admin</artifactId>
     <packaging>war</packaging>
-    <version>4.1.7-SNAPSHOT</version>
+    <version>4.1.7</version>
     <name>Codewave MyTunesRSS Admin Application</name>
     <distributionManagement>
         <site>
@@ -61,7 +61,7 @@
         <dependency>
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
-            <version>4.1.7-SNAPSHOT</version>
+            <version>4.1.7</version>
             <scope>provided</scope>
             <exclusions>
                 <exclusion>
@@ -161,4 +161,8 @@
             </build>
         </profile>
     </profiles>
+
+  <scm>
+    <developerConnection>scm:svn:svn://svn.codewave.biz/codewave-maven2-base/tags/mytunesrss-4.1.7/admin</developerConnection>
+  </scm>
 </project>
