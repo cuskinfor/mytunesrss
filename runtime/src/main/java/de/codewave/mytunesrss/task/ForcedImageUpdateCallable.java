@@ -26,7 +26,7 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
     }
 
     @Override
-    public Boolean call() throws Exception {
+    public Boolean call() throws InterruptedException {
         try {
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateInvalidatingImages")));
             if (LOGGER.isInfoEnabled()) {
@@ -36,10 +36,25 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Starting forced image update.");
             }
-            runImageUpdate(System.currentTimeMillis());
-            updateHelpTables(myQueue, 0); // update image references for albums
-            deleteOrphanedImages();
+            if (!Thread.currentThread().isInterrupted()) {
+                runImageUpdate(System.currentTimeMillis());
+            }
+            if (!Thread.currentThread().isInterrupted()) {
+                updateHelpTables(myQueue, 0); // update image references for albums
+            }
+            if (!Thread.currentThread().isInterrupted()) {
+                deleteOrphanedImages();
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (Exception e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Exception during forced image update.", e);
+            }
         } finally {
+            if (Thread.interrupted()) { // clear interrupt status here to prevent interrupted exception in offer call
+                LOGGER.info("Database update cancelled.");
+            }
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
             myQueue.offer(new TerminateEvent());
         }

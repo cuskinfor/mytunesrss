@@ -109,14 +109,15 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (!Thread.currentThread().isInterrupted()) {
                 myQueue.offer(new DataStoreStatementEvent(new RefreshSmartPlaylistsStatement()));
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Exception during import.", e);
             }
         } finally {
-            if (Thread.currentThread().isInterrupted()) {
-                LOGGER.info("Database update cancelled, clearing queue before adding the final TerminateEvent.");
-                myQueue.clear();
+            if (Thread.interrupted()) { // clear interrupt status here to prevent interrupted exception in offer call
+                LOGGER.info("Database update cancelled.");
             }
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
             myQueue.offer(new TerminateEvent());
@@ -214,10 +215,10 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         } catch (IOException e) {
             LOGGER.error("Could not get image from file.", e);
         } finally {
+            tx.rollback();
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Finished processing track images.");
             }
-            tx.rollback();
         }
     }
 

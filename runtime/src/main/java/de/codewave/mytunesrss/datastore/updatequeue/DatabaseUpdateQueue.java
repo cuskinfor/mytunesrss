@@ -5,16 +5,14 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.Queue;
+import java.util.concurrent.*;
 
 public class DatabaseUpdateQueue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseUpdateQueue.class);
 
-    private BlockingQueue<DatabaseUpdateEvent> myQueue = new ArrayBlockingQueue<DatabaseUpdateEvent>(3);
+    private BlockingQueue<DatabaseUpdateEvent> myQueue = new SynchronousQueue<DatabaseUpdateEvent>();
 
     public DatabaseUpdateQueue(final long maxTxDurationMillis) {
         new Thread(new Runnable() {
@@ -24,11 +22,11 @@ public class DatabaseUpdateQueue {
                 try {
                     DatabaseUpdateEvent event;
                     do {
-                        long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
+                        long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : 1000);
                         LOGGER.debug("Polling queue with a timeout of " + pollTimeoutMillis + " ms.");
                         event = myQueue.poll(pollTimeoutMillis, TimeUnit.MILLISECONDS);
+                        LOGGER.debug("Received " + event);
                         if (event != null) {
-                            LOGGER.debug("Received \"" + event.getClass().getName() + "\" event.");
                             if (tx == null && event.isStartTransaction()) {
                                 LOGGER.debug("Starting new transaction.");
                                 tx = MyTunesRss.STORE.getTransaction();
@@ -56,10 +54,8 @@ public class DatabaseUpdateQueue {
     }
 
     public void offer(DatabaseUpdateEvent event) throws InterruptedException {
-        myQueue.offer(event, 60000, TimeUnit.MILLISECONDS);
-    }
-
-    public void clear() {
-        myQueue.clear();
+        if (!myQueue.offer(event, 60000, TimeUnit.MILLISECONDS)) {
+            LOGGER.error("Lost database update event \"" + event + "\".");
+        }
     }
 }
