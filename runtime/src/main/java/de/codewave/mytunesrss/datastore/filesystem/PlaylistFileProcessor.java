@@ -71,6 +71,8 @@ public class PlaylistFileProcessor implements FileProcessor {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not insert/update playlist from \"" + playlistFile + "\" into database.", e);
                 }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
     }

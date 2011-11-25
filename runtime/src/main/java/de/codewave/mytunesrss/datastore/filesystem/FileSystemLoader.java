@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +33,7 @@ public class FileSystemLoader {
             IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
                 public boolean accept(File file) {
                     if (watchdogThread.isInterrupted()) {
+                        Thread.currentThread().interrupt();
                         throw new ShutdownRequestedException();
                     }
                     return file.isDirectory() || (datasource.isIncluded(file) && FileSupportUtils.isSupported(file.getName()));
@@ -43,6 +43,7 @@ public class FileSystemLoader {
             IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                 public boolean accept(File file) {
                     if (watchdogThread.isInterrupted()) {
+                        Thread.currentThread().interrupt();
                         throw new ShutdownRequestedException();
                     }
                     return file.isDirectory() || (datasource.isIncluded(file) && "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase())));

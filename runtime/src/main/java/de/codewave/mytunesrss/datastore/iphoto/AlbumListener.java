@@ -47,12 +47,17 @@ public class AlbumListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        insertAlbum((Map) value);
+        try {
+            insertAlbum((Map) value);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
         return false;
     }
 
-    private void insertAlbum(Map album) {
+    private void insertAlbum(Map album) throws InterruptedException {
         if (myWatchdogThread.isInterrupted()) {
+            Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
         }
 

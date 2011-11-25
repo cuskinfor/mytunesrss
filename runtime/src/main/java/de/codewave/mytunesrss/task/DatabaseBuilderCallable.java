@@ -29,7 +29,7 @@ import java.util.concurrent.Callable;
  */
 public class DatabaseBuilderCallable implements Callable<Boolean> {
 
-    public static void updateHelpTables(DatabaseUpdateQueue queue, int updatedCount) {
+    public static void updateHelpTables(DatabaseUpdateQueue queue, int updatedCount) throws InterruptedException {
         if (updatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
             queue.offer(new DataStoreStatementEvent(new RecreateHelpTablesStatement()));
         }
@@ -166,7 +166,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
     }
 
-    protected void deleteOrphanedImages() {
+    protected void deleteOrphanedImages() throws InterruptedException {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Deleting orphaned images.");
         }
@@ -177,7 +177,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }));
     }
 
-    protected void runImageUpdate(final long timeUpdateStart) {
+    protected void runImageUpdate(final long timeUpdateStart) throws InterruptedException {
         myState = State.UpdatingTrackImages;
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImages");
         myQueue.offer(new MyTunesRssEventEvent(event));
@@ -228,7 +228,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
      * @throws IOException
      */
     private Map<String, Long> runUpdate(SystemInformation systemInformation)
-            throws SQLException, IOException {
+            throws SQLException, IOException, InterruptedException {
         Map<String, Long> missingItunesFiles = new HashMap<String, Long>();
         long timeLastUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : systemInformation
                 .getLastUpdate();

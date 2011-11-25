@@ -46,7 +46,7 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
         return true;
     }
 
-    private void resetLastImageUpdateForAllTracks() {
+    private void resetLastImageUpdateForAllTracks() throws InterruptedException {
         myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
                 MyTunesRssUtils.createStatement(connection, "resetLastImageUpdateForAllTracks").execute();

@@ -62,8 +62,12 @@ public class PhotoListener implements PListHandlerListener {
         Map photo = (Map) value;
         String photoId = calculatePhotoId(key, photo);
         if (photoId != null) {
-            if (processPhoto(key, photo, photoId, myPhotoIds.remove(photoId))) {
-                myUpdatedCount++;
+            try {
+                if (processPhoto(key, photo, photoId, myPhotoIds.remove(photoId))) {
+                    myUpdatedCount++;
+                }
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
         return false;
@@ -82,8 +86,9 @@ public class PhotoListener implements PListHandlerListener {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
 
-    private boolean processPhoto(String key, Map photo, String photoId, boolean existing) {
+    private boolean processPhoto(String key, Map photo, String photoId, boolean existing) throws InterruptedException {
         if (myWatchdogThread.isInterrupted()) {
+            Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
         }
         String name = (String) photo.get("Caption");

@@ -114,12 +114,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
         myTrackIds.removeAll(myExistingIds);
         myPhotoIds.removeAll(myExistingIds);
     }
 
-    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, FileType type) throws IOException {
+    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, FileType type) throws IOException, InterruptedException {
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
         if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
@@ -161,7 +163,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return false;
     }
 
-    private void insertOrUpdateImage(File photoFile, final String photoFileId, boolean existingPhoto) throws IOException {
+    private void insertOrUpdateImage(File photoFile, final String photoFileId, boolean existingPhoto) throws IOException, InterruptedException {
         final String canonicalFilePath = photoFile.getCanonicalPath();
         InsertOrUpdatePhotoStatement statement = existingPhoto ? new UpdatePhotoStatement() : new InsertPhotoStatement();
         statement.clear();

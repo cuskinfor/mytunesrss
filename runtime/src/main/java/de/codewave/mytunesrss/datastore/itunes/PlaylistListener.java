@@ -50,6 +50,7 @@ public class PlaylistListener implements PListHandlerListener {
 
     private void insertPlaylist(Map playlist) {
         if (myWatchdogThread.isInterrupted()) {
+            Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
         }
 
@@ -100,6 +101,8 @@ public class PlaylistListener implements PListHandlerListener {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);
                     }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
         }

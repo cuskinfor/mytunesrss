@@ -66,9 +66,13 @@ public class TrackListener implements PListHandlerListener {
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
-        if (processTrack(track, myTrackIds.remove(trackId))) {
-            myUpdatedCount++;
-            DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
+        try {
+            if (processTrack(track, myTrackIds.remove(trackId))) {
+                myUpdatedCount++;
+                DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
         return false;
     }
@@ -83,8 +87,9 @@ public class TrackListener implements PListHandlerListener {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
 
-    private boolean processTrack(Map track, boolean existing) {
+    private boolean processTrack(Map track, boolean existing) throws InterruptedException {
         if (myWatchdogThread.isInterrupted()) {
+            Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
         }
         String trackId = calculateTrackId(track);

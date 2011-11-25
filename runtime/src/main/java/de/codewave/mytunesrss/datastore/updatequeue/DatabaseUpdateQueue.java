@@ -5,6 +5,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -13,7 +14,7 @@ public class DatabaseUpdateQueue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseUpdateQueue.class);
 
-    private BlockingQueue<DatabaseUpdateEvent> myQueue = new LinkedBlockingQueue<DatabaseUpdateEvent>();
+    private BlockingQueue<DatabaseUpdateEvent> myQueue = new ArrayBlockingQueue<DatabaseUpdateEvent>(3);
 
     public DatabaseUpdateQueue(final long maxTxDurationMillis) {
         new Thread(new Runnable() {
@@ -54,8 +55,8 @@ public class DatabaseUpdateQueue {
         }, "DatabaseUpdateQueueWorker").start();
     }
 
-    public void offer(DatabaseUpdateEvent event) {
-        myQueue.offer(event);
+    public void offer(DatabaseUpdateEvent event) throws InterruptedException {
+        myQueue.offer(event, 60000, TimeUnit.MILLISECONDS);
     }
 
     public void clear() {
