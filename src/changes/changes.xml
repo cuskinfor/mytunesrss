@@ -8,7 +8,10 @@
     <body>
 
         <release version="4.2.0" date="___D___">
-            <action dev="mdescher" type="update">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-309] Wrong background color for artwork images
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed sql syntax problem for mysql databases.
             </action>
             <action dev="mdescher" type="update">
