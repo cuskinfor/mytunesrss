@@ -5,7 +5,9 @@ import de.codewave.utils.sql.DataStoreSession;
 public class TerminateEvent implements DatabaseUpdateEvent {
 
     public boolean execute(DataStoreSession session) {
-        session.commit();
+        if (session != null) {
+            session.commit();
+        }
         return false;
     }
 
