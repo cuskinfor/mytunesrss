@@ -22,7 +22,7 @@ public class DatabaseUpdateQueue {
                 try {
                     DatabaseUpdateEvent event;
                     do {
-                        long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : 1000);
+                        long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
                         LOGGER.debug("Polling queue with a timeout of " + pollTimeoutMillis + " ms.");
                         event = myQueue.poll(pollTimeoutMillis, TimeUnit.MILLISECONDS);
                         LOGGER.debug("Received " + event);

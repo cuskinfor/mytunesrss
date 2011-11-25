@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,14 +48,20 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                                                                getDisplayFilter().getAlbumType());
             DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
             int pageSize = getWebConfig().getEffectivePageSize();
-            List<Album> albums;
-            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
-                int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(queryResult.getResultSize(), current);
+            List<Album> albums = new ArrayList<Album>();
+            int trackCount = 0;
+            int current = getSafeIntegerRequestParameter("index", 0);
+            int queryResultSize = queryResult.getResultSize();
+            if (pageSize > 0 && queryResultSize > pageSize) {
+                Pager pager = createPager(queryResultSize, current);
                 getRequest().setAttribute("indexPager", pager);
-                albums = queryResult.getResults(current * pageSize, pageSize);
-            } else {
-                albums = queryResult.getResults();
+            }
+            for (int i = 0; i < queryResultSize; i++) {
+                Album album = queryResult.nextResult();
+                trackCount += album.getTrackCount();
+                if (pageSize == 0 || (i >= current * pageSize && i < (current + 1) * pageSize)) {
+                    albums.add(album);
+                }
             }
             getRequest().setAttribute("albums", albums);
             Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));
@@ -62,10 +69,6 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("singleGenre", singleGenre);
             getRequest().setAttribute("singleArtist", singleArtist);
             if (singleArtist || singleGenre) {
-                int trackCount = 0;
-                for (Album album : albums) {
-                    trackCount += album.getTrackCount();
-                }
                 getRequest().setAttribute("allAlbumsTrackCount", trackCount);
                 if (singleArtist) {
                     final String finalArtist = artist;
