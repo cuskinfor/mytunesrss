@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
 import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -23,10 +24,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
@@ -49,26 +47,26 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private TrackSource mySource;
     private boolean myPhoto;
 
-    public HandleTrackImagesStatement(TrackSource source, File file, String trackId, long lastUpdateTime, boolean photo) {
+    public HandleTrackImagesStatement(TrackSource source, File file, String trackId, long lastUpdateTime, boolean photo) throws IOException {
         myLastUpdateTime = lastUpdateTime;
         myFile = file;
         myTrackId = trackId;
         mySource = source;
         myPhoto = photo;
+        myImage = getLocalFileImage();
     }
 
-    public HandleTrackImagesStatement(File file, String trackId, Image image, long lastUpdateTime) {
+    public HandleTrackImagesStatement(File file, String trackId, Image image, long lastUpdateTime) throws IOException {
         myLastUpdateTime = lastUpdateTime;
         myFile = file;
         myTrackId = trackId;
-        myImage = image;
+        myImage = image != null ? image : getLocalFileImage();
     }
 
     public void execute(Connection connection) throws SQLException {
         try {
-            Image image = getImage();
-            if (image != IMAGE_UP_TO_DATE && image != null && image.getData() != null && image.getData().length > 0) {
-                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
+            if (myImage != IMAGE_UP_TO_DATE && myImage != null && myImage.getData() != null && myImage.getData().length > 0) {
+                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(myImage.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
@@ -77,36 +75,36 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 32.");
                     }
-                    Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(image, 32);
+                    Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 32);
                     new InsertImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
                 }
                 if (!myPhoto && !imageSizes.contains(Integer.valueOf(64))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 64.");
                     }
-                    Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(image, 64);
+                    Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 64);
                     new InsertImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
                 }
                 if (!imageSizes.contains(Integer.valueOf(128))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }
-                    Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128);
+                    Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 128);
                     new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
                 if (!myPhoto && !imageSizes.contains(Integer.valueOf(256))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 256.");
                     }
-                    Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(image, 256);
+                    Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 256);
                     new InsertImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
                 }
-                int originalSize = MyTunesRssUtils.getMaxImageSize(image);
+                int originalSize = MyTunesRssUtils.getMaxImageSize(myImage);
                 if (!myPhoto && originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize() && !imageSizes.contains(Integer.valueOf(originalSize))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size " + originalSize + ".");
                     }
-                    new InsertImageStatement(imageHash, originalSize, image.getMimeType(), image.getData()).execute(connection);
+                    new InsertImageStatement(imageHash, originalSize, myImage.getMimeType(), myImage.getData()).execute(connection);
                 }
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             }
@@ -115,13 +113,6 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", t);
             }
         }
-    }
-
-    private Image getImage() throws IOException {
-        if (myImage != null) {
-            return myImage;
-        }
-        return getLocalFileImage();
     }
 
     private Image getLocalFileImage() throws IOException {

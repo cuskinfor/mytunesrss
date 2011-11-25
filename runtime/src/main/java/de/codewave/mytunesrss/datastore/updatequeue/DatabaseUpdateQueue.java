@@ -57,4 +57,8 @@ public class DatabaseUpdateQueue {
     public void offer(DatabaseUpdateEvent event) {
         myQueue.offer(event);
     }
+
+    public void clear() {
+        myQueue.clear();
+    }
 }

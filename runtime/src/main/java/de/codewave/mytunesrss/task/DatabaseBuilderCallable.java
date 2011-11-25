@@ -114,6 +114,10 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 LOGGER.error("Exception during import.", e);
             }
         } finally {
+            if (Thread.currentThread().isInterrupted()) {
+                LOGGER.info("Database update cancelled, clearing queue before adding the final TerminateEvent.");
+                myQueue.clear();
+            }
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
             myQueue.offer(new TerminateEvent());
         }
@@ -207,6 +211,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         } catch (SQLException e) {
             LOGGER.error("Could not find tracks for image update.", e);
+        } catch (IOException e) {
+            LOGGER.error("Could not get image from file.", e);
         } finally {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Finished processing track images.");
