@@ -17,7 +17,7 @@ public class CompleteTest {
     private static final int WAIT_INTERVAL = 100;
     private static final int TIMEOUT = 60000;
     private static final String BASE_URL = "http://localhost:47110";
-    private static final int MAX_THREADS = 1;
+    private static final int MAX_THREADS = 5;
 
     public static void main(String[] args) throws Exception {
         for (int i = 1; i <= MAX_THREADS; i++) {

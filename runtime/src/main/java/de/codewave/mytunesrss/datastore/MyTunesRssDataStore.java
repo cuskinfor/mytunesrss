@@ -23,6 +23,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * de.codewave.mytunesrss.datastore.MyTunesRssDataStore
@@ -32,10 +33,11 @@ public class MyTunesRssDataStore extends DataStore {
     public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;
-    private boolean myInitialized;
+    private AtomicBoolean myInitialized = new AtomicBoolean(false);
+    private GenericObjectPool myConnectionPool;
 
     public boolean isInitialized() {
-        return myInitialized;
+        return myInitialized.get();
     }
 
     @Override
@@ -45,7 +47,7 @@ public class MyTunesRssDataStore extends DataStore {
         final String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
         initSmartStatementFactory(MyTunesRss.CONFIG.getDatabaseType());
         LOG.info("Creating database connection pool for connect string \"" + databaseConnection + "\".");
-        setConnectionPool(new GenericObjectPool(new BasePoolableObjectFactory() {
+        myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
             @Override
             public Object makeObject() throws Exception {
                 return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
@@ -57,29 +59,14 @@ public class MyTunesRssDataStore extends DataStore {
                     ((Connection) object).close();
                 }
             }
-        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 5, 2, false, false, 15000, 10, 300000, false, 60000));
+        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 5, 2, false, false, 15000, 10, 300000, false, 60000);
+        setConnectionPool(myConnectionPool);
         testDatabaseConnection(databaseConnection, databaseUser, databasePassword);
-        myInitialized = true;
+        myInitialized.set(true);
+        LOG.info("Pool has been marked initialized.");
     }
 
     private void testDatabaseConnection(String databaseConnection, String databaseUser, String databasePassword) throws SQLException {
-//        long endTime = System.currentTimeMillis() + 10000;
-//        do {
-//            try {
-//                Connection conn = DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
-//                conn.close();
-//                return; // done testing
-//            } catch (SQLException e) {
-//                if (LOG.isWarnEnabled()) {
-//                    LOG.warn("Could not get a database connection.");
-//                }
-//            }
-//            try {
-//                Thread.sleep(1000);
-//            } catch (InterruptedException e) {
-//                // intentionally left blank
-//            }
-//        } while (System.currentTimeMillis() < endTime);
         Connection conn = DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
         conn.close();
     }
@@ -117,11 +104,21 @@ public class MyTunesRssDataStore extends DataStore {
 
     @Override
     public synchronized void destroy() {
+        myInitialized.set(false);
+        LOG.info("Pool has been marked uninitialized.");
+        while (myConnectionPool != null && myConnectionPool.getNumActive() > 0) {
+            LOG.info("Waiting for pool to become inactive (" + myConnectionPool.getNumActive() + ").");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                //Thread.currentThread().interrupt();
+            }
+        }
+        LOG.info("Pool is inactive, proceeding with destruction.");
         super.destroy();
-        myInitialized = false;
     }
 
-    public synchronized <T> T executeQuery(DataStoreQuery<T> query) throws SQLException {
+    public <T> T executeQuery(DataStoreQuery<T> query) throws SQLException {
         DataStoreSession transaction = getTransaction();
         try {
             return transaction.executeQuery(query);
@@ -130,7 +127,35 @@ public class MyTunesRssDataStore extends DataStore {
         }
     }
 
-    public synchronized int getQueryResultSize(DataStoreQuery<? extends DataStoreQuery.QueryResult> query) throws SQLException {
+    @Override
+    public DataStoreSession getTransaction() {
+        return new DataStoreSession(this) {
+            @Override
+            protected void begin() {
+                try {
+                    for (boolean gotConnection = false; !gotConnection; ) {
+                        if (!myInitialized.get()) {
+                            LOG.debug("Waiting for pool to become initialized.");
+                            while (!myInitialized.get()) {
+                                Thread.sleep(100);
+                            }
+                        }
+                        super.begin();
+                        if (!myInitialized.get()) {
+                            LOG.debug("Releasing acquired connection since data store become uninitialized.");
+                            release();
+                        } else {
+                            gotConnection = true;
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        };
+    }
+
+    public int getQueryResultSize(DataStoreQuery<? extends DataStoreQuery.QueryResult> query) throws SQLException {
         DataStoreSession transaction = getTransaction();
         try {
             return transaction.executeQuery(query).getResultSize();
