@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.2.0" date="___D___">
+            <action dev="mdescher" type="update">
+                Restored Java 5 compatibility by updating Vaadin refresher plugin to 1.1.1.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-320] Pause database access when backing up
             </action>
