@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.1.8" date="2011-11-xx">
+        <release version="4.1.8" date="2011-11-27">
             <action dev="mdescher" type="update">
                 Restored Java 5 compatibility by updating Vaadin refresher plugin to 1.1.1.
             </action>
