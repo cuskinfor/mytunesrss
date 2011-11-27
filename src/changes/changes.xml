@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.8" date="2011-11-xx">
+            <action dev="mdescher" type="update">
+                Restored Java 5 compatibility by updating Vaadin refresher plugin to 1.1.1.
+            </action>
+        </release>
+
         <release version="4.1.7" date="2011-11-23">
             <action dev="mdescher" type="fix">
                 Update to camel-1.7 for better year (@day atom) parsing.

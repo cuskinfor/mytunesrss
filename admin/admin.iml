@@ -32,7 +32,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.vaadin:vaadin:6.6.0" level="project" />
-    <orderEntry type="library" name="Maven: org.vaadin.addons:refresher:1.1.0" level="project" />
+    <orderEntry type="library" name="Maven: org.vaadin.addons:refresher:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:vaadin-treetable:1.2.0" level="project" />
     <orderEntry type="module" module-name="runtime" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave.apple-extensions:apple-extensions:1.0.1" level="project" />
