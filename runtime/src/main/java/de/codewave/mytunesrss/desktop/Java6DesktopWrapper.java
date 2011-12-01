@@ -5,9 +5,12 @@
 
 package de.codewave.mytunesrss.desktop;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
+
 import java.awt.*;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Locale;
 
 public class Java6DesktopWrapper implements DesktopWrapper {
 
@@ -19,7 +22,7 @@ public class Java6DesktopWrapper implements DesktopWrapper {
         try {
             Desktop.getDesktop().browse(uri);
         } catch (IOException e) {
-            throw new RuntimeException("Could not open browser.", e);
+            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.openBrowser", e.getMessage()));
         }
     }
 

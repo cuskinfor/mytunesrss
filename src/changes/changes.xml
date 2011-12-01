@@ -74,7 +74,19 @@
         </release>
 
 
-        <release version="4.1.7" date="___D___">
+        <release version="4.1.9" date="2011-12-01">
+            <action dev="mdescher" type="update">
+                Error message instead of a runtime exception when the browser cannot be started.
+            </action>
+        </release>
+
+        <release version="4.1.8" date="2011-11-27">
+            <action dev="mdescher" type="update">
+                Restored Java 5 compatibility by updating Vaadin refresher plugin to 1.1.1.
+            </action>
+        </release>
+
+        <release version="4.1.7" date="2011-11-23">
             <action dev="mdescher" type="update">
                 MYTUNESRSS-310 - Links to external sites don't work
             </action>
