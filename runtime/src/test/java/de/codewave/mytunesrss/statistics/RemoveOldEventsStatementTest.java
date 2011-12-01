@@ -11,6 +11,7 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -21,7 +22,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class RemoveOldEventsStatementTest {
     @Before
-    public void setUp() throws SQLException, IOException, ClassNotFoundException {
+    public void setUp() throws SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
         MyTunesRssTestUtils.before();
     }
 
