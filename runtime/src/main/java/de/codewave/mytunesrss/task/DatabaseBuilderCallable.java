@@ -131,7 +131,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 LOGGER.info("Starting database update.");
             }
             final long timeUpdateStart = System.currentTimeMillis();
-            SystemInformation systemInformation = MyTunesRss.STORE.getTransaction().executeQuery(new GetSystemInformationQuery());
+            SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
             final Map<String, Long> missingItunesFiles = runUpdate(systemInformation);
             if (!Thread.currentThread().isInterrupted()) {
                 myQueue.offer(new DataStoreStatementEvent(new UpdateStatisticsStatement()));
@@ -154,7 +154,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 myQueue.offer(new DataStoreEvent() {
                     public boolean execute(DataStoreSession session) {
                         try {
-                            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), missingItunesFiles, MyTunesRss.STORE.getTransaction().executeQuery(new GetSystemInformationQuery()));
+                            MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), missingItunesFiles, MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery()));
                         } catch (SQLException e) {
                             LOGGER.warn("Could not notify admin of finished database update.", e);
                         }

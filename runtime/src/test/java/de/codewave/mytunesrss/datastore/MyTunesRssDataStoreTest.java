@@ -3,31 +3,24 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.DatabaseType;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssConfig;
+import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
-import de.codewave.mytunesrss.statistics.DownloadEvent;
-import de.codewave.mytunesrss.statistics.GetStatisticEventsQuery;
-import de.codewave.mytunesrss.statistics.InsertStatisticsEventStatement;
-import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.DataStoreStatement;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.util.LocaleServiceProviderPool;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -91,10 +84,7 @@ public class MyTunesRssDataStoreTest {
                 }
                 DataStoreSession session = MyTunesRss.STORE.getTransaction();
                 try {
-                    InsertPhotoStatement insertPhotoStatement = new InsertPhotoStatement();
-                    insertPhotoStatement.setId(UUID.randomUUID().toString());
-                    insertPhotoStatement.setName(UUID.randomUUID().toString());
-                    insertPhotoStatement.setFile(UUID.randomUUID().toString());
+                    InsertPhotoStatement insertPhotoStatement = createInsertPhotoStatement();
                     session.executeStatement(insertPhotoStatement);
                     session.commit();
                 } catch (SQLException e) {
@@ -104,6 +94,14 @@ public class MyTunesRssDataStoreTest {
                 }
             }
         }
+    }
+
+    private static InsertPhotoStatement createInsertPhotoStatement() {
+        InsertPhotoStatement insertPhotoStatement = new InsertPhotoStatement();
+        insertPhotoStatement.setId(UUID.randomUUID().toString());
+        insertPhotoStatement.setName(UUID.randomUUID().toString());
+        insertPhotoStatement.setFile(UUID.randomUUID().toString());
+        return insertPhotoStatement;
     }
 
     private static class DestroyInitRunnable implements Runnable {

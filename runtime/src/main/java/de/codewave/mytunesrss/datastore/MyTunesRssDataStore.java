@@ -23,6 +23,8 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -34,7 +36,7 @@ public class MyTunesRssDataStore extends DataStore {
 
     private SmartStatementFactory mySmartStatementFactory;
     private AtomicBoolean myInitialized = new AtomicBoolean(false);
-    private GenericObjectPool myConnectionPool;
+    GenericObjectPool myConnectionPool;
 
     public boolean isInitialized() {
         return myInitialized.get();
@@ -42,24 +44,12 @@ public class MyTunesRssDataStore extends DataStore {
 
     @Override
     public synchronized void init() throws IOException, SQLException {
-        final String databaseConnection = MyTunesRss.CONFIG.getDatabaseConnection();
-        final String databaseUser = MyTunesRss.CONFIG.getDatabaseUser();
-        final String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
+        String databaseConnection = MyTunesRss.CONFIG.getDatabaseConnection();
+        String databaseUser = MyTunesRss.CONFIG.getDatabaseUser();
+        String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
         initSmartStatementFactory(MyTunesRss.CONFIG.getDatabaseType());
         LOG.info("Creating database connection pool for connect string \"" + databaseConnection + "\".");
-        myConnectionPool = new GenericObjectPool(new BasePoolableObjectFactory() {
-            @Override
-            public Object makeObject() throws Exception {
-                return DriverManager.getConnection(databaseConnection, databaseUser, databasePassword);
-            }
-
-            @Override
-            public void destroyObject(Object object) throws Exception {
-                if (object instanceof Connection) {
-                    ((Connection) object).close();
-                }
-            }
-        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 5, 2, false, false, 15000, 10, 300000, false, 60000);
+        myConnectionPool = new MyTunesRssDataStorePool(databaseConnection, databaseUser, databasePassword);
         setConnectionPool(myConnectionPool);
         testDatabaseConnection(databaseConnection, databaseUser, databasePassword);
         myInitialized.set(true);
