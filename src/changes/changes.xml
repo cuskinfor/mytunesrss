@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="4.1.10" date="2011-12-04">
+            <action dev="mdescher" type="fix">
+                Updated to camel-1.8 to fix endless loops while parsing broken MP4 files.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed year parsing in MP4 files.
+            </action>
+        </release>
+
         <release version="4.1.9" date="2011-12-01">
             <action dev="mdescher" type="update">
                 Error message instead of a runtime exception when the browser cannot be started.

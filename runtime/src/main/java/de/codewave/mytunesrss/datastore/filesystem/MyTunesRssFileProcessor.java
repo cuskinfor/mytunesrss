@@ -447,7 +447,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setComment(MyTunesRssUtils.normalize(comment));
                 }
                 atom = atoms.getFirst(Atom.Year.getPath());
-                statement.setYear(atom != null ? ((YearAtom)atom).getYear() : null);
+                if (atom != null) {
+                    String year = atom.getDataAsString(8, "UTF-8");
+                    if (StringUtils.isNotBlank(year)) {
+                        try {
+                            statement.setYear(Integer.parseInt(year));
+                        } catch (NumberFormatException e) {
+                            statement.setYear(Integer.parseInt(year.substring(0, StringUtils.indexOfAnyBut(year, "1234567890"))));
+                        }
+                    }
+                }
                 if (mediaType == MediaType.Audio) {
                     atom = atoms.getFirst(Atom.Album.getPath());
                     String album = atom != null ? atom.getDataAsString(8, "UTF-8") : null;
