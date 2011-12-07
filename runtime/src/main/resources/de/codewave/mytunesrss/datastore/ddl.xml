@@ -157,8 +157,9 @@
         </sql>
         <sql>
             {create_table_prefix} statistics (
-                ts_create NUMERIC(19) NOT NULL,
-                data {statistics_datatype} NOT NULL
+                ts_create BIGINT NOT NULL,
+                type INTEGER NOT NULL,
+                data VARCHAR(2048) NOT NULL
             )
         </sql>
         <sql>
@@ -222,6 +223,7 @@
         <sql>CREATE INDEX idx_genre_first ON genre (first_char)</sql>
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
+        <sql>CREATE INDEX idx_statistics_type ON statistics (type)</sql>
         <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
         <sql>CREATE INDEX idx_tag_track_id ON tag (track_id)</sql>
         <sql>CREATE INDEX idx_tag_tag ON tag (tag)</sql>

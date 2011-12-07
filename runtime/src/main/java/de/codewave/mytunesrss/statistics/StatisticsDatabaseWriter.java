@@ -21,17 +21,12 @@ public class StatisticsDatabaseWriter implements StatisticsEventListener {
             // write events only in case the keep time is greater than 0
             new Thread(new Runnable() {
                 public void run() {
-                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     DataStoreSession tx = MyTunesRss.STORE.getTransaction();
                     try {
-                        ObjectOutputStream oos = new ObjectOutputStream(baos);
-                        oos.writeObject(event);
-                        InsertStatisticsEventStatement statisticsEventStatement = new InsertStatisticsEventStatement(baos.toByteArray());
+                        InsertStatisticsEventStatement statisticsEventStatement = new InsertStatisticsEventStatement(event);
                         tx.executeStatement(statisticsEventStatement);
                         tx.commit();
                         LOGGER.debug("Wrote statistics event \"" + event + "\" to database.");
-                    } catch (IOException e) {
-                        LOGGER.error("Could not write statistics event to database.", e);
                     } catch (SQLException e) {
                         LOGGER.error("Could not write statistics event to database.", e);
                     } finally {

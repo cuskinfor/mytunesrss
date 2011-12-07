@@ -277,6 +277,16 @@
 
     <statement name="migrate_4.2.0">
         <sql>ALTER TABLE image ADD COLUMN mimetype VARCHAR(50) NOT NULL DEFAULT 'image/jpg'</sql>
+        <sql>DROP table statistics</sql>
+        <sql>
+            {create_table_prefix} statistics (
+                ts_create BIGINT NOT NULL,
+                type INTEGER NOT NULL,
+                data VARCHAR(2048) NOT NULL
+            )
+        </sql>
+        <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
+        <sql>CREATE INDEX idx_statistics_type ON statistics (type)</sql>
     </statement>
 
 </statements>

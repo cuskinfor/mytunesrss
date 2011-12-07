@@ -88,6 +88,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-core-asl:1.6.2" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.sanselan:sanselan:0.97-incubator" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-collections:commons-collections:3.2" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-mapper-asl:1.8.5" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.codehaus.jackson:jackson-xc:1.8.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-user:2.3.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:sources:1.0.0.GA" level="project" />

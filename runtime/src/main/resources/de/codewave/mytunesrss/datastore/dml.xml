@@ -575,7 +575,7 @@
     </statement>
 
     <statement name="insertStatisticsEvent">
-        <sql>INSERT INTO statistics (ts_create, data) VALUES (:ts, :data)</sql>
+        <sql>INSERT INTO statistics (ts_create, type, data) VALUES (:ts, :type, :data)</sql>
     </statement>
 
     <statement name="removeOldStatisticEvents">
@@ -584,9 +584,10 @@
 
     <statement name="getStatisticEvents">
         <sql>
-            SELECT ts_create AS ts, data AS data
+            SELECT ts_create AS ts, type AS type, data AS data
             FROM statistics
             WHERE ts_create &gt;= :ts_from AND ts_create &lt; :ts_to
+            AND type IN (:type[])
             ORDER BY ts
         </sql>
     </statement>

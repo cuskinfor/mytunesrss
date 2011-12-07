@@ -3,7 +3,13 @@ package de.codewave.mytunesrss.statistics;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -11,20 +17,30 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.statistics.InsertStatisticsStatement
  */
 public class InsertStatisticsEventStatement implements DataStoreStatement {
-    private byte[] myData;
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsertStatisticsEventStatement.class);
 
-    public InsertStatisticsEventStatement(byte[] data) {
-        myData = data;
+    private StatisticsEvent myEvent;
+
+    public InsertStatisticsEventStatement(StatisticsEvent event) {
+        myEvent = event;
     }
 
     public void execute(Connection connection) throws SQLException {
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertStatisticsEvent");
-        statement.setObject("ts", getTime());
-        statement.setObject("data", myData);
-        statement.execute();
+        String json;
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
+            mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
+            mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
+            json = mapper.writeValueAsString(myEvent);
+            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertStatisticsEvent");
+            statement.setObject("ts", System.currentTimeMillis());
+            statement.setObject("type", myEvent.getType().getValue());
+            statement.setObject("data", json);
+            statement.execute();
+        } catch (IOException e) {
+            LOGGER.warn("Could not write statistics event of type \"" + myEvent.getType().name() + "\".", e);
+        }
     }
 
-    long getTime() {
-        return System.currentTimeMillis();
-    }
 }
