@@ -34,7 +34,7 @@ public class InsertStatisticsEventStatement implements DataStoreStatement {
             mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
             json = mapper.writeValueAsString(myEvent);
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertStatisticsEvent");
-            statement.setObject("ts", System.currentTimeMillis());
+            statement.setObject("ts", myEvent.getEventTime());
             statement.setObject("type", myEvent.getType().getValue());
             statement.setObject("data", json);
             statement.execute();

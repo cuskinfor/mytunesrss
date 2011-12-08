@@ -5,12 +5,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
-public class DownloadEvent implements StatisticsEvent {
+public class DownloadEvent extends AbstractEvent {
     @XmlElement(name = "user")
     public String myUser;
+
     @XmlElement(name = "bytes")
     public  long myBytes;
-    @XmlTransient
+
+    public DownloadEvent() {
+        // default constructor for JAXB
+    }
+
+    public DownloadEvent(String user, long bytes) {
+        myUser = user;
+        myBytes = bytes;
+    }
+
     public StatEventType getType() {
         return StatEventType.LOGIN;
     }

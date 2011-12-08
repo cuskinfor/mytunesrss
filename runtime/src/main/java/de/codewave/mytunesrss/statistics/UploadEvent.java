@@ -5,12 +5,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
-public class UploadEvent implements StatisticsEvent {
+public class UploadEvent extends AbstractEvent {
     @XmlElement(name = "user")
     public String myUser;
+
     @XmlElement(name = "bytes")
     public long myBytes;
-    @XmlTransient
+
+    public UploadEvent() {
+        // default constructor for JAXB
+    }
+
+    public UploadEvent(String user, long bytes) {
+        myUser = user;
+        myBytes = bytes;
+    }
+
     public StatEventType getType() {
         return StatEventType.UPLOAD;
     }

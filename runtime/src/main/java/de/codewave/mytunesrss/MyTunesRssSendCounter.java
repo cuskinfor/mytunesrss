@@ -27,6 +27,6 @@ public class MyTunesRssSendCounter implements StreamSender.ByteSentCounter {
     }
 
     public void notifyEnd() {
-        StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(myUser, myCount));
+        StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(myUser.getName(), myCount));
     }
 }

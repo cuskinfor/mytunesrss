@@ -584,11 +584,13 @@
 
     <statement name="getStatisticEvents">
         <sql>
+            <![CDATA[
             SELECT ts_create AS ts, type AS type, data AS data
             FROM statistics
-            WHERE ts_create &gt;= :ts_from AND ts_create &lt; :ts_to
-            AND type IN (:type[])
+            WHERE ts_create >= :ts_from AND ts_create <= :ts_to
+            <types>AND type IN (:type[])</types>
             ORDER BY ts
+            ]]>
         </sql>
     </statement>
 

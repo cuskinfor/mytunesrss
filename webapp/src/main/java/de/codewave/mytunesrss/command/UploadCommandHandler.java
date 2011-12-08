@@ -44,7 +44,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             StringBuilder info = new StringBuilder();
             for (FileItem item : items) {
                 processItem(item);
-                StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser(), item.getSize()));
+                StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), item.getSize()));
                 info.append(item.getName()).append("\n");
             }
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());

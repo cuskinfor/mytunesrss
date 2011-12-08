@@ -36,42 +36,36 @@ public class RemoveOldEventsStatementTest {
         createEvents();
         // count all events
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        assertEquals(21, session.executeQuery(new GetStatisticEventsQuery(0, System.currentTimeMillis(), "yyyy-MM-dd")).size());
-        session.commit();
-        // keep 11 events (keep time = 10 days)
-        session = MyTunesRss.STORE.getTransaction();
-        MyTunesRss.CONFIG.setStatisticKeepTime(10);
-        session.executeStatement(new RemoveOldEventsStatement());
-        session.commit();
-        // count remaining events
-        session = MyTunesRss.STORE.getTransaction();
-        assertEquals(12, session.executeQuery(new GetStatisticEventsQuery(0, System.currentTimeMillis(), "yyyy-MM-dd")).size());
-        session.commit();
-        // count remaining events with other date pattern (should only return one event)
-        session = MyTunesRss.STORE.getTransaction();
-        List<String> lines = session.executeQuery(new GetStatisticEventsQuery(0, System.currentTimeMillis(), "-"));
-        assertEquals(2, lines.size());
-        // check returned line with accumulated events (11 download events with 1000 bytes each, all for user "dummy")
-        assertEquals("-,dummy,0,11000,0", lines.get(1));
-        session.commit();
+        try {
+            assertEquals(20, session.executeQuery(new GetStatisticsEventsQuery(0, System.currentTimeMillis())).getResultSize());
+            session.commit();
+            // keep 11 events (keep time = 10 days)
+            session = MyTunesRss.STORE.getTransaction();
+            MyTunesRss.CONFIG.setStatisticKeepTime(10);
+            session.executeStatement(new RemoveOldEventsStatement());
+            session.commit();
+            // count remaining events
+            session = MyTunesRss.STORE.getTransaction();
+            assertEquals(11, session.executeQuery(new GetStatisticsEventsQuery(0, System.currentTimeMillis())).getResultSize());
+            session.commit();
+        } finally {
+            session.rollback();
+        }
     }
 
     private void createEvents() throws IOException, SQLException {
         // insert 20 events (1 for today, 1 for yesterday, ...)
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        for (long i = 0; i < 20; i++) {
-            final long finalTime = System.currentTimeMillis() - (i * 3600L * 1000L * 24L);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(new DownloadEvent(new User("dummy"), 1000));
-            session.executeStatement(new InsertStatisticsEventStatement(baos.toByteArray()) {
-                @Override
-                long getTime() {
-                    return finalTime;
-                }
-            });
+        try {
+            for (long i = 0; i < 20; i++) {
+                DownloadEvent event = new DownloadEvent("dummy", 1000);
+                event.setEventTime(System.currentTimeMillis() - (i * 3600L * 1000L * 24L));
+                session.executeStatement(new InsertStatisticsEventStatement(event));
+            }
+            session.executeStatement(new RemoveOldEventsStatement());
+            session.commit();
+        } finally {
+            session.rollback();
         }
-        session.executeStatement(new RemoveOldEventsStatement());
-        session.commit();
     }
 }

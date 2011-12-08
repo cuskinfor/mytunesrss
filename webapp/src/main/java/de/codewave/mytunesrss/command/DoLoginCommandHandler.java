@@ -9,21 +9,11 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.mytunesrss.statistics.LoginEvent;
+import de.codewave.mytunesrss.statistics.SessionStartEvent;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.utils.servlet.ServletUtils;
-import org.openid4java.consumer.ConsumerException;
-import org.openid4java.consumer.ConsumerManager;
-import org.openid4java.discovery.DiscoveryException;
-import org.openid4java.discovery.DiscoveryInformation;
-import org.openid4java.message.AuthRequest;
-import org.openid4java.message.MessageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Command handler for submission of login form.
@@ -68,7 +58,6 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         }
         MyTunesRssWebUtils.setCookieLanguage(getRequest(), getResponse(), lc);
         MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);
-        StatisticsEventManager.getInstance().fireEvent(new LoginEvent(getAuthUser()));
         if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
             restartMyTunesRssCom();
         } else {

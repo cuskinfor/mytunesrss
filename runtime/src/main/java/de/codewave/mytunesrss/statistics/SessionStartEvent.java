@@ -5,10 +5,22 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
-public class LoginEvent implements StatisticsEvent {
+public class SessionStartEvent extends AbstractEvent {
     @XmlElement(name = "user")
     public String myUser;
-    @XmlTransient
+
+    @XmlElement(name = "sessionid")
+    public String mySessionId;
+
+    public SessionStartEvent() {
+        // default constructor for JAXB
+    }
+
+    public SessionStartEvent(String user, String sessionId) {
+        myUser = user;
+        mySessionId = sessionId;
+    }
+
     public StatEventType getType() {
         return StatEventType.LOGIN;
     }
