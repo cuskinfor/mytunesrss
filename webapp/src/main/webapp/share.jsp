@@ -19,7 +19,6 @@
 <script type="text/javascript">
 
     var links = new Array();
-    var facebookMessage = '${mtfn:escapeJs(facebookText)}';
 
     function displayLink() {
         var selectedLink = links[$jQ("#linkSelect option:selected")[0].index];
@@ -60,14 +59,14 @@
                 "url" : links[$jQ("#linkSelect option:selected")[0].index]
             },
             success : function(data) {
-                $jQ("#facebookMessage").val(facebookMessage + "\r\n" + data);
+                $jQ("#facebookLink").val(data);
                 hideLoading();
                 centerPopupWindow("", "MyTunesRssFacebook", 980, 480, "resizable=yes,location=no,menubar=no,scrollbars=auto,status=no,toolbar=no,hotkeys=no");
                 $jQ('#facebookForm').submit();
                 $jQ.modal.close();
             },
             error : function() {
-                $jQ("#facebookMessage").val(facebookMessage + "\r\n" + links[$jQ("#linkSelect option:selected")[0].index]);
+                $jQ("#facebookLink").val(links[$jQ("#linkSelect option:selected")[0].index]);
                 hideLoading();
                 centerPopupWindow("", "MyTunesRssFacebook", 980, 480, "resizable=yes,location=no,menubar=no,scrollbars=auto,status=no,toolbar=no,hotkeys=no");
                 $jQ('#facebookForm').submit();
@@ -103,13 +102,12 @@
 <c:if test="${!empty globalConfig.facebookApiKey}">
     <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="post" target="MyTunesRssFacebook">
         <input type="hidden" name="app_id" value="${globalConfig.facebookApiKey}"/>
-        <input type="hidden" name="link" value="http://www.codewave.de/products/mytunesrss"/>
+        <input id="facebookLink" type="hidden" name="link" value="http://www.codewave.de/products/mytunesrss"/>
         <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
-        <input type="hidden" name="name" value="MyTunesRSS"/>
-        <input type="hidden" name="caption" value="Your personal Media Server"/>
+        <input type="hidden" name="name" value="<c:out value="${artistAndTitle}"/>"/>
+        <input type="hidden" name="caption" value="MyTunesRSS - Your personal Media Server"/>
         <input type="hidden" name="description"
                value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
-        <input id="facebookMessage" type="hidden" name="message" value=""/>
         <input type="hidden" name="redirect_uri" value="http://mytunesrss.com/tools/close_window.php"/>
     </form>
 </c:if>
