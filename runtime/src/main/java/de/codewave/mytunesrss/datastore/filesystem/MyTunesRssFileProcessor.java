@@ -414,11 +414,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                     statement.setAlbum(MyTunesRssUtils.normalize(album));
                     String artist = moov.getArtist();
+                    String albumArtist = moov.getAlbumArtist();
                     if (StringUtils.isBlank(artist)) {
-                        artist = getFallbackArtistName(file);
+                        if (StringUtils.isBlank(albumArtist)) {
+                            artist = getFallbackArtistName(file);
+                        } else {
+                            artist = albumArtist;
+                        }
                     }
                     statement.setArtist(MyTunesRssUtils.normalize(artist));
-                    String albumArtist = moov.getAlbumArtist();
                     if (StringUtils.isBlank(albumArtist)) {
                         albumArtist = artist;
                     }
