@@ -31,16 +31,16 @@ public class IphotoLoader {
     private static final Logger LOG = LoggerFactory.getLogger(IphotoLoader.class);
 
     /**
-     * Load tracks from an iPhoto XML file.
      *
+     * @param executionThread
      * @param config
      * @param queue
      * @param timeLastUpdate
      * @param photoIds
-     * @return Number of missing files.
-     * @throws java.sql.SQLException
+     * @throws SQLException
+     * @throws MalformedURLException
      */
-    public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> photoIds, Collection<String> existsingAlbumIds) throws SQLException, MalformedURLException {
+    public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> photoIds) throws SQLException, MalformedURLException {
         File iPhotoLibraryXmlFile = new File(config.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME);
         URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURL();
         if (iPhotoLibraryXml != null) {
@@ -69,12 +69,6 @@ public class IphotoLoader {
                 LOG.info("Parsing iPhoto (albums/rolls): \"" + iPhotoLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " iPhoto photos.");
-                if (albumListener != null) {
-                    existsingAlbumIds.removeAll(albumListener.getExistingIds());
-                }
-                if (rollListener != null) {
-                    existsingAlbumIds.removeAll(rollListener.getExistingIds());
-                }
             } catch (IOException e) {
                 LOG.error("Could not read data from iTunes xml file.", e);
             } catch (ParserConfigurationException e) {

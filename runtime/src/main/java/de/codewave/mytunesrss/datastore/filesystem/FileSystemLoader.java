@@ -21,8 +21,7 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds,
-                                          Collection<String> playlistIds, Collection<String> photoAlbumIds) throws IOException, SQLException {
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
@@ -52,8 +51,6 @@ public class FileSystemLoader {
             if (LOG.isInfoEnabled()) {
                 LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
             }
-            playlistIds.removeAll(playlistFileProcessor.getExistingIds());
-            photoAlbumIds.removeAll(fileProcessor.getExistingPhotoAlbumIds());
         }
     }
 }

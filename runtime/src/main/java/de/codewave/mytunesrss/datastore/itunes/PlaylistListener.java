@@ -25,7 +25,6 @@ public class PlaylistListener implements PListHandlerListener {
 
     private DatabaseUpdateQueue myQueue;
     private Map<Long, String> myTrackIdToPersId;
-    private Set<String> myExistingIds = new HashSet<String>();
     private LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
     private Set<ItunesPlaylistType> myIgnores;
@@ -96,7 +95,6 @@ public class PlaylistListener implements PListHandlerListener {
                         statement.setUpdate(true);
                     }
                     myQueue.offer(new DataStoreStatementEvent(statement));
-                    myExistingIds.add(playlistId);
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);
@@ -106,9 +104,5 @@ public class PlaylistListener implements PListHandlerListener {
                 }
             }
         }
-    }
-
-    public Collection<String> getExistingIds() {
-        return myExistingIds;
     }
 }
