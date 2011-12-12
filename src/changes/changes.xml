@@ -9,6 +9,9 @@
 
         <release version="4.2.0" date="___D___">
             <action dev="mdescher" type="update">
+                Updated to camel-1.9 to fix endless loops while parsing broken MP4 files and artist atom parsing.
+            </action>
+            <action dev="mdescher" type="update">
                 Restored Java 5 compatibility by updating Vaadin refresher plugin to 1.1.1.
             </action>
             <action dev="mdescher" type="fix">
