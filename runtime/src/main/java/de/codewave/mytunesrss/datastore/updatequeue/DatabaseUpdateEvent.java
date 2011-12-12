@@ -6,4 +6,5 @@ public interface DatabaseUpdateEvent {
     boolean isTerminate();
     boolean isStartTransaction();
     boolean execute(DataStoreSession transaction);
+    boolean isCheckpointRelevant();
 }

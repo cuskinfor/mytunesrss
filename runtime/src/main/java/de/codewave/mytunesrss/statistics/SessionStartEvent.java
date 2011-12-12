@@ -22,6 +22,6 @@ public class SessionStartEvent extends AbstractEvent {
     }
 
     public StatEventType getType() {
-        return StatEventType.LOGIN;
+        return StatEventType.SESSION_START;
     }
 }

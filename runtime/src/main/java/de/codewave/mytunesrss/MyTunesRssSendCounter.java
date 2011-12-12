@@ -11,10 +11,12 @@ import de.codewave.utils.servlet.StreamSender;
 public class MyTunesRssSendCounter implements StreamSender.ByteSentCounter {
     private SessionManager.SessionInfo mySessionInfo;
     private User myUser;
+    private String myTrackId;
     private long myCount;
 
-    public MyTunesRssSendCounter(User user, SessionManager.SessionInfo sessionInfo) {
+    public MyTunesRssSendCounter(User user, String trackId, SessionManager.SessionInfo sessionInfo) {
         myUser = user;
+        myTrackId = trackId;
         mySessionInfo = sessionInfo;
     }
 
@@ -27,6 +29,6 @@ public class MyTunesRssSendCounter implements StreamSender.ByteSentCounter {
     }
 
     public void notifyEnd() {
-        StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(myUser.getName(), myCount));
+        StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(myUser.getName(), myTrackId,  myCount));
     }
 }

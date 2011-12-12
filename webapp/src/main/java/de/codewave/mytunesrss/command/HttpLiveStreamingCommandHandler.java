@@ -59,7 +59,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
             } else {
                 sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
-                sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), trackId, SessionManager.getSessionInfo(getRequest())));
             }
         } else {
             sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);

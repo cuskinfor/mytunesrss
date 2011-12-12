@@ -60,7 +60,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                     if (MyTunesRss.STORE.getQueryResultSize(new FindPlaylistQuery(Collections.singletonList(PlaylistType.M3uFile), id, null, true)) > 0) {
                         statement.setUpdate(true);
                     }
-                    myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert/update playlist from \"" + playlistFile + "\" into database."));
+                    myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert/update playlist from \"" + playlistFile + "\" into database."));
                     myExistingIds.add(id);
                 }
             } catch (IOException e) {

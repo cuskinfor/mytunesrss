@@ -29,14 +29,25 @@ import java.util.concurrent.Callable;
  */
 public class DatabaseBuilderCallable implements Callable<Boolean> {
 
-    public static void updateHelpTables(DatabaseUpdateQueue queue, int updatedCount) throws InterruptedException {
-        if (updatedCount % MyTunesRssDataStore.UPDATE_HELP_TABLES_FREQUENCY == 0) {
-            queue.offer(new DataStoreStatementEvent(new RecreateHelpTablesStatement()));
-        }
-    }
-
     public enum State {
         UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle(), UpdatingTracksFromIphoto();
+    }
+
+    private static final class ImageUpdateInfo {
+
+        private TrackSource myTrackSource;
+        private File myFile;
+        private String myId;
+        private long myTimeLastImageUpdate;
+        private boolean myImageType;
+
+        public ImageUpdateInfo(Track track, long timeLastImageUpdate) {
+            myTrackSource = track.getSource();
+            myFile = track.getFile();
+            myId = track.getId();
+            myTimeLastImageUpdate = timeLastImageUpdate;
+            myImageType = track.getMediaType() == MediaType.Image;
+        }
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBuilderCallable.class);
@@ -131,18 +142,17 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
             final Map<String, Long> missingItunesFiles = runUpdate(systemInformation);
             if (!Thread.currentThread().isInterrupted()) {
-                myQueue.offer(new DataStoreStatementEvent(new UpdateStatisticsStatement()));
+                myQueue.offer(new DataStoreStatementEvent(new UpdateStatisticsStatement(), false));
                 myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                     public void execute(Connection connection) throws SQLException {
                         connection.createStatement().execute(
                                 "UPDATE system_information SET lastupdate = " + timeUpdateStart);
                     }
-                }));
+                }, false));
             }
             if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
                 runImageUpdate(timeUpdateStart);
             }
-            updateHelpTables(myQueue, 0); // update image references for albums
             if (!Thread.currentThread().isInterrupted()) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
@@ -155,6 +165,11 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                             LOGGER.warn("Could not notify admin of finished database update.", e);
                         }
                         return true;
+                    }
+
+                    @Override
+                    public boolean isCheckpointRelevant() {
+                        return false;
                     }
                 });
             }
@@ -170,6 +185,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Processing track images.");
         }
+        List<ImageUpdateInfo> imageUpdateInfos = new ArrayList<ImageUpdateInfo>();
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
             DataStoreQuery.QueryResult<Track> result = tx.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
@@ -189,20 +205,23 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     });
                 }
             });
-            for (Track track = result.nextResult(); track != null && !Thread.currentThread().isInterrupted(); track = result
-                    .nextResult()) {
+            for (Track track = result.nextResult(); track != null && !Thread.currentThread().isInterrupted(); track = result.nextResult()) {
                 long timeLastImageUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : track.getLastImageUpdate();
-                myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(track.getSource(), track.getFile(), track
-                        .getId(), timeLastImageUpdate, track.getMediaType() == MediaType.Image)));
+                imageUpdateInfos.add(new ImageUpdateInfo(track, timeLastImageUpdate));
             }
         } catch (SQLException e) {
             LOGGER.error("Could not find tracks for image update.", e);
-        } catch (IOException e) {
-            LOGGER.error("Could not get image from file.", e);
         } finally {
             tx.rollback();
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Finished processing track images.");
+            }
+        }
+        for (ImageUpdateInfo imageUpdateInfo : imageUpdateInfos) {
+            try {
+                myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate, imageUpdateInfo.myImageType), false));
+            } catch (IOException e) {
+                LOGGER.error("Could not get image from file.", e);
             }
         }
     }
@@ -270,17 +289,13 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
             }
-            myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds)));
+            myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + photoIds.size() + " photos from database.");
             }
-            myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds)));
-        }
-        if (!Thread.currentThread().isInterrupted()) {
-            // ensure the help tables are created with all the data
-            updateHelpTables(myQueue, 0);
+            myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds), true));
         }
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");

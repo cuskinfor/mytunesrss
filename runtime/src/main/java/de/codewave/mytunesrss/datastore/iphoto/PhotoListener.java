@@ -106,9 +106,9 @@ public class PhotoListener implements PListHandlerListener {
                     Long createDate = (((Double)photo.get("DateAsTimerInterval")).longValue() * 1000) + 978303600000L;
                     statement.setDate(createDate != null ? createDate.longValue() : -1);
                     statement.setFile(filename);
-                    myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert photo \"" + name + "\" into database"));
+                    myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
                     HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
-                    myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, "Could not insert photo \"" + name + "\" into database"));
+                    myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
                     myPhotoIdToPersId.put(Long.valueOf(key), photoId);
                     return true;
                 } else if (existing) {

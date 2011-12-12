@@ -39,9 +39,6 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
             if (!Thread.currentThread().isInterrupted()) {
                 runImageUpdate(System.currentTimeMillis());
             }
-            if (!Thread.currentThread().isInterrupted()) {
-                updateHelpTables(myQueue, 0); // update image references for albums
-            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
@@ -63,6 +60,6 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
             public void execute(Connection connection) throws SQLException {
                 MyTunesRssUtils.createStatement(connection, "resetLastImageUpdateForAllTracks").execute();
             }
-        }));
+        }, false));
     }
 }

@@ -3,8 +3,9 @@ package de.codewave.mytunesrss.statistics;
 public enum StatEventType {
     NULL(0, NullEvent.class),
     DOWNLOAD(1, DownloadEvent.class),
-    LOGIN(2, SessionStartEvent.class),
-    UPLOAD(3, UploadEvent.class);
+    SESSION_START(2, SessionStartEvent.class),
+    SESSION_END(3, SessionEndEvent.class),
+    UPLOAD(4, UploadEvent.class);
 
     public static Class getEventClass(int typeValue) {
         for (StatEventType type : StatEventType.values()) {

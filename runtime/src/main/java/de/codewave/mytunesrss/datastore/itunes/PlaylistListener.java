@@ -94,7 +94,7 @@ public class PlaylistListener implements PListHandlerListener {
                             true)) > 0) {
                         statement.setUpdate(true);
                     }
-                    myQueue.offer(new DataStoreStatementEvent(statement));
+                    myQueue.offer(new DataStoreStatementEvent(statement, true));
                 } catch (SQLException e) {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);

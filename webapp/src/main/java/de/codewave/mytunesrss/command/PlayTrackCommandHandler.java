@@ -69,7 +69,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, new FileInputStream(file));
                     }
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
-                    streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                    streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                     getAuthUser().playLastFmTrack(track);
                 }
             } else {

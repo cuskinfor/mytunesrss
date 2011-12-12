@@ -14,13 +14,16 @@ public class DataStoreStatementEvent extends DataStoreEvent {
 
     private DataStoreStatement myStatement;
     private String myExLogMsg;
+    private boolean myCheckpointRelevant;
 
-    public DataStoreStatementEvent(DataStoreStatement statement) {
+    public DataStoreStatementEvent(DataStoreStatement statement, boolean checkpointRelevant) {
         myStatement = statement;
+        myCheckpointRelevant = checkpointRelevant;
     }
 
-    public DataStoreStatementEvent(DataStoreStatement statement, String exLogMsg) {
+    public DataStoreStatementEvent(DataStoreStatement statement, boolean checkpointRelevant, String exLogMsg) {
         myStatement = statement;
+        myCheckpointRelevant = checkpointRelevant;
         myExLogMsg = exLogMsg;
     }
 
@@ -35,5 +38,10 @@ public class DataStoreStatementEvent extends DataStoreEvent {
             }
         }
         return true;
+    }
+
+    @Override
+    public boolean isCheckpointRelevant() {
+        return myCheckpointRelevant;
     }
 }

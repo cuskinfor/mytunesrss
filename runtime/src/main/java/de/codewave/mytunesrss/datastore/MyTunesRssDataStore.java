@@ -32,7 +32,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class MyTunesRssDataStore extends DataStore {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssDataStore.class);
-    public static final int UPDATE_HELP_TABLES_FREQUENCY = 30000;
 
     private SmartStatementFactory mySmartStatementFactory;
     private AtomicBoolean myInitialized = new AtomicBoolean(false);

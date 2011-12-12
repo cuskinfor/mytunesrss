@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class TerminateEvent implements DatabaseUpdateEvent {
+public class TerminateEvent extends CheckpointEvent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateEvent.class);
 
@@ -25,30 +25,15 @@ public class TerminateEvent implements DatabaseUpdateEvent {
                     MyTunesRssUtils.createStatement(connection, "finishDatabaseUpdate").execute();
                 }
             });
-            session.executeStatement(new RefreshSmartPlaylistsStatement());
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
-            session.setRollbackOnly();
         }
+        super.execute(session);
         session.commit();
-        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.buildingTrackIndex");
-        MyTunesRss.LAST_DATABASE_EVENT = event;
-        MyTunesRssEventManager.getInstance().fireEvent(event);
-        try {
-            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
-        } catch (IOException e) {
-            LOGGER.warn("Could not rebuild track index.", e);
-        } catch (SQLException e) {
-            LOGGER.warn("Could not rebuild track index.", e);
-        }
         return false;
     }
 
     public boolean isTerminate() {
-        return true;
-    }
-
-    public boolean isStartTransaction() {
         return true;
     }
 }

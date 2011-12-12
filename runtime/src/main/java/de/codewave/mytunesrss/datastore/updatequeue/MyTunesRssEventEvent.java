@@ -19,6 +19,10 @@ public class MyTunesRssEventEvent implements DatabaseUpdateEvent {
         return true;
     }
 
+    public boolean isCheckpointRelevant() {
+        return false;
+    }
+
     public boolean isStartTransaction() {
         return false;
     }

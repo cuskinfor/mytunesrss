@@ -58,7 +58,7 @@ public class RemoveOldEventsStatementTest {
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
             for (long i = 0; i < 20; i++) {
-                DownloadEvent event = new DownloadEvent("dummy", 1000);
+                DownloadEvent event = new DownloadEvent("dummy", "dummy-id", 1000);
                 event.setEventTime(System.currentTimeMillis() - (i * 3600L * 1000L * 24L));
                 session.executeStatement(new InsertStatisticsEventStatement(event));
             }

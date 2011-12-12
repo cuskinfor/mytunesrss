@@ -149,16 +149,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setProtected(type.isProtected());
         statement.setMediaType(type.getMediaType());
         statement.setFileName(canonicalFilePath);
-        myQueue.offer(new DataStoreStatementEvent(statement));
+        myQueue.offer(new DataStoreStatementEvent(statement, true));
         if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
             HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
-            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, "Could not insert track \"" + canonicalFilePath + "\" into database"));
+            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, false, "Could not insert track \"" + canonicalFilePath + "\" into database"));
         } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
             HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
-            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, "Could not insert track \"" + canonicalFilePath + "\" into database"));
+            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, false, "Could not insert track \"" + canonicalFilePath + "\" into database"));
         }
         myUpdatedCount++;
-        DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
         myExistingIds.add(fileId);
         return false;
     }
@@ -189,9 +188,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.warn("Could not read EXIF data from \"" + photoFile.getAbsolutePath() + "\".");
             }
         }
-        myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+        myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
         HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
-        myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+        myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
         String albumName = getPhotoAlbum(photoFile);
         try {
             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
@@ -225,13 +224,18 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         }
                         return true;
                     }
+
+                    @Override
+                    public boolean isCheckpointRelevant() {
+                        return true;
+                    }
                 });
             } else {
                 SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
                 savePhotoAlbumStatement.setId(albumId);
                 savePhotoAlbumStatement.setName(albumName);
                 savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));
-                myQueue.offer(new DataStoreStatementEvent(savePhotoAlbumStatement, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+                myQueue.offer(new DataStoreStatementEvent(savePhotoAlbumStatement, true, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
                 myPhotoAlbumIds.add(albumId);
             }
         } catch (NoSuchAlgorithmException e) {
@@ -240,7 +244,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         myUpdatedCount++;
-        DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
         myExistingIds.add(photoFileId);
     }
 

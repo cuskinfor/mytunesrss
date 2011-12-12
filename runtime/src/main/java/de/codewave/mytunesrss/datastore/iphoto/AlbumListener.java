@@ -80,7 +80,7 @@ public class AlbumListener implements PListHandlerListener {
                     statement.setPhotoIds(photos);
                     boolean update = myPhotoAlbumIds.contains(albumId);
                     statement.setUpdate(update);
-                    myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert/update photo album \"" + albumName + "\" into database."));
+                    myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert/update photo album \"" + albumName + "\" into database."));
                     if (!update) {
                         myPhotoAlbumIds.add(albumId);
                     }

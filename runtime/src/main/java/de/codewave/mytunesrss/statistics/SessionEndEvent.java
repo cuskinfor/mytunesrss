@@ -25,6 +25,6 @@ public class SessionEndEvent extends AbstractEvent {
     }
 
     public StatEventType getType() {
-        return StatEventType.LOGIN;
+        return StatEventType.SESSION_END;
     }
 }

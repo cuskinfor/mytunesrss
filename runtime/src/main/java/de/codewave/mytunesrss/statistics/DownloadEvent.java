@@ -10,18 +10,22 @@ public class DownloadEvent extends AbstractEvent {
     public String myUser;
 
     @XmlElement(name = "bytes")
-    public  long myBytes;
+    public long myBytes;
+
+    @XmlElement(name = "track_id")
+    public String myTrackId;
 
     public DownloadEvent() {
         // default constructor for JAXB
     }
 
-    public DownloadEvent(String user, long bytes) {
+    public DownloadEvent(String user, String trackId, long bytes) {
         myUser = user;
+        myTrackId = trackId;
         myBytes = bytes;
     }
 
     public StatEventType getType() {
-        return StatEventType.LOGIN;
+        return StatEventType.DOWNLOAD;
     }
 }

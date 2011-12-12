@@ -69,7 +69,6 @@ public class TrackListener implements PListHandlerListener {
         try {
             if (processTrack(track, myTrackIds.remove(trackId))) {
                 myUpdatedCount++;
-                DatabaseBuilderCallable.updateHelpTables(myQueue, myUpdatedCount);
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -145,7 +144,7 @@ public class TrackListener implements PListHandlerListener {
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
                             statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
-                            myQueue.offer(new DataStoreStatementEvent(statement, "Could not insert track \"" + name + "\" into database."));
+                            myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                             return true;
                         } else if (existing) {

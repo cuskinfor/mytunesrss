@@ -38,7 +38,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
                 if (file.exists()) {
                     getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() + "\"");
                     streamSender = new FileSender(file, track.getContentType(), file.length());
-                    streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                    streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                 } else {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");

@@ -1,10 +1,13 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Queue;
 import java.util.concurrent.*;
 
@@ -18,13 +21,20 @@ public class DatabaseUpdateQueue {
         new Thread(new Runnable() {
             public void run() {
                 long txBegin = System.currentTimeMillis();
+                long checkpointStartTime = 0;
                 DataStoreSession tx = null;
                 try {
                     DatabaseUpdateEvent event;
                     do {
-                        long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
-                        LOGGER.debug("Polling queue with a timeout of " + pollTimeoutMillis + " ms.");
-                        event = myQueue.poll(pollTimeoutMillis, TimeUnit.MILLISECONDS);
+                        if (checkpointStartTime > 0 && System.currentTimeMillis() - checkpointStartTime > 30000) {
+                            LOGGER.debug("Checkpoint reached.");
+                            event = new CheckpointEvent();
+                            checkpointStartTime = 0;
+                        } else {
+                            long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
+                            LOGGER.debug("Polling queue with a timeout of " + pollTimeoutMillis + " ms.");
+                            event = myQueue.poll(pollTimeoutMillis, TimeUnit.MILLISECONDS);
+                        }
                         LOGGER.debug("Received " + event);
                         if (event != null) {
                             if (tx == null && event.isStartTransaction()) {
@@ -44,7 +54,11 @@ public class DatabaseUpdateQueue {
                                 tx = null;
                             }
                         }
-                    } while (event == null || !event.isTerminate());
+                        if (event != null && event.isCheckpointRelevant() && checkpointStartTime == 0) {
+                            LOGGER.debug("Setting checkpoint start time after checkpoint relevant event.");
+                            checkpointStartTime = System.currentTimeMillis();
+                        }
+                    } while ((event == null || !event.isTerminate()) && !Thread.interrupted());
                 } catch (InterruptedException e) {
                     LOGGER.info("Interrupted while waiting for event.");
                 }
