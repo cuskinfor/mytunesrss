@@ -8,7 +8,10 @@
     <body>
 
         <release version="4.2.0" date="___D___">
-            <action dev="mdescher" type="update">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-315] Wrong http status code when playlist retrieved but no playlist permission
+            </action>
+            <action dev="mdescher" type="fix">
                 Updated to camel-1.9 to fix endless loops while parsing broken MP4 files and artist atom parsing.
             </action>
             <action dev="mdescher" type="update">

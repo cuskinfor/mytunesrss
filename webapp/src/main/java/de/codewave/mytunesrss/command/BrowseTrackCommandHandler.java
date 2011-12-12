@@ -93,7 +93,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 if (StringUtils.isNotEmpty(getRequestParameter("backUrl", null))) {
                     redirect(MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null)));
                 } else {
-                    getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+                    getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } else {
                 DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),

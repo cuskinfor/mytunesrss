@@ -93,7 +93,7 @@ public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
                 createZipArchive(user, getResponse().getOutputStream(), tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
             }
         } else {
-            getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 

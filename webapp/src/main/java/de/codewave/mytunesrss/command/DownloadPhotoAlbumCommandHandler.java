@@ -55,7 +55,7 @@ public class DownloadPhotoAlbumCommandHandler extends MyTunesRssCommandHandler {
             getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbum", "cGhvdG9z")) + ".zip\""); // cGhvdG9z => photos
             createZipArchive(getResponse().getOutputStream(), photoResult.getResults(), new MyTunesRssSendCounter(user, SessionManager.getSessionInfo(getRequest())), photoSize);
         } else {
-            getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 

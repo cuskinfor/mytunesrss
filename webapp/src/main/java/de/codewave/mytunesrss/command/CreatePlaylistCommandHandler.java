@@ -46,7 +46,7 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
                 forward(MyTunesRssCommand.ShowPortal);// todo: redirect to backUrl
             }
         } else {
-            getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
         }
     }
 

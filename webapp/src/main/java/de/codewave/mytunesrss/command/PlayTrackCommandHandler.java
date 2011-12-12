@@ -59,7 +59,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                         LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
                     }
                     MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
-                    streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
+                    streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                 } else {
                     if (Mp4Utils.isMp4File(file)) {
                         // qt-faststart
@@ -81,9 +81,9 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             }
         } else {
             if (LOG.isWarnEnabled()) {
-                LOG.warn("No tracks recognized in request, sending response code SC_NO_CONTENT instead.");
+                LOG.warn("No tracks recognized in request, sending response code SC_NOT_FOUND instead.");
             }
-            streamSender = new StatusCodeSender(HttpServletResponse.SC_NO_CONTENT);
+            streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
         getTransaction().commit();
         if (ServletUtils.isHeadRequest(getRequest())) {
