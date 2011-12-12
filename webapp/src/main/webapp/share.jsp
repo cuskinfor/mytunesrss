@@ -49,30 +49,11 @@
     }
 
     function shareFacebook() {
-        showLoading("<fmt:message key="facebook.shorteningUrl"/>");
-        new $jQ.ajax({
-            url : "${servletUrl}/shortenUrl/${auth}",
-            type : "POST",
-            contentType : "application/x-www-form-urlencoded",
-            processData : true,
-            data : {
-                "url" : links[$jQ("#linkSelect option:selected")[0].index]
-            },
-            success : function(data) {
-                $jQ("#facebookLink").val(data);
-                hideLoading();
-                centerPopupWindow("", "MyTunesRssFacebook", 980, 480, "resizable=yes,location=no,menubar=no,scrollbars=auto,status=no,toolbar=no,hotkeys=no");
-                $jQ('#facebookForm').submit();
-                $jQ.modal.close();
-            },
-            error : function() {
-                $jQ("#facebookLink").val(links[$jQ("#linkSelect option:selected")[0].index]);
-                hideLoading();
-                centerPopupWindow("", "MyTunesRssFacebook", 980, 480, "resizable=yes,location=no,menubar=no,scrollbars=auto,status=no,toolbar=no,hotkeys=no");
-                $jQ('#facebookForm').submit();
-                $jQ.modal.close();
-            }
-        });
+        $jQ("#facebookLink").val(links[$jQ("#linkSelect option:selected")[0].index]);
+        hideLoading();
+        centerPopupWindow("", "MyTunesRssFacebook", 980, 480, "resizable=yes,location=no,menubar=no,scrollbars=auto,status=no,toolbar=no,hotkeys=no");
+        $jQ('#facebookForm').submit();
+        $jQ.modal.close();
     }
 
 </script>
