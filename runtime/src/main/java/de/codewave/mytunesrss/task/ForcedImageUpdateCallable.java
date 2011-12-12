@@ -42,9 +42,6 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
             if (!Thread.currentThread().isInterrupted()) {
                 updateHelpTables(myQueue, 0); // update image references for albums
             }
-            if (!Thread.currentThread().isInterrupted()) {
-                deleteOrphanedImages();
-            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {

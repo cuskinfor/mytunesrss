@@ -106,9 +106,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             myQueue.offer(new MyTunesRssEventEvent(event));
             internalExecute();
             result = Boolean.TRUE;
-            if (!Thread.currentThread().isInterrupted()) {
-                myQueue.offer(new DataStoreStatementEvent(new RefreshSmartPlaylistsStatement()));
-            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
@@ -147,7 +144,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
             updateHelpTables(myQueue, 0); // update image references for albums
             if (!Thread.currentThread().isInterrupted()) {
-                deleteOrphanedImages();
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
                 }
@@ -165,17 +161,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         } catch (Exception e) {
             throw e;
         }
-    }
-
-    protected void deleteOrphanedImages() throws InterruptedException {
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Deleting orphaned images.");
-        }
-        myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                MyTunesRssUtils.createStatement(connection, "deleteOrphanedImages").execute();
-            }
-        }));
     }
 
     protected void runImageUpdate(final long timeUpdateStart) throws InterruptedException {
@@ -296,19 +281,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         if (!Thread.currentThread().isInterrupted()) {
             // ensure the help tables are created with all the data
             updateHelpTables(myQueue, 0);
-            myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
-                public void execute(Connection connection) throws SQLException {
-                    MyTunesRssUtils.createStatement(connection, "removeObsoletePhotoAlbumsAndPlaylists").execute();
-                }
-            }));
         }
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Obsolete tracks and playlists removed from database.");
-        }
-        if (!Thread.currentThread().isInterrupted()) {
-            MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.buildingTrackIndex");
-            myQueue.offer(new MyTunesRssEventEvent(event));
-            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
         }
         return missingItunesFiles;
     }

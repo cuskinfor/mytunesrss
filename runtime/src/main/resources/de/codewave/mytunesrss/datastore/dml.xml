@@ -254,16 +254,6 @@
         </sql>
     </statement>
 
-    <statement name="deleteOrphanedImages">
-        <sql>
-            DELETE FROM image
-            WHERE NOT EXISTS
-                ( SELECT * FROM track t WHERE t.image_hash = hash )
-            AND NOT EXISTS
-                ( SELECT * FROM photo p WHERE p.image_hash = hash )
-        </sql>
-    </statement>
-
     <statement name="resetLastImageUpdateForAllTracks">
         <sql>UPDATE track SET last_image_update = NULL</sql>
     </statement>
@@ -482,9 +472,16 @@
         </sql>
     </statement>
 
-    <statement name="removeObsoletePhotoAlbumsAndPlaylists">
+    <statement name="finishDatabaseUpdate">
         <sql>DELETE FROM photoalbum WHERE NOT EXISTS (SELECT * FROM link_photo_album WHERE link_photo_album.album_id = photoalbum.id)</sql>
         <sql>DELETE FROM playlist WHERE type != 'MyTunesSmart' AND NOT EXISTS (SELECT * FROM link_track_playlist WHERE link_track_playlist.playlist_id = playlist.id)</sql>
+        <sql>
+            DELETE FROM image
+            WHERE NOT EXISTS
+            ( SELECT * FROM track t WHERE t.image_hash = hash )
+            AND NOT EXISTS
+            ( SELECT * FROM photo p WHERE p.image_hash = hash )
+        </sql>
     </statement>
 
     <statement name="updateImageForPhoto">

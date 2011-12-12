@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
-import de.codewave.mytunesrss.task.RefreshSmartPlaylistsAndLuceneIndexCallable;
 
 import java.io.IOException;
 import java.sql.SQLException;
