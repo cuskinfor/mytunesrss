@@ -50,7 +50,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private static enum Atom {
         Album("moov.udta.meta.ilst.\u00a9alb.data"),
-        Artist("moov.udta.meta.ilst.\u00a9art.data"),
+        Artist("moov.udta.meta.ilst.\u00a9ART.data"),
         AlbumArtist("moov.udta.meta.ilst.aART.data"),
         Title("moov.udta.meta.ilst.\u00a9nam.data"),
         TrackNumber("moov.udta.meta.ilst.trkn.data"),

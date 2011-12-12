@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.1.11" date="2011-12-12">
+            <action dev="mdescher" type="fix">
+                Updated to camel-1.9 to fix artist atom parsing. Also fixed the same bug in mytunesrss code.
+            </action>
+        </release>
+
         <release version="4.1.10" date="2011-12-04">
             <action dev="mdescher" type="fix">
                 Updated to camel-1.8 to fix endless loops while parsing broken MP4 files.
