@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -69,7 +70,7 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
             myLastValidationTimestamp.set(System.currentTimeMillis());
             for (BorrowInformation borrowInformation : new ArrayList<BorrowInformation>(myActiveObjects.values())) {
                 if (borrowInformation.getAgeMillis() > LEAK_TIME) {
-                    LOGGER.error("Connection in database connection pool seems to have leaked. Allocation information follows.", borrowInformation.getThreadInfo());
+                    LOGGER.error("Connection in database connection pool seems to have leaked. Allocation (" + new Date(borrowInformation.getTimestamp()) + ") information follows.", borrowInformation.getThreadInfo());
                 }
             }
         }

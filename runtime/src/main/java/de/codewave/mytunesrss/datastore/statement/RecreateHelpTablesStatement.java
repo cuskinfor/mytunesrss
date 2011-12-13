@@ -30,15 +30,17 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
         statementGenre.setItems("hidden_genres", hiddenGenres);
         long startTime = System.currentTimeMillis();
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Recreating help tables.");
+            LOG.debug("Recreating albums help table.");
         }
-        connection.commit();
         statementAlbum.execute();
-        connection.commit();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recreating artists help table.");
+        }
         statementArtist.execute();
-        connection.commit();
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Recreating genres help table.");
+        }
         statementGenre.execute();
-        connection.commit();
         long endTime = System.currentTimeMillis();
         if (LOG.isDebugEnabled()) {
             LOG.debug("Time for building help tables: " + (endTime - startTime));

@@ -10,7 +10,7 @@ public class BorrowInformation {
     private Throwable myThreadInfo;
 
     public BorrowInformation(Throwable threadInfo) {
-        myThreadInfo = threadInfo;
+        this(System.currentTimeMillis(), threadInfo);
     }
 
     public BorrowInformation(long timestamp, Throwable threadInfo) {
