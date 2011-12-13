@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.1.11" date="2011-12-12">
+        <release version="4.1.11" date="2011-12-13">
             <action dev="mdescher" type="fix">
                 Updated to camel-1.9 to fix artist atom parsing. Also fixed the same bug in mytunesrss code.
             </action>
