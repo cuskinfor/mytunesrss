@@ -26,7 +26,7 @@ public class DatabaseUpdateQueue {
                 try {
                     DatabaseUpdateEvent event;
                     do {
-                        if (checkpointStartTime > 0 && System.currentTimeMillis() - checkpointStartTime > 30000) {
+                        if (checkpointStartTime > 0 && System.currentTimeMillis() - checkpointStartTime > 60000) {
                             LOGGER.debug("Checkpoint reached.");
                             event = new CheckpointEvent();
                             checkpointStartTime = 0;
@@ -68,7 +68,7 @@ public class DatabaseUpdateQueue {
     }
 
     public void offer(DatabaseUpdateEvent event) throws InterruptedException {
-        if (!myQueue.offer(event, 60000, TimeUnit.MILLISECONDS)) {
+        if (!myQueue.offer(event, 600000, TimeUnit.MILLISECONDS)) {
             LOGGER.error("Lost database update event \"" + event + "\".");
         }
     }
