@@ -142,7 +142,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
             final Map<String, Long> missingItunesFiles = runUpdate(systemInformation);
             if (!Thread.currentThread().isInterrupted()) {
-                myQueue.offer(new DataStoreStatementEvent(new UpdateStatisticsStatement(), false));
                 myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                     public void execute(Connection connection) throws SQLException {
                         connection.createStatement().execute(

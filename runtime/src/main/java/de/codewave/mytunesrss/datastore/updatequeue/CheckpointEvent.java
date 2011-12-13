@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
+import de.codewave.mytunesrss.datastore.statement.UpdateStatisticsStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
@@ -26,6 +27,7 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         try {
             session.executeStatement(new RecreateHelpTablesStatement());
             session.executeStatement(new RefreshSmartPlaylistsStatement());
+            session.executeStatement(new UpdateStatisticsStatement());
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         }
