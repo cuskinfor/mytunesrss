@@ -90,11 +90,15 @@ public class MyTunesRssUtils {
 
     public static void showErrorMessageWithDialog(String message) {
         LOGGER.error(message);
-        if (!MyTunesRss.CONFIG.isHeadless() && !MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+        if (!isHeadless()) {
             JOptionPane.showMessageDialog(null, message);
         } else {
             System.err.println(message);
         }
+    }
+
+    public static boolean isHeadless() {
+        return MyTunesRss.CONFIG.isHeadless() || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) || GraphicsEnvironment.isHeadless();
     }
 
     public static void showErrorMessage(String message) {

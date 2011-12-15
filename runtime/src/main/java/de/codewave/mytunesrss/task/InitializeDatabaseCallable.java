@@ -15,10 +15,12 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Locale;
 import java.util.concurrent.Callable;
 
 /**
@@ -45,6 +47,17 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                 } else {
                     LOGGER.debug("Version found.");
                     if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
+                        if (MyTunesRss.REGISTRATION.isExpiredVersion()) {
+                            if (MyTunesRssUtils.isHeadless()) {
+                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.registrationExpiredVersion"));
+                                MyTunesRssUtils.shutdownGracefully();
+                            } else {
+                                int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.licenseExpiredVersion"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
+                                if (result == JOptionPane.YES_OPTION) {
+                                    MyTunesRssUtils.shutdownGracefully();
+                                }
+                            }
+                        }
                         session.executeStatement(new MigrationStatement());
                         session.commit();
                     }

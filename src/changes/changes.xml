@@ -9,6 +9,9 @@
 
         <release version="4.2.0" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-324] Only refuse to start the user interface with an expired license
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-315] Wrong http status code when playlist retrieved but no playlist permission
             </action>
             <action dev="mdescher" type="fix">

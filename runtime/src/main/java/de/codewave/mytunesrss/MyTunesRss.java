@@ -159,7 +159,7 @@ public class MyTunesRss {
         handleRegistration();
         MyTunesRssUtils.setCodewaveLogLevel(CONFIG.getCodewaveLogLevel());
         processSanityChecks();
-        if (!MyTunesRss.CONFIG.isHeadless() && !COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless()) {
+        if (!MyTunesRssUtils.isHeadless()) {
             initMainWindow();
         }
         initializeQuicktimePlayer();
@@ -348,7 +348,7 @@ public class MyTunesRss {
             InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
             callable.call();
             if (callable.getException() != null) {
-                if (!MyTunesRss.CONFIG.isHeadless() && !COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && CONFIG.isDefaultDatabase()) {
+                if (!MyTunesRssUtils.isHeadless() && CONFIG.isDefaultDatabase()) {
                     List<DatabaseBackup> backups = MyTunesRssUtils.findDatabaseBackups();
                     if (MyTunesRss.CONFIG.isDefaultDatabase() && !backups.isEmpty()) {
                         DatabaseBackup backup = (DatabaseBackup)JOptionPane.showInputDialog(
@@ -391,7 +391,7 @@ public class MyTunesRss {
                 MyTunesRssUtils.shutdownGracefully();
             }
             if (callable.getDatabaseVersion().compareTo(new Version(VERSION)) > 0) {
-                if (!MyTunesRss.CONFIG.isHeadless() && !COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) && !GraphicsEnvironment.isHeadless() && CONFIG.isDefaultDatabase()) {
+                if (!MyTunesRssUtils.isHeadless() && CONFIG.isDefaultDatabase()) {
                     int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatchReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
                         LOGGER.info("Recreating default database.");
@@ -442,13 +442,6 @@ public class MyTunesRss {
         if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
             MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
             MyTunesRssUtils.shutdownGracefully();
-        }
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if (feedback != null && feedback.getMessage() != null) {
-            MyTunesRssUtils.showErrorMessageWithDialog(feedback.getMessage());
-            if (!feedback.isValid()) {
-                MyTunesRssUtils.shutdownGracefully();
-            }
         }
     }
 
@@ -575,7 +568,7 @@ public class MyTunesRss {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Started admin server on port " + localPort + ".");
         }
-        if (MyTunesRss.CONFIG.isHeadless() || COMMAND_LINE_ARGS.containsKey(CMD_HEADLESS) || GraphicsEnvironment.isHeadless()) {
+        if (MyTunesRssUtils.isHeadless()) {
             System.out.println("Started admin server on port " + localPort);
         }
         return true;
