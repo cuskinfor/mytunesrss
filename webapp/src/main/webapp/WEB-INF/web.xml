@@ -25,7 +25,7 @@
     <listener>
         <description>Session manager listener</description>
         <display-name>SessionManager</display-name>
-        <listener-class>de.codewave.utils.servlet.SessionManager</listener-class>
+        <listener-class>de.codewave.mytunesrss.servlet.MyTunesRssSessionManager</listener-class>
     </listener>
     <context-param>
         <description>Session info class</description>
