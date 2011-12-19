@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.statistics;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
@@ -13,15 +15,12 @@ public class SessionStartEvent extends AbstractEvent {
     public String mySessionId;
 
     public SessionStartEvent() {
-        // default constructor for JAXB
+        super(StatEventType.SESSION_START);
     }
 
     public SessionStartEvent(String user, String sessionId) {
+        super(StatEventType.SESSION_START);
         myUser = user;
         mySessionId = sessionId;
-    }
-
-    public StatEventType getType() {
-        return StatEventType.SESSION_START;
     }
 }

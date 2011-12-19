@@ -28,15 +28,10 @@ public class InsertStatisticsEventStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         String json;
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-            mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
-            mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
-            json = mapper.writeValueAsString(myEvent);
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertStatisticsEvent");
             statement.setObject("ts", myEvent.getEventTime());
             statement.setObject("type", myEvent.getType().getValue());
-            statement.setObject("data", json);
+            statement.setObject("data", myEvent.toJson());
             statement.execute();
         } catch (IOException e) {
             LOGGER.warn("Could not write statistics event of type \"" + myEvent.getType().name() + "\".", e);

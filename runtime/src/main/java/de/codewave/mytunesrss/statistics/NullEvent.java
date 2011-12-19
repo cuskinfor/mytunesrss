@@ -1,10 +1,12 @@
 package de.codewave.mytunesrss.statistics;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 public class NullEvent extends AbstractEvent {
 
     public static final NullEvent INSTANCE = new NullEvent();
 
-    public StatEventType getType() {
-        return StatEventType.NULL;
+    public NullEvent() {
+        super(StatEventType.NULL);
     }
 }

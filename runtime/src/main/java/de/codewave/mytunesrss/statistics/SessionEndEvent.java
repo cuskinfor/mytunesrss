@@ -16,15 +16,12 @@ public class SessionEndEvent extends AbstractEvent {
     public long myDuration;
 
     public SessionEndEvent() {
-        // default constructor for JAXB
+        super(StatEventType.SESSION_END);
     }
 
     public SessionEndEvent(String user, String sessionId) {
+        super(StatEventType.SESSION_END);
         myUser = user;
         mySessionId = sessionId;
-    }
-
-    public StatEventType getType() {
-        return StatEventType.SESSION_END;
     }
 }

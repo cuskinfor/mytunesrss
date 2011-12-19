@@ -16,16 +16,13 @@ public class DownloadEvent extends AbstractEvent {
     public String myTrackId;
 
     public DownloadEvent() {
-        // default constructor for JAXB
+        super(StatEventType.DOWNLOAD);
     }
 
     public DownloadEvent(String user, String trackId, long bytes) {
+        super(StatEventType.DOWNLOAD);
         myUser = user;
         myTrackId = trackId;
         myBytes = bytes;
-    }
-
-    public StatEventType getType() {
-        return StatEventType.DOWNLOAD;
     }
 }

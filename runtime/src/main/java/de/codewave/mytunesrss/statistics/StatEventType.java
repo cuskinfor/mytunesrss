@@ -10,7 +10,7 @@ public enum StatEventType {
     public static Class getEventClass(int typeValue) {
         for (StatEventType type : StatEventType.values()) {
             if (type.getValue() == typeValue) {
-                return type.getClass();
+                return type.myClazz;
             }
         }
         throw new IllegalArgumentException("Unknown event type value \"" + typeValue + "\".");

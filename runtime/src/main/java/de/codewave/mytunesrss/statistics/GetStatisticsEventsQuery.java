@@ -42,11 +42,16 @@ public class GetStatisticsEventsQuery extends DataStoreQuery<DataStoreQuery.Quer
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getStatisticEvents", Collections.singletonMap("types", types));
         statement.setLong("ts_from", myFrom);
         statement.setLong("ts_to", myTo);
-        statement.setItems("type", myTypes);
+        if (types) {
+            Integer[] typeValues = new Integer[myTypes.length];
+            for (int i = 0; i < myTypes.length; i++) {
+                typeValues[i] = myTypes[i].getValue();
+            }
+            statement.setItems("type", typeValues);
+        }
         final ObjectMapper mapper = new ObjectMapper();
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
-        mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
         return execute(statement, new ResultBuilder<StatisticsEvent>() {
             public StatisticsEvent create(ResultSet resultSet) throws SQLException {
                 try {

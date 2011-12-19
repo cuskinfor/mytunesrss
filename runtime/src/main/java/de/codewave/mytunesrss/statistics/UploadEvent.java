@@ -13,15 +13,12 @@ public class UploadEvent extends AbstractEvent {
     public long myBytes;
 
     public UploadEvent() {
-        // default constructor for JAXB
+        super(StatEventType.UPLOAD);
     }
 
     public UploadEvent(String user, long bytes) {
+        super(StatEventType.UPLOAD);
         myUser = user;
         myBytes = bytes;
-    }
-
-    public StatEventType getType() {
-        return StatEventType.UPLOAD;
     }
 }
