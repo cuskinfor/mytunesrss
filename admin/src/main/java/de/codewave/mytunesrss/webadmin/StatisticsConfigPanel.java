@@ -15,6 +15,9 @@ import de.codewave.mytunesrss.statistics.GetStatisticsEventsQuery;
 import de.codewave.mytunesrss.statistics.SessionStartEvent;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
+import de.codewave.mytunesrss.webadmin.statistics.DownVolumePerDayChartGenerator;
+import de.codewave.mytunesrss.webadmin.statistics.ReportChartGenerator;
+import de.codewave.mytunesrss.webadmin.statistics.SessionsPerDayChartGenerator;
 import de.codewave.utils.sql.*;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -30,6 +33,7 @@ import org.jfree.data.xy.DefaultXYDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.JFreeChartWrapper;
+import sun.rmi.log.LogInputStream;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -39,27 +43,6 @@ import java.util.*;
 public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(StatisticsConfigPanel.class);
-
-    static enum ReportType {
-        Sessions("sessions", StatEventType.SESSION_START);
-
-        private String myLabelKey;
-        private StatEventType[] myStatEventTypes;
-
-        private ReportType(String labelKey, StatEventType... statEventTypes) {
-            myLabelKey = labelKey;
-            myStatEventTypes = statEventTypes;
-        }
-
-        public StatEventType[] getStatEventTypes() {
-            return myStatEventTypes;
-        }
-
-        @Override
-        public String toString() {
-            return "statisticsConfigPanel.reportType." + myLabelKey;
-        }
-    }
 
     private Form myConfigForm;
     private SmartTextField myStatisticsKeepTime;
@@ -85,7 +68,10 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         myReportToDate.setLenient(false);
         myReportToDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myReportToDate.setResolution(DateField.RESOLUTION_DAY);
-        myReportType = getComponentFactory().createSelect("statisticsConfigPanel.reportType", Arrays.asList(ReportType.values()));
+        myReportType = getComponentFactory().createSelect("statisticsConfigPanel.reportType", Arrays.asList(
+                new SessionsPerDayChartGenerator(),
+                new DownVolumePerDayChartGenerator()
+        ));
         myGenerateReport = getComponentFactory().createButton("statisticsConfigPanel.createReport", this);
         myConfigForm.addField(myStatisticsKeepTime, myStatisticsKeepTime);
         addComponent(getComponentFactory().surroundWithPanel(myConfigForm, FORM_PANEL_MARGIN_INFO, getBundleString("statisticsConfigPanel.config.caption")));
@@ -124,12 +110,19 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         if (clickEvent.getButton() == myGenerateReport) {
             //generateReport();
             try {
-                JFreeChartWrapper wrapper = new JFreeChartWrapper(generateReport((ReportType)myReportType.getValue()));
+                ReportChartGenerator generator = (ReportChartGenerator) myReportType.getValue();
+                Map<Day, List<StatisticsEvent>> eventsPerDay = createEmptyEventsPerDayMap();
+                for (StatisticsEvent event : selectData(generator.getEventTypes())) {
+                    eventsPerDay.get(new Day(new Date(event.getEventTime()))).add(event);
+                }
+                JFreeChartWrapper wrapper = new JFreeChartWrapper(generator.generate(eventsPerDay));
                 Window chartWindow = new Window("@todo chart");
                 Panel chartPanel = new Panel();
                 chartPanel.addComponent(wrapper);
+                chartPanel.setWidth((wrapper.getGraphWidth() + 20) + "px");
                 chartWindow.setContent(chartPanel);
                 getWindow().addWindow(chartWindow);
+                chartWindow.center();
             } catch (SQLException e) {
                 LOG.error("Could not create report chart.", e);
             }
@@ -138,35 +131,15 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         }
     }
 
-    private JFreeChart generateReport(ReportType reportType) throws SQLException {
-        if (reportType == ReportType.Sessions) {
-            List<StatisticsEvent> events = selectData(((ReportType)myReportType.getValue()).getStatEventTypes());
-            TimeSeries ts = new TimeSeries("@todo sessions");
-            for (Day day : getReportDays()) {
-                long sessionsPerDay = 0;
-                for (StatisticsEvent event : events) {
-                    if (day.getFirstMillisecond() <= event.getEventTime() && day.getLastMillisecond() >= event.getEventTime()) {
-                        sessionsPerDay++;
-                    }
-                }
-                ts.add(day, sessionsPerDay);
-            }
-            TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection(ts);
-            return ChartFactory.createTimeSeriesChart("@todo sessions per day", "@todo date", "@todo sessions", timeSeriesCollection, false, true, false);
-        } else {
-            throw new IllegalArgumentException("Report type \"" + reportType + "\" cannot be generated.");
-        }
-    }
-
-    private List<Day> getReportDays() {
-        List<Day> reportDays = new ArrayList<Day>();
+    private Map<Day, List<StatisticsEvent>> createEmptyEventsPerDayMap() {
+        Map<Day, List<StatisticsEvent>> eventsPerDay = new HashMap<Day, List<StatisticsEvent>>();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime((Date)myReportFromDate.getValue());
         while (calendar.getTime().compareTo((Date)myReportToDate.getValue()) <= 0) {
-            reportDays.add(new Day(calendar.getTime()));
+            eventsPerDay.put(new Day(calendar.getTime()), new ArrayList<StatisticsEvent>());
             calendar.add(Calendar.DATE, 1);
         }
-        return reportDays;
+        return eventsPerDay;
     }
 
     private List<StatisticsEvent> selectData(StatEventType... types) throws SQLException {

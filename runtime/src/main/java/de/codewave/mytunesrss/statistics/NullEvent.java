@@ -8,5 +8,6 @@ public class NullEvent extends AbstractEvent {
 
     public NullEvent() {
         super(StatEventType.NULL);
+        setEventTime(Long.MIN_VALUE);
     }
 }

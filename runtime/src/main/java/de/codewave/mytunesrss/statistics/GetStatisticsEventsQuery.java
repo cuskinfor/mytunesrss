@@ -57,6 +57,7 @@ public class GetStatisticsEventsQuery extends DataStoreQuery<DataStoreQuery.Quer
                 try {
                     AbstractEvent event = (AbstractEvent) mapper.readValue(resultSet.getString("data"), StatEventType.getEventClass(resultSet.getInt("type")));
                     event.setEventTime(resultSet.getLong("ts"));
+                    return event;
                 } catch (IOException e) {
                     LOGGER.warn("Could not reconstruct event from database.", e);
                 }
