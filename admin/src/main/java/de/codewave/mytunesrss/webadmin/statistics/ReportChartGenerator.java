@@ -12,8 +12,9 @@ import org.jfree.data.time.Day;
 
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 public interface ReportChartGenerator {
-    JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay);
+    JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle);
     StatEventType[] getEventTypes();
 }

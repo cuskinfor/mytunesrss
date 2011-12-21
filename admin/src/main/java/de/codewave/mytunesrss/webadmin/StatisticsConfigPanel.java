@@ -19,6 +19,7 @@ import de.codewave.mytunesrss.webadmin.statistics.DownVolumePerDayChartGenerator
 import de.codewave.mytunesrss.webadmin.statistics.ReportChartGenerator;
 import de.codewave.mytunesrss.webadmin.statistics.SessionsPerDayChartGenerator;
 import de.codewave.utils.sql.*;
+import de.codewave.vaadin.ResourceBundleSelectItemWrapper;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ProgressWindow;
@@ -69,9 +70,12 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         myReportToDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myReportToDate.setResolution(DateField.RESOLUTION_DAY);
         myReportType = getComponentFactory().createSelect("statisticsConfigPanel.reportType", Arrays.asList(
-                new SessionsPerDayChartGenerator(),
-                new DownVolumePerDayChartGenerator()
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new SessionsPerDayChartGenerator(), getApplication().getBundle()),
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new DownVolumePerDayChartGenerator(), getApplication().getBundle())
         ));
+        myReportType.setNullSelectionAllowed(false);
+        myReportType.setNewItemsAllowed(false);
+        myReportType.select(myReportType.getItemIds().iterator().next());
         myGenerateReport = getComponentFactory().createButton("statisticsConfigPanel.createReport", this);
         myConfigForm.addField(myStatisticsKeepTime, myStatisticsKeepTime);
         addComponent(getComponentFactory().surroundWithPanel(myConfigForm, FORM_PANEL_MARGIN_INFO, getBundleString("statisticsConfigPanel.config.caption")));
@@ -110,16 +114,16 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         if (clickEvent.getButton() == myGenerateReport) {
             //generateReport();
             try {
-                ReportChartGenerator generator = (ReportChartGenerator) myReportType.getValue();
+                ReportChartGenerator generator = ((ResourceBundleSelectItemWrapper<ReportChartGenerator>) myReportType.getValue()).getItem();
                 Map<Day, List<StatisticsEvent>> eventsPerDay = createEmptyEventsPerDayMap();
                 for (StatisticsEvent event : selectData(generator.getEventTypes())) {
                     eventsPerDay.get(new Day(new Date(event.getEventTime()))).add(event);
                 }
-                JFreeChartWrapper wrapper = new JFreeChartWrapper(generator.generate(eventsPerDay));
-                Window chartWindow = new Window("@todo chart");
+                JFreeChartWrapper wrapper = new JFreeChartWrapper(generator.generate(eventsPerDay, getApplication().getBundle()));
+                Window chartWindow = new Window(myReportType.getValue().toString());
                 Panel chartPanel = new Panel();
                 chartPanel.addComponent(wrapper);
-                chartPanel.setWidth((wrapper.getGraphWidth() + 20) + "px");
+                chartPanel.setWidth((wrapper.getGraphWidth() + 50) + "px");
                 chartWindow.setContent(chartPanel);
                 getWindow().addWindow(chartWindow);
                 chartWindow.center();

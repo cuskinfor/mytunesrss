@@ -76,6 +76,10 @@ public class MyTunesRssWebAdmin extends Application {
         return window;
     }
 
+    public ResourceBundle getBundle() {
+        return myBundle;
+    }
+
     public String getBundleString(String key, Object... parameters) {
         return getBundleString(myBundle, key, parameters);
     }
