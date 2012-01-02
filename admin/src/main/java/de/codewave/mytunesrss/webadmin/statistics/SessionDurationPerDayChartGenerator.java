@@ -18,16 +18,13 @@ import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class SessionDurationPerDayChartGenerator implements ReportChartGenerator {
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
-        TimeSeries tsMin = new TimeSeries("min");
-        TimeSeries tsMax = new TimeSeries("max");
-        TimeSeries tsMedian = new TimeSeries("median");
+        TimeSeries tsMin = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMin"));
+        TimeSeries tsMax = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMax"));
+        TimeSeries tsMedian = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMedian"));
         for (Map.Entry<Day, List<StatisticsEvent>> entry : eventsPerDay.entrySet()) {
             if (!entry.getValue().isEmpty()) {
                 tsMin.add(entry.getKey(), getMin(entry.getValue()));
@@ -42,7 +39,7 @@ public class SessionDurationPerDayChartGenerator implements ReportChartGenerator
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection(tsMin);
         timeSeriesCollection.addSeries(tsMax);
         timeSeriesCollection.addSeries(tsMedian);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(bundle.getString(toString()), bundle.getString("statisticsConfigPanel.chart.axisDate"), bundle.getString("statisticsConfigPanel.chart.axisSessions"), timeSeriesCollection, true, true, false);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart(bundle.getString(toString()), bundle.getString("statisticsConfigPanel.chart.axisDate"), bundle.getString("statisticsConfigPanel.chart.axisSessionDuration"), timeSeriesCollection, true, true, false);
         ((DateAxis)chart.getXYPlot().getDomainAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.DAY, Math.max(1, eventsPerDay.size() / 10)));
         return chart;
     }
@@ -68,6 +65,7 @@ public class SessionDurationPerDayChartGenerator implements ReportChartGenerator
         for (StatisticsEvent event : events) {
             durations.add(Long.valueOf(((SessionEndEvent)event).myDuration));
         }
+        Collections.sort(durations);
         return durations.get(durations.size() / 2);
     }
 
