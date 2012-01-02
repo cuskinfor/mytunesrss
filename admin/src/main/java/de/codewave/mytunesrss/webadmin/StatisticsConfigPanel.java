@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import de.codewave.mytunesrss.webadmin.statistics.DownVolumePerDayChartGenerator;
 import de.codewave.mytunesrss.webadmin.statistics.ReportChartGenerator;
+import de.codewave.mytunesrss.webadmin.statistics.SessionDurationPerDayChartGenerator;
 import de.codewave.mytunesrss.webadmin.statistics.SessionsPerDayChartGenerator;
 import de.codewave.utils.sql.*;
 import de.codewave.vaadin.ResourceBundleSelectItemWrapper;
@@ -71,6 +72,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         myReportToDate.setResolution(DateField.RESOLUTION_DAY);
         myReportType = getComponentFactory().createSelect("statisticsConfigPanel.reportType", Arrays.asList(
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new SessionsPerDayChartGenerator(), getApplication().getBundle()),
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new SessionDurationPerDayChartGenerator(), getApplication().getBundle()),
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new DownVolumePerDayChartGenerator(), getApplication().getBundle())
         ));
         myReportType.setNullSelectionAllowed(false);
