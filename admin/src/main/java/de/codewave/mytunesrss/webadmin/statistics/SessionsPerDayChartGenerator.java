@@ -9,28 +9,25 @@ import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnit;
-import org.jfree.chart.axis.DateTickUnitType;
-import org.jfree.chart.axis.ValueAxis;
+import org.jfree.chart.axis.*;
+import org.jfree.data.Range;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class SessionsPerDayChartGenerator implements ReportChartGenerator {
+public class SessionsPerDayChartGenerator extends TimeSeriesCharGenerator implements ReportChartGenerator {
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
         TimeSeries ts = new TimeSeries(getClass().getSimpleName());
         for (Map.Entry<Day, List<StatisticsEvent>> entry : eventsPerDay.entrySet()) {
             ts.add(entry.getKey(), entry.getValue().size());
         }
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection(ts);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(bundle.getString(toString()), bundle.getString("statisticsConfigPanel.chart.axisDate"), bundle.getString("statisticsConfigPanel.chart.axisSessions"), timeSeriesCollection, false, true, false);
-        ((DateAxis)chart.getXYPlot().getDomainAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.DAY, Math.max(1, eventsPerDay.size() / 10)));
-        return chart;
+        return createTimeSeriesChart(timeSeriesCollection, bundle, "statisticsConfigPanel.chart.axisSessions");
     }
 
     public StatEventType[] getEventTypes() {

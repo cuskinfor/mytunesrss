@@ -10,17 +10,16 @@ import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnit;
-import org.jfree.chart.axis.DateTickUnitType;
+import org.jfree.chart.axis.*;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
-public class SessionDurationPerDayChartGenerator implements ReportChartGenerator {
+public class SessionDurationPerDayChartGenerator extends TimeSeriesCharGenerator implements ReportChartGenerator {
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
         TimeSeries tsMin = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMin"));
         TimeSeries tsMax = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMax"));
@@ -39,31 +38,29 @@ public class SessionDurationPerDayChartGenerator implements ReportChartGenerator
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection(tsMin);
         timeSeriesCollection.addSeries(tsMax);
         timeSeriesCollection.addSeries(tsMedian);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(bundle.getString(toString()), bundle.getString("statisticsConfigPanel.chart.axisDate"), bundle.getString("statisticsConfigPanel.chart.axisSessionDuration"), timeSeriesCollection, true, true, false);
-        ((DateAxis)chart.getXYPlot().getDomainAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.DAY, Math.max(1, eventsPerDay.size() / 10)));
-        return chart;
+        return createTimeSeriesChart(timeSeriesCollection, bundle, "statisticsConfigPanel.chart.axisSessionDuration");
     }
 
-    private double getMin(List<StatisticsEvent> events) {
+    private long getMin(List<StatisticsEvent> events) {
         long min = Long.MAX_VALUE;
         for (StatisticsEvent event : events) {
-            min = Math.min(min, ((SessionEndEvent)event).myDuration);
+            min = Math.min(min, (((SessionEndEvent)event).myDuration / 1000)); // seconds
         }
         return min;
     }
 
-    private double getMax(List<StatisticsEvent> events) {
+    private long getMax(List<StatisticsEvent> events) {
         long max = Long.MIN_VALUE;
         for (StatisticsEvent event : events) {
-            max = Math.max(max, ((SessionEndEvent) event).myDuration);
+            max = Math.max(max, (((SessionEndEvent)event).myDuration / 1000)); // seconds
         }
         return max;
     }
 
-    private double getMedian(List<StatisticsEvent> events) {
+    private long getMedian(List<StatisticsEvent> events) {
         List<Long> durations = new ArrayList<Long>();
         for (StatisticsEvent event : events) {
-            durations.add(Long.valueOf(((SessionEndEvent)event).myDuration));
+            durations.add(Long.valueOf(((SessionEndEvent)event).myDuration / 1000)); // seconds
         }
         Collections.sort(durations);
         return durations.get(durations.size() / 2);

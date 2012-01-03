@@ -10,18 +10,18 @@ import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.DateAxis;
-import org.jfree.chart.axis.DateTickUnit;
-import org.jfree.chart.axis.DateTickUnitType;
+import org.jfree.chart.axis.*;
 import org.jfree.data.time.Day;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
+import org.jfree.data.time.TimeSeriesDataItem;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class DownVolumePerDayChartGenerator implements ReportChartGenerator {
+public class DownVolumePerDayChartGenerator extends TimeSeriesCharGenerator implements ReportChartGenerator {
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
         TimeSeries ts = new TimeSeries(getClass().getSimpleName());
         for (Map.Entry<Day, List<StatisticsEvent>> entry : eventsPerDay.entrySet()) {
@@ -29,12 +29,11 @@ public class DownVolumePerDayChartGenerator implements ReportChartGenerator {
             for (StatisticsEvent event : entry.getValue()) {
                 volume += ((DownloadEvent)event).myBytes;
             }
-            ts.add(entry.getKey(), volume / (1024 * 1024)); // megabyte
+            long value = volume / (1024 * 1024); // megabyte
+            ts.add(entry.getKey(), value);
         }
         TimeSeriesCollection timeSeriesCollection = new TimeSeriesCollection(ts);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart(bundle.getString(toString()), bundle.getString("statisticsConfigPanel.chart.axisDate"), bundle.getString("statisticsConfigPanel.chart.axisVolumeMib"), timeSeriesCollection, false, true, false);
-        ((DateAxis)chart.getXYPlot().getDomainAxis()).setTickUnit(new DateTickUnit(DateTickUnitType.DAY, Math.max(1, eventsPerDay.size() / 10)));
-        return chart;
+        return createTimeSeriesChart(timeSeriesCollection, bundle, "statisticsConfigPanel.chart.axisVolumeMib");
     }
 
     public StatEventType[] getEventTypes() {
