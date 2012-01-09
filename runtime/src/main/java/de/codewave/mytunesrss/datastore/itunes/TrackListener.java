@@ -95,7 +95,7 @@ public class TrackListener implements PListHandlerListener {
         String name = (String) track.get("Name");
         String trackType = (String) track.get("Track Type");
         if (trackType == null || "File".equals(trackType)) {
-            String filename = applyReplacements(ItunesLoader.getFileNameForLocation((String) track.get("Location")));
+            String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
             if (StringUtils.isNotBlank(filename)) {
                 String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
                 if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
