@@ -14,8 +14,8 @@
     <inceptionYear>2006</inceptionYear>
     <parent>
         <groupId>de.codewave</groupId>
-        <artifactId>codewave-maven2-base</artifactId>
-        <version>3.17-SNAPSHOT</version>
+        <artifactId>codewave-base</artifactId>
+        <version>3.17</version>
     </parent>
     <repositories>
         <repository>
