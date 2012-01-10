@@ -35,12 +35,14 @@ public class MyTunesRssSessionManager extends SessionManager {
     @Override
     public void sessionDestroyed(HttpSessionEvent httpSessionEvent) {
         MyTunesRssSessionInfo sessionInfo = (MyTunesRssSessionInfo) getSessionInfo(httpSessionEvent.getSession());
-        User user = sessionInfo.getUser();
-        if (user != null) {
-            SessionEndEvent event = new SessionEndEvent(user.getName(), httpSessionEvent.getSession().getId());
-            event.setEventTime(sessionInfo.getLastAccessTime());
-            event.myDuration = sessionInfo.getLastAccessTime() - sessionInfo.getConnectTime();
-            StatisticsEventManager.getInstance().fireEvent(event);
+        if (sessionInfo != null) {
+            User user = sessionInfo.getUser();
+            if (user != null) {
+                SessionEndEvent event = new SessionEndEvent(user.getName(), httpSessionEvent.getSession().getId());
+                event.setEventTime(sessionInfo.getLastAccessTime());
+                event.myDuration = sessionInfo.getLastAccessTime() - sessionInfo.getConnectTime();
+                StatisticsEventManager.getInstance().fireEvent(event);
+            }
         }
         super.sessionDestroyed(httpSessionEvent);
     }
