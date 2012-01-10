@@ -5,8 +5,6 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 
-import java.util.List;
-
 /**
  * de.codewave.mytunesrss.command.ShowRemoteControlHandler
  */

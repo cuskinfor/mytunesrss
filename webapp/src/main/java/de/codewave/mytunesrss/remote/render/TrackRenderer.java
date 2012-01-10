@@ -1,13 +1,10 @@
 package de.codewave.mytunesrss.remote.render;
 
-import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.UserAgent;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
+import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
 import java.util.HashMap;
 import java.util.Map;

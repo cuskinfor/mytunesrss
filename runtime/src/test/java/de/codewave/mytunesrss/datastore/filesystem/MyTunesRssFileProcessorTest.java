@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.datastore.filesystem;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import org.junit.After;

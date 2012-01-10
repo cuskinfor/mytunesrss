@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.quicktime;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.utils.swing.SwingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +17,6 @@ import quicktime.std.StdQTException;
 import quicktime.std.clocks.ExtremesCallBack;
 import quicktime.std.clocks.TimeRecord;
 import quicktime.std.movies.Movie;
-import quicktime.std.movies.media.DataRef;
 
 import javax.swing.*;
 import java.awt.*;

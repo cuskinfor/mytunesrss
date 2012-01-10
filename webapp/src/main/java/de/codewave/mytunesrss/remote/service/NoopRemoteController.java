@@ -2,8 +2,8 @@ package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.datastore.statement.Track;
 
-import java.util.List;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.remote.service.NoopRemoteController

@@ -1,10 +1,7 @@
 package de.codewave.mytunesrss.statistics;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 @XmlRootElement
 public class SessionStartEvent extends AbstractEvent {

@@ -4,30 +4,25 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.camel.mp3.Id3Tag;
-import de.codewave.camel.mp3.Id3v2Tag;
-import de.codewave.camel.mp3.Mp3Utils;
-import de.codewave.camel.mp3.exception.IllegalHeaderException;
 import de.codewave.camel.mp4.Mp4Utils;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
-import de.codewave.mytunesrss.transcoder.Transcoder;
-import de.codewave.utils.servlet.*;
+import de.codewave.utils.servlet.ServletUtils;
+import de.codewave.utils.servlet.SessionManager;
+import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler

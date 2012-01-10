@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;

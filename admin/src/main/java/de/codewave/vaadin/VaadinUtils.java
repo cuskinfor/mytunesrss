@@ -10,10 +10,11 @@ import com.vaadin.data.Property;
 import com.vaadin.data.Validatable;
 import com.vaadin.data.Validator;
 import com.vaadin.data.validator.CompositeValidator;
-import com.vaadin.ui.*;
-import org.apache.commons.lang.StringUtils;
+import com.vaadin.ui.Component;
+import com.vaadin.ui.ComponentContainer;
+import com.vaadin.ui.Table;
+import com.vaadin.ui.Window;
 
-import java.awt.event.WindowEvent;
 import java.util.Iterator;
 
 public class VaadinUtils {

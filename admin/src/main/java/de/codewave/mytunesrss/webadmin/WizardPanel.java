@@ -19,8 +19,6 @@ import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.security.MessageDigest;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class WizardPanel extends Panel implements Button.ClickListener {

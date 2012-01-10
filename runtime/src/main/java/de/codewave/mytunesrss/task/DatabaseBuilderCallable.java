@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.iphoto.IphotoLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;

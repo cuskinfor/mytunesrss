@@ -5,14 +5,12 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.StringTokenizer;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement

@@ -5,8 +5,6 @@ import de.codewave.mytunesrss.lastfm.LastFmSession;
 import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.lastfm.LastFmUtils;
 import de.codewave.utils.MiscUtils;
-import de.codewave.utils.servlet.RangeHeader;
-import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Hex;
@@ -18,7 +16,6 @@ import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import java.io.OutputStream;
 import java.util.*;
 
 /**

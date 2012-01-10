@@ -1,8 +1,8 @@
 /*
  * MyTunesRssExecutorService.java 19.04.2010
- * 
+ *
  * Copyright (c) 2010 1&1 Internet AG. All rights reserved.
- * 
+ *
  * $Id$
  */
 package de.codewave.mytunesrss;
@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.task.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.SQLException;
 import java.util.concurrent.*;
 
 public class MyTunesRssExecutorService {

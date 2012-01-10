@@ -8,9 +8,6 @@ package de.codewave.mytunesrss;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.network.UpdateInfo;
 
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-
 public class CheckUpdateRunnable implements Runnable {
 
     public static UpdateInfo UPDATE_INFO;

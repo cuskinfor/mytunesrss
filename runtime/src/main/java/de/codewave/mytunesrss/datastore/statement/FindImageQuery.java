@@ -9,8 +9,6 @@ import de.codewave.utils.sql.SmartStatement;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertImageStatement

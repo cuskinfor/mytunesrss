@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.remote;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.MiscUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

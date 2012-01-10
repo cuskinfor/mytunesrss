@@ -12,8 +12,6 @@ import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.UpdatePhotoStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

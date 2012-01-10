@@ -4,7 +4,6 @@ import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.FlashPlayerConfig;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.PlaylistFileType;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;

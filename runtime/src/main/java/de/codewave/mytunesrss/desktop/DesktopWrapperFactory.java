@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.desktop;
 
-import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +23,7 @@ public class DesktopWrapperFactory {
         try {
             return new Java6DesktopWrapper();
         } catch (Throwable e) {
-            LOGGER.debug("Could not create Java6DesktopWrapper: " + e.getMessage());        
+            LOGGER.debug("Could not create Java6DesktopWrapper: " + e.getMessage());
             return new NullDesktopWrapper();
         }
     }

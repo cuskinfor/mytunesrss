@@ -21,7 +21,6 @@ import org.openid4java.message.ax.AxMessage;
 import org.openid4java.message.ax.FetchResponse;
 
 import java.io.IOException;
-import java.util.List;
 
 public class ValidateOpenIdCommandHandler extends DoLoginWithOpenIdCommandHandler {
     @Override

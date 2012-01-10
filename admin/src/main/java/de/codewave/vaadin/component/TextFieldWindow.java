@@ -5,7 +5,6 @@
 
 package de.codewave.vaadin.component;
 
-import com.vaadin.Application;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;

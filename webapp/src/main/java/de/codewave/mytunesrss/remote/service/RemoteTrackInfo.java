@@ -1,7 +1,5 @@
 package de.codewave.mytunesrss.remote.service;
 
-import org.apache.commons.lang.StringUtils;
-
 /**
  * de.codewave.mytunesrss.remote.service.RemoteTrackInfo
  */

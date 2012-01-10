@@ -1,19 +1,14 @@
 package de.codewave.mytunesrss.meta;
 
 import de.codewave.camel.mp4.CoverAtom;
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import org.apache.commons.lang.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
 
 /**
  * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils

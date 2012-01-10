@@ -5,8 +5,6 @@
 
 package de.codewave.mytunesrss;
 
-import java.util.Locale;
-
 public enum VideoType {
     Movie(), TvShow();
 

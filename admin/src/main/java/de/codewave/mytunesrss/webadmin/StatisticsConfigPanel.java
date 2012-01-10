@@ -5,40 +5,25 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.statistics.GetStatisticsEventsQuery;
-import de.codewave.mytunesrss.statistics.SessionStartEvent;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import de.codewave.mytunesrss.webadmin.statistics.DownVolumePerDayChartGenerator;
 import de.codewave.mytunesrss.webadmin.statistics.ReportChartGenerator;
 import de.codewave.mytunesrss.webadmin.statistics.SessionDurationPerDayChartGenerator;
 import de.codewave.mytunesrss.webadmin.statistics.SessionsPerDayChartGenerator;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.ResourceBundleSelectItemWrapper;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.ProgressWindow;
-import de.codewave.vaadin.component.SinglePanelWindow;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.JFreeChart;
-import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.time.Day;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
-import org.jfree.data.xy.DefaultXYDataset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vaadin.addon.JFreeChartWrapper;
-import sun.rmi.log.LogInputStream;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 

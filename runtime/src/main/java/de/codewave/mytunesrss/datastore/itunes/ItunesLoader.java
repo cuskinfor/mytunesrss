@@ -4,12 +4,10 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.AdminNotifier;
 import de.codewave.mytunesrss.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
 import org.apache.commons.lang.StringUtils;

@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.text.SimpleDateFormat;
-import java.util.Map;
 
 public enum MyTunesRssResource {
     Login("/login.jsp"),

@@ -5,7 +5,8 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.FlashPlayerConfig;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 

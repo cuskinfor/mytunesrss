@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.servlet;
 import de.codewave.mytunesrss.User;
 import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.statistics.SessionEndEvent;
-import de.codewave.mytunesrss.statistics.SessionStartEvent;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.utils.servlet.SessionManager;
 

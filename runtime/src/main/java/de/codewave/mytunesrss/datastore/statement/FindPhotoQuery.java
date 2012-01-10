@@ -5,20 +5,17 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.queryParser.ParseException;
-import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQuery

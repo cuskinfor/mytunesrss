@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultBuilder;

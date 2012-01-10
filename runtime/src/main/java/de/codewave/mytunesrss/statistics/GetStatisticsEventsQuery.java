@@ -15,7 +15,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.List;
 
 public class GetStatisticsEventsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<StatisticsEvent>> {
 

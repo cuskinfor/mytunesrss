@@ -7,9 +7,9 @@ package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.datastore.updatequeue.TerminateEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.MyTunesRssEventEvent;
+import de.codewave.mytunesrss.datastore.updatequeue.TerminateEvent;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

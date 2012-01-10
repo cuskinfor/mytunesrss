@@ -7,7 +7,10 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Form;
+import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.vaadin.SmartTextField;
@@ -19,7 +22,6 @@ import de.codewave.vaadin.validation.SameValidator;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 public class ServerConfigPanel extends MyTunesRssConfigPanel {

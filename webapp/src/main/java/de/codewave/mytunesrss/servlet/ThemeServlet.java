@@ -5,22 +5,21 @@
 package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.PrefsUtils;
-import org.apache.commons.lang.StringUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.ServletException;
 import java.io.File;
-import java.io.IOException;
-import java.io.FileReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.URLConnection;
 
 /**

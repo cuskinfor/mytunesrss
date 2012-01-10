@@ -5,9 +5,10 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.util.concurrent.Callable;
 

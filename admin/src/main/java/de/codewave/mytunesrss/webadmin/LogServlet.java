@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.IndexedLoggingEvent;
 import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Layout;
 import org.apache.log4j.PatternLayout;
 
 import javax.servlet.ServletException;

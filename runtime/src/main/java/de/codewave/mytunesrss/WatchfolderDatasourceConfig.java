@@ -7,7 +7,6 @@ package de.codewave.mytunesrss;
 
 import org.apache.commons.lang.StringUtils;
 
-import javax.xml.bind.annotation.XmlElementRef;
 import java.io.File;
 import java.util.regex.Pattern;
 

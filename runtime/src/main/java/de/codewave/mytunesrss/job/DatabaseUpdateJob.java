@@ -4,8 +4,6 @@ import de.codewave.mytunesrss.MyTunesRss;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Job implementation for database updates. This job simply starts the database builder task which only runs if it is not already running. The task is

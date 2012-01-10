@@ -9,8 +9,6 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.mytunesrss.statistics.SessionStartEvent;
-import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.utils.servlet.ServletUtils;
 
 import java.io.IOException;

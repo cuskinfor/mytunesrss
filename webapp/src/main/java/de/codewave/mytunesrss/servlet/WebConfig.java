@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +14,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.plaf.basic.BasicInternalFrameTitlePane;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;

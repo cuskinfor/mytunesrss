@@ -5,13 +5,8 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.Base64Utils;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.codec.binary.Hex;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

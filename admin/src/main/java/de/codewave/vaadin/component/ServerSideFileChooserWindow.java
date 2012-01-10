@@ -6,8 +6,7 @@
 package de.codewave.vaadin.component;
 
 import com.vaadin.terminal.Resource;
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.*;
+import com.vaadin.ui.Window;
 
 import java.io.File;
 import java.util.regex.Pattern;

@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.remote.render;
 
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.Artist;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.HashMap;

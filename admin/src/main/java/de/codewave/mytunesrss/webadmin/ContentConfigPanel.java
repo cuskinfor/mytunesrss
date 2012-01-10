@@ -16,7 +16,6 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import de.codewave.utils.sql.SmartStatementExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
