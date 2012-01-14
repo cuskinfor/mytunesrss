@@ -58,6 +58,7 @@ public enum MyTunesRssCommand implements Command {
     AddToOneClickPlaylist("addToOneClickPlaylist", AddToOneClickPlaylistCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class),
     ShowPhoto("showPhoto", ShowPhotoCommandHandler.class),
+    DownloadPhoto("downloadPhoto", DownloadPhotoCommandHandler.class),
     ShowShareLink("showShareLink", ShowShareLinkCommandHandler.class),
     ShortenUrl("shortenUrl", ShortenUrlCommandHandler.class),
     CloseWindow("closeWindow", CloseWindowCommandHandler.class),

@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.2.0" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-307] Download button for full sized photo
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-326] Path replacements are too difficult to understand
                 Path replacements are applied to the string from the iTunes XML without any preprocessing before.

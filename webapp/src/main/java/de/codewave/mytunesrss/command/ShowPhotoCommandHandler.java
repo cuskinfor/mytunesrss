@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -72,7 +73,7 @@ public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
                         sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(filename), Locale.ENGLISH), photoFile.length());
                     }
                     sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
-                    sender.sendGetResponse(getRequest(), getResponse(), false);
+                    sendResponse(sender, photoFile.getName());
                 } else {
                     getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
                 }
@@ -84,5 +85,9 @@ public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
         } else {
             getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    protected void sendResponse(StreamSender sender, String filename) throws IOException {
+        sender.sendGetResponse(getRequest(), getResponse(), false);
     }
 }
