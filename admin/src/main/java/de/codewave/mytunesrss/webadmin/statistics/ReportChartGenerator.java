@@ -10,11 +10,12 @@ import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.time.Day;
 
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
 public interface ReportChartGenerator {
-    JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle);
+    JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) throws SQLException;
     StatEventType[] getEventTypes();
 }

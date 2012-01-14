@@ -11,10 +11,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.statistics.GetStatisticsEventsQuery;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
-import de.codewave.mytunesrss.webadmin.statistics.DownVolumePerDayChartGenerator;
-import de.codewave.mytunesrss.webadmin.statistics.ReportChartGenerator;
-import de.codewave.mytunesrss.webadmin.statistics.SessionDurationPerDayChartGenerator;
-import de.codewave.mytunesrss.webadmin.statistics.SessionsPerDayChartGenerator;
+import de.codewave.mytunesrss.webadmin.statistics.*;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.ResourceBundleSelectItemWrapper;
 import de.codewave.vaadin.SmartTextField;
@@ -58,7 +55,9 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         myReportType = getComponentFactory().createSelect("statisticsConfigPanel.reportType", Arrays.asList(
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new SessionsPerDayChartGenerator(), getApplication().getBundle()),
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new SessionDurationPerDayChartGenerator(), getApplication().getBundle()),
-                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new DownVolumePerDayChartGenerator(), getApplication().getBundle())
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new DownVolumePerDayChartGenerator(), getApplication().getBundle()),
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new TopNameChartGenerator(), getApplication().getBundle()),
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new TopArtistChartGenerator(), getApplication().getBundle())
         ));
         myReportType.setNullSelectionAllowed(false);
         myReportType.setNewItemsAllowed(false);
@@ -79,7 +78,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig() {
-        myStatisticsKeepTime.setValue(MyTunesRss.CONFIG.getStatisticKeepTime(), 0, 365, 60);
+        myStatisticsKeepTime.setValue(MyTunesRss.CONFIG.getStatisticKeepTime(), 0, 999, 400);
     }
 
     protected void writeToConfig() {
