@@ -297,7 +297,7 @@
 <jsp:include page="incl_functions_menu.jsp"/>
 <jsp:include page="incl_edit_tags.jsp" />
 
-<c:if test="${yahoo}"><script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script></c:if>
+<c:if test="${yahoo}"><script type="text/javascript" src="${appUrl}/js/ymp.js"></script></c:if>
 
 </body>
 
