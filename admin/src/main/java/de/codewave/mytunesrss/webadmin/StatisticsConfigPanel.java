@@ -41,13 +41,12 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         myConfigForm = getComponentFactory().createForm(null, true);
         myStatisticsKeepTime = getComponentFactory().createTextField("statisticsConfigPanel.statisticsKeepTime", getApplication().getValidatorFactory().createMinMaxValidator(1, 720));
         Calendar from = new GregorianCalendar();
-        from.set(Calendar.DAY_OF_MONTH, from.getActualMinimum(Calendar.DAY_OF_MONTH));
+        from.add(Calendar.DAY_OF_YEAR, -30);
         myReportFromDate = new DateField(getBundleString("statisticsConfigPanel.reportFrom"), from.getTime());
         myReportFromDate.setLenient(false);
         myReportFromDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
         myReportFromDate.setResolution(DateField.RESOLUTION_DAY);
         Calendar to = new GregorianCalendar();
-        to.set(Calendar.DAY_OF_MONTH, to.getActualMaximum(Calendar.DAY_OF_MONTH));
         myReportToDate = new DateField(getBundleString("statisticsConfigPanel.reportTo"), to.getTime());
         myReportToDate.setLenient(false);
         myReportToDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
