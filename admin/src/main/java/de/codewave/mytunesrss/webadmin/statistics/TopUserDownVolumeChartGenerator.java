@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin.statistics;
 
 import de.codewave.mytunesrss.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.statistics.DownloadEvent;
 import de.codewave.mytunesrss.statistics.SessionEndEvent;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
@@ -20,11 +21,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class TopUserSessionChartGenerator extends TopChartGenerator {
+public class TopUserDownVolumeChartGenerator extends TopChartGenerator {
 
     @Override
     public String toString() {
-        return "statisticsConfigPanel.reportType.topUserSession";
+        return "statisticsConfigPanel.reportType.topUserDownVolume";
     }
 
     @Override
@@ -32,12 +33,12 @@ public class TopUserSessionChartGenerator extends TopChartGenerator {
         Map<String, MutableLong> itemsWithCount = new HashMap<String, MutableLong>();
         for (List<StatisticsEvent> eventList : eventsPerDay.values()) {
             for (StatisticsEvent event : eventList) {
-                String user = ((SessionEndEvent)event).myUser;
-                long duration = ((SessionEndEvent)event).myDuration;
+                String user = ((DownloadEvent)event).myUser;
+                long bytes = ((DownloadEvent)event).myBytes;
                 if (itemsWithCount.containsKey(user)) {
-                    itemsWithCount.get(user).add(duration / 1000);
+                    itemsWithCount.get(user).add(bytes / 1024);
                 } else {
-                    itemsWithCount.put(user, new MutableLong(duration / 1000));
+                    itemsWithCount.put(user, new MutableLong(bytes / 1024));
                 }
             }
         }
@@ -45,17 +46,23 @@ public class TopUserSessionChartGenerator extends TopChartGenerator {
     }
 
     @Override
-    protected String getItemLabel(String item, long seconds, ResourceBundle bundle) {
-        long h = seconds / 3600;
-        long m = (seconds - (3600 * h)) / 60;
-        long s = seconds % 60;
-        DecimalFormat df = new DecimalFormat("##");
-        return item + " = " + h + ":" + df.format(m) + ":" + df.format(s);
+    protected String getItemLabel(String item, long value, ResourceBundle bundle) {
+        long gib = value / (1024 * 1024);
+        long mib = (value - (1204 * 1024 * gib)) / 1024;
+        long kib = value % 1024;
+        DecimalFormat decimalFormat = new DecimalFormat("000");
+        if (gib > 0) {
+            return item + " = " + gib + bundle.getString("statisticsConfigPanel.chart.decimalSeparator") + decimalFormat.format(mib) + " GiB";
+        } else if (mib > 0) {
+            return item + " = " + mib + bundle.getString("statisticsConfigPanel.chart.decimalSeparator") + decimalFormat.format(kib) + " MiB";
+        } else {
+            return item + " = " + kib + " KiB";
+        }
     }
 
     public StatEventType[] getEventTypes() {
         return new StatEventType[]{
-                StatEventType.SESSION_END
+                StatEventType.DOWNLOAD
         };
     }
 }

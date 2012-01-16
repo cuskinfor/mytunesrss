@@ -31,16 +31,14 @@ public abstract class TopChartGenerator implements ReportChartGenerator {
         DefaultPieDataset pieDataset = new DefaultPieDataset();
         for (String item : items.subList(0, Math.min(MAX_SLICES, items.size()))) {
             MutableLong count = itemsWithCount.get(item);
-            pieDataset.setValue(getItemLabel(item, count.longValue()), count);
+            pieDataset.setValue(getItemLabel(item, count.longValue(), bundle), count);
         }
         return ChartFactory.createPieChart(bundle.getString(toString()), pieDataset, false, true, false);
     }
 
-    protected String getItemLabel(String item, long count) {
+    protected String getItemLabel(String item, long count, ResourceBundle bundle) {
         return item + " = " + count;
     }
 
     protected abstract Map<String, MutableLong> getItemsWithCount(Map<Day, List<StatisticsEvent>> eventsPerDay) throws SQLException;
-
-    protected abstract String getItem(Track track);
 }
