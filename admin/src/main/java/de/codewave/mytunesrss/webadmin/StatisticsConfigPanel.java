@@ -56,7 +56,8 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new SessionDurationPerDayChartGenerator(), getApplication().getBundle()),
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new DownVolumePerDayChartGenerator(), getApplication().getBundle()),
                 new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new TopNameChartGenerator(), getApplication().getBundle()),
-                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new TopArtistChartGenerator(), getApplication().getBundle())
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new TopArtistChartGenerator(), getApplication().getBundle()),
+                new ResourceBundleSelectItemWrapper<ReportChartGenerator>(new TopUserSessionChartGenerator(), getApplication().getBundle())
         ));
         myReportType.setNullSelectionAllowed(false);
         myReportType.setNewItemsAllowed(false);
