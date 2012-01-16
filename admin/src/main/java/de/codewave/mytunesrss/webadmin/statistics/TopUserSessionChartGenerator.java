@@ -49,7 +49,7 @@ public class TopUserSessionChartGenerator extends TopChartGenerator {
         long h = seconds / 3600;
         long m = (seconds - (3600 * h)) / 60;
         long s = seconds % 60;
-        DecimalFormat df = new DecimalFormat("##");
+        DecimalFormat df = new DecimalFormat("00");
         return item + " = " + h + ":" + df.format(m) + ":" + df.format(s);
     }
 
