@@ -351,6 +351,18 @@ table.navigation {
 	white-space: nowrap;
 }
 
+.actions .ywp-page-btn {
+    display: inline-block !important;
+    height: 18px !important;
+    width: 18px !important;
+    margin: 0 0 0 2px !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+    border: none !important;
+	white-space: nowrap !important;
+    top: 0 !important;
+}
+
 .actions a span {
 	display: none;
 }
@@ -416,19 +428,13 @@ table.navigation {
     background: url("../images/action-edit.png") left top no-repeat;
 }
 
-.actions .ymp-btn-page-play {
+.actions .ywp-page-btn-play {
 	background: url("../images/action-yahoo.png") left top no-repeat !important;
 }
 
-.actions .ymp-btn-page-pause {
+.actions .ywp-page-btn-pause {
 	background: url("../images/action-yahoo-playing.png") left top no-repeat !important;
 }
-
-.actions .ymp-btn-page-play em,
-.actions .ymp-btn-page-pause em {
-	visibility: hidden !important;
-}
-
 
 /* Actions Menu */
 
@@ -969,14 +975,6 @@ a.original {
     background: url("../images/action-download.png") left center no-repeat;
     padding-left: 24px;
     line-height: 18px !important;
-}
-
-
-/* Yahoo Player */
-
-.actions a.ymp-btn-page-play,
-.actions a.ymp-btn-page-pause {
-    padding: 0 !important;
 }
 
 
