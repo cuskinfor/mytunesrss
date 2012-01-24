@@ -9,6 +9,9 @@
 
         <release version="4.2.0" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-300] Automatic download/update of language packs from mytunesrss.com
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-307] Download button for full sized photo
             </action>
             <action dev="mdescher" type="fix">

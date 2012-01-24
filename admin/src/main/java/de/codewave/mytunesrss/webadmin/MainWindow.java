@@ -34,6 +34,16 @@ public class MainWindow extends Window {
         return getMyTunesRssWebAdmin().getBundleString(key, parameters);
     }
 
+    @Deprecated
+    public void showDebugMessage(String message) {
+        new MessageWindow(50, Sizeable.UNITS_EM, null, null, message, new Button(getBundleString("button.ok"))) {
+            @Override
+            protected void onClick(Button button) {
+                // intentionally left blank
+            }
+        }.show(this);
+    }
+
     public void showError(String messageKey, Object... parameters) {
         new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters), new Button(getBundleString("button.ok"))) {
             @Override

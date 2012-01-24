@@ -12,18 +12,27 @@ import com.vaadin.terminal.StreamResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.HttpException;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,6 +60,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Button myAddFlashPlayer;
     private Button myExportDefaultLanguage;
     private Button myAddLanguage;
+    private Button myDownloadLanguage;
 
     public void attach() {
         super.attach();
@@ -92,6 +102,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         uploadLanguage.addListener((Upload.SucceededListener) this);
         uploadLanguage.addListener((Upload.FailedListener) this);
         languageButtons.addComponent(uploadLanguage);
+        myDownloadLanguage = getComponentFactory().createButton("addonsConfigPanel.downloadLanguage", this);
+        languageButtons.addComponent(myDownloadLanguage);
         myExportDefaultLanguage = getComponentFactory().createButton("addonsConfigPanel.exportDefaultLanguage", this);
         languageButtons.addComponent(myExportDefaultLanguage);
         languagesPanel.addComponent(languageButtons);
@@ -320,6 +332,29 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                     ((MainWindow) VaadinUtils.getApplicationWindow(AddonsConfigPanel.this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale()));
                 }
             }.show(getWindow());
+        } else if (clickEvent.getSource() == myDownloadLanguage) {
+            ObjectMapper mapper = new ObjectMapper();
+            AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
+            mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
+            mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
+            HttpClient httpClient = MyTunesRssUtils.createHttpClient();
+            PostMethod postMethod = new PostMethod("http://mytunesrss.com/tools/get_languages.php");
+            postMethod.addParameter("user", MyTunesRss.CONFIG.getMyTunesRssComUser());
+            postMethod.addParameter("pass", Base64.encodeBase64String(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()));
+            try {
+                if (httpClient.executeMethod(postMethod) == 200) {
+                    List<MyTunesRssComLanguage> languages = mapper.readValue(postMethod.getResponseBodyAsStream(), new TypeReference<List<MyTunesRssComLanguage>>() { });
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showDebugMessage("downloaded " + languages.size() + " language files.");
+                } else {
+                    LOGGER.warn("Could not download language files from mytunesrss.com. Response status was \"" + postMethod.getStatusLine() + "\".");
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageListDownloadFailed");
+                }
+            } catch (IOException e) {
+                LOGGER.warn("Could not download language files from mytunesrss.com.", e);
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageListDownloadFailed");
+            } finally {
+                postMethod.releaseConnection();
+            }
         } else if (clickEvent.getSource() == myExportDefaultLanguage) {
             sendLanguageFile(AddonsUtils.getBuiltinLanguageFile(getApplication().getLocale()));
         } else {
