@@ -9,7 +9,7 @@ import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.TranscoderConfig;
+import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;

@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.SmtpProtocol;
+import de.codewave.mytunesrss.config.User;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,9 +1,9 @@
 package de.codewave.mytunesrss.lastfm;
 
-import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.httpclient.methods.GetMethod;

@@ -1,10 +1,10 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * de.codewave.mytunesrss.CompiledReplacementRule
+ * de.codewave.mytunesrss.config.CompiledReplacementRule
  */
 public class CompiledReplacementRule {
     private Pattern myPattern;

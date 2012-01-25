@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;

@@ -1,4 +1,4 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -8,7 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * de.codewave.mytunesrss.FileType
+ * de.codewave.mytunesrss.config.FileType
  */
 public class FileType {
     private String myMimeType;

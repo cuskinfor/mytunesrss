@@ -5,9 +5,9 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.DatabaseType;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssConfig;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;

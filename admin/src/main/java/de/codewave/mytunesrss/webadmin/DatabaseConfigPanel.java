@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.DatabaseType;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.vaadin.SmartTextField;

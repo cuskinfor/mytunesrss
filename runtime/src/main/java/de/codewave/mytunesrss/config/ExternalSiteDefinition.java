@@ -1,10 +1,10 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 import org.apache.commons.lang.builder.EqualsBuilder;
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
 /**
- * de.codewave.mytunesrss.ExternalSiteDefinition
+ * de.codewave.mytunesrss.config.ExternalSiteDefinition
  */
 public class ExternalSiteDefinition {
     private String myType;

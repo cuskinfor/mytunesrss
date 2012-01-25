@@ -1,5 +1,6 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

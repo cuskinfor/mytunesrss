@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.DataStoreSession;
 
 public class MyTunesRssEventEvent implements DatabaseUpdateEvent {

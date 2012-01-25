@@ -2,8 +2,9 @@
  * Copyright (c) 2006, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
@@ -32,7 +33,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * de.codewave.mytunesrss.MyTunesRssConfig
+ * de.codewave.mytunesrss.config.MyTunesRssConfig
  */
 public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);

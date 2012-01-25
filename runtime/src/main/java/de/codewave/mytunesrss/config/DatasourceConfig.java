@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;

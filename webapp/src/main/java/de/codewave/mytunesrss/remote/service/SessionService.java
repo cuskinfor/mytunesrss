@@ -5,7 +5,7 @@
 
 package de.codewave.mytunesrss.remote.service;
 
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 
 public class SessionService {

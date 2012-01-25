@@ -2,14 +2,22 @@
  * Copyright (c) 2007, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.addons;
 
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
+import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +25,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.AddonsUtils
+ * de.codewave.mytunesrss.addons.AddonsUtils
  */
 public class AddonsUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
@@ -389,103 +397,27 @@ public class AddonsUtils {
         return fileNames;
     }
 
-    public static class LanguageDefinition implements Comparable<LanguageDefinition> {
-        private String myCode;
-        private String myInfo;
-
-        public LanguageDefinition(String code, String info) {
-            myCode = code;
-            myInfo = info;
-        }
-
-        public String getCode() {
-            return myCode;
-        }
-
-        public void setCode(String code) {
-            myCode = code;
-        }
-
-        public String getInfo() {
-            return myInfo;
-        }
-
-        public void setInfo(String info) {
-            myInfo = info;
-        }
-
-        @Override
-        public String toString() {
-            return myCode;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof LanguageDefinition)) {
-                return false;
-            }
-            return StringUtils.equals(myCode, ((LanguageDefinition) obj).myCode);
-        }
-
-        @Override
-        public int hashCode() {
-            return myCode != null ? myCode.hashCode() : 0;
-        }
-
-        public int compareTo(LanguageDefinition o) {
-            return myCode.compareTo(o.getCode());
-        }
-    }
-
-    public static class ThemeDefinition implements Comparable<ThemeDefinition> {
-        private String myName;
-        private String myInfo;
-
-        public ThemeDefinition(String name, String info) {
-            myName = name;
-            myInfo = info;
-        }
-
-        public String getName() {
-            return myName;
-        }
-
-        public void setName(String name) {
-            myName = name;
-        }
-
-        public String getInfo() {
-            return myInfo;
-        }
-
-        public void setInfo(String info) {
-            myInfo = info;
-        }
-
-        @Override
-        public String toString() {
-            return myName;
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || !(obj instanceof ThemeDefinition)) {
-                return false;
-            }
-            return StringUtils.equals(myName, ((ThemeDefinition) obj).myName);
-        }
-
-        @Override
-        public int hashCode() {
-            return myName != null ? myName.hashCode() : 0;
-        }
-
-        public int compareTo(ThemeDefinition o) {
-            return myName.compareTo(o.getName());
-        }
-    }
-
     public static enum AddFileResult {
         ExtractFailed(), InvalidFile(), Ok(), SaveFailed();
     }
+
+    public static List<CommunityLanguageDefinition> getCommunityLanguages() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
+        mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
+        mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
+        HttpClient httpClient = MyTunesRssUtils.createHttpClient();
+        GetMethod method = new GetMethod("http://mytunesrss.com/tools/get_languages.php");
+        try {
+            if (httpClient.executeMethod(method) == 200) {
+                return mapper.readValue(method.getResponseBodyAsStream(), new TypeReference<List<CommunityLanguageDefinition>>() {
+                });
+            } else {
+                throw new IOException("Could not download language files from mytunesrss.com. Response status was \"" + method.getStatusLine() + "\".");
+            }
+        } finally {
+            method.releaseConnection();
+        }
+    }
+
 }

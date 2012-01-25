@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;

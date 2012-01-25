@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;

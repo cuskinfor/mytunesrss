@@ -2,6 +2,8 @@ package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
 import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.mytunesrss.config.LdapConfig;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;

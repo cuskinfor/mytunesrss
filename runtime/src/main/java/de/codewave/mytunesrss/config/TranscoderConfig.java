@@ -5,7 +5,7 @@
  *
  * $Id$
  */
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;

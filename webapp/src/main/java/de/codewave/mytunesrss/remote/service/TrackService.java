@@ -5,7 +5,7 @@ import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.TrackUtils;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;

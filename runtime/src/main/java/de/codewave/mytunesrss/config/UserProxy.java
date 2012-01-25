@@ -1,7 +1,10 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
+
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.User;
 
 /**
- * de.codewave.mytunesrss.UserProxy
+ * de.codewave.mytunesrss.config.UserProxy
  */
 public class UserProxy extends User {
     public UserProxy(String name) {

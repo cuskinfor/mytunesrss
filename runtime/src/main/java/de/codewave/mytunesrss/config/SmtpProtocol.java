@@ -1,4 +1,4 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 public enum SmtpProtocol {
     PLAINTEXT(), STARTTLS(), SSL();

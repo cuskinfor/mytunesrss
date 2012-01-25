@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.DatabaseType;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssConfig;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.statement.MigrationStatement;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.IOUtils;

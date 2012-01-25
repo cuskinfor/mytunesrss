@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;

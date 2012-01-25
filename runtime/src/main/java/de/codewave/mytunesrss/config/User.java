@@ -1,6 +1,12 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.UserAgent;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventListener;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.lastfm.LastFmSession;
 import de.codewave.mytunesrss.lastfm.LastFmSubmission;
 import de.codewave.mytunesrss.lastfm.LastFmUtils;
@@ -19,7 +25,7 @@ import org.w3c.dom.Element;
 import java.util.*;
 
 /**
- * de.codewave.mytunesrss.User
+ * de.codewave.mytunesrss.config.User
  */
 public class User implements MyTunesRssEventListener, Cloneable, Comparable<User> {
     private static final Logger LOG = LoggerFactory.getLogger(User.class);

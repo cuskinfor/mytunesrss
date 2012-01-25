@@ -7,10 +7,10 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.FileType;
-import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.config.FileType;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.ReplacementRule;
+import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;

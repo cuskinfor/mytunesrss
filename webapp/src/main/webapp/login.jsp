@@ -7,7 +7,7 @@
 
 <%--@elvariable id="appUrl" type="java.lang.String"--%>
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
-<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
+<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 

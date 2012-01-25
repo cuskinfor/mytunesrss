@@ -3,8 +3,9 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wetorrent.upnp.GatewayDevice;

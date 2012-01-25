@@ -13,8 +13,8 @@
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
 <%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
-<%--@elvariable id="authUser" type="de.codewave.mytunesrss.User"--%>
-<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.MyTunesRssConfig"--%>
+<%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
+<%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 <%--@elvariable id="tracks" type="java.util.List<de.codewave.mytunesrss.TrackUtils.TvShowEpisode>"--%>

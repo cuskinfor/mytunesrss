@@ -5,7 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin.statistics;
 
-import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 
 public class TopArtistChartGenerator extends TopTrackDownloadChartGenerator {

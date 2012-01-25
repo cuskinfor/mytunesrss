@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 public enum PlaylistFileType {
     Xspf("XSPF"), M3u("M3U"), Json("JSON");

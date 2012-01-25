@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.DatabaseType;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.utils.sql.DataStore;
 import de.codewave.utils.sql.DataStoreQuery;

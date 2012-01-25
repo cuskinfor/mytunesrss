@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;

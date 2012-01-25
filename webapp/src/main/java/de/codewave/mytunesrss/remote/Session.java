@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.remote;
 
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.config.User;
 
 import java.util.HashMap;
 import java.util.Map;

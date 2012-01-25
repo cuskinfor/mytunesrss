@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.server;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
 import de.codewave.utils.servlet.SessionManager;

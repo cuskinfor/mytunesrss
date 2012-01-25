@@ -5,11 +5,13 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.iphoto.IphotoLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.updatequeue.*;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

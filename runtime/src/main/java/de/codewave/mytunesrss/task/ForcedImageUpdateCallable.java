@@ -5,7 +5,7 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.MyTunesRssEventEvent;

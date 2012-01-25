@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.transcoding;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.TranscoderConfig;
+import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;

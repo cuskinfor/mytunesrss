@@ -1,6 +1,9 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.TranscoderConfig;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;

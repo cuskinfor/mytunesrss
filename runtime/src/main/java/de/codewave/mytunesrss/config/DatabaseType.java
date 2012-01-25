@@ -3,7 +3,9 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
+
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.util.Locale;
 

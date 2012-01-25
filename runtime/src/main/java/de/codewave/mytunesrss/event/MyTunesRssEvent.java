@@ -2,10 +2,10 @@
  * Copyright (c) 2007, Codewave Software. All Rights Reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.event;
 
 /**
- * de.codewave.mytunesrss.MyTunesRssEvent
+ * de.codewave.mytunesrss.event.MyTunesRssEvent
  */
 public class MyTunesRssEvent {
 

@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.SmtpProtocol;
+import de.codewave.mytunesrss.config.SmtpProtocol;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 

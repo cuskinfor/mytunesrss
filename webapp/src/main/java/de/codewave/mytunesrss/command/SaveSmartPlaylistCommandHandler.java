@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.VideoType;
+import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.SaveMyTunesSmartPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SmartInfo;

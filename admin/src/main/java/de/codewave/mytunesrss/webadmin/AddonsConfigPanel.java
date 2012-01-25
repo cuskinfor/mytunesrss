@@ -12,27 +12,25 @@ import com.vaadin.terminal.StreamResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
-import de.codewave.utils.MiscUtils;
+import de.codewave.mytunesrss.addons.AddonsUtils;
+import de.codewave.mytunesrss.addons.CommunityLanguageDefinition;
+import de.codewave.mytunesrss.addons.LanguageDefinition;
+import de.codewave.mytunesrss.addons.ThemeDefinition;
+import de.codewave.mytunesrss.config.ExternalSiteDefinition;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
+import de.codewave.mytunesrss.config.PlaylistFileType;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -164,14 +162,14 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private void refreshLanguages() {
         myLanguagesTable.removeAllItems();
-        List<AddonsUtils.LanguageDefinition> languages = new ArrayList<AddonsUtils.LanguageDefinition>(AddonsUtils.getLanguages(false));
-        Collections.sort(languages, new Comparator<AddonsUtils.LanguageDefinition>() {
-            public int compare(AddonsUtils.LanguageDefinition languageDefinition1, AddonsUtils.LanguageDefinition languageDefinition2) {
+        List<LanguageDefinition> languages = new ArrayList<LanguageDefinition>(AddonsUtils.getLanguages(false));
+        Collections.sort(languages, new Comparator<LanguageDefinition>() {
+            public int compare(LanguageDefinition languageDefinition1, LanguageDefinition languageDefinition2) {
                 Locale adminLocale = AddonsConfigPanel.this.getApplication().getLocale();
                 return new Locale(languageDefinition1.getCode()).getDisplayName(adminLocale).compareTo(new Locale(languageDefinition2.getCode()).getDisplayName(adminLocale));
             }
         });
-        for (AddonsUtils.LanguageDefinition languageDefinition : languages) {
+        for (LanguageDefinition languageDefinition : languages) {
             myLanguagesTable.addItem(
                     new Object[] {
                         new Locale(languageDefinition.getCode()).getDisplayName(getApplication().getLocale()),
@@ -186,12 +184,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private void refreshThemes() {
         myThemesTable.removeAllItems();
-        List<AddonsUtils.ThemeDefinition> themes = new ArrayList<AddonsUtils.ThemeDefinition>(AddonsUtils.getThemes(false));
+        List<ThemeDefinition> themes = new ArrayList<ThemeDefinition>(AddonsUtils.getThemes(false));
         Collections.sort(themes);
         boolean isDefault = StringUtils.isEmpty(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
         Embedded checkmark = new Embedded("", new ThemeResource("img/checkmark.png"));
         myThemesTable.addItem(new Object[]{isDefault ? checkmark : null, getBundleString("addonsConfigPanel.themes.defname"), createTableRowButton("button.default", this, DEFAULT_UI_THEME_ID, "DefaultTheme", !isDefault), createTableRowButton("button.delete", this, DEFAULT_UI_THEME_ID, "DeleteTheme", false), createTableRowButton("button.export", this, DEFAULT_UI_THEME_ID, "ExportTheme")}, DEFAULT_UI_THEME_ID);
-        for (AddonsUtils.ThemeDefinition theme : themes) {
+        for (ThemeDefinition theme : themes) {
             isDefault = StringUtils.equals(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme(), theme.getName());
             myThemesTable.addItem(new Object[] {
                     isDefault ? checkmark : null,
@@ -333,27 +331,13 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myDownloadLanguage) {
-            ObjectMapper mapper = new ObjectMapper();
-            AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-            mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
-            mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
-            HttpClient httpClient = MyTunesRssUtils.createHttpClient();
-            PostMethod postMethod = new PostMethod("http://mytunesrss.com/tools/get_languages.php");
-            postMethod.addParameter("user", MyTunesRss.CONFIG.getMyTunesRssComUser());
-            postMethod.addParameter("pass", Base64.encodeBase64String(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()));
+            List<CommunityLanguageDefinition> languages = null;
             try {
-                if (httpClient.executeMethod(postMethod) == 200) {
-                    List<MyTunesRssComLanguage> languages = mapper.readValue(postMethod.getResponseBodyAsStream(), new TypeReference<List<MyTunesRssComLanguage>>() { });
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showDebugMessage("downloaded " + languages.size() + " language files.");
-                } else {
-                    LOGGER.warn("Could not download language files from mytunesrss.com. Response status was \"" + postMethod.getStatusLine() + "\".");
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageListDownloadFailed");
-                }
+                languages = AddonsUtils.getCommunityLanguages();
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showDebugMessage("downloaded " + languages.size() + " language files.");
             } catch (IOException e) {
                 LOGGER.warn("Could not download language files from mytunesrss.com.", e);
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageListDownloadFailed");
-            } finally {
-                postMethod.releaseConnection();
             }
         } else if (clickEvent.getSource() == myExportDefaultLanguage) {
             sendLanguageFile(AddonsUtils.getBuiltinLanguageFile(getApplication().getLocale()));

@@ -6,6 +6,9 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.CompiledReplacementRule;
+import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
+import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;

@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.remote.service;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 

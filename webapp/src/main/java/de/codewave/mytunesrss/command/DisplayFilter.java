@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MediaType;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
 import org.apache.commons.lang.StringUtils;
 

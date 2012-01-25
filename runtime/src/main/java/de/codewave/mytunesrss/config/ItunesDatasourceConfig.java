@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 

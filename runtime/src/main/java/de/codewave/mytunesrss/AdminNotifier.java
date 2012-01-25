@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;

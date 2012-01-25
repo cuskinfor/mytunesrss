@@ -5,8 +5,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.VideoType;
+import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.VideoType;
 
 import java.io.File;
 

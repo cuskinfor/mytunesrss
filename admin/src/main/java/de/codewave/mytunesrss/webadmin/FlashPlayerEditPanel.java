@@ -2,9 +2,9 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.FlashPlayerConfig;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.PlaylistFileType;
+import de.codewave.mytunesrss.config.PlaylistFileType;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;

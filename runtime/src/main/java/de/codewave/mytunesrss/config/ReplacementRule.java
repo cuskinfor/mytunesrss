@@ -1,7 +1,7 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.config;
 
 /**
- * de.codewave.mytunesrss.ReplacementRule
+ * de.codewave.mytunesrss.config.ReplacementRule
  */
 public class ReplacementRule {
     private String mySearchPattern;

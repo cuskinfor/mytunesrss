@@ -5,8 +5,6 @@
 
 package de.codewave.mytunesrss.webadmin.statistics;
 
-import de.codewave.mytunesrss.MediaType;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.statistics.SessionEndEvent;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;

@@ -6,8 +6,8 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssEventManager;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.util.concurrent.Callable;

@@ -2,7 +2,7 @@ package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
-import de.codewave.mytunesrss.WatchfolderDatasourceConfig;
+import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.io.IOUtils;
 import org.apache.commons.io.FilenameUtils;

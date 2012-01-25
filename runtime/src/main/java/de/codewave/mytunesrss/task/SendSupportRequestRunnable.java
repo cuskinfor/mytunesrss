@@ -5,8 +5,8 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.DatasourceConfig;
-import de.codewave.mytunesrss.DatasourceType;
+import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.config.DatasourceType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.io.ZipUtils;

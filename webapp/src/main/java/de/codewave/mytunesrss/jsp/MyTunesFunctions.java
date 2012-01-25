@@ -5,7 +5,13 @@
 package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.addons.AddonsUtils;
+import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.config.ExternalSiteDefinition;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
+import de.codewave.mytunesrss.config.TranscoderConfig;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
@@ -218,7 +224,7 @@ public class MyTunesFunctions {
 
     public static List<String[]> availableLanguages(Locale displayLocale) {
         Set<String> codes = new HashSet<String>();
-        for (AddonsUtils.LanguageDefinition definition : AddonsUtils.getLanguages(true)) {
+        for (LanguageDefinition definition : AddonsUtils.getLanguages(true)) {
             codes.add(definition.getCode());
         }
         List<String[]> langs = new ArrayList<String[]>(codes.size());

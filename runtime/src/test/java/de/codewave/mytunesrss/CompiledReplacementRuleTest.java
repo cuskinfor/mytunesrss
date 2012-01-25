@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.CompiledReplacementRule;
+import de.codewave.mytunesrss.config.ReplacementRule;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertEquals;

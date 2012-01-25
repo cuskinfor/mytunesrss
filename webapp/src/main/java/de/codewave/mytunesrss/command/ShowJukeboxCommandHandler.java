@@ -1,6 +1,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
+import de.codewave.mytunesrss.config.PlaylistFileType;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;

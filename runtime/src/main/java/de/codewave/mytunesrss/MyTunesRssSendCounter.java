@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.statistics.DownloadEvent;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.utils.servlet.SessionManager;

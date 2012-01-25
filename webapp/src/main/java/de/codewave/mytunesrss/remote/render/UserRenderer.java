@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.remote.render;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.TranscoderConfig;
-import de.codewave.mytunesrss.User;
+import de.codewave.mytunesrss.config.TranscoderConfig;
+import de.codewave.mytunesrss.config.User;
 
 import java.util.*;
 

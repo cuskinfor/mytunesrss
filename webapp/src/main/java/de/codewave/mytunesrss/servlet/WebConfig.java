@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
