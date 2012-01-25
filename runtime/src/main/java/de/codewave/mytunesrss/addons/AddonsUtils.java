@@ -14,6 +14,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.maven.artifact.versioning.ArtifactVersion;
+import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -401,7 +403,7 @@ public class AddonsUtils {
         ExtractFailed(), InvalidFile(), Ok(), SaveFailed();
     }
 
-    public static List<CommunityLanguageDefinition> getCommunityLanguages() throws IOException {
+    public static Collection<CommunityLanguageDefinition> getCommunityLanguages() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
@@ -410,8 +412,21 @@ public class AddonsUtils {
         GetMethod method = new GetMethod("http://mytunesrss.com/tools/get_languages.php");
         try {
             if (httpClient.executeMethod(method) == 200) {
-                return mapper.readValue(method.getResponseBodyAsStream(), new TypeReference<List<CommunityLanguageDefinition>>() {
+                List<CommunityLanguageDefinition> definitions = mapper.readValue(method.getResponseBodyAsStream(), new TypeReference<List<CommunityLanguageDefinition>>() {
                 });
+                ArtifactVersion appVersion = new DefaultArtifactVersion(MyTunesRss.VERSION);
+                Map<String, CommunityLanguageDefinition> bestDefinitions = new HashMap<String, CommunityLanguageDefinition>();
+                for (Iterator<CommunityLanguageDefinition> iter = definitions.iterator(); iter.hasNext(); ) {
+                    CommunityLanguageDefinition definition = iter.next();
+                    DefaultArtifactVersion langVersion = new DefaultArtifactVersion(definition.getVersion());
+                    if (langVersion.getMajorVersion() == appVersion.getMajorVersion() && langVersion.compareTo(appVersion) <= 0) {
+                        String key = definition.getUserHash() + "_" + definition.getCode();
+                        if (!bestDefinitions.containsKey(key) || new DefaultArtifactVersion(bestDefinitions.get(key).getVersion()).compareTo(langVersion) < 0) {
+                            bestDefinitions.put(key, definition);
+                        }
+                    }
+                }
+                return bestDefinitions.values();
             } else {
                 throw new IOException("Could not download language files from mytunesrss.com. Response status was \"" + method.getStatusLine() + "\".");
             }

@@ -331,7 +331,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myDownloadLanguage) {
-            List<CommunityLanguageDefinition> languages = null;
+            Collection<CommunityLanguageDefinition> languages = null;
             try {
                 languages = AddonsUtils.getCommunityLanguages();
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showDebugMessage("downloaded " + languages.size() + " language files.");
