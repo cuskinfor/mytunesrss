@@ -94,7 +94,7 @@
         <name>lowerSuffix</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String
-            lowerSuffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)
+            lowerSuffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:lowerSuffix(config, user, track)}"/&gt;
@@ -108,7 +108,7 @@
         <name>suffix</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String
-            suffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)
+            suffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:suffix(config, user, track)}"/&gt;
@@ -122,7 +122,7 @@
         <name>contentType</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String
-            contentType(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)
+            contentType(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:contentType(config, user, track)}"/&gt;
@@ -136,7 +136,7 @@
         <name>transcoding</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>boolean
-            transcoding(javax.servlet.jsp.PageContext,de.codewave.mytunesrss.User,de.codewave.mytunesrss.datastore.statement.Track)
+            transcoding(javax.servlet.jsp.PageContext,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:transcoding(config, user, track)}"/&gt;
@@ -266,7 +266,7 @@
         </description>
         <name>tcParamValue</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String tcParamValue(javax.servlet.jsp.PageContext, de.codewave.mytunesrss.User)
+        <function-signature>java.lang.String tcParamValue(javax.servlet.jsp.PageContext, de.codewave.mytunesrss.config.User)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:tcParamValue(pageContext, config, user, track)}"/&gt;
@@ -351,7 +351,7 @@
         <name>isTranscoder</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>boolean
-            isTranscoder(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.TranscoderConfig)
+            isTranscoder(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.TranscoderConfig)
         </function-signature>
     </function>
 
@@ -424,7 +424,7 @@
         </description>
         <name>flashPlayerConfig</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>de.codewave.mytunesrss.FlashPlayerConfig flashPlayerConfig(java.lang.String)</function-signature>
+        <function-signature>de.codewave.mytunesrss.config.FlashPlayerConfig flashPlayerConfig(java.lang.String)</function-signature>
     </function>
 
     <function>
