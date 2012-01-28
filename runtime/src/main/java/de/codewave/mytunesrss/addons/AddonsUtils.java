@@ -10,16 +10,13 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.maven.artifact.versioning.ArtifactVersion;
 import org.apache.maven.artifact.versioning.DefaultArtifactVersion;
-import org.codehaus.jackson.map.AnnotationIntrospector;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
-import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +28,7 @@ import java.util.*;
  */
 public class AddonsUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
+    private static final String GET_LANG_URI = "http://mytunesrss.com/tools/get_language.php";
 
     public static Collection<ThemeDefinition> getThemes(boolean builtinThemes) {
         Set<ThemeDefinition> themeSet = new HashSet<ThemeDefinition>();
@@ -42,10 +40,7 @@ public class AddonsUtils {
             if (builtinThemes) {
                 themeSet.addAll(getThemesFromDir(themesDir));
             }
-            themesDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes");
-            if (!themesDir.exists()) {
-                themesDir.mkdirs();
-            }
+            themesDir = getUserThemesDir();
             themeSet.addAll(getThemesFromDir(themesDir));
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
@@ -59,6 +54,14 @@ public class AddonsUtils {
             }
         });
         return themes;
+    }
+
+    private static File getUserThemesDir() {
+        File themesDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes");
+        if (!themesDir.exists()) {
+            themesDir.mkdirs();
+        }
+        return themesDir;
     }
 
     private static Collection<ThemeDefinition> getThemesFromDir(File themesDir) throws IOException {
@@ -88,14 +91,11 @@ public class AddonsUtils {
                 languagesDir.mkdirs();
             }
             if (builtinLanguages) {
-                languageSet.add(new LanguageDefinition("de", null));
-                languageSet.add(new LanguageDefinition("en", null));
+                languageSet.add(new LanguageDefinition().setCode("de").setVersion(MyTunesRss.VERSION));
+                languageSet.add(new LanguageDefinition().setCode("en").setVersion(MyTunesRss.VERSION));
                 languageSet.addAll(getLanguagesFromDir(languagesDir));
             }
-            languagesDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages");
-            if (!languagesDir.exists()) {
-                languagesDir.mkdirs();
-            }
+            languagesDir = getUserLanguagesDir();
             languageSet.addAll(getLanguagesFromDir(languagesDir));
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {
@@ -111,6 +111,14 @@ public class AddonsUtils {
         return languages;
     }
 
+    private static File getUserLanguagesDir() {
+        File languagesDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages");
+        if (!languagesDir.exists()) {
+            languagesDir.mkdirs();
+        }
+        return languagesDir;
+    }
+
     private static Collection<LanguageDefinition> getLanguagesFromDir(File languagesDir) throws IOException {
         Collection<LanguageDefinition> languages = new HashSet<LanguageDefinition>();
         if (languagesDir.isDirectory()) {
@@ -121,16 +129,33 @@ public class AddonsUtils {
             })) {
                 String languageCode = getLanguageCode(language);
                 if (languageCode != null) {
-                    File readme = new File(languagesDir, language + ".readme.txt");
-                    if (readme.isFile()) {
-                        languages.add(new LanguageDefinition(languageCode, FileUtils.readFileToString(readme, "UTF-8")));
-                    } else {
-                        languages.add(new LanguageDefinition(languageCode, null));
+                    try {
+                        LanguageDefinition languageDefinition = getLocalLanguageDefinition(languagesDir, languageCode);
+                        if (languageDefinition != null) {
+                            languages.add(languageDefinition);
+                        }
+                    } catch (IOException e) {
+                        LOG.warn("Could not use language defintion.", e);
+                    } catch (NumberFormatException e) {
+                        LOG.warn("Could not use language defintion.", e);
                     }
                 }
             }
         }
         return languages;
+    }
+
+    private static LanguageDefinition getLocalLanguageDefinition(File languagesDir, String code) throws IOException {
+        File metaFile = new File(languagesDir, "MyTunesRssWeb_" + code + ".json");
+        if (metaFile.isFile()) {
+            InputStream is = new FileInputStream(metaFile);
+            try {
+                return LanguageDefinition.deserialize(is);
+            } finally {
+                is.close();
+            }
+        }
+        return null;
     }
 
     private static String getLanguageCode(String language) {
@@ -148,8 +173,8 @@ public class AddonsUtils {
             try {
                 zipInputStream = new ZipArchiveInputStream(new FileInputStream(theme));
                 for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
-                    themeDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes/" + themeName);
-                    saveFile(themeDir, entry.getName(), (InputStream) zipInputStream);
+                    themeDir = new File(getUserThemesDir() ,themeName);
+                    saveFile(themeDir, entry.getName(), zipInputStream);
                 }
             } catch (IOException e) {
                 if (themeDir != null && themeDir.exists()) {
@@ -242,26 +267,17 @@ public class AddonsUtils {
     }
 
     public static AddFileResult addLanguage(File language, String originalFilename) {
-        File languageDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages");
         if (language.isFile() && isLanguageArchive(language)) {
             ZipArchiveInputStream zipInputStream = null;
             try {
                 zipInputStream = new ZipArchiveInputStream(new FileInputStream(language));
                 for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
                     if (isLanguageFilename(entry.getName())) {
-                        saveFile(languageDir, entry.getName(), zipInputStream);
+                        saveFile(getUserLanguagesDir(), entry.getName(), zipInputStream);
                     }
                 }
             } catch (IOException e) {
-                if (languageDir != null && languageDir.exists()) {
-                    try {
-                        FileUtils.deleteDirectory(languageDir);
-                    } catch (IOException e1) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not delete directory.", e);
-                        }
-                    }
-                }
+                LOG.error("Could save language file.", e);
                 return AddFileResult.ExtractFailed;
             } finally {
                 if (zipInputStream != null) {
@@ -278,7 +294,7 @@ public class AddonsUtils {
             try {
                 FileInputStream languageInputStream = new FileInputStream(language);
                 try {
-                    saveFile(languageDir, originalFilename, languageInputStream);
+                    saveFile(getUserLanguagesDir(), originalFilename, languageInputStream);
                 } finally {
                     languageInputStream.close();
                 }
@@ -328,7 +344,7 @@ public class AddonsUtils {
             MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(null);
         }
         try {
-            File themeDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes/" + themeName);
+            File themeDir = new File(getUserThemesDir(), themeName);
             if (themeDir.isDirectory()) {
                 FileUtils.deleteDirectory(themeDir);
             } else {
@@ -344,12 +360,15 @@ public class AddonsUtils {
     }
 
     public static String deleteLanguage(String languageCode) {
-        File languageFile = new File(
-                MyTunesRss.PREFERENCES_DATA_PATH + "/languages/MyTunesRssWeb_" + languageCode + ".properties");
+        File languageFile = new File(getUserLanguagesDir(), "MyTunesRssWeb_" + languageCode + ".properties");
         if (languageFile.isFile()) {
             languageFile.delete();
         } else {
             return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.deleteLanguageNoFile");
+        }
+        File metaFile = new File(getUserLanguagesDir(), "MyTunesRssWeb_" + languageCode + ".json");
+        if (metaFile.isFile()) {
+            metaFile.delete();
         }
         return null;
     }
@@ -373,7 +392,7 @@ public class AddonsUtils {
     private static File getLanguageFile(Locale locale, boolean user, boolean builtin, boolean returnMissing) {
         List<String> fileNames = getLanguageFileNames(locale);
         for (String fileName : fileNames) {
-            File languageFile = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages/" + fileName);
+            File languageFile = new File(getUserLanguagesDir(), fileName);
             if (user && (returnMissing || languageFile.isFile())) {
                 return languageFile;
             }
@@ -399,25 +418,20 @@ public class AddonsUtils {
         return fileNames;
     }
 
-    public static enum AddFileResult {
-        ExtractFailed(), InvalidFile(), Ok(), SaveFailed();
-    }
+public static enum AddFileResult {
+    ExtractFailed(), InvalidFile(), Ok(), SaveFailed();
+}
 
-    public static Collection<CommunityLanguageDefinition> getCommunityLanguages() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-        mapper.getDeserializationConfig().setAnnotationIntrospector(introspector);
-        mapper.getSerializationConfig().setAnnotationIntrospector(introspector);
+    public static Collection<LanguageDefinition> getRemoteLanguageDefinitions() throws IOException {
         HttpClient httpClient = MyTunesRssUtils.createHttpClient();
-        GetMethod method = new GetMethod("http://mytunesrss.com/tools/get_languages.php");
+        GetMethod method = new GetMethod(GET_LANG_URI);
         try {
             if (httpClient.executeMethod(method) == 200) {
-                List<CommunityLanguageDefinition> definitions = mapper.readValue(method.getResponseBodyAsStream(), new TypeReference<List<CommunityLanguageDefinition>>() {
-                });
+                List<LanguageDefinition> definitions = LanguageDefinition.deserializeList(method.getResponseBodyAsStream());
                 ArtifactVersion appVersion = new DefaultArtifactVersion(MyTunesRss.VERSION);
-                Map<String, CommunityLanguageDefinition> bestDefinitions = new HashMap<String, CommunityLanguageDefinition>();
-                for (Iterator<CommunityLanguageDefinition> iter = definitions.iterator(); iter.hasNext(); ) {
-                    CommunityLanguageDefinition definition = iter.next();
+                Map<String, LanguageDefinition> bestDefinitions = new HashMap<String, LanguageDefinition>();
+                for (Iterator<LanguageDefinition> iter = definitions.iterator(); iter.hasNext(); ) {
+                    LanguageDefinition definition = iter.next();
                     DefaultArtifactVersion langVersion = new DefaultArtifactVersion(definition.getVersion());
                     if (langVersion.getMajorVersion() == appVersion.getMajorVersion() && langVersion.compareTo(appVersion) <= 0) {
                         String key = definition.getUserHash() + "_" + definition.getCode();
@@ -435,4 +449,66 @@ public class AddonsUtils {
         }
     }
 
+    public static boolean updateLanguage(int communityId) {
+        try {
+            Collection<LanguageDefinition> remoteDefinitions = getRemoteLanguageDefinitions();
+            for (LanguageDefinition remoteDefinition : remoteDefinitions) {
+                if (remoteDefinition.getId() != null && communityId == remoteDefinition.getId()) {
+                    LanguageDefinition localDefinition = getLocalLanguageDefinition(getUserLanguagesDir(), remoteDefinition.getCode());
+                    if (localDefinition.getLastUpdate() < remoteDefinition.getLastUpdate()) {
+                        return downloadLanguage(communityId);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("Could not update language.", e);
+        } catch (NumberFormatException e) {
+            LOG.error("Could not update language.", e);
+        }
+        return false;
+    }
+
+    public static boolean downloadLanguage(int communityId) {
+        try {
+            Collection<LanguageDefinition> languageDefinitions = getRemoteLanguageDefinitions();
+            for (LanguageDefinition languageDefinition : languageDefinitions) {
+                if (languageDefinition.getId() != null && languageDefinition.getId() == communityId) {
+                    HttpClient client = MyTunesRssUtils.createHttpClient();
+                    PostMethod method = new PostMethod(GET_LANG_URI);
+                    method.addParameter("id", Integer.toString(communityId));
+                    try {
+                        if (client.executeMethod(method) == 200) {
+                            Properties language = new Properties();
+                            language.load(method.getResponseBodyAsStream());
+                            storeLanguage(getUserLanguagesDir(), languageDefinition, language);
+                            return true;
+                        }
+                    } finally {
+                        method.releaseConnection();
+                    }
+                }
+            }
+        } catch (IOException e) {
+            LOG.error("Could not download language.", e);
+        }
+        return false;
+    }
+
+    private static void storeLanguage(File languagesDir, LanguageDefinition definition, Properties language) throws IOException {
+
+        File metaFile = new File(languagesDir, "MyTunesRssWeb_" + definition.getCode() + ".json");
+        OutputStream osMeta = new FileOutputStream(metaFile);
+        try {
+            LanguageDefinition.serialize(definition, osMeta);
+            File langFile = new File(languagesDir, "MyTunesRssWeb_" + definition.getCode() + ".properties");
+            OutputStream osLang= new FileOutputStream(langFile);
+            try {
+                language.store(osLang, null);
+            } finally {
+                osLang.close();
+            }
+        } finally {
+            osMeta.close();
+        }
+    }
 }

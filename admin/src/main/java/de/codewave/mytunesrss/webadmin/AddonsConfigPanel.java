@@ -13,7 +13,6 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.addons.AddonsUtils;
-import de.codewave.mytunesrss.addons.CommunityLanguageDefinition;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.addons.ThemeDefinition;
 import de.codewave.mytunesrss.config.ExternalSiteDefinition;
@@ -85,6 +84,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myLanguagesTable = new Table();
         myLanguagesTable.setCacheRate(50);
         myLanguagesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.languages.name"), null, null);
+        myLanguagesTable.addContainerProperty("version", String.class, null, getBundleString("addonsConfigPanel.languages.version"), null, null);
+        myLanguagesTable.addContainerProperty("author", String.class, null, getBundleString("addonsConfigPanel.languages.author"), null, null);
+        myLanguagesTable.addContainerProperty("update", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("export", Button.class, null, "", null, null);
@@ -173,6 +175,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             myLanguagesTable.addItem(
                     new Object[] {
                         new Locale(languageDefinition.getCode()).getDisplayName(getApplication().getLocale()),
+                        languageDefinition.getVersion(),
+                        languageDefinition.getNick(),
+                        languageDefinition.getId() != null ? createTableRowButton("button.update", this, languageDefinition.getId(), "UpdateLanguage") : null,
                         createTableRowButton("button.edit", this, languageDefinition.getCode(), "EditLanguage"),
                         createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
                         createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
@@ -269,6 +274,10 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
                 MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
                 refreshThemes();
+            } else if ("UpdateLanguage".equals(tableRowButton.getData())) {
+                String communityId = tableRowButton.getItemId().toString();
+                boolean result = AddonsUtils.updateLanguage(Integer.valueOf(communityId));
+                debug("update result = " + result);
             } else if ("EditLanguage".equals(tableRowButton.getData())) {
                 String code = tableRowButton.getItemId().toString();
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, new Locale(code)));
@@ -331,10 +340,32 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myDownloadLanguage) {
-            Collection<CommunityLanguageDefinition> languages = null;
             try {
-                languages = AddonsUtils.getCommunityLanguages();
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showDebugMessage("downloaded " + languages.size() + " language files.");
+                Collection<LanguageDefinition> remoteLanguages = AddonsUtils.getRemoteLanguageDefinitions();
+                Collection<LanguageDefinition> localLanguages = AddonsUtils.getLanguages(false);
+                for (Iterator<LanguageDefinition> remoteLangIter = remoteLanguages.iterator(); remoteLangIter.hasNext(); ) {
+                    LanguageDefinition remoteLang = remoteLangIter.next();
+                    for (LanguageDefinition localLang : localLanguages) {
+                        if (remoteLang.getId().equals(localLang.getId())) {
+                            remoteLangIter.remove();
+                            break;
+                        }
+                    }
+                }
+                if (!remoteLanguages.isEmpty()) {
+                    DownloadLanguagePanel downloadLanguagePanel = new DownloadLanguagePanel(remoteLanguages) {
+                        @Override
+                        public void onSuccessfulDownload() {
+                            refreshLanguages();
+                            setTablePageLengths();
+                        }
+                    };
+                    SinglePanelWindow downloadWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.downloadLanguageWindow.caption"), downloadLanguagePanel);
+                    downloadWindow.setClosable(true);
+                    downloadWindow.show(getWindow());
+                } else {
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.noRemoteLanguages");
+                }
             } catch (IOException e) {
                 LOGGER.warn("Could not download language files from mytunesrss.com.", e);
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageListDownloadFailed");
@@ -381,7 +412,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             themeDir = getThemeDir(theme);
         } catch (IOException e) {
             LOGGER.error("Could not find theme dir for \"" + StringUtils.defaultString(theme, "MYTUNESRSS_DEFAULT") + "\".", e);
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.couldNotExportTheme"); // TODO
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.couldNotExportTheme");
             return;
         }
         final File finalThemeDir = themeDir;
@@ -427,7 +458,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }, "MyTunesRSS_" + StringUtils.defaultString(theme, "DEFAULT_THEME") + ".zip", getApplication());
             getWindow().open(streamResource);
         } else {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.couldNotExportTheme"); // TODO
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.couldNotExportTheme");
         }
     }
 

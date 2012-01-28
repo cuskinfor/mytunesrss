@@ -172,4 +172,9 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         }
         return null;
     }
+
+    @Deprecated
+    protected void debug(String message) {
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showDebugMessage(message);
+    }
 }
