@@ -6,11 +6,18 @@ package de.codewave.mytunesrss.addons;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.MiscUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.httpclient.methods.multipart.FilePart;
+import org.apache.commons.httpclient.methods.multipart.MultipartRequestEntity;
+import org.apache.commons.httpclient.methods.multipart.Part;
+import org.apache.commons.httpclient.methods.multipart.StringPart;
+import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -29,6 +36,7 @@ import java.util.*;
 public class AddonsUtils {
     private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
     private static final String GET_LANG_URI = "http://mytunesrss.com/tools/get_language.php";
+    private static final String STORE_LANG_URI = "http://mytunesrss.com/tools/store_language.php";
 
     public static Collection<ThemeDefinition> getThemes(boolean builtinThemes) {
         Set<ThemeDefinition> themeSet = new HashSet<ThemeDefinition>();
@@ -381,8 +389,8 @@ public class AddonsUtils {
         return getUserLanguageFile(locale, false);
     }
 
-    public static File getUserLanguageFile(Locale locale, boolean returnMissig) {
-        return getLanguageFile(locale, true, false, returnMissig);
+    public static File getUserLanguageFile(Locale locale, boolean returnMissing) {
+        return getLanguageFile(locale, true, false, returnMissing);
     }
 
     public static File getBuiltinLanguageFile(Locale locale) {
@@ -449,6 +457,35 @@ public static enum AddFileResult {
         }
     }
 
+    public static boolean uploadLanguage(LanguageDefinition languageDefinition) {
+        HttpClient client = MyTunesRssUtils.createHttpClient();
+        PostMethod postMethod = new PostMethod(STORE_LANG_URI);
+        try {
+            List<Part> parts = new ArrayList<Part>();
+            if (languageDefinition.getId() != null && languageDefinition.getVersion().equals(MyTunesRss.VERSION)) {
+                parts.add(new StringPart("id", Integer.toString(languageDefinition.getId())));
+            }
+            parts.add(new StringPart("user", MyTunesRss.CONFIG.getMyTunesRssComUser()));
+            parts.add(new StringPart("pass", MiscUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash()))));
+            parts.add(new StringPart("version", MyTunesRss.VERSION));
+            parts.add(new StringPart("code", languageDefinition.getCode()));
+            String langFileName = "MyTunesRssWeb_" + languageDefinition.getCode() + ".properties";
+            parts.add(new FilePart("langfile", new File(getUserLanguagesDir(), langFileName)));
+            MultipartRequestEntity multipartRequestEntity = new MultipartRequestEntity(parts.toArray(new Part[parts.size()]), new HttpMethodParams());
+            postMethod.setRequestEntity(multipartRequestEntity);
+            int status = client.executeMethod(postMethod);
+            if (status == 200 || status == 201) {
+                updateLanguageDefintion(getUserLanguagesDir(), LanguageDefinition.deserialize(postMethod.getResponseBodyAsStream()));
+            }
+            return status == 200 || status == 201;
+        } catch (IOException e) {
+            LOG.error("Could not upload language file.", e);
+        } finally {
+            postMethod.releaseConnection();
+        }
+        return false;
+    }
+
     public static boolean updateLanguage(int communityId) {
         try {
             Collection<LanguageDefinition> remoteDefinitions = getRemoteLanguageDefinitions();
@@ -494,8 +531,11 @@ public static enum AddFileResult {
         return false;
     }
 
-    private static void storeLanguage(File languagesDir, LanguageDefinition definition, Properties language) throws IOException {
+    public static void storeLanguage(LanguageDefinition definition, Properties language) throws IOException {
+        storeLanguage(getUserLanguagesDir(), definition, language);
+    }
 
+    private static void storeLanguage(File languagesDir, LanguageDefinition definition, Properties language) throws IOException {
         File metaFile = new File(languagesDir, "MyTunesRssWeb_" + definition.getCode() + ".json");
         OutputStream osMeta = new FileOutputStream(metaFile);
         try {
@@ -507,6 +547,16 @@ public static enum AddFileResult {
             } finally {
                 osLang.close();
             }
+        } finally {
+            osMeta.close();
+        }
+    }
+
+    private static void updateLanguageDefintion(File languagesDir, LanguageDefinition definition) throws IOException {
+        File metaFile = new File(languagesDir, "MyTunesRssWeb_" + definition.getCode() + ".json");
+        OutputStream osMeta = new FileOutputStream(metaFile);
+        try {
+            LanguageDefinition.serialize(definition, osMeta);
         } finally {
             osMeta.close();
         }

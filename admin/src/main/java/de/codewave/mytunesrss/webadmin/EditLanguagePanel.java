@@ -8,9 +8,13 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.addons.AddonsUtils;
+import de.codewave.mytunesrss.addons.LanguageDefinition;
+import de.codewave.utils.MiscUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -19,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.*;
 
 public class EditLanguagePanel extends MyTunesRssConfigPanel {
@@ -27,11 +32,13 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
 
     private Table myEditorTable;
     private Locale myEditLang;
+    private Integer myCommunityId;
     private AddonsConfigPanel myAddonsConfigPanel;
 
-    public EditLanguagePanel(AddonsConfigPanel addonsConfigPanel, Locale editLang) {
+    public EditLanguagePanel(AddonsConfigPanel addonsConfigPanel, Locale editLang, Integer communityId) {
         myAddonsConfigPanel = addonsConfigPanel;
         myEditLang = editLang;
+        myCommunityId = communityId;
     }
 
     public void attach() {
@@ -97,17 +104,19 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         for (Object id : myEditorTable.getItemIds()) {
             props.setProperty((String)id, (String) ((TextField) myEditorTable.getItem(id).getItemProperty("edit").getValue()).getValue());
         }
-        FileOutputStream outputStream = null;
+        LanguageDefinition definition = new LanguageDefinition();
+        definition.setId(myCommunityId);
+        definition.setCode(myEditLang.toString());
+        definition.setVersion(MyTunesRss.VERSION);
+        String username = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMyTunesRssComUser());
+        definition.setUserHash(MiscUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(username)))));
         try {
-            outputStream = new FileOutputStream(AddonsUtils.getUserLanguageFile(myEditLang, true));
-            props.store(outputStream, "MyTunesRSS user interface language for \"" + myEditLang + "\"");
-        } catch (Exception e) {
+            AddonsUtils.storeLanguage(definition, props);
+        } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not write language file.", e);
             }
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editLanguagePanel.error.couldNotWriteFile");
-        } finally {
-            IOUtils.closeQuietly(outputStream);
         }
     }
 

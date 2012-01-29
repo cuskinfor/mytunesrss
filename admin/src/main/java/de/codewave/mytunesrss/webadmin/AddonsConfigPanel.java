@@ -18,12 +18,14 @@ import de.codewave.mytunesrss.addons.ThemeDefinition;
 import de.codewave.mytunesrss.config.ExternalSiteDefinition;
 import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.config.PlaylistFileType;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FileUtils;
@@ -172,13 +174,21 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
         });
         for (LanguageDefinition languageDefinition : languages) {
+            Button uploadUpdateButton = null;
+            String username = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMyTunesRssComUser());
+            String userNameHash = MiscUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(username))));
+            if (languageDefinition != null && languageDefinition.getId() == null || !userNameHash.equals(languageDefinition.getUserHash())) {
+                uploadUpdateButton = createTableRowButton("button.upload", this, languageDefinition, "UploadLanguage");
+            } else {
+                uploadUpdateButton = createTableRowButton("button.update", this, languageDefinition.getId(), "UpdateLanguage");
+            }
             myLanguagesTable.addItem(
                     new Object[] {
                         new Locale(languageDefinition.getCode()).getDisplayName(getApplication().getLocale()),
                         languageDefinition.getVersion(),
                         languageDefinition.getNick(),
-                        languageDefinition.getId() != null ? createTableRowButton("button.update", this, languageDefinition.getId(), "UpdateLanguage") : null,
-                        createTableRowButton("button.edit", this, languageDefinition.getCode(), "EditLanguage"),
+                        uploadUpdateButton,
+                        createTableRowButton("button.edit", this, languageDefinition.getCode() + ";" + (languageDefinition.getId() != null ? languageDefinition.getId().toString() : ""), "EditLanguage"),
                         createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
                         createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
                     },
@@ -274,13 +284,41 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
                 MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
                 refreshThemes();
+            } else if ("UploadLanguage".equals(tableRowButton.getData())) {
+                try {
+                    Properties refProps = new Properties();
+                    InputStream refInputStream = new FileInputStream(AddonsUtils.getBuiltinLanguageFile(getApplication().getLocale()));
+                    try {
+                        refProps.load(refInputStream);
+                    } finally {
+                        refInputStream.close();
+                    }
+                    LanguageDefinition languageDefinition = (LanguageDefinition)tableRowButton.getItemId();
+                    Properties props = new Properties();
+                    FileInputStream is = new FileInputStream(AddonsUtils.getUserLanguageFile(new Locale(languageDefinition.getCode())));
+                    try {
+                        props.load(is);
+                    } finally {
+                        is.close();
+                    }
+                    for (Object key : refProps.keySet()) {
+                        if (!props.containsKey(key) || StringUtils.isBlank((String) props.get(key))) {
+                            debug("missing translations!");
+                            return;
+                        }
+                    }
+                    debug("upload result = " + AddonsUtils.uploadLanguage(languageDefinition));
+                    refreshLanguages();
+                } catch (IOException e) {
+                    debug("error: " + e.getMessage());
+                }
             } else if ("UpdateLanguage".equals(tableRowButton.getData())) {
                 String communityId = tableRowButton.getItemId().toString();
-                boolean result = AddonsUtils.updateLanguage(Integer.valueOf(communityId));
-                debug("update result = " + result);
+                debug("update result = " + AddonsUtils.updateLanguage(Integer.valueOf(communityId)));
+                refreshLanguages();
             } else if ("EditLanguage".equals(tableRowButton.getData())) {
-                String code = tableRowButton.getItemId().toString();
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, new Locale(code)));
+                String[] split = tableRowButton.getItemId().toString().split(";");
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, new Locale(split[0]), split.length == 2 ? Integer.parseInt(tableRowButton.getItemId().toString().split(";")[1]) : null));
             } else if ("ExportLanguage".equals(tableRowButton.getData())) {
                 String code = tableRowButton.getItemId().toString();
                 sendLanguageFile(AddonsUtils.getUserLanguageFile(new Locale(code)));
@@ -336,7 +374,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 @Override
                 protected void onOk(LocaleRepresentation representation) {
                     getParent().removeWindow(this);
-                    ((MainWindow) VaadinUtils.getApplicationWindow(AddonsConfigPanel.this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale()));
+                    ((MainWindow) VaadinUtils.getApplicationWindow(AddonsConfigPanel.this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale(), null));
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myDownloadLanguage) {
