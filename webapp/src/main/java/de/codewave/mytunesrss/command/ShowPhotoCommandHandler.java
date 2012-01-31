@@ -61,12 +61,11 @@ public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
             if (!getAuthUser().isQuotaExceeded()) {
                 File photoFile = new File(filename);
                 if (StringUtils.isNotBlank(filename) && photoFile.isFile()) {
-                    int size = Math.max(Math.min(getIntegerRequestParameter("size", 100), 100), 1);
                     String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
                     StreamSender sender = null;
-                    if (mimeType != null && size > 0) {
+                    if (mimeType != null) {
                         Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
-                        Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, (size * MyTunesRssUtils.getMaxImageSize(image)) / 100);
+                        Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, getIntegerRequestParameter("size", Integer.MAX_VALUE));
                         sender = new StreamSender(new ByteArrayInputStream(scaledImage.getData()), scaledImage.getMimeType(), scaledImage.getData().length);
                         // no need to close the byte array input stream later
                     } else {

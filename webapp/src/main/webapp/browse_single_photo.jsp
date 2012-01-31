@@ -19,19 +19,15 @@
     <jsp:include page="incl_head.jsp"/>
 
     <script type="text/javascript">
-        function resize() {
-            var newSize = $jQ("#photoSizeSelector").val();
-            self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}/size=' + newSize;
-        }
-        function setMaxWidth() {
-            $jQ("#photoimage").css("max-width", ($jQ("div.photoback").width() - $jQ("#photoimage").css("padding-left").replace("px", "") - $jQ("#photoimage").css("padding-right").replace("px", "")) + "px");
-            //$jQ("#photoimage").css("max-width", ($jQ("div.photoback").width() - (2 * $jQ("#photoimage").css("padding"))) + "px");
+        function loadPhoto() {
+            var width = $jQ("div.photoback").width() - $jQ("#photoimage").css("padding-left").replace("px", "") - $jQ("#photoimage").css("padding-right").replace("px", "");
+            $jQ("#photoimage").attr("src", "${mtfn:photoLink(pageContext, photos[param.photoIndex], null)}" + "/size=" + width);
         }
     </script>
 
 </head>
 
-<body class="browse" onload="setMaxWidth()">
+<body class="browse" onload="loadPhoto()">
 
 <div class="body">
 
@@ -57,27 +53,17 @@
                 <tr>
                     <th class="active">
                         <span><c:out value="${mtfn:decode64(param.photoalbum)}"/></span>
-                        <span style="float:right">
-                            <fmt:message key="photos.size" />:
-                            <select id="photoSizeSelector" name="photoSize" onchange="resize()">
-                                <option value="25"><fmt:message key="photos.size.25" /></option>
-                                <option <c:if test="${config.photoSize == 50}">selected="selected"</c:if> value="50"><fmt:message key="photos.size.50" /></option>
-                                <option <c:if test="${config.photoSize == 75}">selected="selected"</c:if> value="75"><fmt:message key="photos.size.75" /></option>
-                                <option <c:if test="${config.photoSize == 100}">selected="selected"</c:if> value="100"><fmt:message key="photos.size.100" /></option>
-                            </select>
-                        </span>
                     </th>
                 </tr>
             </table>
 
-            <c:set var="sizeParam">size=${config.photoSize}</c:set>
             <div class="photoback">
-                <img id="photoimage" class="singlephoto" src="${mtfn:photoLink(pageContext, photos[param.photoIndex], sizeParam)}" />
+                <img id="photoimage" class="singlephoto" src="${appUrl}/images/animated_progress.gif" />
                 <c:if test="${param.photoIndex > 0}">
-                    <div class="leftphotobutton" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex - 1}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}'"></div>
+                    <div class="leftphotobutton" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex - 1}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}/size=' + $jQ('div.content-inner').innerWidth()"></div>
                 </c:if>
                 <c:if test="${param.photoIndex + 1 lt fn:length(photos)}">
-                    <div class="rightphotobutton" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex + 1}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}'"></div>
+                    <div class="rightphotobutton" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex + 1}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}/size=' + $jQ('div.content-inner').innerWidth()"></div>
                 </c:if>
             </div>
 

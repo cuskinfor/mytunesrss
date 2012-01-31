@@ -31,11 +31,6 @@ public class BrowseSinglePhotoCommandHandler extends MyTunesRssCommandHandler {
             DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
             getRequest().setAttribute("photos", photoResult.getResults());
             getRequest().setAttribute("photoPage", getSafeIntegerRequestParameter("photoIndex", 0) / getWebConfig().getEffectivePhotoPageSize());
-            int size = getSafeIntegerRequestParameter("size", 0);
-            if (size > 0 && size < 101) {
-                getWebConfig().setPhotoSize(size);
-                MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), getWebConfig());
-            }
             forward(MyTunesRssResource.BrowseSinglePhoto);
         }
     }
