@@ -67,8 +67,8 @@
                 </c:if>
             </div>
 
-            <div>
-                <a href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>">Download full sized photo</a>
+            <div class="downloadfullsizedphoto">
+                <a href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>"><img src="${appUrl}/images/action-download.png">&nbsp;<fmt:message key="downloadFullSizedPhoto"/></a>
             </div>
 
         </div>

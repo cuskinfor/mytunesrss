@@ -1280,3 +1280,18 @@ div.rightphotobutton {
     background-repeat:no-repeat;
     background-position:right center;
 }
+
+div.downloadfullsizedphoto {
+    text-align: center;
+    padding-bottom: 20px
+}
+
+div.downloadfullsizedphoto img {
+    vertical-align: bottom;
+}
+
+div.downloadfullsizedphoto a {
+    text-decoration: none;
+    color: #000000;
+}
+
