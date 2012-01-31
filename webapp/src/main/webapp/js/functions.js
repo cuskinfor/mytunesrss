@@ -61,6 +61,21 @@ function hideTooltipElement(element) {
     }
 }
 
+function ajax(url, resultCallback) {
+    showLoading("loading...");
+    new $jQ.ajax({
+        url : url,
+        type : "GET",
+        processData : false,
+        success : function(data) {
+            if (resultCallback != undefined) {
+                hideLoading();
+                resultCallback(data);
+            }
+        }
+    });
+}
+
 function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
     showLoading("loading...");
     new $jQ.ajax({

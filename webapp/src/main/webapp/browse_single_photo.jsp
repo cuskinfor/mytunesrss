@@ -23,6 +23,22 @@
             var width = $jQ("div.photoback").width() - $jQ("#photoimage").css("padding-left").replace("px", "") - $jQ("#photoimage").css("padding-right").replace("px", "");
             $jQ("#photoimage").attr("src", "${mtfn:photoLink(pageContext, photos[param.photoIndex], null)}" + "/size=" + width);
         }
+
+        function showExif(exifUrl) {
+            ajax(exifUrl, function(data) {
+                $jQ("#exifData").empty();
+                if (data.length > 0) {
+                    $jQ("#exifData").append("<table>");
+                    $jQ.each(data, function(index, field) {
+                        $jQ("#exifData").append("<tr><td align=right>" + field.name + ":</td><td align=left>" + field.value + "</td></tr>");
+                    });
+                    $jQ("#exifData").append("<table>");
+                } else {
+                    $jQ("#exifData").append("<p><fmt:message key="noExifData"/></p>");
+                }
+                openDialog("#displayExifDialog");
+            });
+        }
     </script>
 
 </head>
@@ -67,8 +83,9 @@
                 </c:if>
             </div>
 
-            <div class="downloadfullsizedphoto">
-                <a href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>"><img src="${appUrl}/images/action-download.png">&nbsp;<fmt:message key="downloadFullSizedPhoto"/></a>
+            <div class="photolinks">
+                <a href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>"><img src="${appUrl}/images/action-download.png">&nbsp;<fmt:message key="downloadFullSizedPhoto"/></a><br/>
+                <a onclick="showExif('${servletUrl}/showExif/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>')"><img src="${appUrl}/images/action-tags.png">&nbsp;<fmt:message key="showExifData"/></a>
             </div>
 
         </div>
@@ -79,6 +96,18 @@
         <div class="inner"></div>
     </div>
 
+</div>
+
+<div id="displayExifDialog" class="dialog">
+    <h2>
+        <fmt:message key="displayExifDialogTitle"/>
+    </h2>
+    <div>
+        <p id="exifData"></p>
+        <p align="right">
+            <button onclick="$jQ.modal.close()"><fmt:message key="doClose"/></button>
+        </p>
+    </div>
 </div>
 
 </body>

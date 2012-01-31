@@ -10,12 +10,15 @@ import org.apache.sanselan.Sanselan;
 import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
+import org.apache.sanselan.formats.tiff.TiffImageMetadata;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Collections;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -43,11 +46,21 @@ public class MyTunesRssExifUtils {
     public static Long getCreateDate(File file) {
         try {
             IImageMetadata imageMeta = Sanselan.getMetadata(file);
+            TiffImageMetadata tiffImageMetadata = null;
             if (imageMeta instanceof JpegImageMetadata) {
                 JpegImageMetadata jpegMeta = (JpegImageMetadata) imageMeta;
-                TiffField exifCreateDateTiffField = jpegMeta.findEXIFValue(TiffConstants.EXIF_TAG_CREATE_DATE);
-                if (exifCreateDateTiffField != null) {
-                    String value = (String) exifCreateDateTiffField.getValue();
+                tiffImageMetadata = jpegMeta.getExif();
+            } else if (imageMeta instanceof TiffImageMetadata) {
+                tiffImageMetadata = (TiffImageMetadata) imageMeta;
+            }
+            if (tiffImageMetadata != null) {
+                TiffField dateField = tiffImageMetadata.findField(TiffConstants.EXIF_TAG_CREATE_DATE);
+                if (dateField == null) {
+                    // fallback to modify date if create date is not available
+                    dateField = tiffImageMetadata.findField(TiffConstants.EXIF_TAG_MODIFY_DATE);
+                }
+                if (dateField != null) {
+                    String value = (String) dateField.getValue();
                     if (StringUtils.isNotBlank(value) && LOGGER.isDebugEnabled()) {
                         LOGGER.debug("EXIF create date for \"" + file.getAbsolutePath() + "\" is \"" + value + "\".");
                     }
@@ -60,5 +73,26 @@ public class MyTunesRssExifUtils {
             }
         }
         return null;
+    }
+
+    public static List<TiffField> getExifData(File file) {
+        try {
+            IImageMetadata imageMeta = Sanselan.getMetadata(file);
+            TiffImageMetadata tiffImageMetadata = null;
+            if (imageMeta instanceof JpegImageMetadata) {
+                JpegImageMetadata jpegMeta = (JpegImageMetadata) imageMeta;
+                tiffImageMetadata = jpegMeta.getExif();
+            } else if (imageMeta instanceof TiffImageMetadata) {
+                tiffImageMetadata = (TiffImageMetadata) imageMeta;
+            }
+            if (tiffImageMetadata != null) {
+                return tiffImageMetadata.getAllFields();
+            }
+        } catch (Exception e) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Could not read EXIF data from \"" + file.getAbsolutePath() + "\".", e);
+            }
+        }
+        return Collections.emptyList();
     }
 }

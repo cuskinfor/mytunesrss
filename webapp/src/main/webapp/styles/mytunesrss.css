@@ -1281,17 +1281,19 @@ div.rightphotobutton {
     background-position:right center;
 }
 
-div.downloadfullsizedphoto {
-    text-align: center;
+div.photolinks {
+    text-align: left;
+    padding-left: 20px;
     padding-bottom: 20px
 }
 
-div.downloadfullsizedphoto img {
+div.photolinks img {
     vertical-align: bottom;
 }
 
-div.downloadfullsizedphoto a {
+div.photolinks a {
     text-decoration: none;
     color: #000000;
+    cursor: pointer;
 }
 

@@ -62,6 +62,7 @@ public enum MyTunesRssCommand implements Command {
     ShowShareLink("showShareLink", ShowShareLinkCommandHandler.class),
     ShortenUrl("shortenUrl", ShortenUrlCommandHandler.class),
     CloseWindow("closeWindow", CloseWindowCommandHandler.class),
+    ShowExif("showExif", ShowExifCommandHandler.class),
     ValidateOpenId("validateOpenId", ValidateOpenIdCommandHandler.class);
 
 
