@@ -142,10 +142,7 @@ public class AddonsUtils {
                 String languageCode = getLanguageCode(language);
                 if (languageCode != null) {
                     try {
-                        LanguageDefinition languageDefinition = getLocalLanguageDefinition(languagesDir, languageCode);
-                        if (languageDefinition != null) {
-                            languages.add(languageDefinition);
-                        }
+                        languages.add(getLocalLanguageDefinition(languagesDir, languageCode));
                     } catch (IOException e) {
                         LOG.warn("Could not use language defintion.", e);
                     } catch (NumberFormatException e) {
@@ -167,7 +164,7 @@ public class AddonsUtils {
                 is.close();
             }
         }
-        return null;
+        return new LanguageDefinition().setCode(code).setVersion(MyTunesRss.VERSION);
     }
 
     private static String getLanguageCode(String propertiesFilesName) {
