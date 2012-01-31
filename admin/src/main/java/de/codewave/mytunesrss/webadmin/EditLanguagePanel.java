@@ -5,6 +5,8 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.data.validator.StringLengthValidator;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
@@ -15,6 +17,7 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -81,6 +84,19 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
                 SmartTextField textField = getComponentFactory().createTextField(null);
                 textField.setValue(editProps.getProperty(key));
                 myEditorTable.addItem(new Object[]{key, refProps.getProperty(key), textField}, key);
+                textField.addListener(new FieldEvents.BlurListener() {
+                    public void blur(FieldEvents.BlurEvent event) {
+                        TextField textField =(TextField) event.getSource();
+                        if (StringUtils.isBlank((String) textField.getValue())) {
+                            textField.addStyleName("missing-translation");
+                        } else {
+                            textField.removeStyleName("missing-translation");
+                        }
+                    }
+                });
+                if (StringUtils.isBlank((String) textField.getValue())) {
+                    textField.addStyleName("missing-translation");
+                }
             }
         } catch (Exception e) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editLanguagePanel.error.couldNotReadFile");
@@ -109,7 +125,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         definition.setCode(myEditLang.toString());
         definition.setVersion(MyTunesRss.VERSION);
         String username = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMyTunesRssComUser());
-        definition.setUserHash(MiscUtils.getUtf8String(Base64.encodeBase64(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(username)))));
+        definition.setUserHash(Hex.encodeHexString(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(username))));
         try {
             AddonsUtils.storeLanguage(definition, props);
         } catch (IOException e) {

@@ -74,7 +74,6 @@ public abstract class DownloadLanguagePanel extends MyTunesRssConfigPanel {
             TableRowButton button = (TableRowButton) (clickEvent.getSource());
             Integer id = (Integer) button.getItemId();
             boolean result = AddonsUtils.downloadLanguage(id);
-            debug("download result = " + result);
             if (result) {
                 myLanguageTable.removeItem(button.getItemId());
                 setTablePageLengths();
@@ -82,6 +81,8 @@ public abstract class DownloadLanguagePanel extends MyTunesRssConfigPanel {
                 if (myLanguageTable.getItemIds().isEmpty()) {
                     getWindow().getParent().removeWindow(getWindow());
                 }
+            } else {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageDownloadFailed");
             }
         }
     }

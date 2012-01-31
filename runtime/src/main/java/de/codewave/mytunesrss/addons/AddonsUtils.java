@@ -38,6 +38,10 @@ public class AddonsUtils {
     private static final String GET_LANG_URI = "http://mytunesrss.com/tools/get_language.php";
     private static final String STORE_LANG_URI = "http://mytunesrss.com/tools/store_language.php";
 
+    public static enum Result {
+        LANGUAGE_UPTODATE(), ERROR(), OK();
+    }
+
     public static Collection<ThemeDefinition> getThemes(boolean builtinThemes) {
         Set<ThemeDefinition> themeSet = new HashSet<ThemeDefinition>();
         try {
@@ -166,10 +170,10 @@ public class AddonsUtils {
         return null;
     }
 
-    private static String getLanguageCode(String language) {
-        int underscoreIndex = language.indexOf('_');
-        if (underscoreIndex > -1 && underscoreIndex + 1 < language.length()) {
-            return language.substring("MyTunesRssWeb_".length(), language.length() - ".properties".length());
+    private static String getLanguageCode(String propertiesFilesName) {
+        int underscoreIndex = propertiesFilesName.indexOf('_');
+        if (underscoreIndex > -1 && underscoreIndex + 1 < propertiesFilesName.length()) {
+            return propertiesFilesName.substring("MyTunesRssWeb_".length(), propertiesFilesName.length() - ".properties".length());
         }
         return null;
     }
@@ -281,7 +285,7 @@ public class AddonsUtils {
                 zipInputStream = new ZipArchiveInputStream(new FileInputStream(language));
                 for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
                     if (isLanguageFilename(entry.getName())) {
-                        saveFile(getUserLanguagesDir(), entry.getName(), zipInputStream);
+                        storeLanguage(getUserLanguagesDir(), new LanguageDefinition().setCode(getLanguageCode(entry.getName())).setVersion(MyTunesRss.VERSION), zipInputStream);
                     }
                 }
             } catch (IOException e) {
@@ -302,7 +306,7 @@ public class AddonsUtils {
             try {
                 FileInputStream languageInputStream = new FileInputStream(language);
                 try {
-                    saveFile(getUserLanguagesDir(), originalFilename, languageInputStream);
+                    storeLanguage(getUserLanguagesDir(), new LanguageDefinition().setCode(getLanguageCode(originalFilename)).setVersion(MyTunesRss.VERSION), languageInputStream);
                 } finally {
                     languageInputStream.close();
                 }
@@ -486,14 +490,18 @@ public static enum AddFileResult {
         return false;
     }
 
-    public static boolean updateLanguage(int communityId) {
+    public static Result updateLanguage(int communityId) {
         try {
             Collection<LanguageDefinition> remoteDefinitions = getRemoteLanguageDefinitions();
             for (LanguageDefinition remoteDefinition : remoteDefinitions) {
                 if (remoteDefinition.getId() != null && communityId == remoteDefinition.getId()) {
                     LanguageDefinition localDefinition = getLocalLanguageDefinition(getUserLanguagesDir(), remoteDefinition.getCode());
                     if (localDefinition.getLastUpdate() < remoteDefinition.getLastUpdate()) {
-                        return downloadLanguage(communityId);
+                        if (downloadLanguage(communityId)) {
+                            return Result.OK;
+                        }
+                    } else {
+                        return Result.LANGUAGE_UPTODATE;
                     }
                 }
             }
@@ -502,7 +510,7 @@ public static enum AddFileResult {
         } catch (NumberFormatException e) {
             LOG.error("Could not update language.", e);
         }
-        return false;
+        return Result.ERROR;
     }
 
     public static boolean downloadLanguage(int communityId) {
@@ -533,6 +541,12 @@ public static enum AddFileResult {
 
     public static void storeLanguage(LanguageDefinition definition, Properties language) throws IOException {
         storeLanguage(getUserLanguagesDir(), definition, language);
+    }
+
+    private static void storeLanguage(File languagesDir, LanguageDefinition definition, InputStream languageStream) throws IOException {
+        Properties props = new Properties();
+        props.load(languageStream);
+        storeLanguage(languagesDir, definition, props);
     }
 
     private static void storeLanguage(File languagesDir, LanguageDefinition definition, Properties language) throws IOException {
