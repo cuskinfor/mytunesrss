@@ -78,6 +78,13 @@ function ajax(url, resultCallback) {
 
 function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
     showLoading("loading...");
+    jsonRpcNoLoadingIndicator(serverUrl, func, parameterArray, function(result, error) {
+        hideLoading();
+        resultCallback(result, error);
+    }, sessionId);
+}
+
+function jsonRpcNoLoadingIndicator(serverUrl, func, parameterArray, resultCallback, sessionId) {
     new $jQ.ajax({
         url : serverUrl + "/../jsonrpc",
         type : "POST",
@@ -96,7 +103,6 @@ function jsonRpc(serverUrl, func, parameterArray, resultCallback, sessionId) {
         }),
         success : function(data) {
             if (resultCallback != undefined) {
-                hideLoading();
                 resultCallback(data.result, data.error);
             }
         }

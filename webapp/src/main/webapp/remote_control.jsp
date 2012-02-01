@@ -14,6 +14,8 @@
 <head>
 
     <jsp:include page="incl_head.jsp"/>
+    <script src="${appUrl}/js/jquery-ui.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery-ui/jquery-ui.css?ts=${sessionCreationTime}" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
 
@@ -46,7 +48,7 @@
                     } catch (e) {
                         document.getElementById("trackrow" + i).style.display = "block";
                     }
-                    document.getElementById("track" + i).innerHTML = trackNames[start + i];
+                    document.getElementById("linkStart" + i).innerHTML = trackNames[start + i];
                     if (imageUrls[start + i] != "") {
                         document.getElementById("cover" + i).innerHTML = "<img src=\"" + imageUrls[start + i] + "\"/>";
                     } else {
@@ -127,8 +129,8 @@
                 $jQ("#rc_play").css("display", "none");
                 $jQ("#rc_pause").css("display", "inline");
             } else if (!trackInfo.playing) {
-                $jQ("rc_play").css("display", "inline");
-                $jQ("rc_pause").css("display", "none");
+                $jQ("#rc_play").css("display", "inline");
+                $jQ("#rc_pause").css("display", "none");
             }
 
             var percentage = trackInfo.currentTime != -1 && trackInfo.length > -1 ? trackInfo.currentTime * 100 / trackInfo.length : 0;
@@ -184,10 +186,13 @@
             execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init2);
         }
 
+        function getStateAndUpdateInterfacePeriodic() {
+            getStateAndUpdateInterface();
+            setTimeout(getStateAndUpdateInterfacePeriodic, 2000);
+        }
+
         function init2(trackInfo) {
-            new PeriodicalExecuter(function() {
-                getStateAndUpdateInterface();
-            }, 2);
+            getStateAndUpdateInterfacePeriodic();
             if (!trackInfo.playing) {
                 <c:choose>
                     <c:when test="${param.fullScreen == 'true'}">
@@ -203,7 +208,7 @@
         }
 
         function execJsonRpc(method, params, callback) {
-            jsonRpc("${servletUrl}", method, params, callback, "${remoteApiSessionId}");
+            jsonRpcNoLoadingIndicator("${servletUrl}", method, params, callback, "${remoteApiSessionId}");
         }
 
       $jQ(document).ready(function(){
@@ -274,7 +279,7 @@
 		            <c:forEach begin="0" end="9" varStatus="itemLoopStatus">
 		                <tr id="trackrow${itemLoopStatus.index}" class="${cwfn:choose(itemLoopStatus.count % 2 == 0, 'even', 'odd')}">
 		                    <td id="cover${itemLoopStatus.index}" class="remotecontrolTrackImage">&nbsp;</td>
-		                    <td id="linkStart${itemLoopStatus.index}" style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist" id="track${itemLoopStatus.index}"/>
+		                    <td id="linkStart${itemLoopStatus.index}" style="cursor:pointer" onclick="startPlayback(${itemLoopStatus.index})" class="artist"></td>
 		                </tr>
 		            </c:forEach>
 
