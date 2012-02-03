@@ -1263,22 +1263,24 @@ div.leftphotobutton {
     position: absolute;
     left: 0;
     top: 0;
-    right: 50%;
     bottom: 0;
+    margin: auto;
+    width: 64px;
+    height: 64px;
     background-image: url("../images/photonav_left.png");
-    background-repeat:no-repeat;
-    background-position:left center;
+    cursor: pointer;
 }
 
 div.rightphotobutton {
     position: absolute;
-    left: 50%;
     top: 0;
     right: 0;
     bottom: 0;
+    margin: auto;
+    width: 64px;
+    height: 64px;
     background-image: url("../images/photonav_right.png");
-    background-repeat:no-repeat;
-    background-position:right center;
+    cursor: pointer;
 }
 
 div.photolinks {
@@ -1287,13 +1289,21 @@ div.photolinks {
     padding-bottom: 20px
 }
 
-div.photolinks img {
-    vertical-align: bottom;
-}
-
 div.photolinks a {
     text-decoration: none;
-    color: #000000;
     cursor: pointer;
 }
 
+div.photolinks img {
+    vertical-align: bottom;
+    border: 0;
+}
+
+div.photolinks span {
+    padding-left: 5px;
+    color: #000000;
+}
+
+div.photolinks a:hover span {
+    text-decoration: underline;
+}
