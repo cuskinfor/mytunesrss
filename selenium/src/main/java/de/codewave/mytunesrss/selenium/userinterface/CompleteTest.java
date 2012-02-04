@@ -15,7 +15,7 @@ public class CompleteTest {
     private static final int WAIT_INTERVAL = 100;
     private static final int TIMEOUT = 60000;
     private static final String BASE_URL = "http://localhost:47110";
-    private static final int MAX_THREADS = 5;
+    private static final int MAX_THREADS = 1;
 
     public static void main(String[] args) throws Exception {
         for (int i = 1; i <= MAX_THREADS; i++) {
@@ -119,22 +119,22 @@ public class CompleteTest {
         driver.findElement(By.id("linkSection7")).click();
         driver.findElement(By.id("linkSection8")).click();
         driver.findElement(By.id("linkSectionAll")).click();
-        driver.findElement(By.id("linkSection4")).click();
+        driver.findElement(By.id("linkSection1")).click();
         driver.findElement(By.id("linkFilter")).click();
         driver.findElement(By.id("filterText")).clear();
-        driver.findElement(By.id("filterText")).sendKeys("jam");
+        driver.findElement(By.id("filterText")).sendKeys("ace");
         driver.findElement(By.id("linkApplyFilter")).click();
         driver.findElement(By.id("filterText")).clear();
         driver.findElement(By.id("filterText")).sendKeys("");
         driver.findElement(By.id("linkApplyFilter")).click();
-        driver.findElement(By.id("linkAlbumsOfArtistAlbum4")).click();
-        driver.findElement(By.id("linkTrackCount1")).click();
+        driver.findElement(By.id("linkTracksOfArtist15")).click();
         driver.findElement(By.id("linkPage1")).click();
         driver.findElement(By.id("linkPage2")).click();
         driver.findElement(By.id("linkPage3")).click();
         driver.findElement(By.id("linkPage4")).click();
         driver.findElement(By.id("linkBack")).click();
-        driver.findElement(By.id("linkTrackCount4")).click();
+        driver.findElement(By.id("linkAlbumsOfArtistAlbum3")).click();
+        driver.findElement(By.id("linkPage1")).click();
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkBrowseMovie")).click();
         driver.findElement(By.id("linkPage8")).click();
@@ -154,8 +154,18 @@ public class CompleteTest {
         driver.findElement(By.id("functionsDialogName8")).click();
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkBrowsePhotoAlbum")).click();
-        driver.findElement(By.id("functionsDialogName0")).click();
+        driver.findElement(By.id("functionsDialogName0")).click(); // show diddl album
         driver.findElement(By.id("linkPage2")).click();
+        driver.findElement(By.id("imgBshZUqWr0WaK_e3XtjDbYQ")).click(); // show a single photo
+        driver.findElement(By.id("leftphotobutton")).click();
+        driver.findElement(By.id("leftphotobutton")).click();
+        driver.findElement(By.id("rightphotobutton")).click();
+        driver.findElement(By.id("rightphotobutton")).click();
+        driver.findElement(By.id("rightphotobutton")).click();
+        driver.findElement(By.id("exiflink")).click();
+        waitForElementText(driver, By.id("value_Modify_Date"), "2011:09:04 01:05:15"); // verify modiy date
+        driver.findElement(By.id("close_exif")).click();
+        driver.findElement(By.id("linkBack")).click();
         driver.findElement(By.id("linkBack")).click();
         driver.findElement(By.id("functionsDialogName1")).click();
         driver.findElement(By.id("linkPage1")).click();
@@ -167,9 +177,9 @@ public class CompleteTest {
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkBrowseArtist")).click();
         driver.findElement(By.id("linkNewPlaylist")).click();
-        driver.findElement(By.id("linkAddToPlaylist3")).click();
+        driver.findElement(By.id("linkAddToPlaylist8")).click();
         waitForElementText(driver, By.id("editPlaylistTrackCount"), "12");
-        driver.findElement(By.id("linkAddToPlaylist6")).click();
+        driver.findElement(By.id("linkAddToPlaylist11")).click();
         waitForElementText(driver, By.id("editPlaylistTrackCount"), "34");
         driver.findElement(By.id("linkFinish")).click();
         driver.findElement(By.id("playlistName")).clear();
