@@ -33,7 +33,7 @@ public class EditPlaylistService {
     public void startEditPlaylist(String playlistId) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             Playlist playlist = new Playlist();
             Collection<Track> tracks = new ArrayList<Track>();
             if (StringUtils.isNotEmpty(playlistId)) {
@@ -66,7 +66,7 @@ public class EditPlaylistService {
     public Object addTracks(String[] trackIds) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             return addTracks(trackIds.length > 0 ? FindTrackQuery.getForIds(trackIds) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
@@ -85,7 +85,7 @@ public class EditPlaylistService {
     public Object addPlaylistTracks(String playlistId) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             return addTracks(new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder));
         }
         throw new IllegalAccessException("UNAUTHORIZED");
@@ -130,7 +130,7 @@ public class EditPlaylistService {
     public Object addAlbums(String[] albums, String[] albumArtists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             return addTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, albumArtists, SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
@@ -148,7 +148,7 @@ public class EditPlaylistService {
     public Object addArtists(String[] artists, boolean fullAlbums) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             if (fullAlbums) {
                 if (artists.length != 1) {
                     throw new IllegalArgumentException("Only one artist supported for full albums!");
@@ -191,7 +191,7 @@ public class EditPlaylistService {
     public Object addGenres(String[] genres, boolean fullAlbums) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             if (fullAlbums) {
                 if (genres.length != 1) {
                     throw new IllegalArgumentException("Only one genre supported for full albums!");
@@ -214,7 +214,7 @@ public class EditPlaylistService {
     public Object removeTracks(String[] trackIds) throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
                 Collection<Track> playlistTracks = (Collection<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
@@ -246,7 +246,7 @@ public class EditPlaylistService {
     public Object removeAlbums(String[] albums, String[] albumArtists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             return removeTracks(albums.length > 0 ? FindTrackQuery.getForAlbum(user, albums, albumArtists, SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
@@ -263,7 +263,7 @@ public class EditPlaylistService {
     public Object removeArtists(String[] artists) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             return removeTracks(artists.length > 0 ? FindTrackQuery.getForArtist(user, artists, SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
@@ -280,7 +280,7 @@ public class EditPlaylistService {
     public Object removeGenres(String[] genres) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             return removeTracks(genres.length > 0 ? FindTrackQuery.getForGenre(user, genres, SortOrder.Album) : null);
         }
         throw new IllegalAccessException("UNAUTHORIZED");
@@ -323,7 +323,7 @@ public class EditPlaylistService {
     public void cancelEditPlaylist() throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
                 session.removeAttribute(KEY_EDIT_PLAYLIST);
@@ -346,7 +346,7 @@ public class EditPlaylistService {
     public void savePlaylist(String playlistName, boolean userPrivate) throws IllegalAccessException, SQLException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
                 if (StringUtils.isBlank(playlistName)) {
@@ -385,7 +385,7 @@ public class EditPlaylistService {
     public Object getPlaylist(int first, int count) throws IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
                 List<Track> playlistTracks = (List<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
@@ -413,7 +413,7 @@ public class EditPlaylistService {
     public Object removePlaylists(String[] playlistIds) throws SQLException, IllegalAccessException {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             int count = 0;
             List<String> playlistIdList = Arrays.asList(playlistIds);
             FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, true);
@@ -440,7 +440,7 @@ public class EditPlaylistService {
     public void moveTracks(int first, int count, int offset) {
         Session session = MyTunesRssRemoteEnv.getSession();
         User user = session.getUser();
-        if (user != null) {
+        if (user != null && user.isCreatePlaylists()) {
             Playlist playlist = (Playlist) session.getAttribute(KEY_EDIT_PLAYLIST);
             if (playlist != null) {
                 MyTunesRssWebUtils.movePlaylistTracks((List<Track>) session.getAttribute(KEY_EDIT_PLAYLIST_TRACKS), first, count, offset);

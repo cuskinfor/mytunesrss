@@ -25,7 +25,7 @@ public class PlaylistService {
      */
     public Object getPlaylists() throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
+        if (user != null && user.isPlaylist()) {
             FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, false);
             return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
@@ -42,7 +42,7 @@ public class PlaylistService {
      */
     public Object getOwnPlaylists() throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
+        if (user != null && user.isPlaylist()) {
             FindPlaylistQuery query = new FindPlaylistQuery(user, null, null, null, false, true);
             return RenderMachine.getInstance().render(TransactionFilter.getTransaction().executeQuery(query));
         }
@@ -62,7 +62,7 @@ public class PlaylistService {
      */
     public Object getTracks(String playlistId, String sortOrder) throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
+        if (user != null && user.isPlaylist()) {
             SortOrder sortOrderEnum = null;
             if (StringUtils.isNotBlank(sortOrder)) {
                 try {

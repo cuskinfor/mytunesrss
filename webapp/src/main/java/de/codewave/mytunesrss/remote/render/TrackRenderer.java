@@ -41,7 +41,9 @@ public class TrackRenderer implements Renderer<Map<String, Object>, Track> {
         } else {
             result.put("playbackUrl", MyTunesFunctions.playbackUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
         }
-        result.put("downloadUrl", MyTunesFunctions.downloadUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
+        if (MyTunesRssRemoteEnv.getSession().getUser().isDownload()) {
+            result.put("downloadUrl", MyTunesFunctions.downloadUrl(MyTunesRssRemoteEnv.getRequest(), track, null));
+        }
         result.put("imageUrl", track.getImageHash() != null ? MyTunesRssRemoteEnv.getServerCall(MyTunesRssCommand.ShowImage,
                                                                                              "hash=" + track.getImageHash()) : null);
         return result;

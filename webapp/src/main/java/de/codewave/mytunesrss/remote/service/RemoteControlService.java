@@ -14,7 +14,7 @@ public class RemoteControlService implements RemoteController {
 
     private void assertAuthenticated() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user == null) {
+        if (user == null || !user.isRemoteControl()) {
             throw new IllegalAccessException("UNAUTHORIZED");
         }
     }

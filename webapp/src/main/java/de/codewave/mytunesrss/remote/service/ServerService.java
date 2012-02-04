@@ -21,7 +21,7 @@ public class ServerService {
 
     public Object discoverOtherServers() throws IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
-        if (user != null) {
+        if (user != null && MyTunesRss.CONFIG.isServerBrowserActive()) {
             List<RemoteServer> servers = new ArrayList<RemoteServer>(MulticastService.getOtherInstances());
             Collections.sort(servers, new Comparator<RemoteServer>() {
                 public int compare(RemoteServer server1, RemoteServer server2) {
