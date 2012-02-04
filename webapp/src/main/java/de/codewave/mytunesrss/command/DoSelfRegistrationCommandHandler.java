@@ -34,6 +34,7 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
             User user = (User) MyTunesRss.CONFIG.getUser(MyTunesRss.CONFIG.getSelfRegisterTemplateUser()).clone();
             user.setName(username);
             user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8")));
+            user.setEmptyPassword(false);
             user.setEmail(email);
             if (!MyTunesRss.CONFIG.addUser(user)) {
                 addError(new BundleError("error.registration.duplicateUsername"));
