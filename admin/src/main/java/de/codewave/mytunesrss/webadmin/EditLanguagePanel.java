@@ -141,8 +141,8 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         for (Object id : myEditorTable.getItemIds()) {
             TextField textField = (TextField) myEditorTable.getItem(id).getItemProperty("edit").getValue();
             if (StringUtils.isBlank((String) textField.getValue())) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editLanguagePanel.error.emptyTranslation");
-                return false;
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("editLanguagePanel.error.emptyTranslation");
+                break;
             }
         }
         if (AddonsUtils.getUserLanguageFile(myEditLang, true) == null) {

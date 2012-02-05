@@ -572,4 +572,27 @@ public static enum AddFileResult {
             osMeta.close();
         }
     }
+
+    public static boolean isComplete(LanguageDefinition languageDefinition) throws IOException {
+        Properties refProps = new Properties();
+        InputStream refInputStream = new FileInputStream(AddonsUtils.getBuiltinLanguageFile(Locale.ENGLISH));
+        try {
+            refProps.load(refInputStream);
+        } finally {
+            refInputStream.close();
+        }
+        Properties props = new Properties();
+        FileInputStream is = new FileInputStream(AddonsUtils.getUserLanguageFile(new Locale(languageDefinition.getCode())));
+        try {
+            props.load(is);
+        } finally {
+            is.close();
+        }
+        for (Object key : refProps.keySet()) {
+            if (!props.containsKey(key) || StringUtils.isBlank((String) props.get(key))) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

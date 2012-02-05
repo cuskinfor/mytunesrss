@@ -27,6 +27,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -225,7 +226,14 @@ public class MyTunesFunctions {
     public static List<String[]> availableLanguages(Locale displayLocale) {
         Set<String> codes = new HashSet<String>();
         for (LanguageDefinition definition : AddonsUtils.getLanguages(true)) {
-            codes.add(definition.getCode());
+            try {
+                if (AddonsUtils.getUserLanguageFile(new Locale(definition.getCode())) == null || AddonsUtils.isComplete(definition)) {
+                    // either not user language or complete
+                   codes.add(definition.getCode());
+                }
+            } catch (IOException e) {
+                LOGGER.warn("Could not add language.", e);
+            }
         }
         List<String[]> langs = new ArrayList<String[]>(codes.size());
         for (String code : codes) {
