@@ -443,7 +443,7 @@ public static enum AddFileResult {
                     LanguageDefinition definition = iter.next();
                     DefaultArtifactVersion langVersion = new DefaultArtifactVersion(definition.getVersion());
                     if (langVersion.getMajorVersion() == appVersion.getMajorVersion() && langVersion.compareTo(appVersion) <= 0) {
-                        String key = definition.getUserHash() + "_" + definition.getCode();
+                        String key = definition.getAccountId() + "_" + definition.getCode();
                         if (!bestDefinitions.containsKey(key) || new DefaultArtifactVersion(bestDefinitions.get(key).getVersion()).compareTo(langVersion) < 0) {
                             bestDefinitions.put(key, definition);
                         }

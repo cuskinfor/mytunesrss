@@ -20,6 +20,7 @@ public class MyTunesRssHttpClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssHttpClient.class);
     private static final String GET_NICKNAME_URI = "http://mytunesrss.com/tools/get_nickname.php";
+    private static final String GET_ACCT_ID_URI = "http://mytunesrss.com/tools/get_account_id.php";
 
     public static String getMyTunesRssComNickname() {
         HttpClient client = MyTunesRssUtils.createHttpClient();
@@ -34,6 +35,23 @@ public class MyTunesRssHttpClient {
             LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
         }
         return null;
+    }
+
+    public static Integer getMyTunesRssComAccountId() {
+        HttpClient client = MyTunesRssUtils.createHttpClient();
+        PostMethod postMethod = new PostMethod(GET_ACCT_ID_URI);
+        postMethod.addParameter("user", MyTunesRss.CONFIG.getMyTunesRssComUser());
+        postMethod.addParameter("pass", getMyTunesRssComPasswordParamValue());
+        try {
+            if (client.executeMethod(postMethod) == 200) {
+                return Integer.valueOf(postMethod.getResponseBodyAsString());
+            }
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
+        } catch (IOException e) {
+            LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
+        }
+        return new Integer(-1); // this is a non-existent id
     }
 
     private static String getMyTunesRssComPasswordParamValue() {

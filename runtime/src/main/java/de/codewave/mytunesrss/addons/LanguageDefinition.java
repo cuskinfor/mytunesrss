@@ -37,7 +37,7 @@ public class LanguageDefinition {
     }
 
     private Integer myId;
-    private String myUserHash;
+    private Integer myAccountId;
     private String myNick;
     private String myCode;
     private String myVersion;
@@ -52,12 +52,12 @@ public class LanguageDefinition {
         return this;
     }
 
-    public String getUserHash() {
-        return myUserHash;
+    public Integer getAccountId() {
+        return myAccountId;
     }
 
-    public LanguageDefinition setUserHash(String userHash) {
-        myUserHash = userHash;
+    public LanguageDefinition setAccountId(Integer accountId) {
+        myAccountId = accountId;
         return this;
     }
 
