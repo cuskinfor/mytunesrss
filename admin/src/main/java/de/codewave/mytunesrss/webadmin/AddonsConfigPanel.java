@@ -171,7 +171,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         });
         for (LanguageDefinition languageDefinition : languages) {
             Button uploadUpdateButton = null;
-            String username = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getMyTunesRssComUser());
             if (languageDefinition != null && (languageDefinition.getId() == null || MyTunesRssHttpClient.getMyTunesRssComAccountId().equals(languageDefinition.getAccountId()))) {
                 uploadUpdateButton = createTableRowButton("button.upload", this, languageDefinition, "UploadLanguage");
                 uploadUpdateButton.setEnabled(MyTunesRss.CONFIG.isMyTunesRssComActive());
@@ -232,6 +231,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                         new URL(s.replace("{KEYWORD}", "dummy"));
                         return true;
                     } catch (MalformedURLException e) {
+                        LOGGER.info("Invalid site definition.", e);
                         // ignore, will return false in the end
                     }
                 }
