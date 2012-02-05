@@ -582,7 +582,7 @@ public static enum AddFileResult {
             refInputStream.close();
         }
         Properties props = new Properties();
-        FileInputStream is = new FileInputStream(AddonsUtils.getUserLanguageFile(new Locale(languageDefinition.getCode())));
+        FileInputStream is = new FileInputStream(AddonsUtils.getUserLanguageFile(languageDefinition.getLocale()));
         try {
             props.load(is);
         } finally {

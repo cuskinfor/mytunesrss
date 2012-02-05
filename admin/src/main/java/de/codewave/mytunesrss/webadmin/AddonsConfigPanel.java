@@ -166,7 +166,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         Collections.sort(languages, new Comparator<LanguageDefinition>() {
             public int compare(LanguageDefinition languageDefinition1, LanguageDefinition languageDefinition2) {
                 Locale adminLocale = AddonsConfigPanel.this.getApplication().getLocale();
-                return new Locale(languageDefinition1.getCode()).getDisplayName(adminLocale).compareTo(new Locale(languageDefinition2.getCode()).getDisplayName(adminLocale));
+                return languageDefinition1.getLocale().getDisplayName(adminLocale).compareTo(languageDefinition2.getLocale().getDisplayName(adminLocale));
             }
         });
         for (LanguageDefinition languageDefinition : languages) {
@@ -179,7 +179,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
             myLanguagesTable.addItem(
                     new Object[] {
-                        new Locale(languageDefinition.getCode()).getDisplayName(getApplication().getLocale()),
+                        languageDefinition.getLocale().getDisplayName(getApplication().getLocale()),
                         languageDefinition.getVersion(),
                         languageDefinition.getNick(),
                         uploadUpdateButton,
@@ -315,10 +315,10 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             } else if ("EditLanguage".equals(tableRowButton.getData())) {
                 String[] split = tableRowButton.getItemId().toString().split(";");
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, new Locale(split[0]), split.length == 2 ? Integer.parseInt(tableRowButton.getItemId().toString().split(";")[1]) : null));
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, LanguageDefinition.getLocaleFromCode(split[0]), split.length == 2 ? Integer.parseInt(tableRowButton.getItemId().toString().split(";")[1]) : null));
             } else if ("ExportLanguage".equals(tableRowButton.getData())) {
                 String code = tableRowButton.getItemId().toString();
-                sendLanguageFile(AddonsUtils.getUserLanguageFile(new Locale(code)));
+                sendLanguageFile(AddonsUtils.getUserLanguageFile(LanguageDefinition.getLocaleFromCode(code)));
             } else if ("ExportTheme".equals(tableRowButton.getData())) {
                 String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
                 sendThemeFile(name);

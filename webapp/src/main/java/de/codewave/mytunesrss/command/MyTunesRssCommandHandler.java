@@ -6,6 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.addons.AddonsUtils;
+import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.User;
@@ -209,7 +210,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     private void setResourceBundle() {
         String cookieLanguage = MyTunesRssWebUtils.getCookieLanguage(getRequest());
-        Locale locale = StringUtils.isNotBlank(cookieLanguage) ? new Locale(cookieLanguage) : getRequest().getLocale();
+        Locale locale = StringUtils.isNotBlank(cookieLanguage) ? LanguageDefinition.getLocaleFromCode(cookieLanguage) : getRequest().getLocale();
         LocalizationContext context = (LocalizationContext) getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
         if (context == null || !ObjectUtils.equals(context.getLocale(), locale)) {
             ResourceBundle bundle = retrieveBundle(AddonsUtils.getBestLanguageFile(locale), locale);

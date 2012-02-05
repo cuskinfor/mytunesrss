@@ -1,15 +1,18 @@
 package de.codewave.mytunesrss.addons;
 
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Locale;
 
 @XmlRootElement
 public class LanguageDefinition {
@@ -34,6 +37,11 @@ public class LanguageDefinition {
 
     public static void serialize(LanguageDefinition definition, OutputStream os) throws IOException {
         MAPPER.writeValue(os, definition);
+    }
+
+    public static Locale getLocaleFromCode(String code) {
+        String[] split = StringUtils.split(code + " _ _ ", "_", 3);
+        return new Locale(split[0].trim(), split[1].trim(), split[2].trim());
     }
 
     private Integer myId;
@@ -95,5 +103,10 @@ public class LanguageDefinition {
     public LanguageDefinition setLastUpdate(long lastUpdate) {
         this.lastUpdate = lastUpdate;
         return this;
+    }
+
+    @XmlTransient
+    public Locale getLocale() {
+        return LanguageDefinition.getLocaleFromCode(myCode);
     }
 }

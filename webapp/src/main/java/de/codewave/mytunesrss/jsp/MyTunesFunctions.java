@@ -227,7 +227,7 @@ public class MyTunesFunctions {
         Set<String> codes = new HashSet<String>();
         for (LanguageDefinition definition : AddonsUtils.getLanguages(true)) {
             try {
-                if (AddonsUtils.getUserLanguageFile(new Locale(definition.getCode())) == null || AddonsUtils.isComplete(definition)) {
+                if (AddonsUtils.getUserLanguageFile(definition.getLocale()) == null || AddonsUtils.isComplete(definition)) {
                     // either not user language or complete
                    codes.add(definition.getCode());
                 }
@@ -237,7 +237,7 @@ public class MyTunesFunctions {
         }
         List<String[]> langs = new ArrayList<String[]>(codes.size());
         for (String code : codes) {
-            langs.add(new String[]{code, new Locale(code).getDisplayName(displayLocale)});
+            langs.add(new String[]{code, LanguageDefinition.getLocaleFromCode(code).getDisplayName(displayLocale)});
         }
         Collections.sort(langs, new Comparator<String[]>() {
             public int compare(String[] o1, String[] o2) {
@@ -249,7 +249,7 @@ public class MyTunesFunctions {
 
     public static Locale preferredLocale(PageContext pageContext, boolean requestFallback) {
         HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-        return StringUtils.isBlank(MyTunesRssWebUtils.getCookieLanguage(request)) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : new Locale(MyTunesRssWebUtils.getCookieLanguage(request));
+        return StringUtils.isBlank(MyTunesRssWebUtils.getCookieLanguage(request)) ? (requestFallback ? pageContext.getRequest().getLocale() : null) : LanguageDefinition.getLocaleFromCode(MyTunesRssWebUtils.getCookieLanguage(request));
     }
 
     public static String httpLiveStreamUrl(PageContext pageContext, Track track, String extraPathInfo) {

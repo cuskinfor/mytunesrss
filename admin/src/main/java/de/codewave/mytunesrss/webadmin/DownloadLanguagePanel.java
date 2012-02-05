@@ -42,12 +42,12 @@ public abstract class DownloadLanguagePanel extends MyTunesRssConfigPanel {
         final Locale locale = getApplication().getLocale();
         Collections.sort(myLanguages, new Comparator<LanguageDefinition>() {
             public int compare(LanguageDefinition languageDefinition1, LanguageDefinition languageDefinition2) {
-                return new Locale(languageDefinition1.getCode()).getDisplayName(locale).compareTo(new Locale(languageDefinition2.getCode()).getDisplayName(locale));
+                return languageDefinition1.getLocale().getDisplayName(locale).compareTo(languageDefinition2.getLocale().getDisplayName(locale));
             }
         });
         for (LanguageDefinition language : myLanguages) {
             myLanguageTable.addItem(new Object[]{
-                    new Locale(language.getCode()).getDisplayName(locale),
+                    language.getLocale().getDisplayName(locale),
                     language.getVersion(),
                     language.getNick(),
                     createTableRowButton("button.download", this, language.getId(), "DownloadLangiage")}, language.getId());
