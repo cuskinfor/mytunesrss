@@ -22,7 +22,7 @@
 # Make sure your current directory is the MyTunesRSS installation dir
 #
 
-VM_OPTIONS='-Xms256m -Xmx256m'
+VM_OPTIONS='-Xmx512m'
 BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar'
 XML_PARSER='-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl'
 MYTUNESRSS_PROPS='-Dde.codewave.mytunesrss'
