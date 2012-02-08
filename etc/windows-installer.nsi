@@ -52,6 +52,7 @@ Section "!MyTunesRSS" MyTunesRSS
 
   SetOutPath "$INSTDIR"
   File /r /x .svn ..\target\${PROJECT_FINAL_NAME}-windows\${PROJECT_FINAL_NAME}\*
+  File ..\target\MyTunesRSS.exe
 
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 
@@ -64,7 +65,7 @@ SectionEnd
 Section "Java Runtime Environment" Jre
 
   SetOutPath "$INSTDIR"
-  File /oname=MyTunesRSS.exe MyTunesRSS-jre.exe
+  File /oname=MyTunesRSS.exe ..\target\MyTunesRSS-jre.exe
 
   SetOutPath "$INSTDIR\data\jre"
   File /r /x .svn jre\*
