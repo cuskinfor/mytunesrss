@@ -63,7 +63,9 @@
         <a id="fn_yahoo${index}" class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>" style="display:none">
             <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
         </a>
-        <a style="display:none" id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('fn_download${index}').attr('href'); return false" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>"></a>
+        <c:if test="${!empty track && authUser.download}">
+            <a style="display:none" id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('fn_download${index}').attr('href'); return false" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+        </c:if>
     </c:when>
     <c:when test="${!empty track && authUser.download}">
         <a id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('#fn_download${index}').attr('href'); return false" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
