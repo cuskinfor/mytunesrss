@@ -59,6 +59,10 @@ public class DatabaseUpdateQueue {
                     } while ((event == null || !event.isTerminate()) && !Thread.interrupted());
                 } catch (InterruptedException e) {
                     LOGGER.info("Interrupted while waiting for event.");
+                } finally {
+                    if (tx != null) {
+                        tx.commit();
+                    }
                 }
                 LOGGER.info("Terminating database update queue thread.");
             }

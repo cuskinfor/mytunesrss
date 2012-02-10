@@ -389,9 +389,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     }
 
     private String getLastDatabaseUpdateText() {
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            final SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
+            SystemInformation systemInformation = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery());
             if (systemInformation.getLastUpdate() > 0) {
                 Date date = new Date(systemInformation.getLastUpdate());
                 return getApplication().getBundleString("statusPanel.lastDatabaseUpdate") + " " + new SimpleDateFormat(
@@ -403,8 +402,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get last update time from database.", e);
             }
-        } finally {
-            session.rollback();
         }
         return getApplication().getBundleString("statusPanel.databaseStatusUnknown");
     }

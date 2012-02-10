@@ -47,21 +47,25 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
     public Object borrowObject() throws Exception {
         check();
         Object o = super.borrowObject();
-        myActiveObjects.put(o, new BorrowInformation(new Throwable()));
+        BorrowInformation borrowInformation = new BorrowInformation(o.toString(), new Throwable());
+        myActiveObjects.put(o, borrowInformation);
+        LOGGER.trace("Borrow (" + borrowInformation + ").", borrowInformation.getThreadInfo());
         return o;
     }
 
     @Override
     public void returnObject(Object obj) throws Exception {
         check();
-        myActiveObjects.remove(obj);
+        BorrowInformation borrowInformation = myActiveObjects.remove(obj);
+        LOGGER.trace("Return (" + borrowInformation + ").", borrowInformation.getThreadInfo());
         super.returnObject(obj);
     }
 
     @Override
     public void invalidateObject(Object obj) throws Exception {
         check();
-        myActiveObjects.remove(obj);
+        BorrowInformation borrowInformation = myActiveObjects.remove(obj);
+        LOGGER.trace("Return (" + borrowInformation + ").", borrowInformation.getThreadInfo());
         super.invalidateObject(obj);
     }
 
@@ -70,7 +74,7 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
             myLastValidationTimestamp.set(System.currentTimeMillis());
             for (BorrowInformation borrowInformation : new ArrayList<BorrowInformation>(myActiveObjects.values())) {
                 if (borrowInformation.getAgeMillis() > LEAK_TIME) {
-                    LOGGER.error("Connection in database connection pool seems to have leaked. Allocation (" + new Date(borrowInformation.getTimestamp()) + ") information follows.", borrowInformation.getThreadInfo());
+                    LOGGER.error("Connection in database connection pool seems to have leaked. Allocation (" + borrowInformation + ") information follows.", borrowInformation.getThreadInfo());
                 }
             }
         }
