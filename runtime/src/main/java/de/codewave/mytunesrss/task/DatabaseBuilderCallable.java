@@ -297,8 +297,18 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
             myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds), true));
         }
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Obsolete tracks and playlists removed from database.");
+        if (!Thread.currentThread().isInterrupted()) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Removing outdated playlists.");
+            }
+            myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAfterUpdate").execute();
+                }
+            }, true));
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Obsolete tracks, photos and playlists removed from database.");
+            }
         }
         return missingItunesFiles;
     }

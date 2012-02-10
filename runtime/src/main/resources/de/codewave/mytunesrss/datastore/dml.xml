@@ -472,9 +472,12 @@
         </sql>
     </statement>
 
-    <statement name="finishDatabaseUpdate">
+    <statement name="cleanupPlaylistsAfterUpdate">
         <sql>DELETE FROM playlist WHERE updated = FALSE AND type IN ('ITunes', 'M3uFile', 'ITunesFolder')</sql>
         <sql>UPDATE playlist SET updated = FALSE</sql>
+    </statement>
+
+    <statement name="finishDatabaseUpdate">
         <sql>DELETE FROM photoalbum WHERE NOT EXISTS (SELECT * FROM link_photo_album WHERE link_photo_album.album_id = photoalbum.id)</sql>
         <sql>DELETE FROM playlist WHERE type != 'MyTunesSmart' AND NOT EXISTS (SELECT * FROM link_track_playlist WHERE link_track_playlist.playlist_id = playlist.id)</sql>
         <sql>
