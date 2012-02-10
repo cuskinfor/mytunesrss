@@ -9,6 +9,12 @@
 
         <release version="4.2-RC-2" date="2012-02-10">
             <action dev="mdescher" type="fix">
+                Fixed missing parameters for database mismatch message.
+            </action>
+        </release>
+
+        <release version="4.2-RC-2" date="2012-02-10">
+            <action dev="mdescher" type="fix">
                 Delete playlists which do not exist anymore.
             </action>
             <action dev="mdescher" type="fix">

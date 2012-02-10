@@ -392,7 +392,7 @@ public class MyTunesRss {
             }
             if (callable.getDatabaseVersion().compareTo(new Version(VERSION)) > 0) {
                 if (!MyTunesRssUtils.isHeadless() && CONFIG.isDefaultDatabase()) {
-                    int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatchReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
+                    int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatchReset", VERSION, callable.getDatabaseVersion().toString()), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
                         LOGGER.info("Recreating default database.");
                         CONFIG.setDefaultDatabaseSettings();
@@ -407,7 +407,7 @@ public class MyTunesRss {
                         }
                     }
                 } else {
-                    MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch"), VERSION, callable.getDatabaseVersion().toString()));
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch", VERSION, callable.getDatabaseVersion().toString()));
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
