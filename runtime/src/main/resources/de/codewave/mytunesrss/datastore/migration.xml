@@ -275,7 +275,7 @@
         <sql>ALTER TABLE album ADD COLUMN compilation BOOLEAN</sql>
     </statement>
 
-    <statement name="migrate_4.2.0">
+    <statement name="migrate_4.2-RC-2">
         <sql>ALTER TABLE image ADD COLUMN mimetype VARCHAR(50) NOT NULL DEFAULT 'image/jpg'</sql>
         <sql>DROP table statistics</sql>
         <sql>
@@ -287,6 +287,7 @@
         </sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>CREATE INDEX idx_statistics_type ON statistics (type)</sql>
+        <sql>ALTER TABLE playlist ADD COLUMN updated BOOLEAN</sql>
     </statement>
 
 </statements>

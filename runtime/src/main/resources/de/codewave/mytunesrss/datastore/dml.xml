@@ -405,13 +405,13 @@
     </statement>
 
     <statement name="insertPlaylist">
-        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id)</sql>
+        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id, updated) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id, TRUE)</sql>
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="updatePlaylist">
-        <sql>UPDATE playlist SET name = :name, user_private = :user_private, container_id = :container_id WHERE id = :id</sql>
+        <sql>UPDATE playlist SET name = :name, user_private = :user_private, container_id = :container_id, updated = TRUE WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
@@ -473,6 +473,8 @@
     </statement>
 
     <statement name="finishDatabaseUpdate">
+        <sql>DELETE FROM playlist WHERE updated = FALSE AND type IN ('ITunes', 'M3uFile', 'ITunesFolder')</sql>
+        <sql>UPDATE playlist SET updated = FALSE</sql>
         <sql>DELETE FROM photoalbum WHERE NOT EXISTS (SELECT * FROM link_photo_album WHERE link_photo_album.album_id = photoalbum.id)</sql>
         <sql>DELETE FROM playlist WHERE type != 'MyTunesSmart' AND NOT EXISTS (SELECT * FROM link_track_playlist WHERE link_track_playlist.playlist_id = playlist.id)</sql>
         <sql>

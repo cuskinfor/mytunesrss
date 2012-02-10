@@ -86,6 +86,7 @@
                 user_owner VARCHAR(256),
                 ts_create NUMERIC(19),
                 container_id VARCHAR(100),
+                updated BOOLEAN,
                 UNIQUE (id)
             )
         </sql>
