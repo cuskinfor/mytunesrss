@@ -12,7 +12,7 @@
                 Delete playlists which do not exist anymore.
             </action>
             <action dev="mdescher" type="fix">
-                Fixed long lasting system_information table lock.
+                Fixed long lasting system_information table lock during DB update.
             </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-316] Do not return URLs for which the user has no permission
