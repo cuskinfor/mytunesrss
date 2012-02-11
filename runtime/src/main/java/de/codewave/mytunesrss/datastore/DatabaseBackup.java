@@ -17,6 +17,13 @@ import java.util.Locale;
 
 public class DatabaseBackup implements Comparable<DatabaseBackup> {
 
+    public static final DatabaseBackup NO_BACKUP = new DatabaseBackup() {
+        @Override
+        public String toString() {
+            return MyTunesRssUtils.getBundleString(Locale.getDefault(), "databaseBackup.none");
+        }
+    };
+
     public static boolean isBackupFile(File file) {
         return file.isFile() && file.getName().startsWith("h2-backup-") && file.getName().endsWith(".zip");
     }
@@ -27,6 +34,10 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
 
     private long myDate;
     private File myFile;
+
+    private DatabaseBackup() {
+        // only special static instance is allowed to use this constructor
+    }
 
     public DatabaseBackup(File file) throws IOException {
         if (!isBackupFile(file)) {
