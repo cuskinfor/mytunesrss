@@ -19,6 +19,7 @@ import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
@@ -57,8 +58,9 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
                 Playlist randomPlaylist = getBooleanRequestParameter("forceNewRandomPlaylist", false) ? null : MyTunesRssWebUtils.findRandomPlaylist(getTransaction(), getAuthUser());
                 if (randomPlaylist == null) {
-                    randomPlaylist = MyTunesRssWebUtils.createRandomPlaylist(getTransaction(), getAuthUser(), getWebConfig(), MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), getWebConfig().getRandomPlaylistSize()));
+                    randomPlaylist = MyTunesRssWebUtils.createRandomPlaylist(getTransaction(), getAuthUser(), getWebConfig(), UUID.randomUUID().toString());
                 }
+                randomPlaylist.setName(MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylist.getTrackCount()));
                 playlists.add(randomPlaylist);
             }
             if (StringUtils.isNotEmpty(containerId)) {

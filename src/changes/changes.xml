@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.2-RC-4" date="___D___">
+            <action dev="mdescher" type="fix">
+                Display random playlist with actual track count and in correct language.
+            </action>
+        </release>
+
         <release version="4.2-RC-3" date="2012-02-11">
             <action dev="mdescher" type="fix">
                 Better handling of broken databases on startup, e.g. show "create new database" in list of backups.
