@@ -65,7 +65,7 @@ public class AdminNotifier {
     public void notifyOutdatedItunesXml(File iTunesMaster, File iTunesXml) {
         if (MyTunesRss.CONFIG.isNotifyOnOutdatedItunesXml() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Outdated iTunes XML file";
-            String body = "The iTunes XML file \"" + iTunesXml.getAbsolutePath() + "\" is older than the corresponding iTunes master file \"" + iTunesMaster.getAbsolutePath() + "\". Deleting the XML file, then starting and stopping iTunes should correct the issue. The problem are most likely characters in the name/author/album/etc information in your iTunes library which cause iTunes to stop updating the XML file. Unless you find and change to offending character(s) in your library, deleting the XML file will fix the problem only once but not permanently.";
+            String body = "The iTunes XML file \"" + iTunesXml.getAbsolutePath() + "\" is older than the corresponding iTunes master file \"" + iTunesMaster.getAbsolutePath() + "\". Deleting the XML file, then starting and stopping iTunes should correct the issue. The problem are most likely characters in the name/author/album/etc information in your iTunes library which cause iTunes to stop updating the XML file. Unless you find and change the offending character(s) in your library, deleting the XML file will fix the problem only once but not permanently.";
             sendAdminMail(subject, body);
         }
     }
