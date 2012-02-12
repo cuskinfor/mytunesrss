@@ -24,17 +24,16 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private Map<Integer, Image> myDefaultImages = new HashMap<Integer, Image>();
 
     private Image getDefaultImage(int size) {
+        if (size <= 0) {
+            return null; // TODO: maybe better an IllegalArgumentException?
+        }
         if (myDefaultImages.get(size) == null) {
             synchronized (myDefaultImages) {
                 if (myDefaultImages.get(size) == null) {
-                    InputStream inputStream = MyTunesRssCommandHandler.class.getClassLoader().getResourceAsStream(
-                            "de/codewave/mytunesrss/default_rss_image.png");
-                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    InputStream inputStream = null;
                     try {
-                        for (int dataByte = inputStream.read(); dataByte > -1 && dataByte < 256; dataByte = inputStream.read()) {
-                            outputStream.write(dataByte);
-                        }
-                        Image image = new Image("image/png", outputStream.toByteArray());
+                        inputStream = MyTunesRssCommandHandler.class.getClassLoader().getResourceAsStream("de/codewave/mytunesrss/default_rss_image.png");
+                        Image image = new Image("image/png", inputStream);
                         myDefaultImages.put(size, MyTunesRssUtils.resizeImageWithMaxSize(image, size));
                     } catch (IOException e) {
                         if (LOG.isErrorEnabled()) {
@@ -42,7 +41,6 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                         }
                     } finally {
                         IOUtils.close(inputStream);
-                        IOUtils.close(outputStream);
                     }
                 }
             }
