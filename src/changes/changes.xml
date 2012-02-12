@@ -9,6 +9,9 @@
 
         <release version="4.2-RC-4" date="___D___">
             <action dev="mdescher" type="fix">
+                MyTunesRSS instance locking did not work correctly.
+            </action>
+            <action dev="mdescher" type="fix">
                 Display random playlist with actual track count and in correct language.
             </action>
         </release>

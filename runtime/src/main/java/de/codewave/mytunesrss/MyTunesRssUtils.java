@@ -58,6 +58,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class MyTunesRssUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
+    private static RandomAccessFile LOCK_FILE;
 
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {
@@ -187,10 +188,11 @@ public class MyTunesRssUtils {
                 }
             }
         } catch (Exception e) {
-                LOGGER.error("Exception during shutdown.", e);
+            LOGGER.error("Exception during shutdown.", e);
 
         } finally {
-                LOGGER.debug("Very last log message before shutdown.");
+
+            LOGGER.debug("Very last log message before shutdown.");
             System.exit(0);
         }
     }
@@ -302,11 +304,11 @@ public class MyTunesRssUtils {
         return systemInfo.toString();
     }
 
-    public static boolean isOtherInstanceRunning(long timeoutMillis) {
-        RandomAccessFile lockFile;
+    public static boolean lockInstance(long timeoutMillis) {
         try {
             File file = new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.lck");
-            lockFile = new RandomAccessFile(file, "rw");
+            file.deleteOnExit();
+            LOCK_FILE = new RandomAccessFile(file, "rw");
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not check for other running instance.", e);
@@ -316,7 +318,7 @@ public class MyTunesRssUtils {
         long endTime = System.currentTimeMillis() + timeoutMillis;
         do {
             try {
-                if (lockFile.getChannel().tryLock() != null) {
+                if (LOCK_FILE.getChannel().tryLock() != null) {
                     return false;
                 }
                 Thread.sleep(500);

@@ -438,7 +438,7 @@ public class MyTunesRss {
     }
 
     private static void processSanityChecks() {
-        if (MyTunesRssUtils.isOtherInstanceRunning(3000)) {
+        if (MyTunesRssUtils.lockInstance(3000)) {
             MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
             MyTunesRssUtils.shutdownGracefully();
         }
