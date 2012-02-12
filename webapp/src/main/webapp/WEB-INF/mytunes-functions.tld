@@ -94,10 +94,10 @@
         <name>lowerSuffix</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String
-            lowerSuffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
+            lowerSuffix(javax.servlet.jsp.PageContext,de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
-            &lt;c:out value="${mtfn:lowerSuffix(config, user, track)}"/&gt;
+            &lt;c:out value="${mtfn:lowerSuffix(pageContext, config, user, track)}"/&gt;
         </example>
     </function>
 
@@ -108,10 +108,10 @@
         <name>suffix</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String
-            suffix(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
+            suffix(javax.servlet.jsp.PageContext,de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
-            &lt;c:out value="${mtfn:suffix(config, user, track)}"/&gt;
+            &lt;c:out value="${mtfn:suffix(pageContex, config, user, track)}"/&gt;
         </example>
     </function>
 
@@ -122,10 +122,10 @@
         <name>contentType</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String
-            contentType(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
+            contentType(javax.servlet.jsp.PageContext,de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.User,de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
-            &lt;c:out value="${mtfn:contentType(config, user, track)}"/&gt;
+            &lt;c:out value="${mtfn:contentType(pageContext, config, user, track)}"/&gt;
         </example>
     </function>
 

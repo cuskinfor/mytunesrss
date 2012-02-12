@@ -48,7 +48,6 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
             track = tracks.nextResult();
             if (!getAuthUser().isQuotaExceeded()) {
                 File file = track.getFile();
-                String contentType = track.getContentType();
                 if (!file.exists()) {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");

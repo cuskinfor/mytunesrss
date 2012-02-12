@@ -22,6 +22,7 @@ import org.codehaus.jackson.io.JsonStringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.jsp.PageContext;
@@ -95,18 +96,23 @@ public class MyTunesFunctions {
         return webSafeFileName(genre.getName());
     }
 
-    public static String lowerSuffix(WebConfig config, User user, Track track) {
-        String suffix = suffix(config, user, track);
+    public static String lowerSuffix(PageContext pageContext, WebConfig config, User user, Track track) {
+        String suffix = suffix(pageContext, config, user, track);
         return suffix != null ? suffix.toLowerCase() : suffix;
     }
 
-    public static String suffix(WebConfig config, User user, Track track) {
+    public static String suffix(PageContext pageContext, WebConfig config, User user, Track track) {
+        return suffix(pageContext.getRequest(), config, user, track);
+    }
+
+    public static String suffix(ServletRequest request, WebConfig config, User user, Track track) {
         if (config != null && user != null) {
             TranscoderConfig transcoderConfig = user.getForceTranscoder(track);
             if (transcoderConfig != null) {
                 return transcoderConfig.getTargetSuffix();
             }
-            if (user.isTranscoder()) {
+            boolean notranscode = "true".equals(request.getParameter("notranscode"));
+            if (!notranscode && user.isTranscoder()) {
                 transcoderConfig = MyTunesRssWebUtils.getTranscoder(config.getActiveTranscoders(), track);
                 if (transcoderConfig != null) {
                     return transcoderConfig.getTargetSuffix();
@@ -116,8 +122,8 @@ public class MyTunesFunctions {
         return FilenameUtils.getExtension(track.getFile().getName());
     }
 
-    public static String contentType(WebConfig config, User user, Track track) {
-        return FileSupportUtils.getContentType("dummy." + suffix(config, user, track));
+    public static String contentType(PageContext pageContext, WebConfig config, User user, Track track) {
+        return FileSupportUtils.getContentType("dummy." + suffix(pageContext, config, user, track));
     }
 
     public static boolean transcoding(PageContext pageContext, User user, Track track) {
@@ -310,7 +316,18 @@ public class MyTunesFunctions {
         if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, false)) {
             return httpLiveStreamUrl(request, track, extraPathInfo);
         }
-        MyTunesRssCommand command = MyTunesRssCommand.PlayTrack;
+        return playbackDownloadUrl(request, MyTunesRssCommand.PlayTrack, track, extraPathInfo);
+    }
+
+    public static String downloadUrl(PageContext pageContext, Track track, String extraPathInfo) {
+        return downloadUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
+    }
+
+    public static String downloadUrl(HttpServletRequest request, Track track, String extraPathInfo) {
+        return playbackDownloadUrl(request, MyTunesRssCommand.DownloadTrack, track, extraPathInfo);
+    }
+
+    private static String playbackDownloadUrl(HttpServletRequest request, MyTunesRssCommand command, Track track, String extraPathInfo) {
         HttpSession session = request.getSession();
         StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
         String auth = (String) request.getAttribute("auth");
@@ -329,30 +346,7 @@ public class MyTunesFunctions {
             pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
-        builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(MyTunesRssWebUtils.getWebConfig(request), user, track));
-        return builder.toString();
-    }
-
-    public static String downloadUrl(PageContext pageContext, Track track, String extraPathInfo) {
-        return downloadUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
-    }
-
-    public static String downloadUrl(HttpServletRequest request, Track track, String extraPathInfo) {
-        MyTunesRssCommand command = MyTunesRssCommand.DownloadTrack;
-        HttpSession session = request.getSession();
-        StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
-        String auth = (String) request.getAttribute("auth");
-        if (StringUtils.isBlank(auth)) {
-            auth = (String) session.getAttribute("auth");
-        }
-        builder.append("/").append(command.getName()).append("/").append(auth);
-        StringBuilder pathInfo = new StringBuilder("track=");
-        pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
-        if (StringUtils.isNotBlank(extraPathInfo)) {
-            pathInfo.append("/").append(extraPathInfo);
-        }
-        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
-        builder.append("/").append(virtualTrackName(track)).append(".").append(FilenameUtils.getExtension(track.getFilename()));
+        builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(request, MyTunesRssWebUtils.getWebConfig(request), user, track));
         return builder.toString();
     }
 

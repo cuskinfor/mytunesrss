@@ -80,6 +80,7 @@
 
 <table cellspacing="0" class="tracklist searchResult">
     <!-- begin playlist header -->
+    <c:set var="fnCount" value="0" />
     <c:if test="${!empty param.playlistName}">
         <tr>
             <th id="functionsDialogName${fnCount}" class="active" colspan="2">
@@ -114,9 +115,9 @@
                 </c:choose>
             </th>
         </tr>
+        <c:set var="fnCount" value="${fnCount + 1}" />
     </c:if>
     <!-- end playlist header -->
-    <c:set var="fnCount" value="0" />
     <c:forEach items="${tracks}" var="track" varStatus="loopStatus">
         <c:if test="${track.newSection}">
             <c:set var="sectionFileName" value=""/>
@@ -257,7 +258,7 @@
                         <c:if test="${authUser.player && config.showPlayer}">
                             <a id="linkEditPlaylistFlash${fnCount}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>track=${track.id}/filename=${mtfn:virtualTrackName(track)}.xspf</mt:encode64></mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                         </c:if>
-                        <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && authUser.yahooPlayer && config.yahooMediaPlayer}">
+                        <c:if test="${mtfn:lowerSuffix(pageContext, config, authUser, track) eq 'mp3' && authUser.yahooPlayer && config.yahooMediaPlayer}">
                             <c:set var="yahoo" value="true"/>
                             <a id="linkEditPlaylistYahoo${fnCount}" class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>">
                                 <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>

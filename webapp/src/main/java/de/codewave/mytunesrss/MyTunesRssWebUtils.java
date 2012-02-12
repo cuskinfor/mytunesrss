@@ -311,7 +311,7 @@ public class MyTunesRssWebUtils {
         boolean notranscode = "true".equals(request.getParameter("notranscode"));
         boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
         User authUser = getAuthUser(request);
-        return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
+        return (authUser != null && authUser.getForceTranscoder(track) != null) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
     }
 
     public static InputStream getMediaStream(HttpServletRequest request, Track track, File file) throws IOException {

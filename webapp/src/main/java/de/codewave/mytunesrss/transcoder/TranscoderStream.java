@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.LogStreamCopyThread;
+import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
@@ -42,24 +43,8 @@ public class TranscoderStream extends InputStream {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
         }
         myProcess = Runtime.getRuntime().exec(transcoderCommand);
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    IOUtils.copy(inputStream, myProcess.getOutputStream());
-                } catch (IOException e) {
-                    LOG.warn("Could not copy input file to stdin of transcoder process.", e);
-                } finally {
-                    try {
-                        inputStream.close();
-                    } catch (IOException e) {
-                        LOG.warn("Could not close original input stream.", e);
-                    }
-                }
-            }
-        }.start();
-        new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug)
-                .start();
+        new StreamCopyThread(inputStream, true, myProcess.getOutputStream(), true).start();
+        new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }
 
     public int read() throws IOException {

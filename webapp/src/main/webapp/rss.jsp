@@ -11,7 +11,7 @@
                 <c:if test="${userAgent != 'Psp'}"><link>${feedUrl}</link></c:if>
             </image>
         </c:if>
-        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(config, authUser, track)}</c:set>
+        <description><fmt:message key="rssChannelDescription"/></description><c:forEach items="${tracks}" var="track"><c:set var="virtualFileName">${mtfn:virtualTrackName(track)}.${mtfn:suffix(pageContext, config, authUser, track)}</c:set>
             <item>
                 <title><c:out value="${track.name}"/></title>
                 <description><c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" /></description>
@@ -20,7 +20,7 @@
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
                 <pubDate>${mtfn:rssDate(track[dateField])}</pubDate>
                 <enclosure url="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>"
-                           type="${mtfn:contentType(config, authUser, track)}"
+                           type="${mtfn:contentType(pageContext, config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>
                         />
                 <c:if test="${!empty(track.imageHash)}"><media:thumbnail url="${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}</mt:encrypt>"/></c:if>

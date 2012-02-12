@@ -204,7 +204,7 @@
                         <td>
                             <c:if test="${track.protected}"><img src="${appUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
                             <c:if test="${track.mediaType == 'Video'}"><img src="${appUrl}/images/${cwfn:choose(track.videoType == 'Movie', 'movie.png', 'tvshow.png')}" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
-                            <c:out value="${mtfn:suffix(null, null, track)}" />
+                            <c:out value="${mtfn:suffix(pageContext, null, null, track)}" />
                         </td>
                     </tr>
                     <tr <mt:flipFlop/>>
@@ -224,7 +224,7 @@
                                     <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
-                                    <a id="linkDownload" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="${track.name}" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+                                    <a id="linkDownload" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
                             </c:if>
                         </td>
                     </tr>
@@ -294,7 +294,7 @@
                                 <c:when test="${track.mediaType == 'Video'}">
                                     <c:set var="imgUrl" value="${appUrl}/images/movie_poster.png"/>
                                     <c:if test="${!empty(track.imageHash)}"><c:set var="imgUrl">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt></c:set></c:if>
-                                    <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"></embed>
+                                    <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" type="${mtfn:contentType(pageContext, config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"></embed>
                                 </c:when>
                                 <c:otherwise>
                                     <img alt="${track.name} Album Art"

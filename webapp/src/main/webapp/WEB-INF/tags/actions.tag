@@ -58,7 +58,7 @@
     <c:if test="${!config.showPlayer}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:choose>
-    <c:when test="${!empty track && authUser.yahooPlayer && config.yahooMediaPlayer && mtfn:lowerSuffix(config, authUser, track) eq 'mp3'}">
+    <c:when test="${!empty track && authUser.yahooPlayer && config.yahooMediaPlayer && mtfn:lowerSuffix(pageContext, config, authUser, track) eq 'mp3'}">
         <c:set var="yahoo" scope="request" value="true"/>
         <a id="fn_yahoo${index}" class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" title="<c:out value="${track.name}"/>" style="display:none">
             <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
