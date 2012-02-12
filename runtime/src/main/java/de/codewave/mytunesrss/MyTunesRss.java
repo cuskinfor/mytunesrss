@@ -179,6 +179,7 @@ public class MyTunesRss {
             EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
+            EXECUTOR_SERVICE.scheduleWithFixedDelay(PRESET_MANAGER, 0, 3600, TimeUnit.SECONDS);
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             initializeDatabase();

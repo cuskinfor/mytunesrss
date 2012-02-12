@@ -15,9 +15,11 @@ import org.apache.commons.lang.StringUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
 import java.util.regex.Pattern;
 
+@XmlRootElement
 public class TranscoderConfig {
     private String myName;
 
