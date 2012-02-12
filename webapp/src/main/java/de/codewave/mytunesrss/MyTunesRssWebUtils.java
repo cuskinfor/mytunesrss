@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.TranscoderConfig;
@@ -27,9 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -315,7 +314,15 @@ public class MyTunesRssWebUtils {
         return (authUser != null && authUser.isForceTranscoders()) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
     }
 
-    public static InputStream getMediaStream(HttpServletRequest request, Track track, InputStream inputStream) throws IOException {
+    public static InputStream getMediaStream(HttpServletRequest request, Track track, File file) throws IOException {
+        InputStream inputStream;
+        if (Mp4Utils.isMp4File(file)) {
+            LOGGER.info("Using QT-FASTSTART utility.");
+            inputStream = Mp4Utils.getFastStartInputStream(file);
+        }
+        else {
+            inputStream = new FileInputStream(file);
+        }
         Transcoder transcoder = getTranscoder(request, track);
         if (transcoder != null) {
             return transcoder.getStream(inputStream);
@@ -324,7 +331,15 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static StreamSender getMediaStreamSender(HttpServletRequest request, Track track, InputStream inputStream) throws IOException {
+    public static StreamSender getMediaStreamSender(HttpServletRequest request, Track track, File file) throws IOException {
+        InputStream inputStream;
+        if (Mp4Utils.isMp4File(file)) {
+            LOGGER.info("Using QT-FASTSTART utility.");
+            inputStream = Mp4Utils.getFastStartInputStream(file);
+        }
+        else {
+            inputStream = new FileInputStream(file);
+        }
         Transcoder transcoder = getTranscoder(request, track);
         if (transcoder != null) {
             return transcoder.getStreamSender(inputStream);

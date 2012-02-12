@@ -56,13 +56,7 @@ public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
                     MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                     streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                 } else {
-                    if (Mp4Utils.isMp4File(file)) {
-                        // qt-faststart
-                        LOG.info("Using QT-FASTSTART utility.");
-                        streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, Mp4Utils.getFastStartInputStream(file));
-                    } else {
-                        streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, new FileInputStream(file));
-                    }
+                    streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                     streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                     getAuthUser().playLastFmTrack(track);

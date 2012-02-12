@@ -9,6 +9,9 @@
 
         <release version="4.2-RC-4" date="___D___">
             <action dev="mdescher" type="fix">
+                Several bugfixes for HTTP live streaming.
+            </action>
+            <action dev="mdescher" type="fix">
                 MyTunesRSS instance locking did not work correctly.
             </action>
             <action dev="mdescher" type="fix">

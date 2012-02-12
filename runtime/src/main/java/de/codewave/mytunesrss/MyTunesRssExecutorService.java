@@ -23,7 +23,7 @@ public class MyTunesRssExecutorService {
 
     private final ExecutorService ROUTER_CONFIG_EXECUTOR = Executors.newSingleThreadExecutor();
 
-    private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(50);
+    private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(10);
 
     private Future<Boolean> DATABASE_UPDATE_FUTURE;
 
@@ -156,6 +156,14 @@ public class MyTunesRssExecutorService {
     public synchronized void schedule(Runnable runnable, int delay, TimeUnit timeUnit) {
         try {
             GENERAL_EXECUTOR.schedule(runnable, delay, timeUnit);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule task.", e);
+        }
+    }
+
+    public synchronized void execute(Runnable runnable) {
+        try {
+            GENERAL_EXECUTOR.execute(runnable);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule task.", e);
         }

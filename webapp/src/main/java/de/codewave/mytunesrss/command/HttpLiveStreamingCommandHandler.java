@@ -23,10 +23,13 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
@@ -87,8 +90,8 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 }
                 HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(playlistIdentifier);
                 if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist())) {
-                    InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track, new FileInputStream(track.getFile()));
-                    MyTunesRss.EXECUTOR_SERVICE.schedule(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream), 0, TimeUnit.MILLISECONDS);
+                    InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track, track.getFile());
+                    MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream));
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
                     getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
                     getTransaction().commit();
@@ -134,59 +137,78 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
 
         public void run() {
-            String[] command = new String[6];
-            command[0] = getJavaExecutablePath();
-            command[1] = "-Djna.library.path=" + MyTunesRss.PREFERENCES_DATA_PATH + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath();
-            command[2] = "-cp";
-            command[3] = getClasspath();
-            command[4] = "de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter";
-            command[5] = getBaseDir().getAbsolutePath();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
-            }
-            BufferedReader reader = null;
-            Process process = null;
             try {
-                process = Runtime.getRuntime().exec(command);
-                new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
-                new StreamCopyThread(myStream, true, process.getOutputStream(), true).start();
-                reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                for (String responseLine = reader.readLine(); responseLine != null; responseLine = reader.readLine()) {
-                    if (responseLine.startsWith(getBaseDir().getAbsolutePath())) {
-                        myPlaylist.addFile(new File(StringUtils.trimToEmpty(responseLine)));
-                    } else if (responseLine.startsWith("ERR")) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("HTTP Live Streaming segmenter error: " + responseLine);
-                        }
-                    }
+                List<String> command = new ArrayList<String>();
+                command.add(getJavaExecutablePath());
+                String dataModel = System.getProperty("sun.arch.data.model");
+                if ("32".equals(dataModel)) {
+                    command.add("-d32");
+                } else if ("64".equals(dataModel)) {
+                    command.add("-d64");
                 }
-                process.waitFor();
-                if (process.exitValue() == 0) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Segmenter process exited with code 0.");
+                command.add("-Djna.library.path=" + MyTunesRss.PREFERENCES_DATA_PATH + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath());
+                command.add("-cp");
+                command.add(getClasspath());
+                command.add("de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter");
+                command.add(getBaseDir().getAbsolutePath());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
+                }
+                BufferedReader reader = null;
+                Process process = null;
+                try {
+                    process = Runtime.getRuntime().exec(command.toArray(new String[command.size()]));
+                    new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                    new StreamCopyThread(myStream, true, process.getOutputStream(), true).start();
+                    reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    final BufferedReader finalReader = reader;
+                    new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                for (String responseLine = finalReader.readLine(); responseLine != null; responseLine = finalReader.readLine()) {
+                                    if (responseLine.startsWith(getBaseDir().getAbsolutePath())) {
+                                        myPlaylist.addFile(new File(StringUtils.trimToEmpty(responseLine)));
+                                    } else if (responseLine.startsWith("ERR")) {
+                                        if (LOG.isErrorEnabled()) {
+                                            LOG.error("HTTP Live Streaming segmenter error: " + responseLine);
+                                        }
+                                    }
+                                }
+                            } catch (Throwable e) {
+                                LOG.warn("HTTP Live Streaming segmenter output reader thread exited with error.", e);
+                            }
+                        }
+                    }).start();
+                    process.waitFor();
+                    if (process.exitValue() == 0) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Segmenter process exited with code 0.");
+                        }
+                        myPlaylist.setDone(true);
+                    } else {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Segmenter process exited with code " + process.exitValue() + ".");
+                        }
+                        myPlaylist.setFailed(true);
                     }
-                    myPlaylist.setDone(true);
-                } else {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Segmenter process exited with code " + process.exitValue() + ".");
+                } catch (IOException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Segmenter exception", e);
                     }
                     myPlaylist.setFailed(true);
+                } catch (InterruptedException e) {
+                    if (LOG.isErrorEnabled()) {
+                        LOG.error("Segmenter thread interrupted exception", e);
+                    }
+                    myPlaylist.setFailed(true);
+                } finally {
+                    IOUtils.closeQuietly(reader);
+                    if (process != null) {
+                        process.destroy();
+                    }
                 }
-            } catch (IOException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Segmenter exception", e);
-                }
-                myPlaylist.setFailed(true);
-            } catch (InterruptedException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Segmenter thread interrupted exception", e);
-                }
-                myPlaylist.setFailed(true);
-            } finally {
-                IOUtils.closeQuietly(reader);
-                if (process != null) {
-                    process.destroy();
-                }
+            } catch (Throwable e) {
+                LOG.error("Error in http live streaming thread.", e);
             }
         }
 
