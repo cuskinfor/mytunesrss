@@ -15,6 +15,7 @@
         <groupId>de.codewave</groupId>
         <artifactId>codewave-base</artifactId>
         <version>3.18</version>
+        <relativePath />
     </parent>
     <repositories>
         <repository>
