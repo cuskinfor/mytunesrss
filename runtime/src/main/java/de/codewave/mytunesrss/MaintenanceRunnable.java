@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -22,12 +24,16 @@ import java.util.Set;
  * - Delete old temporary playlists.
  */
 public class MaintenanceRunnable implements Runnable {
+    private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceRunnable.class);
+
     public void run() {
+        LOGGER.debug("Starting maintenance job.");
         removeOldTempPlaylists();
         removePlaylistsWithoutUser();
     }
 
     private void removePlaylistsWithoutUser() {
+        LOGGER.debug("Maintenance job: removing orphaned playlist.");
         final Set<String> userNames = new HashSet<String>();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             userNames.add(user.getName());
@@ -42,6 +48,7 @@ public class MaintenanceRunnable implements Runnable {
     }
 
     private void removeOldTempPlaylists() {
+        LOGGER.debug("Maintenance job: removing old temporary playlists.");
         MyTunesRss.STORE.executeStatement(new RemoveOldTempPlaylistsStatement());
     }
 }
