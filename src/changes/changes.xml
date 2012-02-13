@@ -9,6 +9,9 @@
 
         <release version="4.2-RC-5" date="___D___">
             <action dev="mdescher" type="fix">
+                Catch all Exceptions instead of only IOExceptions when parsing images from tracks.
+            </action>
+            <action dev="mdescher" type="fix">
                 Updated transcoder presets to new syntax (removed "{infile}" support). New URI for additional remote templates.
             </action>
         </release>

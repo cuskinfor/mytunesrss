@@ -74,9 +74,9 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                 }
                 new UpdateImageForPhotoStatement(myPhotoId, imageHash).execute(connection);
             }
-        } catch (Throwable t) {
+        } catch (Exception e) {
             if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", t);
+                LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", e);
             }
         }
     }

@@ -220,8 +220,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         for (ImageUpdateInfo imageUpdateInfo : imageUpdateInfos) {
             try {
                 myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate, imageUpdateInfo.myImageType), false));
-            } catch (IOException e) {
-                LOGGER.error("Could not get image from file.", e);
+            } catch (Exception e) {
+                LOGGER.warn("Could not get image from file.", e);
             }
         }
     }

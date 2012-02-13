@@ -5,7 +5,10 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -23,14 +26,12 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
 
@@ -174,7 +175,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                                         }
                                     }
                                 }
-                            } catch (Throwable e) {
+                            } catch (Exception e) {
                                 LOG.warn("HTTP Live Streaming segmenter output reader thread exited with error.", e);
                             }
                         }
@@ -207,7 +208,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                         process.destroy();
                     }
                 }
-            } catch (Throwable e) {
+            } catch (Exception e) {
                 LOG.error("Error in http live streaming thread.", e);
             }
         }
