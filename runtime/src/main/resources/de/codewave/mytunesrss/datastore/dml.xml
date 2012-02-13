@@ -254,6 +254,13 @@
         </sql>
     </statement>
 
+    <!-- delete playlists with non-existent owner users -->
+    <statement name="deleteOrphanedPlaylists">
+        <sql>
+            DELETE FROM playlist WHERE user_owner NOT IN (:existingUsers[])
+        </sql>
+    </statement>
+
     <statement name="resetLastImageUpdateForAllTracks">
         <sql>UPDATE track SET last_image_update = NULL</sql>
     </statement>

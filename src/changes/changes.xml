@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.2-RC-6" date="___D___">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-330] Remove playlists of missing users
+            </action>
+        </release>
+
         <release version="4.2-RC-5" date="2012-02-13">
             <action dev="mdescher" type="fix">
                 Catch all Exceptions instead of only IOExceptions when parsing images from tracks.

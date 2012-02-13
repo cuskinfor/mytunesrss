@@ -6,10 +6,7 @@ package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.utils.sql.DataStore;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.SmartStatementFactory;
+import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
@@ -109,6 +106,17 @@ public class MyTunesRssDataStore extends DataStore {
         try {
             return transaction.executeQuery(query);
         } finally {
+            transaction.rollback();
+        }
+    }
+
+    public void executeStatement(DataStoreStatement statement) {
+        DataStoreSession transaction = getTransaction();
+        try {
+            transaction.executeStatement(statement);
+            transaction.commit();
+        } catch (SQLException e) {
+            LOG.error("Could not execute statement.", e);
             transaction.rollback();
         }
     }
