@@ -171,19 +171,19 @@ public class MyTunesRss {
             startQuartzScheduler();
         }
         initializeCaches();
-        if (!SHUTDOWN_IN_PROGRESS.get()) {
-            StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
-        }
 
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
             EXECUTOR_SERVICE.scheduleWithFixedDelay(PRESET_MANAGER, 0, 3600, TimeUnit.SECONDS);
-            EXECUTOR_SERVICE.scheduleWithFixedDelay(new MaintenanceRunnable(), 0, 3600, TimeUnit.SECONDS);
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             initializeDatabase();
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
+            EXECUTOR_SERVICE.scheduleWithFixedDelay(new MaintenanceRunnable(), 0, 3600, TimeUnit.SECONDS);
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
