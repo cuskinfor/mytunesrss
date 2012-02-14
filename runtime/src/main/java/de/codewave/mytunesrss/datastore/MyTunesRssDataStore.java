@@ -110,14 +110,14 @@ public class MyTunesRssDataStore extends DataStore {
         }
     }
 
-    public void executeStatement(DataStoreStatement statement) {
+    public void executeStatement(DataStoreStatement statement) throws SQLException{
         DataStoreSession transaction = getTransaction();
         try {
             transaction.executeStatement(statement);
             transaction.commit();
         } catch (SQLException e) {
-            LOG.error("Could not execute statement.", e);
             transaction.rollback();
+            throw e;
         }
     }
 

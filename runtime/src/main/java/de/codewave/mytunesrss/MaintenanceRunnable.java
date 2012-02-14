@@ -38,17 +38,25 @@ public class MaintenanceRunnable implements Runnable {
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             userNames.add(user.getName());
         }
-        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "deleteOrphanedPlaylists");
-                statement.setItems("existingUsers", userNames.toArray(new String[userNames.size()]));
-                statement.execute();
-            }
-        });
+        try {
+            MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "deleteOrphanedPlaylists");
+                    statement.setItems("existingUsers", userNames.toArray(new String[userNames.size()]));
+                    statement.execute();
+                }
+            });
+        } catch (SQLException e) {
+            LOGGER.warn("Could not remove orphaned playlists.", e);
+        }
     }
 
     private void removeOldTempPlaylists() {
         LOGGER.debug("Maintenance job: removing old temporary playlists.");
-        MyTunesRss.STORE.executeStatement(new RemoveOldTempPlaylistsStatement());
+        try {
+            MyTunesRss.STORE.executeStatement(new RemoveOldTempPlaylistsStatement());
+        } catch (SQLException e) {
+            LOGGER.warn("Could not remove old temporary playlists.", e);
+        }
     }
 }

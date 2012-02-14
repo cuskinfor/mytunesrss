@@ -17,6 +17,8 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.EmailValidator;
@@ -25,6 +27,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -378,7 +381,9 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setLastFmPasswordHash(myLastFmPassword.getStringHashValue(MyTunesRss.MD5_DIGEST));
         myUser.setLastFmUsername((String) myLastFmUsername.getValue());
         myUser.setMaximumZipEntries(myMaxFilesPerArchive.getIntegerValue(-1));
-        myUser.setName((String) myUsername.getValue());
+        final String oldUsername = myUser.getName();
+        final String newUsername = (String) myUsername.getValue();
+        myUser.setName(newUsername);
         if (StringUtils.isBlank(myPassword.getStringValue("")) && !myUser.isEmptyPassword()) {
             myUser.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString())));
             myUser.setEmptyPassword(true);
@@ -450,6 +455,20 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             MyTunesRss.CONFIG.addUser(myUser);
         }
         MyTunesRss.CONFIG.save();
+        if (!myNewUser && !StringUtils.equals(oldUsername, newUsername)) {
+            try {
+                MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+                    public void execute(Connection connection) throws SQLException {
+                        SmartStatement renameStatement = MyTunesRssUtils.createStatement(connection, "renamePlaylistOwner");
+                        renameStatement.setString("oldUsername", oldUsername);
+                        renameStatement.setString("newUsername", newUsername);
+                        renameStatement.execute();
+                    }
+                });
+            } catch (SQLException e) {
+                LOGGER.error("Could not rename owner of playlists. Orphaned playlists will be removed by maintenance job later.", e);
+            }
+        }
     }
 
     @Override

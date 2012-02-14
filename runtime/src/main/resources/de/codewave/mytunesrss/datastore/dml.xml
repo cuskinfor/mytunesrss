@@ -261,6 +261,13 @@
         </sql>
     </statement>
 
+    <!-- rename owner of playlists -->
+    <statement name="renamePlaylistOwner">
+        <sql>
+            UPDATE playlist SET user_owner = :newUsername WHERE user_owner = :oldUsername
+        </sql>
+    </statement>
+
     <statement name="resetLastImageUpdateForAllTracks">
         <sql>UPDATE track SET last_image_update = NULL</sql>
     </statement>
