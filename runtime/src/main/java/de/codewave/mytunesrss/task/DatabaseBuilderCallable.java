@@ -221,7 +221,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             try {
                 myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate, imageUpdateInfo.myImageType), false));
             } catch (Exception e) {
-                LOGGER.warn("Could not get image from file.", e);
+                LOGGER.warn("Could not extract image from file \"" + imageUpdateInfo.myFile.getAbsolutePath() + "\".", e);
             }
         }
     }
