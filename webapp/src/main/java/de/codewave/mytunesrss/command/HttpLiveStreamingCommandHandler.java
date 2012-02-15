@@ -32,6 +32,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
 
@@ -46,7 +47,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         String[] pathInfo = StringUtils.split(getRequest().getPathInfo(), '/');
         if (pathInfo.length > 1) {
             if (StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".ts")) {
-                sendMediaFile(trackId, pathInfo[pathInfo.length - 1]);
+                sendMediaFile(trackId, pathInfo[pathInfo.length - 2], pathInfo[pathInfo.length - 1]);
             } else {
                 sendPlaylist(trackId);
             }
@@ -55,10 +56,10 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private void sendMediaFile(String trackId, String filename) throws IOException {
+    private void sendMediaFile(String trackId, String dirname, String filename) throws IOException {
         StreamSender sender;
         MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
-        File mediaFile = new File(getBaseDir(), filename);
+        File mediaFile = new File(getBaseDir(), dirname + "/" + filename);
         if (mediaFile.isFile()) {
             if (getAuthUser().isQuotaExceeded()) {
                 sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
@@ -90,7 +91,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                     cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
                 }
                 HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(playlistIdentifier);
-                if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist())) {
+                if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist(new File(getBaseDir(), UUID.randomUUID().toString())))) {
                     InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track, track.getFile());
                     MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream));
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
@@ -141,17 +142,11 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             try {
                 List<String> command = new ArrayList<String>();
                 command.add(getJavaExecutablePath());
-                String dataModel = System.getProperty("sun.arch.data.model");
-                if ("32".equals(dataModel)) {
-                    command.add("-d32");
-                } else if ("64".equals(dataModel)) {
-                    command.add("-d64");
-                }
                 command.add("-Djna.library.path=" + MyTunesRss.PREFERENCES_DATA_PATH + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath());
                 command.add("-cp");
                 command.add(getClasspath());
                 command.add("de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter");
-                command.add(getBaseDir().getAbsolutePath());
+                command.add(myPlaylist.getBaseDir().getAbsolutePath());
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
                 }
@@ -167,7 +162,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                         public void run() {
                             try {
                                 for (String responseLine = finalReader.readLine(); responseLine != null; responseLine = finalReader.readLine()) {
-                                    if (responseLine.startsWith(getBaseDir().getAbsolutePath())) {
+                                    if (responseLine.startsWith(myPlaylist.getBaseDir().getAbsolutePath())) {
                                         myPlaylist.addFile(new File(StringUtils.trimToEmpty(responseLine)));
                                     } else if (responseLine.startsWith("ERR")) {
                                         if (LOG.isErrorEnabled()) {

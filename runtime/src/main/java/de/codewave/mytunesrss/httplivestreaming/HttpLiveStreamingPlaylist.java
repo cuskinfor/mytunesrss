@@ -20,6 +20,17 @@ public class HttpLiveStreamingPlaylist {
 
     private AtomicBoolean myFailed = new AtomicBoolean(false);
 
+    private File baseDir;
+
+    public HttpLiveStreamingPlaylist(File baseDir) {
+        this.baseDir = baseDir;
+        baseDir.mkdirs();
+    }
+
+    public File getBaseDir() {
+        return baseDir;
+    }
+
     public boolean isDone() {
         return myDone.get();
     }
@@ -61,7 +72,7 @@ public class HttpLiveStreamingPlaylist {
         sb.append("#EXT-X-TARGETDURATION:10\n");
         for (File file : myFiles) {
             sb.append("#EXTINF:10,\n");
-            sb.append(file.getName()).append("\n");
+            sb.append(getBaseDir().getName()).append("/").append(file.getName()).append("\n");
         }
         if (isDone() || isFailed()) {
             sb.append("#EXT-X-ENDLIST\n");
