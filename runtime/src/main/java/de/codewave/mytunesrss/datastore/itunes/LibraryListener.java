@@ -29,7 +29,7 @@ public class LibraryListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$LibraryListener is not implemented!");
+        throw new UnsupportedOperationException("method beforeArrayAdd of iTunes library listener is not implemented!");
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
