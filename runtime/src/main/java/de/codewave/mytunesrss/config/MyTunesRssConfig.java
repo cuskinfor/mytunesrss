@@ -1212,6 +1212,18 @@ public class MyTunesRssConfig {
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
+                        case Aperture:
+                            ApertureDatasourceConfig apertureDatasourceConfig = new ApertureDatasourceConfig(definition);
+                            pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                            apertureDatasourceConfig.clearPathReplacements();
+                            while (pathReplacementsIterator.hasNext()) {
+                                JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                                String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                                String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                                apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
+                            }
+                            dataSources.add(apertureDatasourceConfig);
+                            break;
                         default:
                             throw new IllegalArgumentException("Unknown datasource type!");
                     }
@@ -1517,6 +1529,19 @@ public class MyTunesRssConfig {
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importRolls", iphotoDatasourceConfig.isImportRolls()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importAlbums", iphotoDatasourceConfig.isImportAlbums()));
+                    break;
+                case Aperture:
+                    ApertureDatasourceConfig apertureDatasourceConfig = (ApertureDatasourceConfig) myDatasources.get(i);
+                    if (apertureDatasourceConfig.getPathReplacements() != null && !apertureDatasourceConfig.getPathReplacements().isEmpty()) {
+                        Element pathReplacementsElement = settings.createElement("path-replacements");
+                        dataSource.appendChild(pathReplacementsElement);
+                        for (ReplacementRule pathReplacement : apertureDatasourceConfig.getPathReplacements()) {
+                            Element pathReplacementElement = settings.createElement("replacement");
+                            pathReplacementsElement.appendChild(pathReplacementElement);
+                            pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "search", pathReplacement.getSearchPattern()));
+                            pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
+                        }
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");

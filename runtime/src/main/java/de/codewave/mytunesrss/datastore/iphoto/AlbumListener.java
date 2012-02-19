@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012. Codewave Software Michael Descher.
+ * All rights reserved.
+ */
+
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.MyTunesRss;
@@ -18,23 +23,16 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
  */
-public class AlbumListener implements PListHandlerListener {
+public abstract class AlbumListener implements PListHandlerListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(AlbumListener.class);
-
-    private static String[] IGNORE_TYPES = new String[] {
-            "Selected Event Album",
-            "Flagged",
-            "Special Roll",
-            "Special Month"
-    };
 
     private DatabaseUpdateQueue myQueue;
     protected LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
-    private Map<Long, String> myPhotoIdToPersId;
+    private Map<String, String> myPhotoIdToPersId;
     private Set<String> myPhotoAlbumIds;
 
-    public AlbumListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
+    protected AlbumListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId) throws SQLException {
         myPhotoIdToPersId = photoIdToPersId;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
@@ -43,7 +41,7 @@ public class AlbumListener implements PListHandlerListener {
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
-        throw new UnsupportedOperationException("method beforeDictPut of class ItunesLoader$PlaylistListener is not supported!");
+        throw new UnsupportedOperationException("method beforeDictPut of photo album listener is not supported!");
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
@@ -62,13 +60,13 @@ public class AlbumListener implements PListHandlerListener {
         }
 
         String albumType = (String) album.get("Album Type");
-        if (!ArrayUtils.contains(IGNORE_TYPES, albumType)) {
+        if (useAlbum(albumType)) {
             String albumId = getAlbumId(album);
             if (albumId != null) {
                 String albumName = getAlbumName(album);
                 List<String> photos = new ArrayList<String>();
                 for (String id : (List<String>) album.get("KeyList")) {
-                    String persId = myPhotoIdToPersId.get(Long.valueOf(id));
+                    String persId = myPhotoIdToPersId.get(id);
                     if (StringUtils.isNotBlank(persId)) {
                         photos.add(persId);
                     }
@@ -93,6 +91,8 @@ public class AlbumListener implements PListHandlerListener {
 
         }
     }
+
+    protected abstract boolean useAlbum(String albumType);
 
     protected String getAlbumName(Map album) {
         return (String) album.get("AlbumName");

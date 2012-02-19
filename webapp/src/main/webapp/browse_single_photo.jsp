@@ -84,8 +84,8 @@
             </div>
 
             <div class="photolinks">
-                <a id="downfullphotolink" href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>"><img src="${appUrl}/images/action-download.png"><span><fmt:message key="downloadFullSizedPhoto"/></span></a><br/>
-                <a id="exiflink" onclick="showExif('${servletUrl}/showExif/${auth}/<mt:encrypt key="${encryptionKey}">photo=${photos[param.photoIndex].id}</mt:encrypt>')"><img src="${appUrl}/images/action-tags.png"><span><fmt:message key="showExifData"/></span></a>
+                <a id="downfullphotolink" href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${cwfn:encodeUrl(photos[param.photoIndex].id)}</mt:encrypt>"><img src="${appUrl}/images/action-download.png"><span><fmt:message key="downloadFullSizedPhoto"/></span></a><br/>
+                <a id="exiflink" onclick="showExif('${servletUrl}/showExif/${auth}/<mt:encrypt key="${encryptionKey}">photo=${cwfn:encodeUrl(photos[param.photoIndex].id)}</mt:encrypt>')"><img src="${appUrl}/images/action-tags.png"><span><fmt:message key="showExifData"/></span></a>
             </div>
 
         </div>

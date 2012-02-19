@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.task;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
+import de.codewave.mytunesrss.datastore.iphoto.ApertureLoader;
 import de.codewave.mytunesrss.datastore.iphoto.IphotoLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -31,7 +32,7 @@ import java.util.concurrent.Callable;
 public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     public enum State {
-        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle(), UpdatingTracksFromIphoto();
+        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle(), UpdatingTracksFromIphoto(), UpdatingTracksFromAperture();
     }
 
     private static final class ImageUpdateInfo {
@@ -103,9 +104,14 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 LOGGER.info("Adding iTunes XML file \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
             myFileDatasources.add(datasource);
-        } else if (datasource.getType() == DatasourceType.Iphoto && new File(file, IphotoDatasourceConfig.XML_FILE_NAME).isFile()) {
+        } else if (datasource.getType() == DatasourceType.Iphoto && new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).isFile()) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Adding iPhoto XML file \"" + new File(file, IphotoDatasourceConfig.XML_FILE_NAME).getAbsolutePath() + "\" to database update sources.");
+                LOGGER.info("Adding iPhoto XML file \"" + new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).getAbsolutePath() + "\" to database update sources.");
+            }
+            myFileDatasources.add(datasource);
+        } else if (datasource.getType() == DatasourceType.Aperture && new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).isFile()) {
+            if (LOGGER.isInfoEnabled()) {
+                LOGGER.info("Adding Aperture XML file \"" + new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).getAbsolutePath() + "\" to database update sources.");
             }
             myFileDatasources.add(datasource);
         }
@@ -167,7 +173,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         return true;
                     }
 
-                    @Override
                     public boolean isCheckpointRelevant() {
                         return false;
                     }
@@ -273,6 +278,11 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
                         myQueue.offer(new MyTunesRssEventEvent(event));
                         IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, myQueue, timeLastUpdate, photoIds);
+                    } else if (datasource.getType() == DatasourceType.Aperture && !Thread.currentThread().isInterrupted()) {
+                        myState = State.UpdatingTracksFromAperture;
+                        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningAperture");
+                        myQueue.offer(new MyTunesRssEventEvent(event));
+                        ApertureLoader.loadFromAperture(Thread.currentThread(), (ApertureDatasourceConfig) datasource, myQueue, timeLastUpdate, photoIds);
                     } else if (datasource.getType() == DatasourceType.Watchfolder && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");

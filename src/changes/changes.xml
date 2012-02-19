@@ -9,6 +9,9 @@
 
         <release version="4.2-RC-6" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-332] Aperture Support
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-331] Change playlist owner name when renaming user
             </action>
             <action dev="mdescher" type="fix">

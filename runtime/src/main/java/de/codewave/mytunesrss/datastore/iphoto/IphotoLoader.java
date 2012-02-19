@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
+import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
 import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandler;
@@ -40,14 +41,14 @@ public class IphotoLoader {
      * @throws MalformedURLException
      */
     public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> photoIds) throws SQLException, MalformedURLException {
-        File iPhotoLibraryXmlFile = new File(config.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME);
+        File iPhotoLibraryXmlFile = new File(config.getDefinition(), IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME);
         URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURL();
         if (iPhotoLibraryXml != null) {
             try {
                 PListHandler handler = new PListHandler();
-                Map<Long, String> photoIdToPersId = new HashMap<Long, String>();
+                Map<String, String> photoIdToPersId = new HashMap<String, String>();
                 LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile, timeLastUpdate);
-                PhotoListener photoListener = new PhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoIds);
+                PhotoListener photoListener = new IphotoPhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoIds);
                 handler.addListener("/plist/dict", libraryListener);
                 // first add all photos
                 handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
@@ -55,9 +56,9 @@ public class IphotoLoader {
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 // then add albums and rolls
                 handler.removeListener("/plist/dict[Master Image List]/dict");
-                AlbumListener albumListener = null;
+                IphotoAlbumListener albumListener = null;
                 if (config.isImportAlbums()) {
-                    albumListener = new AlbumListener(executionThread, queue, libraryListener, photoIdToPersId);
+                    albumListener = new IphotoAlbumListener(executionThread, queue, libraryListener, photoIdToPersId);
                     handler.addListener("/plist/dict[List of Albums]/array", albumListener);
                 }
                 RollListener rollListener = null;
@@ -69,12 +70,13 @@ public class IphotoLoader {
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " iPhoto photos.");
             } catch (IOException e) {
-                LOG.error("Could not read data from iTunes xml file.", e);
+                LOG.error("Could not read data from iPhoto xml file.", e);
             } catch (ParserConfigurationException e) {
-                LOG.error("Could not read data from iTunes xml file.", e);
+                LOG.error("Could not read data from iPhoto xml file.", e);
             } catch (SAXException e) {
-                LOG.error("Could not read data from iTunes xml file.", e);
+                LOG.error("Could not read data from iPhoto xml file.", e);
             }
         }
     }
+
 }

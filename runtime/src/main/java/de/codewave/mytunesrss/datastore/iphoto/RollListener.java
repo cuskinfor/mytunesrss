@@ -13,9 +13,9 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
  */
-public class RollListener extends AlbumListener {
+public class RollListener extends IphotoAlbumListener {
 
-    public RollListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> photoIdToPersId) throws SQLException {
+    public RollListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId) throws SQLException {
         super(watchdogThread, queue, libraryListener, photoIdToPersId);
     }
 

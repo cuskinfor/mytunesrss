@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.datastore.iphoto;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.CompiledReplacementRule;
 import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
+import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
@@ -15,6 +16,7 @@ import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.UpdatePhotoStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
+import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -27,20 +29,19 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
  */
-public class PhotoListener implements PListHandlerListener {
-    private static final Logger LOG = LoggerFactory.getLogger(PhotoListener.class);
+public abstract class PhotoListener implements PListHandlerListener {
 
     private DatabaseUpdateQueue myQueue;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
-    private Map<Long, String> myPhotoIdToPersId;
+    private Map<String, String> myPhotoIdToPersId;
     private Collection<String> myPhotoIds;
     private Thread myWatchdogThread;
     private Set<CompiledReplacementRule> myPathReplacements;
-    private IphotoDatasourceConfig myDatasourceConfig;
-    private long myXmlModDate;
+    private PhotoDatasourceConfig myDatasourceConfig;
+    protected long myXmlModDate;
 
-    public PhotoListener(IphotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> photoIdToPersId,
+    public PhotoListener(PhotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId,
                          Collection<String> photoIds) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
@@ -52,7 +53,6 @@ public class PhotoListener implements PListHandlerListener {
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
         }
-        myXmlModDate = new File(myDatasourceConfig.getDefinition(), IphotoDatasourceConfig.XML_FILE_NAME).lastModified();
     }
 
     public int getUpdatedCount() {
@@ -84,7 +84,7 @@ public class PhotoListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
+        throw new UnsupportedOperationException("method beforeArrayAdd of iPhoto photo listener is not supported!");
     }
 
     private boolean processPhoto(String key, Map photo, String photoId, boolean existing) throws InterruptedException {
@@ -95,7 +95,7 @@ public class PhotoListener implements PListHandlerListener {
         String name = (String) photo.get("Caption");
         String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {
-            String filename = applyReplacements((String) photo.get("ImagePath"));
+            String filename = applyReplacements(getImagePath(key, photo));
             if (StringUtils.isNotBlank(filename)) {
                 File file = new File(filename);
                 if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
@@ -103,23 +103,33 @@ public class PhotoListener implements PListHandlerListener {
                     statement.clear();
                     statement.setId(photoId);
                     statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                    //Long createDate = MyTunesRssExifUtils.getCreateDate(file);
-                    Long createDate = (((Double)photo.get("DateAsTimerInterval")).longValue() * 1000) + 978303600000L;
-                    statement.setDate(createDate != null ? createDate.longValue() : -1);
+                    Double dateAsTimerInterval = (Double) photo.get("DateAsTimerInterval");
+                    if (dateAsTimerInterval == null) {
+                        dateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
+                    }
+                    if (dateAsTimerInterval != null) {
+                        long createDate = (dateAsTimerInterval.longValue() * 1000L) + 978303600000L;
+                        statement.setDate(createDate);
+                    } else {
+                        Long createDate = MyTunesRssExifUtils.getCreateDate(file);
+                        statement.setDate(createDate != null ? createDate.longValue() : null);
+                    }
                     statement.setFile(filename);
                     myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
                     HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
                     myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
-                    myPhotoIdToPersId.put(Long.valueOf(key), photoId);
+                    myPhotoIdToPersId.put(key, photoId);
                     return true;
                 } else if (existing) {
-                    myPhotoIdToPersId.put(Long.valueOf(key), photoId);
+                    myPhotoIdToPersId.put(key, photoId);
                 }
                 return false;
             }
         }
         return false;
     }
+
+    protected abstract String getImagePath(String id, Map photo);
 
     private String applyReplacements(String originalFileName) {
         for (CompiledReplacementRule pathReplacement : myPathReplacements) {

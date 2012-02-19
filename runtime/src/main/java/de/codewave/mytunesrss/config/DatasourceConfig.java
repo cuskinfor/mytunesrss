@@ -16,8 +16,10 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
         File file = new File(definition);
         if (file.isFile() && StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
             return new ItunesDatasourceConfig(definition);
-        } else if (file.isDirectory() && new File(file, IphotoDatasourceConfig.XML_FILE_NAME).isFile()) {
+        } else if (file.isDirectory() && new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).isFile()) {
             return new IphotoDatasourceConfig(definition);
+        } else if (file.isDirectory() && new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).isFile()) {
+            return new ApertureDatasourceConfig(definition);
         } else if (file.isDirectory()) {
             return new WatchfolderDatasourceConfig(definition);
         } else {
@@ -58,6 +60,8 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
                 return new ItunesDatasourceConfig((ItunesDatasourceConfig)config);
             case Iphoto:
                 return new IphotoDatasourceConfig((IphotoDatasourceConfig)config);
+            case Aperture:
+                return new ApertureDatasourceConfig((ApertureDatasourceConfig)config);
             case Watchfolder:
                 return new WatchfolderDatasourceConfig((WatchfolderDatasourceConfig)config);
             default:

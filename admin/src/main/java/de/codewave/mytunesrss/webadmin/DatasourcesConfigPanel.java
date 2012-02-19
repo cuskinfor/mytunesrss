@@ -97,6 +97,8 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
             return new ThemeResource("img/itunes.png");
         } else if (type == DatasourceType.Iphoto) {
             return new ThemeResource("img/iphoto.png");
+        } else if (type == DatasourceType.Aperture) {
+            return new ThemeResource("img/aperture.png");
         } else {
             return new ThemeResource("img/folder.gif");
         }
@@ -145,6 +147,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                         IphotoDatasourceOptionsPanel iphotoOptionsPanel = new IphotoDatasourceOptionsPanel((IphotoDatasourceConfig) datasourceConfig);
                         SinglePanelWindow iphotoOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), iphotoOptionsPanel);
                         iphotoOptionsWindow.show(getWindow());
+                        break;
+                    case Aperture:
+                        ApertureDatasourceOptionsPanel apertureOptionsPanel = new ApertureDatasourceOptionsPanel((ApertureDatasourceConfig) datasourceConfig);
+                        SinglePanelWindow apertureOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), apertureOptionsPanel);
+                        apertureOptionsWindow.show(getWindow());
                         break;
                     case Watchfolder:
                         WatchfolderDatasourceOptionsPanel watchfolderOptionsPanel = new WatchfolderDatasourceOptionsPanel((WatchfolderDatasourceConfig) datasourceConfig);

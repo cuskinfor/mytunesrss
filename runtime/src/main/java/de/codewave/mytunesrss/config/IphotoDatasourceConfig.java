@@ -8,13 +8,12 @@ package de.codewave.mytunesrss.config;
 import java.util.HashSet;
 import java.util.Set;
 
-public class IphotoDatasourceConfig extends DatasourceConfig {
+public class IphotoDatasourceConfig extends PhotoDatasourceConfig {
 
-    private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myImportRolls = true;
     private boolean myImportAlbums;
 
-    public static final String XML_FILE_NAME = "AlbumData.xml";
+    public static final String IPHOTO_XML_FILE_NAME = "AlbumData.xml";
 
     public IphotoDatasourceConfig(String definition) {
         super(definition);
@@ -22,7 +21,6 @@ public class IphotoDatasourceConfig extends DatasourceConfig {
 
     public IphotoDatasourceConfig(IphotoDatasourceConfig source) {
         super(source);
-        myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
         myImportRolls = source.isImportRolls();
         myImportAlbums = source.isImportAlbums();
     }
@@ -30,18 +28,6 @@ public class IphotoDatasourceConfig extends DatasourceConfig {
     @Override
     public DatasourceType getType() {
         return DatasourceType.Iphoto;
-    }
-
-    public Set<ReplacementRule> getPathReplacements() {
-        return new HashSet<ReplacementRule>(myPathReplacements);
-    }
-
-    public void clearPathReplacements() {
-        myPathReplacements.clear();
-    }
-
-    public void addPathReplacement(ReplacementRule pathReplacement) {
-        myPathReplacements.add(pathReplacement);
     }
 
     public boolean isImportAlbums() {
