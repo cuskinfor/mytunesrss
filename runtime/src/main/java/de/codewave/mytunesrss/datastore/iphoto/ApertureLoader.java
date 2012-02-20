@@ -6,10 +6,10 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
-import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -48,39 +48,50 @@ public class ApertureLoader {
         if (iPhotoLibraryXml != null) {
             Connection sqliteConnection = null;
             File databaseFile = new File(config.getDefinition(), "Database/Library.apdb");
-            if (databaseFile.isFile()) {
-                try {
-                    Class.forName("org.sqlite.JDBC");
-                    sqliteConnection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath());
-                } catch (ClassNotFoundException e) {
-                    LOG.warn("Could not use sqlite jdbc driver.", e);
-                }
-            }
+            File apdbClone = null;
             try {
-                PListHandler handler = new PListHandler();
-                Map<String, String> photoIdToPersId = new HashMap<String, String>();
-                LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile, timeLastUpdate);
-                PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoIds, sqliteConnection);
-                handler.addListener("/plist/dict", libraryListener);
-                // first add all photos
-                handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
-                LOG.info("Parsing Aperture (photos): \"" + iPhotoLibraryXml.toString() + "\".");
-                XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
-                // then add albums
-                handler.removeListener("/plist/dict[Master Image List]/dict");
-                IphotoAlbumListener albumListener = null;
-                albumListener = new ApertureAlbumListener(executionThread, queue, libraryListener, photoIdToPersId);
-                handler.addListener("/plist/dict[List of Albums]/array", albumListener);
-                LOG.info("Parsing Aperture (albums): \"" + iPhotoLibraryXml.toString() + "\".");
-                XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
-                LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " Aperture photos.");
-            } catch (IOException e) {
-                LOG.error("Could not read data from Aperture xml file.", e);
-            } catch (ParserConfigurationException e) {
-                LOG.error("Could not read data from Aperture xml file.", e);
-            } catch (SAXException e) {
-                LOG.error("Could not read data from Aperture xml file.", e);
+                if (databaseFile.isFile()) {
+                    try {
+                        Class.forName("org.sqlite.JDBC");
+                        apdbClone = File.createTempFile("aperture-library-", ".apdb");
+                        FileUtils.copyFile(databaseFile, apdbClone);
+                        LOG.info("Opening Aperture sqlite database \"" + apdbClone.getAbsolutePath() + "\".");
+                        sqliteConnection = DriverManager.getConnection("jdbc:sqlite:" + apdbClone.getAbsolutePath());
+                    } catch (ClassNotFoundException e) {
+                        LOG.warn("Could not open Aperture sqlite database.", e);
+                    } catch (IOException e) {
+                        LOG.warn("Could not open Aperture sqlite database.", e);
+                    }
+                }
+                try {
+                    PListHandler handler = new PListHandler();
+                    Map<String, String> photoIdToPersId = new HashMap<String, String>();
+                    LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile, timeLastUpdate);
+                    PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoIds, sqliteConnection);
+                    handler.addListener("/plist/dict", libraryListener);
+                    // first add all photos
+                    handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
+                    LOG.info("Parsing Aperture (photos): \"" + iPhotoLibraryXml.toString() + "\".");
+                    XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
+                    // then add albums
+                    handler.removeListener("/plist/dict[Master Image List]/dict");
+                    IphotoAlbumListener albumListener = null;
+                    albumListener = new ApertureAlbumListener(executionThread, queue, libraryListener, photoIdToPersId);
+                    handler.addListener("/plist/dict[List of Albums]/array", albumListener);
+                    LOG.info("Parsing Aperture (albums): \"" + iPhotoLibraryXml.toString() + "\".");
+                    XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
+                    LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " Aperture photos.");
+                } catch (IOException e) {
+                    LOG.error("Could not read data from Aperture xml file.", e);
+                } catch (ParserConfigurationException e) {
+                    LOG.error("Could not read data from Aperture xml file.", e);
+                } catch (SAXException e) {
+                    LOG.error("Could not read data from Aperture xml file.", e);
+                }
             } finally {
+                if (apdbClone != null && apdbClone.isFile()) {
+                    apdbClone.delete();
+                }
                 if (sqliteConnection != null) {
                     sqliteConnection.close();
                 }

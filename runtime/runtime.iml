@@ -81,7 +81,6 @@
     <orderEntry type="library" name="Maven: org.codehaus.jackson:jackson-xc:1.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.maven:maven-artifact:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.plexus:plexus-utils:2.0.6" level="project" />
-    <orderEntry type="library" name="Maven: org.xerial:sqlite-jdbc:3.7.2" level="project" />
   </component>
 </module>
 
