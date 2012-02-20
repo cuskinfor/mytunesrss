@@ -95,7 +95,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         String name = (String) photo.get("Caption");
         String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {
-            String filename = applyReplacements(getImagePath(key, photo));
+            String filename = applyReplacements(getImagePath(photo));
             if (StringUtils.isNotBlank(filename)) {
                 File file = new File(filename);
                 if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
@@ -129,7 +129,9 @@ public abstract class PhotoListener implements PListHandlerListener {
         return false;
     }
 
-    protected abstract String getImagePath(String id, Map photo);
+    private String getImagePath(Map photo) {
+        return (String) photo.get("ImagePath");
+    }
 
     private String applyReplacements(String originalFileName) {
         for (CompiledReplacementRule pathReplacement : myPathReplacements) {

@@ -21,8 +21,4 @@ public class IphotoPhotoListener extends PhotoListener {
         super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId, photoIds);
         myXmlModDate = new File(datasourceConfig.getDefinition(), IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).lastModified();
     }
-
-    protected String getImagePath(String id, Map photo) {
-        return (String) photo.get("ImagePath");
-    }
 }
