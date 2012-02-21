@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.2" date="___D___">
+            <action dev="mdescher" type="update">
+                Create jukebox links without js replace but only by appending a player name to a prepared link.
+            </action>
+        </release>
+
         <release version="4.2-RC-6" date="2012-02-19">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-332] Aperture Support

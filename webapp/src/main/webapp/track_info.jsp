@@ -221,7 +221,7 @@
                             </c:if>
                             <c:if test="${authUser.player && config.showPlayer}">
                                 <c:set var="playlistParams"><mt:encode64>track=${track.id}</mt:encode64></c:set>
-                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/playerId=#ID#/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>'); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
                                     <a id="linkDownload" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
