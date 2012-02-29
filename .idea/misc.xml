@@ -89,11 +89,11 @@
             <SvnBranchConfiguration>
               <option name="branchUrls">
                 <list>
-                  <option value="svn://codewave.dyn-o-saur.com/mytunesrss/branches" />
-                  <option value="svn://codewave.dyn-o-saur.com/mytunesrss/tags" />
+                  <option value="svn://svn.codewave.biz/mytunesrss/branches" />
+                  <option value="svn://svn.codewave.biz/mytunesrss/tags" />
                 </list>
               </option>
-              <option name="trunkUrl" value="svn://codewave.dyn-o-saur.com/mytunesrss/trunk" />
+              <option name="trunkUrl" value="svn://svn.codewave.biz/mytunesrss/trunk" />
             </SvnBranchConfiguration>
           </value>
         </entry>

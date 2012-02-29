@@ -3,7 +3,7 @@
     <extension name="coverage" enabled="false" merge="false" sample_coverage="true" runner="emma" />
     <option name="MAIN_CLASS_NAME" value="de.codewave.mytunesrss.MyTunesRss" />
     <option name="VM_PARAMETERS" value="-d32 -Xms32m -Xmx256m -Xbootclasspath/p:lib/xercesImpl-2.9.1.jar -Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl -DMyTunesRSS.versionFileURI=file:../../etc/version.txt -Dde.codewave.mytunesrss -Dde.codewave.mytunesrss.addons.builtin=../../etc -Dde.codewave.mytunesrss.native=../../etc/ffmpeg/mac  " />
-    <option name="PROGRAM_PARAMETERS" value="-cacheDataPath $USER_CACHES$/MyTunesRSS42/postgres -prefsDataPath $USER_PREFERENCES$/MyTunesRSS42/postgres -logConfig ../../etc/log4j-devel.xml" />
+    <option name="PROGRAM_PARAMETERS" value="-cacheDataPath $USER_CACHES$/MyTunesRSS43/postgres -prefsDataPath $USER_PREFERENCES$/MyTunesRSS43/postgres -logConfig ../../etc/log4j-devel.xml" />
     <option name="WORKING_DIRECTORY" value="file://$MODULE_DIR$/../target/idea" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
     <option name="ALTERNATIVE_JRE_PATH" value="" />

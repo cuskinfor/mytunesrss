@@ -45,7 +45,7 @@ public class TopUserDownVolumeChartGenerator extends TopChartGenerator {
     @Override
     protected String getItemLabel(String item, long value, ResourceBundle bundle) {
         long gib = value / (1024 * 1024);
-        long mib = (value - (1204 * 1024 * gib)) / 1024;
+        long mib = (value - (1024 * 1024 * gib)) / 1024;
         long kib = value % 1024;
         DecimalFormat decimalFormat = new DecimalFormat("000");
         if (gib > 0) {
