@@ -9,6 +9,9 @@
 
         <release version="4.2.1" date="___D___">
             <action dev="mdescher" type="fix">
+                Fixed photo date usage (especially for Aperture). New preference order is 1) date from XML, 2) date from EXIF and 3) mod. date from xml.
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed scrolling in log viewer.
             </action>
             <action dev="mdescher" type="fix">

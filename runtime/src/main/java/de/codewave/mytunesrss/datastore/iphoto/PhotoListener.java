@@ -104,16 +104,21 @@ public abstract class PhotoListener implements PListHandlerListener {
                     statement.setId(photoId);
                     statement.setName(MyTunesRssUtils.normalize(name.trim()));
                     Double dateAsTimerInterval = (Double) photo.get("DateAsTimerInterval");
-                    if (dateAsTimerInterval == null) {
-                        dateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
-                    }
+                    Double modDateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
+                    Long createDate = null;
+                    // preference order for date:
+                    // 1) date from xml
+                    // 2) exif date
+                    // 3) modification date from xml
                     if (dateAsTimerInterval != null) {
-                        long createDate = (dateAsTimerInterval.longValue() * 1000L) + 978303600000L;
-                        statement.setDate(createDate);
+                        createDate = Long.valueOf((dateAsTimerInterval.longValue() * 1000L) + 978303600000L);
                     } else {
-                        Long createDate = MyTunesRssExifUtils.getCreateDate(file);
-                        statement.setDate(createDate != null ? createDate.longValue() : null);
+                        createDate = MyTunesRssExifUtils.getCreateDate(file);
+                        if (createDate == null && modDateAsTimerInterval != null) {
+                            createDate = Long.valueOf((modDateAsTimerInterval.longValue() * 1000L) + 978303600000L);
+                        }
                     }
+                    statement.setDate(createDate);
                     statement.setFile(filename);
                     myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
                     HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
