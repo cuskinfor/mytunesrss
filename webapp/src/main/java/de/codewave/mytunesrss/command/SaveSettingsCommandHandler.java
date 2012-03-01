@@ -88,40 +88,38 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private boolean transferAndValidateLastFmAccount() {
-        if (!getAuthUser().isEditLastFmAccount()) {
-            throw new RuntimeException("LastFM account not allowed for user \"" + getAuthUser().getName() + "\".");
-        }
-        String username = getRequestParameter("lastfmusername", null);
-        String password1 = getRequestParameter("lastfmpassword1", null);
-        String password2 = getRequestParameter("lastfmpassword2", null);
-        getAuthUser().setLastFmUsername(username);
-        if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
-            if (StringUtils.equals(password1, password2)) {
-                getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(password1)));
-            } else {
-                addError(new BundleError("error.settingsLastFmPasswordMismatch"));
-                return true;
+        if (getAuthUser().isEditLastFmAccount()) {
+            String username = getRequestParameter("lastfmusername", null);
+            String password1 = getRequestParameter("lastfmpassword1", null);
+            String password2 = getRequestParameter("lastfmpassword2", null);
+            getAuthUser().setLastFmUsername(username);
+            if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
+                if (StringUtils.equals(password1, password2)) {
+                    getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(password1)));
+                } else {
+                    addError(new BundleError("error.settingsLastFmPasswordMismatch"));
+                    return true;
+                }
             }
         }
         return false;
     }
 
     private boolean transferAndValidatePassword() {
-        String password1 = getRequestParameter("password1", null);
-        String password2 = getRequestParameter("password2", null);
-        if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
-            if (!getAuthUser().isChangePassword() || getAuthUser().isEmptyPassword()) {
-                throw new RuntimeException("Password change not allowed for user \"" + getAuthUser().getName() + "\".");
-            }
-            if (StringUtils.equals(password1, password2)) {
-                byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(password1));
-                if (!Arrays.equals(passwordHash, getAuthUser().getPasswordHash())) {
-                    getAuthUser().setPasswordHash(passwordHash);
-                    MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(getAuthUser());
+        if (getAuthUser().isChangePassword()) {
+            String password1 = getRequestParameter("password1", null);
+            String password2 = getRequestParameter("password2", null);
+            if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
+                if (StringUtils.equals(password1, password2)) {
+                    byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(password1));
+                    if (!Arrays.equals(passwordHash, getAuthUser().getPasswordHash())) {
+                        getAuthUser().setPasswordHash(passwordHash);
+                        MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(getAuthUser());
+                    }
+                } else {
+                    addError(new BundleError("error.settingsPasswordMismatch"));
+                    return true;
                 }
-            } else {
-                addError(new BundleError("error.settingsPasswordMismatch"));
-                return true;
             }
         }
         return false;
