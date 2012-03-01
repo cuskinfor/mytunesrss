@@ -19,7 +19,7 @@
                 if (req.status === 200) {
                     $jQ("#log").append(req.responseText);
                     if ($jQ("#autoscroll:checked").val() != undefined) {
-                        $jQ("#scrollpane").scrollTop($jQ("#scrollpane").attr("scrollHeight"));
+                        $jQ("#scrollpane").scrollTop($jQ("#scrollpane").prop("scrollHeight"));
                     }
                 }
                 setTimeout(loadLog, 1000);
