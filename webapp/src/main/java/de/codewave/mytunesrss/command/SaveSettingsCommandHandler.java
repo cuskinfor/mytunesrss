@@ -88,14 +88,14 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private boolean transferAndValidateLastFmAccount() {
+        if (!getAuthUser().isEditLastFmAccount()) {
+            throw new RuntimeException("LastFM account not allowed for user \"" + getAuthUser().getName() + "\".");
+        }
         String username = getRequestParameter("lastfmusername", null);
         String password1 = getRequestParameter("lastfmpassword1", null);
         String password2 = getRequestParameter("lastfmpassword2", null);
         getAuthUser().setLastFmUsername(username);
         if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
-            if (!getAuthUser().isLastFmAccount()) {
-                throw new RuntimeException("LastFM account not allowed for user \"" + getAuthUser().getName() + "\".");
-            }
             if (StringUtils.equals(password1, password2)) {
                 getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(password1)));
             } else {
