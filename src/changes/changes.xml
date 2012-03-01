@@ -9,6 +9,9 @@
 
         <release version="4.2.1" date="___D___">
             <action dev="mdescher" type="fix">
+                Set connect and socket timeout to 10 seconds for OpenID provider discovery. Default for connect was 3 seconds.
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-334] Broken values in download statistics
             </action>
         </release>
