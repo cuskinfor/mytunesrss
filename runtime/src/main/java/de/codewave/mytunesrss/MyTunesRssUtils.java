@@ -275,8 +275,12 @@ public class MyTunesRssUtils {
         LOGGER.error("Setting codewave log to level \"" + level + "\".");
     }
 
-    public static String normalize(String text) {
+    public static String compose(String text) {
         return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
+    }
+
+    public static String decompose(String text) {
+        return StringUtils.isBlank(text) ? text : Normalizer.decompose(text, false);
     }
 
     public static String getBaseType(String contentType) {
@@ -605,5 +609,30 @@ public class MyTunesRssUtils {
         } finally {
             imageInputStream.close();
         }
+    }
+
+    /**
+     * Return best file for the specified name. First the file is created using the composed form of the
+     * file name. If this file does not exist, the decomposed form is used. If this file does not exist
+     * either, the original name is used. This file is returned no matter whether or not it exists.
+     *
+     * @param filename A filename.
+     *
+     * @return The best file for the specified name.
+     */
+    public static File getBestFileForPath(String filename) {
+        LOGGER.debug("Getting best file for path \"" + filename + "\".");
+        LOGGER.debug("Trying composed form.");
+        File file = new File(MyTunesRssUtils.compose(filename));
+        if (!file.exists()) {
+            LOGGER.debug("Trying decomposed form.");
+            file = new File(MyTunesRssUtils.decompose(filename));
+            if (!file.exists()) {
+                LOGGER.debug("Trying original filename.");
+                file = new File(filename);
+            }
+        }
+        LOGGER.debug("File \"" + file.getAbsolutePath() + "\"" + (file.exists() ? " exists." : " does not exist."));
+        return file;
     }
 }

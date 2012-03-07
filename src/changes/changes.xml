@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.2.2" date="___D___">
+            <action dev="mdescher" type="update">
+                Try composed, decomposed and original form of file name stored in iTunesm, iPhoto and Aperture XMLs.
+            </action>
+        </release>
+
         <release version="4.2.1" date="2012-03-04">
             <action dev="mdescher" type="fix">
                 Fixed saving last.fm account in user interface settings.

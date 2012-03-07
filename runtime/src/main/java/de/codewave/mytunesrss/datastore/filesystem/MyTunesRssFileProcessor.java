@@ -273,12 +273,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (StringUtils.isEmpty(album)) {
                     album = getFallbackAlbumName(file);
                 }
-                statement.setAlbum(MyTunesRssUtils.normalize(album));
+                statement.setAlbum(MyTunesRssUtils.compose(album));
                 String artist = tag.getArtist();
                 if (StringUtils.isEmpty(artist)) {
                     artist = getFallbackArtistName(file);
                 }
-                statement.setArtist(MyTunesRssUtils.normalize(artist));
+                statement.setArtist(MyTunesRssUtils.compose(artist));
                 String name = tag.getTitle();
                 if (StringUtils.isEmpty(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
@@ -290,7 +290,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     LOGGER.warn("Illegal YEAR value \"" + yearString + "\" in \"" + file + "\".");
                     statement.setYear(-1);
                 }
-                statement.setName(MyTunesRssUtils.normalize(name));
+                statement.setName(MyTunesRssUtils.compose(name));
                 String albumArtist = artist;
                 if (tag.isId3v2()) {
                     Id3v2Tag id3v2Tag = ((Id3v2Tag) tag);
@@ -299,7 +299,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         albumArtist = artist;
                     }
                     String composer = id3v2Tag.getComposer();
-                    statement.setComposer(MyTunesRssUtils.normalize(composer));
+                    statement.setComposer(MyTunesRssUtils.compose(composer));
                     statement.setTime(id3v2Tag.getTimeSeconds());
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     statement.setCompilation(!StringUtils.equalsIgnoreCase(artist, albumArtist));
@@ -323,7 +323,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (genre != null) {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
-                statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull(createComment(tag))));
+                statement.setComment(MyTunesRssUtils.compose(StringUtils.trimToNull(createComment(tag))));
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
@@ -400,16 +400,16 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (StringUtils.isBlank(name)) {
                     name = FilenameUtils.getBaseName(file.getName());
                 }
-                statement.setName(MyTunesRssUtils.normalize(name));
+                statement.setName(MyTunesRssUtils.compose(name));
                 meta.setMp4Codec(moov.getMp4Codec());
                 statement.setMp4Codec(moov.getMp4Codec());
                 String genre = moov.getGenre();
                 if (StringUtils.isNotBlank(genre)) {
-                    statement.setGenre(MyTunesRssUtils.normalize(genre));
+                    statement.setGenre(MyTunesRssUtils.compose(genre));
                 }
                 String comment = moov.getComment();
                 if (StringUtils.isNotBlank(comment)) {
-                    statement.setComment(MyTunesRssUtils.normalize(comment));
+                    statement.setComment(MyTunesRssUtils.compose(comment));
                 }
                 Integer year = moov.getYear();
                 if (year != null) {
@@ -420,7 +420,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     if (StringUtils.isBlank(album)) {
                         album = getFallbackAlbumName(file);
                     }
-                    statement.setAlbum(MyTunesRssUtils.normalize(album));
+                    statement.setAlbum(MyTunesRssUtils.compose(album));
                     String artist = moov.getArtist();
                     String albumArtist = moov.getAlbumArtist();
                     if (StringUtils.isBlank(artist)) {
@@ -430,14 +430,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             artist = albumArtist;
                         }
                     }
-                    statement.setArtist(MyTunesRssUtils.normalize(artist));
+                    statement.setArtist(MyTunesRssUtils.compose(artist));
                     if (StringUtils.isBlank(albumArtist)) {
                         albumArtist = artist;
                     }
-                    statement.setAlbumArtist(MyTunesRssUtils.normalize(albumArtist));
+                    statement.setAlbumArtist(MyTunesRssUtils.compose(albumArtist));
                     statement.setCompilation(moov.isCompilation() || !StringUtils.equalsIgnoreCase(artist, albumArtist));
                     String composer = moov.getComposer();
-                    statement.setComposer(MyTunesRssUtils.normalize(composer));
+                    statement.setComposer(MyTunesRssUtils.compose(composer));
                     Long trackNumer = moov.getTrackNumber();
                     if (trackNumer != null) {
                         statement.setTrackNumber(trackNumer.intValue());
@@ -457,7 +457,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     if (videoType == VideoType.TvShow) {
                         String tvShow = moov.getTvShow();
                         if (StringUtils.isNotBlank(tvShow)) {
-                            statement.setSeries(MyTunesRssUtils.normalize(tvShow));
+                            statement.setSeries(MyTunesRssUtils.compose(tvShow));
                         } else {
                             statement.setSeries(getFallbackSeries(file));
                         }
