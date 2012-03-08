@@ -9,7 +9,7 @@
 
         <release version="4.2.2" date="___D___">
             <action dev="mdescher" type="update">
-                Try composed, decomposed and original form of file name stored in iTunesm, iPhoto and Aperture XMLs.
+                Try very hard to find files from iTunes, Aperture and iPhoto libraries.
             </action>
         </release>
 

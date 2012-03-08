@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
@@ -620,19 +621,41 @@ public class MyTunesRssUtils {
      *
      * @return The best file for the specified name.
      */
-    public static File getBestFileForPath(String filename) {
-        LOGGER.debug("Getting best file for path \"" + filename + "\".");
-        LOGGER.debug("Trying composed form.");
-        File file = new File(MyTunesRssUtils.compose(filename));
-        if (!file.exists()) {
-            LOGGER.debug("Trying decomposed form.");
-            file = new File(MyTunesRssUtils.decompose(filename));
-            if (!file.exists()) {
-                LOGGER.debug("Trying original filename.");
-                file = new File(filename);
+    public static File searchFile(String filename) {
+        return searchFile(new File(filename));
+    }
+
+    public static File searchFile(File file) {
+        if (file == null) {
+            return null;
+        }
+        String filename = file.getAbsolutePath();
+        LOGGER.debug("Trying original string \"" + MiscUtils.getUtf8UrlEncoded(filename) + "\".");
+        if (file.exists()) {
+            return file;
+        }
+        LOGGER.debug("Trying composed form string \"" + MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.compose(filename)) + "\".");
+        File composedFile = new File(MyTunesRssUtils.compose(filename));
+        if (composedFile.exists()) {
+            return composedFile;
+        }
+        LOGGER.debug("Trying decomposed form string \"" + MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.decompose(filename)) + "\".");
+        File decomposedFile = new File(MyTunesRssUtils.decompose(filename));
+        if (decomposedFile.exists()) {
+            return decomposedFile;
+        }
+        LOGGER.debug("Trying to find parent.");
+        File parent = searchFile(file.getParentFile());
+        if (parent != null && parent.exists()) {
+            LOGGER.debug("Found parent, listing files.");
+            for (File each : parent.listFiles()) {
+                if (MyTunesRssUtils.compose(each.getName()).equals(MyTunesRssUtils.compose(file.getName()))) {
+                    LOGGER.debug("Finally found file.");
+                    return each;
+                }
             }
         }
-        LOGGER.debug("File \"" + file.getAbsolutePath() + "\"" + (file.exists() ? " exists." : " does not exist."));
-        return file;
+        LOGGER.debug("File not found.");
+        return null;
     }
 }
