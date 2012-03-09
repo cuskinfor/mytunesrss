@@ -17,6 +17,12 @@
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="statistics" type="de.codewave.mytunesrss.datastore.statement.SystemInformation"--%>
+<%--@elvariable id="photoAlbums" type="java.lang.Boolean"--%>
+<%--@elvariable id="pager" type="de.codewave.mytunesrss.Pager"--%>
+<%--@elvariable id="lastSearchTerm" type="java.lang.String"--%>
+<%--@elvariable id="uploadLink" type="java.lang.Boolean"--%>
+<%--@elvariable id="stateEditPlaylist" type="java.lang.Boolean"--%>
+<%--@elvariable id="container" type="de.codewave.mytunesrss.datastore.statement.Playlist"--%>
 
 <%--@elvariable id="playlists" type="java.util.List"--%>
 
@@ -159,12 +165,12 @@
 
         <c:if test="${!empty container}">
             <tr class="even">
-                <td id="linkHomeFolder" class="homefolder" colspan="3" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}'">
+                <td id="linkHomeFolder" class="homefolder" colspan="3" style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}'">
                     &nbsp;
                 </td>
             </tr>
             <tr class="odd">
-                <td id="linkParentFolder" class="parentfolder" colspan="3" style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
+                <td id="linkParentFolder" class="parentfolder" colspan="3" style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
                     &nbsp;
                 </td>
             </tr>
@@ -172,7 +178,7 @@
 
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td id="playlistNameColumn${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'"</c:if>>
+                <td id="playlistNameColumn${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'"</c:if>>
                     <c:choose>
                         <c:when test="${playlist.type != 'ITunesFolder' && playlist.trackCount >= 0}">
                             <a id="linkNameBrowseTrack${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playlistName=${mtfn:encode64(playlist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${playlist.name}" /></a>
