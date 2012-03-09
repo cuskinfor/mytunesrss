@@ -98,10 +98,11 @@ public class TrackListener implements PListHandlerListener {
             if (StringUtils.isNotBlank(filename)) {
                 String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
                 if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
-                    if (!new File(filename).isFile()) {
+                    File file = MyTunesRssUtils.searchFile(filename);
+                    if (file == null || !file.isFile()) {
                         myMissingFiles++;
                     }
-                    if (!myDatasourceConfig.isDeleteMissingFiles() || new File(filename).isFile()) {
+                    if (!myDatasourceConfig.isDeleteMissingFiles() || file.isFile()) {
                         Date dateModified = ((Date) track.get("Date Modified"));
                         long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                         Date dateAdded = ((Date) track.get("Date Added"));
@@ -111,16 +112,16 @@ public class TrackListener implements PListHandlerListener {
                                     existing ? new UpdateTrackStatement(TrackSource.ITunes) : new InsertTrackStatement(TrackSource.ITunes);
                             statement.clear();
                             statement.setId(trackId);
-                            statement.setName(MyTunesRssUtils.normalize(name.trim()));
-                            String artist = MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Artist")));
+                            statement.setName(MyTunesRssUtils.compose(name.trim()));
+                            String artist = MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Artist")));
                             statement.setArtist(artist);
-                            String albumArtist = MyTunesRssUtils.normalize(StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist"))));
+                            String albumArtist = MyTunesRssUtils.compose(StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist"))));
                             statement.setAlbumArtist(albumArtist);
-                            statement.setAlbum(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Album"))));
+                            statement.setAlbum(MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Album"))));
                             statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
-                            statement.setFileName(filename);
-                            statement.setProtected(FileSupportUtils.isProtected(filename));
+                            statement.setFileName(file.getAbsolutePath());
+                            statement.setProtected(FileSupportUtils.isProtected(file.getName()));
                             boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
                             statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
                             if (video) {
@@ -129,7 +130,7 @@ public class TrackListener implements PListHandlerListener {
                                 boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
                                 statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
                                 if (tvshow) {
-                                    statement.setSeries(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Series"))));
+                                    statement.setSeries(MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Series"))));
                                     statement.setSeason((int) (track.get("Season") != null ? (Long) track.get("Season") : 0));
                                     statement.setEpisode((int) (track.get("Episode Order") != null ? (Long) track.get("Episode Order") : 0));
                                 }
@@ -138,11 +139,11 @@ public class TrackListener implements PListHandlerListener {
                             statement.setComposer(StringUtils.trimToNull((String) track.get("Composer")));
                             boolean compilation = track.get("Compilation") != null && ((Boolean) track.get("Compilation")).booleanValue();
                             statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, albumArtist));
-                            statement.setComment(MyTunesRssUtils.normalize(StringUtils.trimToNull((String) track.get("Comments"))));
+                            statement.setComment(MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Comments"))));
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
-                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, filename, 0) : mp4Codec);
+                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), 0) : mp4Codec);
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                             return true;

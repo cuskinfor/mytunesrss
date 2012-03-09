@@ -36,21 +36,14 @@ public class WizardWorkingPanel extends Panel implements Refresher.RefreshListen
 
     public void refresh(Refresher refresher) {
         if (!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {
+            refresher.removeListener(this);
             String url = "http://" + getApplication().getURL().getHost() + ":" + MyTunesRss.CONFIG.getPort() + StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Forwarding to user interface URL \"" + url + "\".");
             }
-            VaadinUtils.getApplicationWindow(this).open(new ExternalResource(url));
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                    ((MainWindow) VaadinUtils.getApplicationWindow(WizardWorkingPanel.this)).showComponent(new StatusPanel());
-                }
-            }).start();
+            MainWindow mainWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
+            mainWindow.showComponent(new StatusPanel());
+            mainWindow.open(new ExternalResource(url));
         }
     }
 }

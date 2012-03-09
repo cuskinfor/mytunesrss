@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.CompiledReplacementRule;
-import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
@@ -19,8 +18,6 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -97,12 +94,12 @@ public abstract class PhotoListener implements PListHandlerListener {
         if ("Image".equals(mediaType)) {
             String filename = applyReplacements(getImagePath(photo));
             if (StringUtils.isNotBlank(filename)) {
-                File file = new File(filename);
-                if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
+                File file = MyTunesRssUtils.searchFile(filename);
+                if (file != null && file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
                     InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement() : new InsertPhotoStatement();
                     statement.clear();
                     statement.setId(photoId);
-                    statement.setName(MyTunesRssUtils.normalize(name.trim()));
+                    statement.setName(MyTunesRssUtils.compose(name.trim()));
                     Double dateAsTimerInterval = (Double) photo.get("DateAsTimerInterval");
                     Double modDateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
                     Long createDate = null;

@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
@@ -275,8 +276,12 @@ public class MyTunesRssUtils {
         LOGGER.error("Setting codewave log to level \"" + level + "\".");
     }
 
-    public static String normalize(String text) {
+    public static String compose(String text) {
         return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
+    }
+
+    public static String decompose(String text) {
+        return StringUtils.isBlank(text) ? text : Normalizer.decompose(text, false);
     }
 
     public static String getBaseType(String contentType) {
@@ -605,5 +610,52 @@ public class MyTunesRssUtils {
         } finally {
             imageInputStream.close();
         }
+    }
+
+    /**
+     * Return best file for the specified name. First the file is created using the composed form of the
+     * file name. If this file does not exist, the decomposed form is used. If this file does not exist
+     * either, the original name is used. This file is returned no matter whether or not it exists.
+     *
+     * @param filename A filename.
+     *
+     * @return The best file for the specified name.
+     */
+    public static File searchFile(String filename) {
+        return searchFile(new File(filename));
+    }
+
+    public static File searchFile(File file) {
+        if (file == null) {
+            return null;
+        }
+        String filename = file.getAbsolutePath();
+        LOGGER.debug("Trying original string \"" + MiscUtils.getUtf8UrlEncoded(filename) + "\".");
+        if (file.exists()) {
+            return file;
+        }
+        LOGGER.debug("Trying composed form string \"" + MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.compose(filename)) + "\".");
+        File composedFile = new File(MyTunesRssUtils.compose(filename));
+        if (composedFile.exists()) {
+            return composedFile;
+        }
+        LOGGER.debug("Trying decomposed form string \"" + MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.decompose(filename)) + "\".");
+        File decomposedFile = new File(MyTunesRssUtils.decompose(filename));
+        if (decomposedFile.exists()) {
+            return decomposedFile;
+        }
+        LOGGER.debug("Trying to find parent.");
+        File parent = searchFile(file.getParentFile());
+        if (parent != null && parent.exists()) {
+            LOGGER.debug("Found parent, listing files.");
+            for (File each : parent.listFiles()) {
+                if (MyTunesRssUtils.compose(each.getName()).equals(MyTunesRssUtils.compose(file.getName()))) {
+                    LOGGER.debug("Finally found file.");
+                    return each;
+                }
+            }
+        }
+        LOGGER.debug("File not found.");
+        return null;
     }
 }
