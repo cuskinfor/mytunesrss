@@ -581,7 +581,7 @@
         <sql>UPDATE system_information SET music_count = (SELECT COUNT(id) FROM track WHERE mediatype = 'Audio')</sql>
         <sql>UPDATE system_information SET movie_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'Movie')</sql>
         <sql>UPDATE system_information SET tvshow_count = (SELECT COUNT(name) FROM track WHERE mediatype = 'Video' AND videotype = 'TvShow')</sql>
-        <sql>UPDATE system_information SET photo_count = (SELECT COUNT(id) FROM photo)</sql>
+        <sql>UPDATE system_information SET photo_count = (SELECT COUNT(id) FROM photo WHERE EXISTS (SELECT * FROM link_photo_album WHERE link_photo_album.photo_id = photo.id))</sql>
     </statement>
 
     <statement name="removeTempPlaylistWithId">
