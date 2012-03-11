@@ -99,7 +99,7 @@ public class TrackListener implements PListHandlerListener {
                 String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
                 if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
                     File file = MyTunesRssUtils.searchFile(filename);
-                    if (file == null || !file.isFile()) {
+                    if (!file.isFile()) {
                         myMissingFiles++;
                     }
                     if (!myDatasourceConfig.isDeleteMissingFiles() || file.isFile()) {
