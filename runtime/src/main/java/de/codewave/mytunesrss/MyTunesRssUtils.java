@@ -627,27 +627,29 @@ public class MyTunesRssUtils {
 
     public static File searchFile(File file) {
         String filename = file.getAbsolutePath();
-        LOGGER.debug("Trying to find file \"" + MiscUtils.getUtf8UrlEncoded(filename) + "\".");
+        LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + ".");
         if (file.exists()) {
             return file;
         }
         File composedFile = new File(MyTunesRssUtils.compose(filename));
+        LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(composedFile.getAbsolutePath()) + ".");
         if (composedFile.exists()) {
             return composedFile;
         }
         File decomposedFile = new File(MyTunesRssUtils.decompose(filename));
+        LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(decomposedFile.getAbsolutePath()) + ".");
         if (decomposedFile.exists()) {
             return decomposedFile;
         }
-        LOGGER.debug("File not found, trying to find parent.");
         if (file.getParentFile() != null) {
+            LOGGER.debug("File not found, trying to find parent.");
             File parent = searchFile(file.getParentFile());
             if (parent != null && parent.exists()) {
                 LOGGER.debug("Found parent, listing files.");
                 for (File each : parent.listFiles()) {
                     LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
                     if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
-                        LOGGER.debug("Found file in listing.");
+                        LOGGER.debug("Match.");
                         return each;
                     }
                 }
