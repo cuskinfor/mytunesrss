@@ -645,8 +645,8 @@ public class MyTunesRssUtils {
             if (parent != null && parent.exists()) {
                 LOGGER.debug("Found parent, listing files.");
                 for (File each : parent.listFiles()) {
-                    LOGGER.debug("Comparing \"" + file.getName() + "\" to \"" + each.getName() + "\".");
-                    if (MyTunesRssUtils.compose(each.getName()).equals(MyTunesRssUtils.compose(file.getName()))) {
+                    LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
+                    if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
                         LOGGER.debug("Found file in listing.");
                         return each;
                     }
