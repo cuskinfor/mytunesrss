@@ -1,3 +1,7 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--%@ page contentType="application/xhtml+xml;charset=UTF-8" language="java" %-->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -22,106 +26,72 @@
 
 <c:set var="backUrl" scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">/photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
-
 <head>
 
     <jsp:include page="incl_head.jsp"/>
 
-    <%-- stolen code starts here --%>
-
     <style type="text/css">
 
-        .thumbwrap {
+        .thumblist {
+        	text-align: center;
             padding: 15px 8px 0 8px;
             background-color: #f4f4f4;
             margin: 0;
-            text-align: center;
         }
-        .thumbwrap li {
-            display: -moz-inline-box;
-            display: inline-block;
-            /*\*/ vertical-align: top; /**/
+
+        .thumblist li {
+            vertical-align: top;
             margin: 0 7px 15px 7px;
             padding: 0;
+            display: inline-block;
         }
-            /*  Moz: NO border qui altrimenti difficolta' con width, table altrimenti problemi a text resize (risolubili con refresh) */
-        .thumbwrap li>div {
-            /*\*/ display: table; table-layout: fixed; /**/
-            width: 130px;
-        }
-            /*\*/
-        .thumbwrap>li .wrimg {
-            display: table-cell;
+
+        .thumblist div {
+        	display: table-cell;
             text-align: center;
             vertical-align: middle;
             width: 130px;
             height: 130px;
         }
 
-        .wrimg img {
+        .thumblist img {
             cursor: pointer;
-        }
-
-            /**/
-        .thumbwrap img {
-            vertical-align: middle;
             border: 1px solid black;
         }
-        .thumbwrap a:hover {
-            background-color: #dfd;
-        }
-            /*\*//*/
-    * html .thumbwrap li .wrimg {
-        display: block;
-        font-size: 1px;
-    }
-    * html .thumbwrap .wrimg span {
-        display: inline-block;
-        vertical-align: middle;
-        height: 128px;
-        width: 1px;
-    }
-    /* top ib e hover Op < 9.5 */
-        @media all and (min-width: 0px) {
-            html:first-child .thumbwrap li div {
-                display: block;
-            }
-            html:first-child .thumbwrap a {
-                display: inline-block;
-                vertical-align: top;
-            }
-            html:first-child .thumbwrap {
-                border-collapse: collapse;
-                display: inline-block; /* non deve avere margin */
-            }
-        }
-    </style>
-    <!--[if lt IE 8]><style>
-    .thumbwrap li {
-        width: 130px;
-        display: inline;
-    }
-    .thumbwrap {
-        _height: 0;
-        zoom: 1;
-        display: inline;
-    }
-    .thumbwrap li .wrimg {
-        display: block;
-        width: auto;
-        height: auto;
-    }
-    .thumbwrap .wrimg span {
-        vertical-align: middle;
-        height: 130px;
-        zoom: 1;
-    }
-</style><![endif]-->
 
-    <%-- stolen code ends here --%>
+    </style>
+
+    <!--[if IE]>
+    <style type="text/css">
+
+        .thumblist li {
+            vertical-align: top;
+            margin: 0 7px 0 7px;
+            padding: 0;
+            display: inline;
+        }
+
+        .thumblist div {
+            text-align: center;
+            width: 130px;
+            height: 130px;
+            padding-bottom: 15px;
+        }
+
+        .thumblist span {
+            vertical-align: middle;
+            height: 130px;
+            width: 0;
+        }
+
+        .thumblist img {
+            vertical-align: middle;
+            cursor: pointer;
+            border: 1px solid black;
+        }
+
+    </style>
+    <![endif]-->
 
 </head>
 
@@ -158,10 +128,10 @@
                 </tr>
             </table>
 
-            <ul class="thumbwrap">
+            <ul class="thumblist">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span class="wrimg"><img id="img${photo.imageHash}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()"></span></div>
+                        <div><span></span><img id="img${photo.imageHash}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
                     </li>
                 </c:forEach>
             </ul>

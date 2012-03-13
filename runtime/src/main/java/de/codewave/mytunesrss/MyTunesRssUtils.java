@@ -626,36 +626,36 @@ public class MyTunesRssUtils {
     }
 
     public static File searchFile(File file) {
-        if (file == null) {
-            return null;
-        }
         String filename = file.getAbsolutePath();
-        LOGGER.debug("Trying original string \"" + MiscUtils.getUtf8UrlEncoded(filename) + "\".");
+        LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + ".");
         if (file.exists()) {
             return file;
         }
-        LOGGER.debug("Trying composed form string \"" + MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.compose(filename)) + "\".");
         File composedFile = new File(MyTunesRssUtils.compose(filename));
+        LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(composedFile.getAbsolutePath()) + ".");
         if (composedFile.exists()) {
             return composedFile;
         }
-        LOGGER.debug("Trying decomposed form string \"" + MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.decompose(filename)) + "\".");
         File decomposedFile = new File(MyTunesRssUtils.decompose(filename));
+        LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(decomposedFile.getAbsolutePath()) + ".");
         if (decomposedFile.exists()) {
             return decomposedFile;
         }
-        LOGGER.debug("Trying to find parent.");
-        File parent = searchFile(file.getParentFile());
-        if (parent != null && parent.exists()) {
-            LOGGER.debug("Found parent, listing files.");
-            for (File each : parent.listFiles()) {
-                if (MyTunesRssUtils.compose(each.getName()).equals(MyTunesRssUtils.compose(file.getName()))) {
-                    LOGGER.debug("Finally found file.");
-                    return each;
+        if (file.getParentFile() != null) {
+            LOGGER.debug("File not found, trying to find parent.");
+            File parent = searchFile(file.getParentFile());
+            if (parent != null && parent.exists()) {
+                LOGGER.debug("Found parent, listing files.");
+                for (File each : parent.listFiles()) {
+                    LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
+                    if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
+                        LOGGER.debug("Match.");
+                        return each;
+                    }
                 }
             }
         }
         LOGGER.debug("File not found.");
-        return null;
+        return file;
     }
 }
