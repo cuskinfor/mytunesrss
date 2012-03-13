@@ -1,3 +1,7 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--%@ page contentType="application/xhtml+xml;charset=UTF-8" language="java" %-->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -21,10 +25,6 @@
 <%--@elvariable id="photos" type="java.util.List<de.codewave.mytunesrss.datastore.statement.Photo>"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">/photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
 
@@ -66,7 +66,7 @@
 
         .thumblist li {
             vertical-align: top;
-            margin: 0 7px 15px 7px;
+            margin: 0 7px 0 7px;
             padding: 0;
             display: inline;
         }
@@ -75,11 +75,13 @@
             text-align: center;
             width: 130px;
             height: 130px;
+            padding-bottom: 15px;
         }
 
         .thumblist span {
             vertical-align: middle;
             height: 130px;
+            width: 0;
         }
 
         .thumblist img {
@@ -129,7 +131,7 @@
             <ul class="thumblist">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span></span><img id="img${photo.imageHash}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()"></div>
+                        <div><span></span><img id="img${photo.imageHash}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/size=${imageSize}</mt:encrypt>" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
                     </li>
                 </c:forEach>
             </ul>

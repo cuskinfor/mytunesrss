@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -53,7 +54,7 @@ public class FindPhotoQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ph
                 photo.setName(resultSet.getString("name"));
                 photo.setFile(resultSet.getString("file"));
                 photo.setDate(resultSet.getLong("date"));
-                photo.setImageHash(resultSet.getString("image_hash"));
+                photo.setImageHash(StringUtils.trimToNull(resultSet.getString("image_hash")));
                 photo.setLastImageUpdate(resultSet.getLong("last_image_update"));
                 return photo;
             }

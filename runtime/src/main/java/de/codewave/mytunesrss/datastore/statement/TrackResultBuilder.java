@@ -34,7 +34,7 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setTsUpdated(resultSet.getLong("TS_UPDATED"));
         track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
         track.setPlayCount(resultSet.getLong("PLAYCOUNT"));
-        track.setImageHash(resultSet.getString("IMAGE_HASH"));
+        track.setImageHash(StringUtils.trimToNull(resultSet.getString("IMAGE_HASH")));
         track.setComment(resultSet.getString("COMMENT"));
         track.setPosNumber(resultSet.getInt("POS_NUMBER"));
         track.setPosSize(resultSet.getInt("POS_SIZE"));
