@@ -1,7 +1,6 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 
-<!--%@ page contentType="application/xhtml+xml;charset=UTF-8" language="java" %-->
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -27,72 +26,7 @@
 <c:set var="backUrl" scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">/photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <head>
-
     <jsp:include page="incl_head.jsp"/>
-
-    <style type="text/css">
-
-        .thumblist {
-        	text-align: center;
-            padding: 15px 8px 0 8px;
-            background-color: #f4f4f4;
-            margin: 0;
-        }
-
-        .thumblist li {
-            vertical-align: top;
-            margin: 0 7px 15px 7px;
-            padding: 0;
-            display: inline-block;
-        }
-
-        .thumblist div {
-        	display: table-cell;
-            text-align: center;
-            vertical-align: middle;
-            width: 130px;
-            height: 130px;
-        }
-
-        .thumblist img {
-            cursor: pointer;
-            border: 1px solid black;
-        }
-
-    </style>
-
-    <!--[if IE]>
-    <style type="text/css">
-
-        .thumblist li {
-            vertical-align: top;
-            margin: 0 7px 0 7px;
-            padding: 0;
-            display: inline;
-        }
-
-        .thumblist div {
-            text-align: center;
-            width: 130px;
-            height: 130px;
-            padding-bottom: 15px;
-        }
-
-        .thumblist span {
-            vertical-align: middle;
-            height: 130px;
-            width: 0;
-        }
-
-        .thumblist img {
-            vertical-align: middle;
-            cursor: pointer;
-            border: 1px solid black;
-        }
-
-    </style>
-    <![endif]-->
-
 </head>
 
 <body class="browse">
