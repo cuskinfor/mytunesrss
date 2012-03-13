@@ -1307,3 +1307,30 @@ div.photolinks span {
 div.photolinks a:hover span {
     text-decoration: underline;
 }
+
+.thumblist {
+	text-align: center;
+    padding: 15px 8px 0 8px;
+    background-color: #f4f4f4;
+    margin: 0;
+}
+
+.thumblist li {
+    vertical-align: top;
+    margin: 0 7px 15px 7px;
+    padding: 0;
+    display: inline-block;
+}
+
+.thumblist div {
+	display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+    width: 130px;
+    height: 130px;
+}
+
+.thumblist img {
+    cursor: pointer;
+    border: 1px solid black;
+}

@@ -1,0 +1,25 @@
+.thumblist li {
+    vertical-align: top;
+    margin: 0 7px 0 7px;
+    padding: 0;
+    display: inline;
+}
+
+.thumblist div {
+    text-align: center;
+    width: 130px;
+    height: 130px;
+    padding-bottom: 15px;
+}
+
+.thumblist span {
+    vertical-align: middle;
+    height: 130px;
+    width: 0;
+}
+
+.thumblist img {
+    vertical-align: middle;
+    cursor: pointer;
+    border: 1px solid black;
+}
