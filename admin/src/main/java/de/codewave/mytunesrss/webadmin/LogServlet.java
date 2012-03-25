@@ -21,11 +21,15 @@ import java.util.Iterator;
 
 public class LogServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (StringUtils.isBlank(request.getParameter("index"))) {
-            sendPage(response);
+        if (!Boolean.TRUE.equals(request.getSession().getAttribute("MyTunesRSSWebAdmin"))) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login to the MyTunesRSS web admin.");
         } else {
-            String lineSeparator = "\r\n";
-            sendLogLines(Long.parseLong(request.getParameter("index")), lineSeparator, response);
+            if (StringUtils.isBlank(request.getParameter("index"))) {
+                sendPage(response);
+            } else {
+                String lineSeparator = "\r\n";
+                sendLogLines(Long.parseLong(request.getParameter("index")), lineSeparator, response);
+            }
         }
     }
 
