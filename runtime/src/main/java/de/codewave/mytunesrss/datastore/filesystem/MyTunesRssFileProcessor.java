@@ -501,10 +501,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             statement.setAlbum(getFallbackAlbumName(file));
             statement.setArtist(getFallbackArtistName(file));
         }
-        if (mediaType == MediaType.Video && myDatasourceConfig.getVideoType() == VideoType.TvShow) {
-            statement.setSeries(getFallbackSeries(file));
-            statement.setSeason(getFallbackSeason(file));
-            statement.setEpisode(getFallbackEpisode(file));
+        if (mediaType == MediaType.Video) {
+            statement.setVideoType(myDatasourceConfig.getVideoType());
+            if (myDatasourceConfig.getVideoType() == VideoType.TvShow) {
+                statement.setSeries(getFallbackSeries(file));
+                statement.setSeason(getFallbackSeason(file));
+                statement.setEpisode(getFallbackEpisode(file));
+            }
         }
     }
 

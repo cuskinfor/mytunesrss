@@ -13,6 +13,12 @@
 
         <release version="4.2.3" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-345] Video type not set for non-MP4 video in watch folders
+            </action>
+            <action dev="mdescher" type="fix">
+                Show random playlist only if it contains at least 1 track.
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-343] Exception when creating statistics
             </action>
         </release>
