@@ -7,6 +7,21 @@
 
     <body>
 
+        <release version="4.2.3" date="2012-03-25">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-344] Admin log display must not work for non-logged in user
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-345] Video type not set for non-MP4 video in watch folders
+            </action>
+            <action dev="mdescher" type="fix">
+                Show random playlist only if it contains at least 1 track.
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-343] Exception when creating statistics
+            </action>
+        </release>
+
         <release version="4.2.2" date="2012-03-17">
             <action dev="mdescher" type="update">
                 Fixed display problems of photo browser in Internet Explorer 7 and 8.

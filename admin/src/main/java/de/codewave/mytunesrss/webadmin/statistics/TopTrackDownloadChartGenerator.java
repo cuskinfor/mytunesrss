@@ -54,12 +54,14 @@ public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
     protected Map<String, MutableLong> getItemsWithCount(Map<Day, List<StatisticsEvent>> eventsPerDay) throws SQLException {
         Map<String, MutableLong> items = new HashMap<String, MutableLong>();
         for (Track track : getFlatTrackList(eventsPerDay)) {
-            String item = getItem(track);
-            if (StringUtils.isNotBlank(item)) {
-                if (items.containsKey(item)) {
-                    items.get(item).add(1);
-                } else {
-                    items.put(item, new MutableLong(1));
+            if (track != null) {
+                String item = getItem(track);
+                if (StringUtils.isNotBlank(item)) {
+                    if (items.containsKey(item)) {
+                        items.get(item).add(1);
+                    } else {
+                        items.put(item, new MutableLong(1));
+                    }
                 }
             }
         }
