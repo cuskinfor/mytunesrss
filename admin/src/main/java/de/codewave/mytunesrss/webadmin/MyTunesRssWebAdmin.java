@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.Application;
 import com.vaadin.addon.treetable.TreeTable;
 import com.vaadin.terminal.Terminal;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -60,6 +61,7 @@ public class MyTunesRssWebAdmin extends Application {
         } else if (MyTunesRss.CONFIG.isAdminPassword()) {
             panel = new LoginPanel();
         } else {
+            ((WebApplicationContext)getContext()).getHttpSession().setAttribute("MyTunesRSSWebAdmin", Boolean.TRUE);
             panel = new StatusPanel();
         }
         return panel;

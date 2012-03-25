@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.event.ShortcutAction;
+import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -37,6 +38,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST))) {
             getApplication().setUser("USER"); // we just need any non-NULL objects here
+            ((WebApplicationContext)getApplication().getContext()).getHttpSession().setAttribute("MyTunesRSSWebAdmin", Boolean.TRUE);
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new StatusPanel());
         } else {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("loginPanel.error.invalidLogin");
