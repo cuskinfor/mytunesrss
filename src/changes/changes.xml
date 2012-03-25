@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.2.3" date="___D___">
+        <release version="4.2.3" date="2012-03-25">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-344] Admin log display must not work for non-logged in user
             </action>
