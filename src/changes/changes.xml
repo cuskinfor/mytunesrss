@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.2.3" date="2012-03-25">
+        <release version="4.2.4" date="2012-03-25">
             <action dev="mdescher" type="fix">
                 Update to codewave-utils 1.5 to fix a problem with IOUtils#isContained and IOUtils#isContainedOrSame.
             </action>
