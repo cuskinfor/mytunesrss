@@ -9,6 +9,12 @@
 
         <release version="4.2.3" date="2012-03-25">
             <action dev="mdescher" type="fix">
+                Update to codewave-utils 1.5 to fix a problem with IOUtils#isContained and IOUtils#isContainedOrSame.
+            </action>
+        </release>
+
+        <release version="4.2.3" date="2012-03-25">
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-344] Admin log display must not work for non-logged in user
             </action>
             <action dev="mdescher" type="fix">
