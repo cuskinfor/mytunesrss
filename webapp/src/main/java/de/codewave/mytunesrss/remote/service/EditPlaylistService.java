@@ -425,6 +425,7 @@ public class EditPlaylistService {
                     count++;
                 }
             }
+            MyTunesRssUtils.updateUserDatabaseReferences(TransactionFilter.getTransaction());
             return count;
         }
         throw new IllegalAccessException("UNAUTHORIZED");

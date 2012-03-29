@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.DeletePlaylistStatement;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
@@ -18,6 +19,7 @@ public class DeletePlaylistCommandHandler extends MyTunesRssCommandHandler {
             DeletePlaylistStatement statement = new DeletePlaylistStatement();
             statement.setId(playlistId);
             getTransaction().executeStatement(statement);
+            MyTunesRssUtils.updateUserDatabaseReferences(getTransaction());
             forward(MyTunesRssCommand.ShowPlaylistManager);
         } else {
             forward(MyTunesRssResource.Login);

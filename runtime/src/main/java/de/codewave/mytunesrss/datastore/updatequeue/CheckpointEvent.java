@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.UpdateStatisticsStatement;
@@ -34,6 +35,11 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
             LOGGER.warn("Could not rebuild track index.", e);
         } catch (SQLException e) {
             LOGGER.warn("Could not rebuild track index.", e);
+        }
+        try {
+            MyTunesRssUtils.updateUserDatabaseReferences(session);
+        } catch (SQLException e) {
+            LOGGER.warn("Could not update user database references.", e);
         }
         return true;
     }
