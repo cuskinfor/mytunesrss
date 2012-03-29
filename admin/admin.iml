@@ -9,18 +9,10 @@
         <webroots>
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
-      </configuration>
-      <facet type="Vaadin" name="Vaadin Application">
-        <configuration vaadinUsedWebRootPathUrl="file://$MODULE_DIR$/src/main/webapp" vaadinGWTLocationPath="" vaadinVMOptions="-Xss8M -Xmx512M -XX:MaxPermSize=512M" vaadinJavaScriptStyle="Obfuscated" vaadinCompilerThreads="" />
-      </facet>
-    </facet>
-    <facet type="gwt" name="GWT">
-      <configuration>
-        <setting name="compilerMaxHeapSize" value="128" />
-        <setting name="gwtScriptOutputStyle" value="DETAILED" />
-        <setting name="gwtSdkUrl" value="file://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev/2.3.0/" />
-        <setting name="gwtSdkType" value="maven" />
-        <setting name="webFacet" value="Web" />
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/src/main/java" />
+          <root url="file://$MODULE_DIR$/src/main/resources" />
+        </sourceRoots>
       </configuration>
     </facet>
   </component>
