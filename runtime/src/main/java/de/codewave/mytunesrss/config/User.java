@@ -46,6 +46,17 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         return myName == null ? -1 : myName.compareTo(o.myName);
     }
 
+    public void retainPlaylists(Set<String> ids) {
+        myRestrictedPlaylistIds.retainAll(ids);
+        myExcludedPlaylistIds.retainAll(ids);
+        myHiddenPlaylistIds.retainAll(ids);
+    }
+
+    public void retainPhotoAlbums(Set<String> ids) {
+        myRestrictedPhotoAlbumIds.retainAll(ids);
+        myExcludedPhotoAlbumIds.retainAll(ids);
+    }
+
     public enum QuotaType {
         None, Day, Week, Month;
 

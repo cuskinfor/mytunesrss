@@ -5,8 +5,7 @@ import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.config.LdapConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.RemoveOldTempPlaylistsStatement;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.MiscUtils;
@@ -657,5 +656,17 @@ public class MyTunesRssUtils {
         }
         LOGGER.debug("File not found.");
         return file;
+    }
+
+    public static void updateUserDatabaseReferences(DataStoreSession session) throws SQLException {
+        Set<String> playlistIds = new HashSet<String>();
+        for (Playlist playlist : session.executeQuery(new FindPlaylistQuery(null, null, null, true)).getResults()) {
+            playlistIds.add(playlist.getId());
+        }
+        Set<String> photoAlbumIds = new HashSet<String>(session.executeQuery(new FindPhotoAlbumIdsQuery()));
+        for (User user : MyTunesRss.CONFIG.getUsers()) {
+            user.retainPlaylists(playlistIds);
+            user.retainPhotoAlbums(photoAlbumIds);
+        }
     }
 }
