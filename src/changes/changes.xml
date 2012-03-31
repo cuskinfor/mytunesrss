@@ -13,6 +13,9 @@
 
         <release version="4.2.4" date="___D___">
             <action dev="mdescher" type="fix">
+                H2 database update to 1.3.165
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-346] Verify that old exclusion and restriction playlists are removed from user settings
             </action>
             <action dev="mdescher" type="fix">
