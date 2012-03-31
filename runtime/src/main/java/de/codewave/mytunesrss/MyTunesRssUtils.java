@@ -643,13 +643,16 @@ public class MyTunesRssUtils {
         if (file.getParentFile() != null) {
             LOGGER.debug("File not found, trying to find parent.");
             File parent = searchFile(file.getParentFile());
-            if (parent != null && parent.exists()) {
+            if (parent != null && parent.isDirectory()) {
                 LOGGER.debug("Found parent, listing files.");
-                for (File each : parent.listFiles()) {
-                    LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
-                    if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
-                        LOGGER.debug("Match.");
-                        return each;
+                File[] files = parent.listFiles();
+                if (files != null && files.length > 0) {
+                    for (File each : files) {
+                        LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
+                        if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
+                            LOGGER.debug("Match.");
+                            return each;
+                        }
                     }
                 }
             }
