@@ -223,9 +223,12 @@ public class MyTunesRssUtils {
 
     public static boolean deleteRecursivly(File file) {
         if (file.isDirectory()) {
-            for (File subFile : file.listFiles()) {
-                if (!deleteRecursivly(subFile)) {
-                    return false;
+            File[] files = file.listFiles();
+            if (files != null) {
+                for (File subFile : files) {
+                    if (!deleteRecursivly(subFile)) {
+                        return false;
+                    }
                 }
             }
             file.delete();
@@ -538,10 +541,13 @@ public class MyTunesRssUtils {
 
     public static List<DatabaseBackup> findDatabaseBackups() throws IOException {
         List<DatabaseBackup> backups = new ArrayList<DatabaseBackup>();
-        for (File file : new File(MyTunesRss.CACHE_DATA_PATH).listFiles()) {
-            if (DatabaseBackup.isBackupFile(file)) {
-                LOGGER.debug("Found backup file \"" + file + "\".");
-                backups.add(new DatabaseBackup(file));
+        File[] files = new File(MyTunesRss.CACHE_DATA_PATH).listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (DatabaseBackup.isBackupFile(file)) {
+                    LOGGER.debug("Found backup file \"" + file + "\".");
+                    backups.add(new DatabaseBackup(file));
+                }
             }
         }
         Collections.sort(backups);
@@ -646,7 +652,7 @@ public class MyTunesRssUtils {
             if (parent != null && parent.isDirectory()) {
                 LOGGER.debug("Found parent, listing files.");
                 File[] files = parent.listFiles();
-                if (files != null && files.length > 0) {
+                if (files != null) {
                     for (File each : files) {
                         LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
                         if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
