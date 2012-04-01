@@ -79,16 +79,19 @@ public class AddonsUtils {
     private static Collection<ThemeDefinition> getThemesFromDir(File themesDir) throws IOException {
         Collection<ThemeDefinition> themes = new HashSet<ThemeDefinition>();
         if (themesDir.isDirectory()) {
-            for (String theme : themesDir.list(new FilenameFilter() {
+            String[] themeFileNames = themesDir.list(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
                 }
-            })) {
-                File readme = new File(themesDir + "/" + theme, "readme.txt");
-                if (readme.isFile()) {
-                    themes.add(new ThemeDefinition(theme, FileUtils.readFileToString(readme, "UTF-8")));
-                } else {
-                    themes.add(new ThemeDefinition(theme, null));
+            });
+            if (themeFileNames != null) {
+                for (String theme : themeFileNames) {
+                    File readme = new File(themesDir + "/" + theme, "readme.txt");
+                    if (readme.isFile()) {
+                        themes.add(new ThemeDefinition(theme, FileUtils.readFileToString(readme, "UTF-8")));
+                    } else {
+                        themes.add(new ThemeDefinition(theme, null));
+                    }
                 }
             }
         }
@@ -134,19 +137,22 @@ public class AddonsUtils {
     private static Collection<LanguageDefinition> getLanguagesFromDir(File languagesDir) throws IOException {
         Collection<LanguageDefinition> languages = new HashSet<LanguageDefinition>();
         if (languagesDir.isDirectory()) {
-            for (String language : languagesDir.list(new FilenameFilter() {
+            String[] languageFileNames = languagesDir.list(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
                     return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
                 }
-            })) {
-                String languageCode = getLanguageCode(language);
-                if (languageCode != null) {
-                    try {
-                        languages.add(getLocalLanguageDefinition(languagesDir, languageCode));
-                    } catch (IOException e) {
-                        LOG.warn("Could not use language defintion.", e);
-                    } catch (NumberFormatException e) {
-                        LOG.warn("Could not use language defintion.", e);
+            });
+            if (languageFileNames != null) {
+                for (String language : languageFileNames) {
+                    String languageCode = getLanguageCode(language);
+                    if (languageCode != null) {
+                        try {
+                            languages.add(getLocalLanguageDefinition(languagesDir, languageCode));
+                        } catch (IOException e) {
+                            LOG.warn("Could not use language defintion.", e);
+                        } catch (NumberFormatException e) {
+                            LOG.warn("Could not use language defintion.", e);
+                        }
                     }
                 }
             }

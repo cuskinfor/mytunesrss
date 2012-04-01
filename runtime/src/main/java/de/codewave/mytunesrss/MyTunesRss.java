@@ -327,10 +327,12 @@ public class MyTunesRss {
             if (prefsDataPathContents == null || prefsDataPathContents.length == 0) {
                 for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
                     File oldPrefsDir = new File(PrefsUtils.getPreferencesDataPathNoCreate(prevVersionAppIdentifier));
-                    if (oldPrefsDir.isDirectory() && oldPrefsDir.list().length > 0) {
+                    String[] oldPrefsDirFileNames = oldPrefsDir.list();
+                    if (oldPrefsDir.isDirectory() && oldPrefsDirFileNames != null && oldPrefsDirFileNames.length > 0) {
                         FileUtils.copyDirectory(oldPrefsDir, prefsDataPath);
                         File oldCacheDir = new File(PrefsUtils.getCacheDataPathNoCreate(prevVersionAppIdentifier));
-                        if (oldCacheDir.isDirectory() && oldCacheDir.list().length > 0) {
+                        String[] oldCacheDirFileNames = oldCacheDir.list();
+                        if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
                             FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
                         }
                     }
@@ -640,7 +642,7 @@ public class MyTunesRss {
 
     private static ClassLoader createExtraClassloader(File libDir) {
         try {
-            Collection<File> files = libDir.isDirectory() ? (Collection<File>) FileUtils.listFiles(libDir, new String[]{"jar", "zip"}, false) : null;
+            Collection<File> files = libDir.isDirectory() ? FileUtils.listFiles(libDir, new String[]{"jar", "zip"}, false) : null;
             if (files != null && !files.isEmpty()) {
                 Collection<URL> urls = new ArrayList<URL>();
                 for (File file : files) {

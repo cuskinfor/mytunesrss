@@ -217,10 +217,13 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         File itcFile = null;
                         File albumArtworkDir = new File(file.getParentFile(), "Album Artwork");
                         if (albumArtworkDir.isDirectory()) {
-                            for (File subdir : albumArtworkDir.listFiles()) {
-                                itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
-                                if (itcFile.isFile()) {
-                                    break;
+                            File[] files = albumArtworkDir.listFiles();
+                            if (files != null) {
+                                for (File subdir : files) {
+                                    itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
+                                    if (itcFile.isFile()) {
+                                        break;
+                                    }
                                 }
                             }
                             if (itcFile.isFile() && itcFile.lastModified() >= myLastUpdateTime) {
