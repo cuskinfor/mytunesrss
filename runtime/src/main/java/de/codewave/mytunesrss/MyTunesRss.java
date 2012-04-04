@@ -83,8 +83,11 @@ public class MyTunesRss {
     // Alternative log4j configuration location (e.g. -logConfig ../etc/log4j-develop.xml)
     public static final String CMD_LOGCONFIG = "logConfig";
 
-    // Shutdown port, send "SHUTDOWN" to this port to shutdown MyTunesRSS (works only from localhost)
+    // Shutdown port, send "SHUTDOWN" to this port to shutdown MyTunesRSS (e.g. -shutdownPort 12345)
     public static final String CMD_SHUTDOWN_PORT = "shutdownPort";
+
+    // Send a shutdown request to the specified port (e.g. -shutdown 12345)
+    public static final String CMD_SHUTDOWN = "shutdown";
 
     // Cache directory names
     public static final String CACHEDIR_TEMP = "tmp";
@@ -133,6 +136,27 @@ public class MyTunesRss {
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
 
     public static void main(final String[] args) throws Exception {
+        processArguments(args);
+        if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
+            try {
+                Integer port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN)[0]);
+                Socket socket = new Socket(InetAddress.getByName(null), port);
+                socket.getOutputStream().write("SHUTDOWN".getBytes("US-ASCII"));
+                socket.getOutputStream().flush();
+                try {
+                    socket.getInputStream().read();
+                } catch (IOException e) {
+                    // this is okay, the server has shutdown
+                }
+            } catch (NumberFormatException e) {
+                System.err.println("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN)[0] + "\" specified.");
+                System.exit(1);
+            } catch (IOException e) {
+                System.err.println("Could not shutdown MyTunesRSS on port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN)[0] + "\": " + e.getMessage());
+                System.exit(1);
+            }
+            System.exit(0);
+        }
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -145,7 +169,6 @@ public class MyTunesRss {
             }
         });
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
-        processArguments(args);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();
         copyOldPrefsAndCache();
@@ -188,7 +211,7 @@ public class MyTunesRss {
             StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
             EXECUTOR_SERVICE.scheduleWithFixedDelay(new MaintenanceRunnable(), 0, 3600, TimeUnit.SECONDS);
         }
-        if (!SHUTDOWN_IN_PROGRESS.get() && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT) != null) {
+        if (!SHUTDOWN_IN_PROGRESS.get() && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT).length > 0) {
             try {
                 int port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0]);
                 startShutdownListener(port);
@@ -233,8 +256,17 @@ public class MyTunesRss {
                         try {
                             socket = serverSocket.accept();
                             InputStream inputStream = socket.getInputStream();
-                            List<String> lines = IOUtils.readLines(inputStream, "US-ASCII");
-                            if (lines != null && lines.size() > 0 && "SHUTDOWN".equals(lines.get(0))) {
+                            byte[] buffer = new byte[] {' ', ' ', ' ', ' ', ' ', ' ', ' ', ' '};
+                            while (!"SHUTDOWN".equals(new String(buffer, "US-ASCII"))) {
+                                System.arraycopy(buffer, 1, buffer, 0, 7);
+                                int nextByte = inputStream.read();
+                                if (nextByte == -1) {
+                                    break;
+                                } else {
+                                    buffer[7] = (byte)nextByte;
+                                }
+                            }
+                            if ("SHUTDOWN".equals(new String(buffer, "US-ASCII"))) {
                                 LOGGER.warn("Received shutdown signal on port " + port + ".");
                                 MyTunesRssUtils.shutdownGracefully();
                             }
