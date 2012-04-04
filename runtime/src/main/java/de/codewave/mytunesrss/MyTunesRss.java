@@ -737,7 +737,12 @@ public class MyTunesRss {
                 FORM.setUserUrl(-1);
             }
         } catch (Exception e) {
-            FORM.setUserUrl(e);
+            if (FORM != null) {
+                FORM.setUserUrl(e);
+            } else {
+                LOGGER.error("Could not start MyTunesRSS server,", e);
+                MyTunesRssUtils.showErrorMessage(e.getMessage());
+            }
             return e;
         }
         return null;
