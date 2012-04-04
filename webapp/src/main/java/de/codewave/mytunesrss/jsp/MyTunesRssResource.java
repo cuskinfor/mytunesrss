@@ -77,6 +77,7 @@ public enum MyTunesRssResource {
             if (!Boolean.TRUE.equals(request.getSession().getAttribute("welcomeMessageDone"))) {
                 handleWelcomeMessage(request);
             }
+            MyTunesRssWebUtils.addError(request, new BundleError("current.user.message", MyTunesRssWebUtils.getAuthUser(request).getName()), "messages");
             long expiration = MyTunesRssWebUtils.getAuthUser(request).getExpiration();
             if (expiration > 0) {
                 Error error = new BundleError("accountExpirationWarning", new SimpleDateFormat(MyTunesRssWebUtils.getBundleString(request, "dateFormat")).format(expiration));
