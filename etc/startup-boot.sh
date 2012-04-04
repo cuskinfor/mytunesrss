@@ -19,6 +19,9 @@
 # Shutdown port, send the text "SHUTDOWN" to this port to shutdown MyTunesRSS gracefully. Listens on 127.0.0.1 only.
 # -shutdownPort 12345
 #
+# Shutdown a local instance running on the specified port.
+# -shutdown 12345
+#
 # You might have to add the full path to the java executable (java) if not in path
 # Make sure your current directory is the MyTunesRSS installation dir
 #
@@ -35,7 +38,8 @@ case "$1" in
         java $VM_OPTIONS $BOOT_CP $XML_PARSER $MYTUNESRSS_PROPS -jar mytunesrss.jar -shutdownPort $SHUTDOWN_PORT
         ;;
   stop)
-        echo "SHUTDOWN" > /dev/tcp/127.0.0.1/$SHUTDOWN_PORT
+        cd [... insert MyTunesRSS install dir here ...]
+        java -jar mytunesrss.jar -shutdown $SHUTDOWN_PORT
         ;;
   restart|reload|force-reload)
         echo "Error: argument '$1' not supported" >&2
