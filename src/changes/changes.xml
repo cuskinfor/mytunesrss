@@ -8,7 +8,10 @@
     <body>
 
         <release version="4.3" date="___D___">
-
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-348] Stop-Port
+                Use command line option -shutdownPort to enable the shutdown listener
+            </action>
         </release>
 
         <release version="4.2.4" date="___D___">

@@ -45,14 +45,14 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.net.ServerSocketFactory;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.net.URLClassLoader;
+import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.*;
@@ -82,6 +82,9 @@ public class MyTunesRss {
 
     // Alternative log4j configuration location (e.g. -logConfig ../etc/log4j-develop.xml)
     public static final String CMD_LOGCONFIG = "logConfig";
+
+    // Shutdown port, send "SHUTDOWN" to this port to shutdown MyTunesRSS (works only from localhost)
+    public static final String CMD_SHUTDOWN_PORT = "shutdownPort";
 
     // Cache directory names
     public static final String CACHEDIR_TEMP = "tmp";
@@ -185,6 +188,14 @@ public class MyTunesRss {
             StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
             EXECUTOR_SERVICE.scheduleWithFixedDelay(new MaintenanceRunnable(), 0, 3600, TimeUnit.SECONDS);
         }
+        if (!SHUTDOWN_IN_PROGRESS.get() && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT) != null) {
+            try {
+                int port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0]);
+                startShutdownListener(port);
+            } catch (NumberFormatException e) {
+                MyTunesRssUtils.showErrorMessage("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0] + "\" specified.");
+            }
+        }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
                 MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
@@ -210,12 +221,52 @@ public class MyTunesRss {
         }
     }
 
+    private static void startShutdownListener(final int port) {
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(port, 0, InetAddress.getByName(null));
+                    LOGGER.info("Started shutdown listener on port " + port + ".");
+                    MyTunesRssUtils.showErrorMessage("Started shutdown listener on port " + port + ".");
+                    while (true) {
+                        Socket socket = null;
+                        try {
+                            socket = serverSocket.accept();
+                            InputStream inputStream = socket.getInputStream();
+                            List<String> lines = IOUtils.readLines(inputStream, "US-ASCII");
+                            if (lines != null && lines.size() > 0 && "SHUTDOWN".equals(lines.get(0))) {
+                                LOGGER.warn("Received shutdown signal on port " + port + ".");
+                                MyTunesRssUtils.shutdownGracefully();
+                            }
+                        } catch (IOException e) {
+                            LOGGER.error("Shutdown listener communication error.", e);
+                        } finally {
+                            if (socket != null) {
+                                try {
+                                    socket.close();
+                                } catch (IOException e) {
+                                    LOGGER.error("Could not close shutdown listener communication socket.", e);
+                                }
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Could not start shutdown listener.", e);
+                    MyTunesRssUtils.showErrorMessage("Could not start shutdown listener: " + e.getMessage());
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.setName("MyTunesRSS Shutdown Listener");
+        thread.start();
+    }
+
     private static void initMainWindow() throws AWTException {
         FORM = new MyTunesRssForm();
     }
 
     private static void createMissingPrefDirs() throws IOException {
-        for (String dir : new String[] {"native", "lib", "themes", "languages", "flashplayer"}) {
+        for (String dir : new String[]{"native", "lib", "themes", "languages", "flashplayer"}) {
             File file = new File(MyTunesRss.PREFERENCES_DATA_PATH, dir);
             if (!file.exists()) {
                 file.mkdirs();
@@ -268,9 +319,9 @@ public class MyTunesRss {
         System.setProperty("MyTunesRSS.logDir", MyTunesRss.CACHE_DATA_PATH);
         try {
             for (Iterator<File> iter =
-                    (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRss.CACHE_DATA_PATH),
-                            new String[]{"log"},
-                            false); iter.hasNext();) {
+                         (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRss.CACHE_DATA_PATH),
+                                 new String[]{"log"},
+                                 false); iter.hasNext(); ) {
                 iter.next().delete();
             }
         } catch (Exception e) {
@@ -356,7 +407,7 @@ public class MyTunesRss {
                     List<DatabaseBackup> backups = MyTunesRssUtils.findDatabaseBackups();
                     if (!backups.isEmpty()) {
                         backups.add(DatabaseBackup.NO_BACKUP);
-                        DatabaseBackup backup = (DatabaseBackup)JOptionPane.showInputDialog(
+                        DatabaseBackup backup = (DatabaseBackup) JOptionPane.showInputDialog(
                                 null,
                                 MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorRestore"),
                                 MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"),
