@@ -16,6 +16,9 @@ REM
 REM Cache data path (otherwise the default is used)
 REM -cacheDataPath /var/mytunesrss/cache
 REM
+REM Shutdown port, send the text "SHUTDOWN" to this port to shutdown MyTunesRSS gracefully. Listens on 127.0.0.1 only.
+REM -shutdownPort 12345
+REM
 REM You might have to add the full path to the java executable (java) if not in path
 REM Make sure your current directory is the MyTunesRSS installation dir
 REM

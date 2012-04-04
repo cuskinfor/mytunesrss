@@ -1,7 +1,5 @@
-#!/bin/sh
-
 #
-# MyTunesRSS startup script
+# MyTunesRSS startup script for system boot
 #
 # Optional command line options, please add them at the end of the command line at the end of
 # this file, after the JAR file name.
@@ -29,5 +27,22 @@ VM_OPTIONS='-Xmx512m'
 BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar'
 XML_PARSER='-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl'
 MYTUNESRSS_PROPS='-Dde.codewave.mytunesrss'
+SHUTDOWN_PORT=55555
 
-java $VM_OPTIONS $BOOT_CP $XML_PARSER $MYTUNESRSS_PROPS -jar mytunesrss.jar
+case "$1" in
+  start)
+        cd [... insert MyTunesRSS install dir here ...]
+        java $VM_OPTIONS $BOOT_CP $XML_PARSER $MYTUNESRSS_PROPS -jar mytunesrss.jar -shutdownPort $SHUTDOWN_PORT
+        ;;
+  stop)
+        echo "SHUTDOWN" > /dev/tcp/127.0.0.1/$SHUTDOWN_PORT
+        ;;
+  restart|reload|force-reload)
+        echo "Error: argument '$1' not supported" >&2
+        exit 3
+        ;;
+  *)
+        echo "Usage: $0 start|stop" >&2
+        exit 3
+        ;;
+esac
