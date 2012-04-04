@@ -116,6 +116,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myPhotos = true;
     private boolean myShare = true;
     private boolean myDownloadPhotoAlbum = true;
+    private boolean myAudio = true;
+    private boolean myMovies = true;
+    private boolean myTvShows = true;
 
     public User(String name) {
         myName = name;
@@ -533,6 +536,30 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myDownloadPhotoAlbum = downloadPhotoAlbum;
     }
 
+    public boolean isAudio() {
+        return myAudio;
+    }
+
+    public void setAudio(boolean audio) {
+        myAudio = audio;
+    }
+
+    public boolean isMovies() {
+        return myMovies;
+    }
+
+    public void setMovies(boolean movies) {
+        myMovies = movies;
+    }
+
+    public boolean isTvShows() {
+        return myTvShows;
+    }
+
+    public void setTvShows(boolean tvShows) {
+        myTvShows = tvShows;
+    }
+
     @Override
     public String toString() {
         return getName();
@@ -678,6 +705,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setPhotos(JXPathUtils.getBooleanValue(settings, "featurePhotos", myPhotos));
         setShare(JXPathUtils.getBooleanValue(settings, "featureShare", myShare));
         setDownloadPhotoAlbum(JXPathUtils.getBooleanValue(settings, "featureDownloadPhotoAlbum", myDownloadPhotoAlbum));
+        setAudio(JXPathUtils.getBooleanValue(settings, "featureAudio", myAudio));
+        setMovies(JXPathUtils.getBooleanValue(settings, "featureMovies", myMovies));
+        setTvShows(JXPathUtils.getBooleanValue(settings, "featureTvShows", myTvShows));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -771,6 +801,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePhotos", isPhotos()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureShare", isShare()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownloadPhotoAlbum", isDownloadPhotoAlbum()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureAudio", isAudio()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureMovies", isMovies()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureTvShows", isTvShows()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {

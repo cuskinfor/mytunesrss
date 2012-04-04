@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-339] Permissions for music, movie and tvshows
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-338] Display logged in user name in user interface
             </action>
             <action dev="mdescher" type="add">
