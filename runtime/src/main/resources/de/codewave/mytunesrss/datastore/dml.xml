@@ -170,9 +170,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            <noaudio>AND t.media_type != 'Audio'</noaudio>
-            <notvshows>AND t.video_type != 'TvShow'</notvshows>
-            <nomovies>AND t.video_type != 'Movie'</nomovies>
+            <noaudio>AND t.mediatype != 'Audio'</noaudio>
+            <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+            <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
             GROUP BY ltp.idx, {trackColumnsForGrouping}
             <indexorder>ORDER BY idx</indexorder>
             <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
@@ -197,9 +197,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            <noaudio>AND t.media_type != 'Audio'</noaudio>
-            <notvshows>AND t.video_type != 'TvShow'</notvshows>
-            <nomovies>AND t.video_type != 'Movie'</nomovies>
+            <noaudio>AND t.mediatype != 'Audio'</noaudio>
+            <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+            <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
             GROUP BY {trackColumnsForGrouping}
             <albumorder>ORDER BY album, pos_number, track_number, name</albumorder>
             <artistorder>ORDER BY artist, album, pos_number, track_number, name</artistorder>
@@ -245,9 +245,9 @@
             )
         </excluded>
         <temptables>AND t.id = tluc.track_id</temptables>
-        <noaudio>AND t.media_type != 'Audio'</noaudio>
-        <notvshows>AND t.video_type != 'TvShow'</notvshows>
-        <nomovies>AND t.video_type != 'Movie'</nomovies>
+        <noaudio>AND t.mediatype != 'Audio'</noaudio>
+        <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+        <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
         GROUP BY {trackColumnsForGrouping}
         <albumsort>ORDER BY t.album, t.pos_number, t.track_number, t.name</albumsort>
         <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
@@ -832,9 +832,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            <noaudio>AND t.media_type != 'Audio'</noaudio>
-            <notvshows>AND t.video_type != 'TvShow'</notvshows>
-            <nomovies>AND t.video_type != 'Movie'</nomovies>
+            <noaudio>AND t.mediatype != 'Audio'</noaudio>
+            <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+            <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
             {findRandomTracksOrderClause}
             ]]>
         </sql>
@@ -856,9 +856,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            <noaudio>AND t.media_type != 'Audio'</noaudio>
-            <notvshows>AND t.video_type != 'TvShow'</notvshows>
-            <nomovies>AND t.video_type != 'Movie'</nomovies>
+            <noaudio>AND t.mediatype != 'Audio'</noaudio>
+            <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+            <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
             {findLastUpdatedTracksOrderClause}
             ]]>
         </sql>
@@ -880,9 +880,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            <noaudio>AND t.media_type != 'Audio'</noaudio>
-            <notvshows>AND t.video_type != 'TvShow'</notvshows>
-            <nomovies>AND t.video_type != 'Movie'</nomovies>
+            <noaudio>AND t.mediatype != 'Audio'</noaudio>
+            <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+            <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
             {findMostPlayedTracksOrderClause}
             ]]>
         </sql>
@@ -902,9 +902,9 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            <noaudio>AND t.media_type != 'Audio'</noaudio>
-            <notvshows>AND t.video_type != 'TvShow'</notvshows>
-            <nomovies>AND t.video_type != 'Movie'</nomovies>
+            <noaudio>AND t.mediatype != 'Audio'</noaudio>
+            <notvshows>AND (t.videotype IS NULL OR t.videotype != 'TvShow')</notvshows>
+            <nomovies>AND (t.videotype IS NULL OR t.videotype != 'Movie')</nomovies>
             {findRecentlyPlayedTracksOrderClause}
             ]]>
         </sql>
