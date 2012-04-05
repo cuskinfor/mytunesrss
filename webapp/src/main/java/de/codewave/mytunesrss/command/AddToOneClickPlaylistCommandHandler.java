@@ -35,7 +35,7 @@ public class AddToOneClickPlaylistCommandHandler extends MyTunesRssCommandHandle
                     throw new IllegalArgumentException("Illegal playlist ID.");
                 }
                 Playlist playlist = queryResult.get(0);
-                for (Track track : TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlist.getId(), null)).getResults()) {
+                for (Track track : TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlist.getId(), null)).getResults()) {
                     trackIds.add(track.getId());
                 }
                 statement = new SaveMyTunesPlaylistStatement(playlist.getUserOwner(), playlist.isUserPrivate());

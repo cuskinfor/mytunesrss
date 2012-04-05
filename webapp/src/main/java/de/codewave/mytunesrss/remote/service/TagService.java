@@ -99,7 +99,7 @@ public class TagService {
     public void setTagsToPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null && user.isEditTags()) {
-            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
+            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder)).getResults();
             setTagsToTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
             throw new IllegalAccessException("UNAUTHORIZED");
@@ -109,7 +109,7 @@ public class TagService {
     public void removeTagsFromPlaylist(String playlistId, String[] tags) throws IllegalAccessException, SQLException, IOException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null && user.isEditTags()) {
-            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder)).getResults();
+            List<Track> tracks = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder)).getResults();
             removeTagsFromTracks(TrackUtils.getTrackIds(tracks), tags);
         } else {
             throw new IllegalAccessException("UNAUTHORIZED");

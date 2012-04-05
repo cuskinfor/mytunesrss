@@ -16,7 +16,7 @@ import java.util.List;
 public class QuicktimePlayerRemoteController implements RemoteController {
 
     public void loadPlaylist(String playlistId) throws SQLException, QuicktimePlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(playlistId, SortOrder.KeepOrder);
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(MyTunesRssRemoteEnv.getSession().getUser(), playlistId, SortOrder.KeepOrder);
         loadItems(query);
     }
 
