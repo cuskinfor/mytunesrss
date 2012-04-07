@@ -28,8 +28,10 @@ public class PlaylistListener implements PListHandlerListener {
     private LibraryListener myLibraryListener;
     private Thread myWatchdogThread;
     private Set<ItunesPlaylistType> myIgnores;
+    ItunesDatasourceConfig myDatasourceConfig;
 
-    public PlaylistListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, ItunesDatasourceConfig config) {
+    public PlaylistListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId, ItunesDatasourceConfig config) {
+        myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
         myTrackIdToPersId = trackIdToPersId;
@@ -82,7 +84,7 @@ public class PlaylistListener implements PListHandlerListener {
                 }
             }
             if (!tracks.isEmpty()) {
-                SavePlaylistStatement statement = new SaveITunesPlaylistStatement(folder);
+                SavePlaylistStatement statement = new SaveITunesPlaylistStatement(myDatasourceConfig.getId(), folder);
                 statement.setId(playlistId);
                 statement.setName(name);
                 statement.setTrackIds(tracks);

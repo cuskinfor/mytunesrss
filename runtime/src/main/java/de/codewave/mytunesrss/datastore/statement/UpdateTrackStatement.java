@@ -15,8 +15,8 @@ import java.sql.SQLException;
 public class UpdateTrackStatement extends InsertOrUpdateTrackStatement {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateTrackStatement.class);
 
-    public UpdateTrackStatement(TrackSource source) {
-        super(source);
+    public UpdateTrackStatement(TrackSource source, String sourceId) {
+        super(source, sourceId);
     }
 
     @Override

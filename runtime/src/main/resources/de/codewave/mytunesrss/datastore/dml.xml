@@ -353,8 +353,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
         </sql>
     </statement>
 
@@ -367,8 +367,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
         </sql>
     </statement>
 
@@ -387,7 +387,7 @@
                              lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment), year = :year,
                              series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
                              album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist, composer = :composer,
-                             compilation = :compilation
+                             compilation = :compilation, source_id = :source_id
             WHERE id = :id
         </sql>
     </statement>
@@ -413,19 +413,19 @@
                              pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
                              lower_comment = LOWER(:comment), year = :year, series = :series, lower_series = LOWER(:series), season = :season, episode = :episode,
                              videotype = :videotype, album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist,
-                             composer = :composer, compilation = :compilation
+                             composer = :composer, compilation = :compilation, source_id = :source_id
             WHERE id = :id
         </sql>
     </statement>
 
     <statement name="insertPlaylist">
-        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id, updated) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id, TRUE)</sql>
+        <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id, updated, source_id) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id, TRUE, :source_id)</sql>
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
     </statement>
 
     <statement name="updatePlaylist">
-        <sql>UPDATE playlist SET name = :name, user_private = :user_private, container_id = :container_id, updated = TRUE WHERE id = :id</sql>
+        <sql>UPDATE playlist SET name = :name, user_private = :user_private, container_id = :container_id, updated = TRUE, source_id = :source_id WHERE id = :id</sql>
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
@@ -440,11 +440,11 @@
     </statement>
 
     <statement name="insertPhoto">
-        <sql>INSERT INTO photo (id, name, date, file) VALUES (:id, :name, :date, :file)</sql>
+        <sql>INSERT INTO photo (id, name, date, file, source_id) VALUES (:id, :name, :date, :file, :source_id)</sql>
     </statement>
 
     <statement name="updatePhoto">
-        <sql>UPDATE photo SET name = :name, date = :date, file = :file WHERE id = :id</sql>
+        <sql>UPDATE photo SET name = :name, date = :date, file = :file, source_id = :source_id WHERE id = :id</sql>
     </statement>
 
     <statement name="getPhotoAlbumIds">
@@ -508,14 +508,14 @@
     </statement>
 
     <statement name="insertPhotoAlbum">
-        <sql>INSERT INTO photoalbum (id, name) VALUES (:id, :name)</sql>
+        <sql>INSERT INTO photoalbum (id, name, source_id) VALUES (:id, :name, :source_id)</sql>
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
         <sql>{updatePhotoAlbumCountAndDates}</sql>
         <sql>{correctPhotoAlbumFirstDates}</sql>
     </statement>
 
     <statement name="updatePhotoAlbum">
-        <sql>UPDATE photoalbum SET name = :name WHERE id = :id</sql>
+        <sql>UPDATE photoalbum SET name = :name, source_id = :source_id WHERE id = :id</sql>
         <sql>DELETE FROM link_photo_album WHERE album_id = :id</sql>
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
         <sql>{updatePhotoAlbumCountAndDates}</sql>

@@ -5,7 +5,8 @@ package de.codewave.mytunesrss.datastore.statement;
  */
 public class SaveM3uFilePlaylistStatement extends SavePlaylistStatement {
 
-    public SaveM3uFilePlaylistStatement() {
+    public SaveM3uFilePlaylistStatement(String sourceId) {
+        super(sourceId);
         setType(PlaylistType.M3uFile);
     }
 

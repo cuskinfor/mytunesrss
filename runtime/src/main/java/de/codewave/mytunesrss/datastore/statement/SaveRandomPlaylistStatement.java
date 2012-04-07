@@ -11,6 +11,7 @@ package de.codewave.mytunesrss.datastore.statement;
 public class SaveRandomPlaylistStatement extends SavePlaylistStatement {
 
     public SaveRandomPlaylistStatement() {
+        super(null);
         setType(PlaylistType.Random);
     }
 

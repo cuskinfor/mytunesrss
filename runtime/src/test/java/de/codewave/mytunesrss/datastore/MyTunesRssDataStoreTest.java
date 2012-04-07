@@ -95,7 +95,7 @@ public class MyTunesRssDataStoreTest {
     }
 
     private static InsertPhotoStatement createInsertPhotoStatement() {
-        InsertPhotoStatement insertPhotoStatement = new InsertPhotoStatement();
+        InsertPhotoStatement insertPhotoStatement = new InsertPhotoStatement(null);
         insertPhotoStatement.setId(UUID.randomUUID().toString());
         insertPhotoStatement.setName(UUID.randomUUID().toString());
         insertPhotoStatement.setFile(UUID.randomUUID().toString());

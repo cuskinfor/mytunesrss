@@ -38,7 +38,7 @@ public class FileSystemLoader {
                     return file.isDirectory() || (datasource.isIncluded(file) && FileSupportUtils.isSupported(file.getName()));
                 }
             });
-            PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(queue, fileProcessor.getExistingIds());
+            PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());
             IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                 public boolean accept(File file) {
                     if (watchdogThread.isInterrupted()) {

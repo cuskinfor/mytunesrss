@@ -16,6 +16,7 @@ import java.sql.SQLException;
  */
 public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
     public SaveMyTunesPlaylistStatement(String userName, boolean userPrivate) {
+        super(null);
         setType(PlaylistType.MyTunes);
         setUserName(userName);
         setUserPrivate(userPrivate);

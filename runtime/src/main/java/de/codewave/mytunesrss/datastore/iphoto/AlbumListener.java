@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoAlbumIdsQuery;
 import de.codewave.mytunesrss.datastore.statement.SavePhotoAlbumStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
@@ -31,8 +32,10 @@ public abstract class AlbumListener implements PListHandlerListener {
     private Thread myWatchdogThread;
     private Map<String, String> myPhotoIdToPersId;
     private Set<String> myPhotoAlbumIds;
+    private PhotoDatasourceConfig myDatasourceConfig;
 
-    protected AlbumListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId) throws SQLException {
+    protected AlbumListener(PhotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId) throws SQLException {
+        myDatasourceConfig = datasourceConfig;
         myPhotoIdToPersId = photoIdToPersId;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
@@ -72,7 +75,7 @@ public abstract class AlbumListener implements PListHandlerListener {
                     }
                 }
                 if (!photos.isEmpty()) {
-                    SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement();
+                    SavePhotoAlbumStatement statement = new SavePhotoAlbumStatement(myDatasourceConfig.getId());
                     statement.setId(albumId);
                     statement.setName(albumName);
                     statement.setPhotoIds(photos);

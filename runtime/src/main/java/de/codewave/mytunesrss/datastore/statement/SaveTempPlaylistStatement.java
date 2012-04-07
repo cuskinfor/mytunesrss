@@ -10,6 +10,7 @@ package de.codewave.mytunesrss.datastore.statement;
 public class SaveTempPlaylistStatement extends SavePlaylistStatement {
 
     public SaveTempPlaylistStatement() {
+        super(null);
         setType(PlaylistType.TEMP);
     }
 

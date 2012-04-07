@@ -58,12 +58,12 @@ public class IphotoLoader {
                 handler.removeListener("/plist/dict[Master Image List]/dict");
                 IphotoAlbumListener albumListener = null;
                 if (config.isImportAlbums()) {
-                    albumListener = new IphotoAlbumListener(executionThread, queue, libraryListener, photoIdToPersId);
+                    albumListener = new IphotoAlbumListener(config, executionThread, queue, libraryListener, photoIdToPersId);
                     handler.addListener("/plist/dict[List of Albums]/array", albumListener);
                 }
                 RollListener rollListener = null;
                 if (config.isImportRolls()) {
-                    rollListener = new RollListener(executionThread, queue, libraryListener, photoIdToPersId);
+                    rollListener = new RollListener(config, executionThread, queue, libraryListener, photoIdToPersId);
                     handler.addListener("/plist/dict[List of Rolls]/array", rollListener);
                 }
                 LOG.info("Parsing iPhoto (albums/rolls): \"" + iPhotoLibraryXml.toString() + "\".");

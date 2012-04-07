@@ -21,7 +21,12 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
     private String myName;
     private long myDate;
     private String myFile;
+    private String mySourceId;
     private SmartStatement myStatement;
+
+    protected InsertOrUpdatePhotoStatement(String sourceId) {
+        mySourceId = sourceId;
+    }
 
     public void setId(String id) {
         myId = id;
@@ -50,6 +55,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
             }
             myStatement.clearParameters();
             myStatement.setString("id", myId);
+            myStatement.setString("source_id", mySourceId);
             myStatement.setString("name", myName);
             myStatement.setLong("date", myDate);
             myStatement.setString("file", myFile);
@@ -65,6 +71,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
 
     public void clear() {
         myId = null;
+        mySourceId = null;
         myName = null;
         myDate = 0L;
         myFile = null;

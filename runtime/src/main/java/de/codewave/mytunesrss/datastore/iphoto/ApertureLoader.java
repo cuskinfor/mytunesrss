@@ -59,7 +59,7 @@ public class ApertureLoader {
                 // then add albums
                 handler.removeListener("/plist/dict[Master Image List]/dict");
                 IphotoAlbumListener albumListener = null;
-                albumListener = new ApertureAlbumListener(executionThread, queue, libraryListener, photoIdToPersId);
+                albumListener = new ApertureAlbumListener(config, executionThread, queue, libraryListener, photoIdToPersId);
                 handler.addListener("/plist/dict[List of Albums]/array", albumListener);
                 LOG.info("Parsing Aperture (albums): \"" + iPhotoLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);

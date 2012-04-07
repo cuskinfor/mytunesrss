@@ -27,6 +27,11 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
     private List<String> myPhotoIds;
     private boolean myUpdate;
     private boolean myAdd;
+    private String mySourceId;
+
+    public SavePhotoAlbumStatement(String sourceId) {
+        mySourceId = sourceId;
+    }
 
     protected String getId() {
         return myId;
@@ -63,6 +68,7 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
     protected void executeInsert(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertPhotoAlbum");
         statement.setString("id", myId);
+        statement.setString("source_id", mySourceId);
         statement.setString("name", myName);
         statement.setObject("photo_id", myPhotoIds);
         LOG.debug("Inserting photo album \"" + myName + "\" with " + myPhotoIds.size() + " photos.");
@@ -74,11 +80,13 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
         if (myAdd) {
             statement = MyTunesRssUtils.createStatement(connection, "addPhotosToAlbum");
             statement.setString("id", myId);
+            statement.setString("source_id", mySourceId);
             statement.setObject("photo_id", myPhotoIds);
             LOG.debug("Adding " + myPhotoIds.size() + " photo(s) to photo album \"" + myName + "\".");
         } else {
             statement = MyTunesRssUtils.createStatement(connection, "updatePhotoAlbum");
             statement.setString("id", myId);
+            statement.setString("source_id", mySourceId);
             statement.setString("name", myName);
             statement.setObject("photo_id", myPhotoIds);
             LOG.debug("Updating photo album \"" + myName + "\" with " + myPhotoIds.size() + " photo(s).");

@@ -130,9 +130,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
         if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-            statement = existingTrack ? new UpdateTrackAndImageStatement(TrackSource.FileSystem) : new InsertTrackAndImageStatement(TrackSource.FileSystem);
+            statement = existingTrack ? new UpdateTrackAndImageStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackAndImageStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
         } else {
-            statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem) : new InsertTrackStatement(TrackSource.FileSystem);
+            statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
         }
         statement.clear();
         // never set any statement information here, since they are cleared once again later for MP4 file
@@ -169,7 +169,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private void insertOrUpdateImage(File photoFile, final String photoFileId, boolean existingPhoto) throws IOException, InterruptedException {
         final String canonicalFilePath = photoFile.getCanonicalPath();
-        InsertOrUpdatePhotoStatement statement = existingPhoto ? new UpdatePhotoStatement() : new InsertPhotoStatement();
+        InsertOrUpdatePhotoStatement statement = existingPhoto ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
         statement.clear();
         statement.setId(photoFileId);
         statement.setName(photoFile.getName());
@@ -217,7 +217,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     });
                                 }
                             }).getResultSize() == 0) {
-                                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement(myDatasourceConfig.getId());
                                 savePhotoAlbumStatement.setId(albumId);
                                 savePhotoAlbumStatement.setUpdate(true);
                                 savePhotoAlbumStatement.setAdd(true);
@@ -236,7 +236,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                 });
             } else {
-                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement();
+                SavePhotoAlbumStatement savePhotoAlbumStatement = new SavePhotoAlbumStatement(myDatasourceConfig.getId());
                 savePhotoAlbumStatement.setId(albumId);
                 savePhotoAlbumStatement.setName(albumName);
                 savePhotoAlbumStatement.setPhotoIds(Collections.singletonList(photoFileId));

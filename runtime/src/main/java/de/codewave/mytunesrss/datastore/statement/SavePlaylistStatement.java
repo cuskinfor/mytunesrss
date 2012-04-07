@@ -29,9 +29,10 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     private String myUserName;
     private boolean myUserPrivate;
     private String myContainerId;
+    private String mySourceId;
 
-    protected SavePlaylistStatement() {
-        // intentionally left blank
+    protected SavePlaylistStatement(String sourceId) {
+        mySourceId = sourceId;
     }
 
     protected String getId() {
@@ -89,6 +90,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     protected void executeInsert(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "insertPlaylist");
         statement.setString("id", myId);
+        statement.setString("source_id", mySourceId);
         statement.setString("name", myName);
         statement.setString("type", myType.name());
         statement.setObject("track_id", myTrackIds);
@@ -102,6 +104,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     protected void executeUpdate(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePlaylist");
         statement.setString("id", myId);
+        statement.setString("source_id", mySourceId);
         statement.setString("name", myName);
         statement.setObject("track_id", myTrackIds);
         statement.setBoolean("user_private", myUserPrivate);

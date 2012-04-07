@@ -58,10 +58,12 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     private TrackSource mySource;
     private String myComposer;
     private boolean myCompilation;
+    private String mySourceId;
     private SmartStatement myStatement;
 
-    protected InsertOrUpdateTrackStatement(TrackSource source) {
+    protected InsertOrUpdateTrackStatement(TrackSource source, String sourceId) {
         mySource = source;
+        mySourceId = sourceId;
     }
 
     public void setAlbum(String album) {
@@ -187,6 +189,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setInt("year", myYear);
             myStatement.setString("composer", myComposer);
             myStatement.setInt("compilation", myCompilation ? 1 : 0);
+            myStatement.setString("source_id", mySourceId);
             myStatement.execute();
         } catch (SQLException e) {
             logError(myId, e);

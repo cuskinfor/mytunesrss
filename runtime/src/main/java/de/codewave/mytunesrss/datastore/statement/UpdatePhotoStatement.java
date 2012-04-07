@@ -16,6 +16,10 @@ import java.sql.SQLException;
 public class UpdatePhotoStatement extends InsertOrUpdatePhotoStatement {
     private static final Logger LOG = LoggerFactory.getLogger(UpdatePhotoStatement.class);
 
+    public UpdatePhotoStatement(String sourceId) {
+        super(sourceId);
+    }
+
     @Override
     protected void logError(String id, SQLException e) {
         if (LOG.isErrorEnabled()) {

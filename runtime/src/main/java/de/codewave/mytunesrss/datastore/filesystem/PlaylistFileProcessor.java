@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveM3uFilePlaylistStatement;
@@ -28,8 +29,10 @@ public class PlaylistFileProcessor implements FileProcessor {
     private DatabaseUpdateQueue myQueue;
     private Collection<String> myExistingIds = new HashSet<String>();
     private Set<String> myExistingTrackIds;
+    private WatchfolderDatasourceConfig myDatasourceConfig;
 
-    public PlaylistFileProcessor(DatabaseUpdateQueue queue, Set<String> existingTrackIds) {
+    public PlaylistFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, Set<String> existingTrackIds) {
+        myDatasourceConfig = datasourceConfig;
         myQueue = queue;
         myExistingTrackIds = existingTrackIds;
     }
@@ -53,7 +56,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                     }
                 }
                 if (!trackIds.isEmpty()) {
-                    SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement();
+                    SaveM3uFilePlaylistStatement statement = new SaveM3uFilePlaylistStatement(myDatasourceConfig.getId());
                     statement.setId(id);
                     statement.setName(FilenameUtils.getBaseName(playlistFile.getName()));
                     statement.setTrackIds(trackIds);

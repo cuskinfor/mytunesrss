@@ -96,7 +96,7 @@ public abstract class PhotoListener implements PListHandlerListener {
             if (StringUtils.isNotBlank(filename)) {
                 File file = MyTunesRssUtils.searchFile(filename);
                 if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
-                    InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement() : new InsertPhotoStatement();
+                    InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
                     statement.clear();
                     statement.setId(photoId);
                     statement.setName(MyTunesRssUtils.compose(name.trim()));

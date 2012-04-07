@@ -19,6 +19,7 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
     private SmartInfo mySmartInfo;
 
     public SaveMyTunesSmartPlaylistStatement(String userName, boolean userPrivate, SmartInfo smartInfo) {
+        super(null);
         setType(PlaylistType.MyTunesSmart);
         setUserName(userName);
         setUserPrivate(userPrivate);

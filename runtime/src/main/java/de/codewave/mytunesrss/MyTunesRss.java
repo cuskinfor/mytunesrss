@@ -134,6 +134,7 @@ public class MyTunesRss {
     public static String CACHE_DATA_PATH;
     public static String PREFERENCES_DATA_PATH;
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
+    public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -233,6 +234,10 @@ public class MyTunesRss {
         }
         startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
+            if (RUN_DATABASE_REFRESH_ON_STARTUP) {
+                RUN_DATABASE_REFRESH_ON_STARTUP = false;
+                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+            }
             while (true) {
                 try {
                     Thread.sleep(3600000); // sleep one hour

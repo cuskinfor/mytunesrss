@@ -5,6 +5,8 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
+import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
+import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 
 import java.sql.SQLException;
@@ -15,8 +17,8 @@ import java.util.Map;
  */
 public class RollListener extends IphotoAlbumListener {
 
-    public RollListener(Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId) throws SQLException {
-        super(watchdogThread, queue, libraryListener, photoIdToPersId);
+    public RollListener(IphotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId) throws SQLException {
+        super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId);
     }
 
 

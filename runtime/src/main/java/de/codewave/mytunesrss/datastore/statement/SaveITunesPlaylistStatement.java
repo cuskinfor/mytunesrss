@@ -9,7 +9,8 @@ package de.codewave.mytunesrss.datastore.statement;
  */
 public class SaveITunesPlaylistStatement extends SavePlaylistStatement {
 
-    public SaveITunesPlaylistStatement(boolean folder) {
+    public SaveITunesPlaylistStatement(String sourceId, boolean folder) {
+        super(sourceId);
         setType(folder ? PlaylistType.ITunesFolder : PlaylistType.ITunes);
     }
 
