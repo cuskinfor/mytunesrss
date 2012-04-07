@@ -56,7 +56,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     private static State myState = State.Idle;
 
-    private List<DatasourceConfig> myFileDatasources = new ArrayList<DatasourceConfig>();
+    private List<DatasourceConfig> myDatasources = new ArrayList<DatasourceConfig>();
 
     private boolean myIgnoreTimestamps;
 
@@ -77,7 +77,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     private void addToDatasources(DatasourceConfig datasource) {
         File file = new File(datasource.getDefinition());
         if (datasource.getType() == DatasourceType.Watchfolder && file.exists()) {
-            for (Iterator<DatasourceConfig> iter = myFileDatasources.iterator(); iter.hasNext();) {
+            for (Iterator<DatasourceConfig> iter = myDatasources.iterator(); iter.hasNext();) {
                 DatasourceConfig eachDatasource = iter.next();
                 File eachFile = new File(eachDatasource.getDefinition());
                 if (eachDatasource.getType() == DatasourceType.Watchfolder && eachFile.exists()) {
@@ -98,22 +98,22 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding folder \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
-            myFileDatasources.add(datasource);
+            myDatasources.add(datasource);
         } else if (datasource.getType() == DatasourceType.Itunes && file.exists()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding iTunes XML file \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
-            myFileDatasources.add(datasource);
+            myDatasources.add(datasource);
         } else if (datasource.getType() == DatasourceType.Iphoto && new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).isFile()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding iPhoto XML file \"" + new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).getAbsolutePath() + "\" to database update sources.");
             }
-            myFileDatasources.add(datasource);
+            myDatasources.add(datasource);
         } else if (datasource.getType() == DatasourceType.Aperture && new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).isFile()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding Aperture XML file \"" + new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).getAbsolutePath() + "\" to database update sources.");
             }
-            myFileDatasources.add(datasource);
+            myDatasources.add(datasource);
         }
     }
 
@@ -264,9 +264,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 return ids;
             }
         });
-        if (myFileDatasources != null && !Thread.currentThread().isInterrupted()) {
+        if (myDatasources != null && !Thread.currentThread().isInterrupted()) {
             try {
-                for (DatasourceConfig datasource : myFileDatasources) {
+                for (DatasourceConfig datasource : myDatasources) {
                     if (datasource.getType() == DatasourceType.Itunes && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromItunes;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningItunes");
