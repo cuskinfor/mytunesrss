@@ -295,6 +295,7 @@
         <sql>ALTER TABLE photo ADD COLUMN source_id VARCHAR(100)</sql>
         <sql>ALTER TABLE photoalbum ADD COLUMN source_id VARCHAR(100)</sql>
         <sql>ALTER TABLE playlist ADD COLUMN source_id VARCHAR(100)</sql>
+        <sql>ALTER TABLE smart_info ADD COLUMN source_id VARCHAR(100)</sql>
     </statement>
 
 </statements>

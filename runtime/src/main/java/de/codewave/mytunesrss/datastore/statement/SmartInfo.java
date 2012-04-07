@@ -22,6 +22,7 @@ public class SmartInfo {
     private MediaType myMediaType;
     private VideoType myVideoType;
     private String myComposerPattern;
+    private String mySourceId;
 
     public String getAlbumPattern() {
         return myAlbumPattern;
@@ -133,6 +134,14 @@ public class SmartInfo {
 
     public void setComposerPattern(String composerPattern) {
         myComposerPattern = composerPattern;
+    }
+
+    public String getSourceId() {
+        return mySourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        mySourceId = sourceId;
     }
 
     public boolean isLuceneCriteria() {

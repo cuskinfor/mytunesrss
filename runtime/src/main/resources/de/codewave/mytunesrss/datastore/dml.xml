@@ -624,9 +624,9 @@
         <parameter name="videotype" type="java.lang.String"/>
         <sql>
             INSERT INTO smart_info (playlist_id, album_pattern, artist_pattern, genre_pattern, series_pattern, title_pattern,
-                                    file_pattern, tag_pattern, comment_pattern, time_min, time_max, mediatype, protected, videotype, composer_pattern)
+                                    file_pattern, tag_pattern, comment_pattern, time_min, time_max, mediatype, protected, videotype, composer_pattern, source_id)
             VALUES (:playlist_id, :album_pattern, :artist_pattern, :genre_pattern, :series_pattern, :title_pattern,
-                    :file_pattern, :tag_pattern, :comment_pattern, :time_min, :time_max, :mediatype, :protected, :videotype, :composer_pattern)
+                    :file_pattern, :tag_pattern, :comment_pattern, :time_min, :time_max, :mediatype, :protected, :videotype, :composer_pattern, :source_id)
         </sql>
     </statement>
 
@@ -638,7 +638,7 @@
                 si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
                 si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.tag_pattern AS tag_pattern, si.comment_pattern AS comment_pattern, si.time_min AS time_min,
                 si.time_max AS time_max, si.mediatype AS mediatype, si.protected AS protected, si.videotype AS videotype, si.series_pattern AS series_pattern,
-                si.composer_pattern AS composer_pattern
+                si.composer_pattern AS composer_pattern, si.source_id AS source_id
             FROM
                 playlist p, smart_info si
             WHERE
@@ -670,6 +670,7 @@
                 protected = :protected,
                 videotype = :videotype,
                 composer_pattern = :composer_pattern
+                source_id = :source_id
             WHERE
                 playlist_id = :playlist_id
         </sql>
@@ -683,7 +684,7 @@
                 si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
                 si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.tag_pattern AS tag_pattern, si.comment_pattern AS comment_pattern, si.time_min AS time_min,
                 si.time_max AS time_max, si.mediatype AS mediatype, si.protected AS protected, si.videotype AS videotype, si.series_pattern AS series_pattern,
-                si.composer_pattern AS composer_pattern
+                si.composer_pattern AS composer_pattern, si.source_id AS source_id
             FROM
                 playlist p, smart_info si
             WHERE
@@ -715,6 +716,7 @@
                 <mediatype>AND t.mediatype = :mediatype</mediatype>
                 <videotype>AND t.videotype = :videotype</videotype>
                 <protected>AND t.protected = :protected</protected>
+                <sourceid>AND t.source_id = :source_id</sourceid>
                 ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name
             ]]>
         </sql>

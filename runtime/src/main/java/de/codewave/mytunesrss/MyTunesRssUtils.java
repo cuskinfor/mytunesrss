@@ -2,10 +2,7 @@ package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
 import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.mytunesrss.config.LdapConfig;
-import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.VideoType;
+import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
@@ -63,6 +60,7 @@ public class MyTunesRssUtils {
     public static final String SYSTEM_PLAYLIST_ID_AUDIO = "system_audio";
     public static final String SYSTEM_PLAYLIST_ID_MOVIES = "system_movies";
     public static final String SYSTEM_PLAYLIST_ID_TVSHOWS = "system_tvshows";
+    public static final String SYSTEM_PLAYLIST_ID_DATASOURCE = "system_ds_";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
     private static RandomAccessFile LOCK_FILE;
@@ -694,6 +692,7 @@ public class MyTunesRssUtils {
             SmartInfo smartInfo = new SmartInfo();
             smartInfo.setMediaType(MediaType.Audio);
             session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_AUDIO, smartInfo));
+            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_AUDIO));
         }
         // movies
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_MOVIES, null, true)).getResultSize() == 0) {
@@ -702,6 +701,7 @@ public class MyTunesRssUtils {
             smartInfo.setMediaType(MediaType.Video);
             smartInfo.setVideoType(VideoType.Movie);
             session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_MOVIES, smartInfo));
+            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_MOVIES));
         }
         // tv shows
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_TVSHOWS, null, true)).getResultSize() == 0) {
@@ -710,7 +710,22 @@ public class MyTunesRssUtils {
             smartInfo.setMediaType(MediaType.Video);
             smartInfo.setVideoType(VideoType.TvShow);
             session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_TVSHOWS, smartInfo));
+            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_TVSHOWS));
         }
-        session.executeStatement(new RefreshSmartPlaylistsStatement());
+        // data sources
+        refreshDatasourcePlaylists(session);
+    }
+
+    public static void refreshDatasourcePlaylists(DataStoreSession session) throws SQLException {
+        // data sources
+        for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
+            if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), null, true)).getResultSize() == 0) {
+                LOGGER.info("Creating system playlist for data source \"" + datasourceConfig.getId() + "\".");
+                SmartInfo smartInfo = new SmartInfo();
+                smartInfo.setSourceId(datasourceConfig.getId());
+                session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), smartInfo));
+                session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId()));
+            }
+        }
     }
 }

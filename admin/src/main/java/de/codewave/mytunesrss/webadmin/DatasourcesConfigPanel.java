@@ -21,8 +21,11 @@ import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import de.codewave.vaadin.validation.FileValidator;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +35,7 @@ import java.util.regex.Pattern;
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasourcesConfigPanel.class);
 
     private Table myDatasources;
     private Button myAddLocalDatasource;
@@ -110,6 +114,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setUploadDir(myUploadDir.getStringValue(null));
         MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
         MyTunesRss.CONFIG.save();
+        try {
+            MyTunesRssUtils.refreshDatasourcePlaylists(MyTunesRss.STORE.getTransaction());
+        } catch (SQLException e) {
+            LOGGER.error("Could not refresh datasource playlists.", e);
+        }
     }
 
     private void setTablePageLengths() {

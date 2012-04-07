@@ -184,6 +184,7 @@
                 videotype VARCHAR(20),
                 protected BOOLEAN,
                 composer_pattern VARCHAR(100),
+                source_id VARCHAR(100),
                 UNIQUE (playlist_id),
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )

@@ -5,6 +5,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,62 +24,84 @@ import java.util.Map;
  */
 public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
+    private SmartInfo mySmartInfo;
+    private String myPlaylistId;
+
+    public RefreshSmartPlaylistsStatement() {
+        // nothing to do here
+    }
+
+    public RefreshSmartPlaylistsStatement(SmartInfo smartInfo, String playlistId) {
+        mySmartInfo = smartInfo;
+        myPlaylistId = playlistId;
+    }
 
     public void execute(Connection connection) throws SQLException {
-        List<SmartPlaylist> smartPlaylists = new DataStoreQuery<List<SmartPlaylist>>() {
-            @Override
-            public List<SmartPlaylist> execute(Connection connection) throws SQLException {
-                return execute(MyTunesRssUtils.createStatement(connection, "findAllSmartPlaylists"), new SmartPlaylistResultBuilder()).getResults();
-            }
-        }.execute(connection);
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
-        for (SmartPlaylist smartPlaylist : smartPlaylists) {
-            try {
-                if (smartPlaylist.getSmartInfo().isLuceneCriteria()) {
-                    Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartPlaylist.getSmartInfo(), 0);
-                    MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
-                    if (!CollectionUtils.isEmpty(trackIds)) {
-                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
-                        statement.setObject("track_id", trackIds);
-                        statement.execute();
-                    }
+        if (mySmartInfo == null || StringUtils.isBlank(myPlaylistId)) {
+            List<SmartPlaylist> smartPlaylists = new DataStoreQuery<List<SmartPlaylist>>() {
+                @Override
+                public List<SmartPlaylist> execute(Connection connection) throws SQLException {
+                    return execute(MyTunesRssUtils.createStatement(connection, "findAllSmartPlaylists"), new SmartPlaylistResultBuilder()).getResults();
                 }
-                Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
-                conditionals.put("lucene", smartPlaylist.getSmartInfo().isLuceneCriteria());
-                conditionals.put("nolucene", !smartPlaylist.getSmartInfo().isLuceneCriteria());
-                conditionals.put("mintime", smartPlaylist.getSmartInfo().getTimeMin() != null);
-                conditionals.put("maxtime", smartPlaylist.getSmartInfo().getTimeMax() != null);
-                conditionals.put("mediatype", smartPlaylist.getSmartInfo().getMediaType() != null);
-                conditionals.put("videotype", smartPlaylist.getSmartInfo().getVideoType() != null);
-                conditionals.put("protected", smartPlaylist.getSmartInfo().getProtected() != null);
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "refreshSmartPlaylist", conditionals);
-                statement.setString("id", smartPlaylist.getPlaylist().getId());
-                if (smartPlaylist.getSmartInfo().getTimeMin() != null) {
-                    statement.setInt("time_min", smartPlaylist.getSmartInfo().getTimeMin());
-                }
-                if (smartPlaylist.getSmartInfo().getTimeMax() != null) {
-                    statement.setInt("time_max", smartPlaylist.getSmartInfo().getTimeMax());
-                }
-                if (smartPlaylist.getSmartInfo().getMediaType() != null) {
-                    statement.setString("mediatype", smartPlaylist.getSmartInfo().getMediaType().name());
-                }
-                if (smartPlaylist.getSmartInfo().getVideoType() != null) {
-                    statement.setString("videotype", smartPlaylist.getSmartInfo().getVideoType().name());
-                }
-                if (smartPlaylist.getSmartInfo().getProtected() != null) {
-                    statement.setBoolean("protected", smartPlaylist.getSmartInfo().getProtected());
-                }
-                statement.execute();
-            } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could update smart playlist.", e);
-                }
-            } catch (ParseException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could update smart playlist.", e);
-                }
+            }.execute(connection);
+            for (SmartPlaylist smartPlaylist : smartPlaylists) {
+                SmartInfo smartInfo = smartPlaylist.getSmartInfo();
+                refreshSmartPlaylist(connection, smartInfo, smartPlaylist.getPlaylist().getId());
             }
+        } else {
+
         }
         LOGGER.info("Smart playlists have been refreshed.");
+    }
+
+    private void refreshSmartPlaylist(Connection connection, SmartInfo smartInfo, String playlistId) throws SQLException {
+        try {
+            if (smartInfo.isLuceneCriteria()) {
+                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartInfo, 0);
+                MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
+                if (!CollectionUtils.isEmpty(trackIds)) {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
+                    statement.setObject("track_id", trackIds);
+                    statement.execute();
+                }
+            }
+            Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+            conditionals.put("lucene", smartInfo.isLuceneCriteria());
+            conditionals.put("nolucene", !smartInfo.isLuceneCriteria());
+            conditionals.put("mintime", smartInfo.getTimeMin() != null);
+            conditionals.put("maxtime", smartInfo.getTimeMax() != null);
+            conditionals.put("mediatype", smartInfo.getMediaType() != null);
+            conditionals.put("videotype", smartInfo.getVideoType() != null);
+            conditionals.put("protected", smartInfo.getProtected() != null);
+            conditionals.put("sourceid", StringUtils.isNotBlank(smartInfo.getSourceId()));
+            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "refreshSmartPlaylist", conditionals);
+            statement.setString("id", playlistId);
+            statement.setString("source_id", smartInfo.getSourceId());
+            if (smartInfo.getTimeMin() != null) {
+                statement.setInt("time_min", smartInfo.getTimeMin());
+            }
+            if (smartInfo.getTimeMax() != null) {
+                statement.setInt("time_max", smartInfo.getTimeMax());
+            }
+            if (smartInfo.getMediaType() != null) {
+                statement.setString("mediatype", smartInfo.getMediaType().name());
+            }
+            if (smartInfo.getVideoType() != null) {
+                statement.setString("videotype", smartInfo.getVideoType().name());
+            }
+            if (smartInfo.getProtected() != null) {
+                statement.setBoolean("protected", smartInfo.getProtected());
+            }
+            statement.execute();
+        } catch (IOException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could update smart playlist.", e);
+            }
+        } catch (ParseException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could update smart playlist.", e);
+            }
+        }
     }
 }
