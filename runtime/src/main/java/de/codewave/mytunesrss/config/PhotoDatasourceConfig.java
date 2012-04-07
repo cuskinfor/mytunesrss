@@ -12,8 +12,8 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig {
 
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
 
-    public PhotoDatasourceConfig(String definition) {
-        super(definition);
+    public PhotoDatasourceConfig(String id, String definition) {
+        super(id, definition);
     }
 
     public PhotoDatasourceConfig(PhotoDatasourceConfig source) {

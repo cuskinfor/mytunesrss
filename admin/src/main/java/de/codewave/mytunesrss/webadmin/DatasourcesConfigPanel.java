@@ -26,6 +26,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
@@ -182,7 +183,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
             @Override
             protected void onFileSelected(File file) {
-                DatasourceConfig newConfig = DatasourceConfig.create(file.getAbsolutePath());
+                DatasourceConfig newConfig = DatasourceConfig.create(UUID.randomUUID().toString(), file.getAbsolutePath());
                 if (newConfig != null) {
                     if (itemId != null) {
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
@@ -193,10 +194,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                             oldConfig.setDefinition(file.getAbsolutePath());
                         } else {
                             // local type has changed
+                            newConfig.setId(oldConfig.getId()); // keep data source ID
                             myConfigs.put((Long) itemId, newConfig);
                         }
                     } else {
-                        addDatasource(getApplication(), DatasourceConfig.create(file.getAbsolutePath()));
+                        addDatasource(getApplication(), newConfig);
                         setTablePageLengths();
                     }
                 } else {

@@ -48,8 +48,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myIgnoreFileMeta = source.isIgnoreFileMeta();
     }
 
-    public WatchfolderDatasourceConfig(String definition) {
-        super(definition);
+    public WatchfolderDatasourceConfig(String id, String definition) {
+        super(id, definition);
     }
 
     @Override

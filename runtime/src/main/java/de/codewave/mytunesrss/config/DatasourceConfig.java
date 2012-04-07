@@ -9,32 +9,44 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.UUID;
 
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
-    public static DatasourceConfig create(String definition) {
+    public static DatasourceConfig create(String id, String definition) {
         File file = new File(definition);
         if (file.isFile() && StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
-            return new ItunesDatasourceConfig(definition);
+            return new ItunesDatasourceConfig(id, definition);
         } else if (file.isDirectory() && new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).isFile()) {
-            return new IphotoDatasourceConfig(definition);
+            return new IphotoDatasourceConfig(id, definition);
         } else if (file.isDirectory() && new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).isFile()) {
-            return new ApertureDatasourceConfig(definition);
+            return new ApertureDatasourceConfig(id, definition);
         } else if (file.isDirectory()) {
-            return new WatchfolderDatasourceConfig(definition);
+            return new WatchfolderDatasourceConfig(id, definition);
         } else {
             return null;
         }
     }
 
     private String myDefinition;
+    private String myId;
 
     public DatasourceConfig(DatasourceConfig source) {
+        myId = source.getId();
         myDefinition = source.getDefinition();
     }
 
-    public DatasourceConfig(String definition) {
+    public DatasourceConfig(String id, String definition) {
+        setId(id);
         setDefinition(definition);
+    }
+
+    public String getId() {
+        return myId;
+    }
+
+    public void setId(String id) {
+        myId = id;
     }
 
     public String getDefinition() {

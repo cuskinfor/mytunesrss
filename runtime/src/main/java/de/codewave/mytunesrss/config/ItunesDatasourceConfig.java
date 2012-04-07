@@ -16,8 +16,8 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
     private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
 
-    public ItunesDatasourceConfig(String definition) {
-        super(definition);
+    public ItunesDatasourceConfig(String id, String definition) {
+        super(id, definition);
     }
 
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {

@@ -70,7 +70,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         }
         if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getUploadDir())) {
-            addToDatasources(new WatchfolderDatasourceConfig(MyTunesRss.CONFIG.getUploadDir()));
+            addToDatasources(new WatchfolderDatasourceConfig("system_upload_folder", MyTunesRss.CONFIG.getUploadDir()));
         }
     }
 

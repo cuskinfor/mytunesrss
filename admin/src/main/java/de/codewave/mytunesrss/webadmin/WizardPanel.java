@@ -20,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.UUID;
 
 public class WizardPanel extends Panel implements Button.ClickListener {
 
@@ -75,20 +76,23 @@ public class WizardPanel extends Panel implements Button.ClickListener {
         } else if (clickEvent.getSource() == myFinishButton) {
             if (isAnyEmpty(myDatasourcePath, myUsername, myPassword, myRetypePassword)) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("wizardPanel.error.allFieldsMandatory");
-            } else if (DatasourceConfig.create(myDatasourcePath.getStringValue(null)) == null) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.invalidDatasourcePath");
-            } else if (!myPassword.getStringValue("1").equals(myRetypePassword.getStringValue("2"))) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editUserConfigPanel.error.retypePassword");
             } else {
-                MyTunesRss.CONFIG.setDatasources(Collections.singletonList(DatasourceConfig.create(myDatasourcePath.getStringValue(null))));
-                User user = new User(myUsername.getStringValue(null));
-                user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
-                user.setEmptyPassword(false);
-                MyTunesRss.CONFIG.addUser(user);
-                MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
-                MyTunesRss.CONFIG.save();
-                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());
+                DatasourceConfig datasourceConfig = DatasourceConfig.create(UUID.randomUUID().toString(), myDatasourcePath.getStringValue(null));
+                if (datasourceConfig == null) {
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.invalidDatasourcePath");
+                } else if (!myPassword.getStringValue("1").equals(myRetypePassword.getStringValue("2"))) {
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editUserConfigPanel.error.retypePassword");
+                } else {
+                    MyTunesRss.CONFIG.setDatasources(Collections.singletonList(datasourceConfig));
+                    User user = new User(myUsername.getStringValue(null));
+                    user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+                    user.setEmptyPassword(false);
+                    MyTunesRss.CONFIG.addUser(user);
+                    MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
+                    MyTunesRss.CONFIG.save();
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());
+                }
             }
         } else if (clickEvent.getSource() == mySkipButton) {
             MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
