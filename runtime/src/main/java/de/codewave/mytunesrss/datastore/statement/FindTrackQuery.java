@@ -35,13 +35,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
         return query;
     }
 
@@ -49,12 +46,9 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
         return query;
     }
 
@@ -70,10 +64,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.myAlbumArtists[i] = albumArtists[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Audio);
         return query;
     }
@@ -86,10 +77,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.myArtists[i] = artists[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Audio);
         return query;
     }
@@ -102,10 +90,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             query.myGenres[i] = genres[i].toLowerCase();
         }
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Audio);
         return query;
     }
@@ -114,10 +99,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = SortOrder.Movie;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Video);
         query.setVideoType(VideoType.Movie);
         return query;
@@ -127,10 +109,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = SortOrder.TvShow;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Video);
         query.setVideoType(VideoType.TvShow);
         return query;
@@ -140,10 +119,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = SortOrder.TvShow;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Video);
         query.setVideoType(VideoType.TvShow);
         query.setSeries(series);
@@ -154,10 +130,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = SortOrder.TvShow;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        query.myNoAudio = !user.isAudio();
-        query.myNoMovies = !user.isMovies();
-        query.myNoTvShows = !user.isTvShows();
+        query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         query.setMediaTypes(MediaType.Video);
         query.setVideoType(VideoType.TvShow);
         query.setSeries(series);
@@ -178,9 +151,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private VideoType myVideoType;
     private String mySeries;
     private Integer mySeason;
-    private boolean myNoAudio;
-    private boolean myNoMovies;
-    private boolean myNoTvShows;
 
     private FindTrackQuery() {
         // intentionally left blank
@@ -232,9 +202,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("tvshow", mySeries != null);
         conditionals.put("tvshowseason", mySeries != null && mySeason != null);
         conditionals.put("photosort", mySortOrder == SortOrder.Photos);
-        conditionals.put("noaudio", myNoAudio);
-        conditionals.put("nomovies", myNoMovies);
-        conditionals.put("notvshows", myNoTvShows);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);

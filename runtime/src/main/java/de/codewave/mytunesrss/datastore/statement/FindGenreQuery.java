@@ -32,7 +32,7 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
         myIncludeHidden = includeHidden;
         if (user != null) {
             myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-            myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+            myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         }
     }
 

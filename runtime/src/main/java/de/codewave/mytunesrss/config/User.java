@@ -316,6 +316,20 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         return getParent() != null ? getParent().getExcludedPlaylistIds() : new ArrayList<String>(myExcludedPlaylistIds);
     }
 
+    public List<String> getEffectiveExcludedPlaylistIds() {
+        List<String> ids = getExcludedPlaylistIds();
+        if (!isAudio()) {
+            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_AUDIO);
+        }
+        if (!isMovies()) {
+            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_MOVIES);
+        }
+        if (!isTvShows()) {
+            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_TVSHOWS);
+        }
+        return ids;
+    }
+
     public void addExcludedPlaylistId(String playlistId) {
         myExcludedPlaylistIds.add(playlistId);
     }

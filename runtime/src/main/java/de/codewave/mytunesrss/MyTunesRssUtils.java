@@ -3,7 +3,9 @@ package de.codewave.mytunesrss;
 import com.ibm.icu.text.Normalizer;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.config.LdapConfig;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
@@ -57,6 +59,11 @@ import java.util.concurrent.atomic.AtomicLong;
  * de.codewave.mytunesrss.MyTunesRssUtils
  */
 public class MyTunesRssUtils {
+
+    public static final String SYSTEM_PLAYLIST_ID_AUDIO = "system_audio";
+    public static final String SYSTEM_PLAYLIST_ID_MOVIES = "system_movies";
+    public static final String SYSTEM_PLAYLIST_ID_TVSHOWS = "system_tvshows";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
     private static RandomAccessFile LOCK_FILE;
 
@@ -677,5 +684,32 @@ public class MyTunesRssUtils {
             user.retainPlaylists(playlistIds);
             user.retainPhotoAlbums(photoAlbumIds);
         }
+    }
+
+    public static void createMissingSystemPlaylists(DataStoreSession session) throws SQLException {
+        // audio
+        if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_AUDIO, null, true)).getResultSize() == 0) {
+            LOGGER.info("Creating system playlist for audio tracks.");
+            SmartInfo smartInfo = new SmartInfo();
+            smartInfo.setMediaType(MediaType.Audio);
+            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_AUDIO, smartInfo));
+        }
+        // movies
+        if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_MOVIES, null, true)).getResultSize() == 0) {
+            LOGGER.info("Creating system playlist for movies.");
+            SmartInfo smartInfo = new SmartInfo();
+            smartInfo.setMediaType(MediaType.Video);
+            smartInfo.setVideoType(VideoType.Movie);
+            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_MOVIES, smartInfo));
+        }
+        // tv shows
+        if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_TVSHOWS, null, true)).getResultSize() == 0) {
+            LOGGER.info("Creating system playlist for tv shows.");
+            SmartInfo smartInfo = new SmartInfo();
+            smartInfo.setMediaType(MediaType.Video);
+            smartInfo.setVideoType(VideoType.TvShow);
+            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_TVSHOWS, smartInfo));
+        }
+        session.executeStatement(new RefreshSmartPlaylistsStatement());
     }
 }

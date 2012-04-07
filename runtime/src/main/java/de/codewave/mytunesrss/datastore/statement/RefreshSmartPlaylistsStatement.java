@@ -78,7 +78,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     LOGGER.error("Could update smart playlist.", e);
                 }
             }
-            LOGGER.info("Smart playlists have been refreshed.");
         }
+        LOGGER.info("Smart playlists have been refreshed.");
     }
 }

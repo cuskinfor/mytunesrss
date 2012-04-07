@@ -299,7 +299,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                     CheckBox excluded = new CheckBox();
                     excluded.setValue(myUser.getExcludedPlaylistIds().contains(playlist.getId()));
                     CheckBox hidden = new CheckBox();
-                    hidden.setValue(myUser.getHiddenPlaylistIds().contains(playlist.getId()) || playlist.isHidden() || (playlist.isUserPrivate() && !playlist.getUserOwner().equals(myUser.getName())));
+                    hidden.setValue(myUser.getHiddenPlaylistIds().contains(playlist.getId()) || playlist.isHidden() || (playlist.isUserPrivate() && !myUser.getName().equals(playlist.getUserOwner())));
                     hidden.setEnabled(!playlist.isHidden() && !playlist.isUserPrivate());
                     myPlaylistsRestrictions.addItem(new Object[]{restricted, excluded, hidden, playlist.getName()}, playlist);
                 }

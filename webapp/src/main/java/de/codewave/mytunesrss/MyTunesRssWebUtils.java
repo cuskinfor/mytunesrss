@@ -499,15 +499,12 @@ public class MyTunesRssWebUtils {
                 conditionals.put("sourceplaylist", StringUtils.isNotBlank(webConfig.getRandomSource()));
                 conditionals.put("mediatype", StringUtils.isNotBlank(webConfig.getRandomMediaType()));
                 conditionals.put("unprotectedonly", !webConfig.isRandomProtected());
-                conditionals.put("noaudio", !user.isAudio());
-                conditionals.put("nomovies", !user.isMovies());
-                conditionals.put("notvshows", !user.isTvShows());
                 SmartStatement query = MyTunesRssUtils.createStatement(connection, "findRandomTracks", conditionals, ResultSetType.TYPE_SCROLL_INSENSITIVE);
                 query.setString("mediatype", webConfig.getRandomMediaType());
                 query.setInt("maxCount", webConfig.getRandomPlaylistSize());
                 query.setString("sourcePlaylistId", webConfig.getRandomSource());
                 query.setItems("restrictedPlaylistIds", user.getRestrictedPlaylistIds());
-                query.setItems("excludedPlaylistIds", user.getExcludedPlaylistIds());
+                query.setItems("excludedPlaylistIds", user.getEffectiveExcludedPlaylistIds());
                 return execute(query, new ResultBuilder<String>() {
                     public String create(ResultSet resultSet) throws SQLException {
                         return resultSet.getString("ID");

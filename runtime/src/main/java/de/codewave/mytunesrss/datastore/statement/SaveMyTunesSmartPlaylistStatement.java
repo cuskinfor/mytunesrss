@@ -26,15 +26,7 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        if (StringUtils.isEmpty(myId)) {
-            ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextPlaylistId").executeQuery();
-            if (resultSet.next()) {
-                int playlistId = resultSet.getInt("ID");
-                setId("MyTunesRSS" + playlistId);
-            }
-        } else {
-            setUpdate(true);
-        }
+        handleIdAndUpdate(connection);
         super.execute(connection);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, isUpdate() ? "updateSmartInfo" : "insertSmartInfo");
         statement.setString("playlist_id", getId());
@@ -63,5 +55,17 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
             statement.setString("videotype", mySmartInfo.getVideoType().name());
         }
         statement.execute();
+    }
+
+    protected void handleIdAndUpdate(Connection connection) throws SQLException {
+        if (StringUtils.isEmpty(myId)) {
+            ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextPlaylistId").executeQuery();
+            if (resultSet.next()) {
+                int playlistId = resultSet.getInt("ID");
+                setId("MyTunesRSS" + playlistId);
+            }
+        } else {
+            setUpdate(true);
+        }
     }
 }

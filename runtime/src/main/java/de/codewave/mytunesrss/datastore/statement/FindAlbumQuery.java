@@ -47,7 +47,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
         myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         mySortByYear = sortByYear;
         myType = type;
     }

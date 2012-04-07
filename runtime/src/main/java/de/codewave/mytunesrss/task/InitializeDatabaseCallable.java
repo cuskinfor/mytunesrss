@@ -68,6 +68,12 @@ public class InitializeDatabaseCallable implements Callable<Void> {
             } finally {
                 session.rollback();
             }
+            try {
+                MyTunesRssUtils.createMissingSystemPlaylists(session);
+                session.commit();
+            } finally {
+                session.rollback();
+            }
         } catch (IOException e) {
             LOGGER.error("Could not initialize database.", e);
             MyTunesRss.STORE.destroy();

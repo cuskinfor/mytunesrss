@@ -34,9 +34,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
-    private boolean myNoAudio;
-    private boolean myNoMovies;
-    private boolean myNoTvShows;
 
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
         myId = id;
@@ -46,10 +43,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder) {
         this(id, sortOrder);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        myNoAudio = !user.isAudio();
-        myNoMovies = !user.isMovies();
-        myNoTvShows = !user.isTvShows();
+        myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
     }
 
     public void setResultSetType(ResultSetType resultSetType) {
@@ -61,9 +55,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty() && (myRestrictedPlaylistIds.size() > 1 || !myRestrictedPlaylistIds.get(0).equals(myId)));
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
-        conditionals.put("noaudio", myNoAudio);
-        conditionals.put("nomovies", myNoMovies);
-        conditionals.put("notvshows", myNoTvShows);
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId) || PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals, myResultSetType);
             conditionals.put("albumorder", PSEUDO_ID_ALL_BY_ALBUM.equals(myId));
