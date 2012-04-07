@@ -141,6 +141,7 @@ public class MyTunesRssUtils {
     public static void shutdownGracefully() {
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
         LOGGER.debug("Shutting down gracefully.");
+        MyTunesRss.CONFIG.save();
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();
         }

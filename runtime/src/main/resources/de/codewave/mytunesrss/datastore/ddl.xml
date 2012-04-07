@@ -23,6 +23,7 @@
                 protected BOOLEAN,
                 mediatype VARCHAR(20),
                 source VARCHAR(20),
+                source_id VARCHAR(100),
                 genre VARCHAR(255),
                 lower_genre VARCHAR(255),
                 mp4codec VARCHAR(4),
@@ -54,6 +55,7 @@
                 date NUMERIC(19),
                 image_hash CHAR(24),
                 last_image_update NUMERIC(19),
+                source_id VARCHAR(100),
                 UNIQUE (id)
             )
         </sql>
@@ -64,6 +66,7 @@
                 first_date NUMERIC(19),
                 last_date NUMERIC(19),
                 photo_count INTEGER,
+                source_id VARCHAR(100),
                 UNIQUE (id)
             )
         </sql>
@@ -86,6 +89,7 @@
                 user_owner VARCHAR(256),
                 ts_create NUMERIC(19),
                 container_id VARCHAR(100),
+                source_id VARCHAR(100),
                 updated BOOLEAN,
                 UNIQUE (id)
             )
