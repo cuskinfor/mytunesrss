@@ -41,11 +41,13 @@ public class FindPhotoQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ph
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("excluded", myUser != null && !myUser.getExcludedPhotoAlbumIds().isEmpty());
         conditionals.put("restricted", myUser != null && !myUser.getRestrictedPhotoAlbumIds().isEmpty());
+        conditionals.put("excludedDatasources", myUser != null && !myUser.getExcludedDataSourceIds().isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPhotos", conditionals);
         statement.setString("album_id", myAlbumId);
         if (myUser != null) {
             statement.setItems("restrictedPhotoAlbumIds", myUser.getRestrictedPhotoAlbumIds());
             statement.setItems("excludedPhotoAlbumIds", myUser.getExcludedPhotoAlbumIds());
+            statement.setItems("excludedDataSourceIds", myUser.getExcludedDataSourceIds());
         }
         return execute(statement, new ResultBuilder<Photo>() {
             public Photo create(ResultSet resultSet) throws SQLException {

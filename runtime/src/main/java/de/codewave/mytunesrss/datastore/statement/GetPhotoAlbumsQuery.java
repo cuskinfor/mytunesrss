@@ -26,6 +26,7 @@ public class GetPhotoAlbumsQuery extends DataStoreQuery<DataStoreQuery.QueryResu
 
     private List<String> myRestrictedPhotoAlbumIds = Collections.emptyList();
     private List<String> myExcludedPhotoAlbumIds = Collections.emptyList();
+    private List<String> myExcludedDataSourceIds = Collections.emptyList();
 
     /**
      * Get all photo albums
@@ -42,16 +43,19 @@ public class GetPhotoAlbumsQuery extends DataStoreQuery<DataStoreQuery.QueryResu
     public GetPhotoAlbumsQuery(User user) {
         myRestrictedPhotoAlbumIds = user.getRestrictedPhotoAlbumIds();
         myExcludedPhotoAlbumIds = user.getExcludedPhotoAlbumIds();
+        myExcludedDataSourceIds = user.getExcludedDataSourceIds();
     }
 
     public QueryResult<PhotoAlbum> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("excluded", !myExcludedPhotoAlbumIds.isEmpty());
         conditionals.put("restricted", !myRestrictedPhotoAlbumIds.isEmpty());
-        conditionals.put("restricted_or_excluded", !myRestrictedPhotoAlbumIds.isEmpty() || !myExcludedPhotoAlbumIds.isEmpty());
+        conditionals.put("excludedDatasources", !myExcludedDataSourceIds.isEmpty());
+        conditionals.put("restricted_or_excluded", !myRestrictedPhotoAlbumIds.isEmpty() || !myExcludedPhotoAlbumIds.isEmpty() || !myExcludedDataSourceIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoAlbums", conditionals);
         statement.setItems("restrictedPhotoAlbumIds", myRestrictedPhotoAlbumIds);
         statement.setItems("excludedPhotoAlbumIds", myExcludedPhotoAlbumIds);
+        statement.setItems("excludedDataSourceIds", myExcludedDataSourceIds);
         return execute(statement, new ResultBuilder<PhotoAlbum>() {
             public PhotoAlbum create(ResultSet resultSet) throws SQLException {
                 PhotoAlbum photoAlbum = new PhotoAlbum(

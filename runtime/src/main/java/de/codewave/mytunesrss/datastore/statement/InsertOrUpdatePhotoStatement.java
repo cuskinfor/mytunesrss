@@ -71,7 +71,6 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
 
     public void clear() {
         myId = null;
-        mySourceId = null;
         myName = null;
         myDate = 0L;
         myFile = null;

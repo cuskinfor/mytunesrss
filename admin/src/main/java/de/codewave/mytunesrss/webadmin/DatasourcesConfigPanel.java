@@ -13,6 +13,7 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -114,10 +115,13 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setUploadDir(myUploadDir.getStringValue(null));
         MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
         MyTunesRss.CONFIG.save();
+        DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
-            MyTunesRssUtils.refreshDatasourcePlaylists(MyTunesRss.STORE.getTransaction());
+            MyTunesRssUtils.refreshDatasourcePlaylists(session);
         } catch (SQLException e) {
             LOGGER.error("Could not refresh datasource playlists.", e);
+        } finally {
+            session.rollback();
         }
     }
 

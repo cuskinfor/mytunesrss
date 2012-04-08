@@ -472,6 +472,9 @@
                     WHERE elpa.album_id IN (:excludedPhotoAlbumIds[])
                 )
             </excluded>
+            <excludedDatasources>
+                AND p.source_id NOT IN (:excludedDataSourceIds[])
+            </excludedDatasources>
             GROUP BY id, name, file, date, image_hash, last_image_update
             ORDER BY date, name
             ]]>
@@ -910,6 +913,14 @@
                     WHERE elpa.album_id IN (:excludedPhotoAlbumIds[])
                 )
             </excluded>
+            <excludedDatasources>
+                AND pa.source_id NOT IN (:excludedDataSourceIds[])
+                AND lpa.album_id = pa.id
+                AND lpa.photo_id NOT IN (
+                    SELECT edsp.id FROM photo edsp
+                    WHERE edsp.source_id IN (:excludedDataSourceIds[])
+                )
+            </excludedDatasources>
             GROUP BY id, name, first_date, last_date
             ORDER BY first_date, last_date, name
             ]]>
