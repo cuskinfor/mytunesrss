@@ -35,7 +35,10 @@ public class FileType {
         types.add(new FileType(true, "m4b", "audio/x-m4b", MediaType.Audio, false));
         types.add(new FileType(true, "mp3", "audio/mp3", MediaType.Audio, false));
         types.add(new FileType(true, "jpg", "image/jpeg", MediaType.Image, false));
+        types.add(new FileType(true, "jpeg", "image/jpeg", MediaType.Image, false));
         types.add(new FileType(true, "gif", "image/gif", MediaType.Image, false));
+        types.add(new FileType(true, "tif", "image/tiff", MediaType.Image, false));
+        types.add(new FileType(true, "tiff", "image/tiff", MediaType.Image, false));
         types.add(new FileType(true, "png", "image/png", MediaType.Image, false));
         Collections.sort(types, new Comparator<FileType>() {
             public int compare(FileType o1, FileType o2) {
