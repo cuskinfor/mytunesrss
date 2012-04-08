@@ -213,7 +213,6 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                     public void clicked(Button button) {
                         if (button == yes) {
                             MyTunesRss.CONFIG.removeUser(user);
-                            // TODO: remove playlists owned by this user?
                             MyTunesRss.CONFIG.save();
                             initUsersAndGroupsTable();
                         }
@@ -232,7 +231,6 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                     public void clicked(Button button) {
                         if (button == yes) {
                             MyTunesRss.CONFIG.removeUser(group);
-                            // TODO: remove playlists owned by this user?
                             MyTunesRss.CONFIG.save();
                             initUsersAndGroupsTable();
                         }
