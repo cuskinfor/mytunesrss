@@ -9,6 +9,12 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-353] Import photos only if file is supported (import configuration)
+            </action>
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-354] Create default file types for photos
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-350] Configuration for excluding data sources from a user
             </action>
             <action dev="mdescher" type="add">
