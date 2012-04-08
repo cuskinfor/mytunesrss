@@ -12,6 +12,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -67,6 +68,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Table myPermissions;
     private TreeTable myPlaylistsRestrictions;
     private Table myPhotoAlbumRestrictions;
+    private Table myDatasourceExclusions;
     private Table myForceTranscoders;
     private SmartTextField mySearchFuzziness;
     private Select myDownloadLimitType;
@@ -90,7 +92,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     public void attach() {
         super.attach();
-        int rows = myUser.getParent() == null ? 7 : 4;
+        int rows = myUser.getParent() == null ? 8 : 5;
         init(getBundleString("editUserConfigPanel.caption"), getComponentFactory().createGridLayout(1, rows, true, true));
         myUsername = getComponentFactory().createTextField("editUserConfigPanel.username", new UniqueUsernameValidator());
         myPassword = getComponentFactory().createPasswordTextField("editUserConfigPanel.password");
@@ -169,6 +171,19 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.setPageLength(Math.min(myPermissions.size(), 10));
         panel = new Panel(getBundleString("editUserConfigPanel.caption.permissions"));
         panel.addComponent(myPermissions);
+        if (myUser.getParent() == null) {
+            addComponent(panel);
+        }
+        myDatasourceExclusions = new Table();
+        myDatasourceExclusions.setCacheRate(50);
+        myDatasourceExclusions.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        myDatasourceExclusions.addContainerProperty("excluded", CheckBox.class, null, getBundleString("editUserConfigPanel.datasource.excluded"), null, null);
+        myDatasourceExclusions.addContainerProperty("name", String.class, null, getBundleString("editUserConfigPanel.datasource.name"), null, null);
+        myDatasourceExclusions.setColumnExpandRatio("name", 1);
+        myDatasourceExclusions.setEditable(false);
+        myDatasourceExclusions.setSortContainerPropertyId("name");
+        panel = new Panel(getBundleString("editUserConfigPanel.caption.excludedDatasources"));
+        panel.addComponent(myDatasourceExclusions);
         if (myUser.getParent() == null) {
             addComponent(panel);
         }
@@ -337,6 +352,15 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
                 session.rollback();
             }
             myPhotoAlbumRestrictions.setPageLength(Math.min(photoAlbums.size(), 10));
+            myDatasourceExclusions.removeAllItems();
+            List<DatasourceConfig> datasourceConfigs = MyTunesRss.CONFIG.getDatasources();
+            for (DatasourceConfig datasourceConfig : datasourceConfigs) {
+                CheckBox excluded = new CheckBox();
+                excluded.setValue(myUser.getExcludedDataSourceIds().contains(datasourceConfig.getId()));
+                myDatasourceExclusions.addItem(new Object[]{excluded, datasourceConfig.getDefinition()}, datasourceConfig.getId());
+            }
+            myDatasourceExclusions.sort();
+            myDatasourceExclusions.setPageLength(Math.min(datasourceConfigs.size(), 10));
             myForceTranscoders.removeAllItems();
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 CheckBox active = new CheckBox();
@@ -449,6 +473,14 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
         myUser.setRestrictedPhotoAlbumIds(restricted);
         myUser.setExcludedPhotoAlbumIds(excluded);
+        excluded = new HashSet<String>();
+        for (Object itemId : myDatasourceExclusions.getItemIds()) {
+            String id = (String) itemId;
+            if ((Boolean) getTableCellPropertyValue(myDatasourceExclusions, id, "excluded")) {
+                excluded.add(id);
+            }
+        }
+        myUser.setExcludedDataSourceIds(excluded);
         myUser.clearForceTranscoders();
         for (Object transcoderName : myForceTranscoders.getItemIds()) {
             if ((Boolean) getTableCellPropertyValue(myForceTranscoders, transcoderName, "active")) {

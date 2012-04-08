@@ -693,6 +693,7 @@ public class MyTunesRssUtils {
             smartInfo.setMediaType(MediaType.Audio);
             session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_AUDIO, smartInfo));
             session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_AUDIO));
+            session.commit();
         }
         // movies
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_MOVIES, null, true)).getResultSize() == 0) {
@@ -702,6 +703,7 @@ public class MyTunesRssUtils {
             smartInfo.setVideoType(VideoType.Movie);
             session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_MOVIES, smartInfo));
             session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_MOVIES));
+            session.commit();
         }
         // tv shows
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_TVSHOWS, null, true)).getResultSize() == 0) {
@@ -711,6 +713,7 @@ public class MyTunesRssUtils {
             smartInfo.setVideoType(VideoType.TvShow);
             session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_TVSHOWS, smartInfo));
             session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_TVSHOWS));
+            session.commit();
         }
         // data sources
         refreshDatasourcePlaylists(session);
@@ -725,6 +728,7 @@ public class MyTunesRssUtils {
                 smartInfo.setSourceId(datasourceConfig.getId());
                 session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), smartInfo));
                 session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId()));
+                session.commit();
             }
         }
     }

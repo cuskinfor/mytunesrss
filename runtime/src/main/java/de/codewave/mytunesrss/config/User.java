@@ -91,6 +91,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private Set<String> myHiddenPlaylistIds = new HashSet<String>();
     private Set<String> myRestrictedPhotoAlbumIds = new HashSet<String>();
     private Set<String> myExcludedPhotoAlbumIds = new HashSet<String>();
+    private Set<String> myExcludedDataSourceIds = new HashSet<String>();
     private boolean mySharedUser;
     private Map<String, String> myWebConfigs = new HashMap<String, String>();
     private boolean myCreatePlaylists = true;
@@ -327,6 +328,9 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         if (!isTvShows()) {
             ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_TVSHOWS);
         }
+        for (String id : getExcludedDataSourceIds()) {
+            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_DATASOURCE + id);
+        }
         return ids;
     }
 
@@ -388,6 +392,22 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setExcludedPhotoAlbumIds(Set<String> photoAlbumIds) {
         myExcludedPhotoAlbumIds = new HashSet<String>(photoAlbumIds);
+    }
+
+    public List<String> getExcludedDataSourceIds() {
+        return getParent() != null ? getParent().getExcludedDataSourceIds() : new ArrayList<String>(myExcludedDataSourceIds);
+    }
+
+    public void addExcludedDataSourceId(String dataSourceId) {
+        myExcludedDataSourceIds.add(dataSourceId);
+    }
+
+    public void removeExcludedDataSourceId(String dataSourceId) {
+        myExcludedDataSourceIds.remove(dataSourceId);
+    }
+
+    public void setExcludedDataSourceIds(Set<String> dataSourceIds) {
+        myExcludedDataSourceIds = new HashSet<String>(dataSourceIds);
     }
 
     public boolean isSharedUser() {
@@ -685,6 +705,10 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         while (photoAlbumIdIterator.hasNext()) {
             addExcludedPhotoAlbumId(JXPathUtils.getStringValue(photoAlbumIdIterator.next(), ".", null));
         }
+        Iterator<JXPathContext> dataSourceIdIterator = JXPathUtils.getContextIterator(settings, "datasources/excluded");
+        while (dataSourceIdIterator.hasNext()) {
+            addExcludedDataSourceId(JXPathUtils.getStringValue(dataSourceIdIterator.next(), ".", null));
+        }
         setSharedUser(JXPathUtils.getBooleanValue(settings, "shared", false));
         Iterator<JXPathContext> webConfigIterator = JXPathUtils.getContextIterator(settings, "webConfigs/config");
         myWebConfigs.clear();
@@ -776,6 +800,13 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             }
             for (String photoAlbumId : getExcludedPhotoAlbumIds()) {
                 photoalbums.appendChild(DOMUtils.createTextElement(settings, "excluded", photoAlbumId));
+            }
+        }
+        if (!CollectionUtils.isEmpty(getExcludedDataSourceIds())) {
+            Element datasources = settings.createElement("datasources");
+            users.appendChild(datasources);
+            for (String dataSourceId : getExcludedDataSourceIds()) {
+                datasources.appendChild(DOMUtils.createTextElement(settings, "excluded", dataSourceId));
             }
         }
         users.appendChild(DOMUtils.createBooleanElement(settings, "shared", isSharedUser()));
