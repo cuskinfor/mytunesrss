@@ -11,6 +11,7 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
@@ -49,7 +50,7 @@ public class LuceneTrackService {
             LOGGER.debug("Indexing all tracks.");
             long start = System.currentTimeMillis();
             directory = getDirectory();
-            Analyzer analyzer = new WhitespaceAnalyzer();
+            Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
             iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
             session = MyTunesRss.STORE.getTransaction();
             final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
@@ -80,7 +81,7 @@ public class LuceneTrackService {
                     iwriter.addDocument(document);
                 }
             }
-            iwriter.optimize();
+            //iwriter.optimize();
             LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
         } finally {
             if (iwriter != null) {
@@ -138,7 +139,7 @@ public class LuceneTrackService {
             LOGGER.debug("Indexing " + trackIds.length + " tracks.");
             long start = System.currentTimeMillis();
             directory = getDirectory();
-            Analyzer analyzer = new WhitespaceAnalyzer();
+            Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
             iwriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(300));
             final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
             session = MyTunesRss.STORE.getTransaction();
@@ -174,7 +175,7 @@ public class LuceneTrackService {
             for (String deletedTrack : deletedTracks) {
                 iwriter.deleteDocuments(new Term("id", deletedTrack));
             }
-            iwriter.optimize();
+            //iwriter.optimize();
             LOGGER.debug("Finished indexing " + trackIds.length + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
         } finally {
             if (iwriter != null) {
@@ -195,7 +196,8 @@ public class LuceneTrackService {
         Collection<String> trackIds;
         try {
             directory = getDirectory();
-            isearcher = new IndexSearcher(directory);
+            isearcher = new IndexSearcher(IndexReader.open(directory));
+            isearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = createQuery(searchTerms, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
             trackIds = new HashSet<String>();
@@ -218,12 +220,15 @@ public class LuceneTrackService {
         IndexSearcher isearcher = null;
         try {
             directory = getDirectory();
-            isearcher = new IndexSearcher(directory);
+            isearcher = new IndexSearcher(IndexReader.open(directory));
+            isearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = null;
             try {
-                QueryParser parser = new QueryParser(Version.LUCENE_CURRENT, "name", new WhitespaceAnalyzer());
+                QueryParser parser = new QueryParser(Version.LUCENE_35, "name", new WhitespaceAnalyzer(Version.LUCENE_35));
                 parser.setAllowLeadingWildcard(true);
                 luceneQuery = parser.parse(searchExpression);
+            } catch (ParseException e) {
+                throw new LuceneQueryParserException("Could not parse query string.", e);
             } catch (Exception e) {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
@@ -244,19 +249,23 @@ public class LuceneTrackService {
     }
 
     private Query createQuery(String[] searchTerms, int fuzziness) {
-        BooleanQuery andQuery = new BooleanQuery();
+        BooleanQuery orQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
-            BooleanQuery orQuery = new BooleanQuery();
             for (String field : new String[]{"name", "album", "artist", "series", "comment", "tags", "album_artist", "composer"}) {
                 String escapedSearchTerm = QueryParser.escape(searchTerm);
-                orQuery.add(new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*")), BooleanClause.Occur.SHOULD);
+                Query query = new WildcardQuery(new Term(field, escapedSearchTerm));
+                query.setBoost(100f);
+                orQuery.add(query, BooleanClause.Occur.SHOULD);
+                query = new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*"));
+                query.setBoost(50f);
+                orQuery.add(query, BooleanClause.Occur.SHOULD);
                 if (fuzziness > 0) {
                     orQuery.add(new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
                 }
             }
-            andQuery.add(orQuery, BooleanClause.Occur.MUST);
         }
-        return andQuery;
+        LOGGER.debug("QUERY for \"" + StringUtils.join(searchTerms, " ") + "\" (" + fuzziness + "): " + orQuery);
+        return orQuery;
     }
 
     public Collection<String> searchTrackIds(SmartInfo smartInfo, int fuzziness) throws IOException, ParseException {
@@ -265,7 +274,7 @@ public class LuceneTrackService {
         Collection<String> trackIds;
         try {
             directory = getDirectory();
-            isearcher = new IndexSearcher(directory);
+            isearcher = new IndexSearcher(IndexReader.open(directory));
             Query luceneQuery = createQuery(smartInfo, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
             trackIds = new HashSet<String>();
