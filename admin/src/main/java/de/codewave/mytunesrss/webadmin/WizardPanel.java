@@ -90,7 +90,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                     MyTunesRss.CONFIG.addUser(user);
                     MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
                     MyTunesRss.CONFIG.save();
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());
                 }
             }

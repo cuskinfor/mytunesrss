@@ -236,7 +236,7 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
                 RUN_DATABASE_REFRESH_ON_STARTUP = false;
-                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
             }
             while (true) {
                 try {

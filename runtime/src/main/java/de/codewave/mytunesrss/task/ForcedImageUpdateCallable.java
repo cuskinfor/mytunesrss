@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.task;
 
+import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
@@ -16,13 +17,14 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 
 public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ForcedImageUpdateCallable.class);
 
-    public ForcedImageUpdateCallable(boolean ignoreTimestamps) {
-        super(ignoreTimestamps);
+    public ForcedImageUpdateCallable(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
+        super(dataSources, ignoreTimestamps);
     }
 
     @Override

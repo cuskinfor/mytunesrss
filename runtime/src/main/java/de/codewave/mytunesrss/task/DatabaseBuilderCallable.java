@@ -62,39 +62,16 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     protected DatabaseUpdateQueue myQueue = new DatabaseUpdateQueue(2500);
 
-    public DatabaseBuilderCallable(boolean ignoreTimestamps) {
+    public DatabaseBuilderCallable(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
         myIgnoreTimestamps = ignoreTimestamps;
-        if (MyTunesRss.CONFIG.getDatasources() != null && MyTunesRss.CONFIG.getDatasources().size() > 0) {
-            for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
-                addToDatasources(datasource);
-            }
-        }
-        if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getUploadDir())) {
-            addToDatasources(new WatchfolderDatasourceConfig("system_upload_folder", MyTunesRss.CONFIG.getUploadDir()));
+        for (DatasourceConfig datasource : dataSources) {
+            addToDatasources(datasource);
         }
     }
 
     private void addToDatasources(DatasourceConfig datasource) {
         File file = new File(datasource.getDefinition());
         if (datasource.getType() == DatasourceType.Watchfolder && file.exists()) {
-            for (Iterator<DatasourceConfig> iter = myDatasources.iterator(); iter.hasNext();) {
-                DatasourceConfig eachDatasource = iter.next();
-                File eachFile = new File(eachDatasource.getDefinition());
-                if (eachDatasource.getType() == DatasourceType.Watchfolder && eachFile.exists()) {
-                    try {
-                        if (de.codewave.utils.io.IOUtils.isContainedOrSame(eachFile, file)) {
-                            LOGGER.info("Not adding \"" + file.getAbsolutePath() + "\" to database update sources.");
-                            return; // new dir is already scanned through other dir
-                        } else if (de.codewave.utils.io.IOUtils.isContained(file, eachFile)) {
-                            // existing one will be scanned by adding new one, so remove existing one
-                            LOGGER.info("Removing folder \"" + eachFile.getAbsolutePath() + "\" from database update sources.");
-                            iter.remove();
-                        }
-                    } catch (IOException e) {
-                        LOGGER.error("Could not check whether or not folder may be added, so adding it.", e);
-                    }
-                }
-            }
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Adding folder \"" + file.getAbsolutePath() + "\" to database update sources.");
             }
@@ -271,8 +248,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         myState = State.UpdatingTracksFromItunes;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningItunes");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread
-                                .currentThread(), (ItunesDatasourceConfig) datasource, myQueue, timeLastUpdate, trackIds));
+                        missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread.currentThread(), (ItunesDatasourceConfig) datasource, myQueue, timeLastUpdate, trackIds));
                     } else if (datasource.getType() == DatasourceType.Iphoto && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromIphoto;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
@@ -287,8 +263,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue,
-                                timeLastUpdate, trackIds, photoIds);
+                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue, timeLastUpdate, trackIds, photoIds);
                     }
                 }
             } catch (ShutdownRequestedException e) {
@@ -299,13 +274,13 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
             }
-            myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds), true));
+            myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds, getDataSourceIds()), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + photoIds.size() + " photos from database.");
             }
-            myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds), true));
+            myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds, getDataSourceIds()), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
@@ -313,7 +288,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
             myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
-                    MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAfterUpdate").execute();
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAfterUpdate");
+                    statement.setItems("source_id", getDataSourceIds());
+                    statement.execute();
                 }
             }, true));
             if (LOGGER.isInfoEnabled()) {
@@ -321,6 +298,14 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         }
         return missingItunesFiles;
+    }
+
+    private Collection<String> getDataSourceIds() {
+        Set<String> ids = new HashSet<String>();
+        for (DatasourceConfig datasourceConfig : myDatasources) {
+            ids.add(datasourceConfig.getId());
+        }
+        return ids;
     }
 
     public static State getState() {

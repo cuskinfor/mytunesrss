@@ -6,6 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.ProgressRequestWrapper;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
@@ -27,6 +29,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -47,7 +50,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), item.getSize()));
                 info.append(item.getName()).append("\n");
             }
-            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.<DatasourceConfig>singleton(new WatchfolderDatasourceConfig("system_upload_folder", MyTunesRss.CONFIG.getUploadDir())), MyTunesRss.CONFIG.isIgnoreTimestamps());
             MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
             forward(MyTunesRssResource.UploadFinished);
         } else {

@@ -7,10 +7,13 @@
  */
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.task.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class MyTunesRssExecutorService {
@@ -44,19 +47,19 @@ public class MyTunesRssExecutorService {
         ROUTER_CONFIG_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
     }
 
-    public synchronized void scheduleDatabaseUpdate(boolean ignoreTimestamps) {
+    public synchronized void scheduleDatabaseUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
         cancelDatabaseUpdateAndResetJob();
         try {
-            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(ignoreTimestamps));
+            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(dataSources, ignoreTimestamps));
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule database update task.", e);
         }
     }
 
-    public void scheduleImageUpdate() {
+    public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources) {
         cancelDatabaseUpdateAndResetJob();
         try {
-            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(MyTunesRss.CONFIG.isIgnoreTimestamps()));
+            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(dataSources, MyTunesRss.CONFIG.isIgnoreTimestamps()));
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule image update task.", e);
         }

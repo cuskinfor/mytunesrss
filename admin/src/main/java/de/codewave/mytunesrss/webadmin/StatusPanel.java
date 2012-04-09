@@ -275,7 +275,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myBackupDatabase.setEnabled(false);
             new Thread(new Runnable() {
                 public void run() {
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), MyTunesRss.CONFIG.isIgnoreTimestamps());
                 }
             }).start();
         } else if (clickEvent.getSource() == myFullUpdateDatabase) {
@@ -287,7 +287,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myBackupDatabase.setEnabled(false);
             new Thread(new Runnable() {
                 public void run() {
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(true);
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
                 }
             }).start();
         } else if (clickEvent.getSource() == myUpdateImages) {
@@ -299,7 +299,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myBackupDatabase.setEnabled(false);
             new Thread(new Runnable() {
                 public void run() {
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate();
+                    MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate(MyTunesRss.CONFIG.getDatasources());
                 }
             }).start();
         } else if (clickEvent.getSource() == myStopDatabaseUpdate) {

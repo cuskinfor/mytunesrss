@@ -18,7 +18,7 @@ public class DatabaseUpdateJob implements Job {
      * @throws JobExecutionException
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.isIgnoreTimestamps());
+        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), MyTunesRss.CONFIG.isIgnoreTimestamps());
     }
 
 }

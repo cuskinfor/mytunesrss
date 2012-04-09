@@ -317,11 +317,11 @@
     </statement>
 
     <statement name="removeTrack">
-        <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id</sql>
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id AND source_id in (:source_id[])</sql>
     </statement>
 
     <statement name="removePhoto">
-        <sql loop="photo_id" loopbatch="10000" loopcommit="10000">DELETE FROM photo WHERE id = :loopitem_photo_id</sql>
+        <sql loop="photo_id" loopbatch="10000" loopcommit="10000">DELETE FROM photo WHERE id = :loopitem_photo_id AND source_id in (:source_id[])</sql>
     </statement>
 
     <statement name="findImage">
@@ -490,7 +490,7 @@
     </statement>
 
     <statement name="cleanupPlaylistsAfterUpdate">
-        <sql>DELETE FROM playlist WHERE updated = FALSE AND type IN ('ITunes', 'M3uFile', 'ITunesFolder')</sql>
+        <sql>DELETE FROM playlist WHERE updated = FALSE AND type IN ('ITunes', 'M3uFile', 'ITunesFolder') AND source_id in (:source_id[])</sql>
         <sql>UPDATE playlist SET updated = FALSE</sql>
     </statement>
 

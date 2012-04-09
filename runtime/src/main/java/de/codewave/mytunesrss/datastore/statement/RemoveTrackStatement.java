@@ -24,9 +24,11 @@ public class RemoveTrackStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoveTrackStatement.class);
 
     private Collection<String> myTrackIds;
+    private Collection<String> myDataSourceIds;
 
-    public RemoveTrackStatement(Collection<String> trackIds) {
+    public RemoveTrackStatement(Collection<String> trackIds, Collection<String> dataSourceIds) {
         myTrackIds = trackIds;
+        myDataSourceIds = dataSourceIds;
     }
 
     public void execute(Connection connection) throws SQLException {
@@ -35,6 +37,7 @@ public class RemoveTrackStatement implements DataStoreStatement {
         MyTunesRss.LAST_DATABASE_EVENT = event;
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTrack");
         statement.setObject("track_id", myTrackIds);
+        statement.setItems("source_id", myDataSourceIds);
         statement.execute();
     }
 }
