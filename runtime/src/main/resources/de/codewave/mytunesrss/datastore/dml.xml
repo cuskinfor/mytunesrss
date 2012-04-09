@@ -672,7 +672,7 @@
                 mediatype = :mediatype,
                 protected = :protected,
                 videotype = :videotype,
-                composer_pattern = :composer_pattern
+                composer_pattern = :composer_pattern,
                 source_id = :source_id
             WHERE
                 playlist_id = :playlist_id
