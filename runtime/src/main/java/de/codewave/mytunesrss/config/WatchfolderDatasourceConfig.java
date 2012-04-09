@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 
 public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
+    public static final String DEFAULT_TITLE_FALLBACK = "[[[file:(.*)\\..*]]]";
     public static final String DEFAULT_ALBUM_FALLBACK = "[[[dir:0]]]";
     public static final String DEFAULT_ARTIST_FALLBACK = "[[[dir:1]]]";
     public static final String DEFAULT_SERIES_FALLBACK = "[[[dir:1]]]";
@@ -23,6 +24,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private long myMaxFileSize;
     private Pattern myIncludePattern;
     private Pattern myExcludePattern;
+    private String myTitleFallback = DEFAULT_TITLE_FALLBACK;
     private String myAlbumFallback = DEFAULT_ALBUM_FALLBACK;
     private String myArtistFallback = DEFAULT_ARTIST_FALLBACK;
     private String mySeriesFallback = DEFAULT_SERIES_FALLBACK;
@@ -38,6 +40,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myMaxFileSize = source.getMaxFileSize();
         myIncludePattern = source.myIncludePattern;
         myExcludePattern = source.myExcludePattern;
+        myTitleFallback = source.getTitleFallback();
         myAlbumFallback = source.getAlbumFallback();
         myArtistFallback = source.getArtistFallback();
         mySeriesFallback = source.getSeriesFallback();
@@ -87,6 +90,14 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
     public void setExcludePattern(String excludePattern) {
         myExcludePattern = StringUtils.isNotBlank(excludePattern) ? Pattern.compile(excludePattern, Pattern.CASE_INSENSITIVE) : null;
+    }
+
+    public String getTitleFallback() {
+        return myTitleFallback;
+    }
+
+    public void setTitleFallback(String titleFallback) {
+        myTitleFallback = titleFallback;
     }
 
     public String getAlbumFallback() {

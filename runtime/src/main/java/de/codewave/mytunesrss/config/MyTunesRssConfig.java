@@ -1166,6 +1166,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
                             watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
                             watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
+                            watchfolderDatasourceConfig.setTitleFallback(JXPathUtils.getStringValue(datasourceContext, "titleFallback", WatchfolderDatasourceConfig.DEFAULT_TITLE_FALLBACK));
                             watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", WatchfolderDatasourceConfig.DEFAULT_ALBUM_FALLBACK));
                             watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", WatchfolderDatasourceConfig.DEFAULT_ARTIST_FALLBACK));
                             watchfolderDatasourceConfig.setSeriesFallback(JXPathUtils.getStringValue(datasourceContext, "seriesFallback", WatchfolderDatasourceConfig.DEFAULT_SERIES_FALLBACK));
@@ -1488,6 +1489,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "include", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getIncludePattern()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getExcludePattern()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getArtistFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "titleFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getTitleFallback()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "albumFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getAlbumFallback()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "seriesFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getSeriesFallback()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "seasonFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getSeasonFallback()));

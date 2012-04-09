@@ -25,6 +25,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private SmartTextField myMinFileSize;
     private SmartTextField myMaxFileSize;
     private Form myFallbackForm;
+    private SmartTextField myTitleFallback;
     private SmartTextField myAlbumFallback;
     private SmartTextField myArtistFallback;
     private SmartTextField mySeriesFallback;
@@ -58,12 +59,14 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         addComponent(panel);
 
         myFallbackForm = getComponentFactory().createForm(null, true);
+        myTitleFallback = getComponentFactory().createTextField("datasourceOptionsPanel.titleFallback");
         myAlbumFallback = getComponentFactory().createTextField("datasourceOptionsPanel.albumFallback");
         myArtistFallback = getComponentFactory().createTextField("datasourceOptionsPanel.artistFallback");
         mySeriesFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seriesFallback");
         mySeasonFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seasonFallback");
         myEpisodeFallback = getComponentFactory().createTextField("datasourceOptionsPanel.episodeFallback");
         myPhotoAlbumPattern = getComponentFactory().createTextField("datasourceOptionsPanel.photoAlbumPattern");
+        myFallbackForm.addField(myTitleFallback, myTitleFallback);
         myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
         myFallbackForm.addField(myArtistFallback, myArtistFallback);
         myFallbackForm.addField(mySeriesFallback, mySeriesFallback);
@@ -90,6 +93,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setMaxFileSize(myMaxFileSize.getLongValue(0));
         myConfig.setIncludePattern(myIncludePattern.getStringValue(null));
         myConfig.setExcludePattern(myExcludePattern.getStringValue(null));
+        myConfig.setTitleFallback(myTitleFallback.getStringValue(null));
         myConfig.setAlbumFallback(myAlbumFallback.getStringValue(null));
         myConfig.setArtistFallback(myArtistFallback.getStringValue(null));
         myConfig.setSeriesFallback(mySeriesFallback.getStringValue(null));
@@ -114,6 +118,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         }
         myIncludePattern.setValue(myConfig.getIncludePattern(), "");
         myExcludePattern.setValue(myConfig.getExcludePattern(), "");
+        myTitleFallback.setValue(myConfig.getTitleFallback());
         myAlbumFallback.setValue(myConfig.getAlbumFallback());
         myArtistFallback.setValue(myConfig.getArtistFallback());
         mySeriesFallback.setValue(myConfig.getSeriesFallback());

@@ -281,7 +281,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.setArtist(MyTunesRssUtils.compose(artist));
                 String name = tag.getTitle();
                 if (StringUtils.isEmpty(name)) {
-                    name = FilenameUtils.getBaseName(file.getName());
+                    name = StringUtils.defaultIfBlank(getFallbackTitleName(file), FilenameUtils.getBaseName(file.getName()));
                 }
                 String yearString = StringUtils.defaultIfEmpty(tag.getYear(), "-1");
                 try {
@@ -398,7 +398,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             try {
                 String name = moov.getTitle();
                 if (StringUtils.isBlank(name)) {
-                    name = FilenameUtils.getBaseName(file.getName());
+                    name = StringUtils.defaultIfBlank(getFallbackTitleName(file), FilenameUtils.getBaseName(file.getName()));
                 }
                 statement.setName(MyTunesRssUtils.compose(name));
                 meta.setMp4Codec(moov.getMp4Codec());
@@ -496,7 +496,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private void setSimpleInfo(InsertOrUpdateTrackStatement statement, File file, MediaType mediaType) {
-        statement.setName(FilenameUtils.getBaseName(file.getName()));
+        statement.setName(StringUtils.defaultIfBlank(getFallbackTitleName(file), FilenameUtils.getBaseName(file.getName())));
         if (mediaType == MediaType.Audio) {
             statement.setAlbum(getFallbackAlbumName(file));
             statement.setArtist(getFallbackArtistName(file));
@@ -509,6 +509,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.setEpisode(getFallbackEpisode(file));
             }
         }
+    }
+
+    private String getFallbackTitleName(File file) {
+        return myDatasourceConfig.getTitleFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getTitleFallback())) : null;
     }
 
     private String getFallbackAlbumName(File file) {
