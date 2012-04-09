@@ -54,7 +54,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             statement.setName(getRequestParameter("smartPlaylist.playlist.name", null));
             statement.setTrackIds(Collections.<String>emptyList());
             getTransaction().executeStatement(statement);
-            getTransaction().executeStatement(new RefreshSmartPlaylistsStatement());
+            getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, statement.getPlaylistIdAfterExecute()));
             forward(MyTunesRssCommand.ShowPlaylistManager);
         } else {
             createParameterModel("smartPlaylist.playlist.id",

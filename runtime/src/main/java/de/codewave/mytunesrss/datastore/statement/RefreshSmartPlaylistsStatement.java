@@ -50,7 +50,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 refreshSmartPlaylist(connection, smartInfo, smartPlaylist.getPlaylist().getId());
             }
         } else {
-
+            refreshSmartPlaylist(connection, mySmartInfo, myPlaylistId);
         }
         LOGGER.info("Smart playlists have been refreshed.");
     }

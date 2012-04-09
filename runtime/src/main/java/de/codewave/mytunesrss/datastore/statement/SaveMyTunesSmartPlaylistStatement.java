@@ -17,6 +17,7 @@ import java.sql.SQLException;
  */
 public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
     private SmartInfo mySmartInfo;
+    private String myExecutedId;
 
     public SaveMyTunesSmartPlaylistStatement(String userName, boolean userPrivate, SmartInfo smartInfo) {
         super(null);
@@ -57,6 +58,14 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
             statement.setString("videotype", mySmartInfo.getVideoType().name());
         }
         statement.execute();
+        myExecutedId = getId();
+    }
+
+    public String getPlaylistIdAfterExecute() {
+        if (myExecutedId == null) {
+            throw new IllegalStateException("Statement not yet executed.");
+        }
+        return myExecutedId;
     }
 
     protected void handleIdAndUpdate(Connection connection) throws SQLException {
