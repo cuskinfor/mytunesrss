@@ -81,7 +81,6 @@ public class LuceneTrackService {
                     iwriter.addDocument(document);
                 }
             }
-            //iwriter.optimize();
             LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
         } finally {
             if (iwriter != null) {
@@ -175,7 +174,6 @@ public class LuceneTrackService {
             for (String deletedTrack : deletedTracks) {
                 iwriter.deleteDocuments(new Term("id", deletedTrack));
             }
-            //iwriter.optimize();
             LOGGER.debug("Finished indexing " + trackIds.length + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
         } finally {
             if (iwriter != null) {
