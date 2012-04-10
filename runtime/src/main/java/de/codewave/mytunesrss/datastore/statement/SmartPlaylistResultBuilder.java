@@ -37,7 +37,6 @@ public class SmartPlaylistResultBuilder implements ResultBuilder<SmartPlaylist> 
         smartInfo.setCommentPattern(resultSet.getString("COMMENT_PATTERN"));
         smartInfo.setGenrePattern(resultSet.getString("GENRE_PATTERN"));
         smartInfo.setComposerPattern(resultSet.getString("COMPOSER_PATTERN"));
-        smartInfo.setSourceId(resultSet.getString("SOURCE_ID"));
         smartInfo.setProtected(resultSet.getBoolean("PROTECTED"));
         if (resultSet.wasNull()) {
             smartInfo.setProtected(null);

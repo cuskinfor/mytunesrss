@@ -74,10 +74,8 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             conditionals.put("mediatype", smartInfo.getMediaType() != null);
             conditionals.put("videotype", smartInfo.getVideoType() != null);
             conditionals.put("protected", smartInfo.getProtected() != null);
-            conditionals.put("sourceid", StringUtils.isNotBlank(smartInfo.getSourceId()));
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "refreshSmartPlaylist", conditionals);
             statement.setString("id", playlistId);
-            statement.setString("source_id", smartInfo.getSourceId());
             if (smartInfo.getTimeMin() != null) {
                 statement.setInt("time_min", smartInfo.getTimeMin());
             }

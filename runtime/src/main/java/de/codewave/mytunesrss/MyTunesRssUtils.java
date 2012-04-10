@@ -725,7 +725,6 @@ public class MyTunesRssUtils {
             if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), null, true)).getResultSize() == 0) {
                 LOGGER.info("Creating system playlist for data source \"" + datasourceConfig.getId() + "\".");
                 SmartInfo smartInfo = new SmartInfo();
-                smartInfo.setSourceId(datasourceConfig.getId());
                 session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), smartInfo));
                 session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId()));
                 session.commit();
