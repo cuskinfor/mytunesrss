@@ -7,11 +7,12 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 
 public class SaveSystemSmartPlaylistStatement extends SaveMyTunesSmartPlaylistStatement {
 
-    public SaveSystemSmartPlaylistStatement(String id, SmartInfo smartInfo) {
-        super(null, true, smartInfo);
+    public SaveSystemSmartPlaylistStatement(String id, Collection<SmartInfo> smartInfos) {
+        super(null, true, smartInfos);
         setId(id);
         setName(id);
         setType(PlaylistType.System);

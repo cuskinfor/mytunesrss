@@ -75,10 +75,10 @@
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><fmt:message key="smartPlaylist.smartInfo.protected" /></td>
 			                <td>
-			                    <select name="smartPlaylist.smartInfo.protected">
+			                    <select name="smartPlaylist.smartFields.protection">
 			                        <option value=""><fmt:message key="smartPlaylist.smartInfo.protected.null"/></option>
-			                        <option value="true" <c:if test="${smartPlaylist.smartInfo.protected == true}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.protected.true"/></option>
-			                        <option value="false" <c:if test="${!empty smartPlaylist.smartInfo.protected && smartPlaylist.smartInfo.protected == false}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.protected.false"/></option>
+			                        <option value="true" <c:if test="${smartPlaylist.smartFields.protection == 'true'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.protected.true"/></option>
+			                        <option value="false" <c:if test="${!empty smartPlaylist.smartFields.protection && smartPlaylist.smartFields.protection == 'false'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.protected.false"/></option>
 			                    </select>
 			                </td>
 			            </tr>
@@ -86,10 +86,10 @@
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><fmt:message key="smartPlaylist.smartInfo.mediatype" /></td>
 			                <td>
-			                    <select name="smartPlaylist.smartInfo.mediaType">
+			                    <select name="smartPlaylist.smartFields.mediatype">
 			                        <option value=""><fmt:message key="smartPlaylist.smartInfo.mediatype.null"/></option>
-			                        <option value="Video" <c:if test="${smartPlaylist.smartInfo.mediaType == 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.video"/></option>
-			                        <option value="Audio" <c:if test="${smartPlaylist.smartInfo.mediaType == 'Audio'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.audio"/></option>
+			                        <option value="Video" <c:if test="${smartPlaylist.smartFields.mediatype == 'Video'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.video"/></option>
+			                        <option value="Audio" <c:if test="${smartPlaylist.smartFields.mediatype == 'Audio'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.audio"/></option>
 			                    </select>
 			                </td>
 			            </tr>
@@ -97,10 +97,10 @@
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><fmt:message key="smartPlaylist.smartInfo.videotype" /></td>
 			                <td>
-			                    <select name="smartPlaylist.smartInfo.videoType">
+			                    <select name="smartPlaylist.smartFields.videotype">
 			                        <option value=""><fmt:message key="smartPlaylist.smartInfo.videotype.null"/></option>
-			                        <option value="Movie" <c:if test="${smartPlaylist.smartInfo.videoType == 'Movie'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.movie"/></option>
-			                        <option value="TvShow" <c:if test="${smartPlaylist.smartInfo.videoType == 'TvShow'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.tvshow"/></option>
+			                        <option value="Movie" <c:if test="${smartPlaylist.smartFields.videotype == 'Movie'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.movie"/></option>
+			                        <option value="TvShow" <c:if test="${smartPlaylist.smartFields.videotype == 'TvShow'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.tvshow"/></option>
 			                    </select>
 			                </td>
 			            </tr>

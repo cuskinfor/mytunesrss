@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-325] Smart playlist criteria refactoring
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-333] Update and recreate individual data sources
             </action>
             <action dev="mdescher" type="add">

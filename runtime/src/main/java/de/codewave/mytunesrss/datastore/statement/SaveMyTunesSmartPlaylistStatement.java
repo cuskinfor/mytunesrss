@@ -11,20 +11,24 @@ import org.apache.commons.lang.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement
  */
 public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
-    private SmartInfo mySmartInfo;
+    private Collection<SmartInfo> mySmartInfos;
     private String myExecutedId;
 
-    public SaveMyTunesSmartPlaylistStatement(String userName, boolean userPrivate, SmartInfo smartInfo) {
+    public SaveMyTunesSmartPlaylistStatement(String userName, boolean userPrivate, Collection<SmartInfo> smartInfos) {
         super(null);
         setType(PlaylistType.MyTunesSmart);
         setUserName(userName);
         setUserPrivate(userPrivate);
-        mySmartInfo = smartInfo;
+        mySmartInfos = smartInfos;
     }
 
     public void execute(Connection connection) throws SQLException {
@@ -32,30 +36,11 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         super.execute(connection);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, isUpdate() ? "updateSmartInfo" : "insertSmartInfo");
         statement.setString("playlist_id", getId());
-        statement.setString("album_pattern", mySmartInfo.getAlbumPattern());
-        statement.setString("artist_pattern", mySmartInfo.getArtistPattern());
-        statement.setString("genre_pattern", mySmartInfo.getGenrePattern());
-        statement.setString("series_pattern", mySmartInfo.getSeriesPattern());
-        statement.setString("title_pattern", mySmartInfo.getTitlePattern());
-        statement.setString("file_pattern", mySmartInfo.getFilePattern());
-        statement.setString("tag_pattern", mySmartInfo.getTagPattern());
-        statement.setString("comment_pattern", mySmartInfo.getCommentPattern());
-        statement.setString("composer_pattern", mySmartInfo.getComposerPattern());
-        if (mySmartInfo.getTimeMin() != null) {
-            statement.setInt("time_min", mySmartInfo.getTimeMin());
+        Collection<List<Object>> params = new ArrayList<List<Object>>();
+        for (SmartInfo smartInfo : mySmartInfos) {
+            params.add(Arrays.asList(new Object[] {smartInfo.getFieldType().name(), smartInfo.getPattern(), smartInfo.isInvert()}));
         }
-        if (mySmartInfo.getTimeMax() != null) {
-            statement.setInt("time_max", mySmartInfo.getTimeMax());
-        }
-        if (mySmartInfo.getProtected() != null) {
-            statement.setBoolean("protected", mySmartInfo.getProtected());
-        }
-        if (mySmartInfo.getMediaType() != null) {
-            statement.setString("mediatype", mySmartInfo.getMediaType().name());
-        }
-        if (mySmartInfo.getVideoType() != null) {
-            statement.setString("videotype", mySmartInfo.getVideoType().name());
-        }
+        statement.setObject("param", params);
         statement.execute();
         myExecutedId = getId();
     }

@@ -10,20 +10,23 @@ import de.codewave.utils.sql.SmartStatement;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindSmartPlaylistQuery
  */
-public class FindSmartPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<SmartPlaylist>> {
+public class FindSmartPlaylistQuery extends DataStoreQuery<Collection<SmartPlaylist>> {
     private String myId;
 
     public FindSmartPlaylistQuery(String id) {
         myId = id;
     }
 
-    public QueryResult<SmartPlaylist> execute(Connection connection) throws SQLException {
+    public Collection<SmartPlaylist> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findSmartPlaylistById");
         statement.setString("id", myId);
-        return execute(statement, new SmartPlaylistResultBuilder());
+        SmartPlaylistResultBuilder builder = new SmartPlaylistResultBuilder();
+        execute(statement, builder).getResults();
+        return builder.getSmartPlaylists();
     }
 }

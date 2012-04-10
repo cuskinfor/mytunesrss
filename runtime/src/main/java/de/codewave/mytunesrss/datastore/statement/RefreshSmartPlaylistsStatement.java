@@ -24,41 +24,44 @@ import java.util.Map;
  */
 public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
-    private SmartInfo mySmartInfo;
+    private Collection<SmartInfo> mySmartInfos;
     private String myPlaylistId;
 
     public RefreshSmartPlaylistsStatement() {
         // nothing to do here
     }
 
-    public RefreshSmartPlaylistsStatement(SmartInfo smartInfo, String playlistId) {
-        mySmartInfo = smartInfo;
+    public RefreshSmartPlaylistsStatement(Collection<SmartInfo> smartInfos, String playlistId) {
+        mySmartInfos = smartInfos;
         myPlaylistId = playlistId;
     }
 
     public void execute(Connection connection) throws SQLException {
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
-        if (mySmartInfo == null || StringUtils.isBlank(myPlaylistId)) {
-            List<SmartPlaylist> smartPlaylists = new DataStoreQuery<List<SmartPlaylist>>() {
+        if (mySmartInfos == null || mySmartInfos.isEmpty() || StringUtils.isBlank(myPlaylistId)) {
+            Collection<SmartPlaylist> smartPlaylists = new DataStoreQuery<Collection<SmartPlaylist>>() {
                 @Override
-                public List<SmartPlaylist> execute(Connection connection) throws SQLException {
-                    return execute(MyTunesRssUtils.createStatement(connection, "findAllSmartPlaylists"), new SmartPlaylistResultBuilder()).getResults();
+                public Collection<SmartPlaylist> execute(Connection connection) throws SQLException {
+                    SmartPlaylistResultBuilder builder = new SmartPlaylistResultBuilder();
+                    execute(MyTunesRssUtils.createStatement(connection, "findAllSmartPlaylists"), builder).getResults();
+                    return builder.getSmartPlaylists();
                 }
             }.execute(connection);
             for (SmartPlaylist smartPlaylist : smartPlaylists) {
-                SmartInfo smartInfo = smartPlaylist.getSmartInfo();
-                refreshSmartPlaylist(connection, smartInfo, smartPlaylist.getPlaylist().getId());
+                Collection<SmartInfo> smartInfos = smartPlaylist.getSmartInfos();
+                refreshSmartPlaylist(connection, smartInfos, smartPlaylist.getPlaylist().getId());
             }
         } else {
-            refreshSmartPlaylist(connection, mySmartInfo, myPlaylistId);
+            refreshSmartPlaylist(connection, mySmartInfos, myPlaylistId);
         }
         LOGGER.info("Smart playlists have been refreshed.");
     }
 
-    private void refreshSmartPlaylist(Connection connection, SmartInfo smartInfo, String playlistId) throws SQLException {
+    private void refreshSmartPlaylist(Connection connection, Collection<SmartInfo> smartInfos, String playlistId) throws SQLException {
+        LOGGER.debug("Refreshing smart playlist with id \"" + playlistId + "\".");
         try {
-            if (smartInfo.isLuceneCriteria()) {
-                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartInfo, 0);
+            if (SmartInfo.isLuceneCriteria(smartInfos)) {
+                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartInfos, 0);
                 MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
                 if (!CollectionUtils.isEmpty(trackIds)) {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
@@ -67,29 +70,53 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 }
             }
             Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
-            conditionals.put("lucene", smartInfo.isLuceneCriteria());
-            conditionals.put("nolucene", !smartInfo.isLuceneCriteria());
-            conditionals.put("mintime", smartInfo.getTimeMin() != null);
-            conditionals.put("maxtime", smartInfo.getTimeMax() != null);
-            conditionals.put("mediatype", smartInfo.getMediaType() != null);
-            conditionals.put("videotype", smartInfo.getVideoType() != null);
-            conditionals.put("protected", smartInfo.getProtected() != null);
+            conditionals.put("lucene", SmartInfo.isLuceneCriteria(smartInfos));
+            conditionals.put("nolucene", !SmartInfo.isLuceneCriteria(smartInfos));
+            for (SmartInfo smartInfo : smartInfos) {
+                switch (smartInfo.getFieldType()) {
+                    case mintime:
+                        conditionals.put("mintime", true);
+                        break;
+                    case datasource:
+                        conditionals.put("datasource", true);
+                        break;
+                    case maxtime:
+                        conditionals.put("maxtime", true);
+                        break;
+                    case mediatype:
+                        conditionals.put("mediatype", true);
+                        break;
+                    case protection:
+                        conditionals.put("protected", true);
+                        break;
+                    case videotype:
+                        conditionals.put("videotype", true);
+                        break;
+                }
+            }
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "refreshSmartPlaylist", conditionals);
             statement.setString("id", playlistId);
-            if (smartInfo.getTimeMin() != null) {
-                statement.setInt("time_min", smartInfo.getTimeMin());
-            }
-            if (smartInfo.getTimeMax() != null) {
-                statement.setInt("time_max", smartInfo.getTimeMax());
-            }
-            if (smartInfo.getMediaType() != null) {
-                statement.setString("mediatype", smartInfo.getMediaType().name());
-            }
-            if (smartInfo.getVideoType() != null) {
-                statement.setString("videotype", smartInfo.getVideoType().name());
-            }
-            if (smartInfo.getProtected() != null) {
-                statement.setBoolean("protected", smartInfo.getProtected());
+            for (SmartInfo smartInfo : smartInfos) {
+                switch (smartInfo.getFieldType()) {
+                    case mintime:
+                        statement.setInt("time_min", Integer.parseInt(smartInfo.getPattern()));
+                        break;
+                    case datasource:
+                        statement.setString("source_id", smartInfo.getPattern());
+                        break;
+                    case maxtime:
+                        statement.setInt("time_max", Integer.parseInt(smartInfo.getPattern()));
+                        break;
+                    case mediatype:
+                        statement.setString("mediatype", smartInfo.getPattern());
+                        break;
+                    case protection:
+                        statement.setBoolean("protected", Boolean.parseBoolean(smartInfo.getPattern()));
+                        break;
+                    case videotype:
+                        statement.setString("videotype", smartInfo.getPattern());
+                        break;
+                }
             }
             statement.execute();
         } catch (IOException e) {

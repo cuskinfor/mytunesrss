@@ -248,7 +248,8 @@ public class MigrationStatement implements DataStoreStatement {
                     // migration for 4.3
                     if (databaseVersion.compareTo(new Version("4.3")) < 0) {
                         LOG.info("Migrating database to 4.3.");
-                        MyTunesRssUtils.createStatement(connection, "migrate_4.3").execute();
+                        MyTunesRssUtils.createStatement(connection, "migrate_4.3_part_1").execute();
+                        MyTunesRssUtils.createStatement(connection, "migrate_4.3_part_2").execute();
                         databaseVersion = new Version("4.3");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                         MyTunesRss.RUN_DATABASE_REFRESH_ON_STARTUP = true; // force a database refresh to insert the source ids!

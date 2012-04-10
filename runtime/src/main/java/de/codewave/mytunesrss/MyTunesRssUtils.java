@@ -689,30 +689,30 @@ public class MyTunesRssUtils {
         // audio
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_AUDIO, null, true)).getResultSize() == 0) {
             LOGGER.info("Creating system playlist for audio tracks.");
-            SmartInfo smartInfo = new SmartInfo();
-            smartInfo.setMediaType(MediaType.Audio);
-            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_AUDIO, smartInfo));
-            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_AUDIO));
+            Collection<SmartInfo> smartInfos = new ArrayList<SmartInfo>();
+            smartInfos.add(new SmartInfo(SmartFieldType.mediatype, MediaType.Audio.name(), false));
+            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_AUDIO, smartInfos));
+            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, SYSTEM_PLAYLIST_ID_AUDIO));
             session.commit();
         }
         // movies
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_MOVIES, null, true)).getResultSize() == 0) {
             LOGGER.info("Creating system playlist for movies.");
-            SmartInfo smartInfo = new SmartInfo();
-            smartInfo.setMediaType(MediaType.Video);
-            smartInfo.setVideoType(VideoType.Movie);
-            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_MOVIES, smartInfo));
-            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_MOVIES));
+            Collection<SmartInfo> smartInfos = new ArrayList<SmartInfo>();
+            smartInfos.add(new SmartInfo(SmartFieldType.mediatype, MediaType.Video.name(), false));
+            smartInfos.add(new SmartInfo(SmartFieldType.videotype, VideoType.Movie.name(), false));
+            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_MOVIES, smartInfos));
+            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, SYSTEM_PLAYLIST_ID_MOVIES));
             session.commit();
         }
         // tv shows
         if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_TVSHOWS, null, true)).getResultSize() == 0) {
             LOGGER.info("Creating system playlist for tv shows.");
-            SmartInfo smartInfo = new SmartInfo();
-            smartInfo.setMediaType(MediaType.Video);
-            smartInfo.setVideoType(VideoType.TvShow);
-            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_TVSHOWS, smartInfo));
-            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_TVSHOWS));
+            Collection<SmartInfo> smartInfos = new ArrayList<SmartInfo>();
+            smartInfos.add(new SmartInfo(SmartFieldType.mediatype, MediaType.Video.name(), false));
+            smartInfos.add(new SmartInfo(SmartFieldType.videotype, VideoType.TvShow.name(), false));
+            session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_TVSHOWS, smartInfos));
+            session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, SYSTEM_PLAYLIST_ID_TVSHOWS));
             session.commit();
         }
         // data sources
@@ -724,9 +724,10 @@ public class MyTunesRssUtils {
         for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
             if (session.executeQuery(new FindPlaylistQuery(null, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), null, true)).getResultSize() == 0) {
                 LOGGER.info("Creating system playlist for data source \"" + datasourceConfig.getId() + "\".");
-                SmartInfo smartInfo = new SmartInfo();
-                session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), smartInfo));
-                session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfo, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId()));
+                Collection<SmartInfo> smartInfos = new ArrayList<SmartInfo>();
+                smartInfos.add(new SmartInfo(SmartFieldType.datasource, datasourceConfig.getId(), false));
+                session.executeStatement(new SaveSystemSmartPlaylistStatement(SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId(), smartInfos));
+                session.executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, SYSTEM_PLAYLIST_ID_DATASOURCE + datasourceConfig.getId()));
                 session.commit();
             }
         }

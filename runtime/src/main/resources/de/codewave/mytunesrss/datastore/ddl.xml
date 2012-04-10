@@ -67,6 +67,7 @@
                 last_date NUMERIC(19),
                 photo_count INTEGER,
                 source_id VARCHAR(100),
+                updated BOOLEAN,
                 UNIQUE (id)
             )
         </sql>
@@ -170,22 +171,9 @@
         <sql>
             {create_table_prefix} smart_info (
                 playlist_id VARCHAR(100) NOT NULL,
-                album_pattern VARCHAR(100),
-                artist_pattern VARCHAR(100),
-                genre_pattern VARCHAR(100),
-                series_pattern VARCHAR(100),
-                title_pattern VARCHAR(100),
-                file_pattern VARCHAR(100),
-                tag_pattern VARCHAR(100),
-                comment_pattern VARCHAR(100),
-                time_min INTEGER,
-                time_max INTEGER,
-                mediatype VARCHAR(20),
-                videotype VARCHAR(20),
-                protected BOOLEAN,
-                composer_pattern VARCHAR(100),
-                source_id VARCHAR(100),
-                UNIQUE (playlist_id),
+                field_type VARCHAR(100) NOT NULL,
+                pattern VARCHAR(100) NOT NULL,
+                invert BOOLEAN NOT NULL,
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>

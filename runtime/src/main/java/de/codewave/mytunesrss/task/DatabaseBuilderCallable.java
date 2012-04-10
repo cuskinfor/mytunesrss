@@ -284,11 +284,11 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Removing outdated playlists.");
+                LOGGER.info("Removing outdated playlists and photo albums.");
             }
             myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAfterUpdate");
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAndPhotoAlbumsAfterUpdate");
                     statement.setItems("source_id", getDataSourceIds());
                     statement.execute();
                 }

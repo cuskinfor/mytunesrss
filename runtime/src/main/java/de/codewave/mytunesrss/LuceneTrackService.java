@@ -266,14 +266,14 @@ public class LuceneTrackService {
         return orQuery;
     }
 
-    public Collection<String> searchTrackIds(SmartInfo smartInfo, int fuzziness) throws IOException, ParseException {
+    public Collection<String> searchTrackIds(Collection<SmartInfo> smartInfos, int fuzziness) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
         Collection<String> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
-            Query luceneQuery = createQuery(smartInfo, fuzziness);
+            Query luceneQuery = createQuery(smartInfos, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
             trackIds = new HashSet<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
@@ -290,18 +290,40 @@ public class LuceneTrackService {
         }
     }
 
-    private Query createQuery(SmartInfo smartInfo, int fuzziness) {
+    private Query createQuery(Collection<SmartInfo> smartInfos, int fuzziness) {
         BooleanQuery andQuery = new BooleanQuery();
-        addToAndQuery(andQuery, "album", StringUtils.lowerCase(smartInfo.getAlbumPattern()), fuzziness);
-        addToAndQuery(andQuery, "artist", StringUtils.lowerCase(smartInfo.getArtistPattern()), fuzziness);
-        addToAndQuery(andQuery, "series", StringUtils.lowerCase(smartInfo.getSeriesPattern()), fuzziness);
-        addToAndQuery(andQuery, "genre", StringUtils.lowerCase(smartInfo.getGenrePattern()), fuzziness);
-        addToAndQuery(andQuery, "tags", StringUtils.lowerCase(smartInfo.getTagPattern()), fuzziness);
-        addToAndQuery(andQuery, "name", StringUtils.lowerCase(smartInfo.getTitlePattern()), fuzziness);
-        addToAndQuery(andQuery, "comment", StringUtils.lowerCase(smartInfo.getCommentPattern()), fuzziness);
-        addToAndQuery(andQuery, "filename", StringUtils.lowerCase(smartInfo.getFilePattern()), fuzziness);
-        addToAndQuery(andQuery, "album_artist", StringUtils.lowerCase(smartInfo.getArtistPattern()), fuzziness);
-        addToAndQuery(andQuery, "composer", StringUtils.lowerCase(smartInfo.getComposerPattern()), fuzziness);
+        for (SmartInfo smartInfo : smartInfos) {
+            switch (smartInfo.getFieldType()) {
+                case album:
+                    addToAndQuery(andQuery, "album", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case artist:
+                    addToAndQuery(andQuery, "artist", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "album_artist", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case comment:
+                    addToAndQuery(andQuery, "comment", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case composer:
+                    addToAndQuery(andQuery, "composer", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case file:
+                    addToAndQuery(andQuery, "filename", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case genre:
+                    addToAndQuery(andQuery, "genre", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case tag:
+                    addToAndQuery(andQuery, "tags", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case title:
+                    addToAndQuery(andQuery, "name", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+                case tvshow:
+                    addToAndQuery(andQuery, "series", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    break;
+            }
+        }
         return andQuery;
     }
 

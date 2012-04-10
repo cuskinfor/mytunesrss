@@ -290,11 +290,26 @@
         <sql>ALTER TABLE playlist ADD COLUMN updated BOOLEAN</sql>
     </statement>
 
-    <statement name="migrate_4.3">
+    <statement name="migrate_4.3_part_1">
+        <sql>ALTER TABLE photoalbum ADD COLUMN updated BOOLEAN</sql>
         <sql>ALTER TABLE track ADD COLUMN source_id VARCHAR(100)</sql>
         <sql>ALTER TABLE photo ADD COLUMN source_id VARCHAR(100)</sql>
         <sql>ALTER TABLE photoalbum ADD COLUMN source_id VARCHAR(100)</sql>
         <sql>ALTER TABLE playlist ADD COLUMN source_id VARCHAR(100)</sql>
+        <sql>DELETE FROM playlist WHERE id in (SELECT playlist_id FROM smart_info)</sql>
+        <sql>DROP TABLE smart_info</sql>
+    </statement>
+
+    <statement name="migrate_4.3_part_2">
+        <sql>
+            {create_table_prefix} smart_info (
+                playlist_id VARCHAR(100) NOT NULL,
+                field_type VARCHAR(100) NOT NULL,
+                pattern VARCHAR(100) NOT NULL,
+                invert BOOLEAN NOT NULL,
+                CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
+            )
+        </sql>
     </statement>
 
 </statements>

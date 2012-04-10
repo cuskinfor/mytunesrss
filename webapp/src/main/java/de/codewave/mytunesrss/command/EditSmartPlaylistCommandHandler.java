@@ -1,11 +1,10 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.FindSmartPlaylistQuery;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.SmartInfo;
-import de.codewave.mytunesrss.datastore.statement.SmartPlaylist;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
+
+import java.util.ArrayList;
 
 /**
  * de.codewave.mytunesrss.command.EditSmartPlaylistCommandHandler
@@ -17,9 +16,9 @@ public class EditSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         String playlistId = getRequestParameter("playlistId", null);
         SmartPlaylist smartPlaylist = new SmartPlaylist();
         smartPlaylist.setPlaylist(new Playlist());
-        smartPlaylist.setSmartInfo(new SmartInfo());
+        smartPlaylist.setSmartInfos(new ArrayList<SmartInfo>());
         if (StringUtils.isNotBlank(playlistId)) {
-            smartPlaylist = getTransaction().executeQuery(new FindSmartPlaylistQuery(playlistId)).nextResult();
+            smartPlaylist = getTransaction().executeQuery(new FindSmartPlaylistQuery(playlistId)).iterator().next();
         }
         getRequest().setAttribute("smartPlaylist", smartPlaylist);
         getRequest().setAttribute("fields", getFields());
@@ -27,9 +26,18 @@ public class EditSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
     }
 
     static String[] getFields() {
-        return new String[]{"smartPlaylist.smartInfo.albumPattern", "smartPlaylist.smartInfo.artistPattern", "smartPlaylist.smartInfo.composerPattern",
-                "smartPlaylist.smartInfo.genrePattern",
-                "smartPlaylist.smartInfo.seriesPattern", "smartPlaylist.smartInfo.titlePattern", "smartPlaylist.smartInfo.filePattern", "smartPlaylist.smartInfo.tagPattern", "smartPlaylist.smartInfo.commentPattern",
-                "smartPlaylist.smartInfo.timeMin", "smartPlaylist.smartInfo.timeMax"};
+        return new String[]{
+                "smartPlaylist.smartFields." + SmartFieldType.album.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.artist.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.composer.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.genre.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.tvshow.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.title.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.file.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.tag.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.comment.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.mintime.name(),
+                "smartPlaylist.smartFields." + SmartFieldType.maxtime.name()
+        };
     }
 }

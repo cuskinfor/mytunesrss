@@ -4,138 +4,57 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Collection;
+
 /**
  * de.codewave.mytunesrss.datastore.statement.SmartInfo
  */
 public class SmartInfo {
-    private String myAlbumPattern;
-    private String myArtistPattern;
-    private String mySeriesPattern;
-    private String myGenrePattern;
-    private String myTitlePattern;
-    private String myFilePattern;
-    private String myTagPattern;
-    private String myCommentPattern;
-    private Integer myTimeMin;
-    private Integer myTimeMax;
-    private Boolean myProtected;
-    private MediaType myMediaType;
-    private VideoType myVideoType;
-    private String myComposerPattern;
 
-    public String getAlbumPattern() {
-        return myAlbumPattern;
+    public static boolean isLuceneCriteria(Collection<SmartInfo> smartInfos) {
+        for (SmartInfo smartInfo : smartInfos) {
+            if (smartInfo.isLuceneCriteria()) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    public void setAlbumPattern(String albumPattern) {
-        myAlbumPattern = albumPattern;
+    private SmartFieldType myFieldType;
+    private String myPattern;
+    private boolean myInvert;
+
+    public SmartInfo(SmartFieldType fieldType, String pattern, boolean invert) {
+        myFieldType = fieldType;
+        myPattern = pattern;
+        myInvert = invert;
     }
 
-    public String getArtistPattern() {
-        return myArtistPattern;
+    public SmartFieldType getFieldType() {
+        return myFieldType;
     }
 
-    public void setArtistPattern(String artistPattern) {
-        myArtistPattern = artistPattern;
+    public void setFieldType(SmartFieldType fieldType) {
+        myFieldType = fieldType;
     }
 
-    public String getSeriesPattern() {
-        return mySeriesPattern;
+    public String getPattern() {
+        return myPattern;
     }
 
-    public void setSeriesPattern(String seriesPattern) {
-        mySeriesPattern = seriesPattern;
+    public void setPattern(String pattern) {
+        myPattern = pattern;
     }
 
-    public String getGenrePattern() {
-        return myGenrePattern;
+    public boolean isInvert() {
+        return myInvert;
     }
 
-    public void setGenrePattern(String genrePattern) {
-        myGenrePattern = genrePattern;
-    }
-
-    public String getTitlePattern() {
-        return myTitlePattern;
-    }
-
-    public void setTitlePattern(String titlePattern) {
-        myTitlePattern = titlePattern;
-    }
-
-    public String getFilePattern() {
-        return myFilePattern;
-    }
-
-    public void setFilePattern(String filePattern) {
-        myFilePattern = filePattern;
-    }
-
-    public String getTagPattern() {
-        return myTagPattern;
-    }
-
-    public void setTagPattern(String tagPattern) {
-        myTagPattern = tagPattern;
-    }
-
-    public String getCommentPattern() {
-        return myCommentPattern;
-    }
-
-    public void setCommentPattern(String commentPattern) {
-        myCommentPattern = commentPattern;
-    }
-
-    public Integer getTimeMin() {
-        return myTimeMin;
-    }
-
-    public void setTimeMin(Integer timeMin) {
-        myTimeMin = timeMin;
-    }
-
-    public Integer getTimeMax() {
-        return myTimeMax;
-    }
-
-    public void setTimeMax(Integer timeMax) {
-        myTimeMax = timeMax;
-    }
-
-    public Boolean getProtected() {
-        return myProtected;
-    }
-
-    public void setProtected(Boolean aProtected) {
-        myProtected = aProtected;
-    }
-
-    public MediaType getMediaType() {
-        return myMediaType;
-    }
-
-    public void setMediaType(MediaType mediaType) {
-        myMediaType = mediaType;
-    }
-
-    public VideoType getVideoType() {
-        return myVideoType;
-    }
-
-    public void setVideoType(VideoType videoType) {
-        myVideoType = videoType;
-    }
-
-    public String getComposerPattern() {
-        return myComposerPattern;
-    }
-
-    public void setComposerPattern(String composerPattern) {
-        myComposerPattern = composerPattern;
+    public void setInvert(boolean invert) {
+        myInvert = invert;
     }
 
     public boolean isLuceneCriteria() {
-        return StringUtils.isNotEmpty(myAlbumPattern) || StringUtils.isNotEmpty(myArtistPattern) || StringUtils.isNotEmpty(myCommentPattern) || StringUtils.isNotEmpty(myFilePattern) || StringUtils.isNotEmpty(myGenrePattern) || StringUtils.isNotEmpty(myTagPattern) || StringUtils.isNotEmpty(myTitlePattern) || StringUtils.isNotEmpty(mySeriesPattern) || StringUtils.isNotEmpty(myComposerPattern);
+        return myFieldType.isLucene();
     }
 }

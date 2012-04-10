@@ -489,14 +489,14 @@
         </sql>
     </statement>
 
-    <statement name="cleanupPlaylistsAfterUpdate">
-        <sql>DELETE FROM playlist WHERE updated = FALSE AND type IN ('ITunes', 'M3uFile', 'ITunesFolder') AND source_id in (:source_id[])</sql>
+    <statement name="cleanupPlaylistsAndPhotoAlbumsAfterUpdate">
+        <sql>DELETE FROM playlist WHERE updated = FALSE AND source_id in (:source_id[])</sql>
         <sql>UPDATE playlist SET updated = FALSE</sql>
+        <sql>DELETE FROM photoalbum WHERE updated = FALSE AND source_id in (:source_id[])</sql>
+        <sql>UPDATE photoalbum SET updated = FALSE</sql>
     </statement>
 
     <statement name="finishDatabaseUpdate">
-        <sql>DELETE FROM photoalbum WHERE NOT EXISTS (SELECT * FROM link_photo_album WHERE link_photo_album.album_id = photoalbum.id)</sql>
-        <sql>DELETE FROM playlist WHERE type != 'MyTunesSmart' AND NOT EXISTS (SELECT * FROM link_track_playlist WHERE link_track_playlist.playlist_id = playlist.id)</sql>
         <sql>
             DELETE FROM image
             WHERE NOT EXISTS
@@ -511,14 +511,14 @@
     </statement>
 
     <statement name="insertPhotoAlbum">
-        <sql>INSERT INTO photoalbum (id, name, source_id) VALUES (:id, :name, :source_id)</sql>
+        <sql>INSERT INTO photoalbum (id, name, source_id, updated) VALUES (:id, :name, :source_id, TRUE)</sql>
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
         <sql>{updatePhotoAlbumCountAndDates}</sql>
         <sql>{correctPhotoAlbumFirstDates}</sql>
     </statement>
 
     <statement name="updatePhotoAlbum">
-        <sql>UPDATE photoalbum SET name = :name, source_id = :source_id WHERE id = :id</sql>
+        <sql>UPDATE photoalbum SET name = :name, source_id = :source_id, updated = TRUE WHERE id = :id</sql>
         <sql>DELETE FROM link_photo_album WHERE album_id = :id</sql>
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">{createPhotoAlbumLinks}</sql>
         <sql>{updatePhotoAlbumCountAndDates}</sql>
@@ -620,16 +620,8 @@
     </statement>
 
     <statement name="insertSmartInfo">
-        <parameter name="time_min" type="java.lang.Integer"/>
-        <parameter name="time_max" type="java.lang.Integer"/>
-        <parameter name="protected" type="java.lang.Boolean"/>
-        <parameter name="mediatype" type="java.lang.String"/>
-        <parameter name="videotype" type="java.lang.String"/>
-        <sql>
-            INSERT INTO smart_info (playlist_id, album_pattern, artist_pattern, genre_pattern, series_pattern, title_pattern,
-                                    file_pattern, tag_pattern, comment_pattern, time_min, time_max, mediatype, protected, videotype, composer_pattern)
-            VALUES (:playlist_id, :album_pattern, :artist_pattern, :genre_pattern, :series_pattern, :title_pattern,
-                    :file_pattern, :tag_pattern, :comment_pattern, :time_min, :time_max, :mediatype, :protected, :videotype, :composer_pattern)
+        <sql loop="param">
+            INSERT INTO smart_info (playlist_id, field_type, pattern, invert) VALUES (:playlist_id, :loopitem_param[0], :loopitem_param[1], :loopitem_param[2])
         </sql>
     </statement>
 
@@ -638,10 +630,7 @@
             SELECT
                 p.id AS id, p.name AS name, p.track_count AS track_count, p.user_private AS user_private, p.hidden AS hidden,
                 p.user_owner AS user_owner, p.container_id AS container_id,
-                si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
-                si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.tag_pattern AS tag_pattern, si.comment_pattern AS comment_pattern, si.time_min AS time_min,
-                si.time_max AS time_max, si.mediatype AS mediatype, si.protected AS protected, si.videotype AS videotype, si.series_pattern AS series_pattern,
-                si.composer_pattern AS composer_pattern
+                si.field_type AS smart_field_type, si.pattern AS smart_pattern, si.invert AS smart_invert
             FROM
                 playlist p, smart_info si
             WHERE
@@ -650,31 +639,11 @@
     </statement>
 
     <statement name="updateSmartInfo">
-        <parameter name="time_min" type="java.lang.Integer"/>
-        <parameter name="time_max" type="java.lang.Integer"/>
-        <parameter name="protected" type="java.lang.Boolean"/>
-        <parameter name="mediatype" type="java.lang.String"/>
-        <parameter name="videotype" type="java.lang.String"/>
         <sql>
-            UPDATE
-                smart_info
-            SET
-                album_pattern = :album_pattern,
-                artist_pattern = :artist_pattern,
-                genre_pattern = :genre_pattern,
-                series_pattern = :series_pattern,
-                title_pattern = :title_pattern,
-                file_pattern = :file_pattern,
-                tag_pattern = :tag_pattern,
-                comment_pattern = :comment_pattern,
-                time_min = :time_min,
-                time_max = :time_max,
-                mediatype = :mediatype,
-                protected = :protected,
-                videotype = :videotype,
-                composer_pattern = :composer_pattern
-            WHERE
-                playlist_id = :playlist_id
+            DELETE FROM smart_info WHERE playlist_id = :playlist_id
+        </sql>
+        <sql loop="param">
+            INSERT INTO smart_info (playlist_id, field_type, pattern, invert) VALUES (:playlist_id, :loopitem_param[0], :loopitem_param[1], :loopitem_param[2])
         </sql>
     </statement>
 
@@ -683,10 +652,7 @@
             SELECT
                 p.id AS id, p.name AS name, p.track_count AS track_count, p.user_private AS user_private, p.hidden AS hidden,
                 p.user_owner AS user_owner, p.container_id AS container_id,
-                si.album_pattern AS album_pattern, si.artist_pattern AS artist_pattern, si.genre_pattern AS genre_pattern,
-                si.title_pattern AS title_pattern, si.file_pattern AS file_pattern, si.tag_pattern AS tag_pattern, si.comment_pattern AS comment_pattern, si.time_min AS time_min,
-                si.time_max AS time_max, si.mediatype AS mediatype, si.protected AS protected, si.videotype AS videotype, si.series_pattern AS series_pattern,
-                si.composer_pattern AS composer_pattern
+                si.field_type AS smart_field_type, si.pattern AS smart_pattern, si.invert AS smart_invert
             FROM
                 playlist p, smart_info si
             WHERE
@@ -718,6 +684,7 @@
                 <mediatype>AND t.mediatype = :mediatype</mediatype>
                 <videotype>AND t.videotype = :videotype</videotype>
                 <protected>AND t.protected = :protected</protected>
+                <datasource>AND t.source_id = :source_id</datasource>
                 ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name
             ]]>
         </sql>
