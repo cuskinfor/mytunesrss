@@ -12,6 +12,7 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
@@ -24,6 +25,7 @@ import de.codewave.utils.network.UpdateInfo;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import java.net.MalformedURLException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -267,41 +270,56 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopServer.setEnabled(false);
             MyTunesRss.stopWebserver();
         } else if (clickEvent.getSource() == myUpdateDatabase) {
-            myUpdateDatabase.setEnabled(false);
-            myFullUpdateDatabase.setEnabled(false);
-            myUpdateImages.setEnabled(false);
-            myStopDatabaseUpdate.setEnabled(true);
-            myResetDatabase.setEnabled(false);
-            myBackupDatabase.setEnabled(false);
-            new Thread(new Runnable() {
-                public void run() {
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), MyTunesRss.CONFIG.isIgnoreTimestamps());
+            new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourceSelection.caption"), new DatasourcesSelectionPanel() {
+                @Override
+                protected void onContinue(final Collection<DatasourceConfig> datasources) {
+                    myUpdateDatabase.setEnabled(false);
+                    myFullUpdateDatabase.setEnabled(false);
+                    myUpdateImages.setEnabled(false);
+                    myStopDatabaseUpdate.setEnabled(true);
+                    myResetDatabase.setEnabled(false);
+                    myBackupDatabase.setEnabled(false);
+                    new Thread(new Runnable() {
+                        public void run() {
+                            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(datasources, MyTunesRss.CONFIG.isIgnoreTimestamps());
+                        }
+                    }).start();
                 }
-            }).start();
+            }).show(getWindow());
         } else if (clickEvent.getSource() == myFullUpdateDatabase) {
-            myUpdateDatabase.setEnabled(false);
-            myFullUpdateDatabase.setEnabled(false);
-            myUpdateImages.setEnabled(false);
-            myStopDatabaseUpdate.setEnabled(true);
-            myResetDatabase.setEnabled(false);
-            myBackupDatabase.setEnabled(false);
-            new Thread(new Runnable() {
-                public void run() {
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
+            new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourceSelection.caption"), new DatasourcesSelectionPanel() {
+                @Override
+                protected void onContinue(final Collection<DatasourceConfig> datasources) {
+                    myUpdateDatabase.setEnabled(false);
+                    myFullUpdateDatabase.setEnabled(false);
+                    myUpdateImages.setEnabled(false);
+                    myStopDatabaseUpdate.setEnabled(true);
+                    myResetDatabase.setEnabled(false);
+                    myBackupDatabase.setEnabled(false);
+                    new Thread(new Runnable() {
+                        public void run() {
+                            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(datasources, true);
+                        }
+                    }).start();
                 }
-            }).start();
+            }).show(getWindow());
         } else if (clickEvent.getSource() == myUpdateImages) {
-            myUpdateDatabase.setEnabled(false);
-            myFullUpdateDatabase.setEnabled(false);
-            myUpdateImages.setEnabled(false);
-            myStopDatabaseUpdate.setEnabled(true);
-            myResetDatabase.setEnabled(false);
-            myBackupDatabase.setEnabled(false);
-            new Thread(new Runnable() {
-                public void run() {
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate(MyTunesRss.CONFIG.getDatasources());
+            new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourceSelection.caption"), new DatasourcesSelectionPanel() {
+                @Override
+                protected void onContinue(final Collection<DatasourceConfig> datasources) {
+                    myUpdateDatabase.setEnabled(false);
+                    myFullUpdateDatabase.setEnabled(false);
+                    myUpdateImages.setEnabled(false);
+                    myStopDatabaseUpdate.setEnabled(true);
+                    myResetDatabase.setEnabled(false);
+                    myBackupDatabase.setEnabled(false);
+                    new Thread(new Runnable() {
+                        public void run() {
+                            MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate(datasources);
+                        }
+                    }).start();
                 }
-            }).start();
+            }).show(getWindow());
         } else if (clickEvent.getSource() == myStopDatabaseUpdate) {
             myUpdateDatabase.setEnabled(false);
             myFullUpdateDatabase.setEnabled(false);
