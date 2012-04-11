@@ -2,18 +2,14 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
-import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
-import de.codewave.mytunesrss.datastore.statement.SaveMyTunesSmartPlaylistStatement;
-import de.codewave.mytunesrss.datastore.statement.SmartFieldType;
-import de.codewave.mytunesrss.datastore.statement.SmartInfo;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
+import javax.servlet.ServletException;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * de.codewave.mytunesrss.command.SaveSmartPlaylistCommandHandler
@@ -27,29 +23,20 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         if (!isError()) {
             Collection<SmartInfo> smartInfos = new ArrayList<SmartInfo>();
-            smartInfos.add(new SmartInfo(SmartFieldType.album, getRequestParameter("smartPlaylist.smartFields.album", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.artist, getRequestParameter("smartPlaylist.smartFields.artist", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.tvshow, getRequestParameter("smartPlaylist.smartFields.tvshow", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.genre, getRequestParameter("smartPlaylist.smartFields.genre", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.title, getRequestParameter("smartPlaylist.smartFields.title", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.file, getRequestParameter("smartPlaylist.smartFields.file", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.tag, getRequestParameter("smartPlaylist.smartFields.tag", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.comment, getRequestParameter("smartPlaylist.smartFields.comment", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.composer, getRequestParameter("smartPlaylist.smartFields.composer", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.mintime, getRequestParameter("smartPlaylist.smartFields.mintime", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.maxtime, getRequestParameter("smartPlaylist.smartFields.maxtime", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.mediatype, getRequestParameter("smartPlaylist.smartFields.mediatype", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.videotype, getRequestParameter("smartPlaylist.smartFields.videotype", null), false));
-            smartInfos.add(new SmartInfo(SmartFieldType.protection, getRequestParameter("smartPlaylist.smartFields.protection", null), false));
-            for (Iterator<SmartInfo> iter = smartInfos.iterator(); iter.hasNext(); ) {
-                SmartInfo smartInfo = iter.next();
-                if (StringUtils.isBlank(smartInfo.getPattern())) {
-                    iter.remove();
+            Enumeration<String> namesEnum = getRequest().getParameterNames();
+            while (namesEnum.hasMoreElements()) {
+                String name = namesEnum.nextElement();
+                if (name.startsWith("type_")) {
+                    String suffix = name.substring(5);
+                    SmartFieldType type = SmartFieldType.valueOf(getRequestParameter("type_" + suffix, null));
+                    String pattern = getRequestParameter("pattern_" + suffix, null);
+                    boolean invert = getBooleanRequestParameter("invert_" + suffix, false);
+                    if (StringUtils.isNotBlank(pattern)) {
+                        smartInfos.add(new SmartInfo(type, pattern, invert));
+                    }
                 }
             }
-            SaveMyTunesSmartPlaylistStatement statement = new SaveMyTunesSmartPlaylistStatement(getAuthUser().getName(), getBooleanRequestParameter(
-                    "smartPlaylist.playlist.userPrivate",
-                    false), smartInfos);
+            SaveMyTunesSmartPlaylistStatement statement = new SaveMyTunesSmartPlaylistStatement(getAuthUser().getName(), getBooleanRequestParameter("smartPlaylist.playlist.userPrivate", false), smartInfos);
             statement.setId(getRequestParameter("smartPlaylist.playlist.id", null));
             statement.setName(getRequestParameter("smartPlaylist.playlist.name", null));
             statement.setTrackIds(Collections.<String>emptyList());
@@ -57,25 +44,34 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, statement.getPlaylistIdAfterExecute()));
             forward(MyTunesRssCommand.ShowPlaylistManager);
         } else {
-            createParameterModel("smartPlaylist.playlist.id",
-                                 "smartPlaylist.playlist.name",
-                                 "smartPlaylist.playlist.userPrivate",
-                                 "smartPlaylist.smartFields.album",
-                                 "smartPlaylist.smartFields.artist",
-                                 "smartPlaylist.smartFields.tvshow",
-                                 "smartPlaylist.smartFields.genre",
-                                 "smartPlaylist.smartFields.composer",
-                                 "smartPlaylist.smartFields.title",
-                                 "smartPlaylist.smartFields.file",
-                                 "smartPlaylist.smartFields.tag",
-                                 "smartPlaylist.smartFields.comment",
-                                 "smartPlaylist.smartFields.mintime",
-                                 "smartPlaylist.smartFields.maxtime",
-                                 "smartPlaylist.smartFields.protection",
-                                 "smartPlaylist.smartFields.videotype",
-                                 "smartPlaylist.smartFields.mediatype");
-            getRequest().setAttribute("fields", EditSmartPlaylistCommandHandler.getFields());
+            getRequest().setAttribute("smartPlaylist", createRedisplayModel(null));
             forward(MyTunesRssResource.EditSmartPlaylist);
         }
+    }
+
+    protected Map<String, Object> createRedisplayModel(String remove) throws IOException, ServletException {
+        Map<String, Object> playlistModel = new HashMap<String, Object>();
+        playlistModel.put("name", getRequestParameter("smartPlaylist.playlist.name", null));
+        playlistModel.put("id", getRequestParameter("smartPlaylist.playlist.id", null));
+        playlistModel.put("userPrivate", getRequestParameter("smartPlaylist.playlist.userPrivate", null));
+        List<Map<String, String>> smartInfos = new ArrayList<Map<String, String>>();
+        Enumeration<String> namesEnum = getRequest().getParameterNames();
+        while (namesEnum.hasMoreElements()) {
+            String name = namesEnum.nextElement();
+            if (name.startsWith("type_")) {
+                String suffix = name.substring(5);
+                if (!suffix.equals(remove)) {
+                    Map<String, String> smartInfo = new HashMap<String, String>();
+                    smartInfo.put("fieldType", getRequestParameter("type_" + suffix, ""));
+                    smartInfo.put("pattern", getRequestParameter("pattern_" + suffix, ""));
+                    smartInfo.put("invert", getRequestParameter("invert_" + suffix, ""));
+                    smartInfos.add(smartInfo);
+                }
+            }
+        }
+        Map<String, Object> smartPlaylistModel = new HashMap<String, Object>();
+        smartPlaylistModel.put("smartInfos", smartInfos);
+        smartPlaylistModel.put("playlist", playlistModel);
+        return smartPlaylistModel;
     }
 }

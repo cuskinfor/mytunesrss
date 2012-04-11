@@ -48,6 +48,8 @@ public enum MyTunesRssCommand implements Command {
     DoSelfRegistration("register", DoSelfRegistrationCommandHandler.class),
     EditSmartPlaylist("editSmartPlaylist", EditSmartPlaylistCommandHandler.class),
     SaveSmartPlaylist("saveSmartPlaylist", SaveSmartPlaylistCommandHandler.class),
+    AddSmartPlaylistCriteria("addSmartPlaylistCriteria", AddSmartPlaylistCriteriaCommandHandler.class),
+    DelSmartPlaylistCriteria("delSmartPlaylistCriteria", DelSmartPlaylistCriteriaCommandHandler.class),
     ShowRemoteControl("showRemoteControl", ShowRemoteControlHandler.class),
     SearchTracks("searchTracks", SearchTracksCommandHandler.class),
     ShowResource("showResource", ShowResourceCommandHandler.class),

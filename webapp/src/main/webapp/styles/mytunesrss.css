@@ -1334,3 +1334,13 @@ div.photolinks a:hover span {
     cursor: pointer;
     border: 1px solid black;
 }
+
+td.criteriaSpacer {
+    height: 30px;
+}
+
+img.smartPlaylistDeleteAction {
+    cursor: pointer;
+    text-decoration: none;
+    border: 0;
+}

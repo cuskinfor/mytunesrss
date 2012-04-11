@@ -21,23 +21,7 @@ public class EditSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             smartPlaylist = getTransaction().executeQuery(new FindSmartPlaylistQuery(playlistId)).iterator().next();
         }
         getRequest().setAttribute("smartPlaylist", smartPlaylist);
-        getRequest().setAttribute("fields", getFields());
         forward(MyTunesRssResource.EditSmartPlaylist);
     }
 
-    static String[] getFields() {
-        return new String[]{
-                "smartPlaylist.smartFields." + SmartFieldType.album.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.artist.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.composer.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.genre.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.tvshow.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.title.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.file.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.tag.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.comment.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.mintime.name(),
-                "smartPlaylist.smartFields." + SmartFieldType.maxtime.name()
-        };
-    }
 }
