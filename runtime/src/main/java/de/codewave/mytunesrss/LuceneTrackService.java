@@ -295,50 +295,45 @@ public class LuceneTrackService {
         for (SmartInfo smartInfo : smartInfos) {
             switch (smartInfo.getFieldType()) {
                 case album:
-                    addToAndQuery(andQuery, "album", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "album", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case artist:
-                    addToAndQuery(andQuery, "artist", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
-                    addToAndQuery(andQuery, "album_artist", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "artist", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "album_artist", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case comment:
-                    addToAndQuery(andQuery, "comment", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "comment", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case composer:
-                    addToAndQuery(andQuery, "composer", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "composer", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case file:
-                    addToAndQuery(andQuery, "filename", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "filename", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case genre:
-                    addToAndQuery(andQuery, "genre", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "genre", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case tag:
-                    addToAndQuery(andQuery, "tags", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "tags", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case title:
-                    addToAndQuery(andQuery, "name", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "name", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case tvshow:
-                    addToAndQuery(andQuery, "series", StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    addToAndQuery(andQuery, "series", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
             }
         }
         return andQuery;
     }
 
-    private void addToAndQuery(BooleanQuery andQuery, String field, String pattern, int fuzziness) {
+    private void addToAndQuery(BooleanQuery andQuery, String field, boolean not, String pattern, int fuzziness) {
         if (StringUtils.isNotEmpty(pattern)) {
-            BooleanQuery innerAndQuery = new BooleanQuery();
-            String escapedPattern = QueryParser.escape(pattern);
-            for (String term : StringUtils.split(escapedPattern)) {
-                if (fuzziness > 0) {
-                    innerAndQuery.add(new FuzzyQuery(new Term(field, term), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.MUST);
-                } else {
-                    innerAndQuery.add(new WildcardQuery(new Term(field, "*" + term + "*")), BooleanClause.Occur.MUST);
-                }
+            if (fuzziness > 0) {
+                andQuery.add(new FuzzyQuery(new Term(field, QueryParser.escape(pattern)), ((float) (100 - fuzziness)) / 100f), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+            } else {
+                andQuery.add(new WildcardQuery(new Term(field, "*" + QueryParser.escape(pattern) + "*")), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
             }
-            andQuery.add(innerAndQuery, BooleanClause.Occur.MUST);
         }
     }
 }

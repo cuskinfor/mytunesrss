@@ -19,9 +19,15 @@ public class AddSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCom
     public void executeAuthorized() throws IOException, ServletException {
         Map<String,Object> redisplayModel = createRedisplayModel(null);
         Map<String, String> newModel = new HashMap<String, String>();
-        newModel.put("fieldType", getRequestParameter("newFieldType", ""));
+        String fieldType = getRequestParameter("newFieldType", "");
+        if (fieldType.endsWith(".not")) {
+            newModel.put("fieldType", fieldType.substring(0, fieldType.length() - ".not".length()));
+            newModel.put("invert", "true");
+        } else {
+            newModel.put("fieldType", fieldType);
+            newModel.put("invert", "true");
+        }
         newModel.put("pattern", "");
-        newModel.put("invert", "false");
         ((List <Map<String, String>>)redisplayModel.get("smartInfos")).add(newModel);
         getRequest().setAttribute("smartPlaylist", redisplayModel);
         forward(MyTunesRssResource.EditSmartPlaylist);

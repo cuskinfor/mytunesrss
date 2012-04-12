@@ -42,19 +42,19 @@
 			        <table class="settings" cellspacing="0">
 
 			            <tr>
-			                <th class="active" colspan="4"><fmt:message key="editSmartPlaylistTitle" /></th>
+			                <th class="active" colspan="3"><fmt:message key="editSmartPlaylistTitle" /></th>
 			            </tr>
 
 			            <mt:initFlipFlop value1="" value2="class=\"odd\""/>
 
 			            <tr <mt:flipFlop/>>
 			                <td class="label"><label for="smartPlaylistName"><fmt:message key="playlistName" /></label></td>
-			                <td colspan="3"><input id="smartPlaylistName" type="text" name="smartPlaylist.playlist.name" value="<c:out value="${smartPlaylist.playlist.name}"/>" /></td>
+			                <td colspan="2"><input id="smartPlaylistName" type="text" name="smartPlaylist.playlist.name" value="<c:out value="${smartPlaylist.playlist.name}"/>" /></td>
 			            </tr>
 
                         <tr <mt:flipFlop/>>
                             <td class="label"><label for="smartPlaylistUserPrivate"><fmt:message key="playlistUserPrivate" /></label></td>
-                            <td colspan="3">
+                            <td colspan="2">
                                 <input id="smartPlaylistUserPrivate" type="checkbox"
                                        <c:if test="${!authUser.createPublicPlaylists}">disabled="disabled"</c:if>
                                        name="smartPlaylist.playlist.userPrivate"
@@ -63,10 +63,14 @@
                             </td>
                         </tr>
 
+                        <tr><td class="criteriaSpacer" colspan="3"></td></tr>
+
 			            <c:forEach items="${smartPlaylist.smartInfos}" var="smartInfo" varStatus="loopStatus">
                             <input type="hidden" name="type_${loopStatus.index}" value="${smartInfo.fieldType}" />
+                            <input type="hidden" name="invert_${loopStatus.index}" value="${smartInfo.invert}" />
 			                <tr id="criteriaRow${loopStatus.index}" <mt:flipFlop/>>
-			                    <td class="label"><fmt:message key="smartPlaylist.smartInfo.${smartInfo.fieldType}" /></td>
+                                <c:set var="criterionBundleKey">smartPlaylist.smartInfo.${smartInfo.fieldType}<c:if test="${smartInfo.invert}">.not</c:if></c:set>
+			                    <td class="label"><c:if test="${!loopStatus.first}"><fmt:message key="smartPlaylist.smartInfo.and"/> </c:if><fmt:message key="${criterionBundleKey}" /></td>
                                 <c:choose>
                                     <c:when test="${smartInfo.fieldType == 'mediatype'}">
                                         <td>
@@ -76,70 +80,73 @@
                                                 <option value="Image" <c:if test="${smartInfo.pattern == 'Image'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.mediatype.image"/></option>
                                             </select>
                                         </td>
-                                        <td>
-                                            <input type="checkbox" name="invert_${loopStatus.index}" value="true" <c:if test="${smartInfo.invert}">checked="checked"</c:if>/><fmt:message key="smartPlaylist.smartInfo.invert" />
-                                        </td>
-                                        <td>
-                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()"/>
+                                        <td class="smartPlaylistDelCriteria">
+                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
                                     <c:when test="${smartInfo.fieldType == 'videotype'}">
-                                        <td colspan="2">
+                                        <td>
                                             <select name="pattern_${loopStatus.index}">
                                                 <option value="Movie" <c:if test="${smartInfo.pattern == 'Movie'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.movie"/></option>
                                                 <option value="TvShow" <c:if test="${smartInfo.pattern == 'TvShow'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.videotype.tvshow"/></option>
                                             </select>
                                         </td>
-                                        <td>
-                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()"/>
+                                        <td class="smartPlaylistDelCriteria">
+                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
                                     <c:when test="${smartInfo.fieldType == 'protection'}">
-                                        <td colspan="2">
+                                        <td>
                                             <select name="pattern_${loopStatus.index}">
                                                 <option value="true" <c:if test="${smartInfo.pattern}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.protection.true"/></option>
                                                 <option value="false" <c:if test="${!smartInfo.pattern}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.protection.false"/></option>
                                             </select>
                                         </td>
-                                        <td>
-                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()"/>
+                                        <td class="smartPlaylistDelCriteria">
+                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
                                     <c:otherwise>
                                         <td><input type="text" name="pattern_${loopStatus.index}" value="<c:out value="${smartInfo.pattern}"/>" /></td>
-                                        <td>
-                                            <input type="checkbox" name="invert_${loopStatus.index}" value="true" <c:if test="${smartInfo.invert}">checked="checked"</c:if>/><fmt:message key="smartPlaylist.smartInfo.invert" />
-                                        </td>
-                                        <td>
-                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()"/>
+                                        <td class="smartPlaylistDelCriteria">
+                                            <img class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:otherwise>
                                 </c:choose>
 			                </tr>
 			            </c:forEach>
 
-                        <tr><td class="criteriaSpacer" colspan="4"></td></tr>
+                        <tr><td class="criteriaSpacer" colspan="3"></td></tr>
 
                         <tr id="addCriteria">
                             <td class="label">
                                 <fmt:message key="smartPlaylist.smartInfo.new" />
                             </td>
-                            <td colspan="3">
+                            <td colspan="2">
                                 <select name="newFieldType">
                                     <option value="album"><fmt:message key="smartPlaylist.smartInfo.album"/></option>
+                                    <option value="album.not"><fmt:message key="smartPlaylist.smartInfo.album.not"/></option>
                                     <option value="artist"><fmt:message key="smartPlaylist.smartInfo.artist"/></option>
+                                    <option value="artist.not"><fmt:message key="smartPlaylist.smartInfo.artist.not"/></option>
                                     <option value="genre"><fmt:message key="smartPlaylist.smartInfo.genre"/></option>
+                                    <option value="genre.not"><fmt:message key="smartPlaylist.smartInfo.genre.not"/></option>
                                     <option value="tvshow"><fmt:message key="smartPlaylist.smartInfo.tvshow"/></option>
+                                    <option value="tvshow.not"><fmt:message key="smartPlaylist.smartInfo.tvshow.not"/></option>
                                     <option value="title"><fmt:message key="smartPlaylist.smartInfo.title"/></option>
+                                    <option value="title.not"><fmt:message key="smartPlaylist.smartInfo.title.not"/></option>
                                     <option value="file"><fmt:message key="smartPlaylist.smartInfo.file"/></option>
+                                    <option value="file.not"><fmt:message key="smartPlaylist.smartInfo.file.not"/></option>
                                     <option value="tag"><fmt:message key="smartPlaylist.smartInfo.tag"/></option>
+                                    <option value="tag.not"><fmt:message key="smartPlaylist.smartInfo.tag.not"/></option>
                                     <option value="comment"><fmt:message key="smartPlaylist.smartInfo.comment"/></option>
+                                    <option value="comment.not"><fmt:message key="smartPlaylist.smartInfo.comment.not"/></option>
+                                    <option value="composer"><fmt:message key="smartPlaylist.smartInfo.composer"/></option>
+                                    <option value="composer.not"><fmt:message key="smartPlaylist.smartInfo.composer.not"/></option>
                                     <option value="mintime"><fmt:message key="smartPlaylist.smartInfo.mintime"/></option>
                                     <option value="maxtime"><fmt:message key="smartPlaylist.smartInfo.maxtime"/></option>
                                     <option value="mediatype"><fmt:message key="smartPlaylist.smartInfo.mediatype"/></option>
                                     <option value="videotype"><fmt:message key="smartPlaylist.smartInfo.videotype"/></option>
                                     <option value="protection"><fmt:message key="smartPlaylist.smartInfo.protection"/></option>
-                                    <option value="composer"><fmt:message key="smartPlaylist.smartInfo.composer"/></option>
                                 </select>
                                 <input id="linkAddCriteria" type="submit" value="<fmt:message key="smartPlaylist.smartInfo.add"/>" onclick="$jQ('#playlist').attr('action', '${servletUrl}/addSmartPlaylistCriteria/${auth}');return true;"/>
                             </td>

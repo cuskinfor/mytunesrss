@@ -1344,3 +1344,7 @@ img.smartPlaylistDeleteAction {
     text-decoration: none;
     border: 0;
 }
+
+td.smartPlaylistDelCriteria {
+    width: 18px;
+}
