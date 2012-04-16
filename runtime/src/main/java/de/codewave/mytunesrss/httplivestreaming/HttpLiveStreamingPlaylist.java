@@ -6,77 +6,32 @@
 package de.codewave.mytunesrss.httplivestreaming;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.io.IOException;
 
 public class HttpLiveStreamingPlaylist {
 
-    private List<File> myFiles = new ArrayList<File>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpLiveStreamingPlaylist.class);
 
-    private AtomicBoolean myDone = new AtomicBoolean(false);
-
-    private AtomicBoolean myFailed = new AtomicBoolean(false);
-
-    private File baseDir;
+    private File myBaseDir;
 
     public HttpLiveStreamingPlaylist(File baseDir) {
-        this.baseDir = baseDir;
+        myBaseDir = baseDir;
         baseDir.mkdirs();
     }
 
     public File getBaseDir() {
-        return baseDir;
-    }
-
-    public boolean isDone() {
-        return myDone.get();
-    }
-
-    public void setDone(boolean done) {
-        myDone.set(done);
-    }
-
-    public boolean isFailed() {
-        return myFailed.get();
-    }
-
-    public void setFailed(boolean failed) {
-        myFailed.set(failed);
-    }
-
-    public void addFile(File file) {
-        if (myFailed.get() || myDone.get()) {
-            FileUtils.deleteQuietly(file);
-        } else {
-            myFiles.add(file);
-        }
+        return myBaseDir;
     }
 
     public void destroy() {
-        myFailed.set(true);
-        for (File file : myFiles) {
-            FileUtils.deleteQuietly(file);
+        try {
+            FileUtils.deleteDirectory(myBaseDir);
+        } catch (IOException e) {
+            LOGGER.warn("Could not delete http-live-streaming directory \"" + myBaseDir.getAbsolutePath() + "\".");
         }
-    }
-
-    public int getSize() {
-        return myFiles.size();
-    }
-
-    public String getAsString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("#EXTM3U\n");
-        sb.append("#EXT-X-TARGETDURATION:10\n");
-        for (File file : myFiles) {
-            sb.append("#EXTINF:10,\n");
-            sb.append(getBaseDir().getName()).append("/").append(file.getName()).append("\n");
-        }
-        if (isDone() || isFailed()) {
-            sb.append("#EXT-X-ENDLIST\n");
-        }
-        return sb.toString();
     }
 }

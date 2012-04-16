@@ -11,19 +11,14 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
+import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
-import de.codewave.vaadin.component.SelectWindow;
-import de.codewave.vaadin.component.ServerSideFileChooser;
-import de.codewave.vaadin.component.ServerSideFileChooserWindow;
-import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.text.Collator;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -34,38 +29,29 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     private static final String TRANSCODER_NAME_REGEXP = "[a-zA-Z0-9 ]{1,40}";
 
-    private Panel myTranscoderAccordionPanel;
     private Panel myTranscoderPanel;
     private Form myCacheForm;
     private Button myAddTranscoder;
-    private Button myAddTranscoderFromPreset;
     private SmartTextField myStreamingCacheTimeout;
     private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
-    private List<TranscoderConfig> myTranscoderPresets;
+    Panel myAddTranscoderButtons;
 
     public void attach() {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
-        myTranscoderPresets = MyTunesRss.PRESET_MANAGER.getPresets();
         myTranscoderPanel = new Panel(getBundleString("streamingConfigPanel.caption.transcoder"));
         ((Layout) myTranscoderPanel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) myTranscoderPanel.getContent()).setSpacing(true);
-        myTranscoderAccordionPanel = new Panel();
-        Accordion accordion = new Accordion();
-        myTranscoderAccordionPanel.setContent(accordion);
+        myAddTranscoderButtons = new Panel();
+        myAddTranscoderButtons.addStyleName("light");
+        myAddTranscoderButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
+        myAddTranscoder = getComponentFactory().createButton("streamingConfigPanel.transcoder.add", this);
+        myAddTranscoderButtons.addComponent(myAddTranscoder);
         for (int i = 0; i < MyTunesRss.CONFIG.getTranscoderConfigs().size(); i++) {
             createTranscoder();
         }
-        myTranscoderPanel.addComponent(myTranscoderAccordionPanel);
-        Panel addTranscoderButtons = new Panel();
-        addTranscoderButtons.addStyleName("light");
-        addTranscoderButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
-        myAddTranscoder = getComponentFactory().createButton("streamingConfigPanel.transcoder.add", this);
-        addTranscoderButtons.addComponent(myAddTranscoder);
-        myAddTranscoderFromPreset = getComponentFactory().createButton("streamingConfigPanel.transcoder.addPreset", this);
-        addTranscoderButtons.addComponent(myAddTranscoderFromPreset);
-        myTranscoderPanel.addComponent(addTranscoderButtons);
+        myTranscoderPanel.addComponent(myAddTranscoderButtons);
         addComponent(myTranscoderPanel);
         myCacheForm = getComponentFactory().createForm(null, true);
         myStreamingCacheTimeout = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheTimeout", getApplication().getValidatorFactory().createMinMaxValidator(0, 1440));
@@ -94,23 +80,23 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         SmartTextField contentTypeTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.contentType");
         contentTypeTextField.setRequired(true);
         form.addField("contentType", contentTypeTextField);
-        SmartTextField binaryTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.binary", new FileValidator(getBundleString("streamingConfigPanel.error.invalidBinary"), null, FileValidator.PATTERN_ALL));
-        binaryTextField.setRequired(true);
-        form.addField("binary", binaryTextField);
-        Button selectBinary = getComponentFactory().createButton("streamingConfigPanel.transcoder.select", this);
-        selectBinary.setData(form);
-        form.addField("selectBinary", selectBinary);
-        form.addField("options", getComponentFactory().createTextField("streamingConfigPanel.transcoder.options"));
+        SmartTextField muxTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.mux");
+        form.addField("mux", muxTextField);
+        SmartTextField optionsTextField = getComponentFactory().createTextField("streamingConfigPanel.transcoder.options");
+        optionsTextField.setRequired(true);
+        form.addField("options", optionsTextField);
         Button delete = getComponentFactory().createButton("streamingConfigPanel.transcoder.delete", this);
         delete.setData(form);
         Panel panel = getComponentFactory().surroundWithPanel(form, new Layout.MarginInfo(false, true, true, true), null);
-        myTranscoderAccordionPanel.addComponent(panel);
+        myTranscoderPanel.removeComponent(myAddTranscoderButtons);
+        myTranscoderPanel.addComponent(panel);
+        myTranscoderPanel.addComponent(myAddTranscoderButtons);
         panel.addComponent(delete);
         return form;
     }
 
     protected void initFromConfig() {
-        Iterator<Component> componentIterator = myTranscoderAccordionPanel.getComponentIterator();
+        Iterator<Component> componentIterator = myTranscoderPanel.getComponentIterator();
         List<TranscoderConfig> transcoderConfigs = new ArrayList<TranscoderConfig>(MyTunesRss.CONFIG.getTranscoderConfigs());
         Collections.sort(transcoderConfigs, new Comparator<TranscoderConfig>() {
             Collator myCollator = Collator.getInstance(getLocale());
@@ -122,14 +108,13 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         for (int i = 0; i < transcoderConfigs.size(); i++) {
             TranscoderConfig config = transcoderConfigs.get(i);
             Panel panel = (Panel) componentIterator.next();
-            VaadinUtils.getAncestor(panel, TabSheet.class).getTab(panel).setCaption(config.getName());
             Form form = getTranscoderForm(panel);
             form.getField("name").setValue(config.getName());
             form.getField("pattern").setValue(config.getPattern());
             form.getField("codecs").setValue(config.getMp4Codecs());
             form.getField("suffix").setValue(config.getTargetSuffix());
             form.getField("contentType").setValue(config.getTargetContentType());
-            form.getField("binary").setValue(config.getBinary());
+            form.getField("mux").setValue(config.getTargetMux());
             form.getField("options").setValue(config.getOptions());
         }
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
@@ -143,20 +128,22 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             obsoleteTranscoderNames.add(config.getName());
         }
         configs.clear();
-        Iterator<Component> componentIterator = myTranscoderAccordionPanel.getComponentIterator();
+        Iterator<Component> componentIterator = myTranscoderPanel.getComponentIterator();
         while (componentIterator.hasNext()) {
             Form form = getTranscoderForm((Panel) componentIterator.next());
-            TranscoderConfig conf = new TranscoderConfig();
-            String name = ((SmartTextField) form.getField("name")).getStringValue(null);
-            conf.setName(name);
-            obsoleteTranscoderNames.remove(name);
-            conf.setPattern(((SmartTextField) form.getField("pattern")).getStringValue(null));
-            conf.setMp4Codecs(((SmartTextField) form.getField("codecs")).getStringValue(null));
-            conf.setTargetSuffix(((SmartTextField) form.getField("suffix")).getStringValue(null));
-            conf.setTargetContentType(((SmartTextField) form.getField("contentType")).getStringValue(null));
-            conf.setBinary(((SmartTextField) form.getField("binary")).getStringValue(null));
-            conf.setOptions(((SmartTextField) form.getField("options")).getStringValue(null));
-            configs.add(conf);
+            if (form != null) {
+                TranscoderConfig conf = new TranscoderConfig();
+                String name = ((SmartTextField) form.getField("name")).getStringValue(null);
+                conf.setName(name);
+                obsoleteTranscoderNames.remove(name);
+                conf.setPattern(((SmartTextField) form.getField("pattern")).getStringValue(null));
+                conf.setMp4Codecs(((SmartTextField) form.getField("codecs")).getStringValue(null));
+                conf.setTargetSuffix(((SmartTextField) form.getField("suffix")).getStringValue(null));
+                conf.setTargetContentType(((SmartTextField) form.getField("contentType")).getStringValue(null));
+                conf.setTargetMux(((SmartTextField) form.getField("mux")).getStringValue(null));
+                conf.setOptions(((SmartTextField) form.getField("options")).getStringValue(null));
+                configs.add(conf);
+            }
         }
         truncateHttpLiveStreamingCache(obsoleteTranscoderNames);
         truncateTranscodingCache(obsoleteTranscoderNames);
@@ -180,7 +167,10 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Removing playlist with key \"" + transcoderName + "\" from cache item with key \"" + key + "\".");
                 }
-                cacheItem.getPlaylist(transcoderName).destroy();
+                HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(transcoderName);
+                if (playlist != null) {
+                    playlist.destroy();
+                }
                 cacheItem.removePlaylist(transcoderName);
             }
         }
@@ -210,18 +200,20 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     @Override
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myCacheForm);
-        Iterator<Component> formIterator = myTranscoderAccordionPanel.getComponentIterator();
+        Iterator<Component> formIterator = myTranscoderPanel.getComponentIterator();
         Set<String> transcoderNames = new HashSet<String>();
         boolean duplicateName = false;
         while (formIterator.hasNext()) {
             Panel panel = (Panel) formIterator.next();
             Form form = getTranscoderForm(panel);
-            valid &= VaadinUtils.isValid(form);
-            String name = ((SmartTextField) form.getField("name")).getStringValue(null);
-            if (transcoderNames.contains(name)) {
-                duplicateName = true;
+            if (form != null) {
+                valid &= VaadinUtils.isValid(form);
+                String name = ((SmartTextField) form.getField("name")).getStringValue(null);
+                if (transcoderNames.contains(name)) {
+                    duplicateName = true;
+                }
+                transcoderNames.add(name);
             }
-            transcoderNames.add(name);
         }
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
@@ -239,12 +231,12 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 return (Form) component;
             }
         }
-        throw new IllegalArgumentException("No transcoder form found in panel.");
+        return null;
     }
 
     @Override
     protected boolean beforeReset() {
-        myTranscoderAccordionPanel.removeAllComponents();
+        myTranscoderPanel.removeAllComponents();
         for (int i = 0; i < MyTunesRss.CONFIG.getTranscoderConfigs().size(); i++) {
             createTranscoder();
         }
@@ -257,47 +249,19 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             Form form = createTranscoder();
             String name = getBundleString("streamingConfigPanel.transcoder.defaultName", myTranscoderNumberGenerator.getAndIncrement());
             form.getField("name").setValue(name);
-            Panel panel = VaadinUtils.getAncestor(form, Panel.class);
-            ((TabSheet) panel.getParent()).getTab(panel).setCaption(name);
-        } else if (clickEvent.getButton() == myAddTranscoderFromPreset) {
-            new SelectWindow<TranscoderConfig>(50, Sizeable.UNITS_EM, myTranscoderPresets, myTranscoderPresets.get(0), null, getBundleString("streamingConfigDialog.transcoderPreset.caption"), getBundleString("streamingConfigDialog.transcoderPreset.message"), getBundleString("button.ok"), getBundleString("button.cancel")) {
-                @Override
-                protected void onOk(TranscoderConfig transcoderConfig) {
-                    Form form = createTranscoder();
-                    form.getField("name").setValue(transcoderConfig.getName());
-                    form.getField("pattern").setValue(transcoderConfig.getPattern());
-                    form.getField("codecs").setValue(transcoderConfig.getMp4Codecs());
-                    form.getField("suffix").setValue(transcoderConfig.getTargetSuffix());
-                    form.getField("contentType").setValue(transcoderConfig.getTargetContentType());
-                    form.getField("binary").setValue(transcoderConfig.getBinary());
-                    form.getField("options").setValue(transcoderConfig.getOptions());
-                    Panel panel = VaadinUtils.getAncestor(form, Panel.class);
-                    ((TabSheet) panel.getParent()).getTab(panel).setCaption(transcoderConfig.getName());
-                    getParent().removeWindow(this);
+            //Panel panel = VaadinUtils.getAncestor(form, Panel.class);
+            //((TabSheet) panel.getParent()).getTab(panel).setCaption(name);
+        } else if (VaadinUtils.isChild(myTranscoderPanel, clickEvent.getButton())) {
+            final Form buttonForm = (Form) clickEvent.getButton().getData();
+            final Button yes = new Button(getBundleString("button.yes"));
+            Button no = new Button(getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("streamingConfigDialog.deleteConfirmation.caption"), getBundleString("streamingConfigDialog.deleteConfirmation.message", buttonForm.getField("name").getValue()), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        myTranscoderPanel.removeComponent(VaadinUtils.getAncestor(buttonForm, Panel.class));
+                    }
                 }
             }.show(getWindow());
-        } else if (VaadinUtils.isChild(myTranscoderAccordionPanel, clickEvent.getButton())) {
-            final Form buttonForm = (Form) clickEvent.getButton().getData();
-            if (buttonForm.getField("selectBinary") == clickEvent.getButton()) {
-                File dir = StringUtils.isNotBlank((String) buttonForm.getField("binary").getValue()) ? new File((String) buttonForm.getField("binary").getValue()) : null;
-                new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
-                    @Override
-                    protected void onFileSelected(File file) {
-                        buttonForm.getField("binary").setValue(file.getAbsolutePath());
-                        getParent().removeWindow(this);
-                    }
-                }.show(getWindow());
-            } else {
-                final Button yes = new Button(getBundleString("button.yes"));
-                Button no = new Button(getBundleString("button.no"));
-                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("streamingConfigDialog.deleteConfirmation.caption"), getBundleString("streamingConfigDialog.deleteConfirmation.message", buttonForm.getField("name").getValue()), yes, no) {
-                    public void clicked(Button button) {
-                        if (button == yes) {
-                            myTranscoderAccordionPanel.removeComponent(VaadinUtils.getAncestor(buttonForm, Panel.class));
-                        }
-                    }
-                }.show(getWindow());
-            }
         } else {
             super.buttonClick(clickEvent);
         }

@@ -308,43 +308,37 @@ public class MyTunesRssWebUtils {
     }
 
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
-        boolean notranscode = "true".equals(request.getParameter("notranscode"));
-        boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
-        User authUser = getAuthUser(request);
-        return (authUser != null && authUser.getForceTranscoder(track) != null) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
+        if (MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+            boolean notranscode = "true".equals(request.getParameter("notranscode"));
+            boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
+            User authUser = getAuthUser(request);
+            return (authUser != null && authUser.getForceTranscoder(track) != null) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
+        } else {
+            return null;
+        }
     }
 
     public static InputStream getMediaStream(HttpServletRequest request, Track track, File file) throws IOException {
-        InputStream inputStream;
-        if (Mp4Utils.isMp4File(file)) {
-            LOGGER.info("Using QT-FASTSTART utility.");
-            inputStream = Mp4Utils.getFastStartInputStream(file);
-        }
-        else {
-            inputStream = new FileInputStream(file);
-        }
         Transcoder transcoder = getTranscoder(request, track);
-        if (transcoder != null) {
-            return transcoder.getStream(inputStream);
+        if (transcoder == null && Mp4Utils.isMp4File(file)) {
+            LOGGER.info("Using QT-FASTSTART utility.");
+            return Mp4Utils.getFastStartInputStream(file);
+        } else if (transcoder != null) {
+            return transcoder.getStream(file);
         } else {
-            return inputStream;
+            return new FileInputStream(file);
         }
     }
 
     public static StreamSender getMediaStreamSender(HttpServletRequest request, Track track, File file) throws IOException {
-        InputStream inputStream;
-        if (Mp4Utils.isMp4File(file)) {
-            LOGGER.info("Using QT-FASTSTART utility.");
-            inputStream = Mp4Utils.getFastStartInputStream(file);
-        }
-        else {
-            inputStream = new FileInputStream(file);
-        }
         Transcoder transcoder = getTranscoder(request, track);
-        if (transcoder != null) {
-            return transcoder.getStreamSender(inputStream);
+        if (transcoder == null && Mp4Utils.isMp4File(file)) {
+            LOGGER.info("Using QT-FASTSTART utility.");
+            return new StreamSender(Mp4Utils.getFastStartInputStream(file), track.getContentType(), track.getContentLength());
+        } else if (transcoder != null) {
+            return transcoder.getStreamSender(file);
         } else {
-            return new StreamSender(inputStream, track.getContentType(), track.getContentLength());
+            return new StreamSender(new FileInputStream(file), track.getContentType(), track.getContentLength());
         }
     }
 

@@ -25,10 +25,10 @@ public class Transcoder {
 
     public static Transcoder createTranscoder(Track track, User user, String activeTranscoders, boolean tempFile) {
         TranscoderConfig transcoderConfig = user != null ? user.getForceTranscoder(track) : null;
-        Transcoder transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() ? new Transcoder(transcoderConfig, track, tempFile) : null;
+        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, tempFile) : null;
         if (transcoder == null) {
             transcoderConfig = MyTunesRssWebUtils.getTranscoder(activeTranscoders, track);
-            transcoder = transcoderConfig != null && transcoderConfig.isValidBinary() && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track, tempFile) : null;
+            transcoder = transcoderConfig != null && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track, tempFile) : null;
         }
         return transcoder;
     }
@@ -39,11 +39,11 @@ public class Transcoder {
         myTempFile = tempFile;
     }
 
-    public File getTranscodedFile(InputStream originalStream) throws IOException {
+    public File getTranscodedFile(File originalFile) throws IOException {
         File file = File.createTempFile("mytunesrss_", null, new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER));
         try {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
-            InputStream inputStream = getStream(originalStream);
+            InputStream inputStream = getStream(originalFile);
             IOUtils.copy(inputStream, fileOutputStream);
             inputStream.close();
             fileOutputStream.close();
@@ -54,13 +54,13 @@ public class Transcoder {
         }
     }
 
-    public StreamSender getStreamSender(InputStream originalStream) throws IOException {
+    public StreamSender getStreamSender(File originalFile) throws IOException {
         final String identifier = myTrack.getId() + "_" + getTranscoderId();
         if (myTempFile) {
             FileCache.FileInfo fileInfo = MyTunesRss.STREAMING_CACHE.lock(identifier);
             File transcodedFile = fileInfo != null ? fileInfo.getFile() : null;
             if (transcodedFile == null) {
-                transcodedFile = getTranscodedFile(originalStream);
+                transcodedFile = getTranscodedFile(originalFile);
                 MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
                 MyTunesRss.STREAMING_CACHE.lock(identifier);
             }
@@ -70,12 +70,12 @@ public class Transcoder {
                 }
             };
         } else {
-            return new StreamSender(getStream(originalStream), getTargetContentType(), 0);
+            return new StreamSender(getStream(originalFile), getTargetContentType(), 0);
         }
     }
 
-    public InputStream getStream(InputStream originalStream) throws IOException {
-        return new TranscoderStream(myTranscoderConfig, myTrack, originalStream);
+    public InputStream getStream(File originalFile) throws IOException {
+        return new TranscoderStream(myTranscoderConfig, originalFile);
     }
 
     public String getTranscoderId() {

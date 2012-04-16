@@ -28,69 +28,92 @@ public class TranscoderStream extends InputStream {
 
     private Process myProcess;
     private TranscoderConfig myTranscoderConfig;
-    private File myImageFile;
+    private InputStream myInputStream;
 
-    TranscoderStream(TranscoderConfig transcoderConfig, Track track, final InputStream inputStream) throws IOException {
+    TranscoderStream(TranscoderConfig transcoderConfig, File inputFile) throws IOException {
         myTranscoderConfig = transcoderConfig;
-        final String[] transcoderCommand = new String[getArguments().split(" ").length + 1];
-        transcoderCommand[0] = transcoderConfig.getBinary();
-        int i = 1;
-        for (String part : getArguments().split(" ")) {
-            transcoderCommand[i++] = part;
-        }
-        replaceTokens(transcoderCommand, track);
+        final String[] transcoderCommand = new String[] {
+                MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
+                inputFile.getAbsolutePath(),
+                "vlc://quit",
+                "--intf=dummy",
+                "--sout-transcode-audio-sync",
+                "--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}"
+        };
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
         }
-        myProcess = Runtime.getRuntime().exec(transcoderCommand);
-        new StreamCopyThread(inputStream, true, myProcess.getOutputStream(), true).start();
+        myProcess = new ProcessBuilder(transcoderCommand).start();
+        myInputStream = myProcess.getInputStream();
         new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }
 
     public int read() throws IOException {
-        return myProcess.getInputStream().read();
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        return myInputStream.read();
     }
 
     @Override
     public int read(byte[] bytes) throws IOException {
-        return myProcess.getInputStream().read(bytes);
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        return myInputStream.read(bytes);
     }
 
     @Override
     public int read(byte[] bytes, int start, int length) throws IOException {
-        return myProcess.getInputStream().read(bytes, start, length);
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        return myInputStream.read(bytes, start, length);
     }
 
     @Override
     public long skip(long l) throws IOException {
-        return myProcess.getInputStream().skip(l);
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        return myInputStream.skip(l);
     }
 
     @Override
     public int available() throws IOException {
-        return myProcess.getInputStream().available();
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        return myInputStream.available();
     }
 
     @Override
     public void mark(int i) {
-        myProcess.getInputStream().mark(i);
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        myInputStream.mark(i);
     }
 
     @Override
     public void reset() throws IOException {
-        myProcess.getInputStream().reset();
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        myInputStream.reset();
     }
 
     @Override
     public boolean markSupported() {
-        return myProcess.getInputStream().markSupported();
+        if (myInputStream == null) {
+            throw new IllegalStateException("No input stream available.");
+        }
+        return myInputStream.markSupported();
     }
 
     @Override
     public void close() throws IOException {
-        if (myImageFile != null) {
-            myImageFile.delete();
-        }
+        myInputStream = null;
         if (myProcess != null) {
             myProcess.destroy();
         }
@@ -98,77 +121,5 @@ public class TranscoderStream extends InputStream {
 
     protected String getName() {
         return myTranscoderConfig.getName();
-    }
-
-    protected String getArguments() {
-        return myTranscoderConfig.getOptions();
-    }
-
-    public void replaceTokens(String[] command, Track track) {
-        for (int i = 0; i < command.length; i++) {
-            if ("{info.album}".equals(command[i])) {
-                command[i] = track.getAlbum();
-            } else if ("{info.artist}".equals(command[i])) {
-                command[i] = track.getOriginalArtist();
-            } else if ("{info.track}".equals(command[i])) {
-                command[i] = track.getName();
-            } else if ("{info.genre}".equals(command[i])) {
-                command[i] = track.getGenre();
-            } else if ("{info.comment}".equals(command[i])) {
-                command[i] = track.getComment();
-            } else if ("{info.pos.number}".equals(command[i])) {
-                command[i] = Integer.toString(track.getPosNumber());
-            } else if ("{info.pos.size}".equals(command[i])) {
-                command[i] = Integer.toString(track.getPosSize());
-            } else if ("{info.time}".equals(command[i])) {
-                command[i] = Integer.toString(track.getTime());
-            } else if ("{info.track.number}".equals(command[i])) {
-                command[i] = Integer.toString(track.getTrackNumber());
-            } else if ("{info.image.file}".equals(command[i])) {
-                replaceImageToken(track, command, i);
-            }
-        }
-    }
-
-    private void replaceImageToken(Track track, String[] command, int i) {
-        try {
-            myImageFile = MyTunesRssUtils.createTempFile("jpg");
-            byte[] data = new byte[0];
-            DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
-            try {
-                data = transaction.executeQuery(new FindTrackImageQuery(track.getId(), -1));
-                if (data != null && data.length > 0) {
-                    Image image = new Image("image/jpeg", data);
-                    FileOutputStream fos = null;
-                    try {
-                        fos = new FileOutputStream(myImageFile);
-                        fos.write(image.getData());
-                    } catch (IOException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not create image file.", e);
-                        }
-                        myImageFile.delete();
-                    } finally {
-                        IOUtils.closeQuietly(fos);
-                    }
-                }
-            } catch (SQLException e) {
-                if (LOG.isErrorEnabled()) {
-                    LOG.error("Could not query image data.", e);
-                }
-                myImageFile.delete();
-            } finally {
-                transaction.rollback();
-            }
-            try {
-                command[i] = myImageFile.getCanonicalPath();
-            } catch (IOException e) {
-                command[i] = myImageFile.getAbsolutePath();
-            }
-        } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not create temp file for image.", e);
-            }
-        }
     }
 }

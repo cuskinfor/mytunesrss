@@ -22,6 +22,7 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -62,12 +63,15 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         File mediaFile = new File(getBaseDir(), dirname + "/" + filename);
         if (mediaFile.isFile()) {
             if (getAuthUser().isQuotaExceeded()) {
+                LOG.debug("Sending 409 QUOTA_EXCEEDED response.");
                 sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
             } else {
                 sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
+                LOG.debug("Sending video/MP2T response \"" + mediaFile.getAbsolutePath() + "\".");
                 sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), trackId, SessionManager.getSessionInfo(getRequest())));
             }
         } else {
+            LOG.debug("Sending 404 NOT_FOUND response.");
             sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
         sender.sendGetResponse(getRequest(), getResponse(), false);
@@ -92,32 +96,27 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                 }
                 HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(playlistIdentifier);
                 if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist(new File(getBaseDir(), UUID.randomUUID().toString())))) {
-                    InputStream mediaStream = MyTunesRssWebUtils.getMediaStream(getRequest(), track, track.getFile());
-                    MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), mediaStream));
+                    MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), track.getFile()));
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
-                    getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
-                    getTransaction().commit();
+                    try {
+                        getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
+                    } finally {
+                        getTransaction().commit();
+                    }
                     getAuthUser().playLastFmTrack(track);
                 }
                 playlist = cacheItem.getPlaylist(playlistIdentifier);
-                // wait for at least 3 playlist items
-                try {
-                    long timeSlept = 0;
-                    while (!playlist.isFailed() && !playlist.isDone() && playlist.getSize() < 3 && timeSlept < 30000) {
-                        Thread.sleep(500);
-                        timeSlept += 500;
+                File playlistFile = new File(playlist.getBaseDir(), "playlist.m3u8");
+                while (!playlistFile.exists()) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        LOG.debug("Interrupted while waiting for file.");
                     }
-                } catch (InterruptedException e) {
-                    // we have been interrupted, so send the playlist file or an error now
                 }
-                if (playlist.isFailed() || playlist.getSize() == 0) {
-                    cacheItem.removePlaylist(playlistIdentifier);
-                    sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
-                } else {
-                    byte[] playlistBytes = playlist.getAsString().getBytes("ISO-8859-1");
-                    sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
-                }
-
+                byte[] playlistBytes = FileUtils.readFileToByteArray(playlistFile);
+                LOG.debug("Sending playlist: " + new String(playlistBytes));
+                sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
             } else {
                 sender = new StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
             }
@@ -131,95 +130,38 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
 
         private HttpLiveStreamingPlaylist myPlaylist;
 
-        private InputStream myStream;
+        private File myVideoFile;
 
-        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingPlaylist playlist, InputStream stream) {
+        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingPlaylist playlist, File videoFile) {
             myPlaylist = playlist;
-            myStream = stream;
+            myVideoFile = videoFile;
         }
 
         public void run() {
+            Process process = null;
             try {
-                List<String> command = new ArrayList<String>();
-                command.add(getJavaExecutablePath());
-                command.add("-Djna.library.path=" + MyTunesRss.PREFERENCES_DATA_PATH + "/native" + System.getProperty("path.separator") + MyTunesRssUtils.getNativeLibPath().getAbsolutePath());
-                command.add("-cp");
-                command.add(getClasspath());
-                command.add("de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter");
-                command.add(myPlaylist.getBaseDir().getAbsolutePath());
+                final String[] transcoderCommand = new String[] {
+                        MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
+                        myVideoFile.getAbsolutePath(),
+                        "vlc://quit",
+                        "--intf=dummy",
+                        "--sout-transcode-audio-sync",
+                        "--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myPlaylist.getBaseDir().getAbsolutePath() + "/playlist.m3u8" + ",index-url=" + myPlaylist.getBaseDir().getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myPlaylist.getBaseDir().getAbsolutePath() + "/stream-########.ts}"
+                };
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("Executing HTTP Live Streaming command \"" + StringUtils.join(command, " ") + "\".");
+                    LOG.debug("executing HTTP Live Streaming command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
                 }
-                BufferedReader reader = null;
-                Process process = null;
-                try {
-                    process = Runtime.getRuntime().exec(command.toArray(new String[command.size()]));
-                    new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
-                    new StreamCopyThread(myStream, true, process.getOutputStream(), true).start();
-                    reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                    final BufferedReader finalReader = reader;
-                    new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                for (String responseLine = finalReader.readLine(); responseLine != null; responseLine = finalReader.readLine()) {
-                                    if (responseLine.startsWith(myPlaylist.getBaseDir().getAbsolutePath())) {
-                                        myPlaylist.addFile(new File(StringUtils.trimToEmpty(responseLine)));
-                                    } else if (responseLine.startsWith("ERR")) {
-                                        if (LOG.isErrorEnabled()) {
-                                            LOG.error("HTTP Live Streaming segmenter error: " + responseLine);
-                                        }
-                                    }
-                                }
-                            } catch (Exception e) {
-                                LOG.warn("HTTP Live Streaming segmenter output reader thread exited with error.", e);
-                            }
-                        }
-                    }).start();
-                    process.waitFor();
-                    if (process.exitValue() == 0) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("Segmenter process exited with code 0.");
-                        }
-                        myPlaylist.setDone(true);
-                    } else {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Segmenter process exited with code " + process.exitValue() + ".");
-                        }
-                        myPlaylist.setFailed(true);
-                    }
-                } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Segmenter exception", e);
-                    }
-                    myPlaylist.setFailed(true);
-                } catch (InterruptedException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Segmenter thread interrupted exception", e);
-                    }
-                    myPlaylist.setFailed(true);
-                } finally {
-                    IOUtils.closeQuietly(reader);
-                    if (process != null) {
-                        process.destroy();
-                    }
-                }
+                process = new ProcessBuilder(transcoderCommand).start();
+                new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                process.waitFor();
             } catch (Exception e) {
                 LOG.error("Error in http live streaming thread.", e);
-            }
-        }
-
-        private String getJavaExecutablePath() {
-            return System.getProperty("java.home") + "/bin/java";
-        }
-
-        private String getClasspath() {
-            StringBuilder sb = new StringBuilder();
-            for (String cpElement : StringUtils.split(System.getProperty("java.class.path"), System.getProperty("path.separator"))) {
-                if (!cpElement.startsWith(System.getProperty("java.home"))) {
-                    sb.append(cpElement).append(System.getProperty("path.separator"));
+            } finally {
+                if (process != null) {
+                    process.destroy();
                 }
             }
-            return sb.substring(0, sb.length() - 1);
         }
     }
 }

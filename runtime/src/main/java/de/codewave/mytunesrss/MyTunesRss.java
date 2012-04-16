@@ -22,7 +22,6 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
-import de.codewave.mytunesrss.transcoding.PresetManager;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -124,7 +123,6 @@ public class MyTunesRss {
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
     public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
-    public static PresetManager PRESET_MANAGER = new PresetManager();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
     public static MyTunesRssEvent LAST_DATABASE_EVENT;
@@ -203,7 +201,6 @@ public class MyTunesRss {
             EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
-            EXECUTOR_SERVICE.scheduleWithFixedDelay(PRESET_MANAGER, 0, 3600, TimeUnit.SECONDS);
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             initializeDatabase();

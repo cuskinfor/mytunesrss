@@ -129,6 +129,7 @@ public class MyTunesRssConfig {
     private boolean myBackupDatabaseAfterInit;
     private boolean myHeadless = false;
     private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
+    private File myVlcExecutable;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -898,6 +899,14 @@ public class MyTunesRssConfig {
         this.trackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
     }
 
+    public File getVlcExecutable() {
+        return myVlcExecutable;
+    }
+
+    public void setVlcExecutable(File vlcExecutable) {
+        myVlcExecutable = vlcExecutable;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1064,6 +1073,9 @@ public class MyTunesRssConfig {
             JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
             myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
         }
+        if (myTranscoderConfigs.isEmpty()) {
+            myTranscoderConfigs.addAll(TranscoderConfig.DEFAULT_TRANSCODERS);
+        }
         Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
         myExternalSites = new ArrayList<ExternalSiteDefinition>();
         while (externalSitesIterator.hasNext()) {
@@ -1120,6 +1132,7 @@ public class MyTunesRssConfig {
             mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
         }
         setTrackImageMappings(mappings);
+        setVlcExecutable(new File(JXPathUtils.getStringValue(settings, "vlc", "/Applications/VLC.app/Contents/MacOS/VLC")));
     }
 
     /**
@@ -1459,6 +1472,9 @@ public class MyTunesRssConfig {
                     mappingElement.appendChild(DOMUtils.createTextElement(settings, "replacement", rule.getReplacement()));
                 }
             }
+            if (getVlcExecutable() != null) {
+                root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
@@ -1564,6 +1580,10 @@ public class MyTunesRssConfig {
                     wdc.setArtistFallback(migrateFallback(wdc.getArtistFallback()));
                 }
             }
+        }
+        if (current.compareTo(new Version("4.3.0")) < 0) {
+            setVersion("4.3.0");
+            myTranscoderConfigs = new ArrayList<TranscoderConfig>(TranscoderConfig.DEFAULT_TRANSCODERS);
         }
     }
 
