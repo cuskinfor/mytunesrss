@@ -15,10 +15,16 @@ import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.component.ServerSideFileChooser;
+import de.codewave.vaadin.component.ServerSideFileChooserWindow;
+import de.codewave.vaadin.validation.ExecutableFileValidator;
+import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.text.Collator;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -36,10 +42,20 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
     Panel myAddTranscoderButtons;
+    private SmartTextField myVlcBinary;
+    private Button myVlcBinarySelect;
+    private Form myVlcForm;
 
     public void attach() {
         super.attach();
-        init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+        myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new ExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary"), null, FileValidator.PATTERN_ALL));
+        myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
+        myVlcForm = getComponentFactory().createForm(null, true);
+        myVlcForm.addField(myVlcBinary, myVlcBinary);
+        myVlcForm.addField(myVlcBinarySelect, myVlcBinarySelect);
+        Panel vlcPanel = getComponentFactory().surroundWithPanel(myVlcForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.vlc"));
+        addComponent(vlcPanel);
         myTranscoderPanel = new Panel(getBundleString("streamingConfigPanel.caption.transcoder"));
         ((Layout) myTranscoderPanel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) myTranscoderPanel.getContent()).setSpacing(true);
@@ -60,7 +76,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myCacheForm.addField("limit", myStreamingCacheMaxFiles);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }
@@ -119,6 +135,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         }
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
+        myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable());
     }
 
     protected void writeToConfig() {
@@ -149,6 +166,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         truncateTranscodingCache(obsoleteTranscoderNames);
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
+        String vlcBinary = myVlcBinary.getStringValue(null);
+        MyTunesRss.CONFIG.setVlcExecutable(vlcBinary != null ? new File(vlcBinary) : null);
         MyTunesRss.CONFIG.save();
     }
 
@@ -199,7 +218,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myCacheForm);
+        boolean valid = VaadinUtils.isValid(myCacheForm, myVlcForm);
         Iterator<Component> formIterator = myTranscoderPanel.getComponentIterator();
         Set<String> transcoderNames = new HashSet<String>();
         boolean duplicateName = false;
@@ -245,12 +264,19 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
-        if (clickEvent.getButton() == myAddTranscoder) {
+        if (clickEvent.getButton() == myVlcBinarySelect) {
+            File dir = StringUtils.isNotBlank((String) myVlcBinary.getValue()) ? new File((String) myVlcBinary.getValue()) : null;
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectVlcBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
+                @Override
+                protected void onFileSelected(File file) {
+                    myVlcBinary.setValue(file.getAbsolutePath());
+                    getWindow().getParent().removeWindow(this);
+                }
+            }.show(getWindow());
+        } else if (clickEvent.getButton() == myAddTranscoder) {
             Form form = createTranscoder();
             String name = getBundleString("streamingConfigPanel.transcoder.defaultName", myTranscoderNumberGenerator.getAndIncrement());
             form.getField("name").setValue(name);
-            //Panel panel = VaadinUtils.getAncestor(form, Panel.class);
-            //((TabSheet) panel.getParent()).getTab(panel).setCaption(name);
         } else if (VaadinUtils.isChild(myTranscoderPanel, clickEvent.getButton())) {
             final Form buttonForm = (Form) clickEvent.getButton().getData();
             final Button yes = new Button(getBundleString("button.yes"));
