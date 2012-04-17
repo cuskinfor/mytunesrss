@@ -36,7 +36,7 @@ public class TranscoderStream extends InputStream {
                 MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
                 inputFile.getAbsolutePath(),
                 "vlc://quit",
-                "--intf=dummy",
+                "--intf=telnet",
                 "--sout-transcode-audio-sync",
                 "--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}"
         };
