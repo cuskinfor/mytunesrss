@@ -1615,4 +1615,28 @@ public class MyTunesRssConfig {
     public boolean isShowInitialWizard() {
         return isInitialWizard() && getUsers().isEmpty() && getDatasources().isEmpty();
     }
+
+    public boolean isVlc() {
+        return isVlc(myVlcExecutable);
+    }
+
+    public static boolean isVlc(File executable) {
+        if (executable != null && executable.canExecute()) {
+            ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "--version");
+            processBuilder.redirectErrorStream(true);
+            Process process = null;
+            try {
+                process = processBuilder.start();
+                String version = org.apache.commons.io.IOUtils.toString(process.getInputStream());
+                return version.contains("VLC media player");
+            } catch (IOException e) {
+                return false;
+            } finally {
+                if (process != null) {
+                    process.destroy();
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -44,7 +44,6 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private SmartTextField myRegName;
     private DateField myExpirationDate;
     private Upload myUploadLicense;
-    private SmartTextField mySysInfo;
     private File myUploadDir;
 
     public void attach() {
@@ -88,12 +87,8 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySysInfoForm = getComponentFactory().createForm(null, true);
         myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG));
         myShowLog = getComponentFactory().createButton("supportConfigPanel.showLog", this);
-        mySysInfo = getComponentFactory().createTextField("supportConfigPanel.sysInfo");
-        mySysInfo.setEnabled(false);
-        mySysInfo.setRows(5);
         mySysInfoForm.addField("logLevel", myLogLevel);
         mySysInfoForm.addField("showLog", myShowLog);
-        mySysInfoForm.addField("sysInfo", mySysInfo);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
         addDefaultComponents(0, 3, 0, 3, false);
@@ -109,7 +104,6 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         if (MyTunesRss.REGISTRATION.isExpirationDate()) {
             myExpirationDate.setValue(new Date(MyTunesRss.REGISTRATION.getExpiration()));
         }
-        mySysInfo.setValue(MyTunesRssUtils.getSystemInfo());
     }
 
     protected void writeToConfig() {

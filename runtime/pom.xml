@@ -292,10 +292,6 @@
             <artifactId>jsp-2.1-glassfish</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.codewave</groupId>
-            <artifactId>ffmpeg-jna</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
         </dependency>

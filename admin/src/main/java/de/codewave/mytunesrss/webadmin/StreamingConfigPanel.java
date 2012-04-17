@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -17,7 +18,7 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
-import de.codewave.vaadin.validation.ExecutableFileValidator;
+import de.codewave.vaadin.validation.VlcExecutableFileValidator;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 import org.apache.commons.lang.StringUtils;
@@ -45,15 +46,18 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myVlcBinary;
     private Button myVlcBinarySelect;
     private Form myVlcForm;
+    private Button myVlcHomepageButton;
 
     public void attach() {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
-        myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new ExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary"), null, FileValidator.PATTERN_ALL));
+        myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary"), null, FileValidator.PATTERN_ALL));
         myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
+        myVlcHomepageButton = getComponentFactory().createButton("streamingConfigPanel.vlcHomepage", this);
         myVlcForm = getComponentFactory().createForm(null, true);
         myVlcForm.addField(myVlcBinary, myVlcBinary);
         myVlcForm.addField(myVlcBinarySelect, myVlcBinarySelect);
+        myVlcForm.addField(myVlcHomepageButton, myVlcHomepageButton);
         Panel vlcPanel = getComponentFactory().surroundWithPanel(myVlcForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.vlc"));
         addComponent(vlcPanel);
         myTranscoderPanel = new Panel(getBundleString("streamingConfigPanel.caption.transcoder"));
@@ -264,7 +268,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
-        if (clickEvent.getButton() == myVlcBinarySelect) {
+        if (clickEvent.getButton() == myVlcHomepageButton) {
+            getWindow().open(new ExternalResource("http://www.videolan.org"));
+        } else if (clickEvent.getButton() == myVlcBinarySelect) {
             File dir = StringUtils.isNotBlank((String) myVlcBinary.getValue()) ? new File((String) myVlcBinary.getValue()) : null;
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectVlcBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
                 @Override

@@ -5,7 +5,6 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.camel.mp4.Mp4Parser;
-import de.codewave.jna.ffmpeg.HttpLiveStreamingSegmenter;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
@@ -121,7 +120,6 @@ public class MyTunesRss {
     public static Server ADMIN_SERVER;
     public static final AtomicBoolean UNHANDLED_EXCEPTION = new AtomicBoolean(false);
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
-    public static boolean HTTP_LIVE_STREAMING_AVAILABLE;
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
@@ -188,7 +186,6 @@ public class MyTunesRss {
             initMainWindow();
         }
         initializeQuicktimePlayer();
-        checkHttpLiveStreamingSupport();
         logSystemInfo();
         prepareCacheDirs();
         validateWrapperStartSystemProperty();
@@ -300,7 +297,7 @@ public class MyTunesRss {
     }
 
     private static void createMissingPrefDirs() throws IOException {
-        for (String dir : new String[]{"native", "lib", "themes", "languages", "flashplayer"}) {
+        for (String dir : new String[]{"lib", "themes", "languages", "flashplayer"}) {
             File file = new File(MyTunesRss.PREFERENCES_DATA_PATH, dir);
             if (!file.exists()) {
                 file.mkdirs();
@@ -705,23 +702,6 @@ public class MyTunesRss {
             } catch (ClassNotFoundException e) {
                 LOGGER.info("No quicktime environment found, quicktime player disabled.");
             }
-        }
-    }
-
-    private static void checkHttpLiveStreamingSupport() {
-        File libDir = new File(MyTunesRss.PREFERENCES_DATA_PATH, "native");
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Checking native libs for http live streaming support: \"" + libDir.getAbsolutePath() + "\".");
-        }
-        HTTP_LIVE_STREAMING_AVAILABLE = libDir.isDirectory() && HttpLiveStreamingSegmenter.isAvailable(libDir);
-        if (!HTTP_LIVE_STREAMING_AVAILABLE) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Checking native libs for http live streaming support: \"" + MyTunesRssUtils.getNativeLibPath().getAbsolutePath() + "\".");
-            }
-            HTTP_LIVE_STREAMING_AVAILABLE = MyTunesRssUtils.getNativeLibPath().isDirectory() && HttpLiveStreamingSegmenter.isAvailable(MyTunesRssUtils.getNativeLibPath());
-        }
-        if (LOGGER.isWarnEnabled()) {
-            LOGGER.warn("Http live streaming status is \"" + HTTP_LIVE_STREAMING_AVAILABLE + "\".");
         }
     }
 

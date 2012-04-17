@@ -94,9 +94,5 @@
                 <include>readme.*</include>
             </includes>
         </fileSet>
-        <fileSet>
-            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/native</outputDirectory>
-            <directory>etc/ffmpeg/mac</directory>
-        </fileSet>
     </fileSets>
 </assembly>

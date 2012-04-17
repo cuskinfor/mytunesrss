@@ -351,7 +351,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("statusPanel.error.mytunesrsscomNotActive");
             }
         } else if (clickEvent.getSource() == myHelp) {
-            getWindow().open(new ExternalResource("http://docs.codewave.de/mytunesrss4"));
+            getWindow().open(new ExternalResource("http://kb.mytunesrss.com"));
         } else if (clickEvent.getSource() == myQuitMyTunesRss) {
             final Button yes = new Button(getApplication().getBundleString("button.yes"));
             Button no = new Button(getApplication().getBundleString("button.no"));
