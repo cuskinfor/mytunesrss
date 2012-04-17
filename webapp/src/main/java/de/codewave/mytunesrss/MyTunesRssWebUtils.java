@@ -308,7 +308,7 @@ public class MyTunesRssWebUtils {
     }
 
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
-        if (MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+        if (MyTunesRss.CONFIG.isVlc()) {
             boolean notranscode = "true".equals(request.getParameter("notranscode"));
             boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
             User authUser = getAuthUser(request);

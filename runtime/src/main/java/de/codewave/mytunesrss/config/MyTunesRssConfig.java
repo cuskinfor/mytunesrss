@@ -13,8 +13,10 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1132,7 +1134,8 @@ public class MyTunesRssConfig {
             mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
         }
         setTrackImageMappings(mappings);
-        setVlcExecutable(new File(JXPathUtils.getStringValue(settings, "vlc", "/Applications/VLC.app/Contents/MacOS/VLC")));
+        String vlc = JXPathUtils.getStringValue(settings, "vlc", null);
+        setVlcExecutable(vlc != null ? new File(vlc) : null);
     }
 
     /**
@@ -1617,7 +1620,18 @@ public class MyTunesRssConfig {
     }
 
     public boolean isVlc() {
-        return isVlc(myVlcExecutable);
+        return isVlc(getEffectiveVlcExecutable());
+    }
+
+    public File getEffectiveVlcExecutable() {
+        return getEffectiveVlcExecutable(getVlcExecutable());
+    }
+
+    public static File getEffectiveVlcExecutable(File executable) {
+        if (SystemUtils.IS_OS_MAC_OSX && executable.isDirectory() && "app".equalsIgnoreCase(FilenameUtils.getExtension(executable.getName()))) {
+            return new File(executable, "Contents/MacOS/VLC");
+        }
+        return executable;
     }
 
     public static boolean isVlc(File executable) {
@@ -1627,8 +1641,23 @@ public class MyTunesRssConfig {
             Process process = null;
             try {
                 process = processBuilder.start();
+                final Process finalProcess = process;
+                new Thread() {
+                    @Override
+                    public void run() {
+                        // make sure we don't wait longer than 2 seconds for the process
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            // ignore
+                        }
+                        if (finalProcess != null) {
+                            finalProcess.destroy();
+                        }
+                    }
+                }.start();
                 String version = org.apache.commons.io.IOUtils.toString(process.getInputStream());
-                return version.contains("VLC media player");
+                return version.contains("VLC");
             } catch (IOException e) {
                 return false;
             } finally {

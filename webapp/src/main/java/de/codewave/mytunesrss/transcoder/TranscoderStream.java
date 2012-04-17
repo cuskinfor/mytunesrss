@@ -33,7 +33,7 @@ public class TranscoderStream extends InputStream {
     TranscoderStream(TranscoderConfig transcoderConfig, File inputFile) throws IOException {
         myTranscoderConfig = transcoderConfig;
         final String[] transcoderCommand = new String[] {
-                MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
+                MyTunesRss.CONFIG.getEffectiveVlcExecutable().getAbsolutePath(),
                 inputFile.getAbsolutePath(),
                 "vlc://quit",
                 "--intf=telnet",

@@ -141,7 +141,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             Process process = null;
             try {
                 final String[] transcoderCommand = new String[] {
-                        MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
+                        MyTunesRss.CONFIG.getEffectiveVlcExecutable().getAbsolutePath(),
                         myVideoFile.getAbsolutePath(),
                         "vlc://quit",
                         "--intf=telnet",

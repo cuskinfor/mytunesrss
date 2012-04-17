@@ -51,7 +51,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     public void attach() {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
-        myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary"), null, FileValidator.PATTERN_ALL));
+        myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary")));
         myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
         myVlcHomepageButton = getComponentFactory().createButton("streamingConfigPanel.vlcHomepage", this);
         myVlcForm = getComponentFactory().createForm(null, true);
@@ -139,7 +139,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         }
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
-        myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable());
+        myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
     }
 
     protected void writeToConfig() {
