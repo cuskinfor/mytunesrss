@@ -141,7 +141,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             Process process = null;
             try {
                 List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(myVideoFile);
-                transcodeCommand.add("--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myPlaylist.getBaseDir().getAbsolutePath() + "/playlist.m3u8" + ",index-url=" + myPlaylist.getBaseDir().getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myPlaylist.getBaseDir().getAbsolutePath() + "/stream-########.ts}");
+                transcodeCommand.add("--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myPlaylist.getBaseDir().getAbsolutePath() + "/playlist.m3u8" + ",index-url=./" + myPlaylist.getBaseDir().getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myPlaylist.getBaseDir().getAbsolutePath() + "/stream-########.ts}");
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("executing HTTP Live Streaming command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
                 }

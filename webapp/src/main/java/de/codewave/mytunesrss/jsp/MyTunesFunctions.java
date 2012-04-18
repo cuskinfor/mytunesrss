@@ -281,7 +281,7 @@ public class MyTunesFunctions {
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
-        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString())).append("/").append(webSafeFileName(track.getName())).append(".m3u8");
         return builder.toString();
     }
 
