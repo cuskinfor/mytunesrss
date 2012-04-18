@@ -1620,52 +1620,10 @@ public class MyTunesRssConfig {
     }
 
     public boolean isVlc() {
-        return isVlc(getEffectiveVlcExecutable());
-    }
-
-    public File getEffectiveVlcExecutable() {
-        return getEffectiveVlcExecutable(getVlcExecutable());
-    }
-
-    public static File getEffectiveVlcExecutable(File executable) {
-        if (SystemUtils.IS_OS_MAC_OSX && executable.isDirectory() && "app".equalsIgnoreCase(FilenameUtils.getExtension(executable.getName()))) {
-            return new File(executable, "Contents/MacOS/VLC");
-        }
-        return executable;
+        return isVlc(getVlcExecutable());
     }
 
     public static boolean isVlc(File executable) {
-        if (executable != null && executable.canExecute()) {
-            ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "--version");
-            processBuilder.redirectErrorStream(true);
-            Process process = null;
-            try {
-                process = processBuilder.start();
-                final Process finalProcess = process;
-                new Thread() {
-                    @Override
-                    public void run() {
-                        // make sure we don't wait longer than 2 seconds for the process
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                        if (finalProcess != null) {
-                            finalProcess.destroy();
-                        }
-                    }
-                }.start();
-                String version = org.apache.commons.io.IOUtils.toString(process.getInputStream());
-                return version.contains("VLC");
-            } catch (IOException e) {
-                return false;
-            } finally {
-                if (process != null) {
-                    process.destroy();
-                }
-            }
-        }
-        return false;
+        return executable != null && executable.canExecute() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName()));
     }
 }

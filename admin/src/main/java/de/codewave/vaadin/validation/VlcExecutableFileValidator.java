@@ -23,6 +23,6 @@ public class VlcExecutableFileValidator extends AbstractStringValidator {
 
     @Override
     protected boolean isValidString(String value) {
-        return MyTunesRssConfig.isVlc(MyTunesRssConfig.getEffectiveVlcExecutable(new File(value)));
+        return MyTunesRssConfig.isVlc(new File(value));
     }
 }

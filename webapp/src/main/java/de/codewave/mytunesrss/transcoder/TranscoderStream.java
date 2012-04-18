@@ -33,10 +33,11 @@ public class TranscoderStream extends InputStream {
     TranscoderStream(TranscoderConfig transcoderConfig, File inputFile) throws IOException {
         myTranscoderConfig = transcoderConfig;
         final String[] transcoderCommand = new String[] {
-                MyTunesRss.CONFIG.getEffectiveVlcExecutable().getAbsolutePath(),
+                MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
                 inputFile.getAbsolutePath(),
                 "vlc://quit",
-                "--intf=telnet",
+                "--intf=dummy",
+                "--dummy-quiet",
                 "--sout-transcode-audio-sync",
                 "--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}"
         };
