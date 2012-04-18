@@ -140,19 +140,12 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
         public void run() {
             Process process = null;
             try {
-                final String[] transcoderCommand = new String[] {
-                        MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
-                        myVideoFile.getAbsolutePath(),
-                        "vlc://quit",
-                        "--intf=dummy",
-                        "--dummy-quiet",
-                        "--sout-transcode-audio-sync",
-                        "--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myPlaylist.getBaseDir().getAbsolutePath() + "/playlist.m3u8" + ",index-url=" + myPlaylist.getBaseDir().getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myPlaylist.getBaseDir().getAbsolutePath() + "/stream-########.ts}"
-                };
+                List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(myVideoFile);
+                transcodeCommand.add("--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myPlaylist.getBaseDir().getAbsolutePath() + "/playlist.m3u8" + ",index-url=" + myPlaylist.getBaseDir().getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myPlaylist.getBaseDir().getAbsolutePath() + "/stream-########.ts}");
                 if (LOG.isDebugEnabled()) {
-                    LOG.debug("executing HTTP Live Streaming command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
+                    LOG.debug("executing HTTP Live Streaming command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
                 }
-                process = new ProcessBuilder(transcoderCommand).start();
+                process = new ProcessBuilder(transcodeCommand).start();
                 new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                 new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                 process.waitFor();

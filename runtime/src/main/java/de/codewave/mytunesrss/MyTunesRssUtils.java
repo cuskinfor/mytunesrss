@@ -20,6 +20,7 @@ import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.quartz.SchedulerException;
@@ -720,5 +721,17 @@ public class MyTunesRssUtils {
                 session.commit();
             }
         }
+    }
+
+    public static List<String> getDefaultVlcCommand(File inputFile) {
+        List<String> command = new ArrayList<String>();
+        command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
+        command.add(inputFile.getAbsolutePath());
+        command.add("vlc://quit");
+        command.add("--intf=dummy");
+        if (SystemUtils.IS_OS_WINDOWS) {
+            command.add("--dummy-quiet");
+        }
+        return command;
     }
 }

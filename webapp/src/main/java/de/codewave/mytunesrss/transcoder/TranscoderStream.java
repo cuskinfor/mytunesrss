@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.transcoder.TranscoderStream
@@ -32,19 +33,12 @@ public class TranscoderStream extends InputStream {
 
     TranscoderStream(TranscoderConfig transcoderConfig, File inputFile) throws IOException {
         myTranscoderConfig = transcoderConfig;
-        final String[] transcoderCommand = new String[] {
-                MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
-                inputFile.getAbsolutePath(),
-                "vlc://quit",
-                "--intf=dummy",
-                "--dummy-quiet",
-                "--sout-transcode-audio-sync",
-                "--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}"
-        };
+        List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(inputFile);
+        transcodeCommand.add("--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}");
         if (LOG.isDebugEnabled()) {
-            LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcoderCommand, " ") + "\".");
+            LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
         }
-        myProcess = new ProcessBuilder(transcoderCommand).start();
+        myProcess = new ProcessBuilder(transcodeCommand).start();
         myInputStream = myProcess.getInputStream();
         new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }
