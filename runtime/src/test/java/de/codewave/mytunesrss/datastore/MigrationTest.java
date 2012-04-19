@@ -1,26 +1,17 @@
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.statement.MigrationStatement;
-import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.DataStoreStatement;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static junit.framework.Assert.assertEquals;
 
 public class MigrationTest {
 

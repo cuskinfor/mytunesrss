@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.quicktime.QuicktimePlayerException;
+import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.servlet.SessionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -111,8 +111,8 @@ public class WebServer {
             }
             MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
             myRunning.set(true);
-            if (MyTunesRss.QUICKTIME_PLAYER != null) {
-                MyTunesRss.QUICKTIME_PLAYER.init();
+            if (MyTunesRss.VLC_PLAYER != null) {
+                MyTunesRss.VLC_PLAYER.init();
             }
             int localPort = myServer.getConnectors()[0].getLocalPort();
             LOGGER.debug("Started user server on port " + localPort + ".");
@@ -219,12 +219,12 @@ public class WebServer {
             }
             myRunning.set(false);
             try {
-                if (MyTunesRss.QUICKTIME_PLAYER != null) {
-                    MyTunesRss.QUICKTIME_PLAYER.stop();
-                    MyTunesRss.QUICKTIME_PLAYER.destroy();
+                if (MyTunesRss.VLC_PLAYER != null) {
+                    MyTunesRss.VLC_PLAYER.stop();
+                    MyTunesRss.VLC_PLAYER.destroy();
                 }
-            } catch (QuicktimePlayerException e) {
-                LOGGER.error("Could not destroy quicktime player.", e);
+            } catch (VlcPlayerException e) {
+                LOGGER.error("Could not destroy VLC player.", e);
             }
         }
         return true;

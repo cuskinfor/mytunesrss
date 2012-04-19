@@ -259,8 +259,10 @@ public class LuceneTrackService {
                 query = new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*"));
                 query.setBoost(1000f);
                 termOrQuery.add(query, BooleanClause.Occur.SHOULD);
-                query = new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f);
-                termOrQuery.add(query, BooleanClause.Occur.SHOULD);
+                if (fuzziness > 0) {
+                    query = new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f);
+                    termOrQuery.add(query, BooleanClause.Occur.SHOULD);
+                }
                 fieldAndQuery.add(termOrQuery, BooleanClause.Occur.MUST);
             }
             phraseQuery.setBoost(10000f);
@@ -269,7 +271,7 @@ public class LuceneTrackService {
                 finalQuery.add(phraseQuery, BooleanClause.Occur.SHOULD);
             }
         }
-        LOGGER.debug("QUERY for \"" + StringUtils.join(searchTerms, " ") + "\" (" + fuzziness + "): " + finalQuery);
+        LOGGER.debug("QUERY for \"" + StringUtils.join(searchTerms, " ") + "\" (fuzziness=" + fuzziness + "): " + finalQuery);
         return finalQuery;
     }
 

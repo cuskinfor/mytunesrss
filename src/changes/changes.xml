@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.3" date="___D___">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-20] Use VLC instead of QTJava for remote control
+            </action>
             <action dev="mdescher" type="add">
                 Option for maximum number of search results (default is 250) in web settings.
             </action>

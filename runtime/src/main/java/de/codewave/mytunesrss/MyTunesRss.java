@@ -14,13 +14,13 @@ import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
-import de.codewave.mytunesrss.quicktime.QuicktimePlayer;
 import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
+import de.codewave.mytunesrss.vlc.VlcPlayer;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -113,7 +113,7 @@ public class MyTunesRss {
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
-    public static QuicktimePlayer QUICKTIME_PLAYER;
+    public static VlcPlayer VLC_PLAYER;
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
@@ -185,7 +185,7 @@ public class MyTunesRss {
         if (!MyTunesRssUtils.isHeadless()) {
             initMainWindow();
         }
-        initializeQuicktimePlayer();
+        initializeVlcPlayer();
         logSystemInfo();
         prepareCacheDirs();
         validateWrapperStartSystemProperty();
@@ -692,17 +692,9 @@ public class MyTunesRss {
         return true;
     }
 
-    private static void initializeQuicktimePlayer() {
-        if (!GraphicsEnvironment.isHeadless()) {
-            try {
-                // try to find class
-                Class.forName("quicktime.util.QTBuild");
-                QUICKTIME_PLAYER = new QuicktimePlayer();
-                LOGGER.info("Quicktime player created successfully.");
-            } catch (ClassNotFoundException e) {
-                LOGGER.info("No quicktime environment found, quicktime player disabled.");
-            }
-        }
+    private static void initializeVlcPlayer() {
+        VLC_PLAYER = new VlcPlayer();
+        LOGGER.info("VLC player created successfully.");
     }
 
     private static ClassLoader createExtraClassloader(File libDir) {

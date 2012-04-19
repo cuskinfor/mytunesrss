@@ -113,7 +113,6 @@ public class MyTunesRssConfig {
     private boolean myDisableBrowser;
     private boolean myServerBrowserActive;
     private boolean myDisableWebLogin;
-    private boolean myQuicktime64BitWarned;
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
     private int myAdminPort;
@@ -740,14 +739,6 @@ public class MyTunesRssConfig {
         myDisableWebLogin = disableWebLogin;
     }
 
-    public boolean isQuicktime64BitWarned() {
-        return myQuicktime64BitWarned;
-    }
-
-    public void setQuicktime64BitWarned(boolean quicktime64BitWarned) {
-        myQuicktime64BitWarned = quicktime64BitWarned;
-    }
-
     public LdapConfig getLdapConfig() {
         return myLdapConfig;
     }
@@ -1091,7 +1082,6 @@ public class MyTunesRssConfig {
         setAutoLogin(JXPathUtils.getStringValue(settings, "autoLogin", null));
         setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
         setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
-        setQuicktime64BitWarned(JXPathUtils.getBooleanValue(settings, "qt64BitWarned", false));
         myLdapConfig = new LdapConfig(settings);
         Iterator<JXPathContext> users = JXPathUtils.getContextIterator(settings, "users/user");
         while (users != null && users.hasNext()) {
@@ -1437,7 +1427,6 @@ public class MyTunesRssConfig {
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "qt64BitWarned", isQuicktime64BitWarned()));
             root.appendChild(myLdapConfig.createSettingsElement(settings));
             if (!getFlashPlayers().isEmpty()) {
                 Element flashPlayers = settings.createElement("flash-players");
@@ -1604,7 +1593,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isRemoteControl() {
-        return MyTunesRss.QUICKTIME_PLAYER != null;
+        return MyTunesRss.VLC_PLAYER != null;
     }
 
     public boolean isMyTunesRssComActive() {

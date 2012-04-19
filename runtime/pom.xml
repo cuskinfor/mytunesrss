@@ -255,11 +255,6 @@
             <artifactId>mail</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.apple.quicktime</groupId>
-            <artifactId>qtjava</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
         </dependency>

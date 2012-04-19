@@ -20,7 +20,7 @@ public class RemoteControlService implements RemoteController {
     }
 
     private RemoteController getController() {
-        return MyTunesRss.QUICKTIME_PLAYER != null ? new QuicktimePlayerRemoteController() : new NoopRemoteController();
+        return MyTunesRss.VLC_PLAYER != null ? new VlcPlayerRemoteController() : new NoopRemoteController();
     }
 
     public void loadPlaylist(String playlistId) throws Exception {
