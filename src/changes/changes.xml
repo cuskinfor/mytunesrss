@@ -9,9 +9,12 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="add">
+                Option for maximum number of search results (default is 250) in web settings.
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-329] Sort order of search results needs to be improved
             </action>
-            <action dev="mdescher" type="add">
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-357] Do not check roots while browsing folders
             </action>
             <action dev="mdescher" type="add">
