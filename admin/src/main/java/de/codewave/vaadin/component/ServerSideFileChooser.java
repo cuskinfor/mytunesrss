@@ -11,6 +11,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.vaadin.VaadinUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,14 +108,13 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         ((Layout) panel.getContent()).setMargin(true);
         ((Layout.SpacingHandler) panel.getContent()).setSpacing(true);
         myRootFiles = File.listRoots();
-        //myRootFiles = new File[] {new File("/Applications"), new File("/Users"), new File("/Volumes")};
         if (myRootFiles != null && myRootFiles.length > 1) {
             myRootsInput = new Select(labels.getRoots(), Arrays.asList(myRootFiles));
             myRootsInput.setNullSelectionAllowed(false);
             myRootSelectionListener = new Property.ValueChangeListener() {
                 public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                     myCurrentDir = (File) myRootsInput.getValue();
-                    setFiles();
+                    setFiles(false);
                 }
             };
             myRootsInput.addListener(myRootSelectionListener);
@@ -146,16 +146,16 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         buttonPanel.addComponent(myCancel);
         panel.addComponent(buttonPanel);
         setCompositionRoot(panel);
-        setFiles();
+        setFiles(true);
     }
 
-    private void setFiles() {
+    private void setFiles(boolean checkRoots) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Setting files.");
         }
 
         myCurrentDirLabel.setValue(myCurrentDir.getAbsolutePath());
-        if (myRootsInput != null) {
+        if (myRootsInput != null && checkRoots) {
             for (File root : myRootFiles) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Checking root \"" + root.getAbsolutePath() + "\".");
@@ -209,7 +209,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
                 protected void onOk(String text) {
                     getParent().removeWindow(this);
                     new File(myCurrentDir, text).mkdir();
-                    setFiles();
+                    setFiles(false);
                 }
             }.show(VaadinUtils.getApplicationWindow(this));
         }
@@ -228,7 +228,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         if (itemClickEvent.isDoubleClick()) {
             if (file.isDirectory()) {
                 myCurrentDir = file;
-                setFiles();
+                setFiles(false);
             }
         }
     }
