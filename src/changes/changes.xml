@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-329] Sort order of search results needs to be improved
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-357] Do not check roots while browsing folders
             </action>
             <action dev="mdescher" type="add">

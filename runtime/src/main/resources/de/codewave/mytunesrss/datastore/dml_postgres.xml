@@ -15,6 +15,7 @@
     <statement name="createSearchTempTables">
         <sql>
             CREATE TEMPORARY TABLE temp_lucene_tracks (
+                pos SERIAL,
                 track_id VARCHAR(100),
                 UNIQUE(track_id)
             ) ON COMMIT DROP

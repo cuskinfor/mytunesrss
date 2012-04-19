@@ -86,12 +86,12 @@ public class TrackService {
                     }
                 }
                 if (maxTermSize >= 2) {
-                    query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder);
+                    query = FindTrackQuery.getForSearchTerm(user, searchTerm, fuzziness, SortOrder.KeepOrder, maxItems > 0 ? maxItems : 1000);
                     DataStoreSession transaction = TransactionFilter.getTransaction();
                     List<Track> tracks = new ArrayList<Track>();
                     if (query != null) {
                         DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
-                        tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
+                        tracks = result.getResults();
                     }
                     return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
                 } else {
@@ -109,12 +109,12 @@ public class TrackService {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             if (StringUtils.isNotBlank(searchTerm)) {
-                FindTrackQuery query = FindTrackQuery.getForExpertSearchTerm(user, searchTerm, SortOrder.KeepOrder);
+                FindTrackQuery query = FindTrackQuery.getForExpertSearchTerm(user, searchTerm, SortOrder.KeepOrder, maxItems > 0 ? maxItems : 1000);
                 DataStoreSession transaction = TransactionFilter.getTransaction();
                 List<Track> tracks = new ArrayList<Track>();
                 if (query != null) {
                     DataStoreQuery.QueryResult<Track> result = transaction.executeQuery(query);
-                    tracks = maxItems > 0 ? result.getResults(firstItem, maxItems) : result.getResults();
+                    tracks = result.getResults();
                 }
                 return RenderMachine.getInstance().render(TrackUtils.getEnhancedTracks(transaction, tracks, sortOrder));
             } else {

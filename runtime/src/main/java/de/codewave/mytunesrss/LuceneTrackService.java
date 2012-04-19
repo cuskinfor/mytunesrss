@@ -36,8 +36,6 @@ import java.util.*;
 public class LuceneTrackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneTrackService.class);
 
-    private static final int MAX_RESULTS = 10000;
-
     private Directory getDirectory() throws IOException {
         return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
     }
@@ -188,17 +186,17 @@ public class LuceneTrackService {
         }
     }
 
-    public Collection<String> searchTrackIds(String[] searchTerms, int fuzziness) throws IOException, ParseException {
+    public List<String> searchTrackIds(String[] searchTerms, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
-        Collection<String> trackIds;
+        List<String> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
             isearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = createQuery(searchTerms, fuzziness);
-            TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
-            trackIds = new HashSet<String>();
+            TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
+            trackIds = new ArrayList<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
@@ -213,7 +211,7 @@ public class LuceneTrackService {
         }
     }
 
-    public Collection<String> searchTrackIds(String searchExpression) throws IOException, LuceneQueryParserException {
+    public List<String> searchTrackIds(String searchExpression, int maxResults) throws IOException, LuceneQueryParserException {
         Directory directory = null;
         IndexSearcher isearcher = null;
         try {
@@ -230,8 +228,8 @@ public class LuceneTrackService {
             } catch (Exception e) {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
-            TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
-            Collection<String> trackIds = new HashSet<String>();
+            TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
+            List<String> trackIds = new ArrayList<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
@@ -247,35 +245,44 @@ public class LuceneTrackService {
     }
 
     private Query createQuery(String[] searchTerms, int fuzziness) {
-        BooleanQuery orQuery = new BooleanQuery();
-        for (String searchTerm : searchTerms) {
-            for (String field : new String[]{"name", "album", "artist", "series", "comment", "tags", "album_artist", "composer"}) {
+        BooleanQuery finalQuery = new BooleanQuery();
+        for (String field : new String[]{"name", "album", "artist", "series", "comment", "tags", "album_artist", "composer"}) {
+            BooleanQuery fieldAndQuery = new BooleanQuery();
+            PhraseQuery phraseQuery = new PhraseQuery();
+            for (String searchTerm : searchTerms) {
                 String escapedSearchTerm = QueryParser.escape(searchTerm);
-                Query query = new WildcardQuery(new Term(field, escapedSearchTerm));
-                query.setBoost(100f);
-                orQuery.add(query, BooleanClause.Occur.SHOULD);
+                phraseQuery.add(new Term(field, escapedSearchTerm));
+                BooleanQuery termOrQuery = new BooleanQuery();
+                Query query = new TermQuery(new Term(field, escapedSearchTerm));
+                query.setBoost(5000f);
+                termOrQuery.add(query, BooleanClause.Occur.SHOULD);
                 query = new WildcardQuery(new Term(field, "*" + escapedSearchTerm + "*"));
-                query.setBoost(50f);
-                orQuery.add(query, BooleanClause.Occur.SHOULD);
-                if (fuzziness > 0) {
-                    orQuery.add(new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
-                }
+                query.setBoost(1000f);
+                termOrQuery.add(query, BooleanClause.Occur.SHOULD);
+                query = new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f);
+                termOrQuery.add(query, BooleanClause.Occur.SHOULD);
+                fieldAndQuery.add(termOrQuery, BooleanClause.Occur.MUST);
+            }
+            phraseQuery.setBoost(10000f);
+            finalQuery.add(fieldAndQuery, BooleanClause.Occur.SHOULD);
+            if (phraseQuery.getTerms().length > 1) {
+                finalQuery.add(phraseQuery, BooleanClause.Occur.SHOULD);
             }
         }
-        LOGGER.debug("QUERY for \"" + StringUtils.join(searchTerms, " ") + "\" (" + fuzziness + "): " + orQuery);
-        return orQuery;
+        LOGGER.debug("QUERY for \"" + StringUtils.join(searchTerms, " ") + "\" (" + fuzziness + "): " + finalQuery);
+        return finalQuery;
     }
 
-    public Collection<String> searchTrackIds(Collection<SmartInfo> smartInfos, int fuzziness) throws IOException, ParseException {
+    public List<String> searchTrackIds(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
-        Collection<String> trackIds;
+        List<String> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
             Query luceneQuery = createQuery(smartInfos, fuzziness);
-            TopDocs topDocs = isearcher.search(luceneQuery, MAX_RESULTS);
-            trackIds = new HashSet<String>();
+            TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
+            trackIds = new ArrayList<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }

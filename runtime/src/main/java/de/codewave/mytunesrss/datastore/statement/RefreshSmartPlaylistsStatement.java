@@ -61,7 +61,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         LOGGER.debug("Refreshing smart playlist with id \"" + playlistId + "\".");
         try {
             if (SmartInfo.isLuceneCriteria(smartInfos)) {
-                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartInfos, 0);
+                Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartInfos, 0, 10000);
                 MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
                 if (!CollectionUtils.isEmpty(trackIds)) {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");

@@ -37,7 +37,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isNotEmpty(searchTerm)) {
                 if (getWebConfig().getSearchFuzziness() == -1) {
                     try {
-                        query = FindTrackQuery.getForExpertSearchTerm(getAuthUser(), searchTerm, sortOrderValue);
+                        query = FindTrackQuery.getForExpertSearchTerm(getAuthUser(), searchTerm, sortOrderValue, getWebConfig().getMaxSearchResults());
                     } catch (LuceneQueryParserException e) {
                         addError(new BundleError("error.illegalExpertSearchTerm"));
                         forward(MyTunesRssCommand.ShowPortal);
@@ -51,7 +51,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                         }
                     }
                     if (maxTermSize >= 2) {
-                        query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue);
+                        query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue, getWebConfig().getMaxSearchResults());
                     } else {
                         addError(new BundleError("error.searchTermMinSize", 2));
                         forward(MyTunesRssCommand.ShowPortal);

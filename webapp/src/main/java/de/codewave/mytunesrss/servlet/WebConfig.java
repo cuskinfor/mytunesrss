@@ -58,6 +58,7 @@ public class WebConfig {
     private static final String CFG_SHOW_EDIT_TAGS = "showEditTags";
     private static final String CFG_SHOW_ADD_TO_PLAYLIST = "showAddToPlaylist";
     private static final String CFG_PHOTO_SIZE = "photoSize";
+    private static final String CFG_MAX_SEARCH_RESULTS = "maxSearchResults";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
@@ -65,7 +66,8 @@ public class WebConfig {
             CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS,
-            CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE};
+            CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
+            CFG_MAX_SEARCH_RESULTS};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -146,6 +148,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_EDIT_TAGS, "false");
         myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, "false");
         myConfigValues.put(CFG_PHOTO_SIZE, "50");
+        myConfigValues.put(CFG_MAX_SEARCH_RESULTS, "250");
     }
 
     private void initWithIphoneDefaults() {
@@ -586,4 +589,11 @@ public class WebConfig {
         myConfigValues.put(CFG_PHOTO_SIZE, Integer.toString(photoSize));
     }
 
+    public int getMaxSearchResults() {
+        return Integer.parseInt(myConfigValues.get(CFG_MAX_SEARCH_RESULTS));
+    }
+
+    public void setMaxSearchResults(int maxSearchResults) {
+        myConfigValues.put(CFG_MAX_SEARCH_RESULTS, Integer.toString(maxSearchResults));
+    }
 }

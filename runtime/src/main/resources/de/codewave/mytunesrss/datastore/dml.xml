@@ -239,7 +239,8 @@
             )
         </excluded>
         <temptables>AND t.id = tluc.track_id</temptables>
-        GROUP BY {trackColumnsForGrouping}
+        GROUP BY <lucenesort>tluc.pos, </lucenesort>{trackColumnsForGrouping}
+        <lucenesort>ORDER BY tluc.pos</lucenesort>
         <albumsort>ORDER BY t.album, t.pos_number, t.track_number, t.name</albumsort>
         <artistsort>ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name</artistsort>
         <moviesort>ORDER BY t.name</moviesort>
@@ -685,7 +686,7 @@
                 <videotype>AND t.videotype = :videotype</videotype>
                 <protected>AND t.protected = :protected</protected>
                 <datasource>AND t.source_id = :source_id</datasource>
-                ORDER BY t.artist, t.album, t.pos_number, t.track_number, t.name
+                ORDER BY <lucene>tluc.pos, </lucene>t.artist, t.album, t.pos_number, t.track_number, t.name
             ]]>
         </sql>
         <sql>

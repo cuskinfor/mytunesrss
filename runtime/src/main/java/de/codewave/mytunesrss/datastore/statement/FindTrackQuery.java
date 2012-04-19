@@ -31,23 +31,23 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         return query;
     }
 
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder) throws IOException, ParseException {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder, int maxResults) throws IOException, ParseException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
-        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness);
+        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness, maxResults);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         return query;
     }
 
-    public static FindTrackQuery getForExpertSearchTerm(User user, String searchTerm, SortOrder sortOrder) throws IOException, ParseException, LuceneQueryParserException {
+    public static FindTrackQuery getForExpertSearchTerm(User user, String searchTerm, SortOrder sortOrder, int maxResults) throws IOException, ParseException, LuceneQueryParserException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
-        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm);
+        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm, maxResults);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         return query;
     }
@@ -202,6 +202,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("tvshow", mySeries != null);
         conditionals.put("tvshowseason", mySeries != null && mySeason != null);
         conditionals.put("photosort", mySortOrder == SortOrder.Photos);
+        conditionals.put("lucenesort", !CollectionUtils.isEmpty(myIds) && (mySortOrder == null || mySortOrder == SortOrder.KeepOrder));
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);

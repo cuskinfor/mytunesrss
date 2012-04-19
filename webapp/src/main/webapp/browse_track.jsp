@@ -184,7 +184,7 @@
             <c:set var="fnCount" value="${fnCount + 1}" />
         </c:if>
         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-            <c:set var="showArtistColumn" value="${((sortOrder == 'Album' && !track.simple) || !empty param['playlist']) && !mtfn:unknown(track.artist)}" />
+            <c:set var="showArtistColumn" value="${((sortOrder == 'Album' && !track.simple) || !empty param['playlist'] || !empty param['searchTerm']) && !mtfn:unknown(track.artist)}" />
             <c:set var="showAlbumColumn" value="${sortOrder == 'Artist' && !track.simple && !mtfn:unknown(track.album)}" />
             <td class="artist<c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}"> coverThumbnailColumn</c:if>" <c:if test="${!showAlbumColumn && !showArtistColumn}">colspan="2"</c:if>>
                 <div class="trackName">
