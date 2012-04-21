@@ -113,7 +113,7 @@ public class MyTunesRss {
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
-    public static VlcPlayer VLC_PLAYER;
+    public static VlcPlayer VLC_PLAYER = new VlcPlayer();
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
@@ -185,7 +185,6 @@ public class MyTunesRss {
         if (!MyTunesRssUtils.isHeadless()) {
             initMainWindow();
         }
-        initializeVlcPlayer();
         logSystemInfo();
         prepareCacheDirs();
         validateWrapperStartSystemProperty();
@@ -231,6 +230,9 @@ public class MyTunesRss {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
                 RUN_DATABASE_REFRESH_ON_STARTUP = false;
                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
+            }
+            if (!SHUTDOWN_IN_PROGRESS.get() && MyTunesRss.VLC_PLAYER != null) {
+                MyTunesRss.VLC_PLAYER.init();
             }
             while (true) {
                 try {
@@ -690,11 +692,6 @@ public class MyTunesRss {
             return false;
         }
         return true;
-    }
-
-    private static void initializeVlcPlayer() {
-        VLC_PLAYER = new VlcPlayer();
-        LOGGER.info("VLC player created successfully.");
     }
 
     private static ClassLoader createExtraClassloader(File libDir) {

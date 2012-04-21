@@ -111,9 +111,6 @@ public class WebServer {
             }
             MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
             myRunning.set(true);
-            if (MyTunesRss.VLC_PLAYER != null) {
-                MyTunesRss.VLC_PLAYER.init();
-            }
             int localPort = myServer.getConnectors()[0].getLocalPort();
             LOGGER.debug("Started user server on port " + localPort + ".");
         }
@@ -218,14 +215,6 @@ public class WebServer {
                 return false;
             }
             myRunning.set(false);
-            try {
-                if (MyTunesRss.VLC_PLAYER != null) {
-                    MyTunesRss.VLC_PLAYER.stop();
-                    MyTunesRss.VLC_PLAYER.destroy();
-                }
-            } catch (VlcPlayerException e) {
-                LOGGER.error("Could not destroy VLC player.", e);
-            }
         }
         return true;
     }

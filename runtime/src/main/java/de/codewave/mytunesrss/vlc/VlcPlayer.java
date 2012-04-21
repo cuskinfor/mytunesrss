@@ -11,6 +11,7 @@ import de.codewave.utils.io.StreamCopyThread;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,6 @@ import java.util.List;
 
 public class VlcPlayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VlcPlayer.class);
-    private static final int TIMEOUT = 250;
 
     private List<Track> myTracks = Collections.emptyList();
 
@@ -40,14 +40,18 @@ public class VlcPlayer {
     private int myVlcPort = 18675;
 
     public synchronized void init() throws VlcPlayerException {
-        if (myWatchdog == null) {
+        if (myWatchdog == null && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+            LOGGER.info("Initializing VLC player.");
             myWatchdog = new Thread(new Runnable() {
                 public void run() {
-                    ProcessBuilder processBuilder = new ProcessBuilder(
-                            MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath(),
-                            "--intf=rc",
-                            "--rc-host=" + myVlcHost + ":" + myVlcPort
-                    );
+                    List<String> command = new ArrayList<String>();
+                    command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
+                    command.add("--intf=rc");
+                    command.add("--rc-host=" + myVlcHost + ":" + myVlcPort);
+                    if (SystemUtils.IS_OS_WINDOWS) {
+                        command.add("--rc-quiet");
+                    }
+                    ProcessBuilder processBuilder = new ProcessBuilder(command);
                     processBuilder.redirectErrorStream(true);
                     while (!Thread.interrupted()) {
                         LOGGER.debug("Initializing VLC player.");
@@ -83,12 +87,14 @@ public class VlcPlayer {
 
     public synchronized void destroy() throws VlcPlayerException {
         if (myWatchdog != null && myWatchdog.isAlive()) {
+            LOGGER.info("Destroying VLC player.");
             myWatchdog.interrupt();
             try {
                 myWatchdog.join(5000);
             } catch (InterruptedException e) {
                 throw new VlcPlayerException("Interrupted while waiting for watchdog thread to exit.", e);
             }
+            myWatchdog = null;
         }
     }
 

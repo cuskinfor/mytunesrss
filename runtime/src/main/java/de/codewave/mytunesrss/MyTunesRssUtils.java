@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
+import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -140,6 +141,14 @@ public class MyTunesRssUtils {
     public static void shutdownGracefully() {
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
         LOGGER.debug("Shutting down gracefully.");
+        try {
+            if (MyTunesRss.VLC_PLAYER != null) {
+                MyTunesRss.VLC_PLAYER.stop();
+                MyTunesRss.VLC_PLAYER.destroy();
+            }
+        } catch (VlcPlayerException e) {
+            LOGGER.error("Could not destroy VLC player.", e);
+        }
         MyTunesRss.CONFIG.save();
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();

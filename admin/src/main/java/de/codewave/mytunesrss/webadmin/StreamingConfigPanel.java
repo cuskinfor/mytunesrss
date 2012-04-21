@@ -13,13 +13,14 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
+import de.codewave.mytunesrss.vlc.VlcPlayer;
+import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.VlcExecutableFileValidator;
-import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -171,7 +172,20 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
         String vlcBinary = myVlcBinary.getStringValue(null);
-        MyTunesRss.CONFIG.setVlcExecutable(vlcBinary != null ? new File(vlcBinary) : null);
+        File vlcExecutable = vlcBinary != null ? new File(vlcBinary) : null;
+        if ((vlcExecutable == null && MyTunesRss.CONFIG.getVlcExecutable() != null) || (vlcExecutable != null && !vlcExecutable.equals(MyTunesRss.CONFIG.getVlcExecutable()))) {
+            try {
+                MyTunesRss.VLC_PLAYER.destroy();
+            } catch (VlcPlayerException e) {
+                LOG.warn("Could not destroy VLC player.");
+            }
+            MyTunesRss.CONFIG.setVlcExecutable(vlcExecutable);
+            try {
+                MyTunesRss.VLC_PLAYER.init();
+            } catch (VlcPlayerException e) {
+                LOG.warn("Could not initialize VLC player.");
+            }
+        }
         MyTunesRss.CONFIG.save();
     }
 
