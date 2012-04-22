@@ -1135,7 +1135,7 @@ public class MyTunesRssConfig {
         setTrackImageMappings(mappings);
         String vlc = JXPathUtils.getStringValue(settings, "vlc", null);
         setVlcExecutable(vlc != null ? new File(vlc) : null);
-        setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 5));
+        setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
     }
 
     /**

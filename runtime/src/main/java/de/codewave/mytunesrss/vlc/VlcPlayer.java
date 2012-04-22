@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,9 +70,6 @@ public class VlcPlayer {
                             command.add("--intf=http");
                             command.add("--http-host=" + myVlcHost);
                             command.add("--http-port=" + myVlcPort);
-                            if (SystemUtils.IS_OS_WINDOWS) {
-                                command.add("--http-quiet");
-                            }
                             ProcessBuilder processBuilder = new ProcessBuilder(command);
                             processBuilder.redirectErrorStream(true);
                             LOGGER.info("Starting VLC player with HTTP interface on port " + myVlcPort + ".");
