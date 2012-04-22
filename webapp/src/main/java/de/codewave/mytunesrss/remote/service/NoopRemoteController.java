@@ -57,7 +57,7 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void jumpTo(int percentage) {
+    public void seek(int percentage) {
         // intentionally left blank
     }
 

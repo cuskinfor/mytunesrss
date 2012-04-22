@@ -131,6 +131,7 @@ public class MyTunesRssConfig {
     private boolean myHeadless = false;
     private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
     private File myVlcExecutable;
+    private int myVlcSocketTimeout;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -900,6 +901,14 @@ public class MyTunesRssConfig {
         myVlcExecutable = vlcExecutable;
     }
 
+    public int getVlcSocketTimeout() {
+        return myVlcSocketTimeout;
+    }
+
+    public void setVlcSocketTimeout(int vlcSocketTimeout) {
+        myVlcSocketTimeout = vlcSocketTimeout;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1126,6 +1135,7 @@ public class MyTunesRssConfig {
         setTrackImageMappings(mappings);
         String vlc = JXPathUtils.getStringValue(settings, "vlc", null);
         setVlcExecutable(vlc != null ? new File(vlc) : null);
+        setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 5));
     }
 
     /**
@@ -1466,6 +1476,7 @@ public class MyTunesRssConfig {
             }
             if (getVlcExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
+                root.appendChild(DOMUtils.createIntElement(settings, "vlc-timeout", getVlcSocketTimeout()));
             }
             FileOutputStream outputStream = null;
             try {

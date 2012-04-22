@@ -20,6 +20,7 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
+import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.VlcExecutableFileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 import org.apache.commons.lang.StringUtils;
@@ -46,6 +47,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     Panel myAddTranscoderButtons;
     private SmartTextField myVlcBinary;
     private Button myVlcBinarySelect;
+    private SmartTextField myVlcSocketTimeout;
     private Form myVlcForm;
     private Button myVlcHomepageButton;
 
@@ -54,10 +56,12 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary")));
         myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
+        myVlcSocketTimeout = getComponentFactory().createTextField("streamingConfigPanel.vlcTimeout", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcTimeout.invalidTimeout", 1, 1000), 1, 1000));
         myVlcHomepageButton = getComponentFactory().createButton("streamingConfigPanel.vlcHomepage", this);
         myVlcForm = getComponentFactory().createForm(null, true);
         myVlcForm.addField(myVlcBinary, myVlcBinary);
         myVlcForm.addField(myVlcBinarySelect, myVlcBinarySelect);
+        myVlcForm.addField(myVlcSocketTimeout, myVlcSocketTimeout);
         myVlcForm.addField(myVlcHomepageButton, myVlcHomepageButton);
         Panel vlcPanel = getComponentFactory().surroundWithPanel(myVlcForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.vlc"));
         addComponent(vlcPanel);
@@ -141,6 +145,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
         myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
+        myVlcSocketTimeout.setValue(MyTunesRss.CONFIG.getVlcSocketTimeout());
     }
 
     protected void writeToConfig() {
@@ -186,6 +191,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 LOG.warn("Could not initialize VLC player.");
             }
         }
+        MyTunesRss.CONFIG.setVlcSocketTimeout(myVlcSocketTimeout.getIntegerValue(5));
         MyTunesRss.CONFIG.save();
     }
 

@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.mytunesrss.vlc.HttpResponseStatus;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.sql.DataStoreQuery;
 
@@ -79,17 +80,18 @@ public class VlcPlayerRemoteController implements RemoteController {
         MyTunesRss.VLC_PLAYER.play(MyTunesRss.VLC_PLAYER.getCurrentIndex() - 1);
     }
 
-    public void jumpTo(int percentage) throws VlcPlayerException {
-        MyTunesRss.VLC_PLAYER.jumpTo(percentage);
+    public void seek(int percentage) throws VlcPlayerException {
+        MyTunesRss.VLC_PLAYER.seek(percentage);
     }
 
     public RemoteTrackInfo getCurrentTrackInfo() throws VlcPlayerException {
         RemoteTrackInfo trackInfo = new RemoteTrackInfo();
-        trackInfo.setCurrentTime(MyTunesRss.VLC_PLAYER.getCurrentTime());
+        HttpResponseStatus status = MyTunesRss.VLC_PLAYER.getStatus();
+        trackInfo.setCurrentTime(status.getTime());
         trackInfo.setCurrentTrack(MyTunesRss.VLC_PLAYER.getCurrentIndex() + 1);
-        trackInfo.setLength(MyTunesRss.VLC_PLAYER.getCurrentTrackLength());
-        trackInfo.setPlaying(MyTunesRss.VLC_PLAYER.isPlaying());
-        trackInfo.setVolume(MyTunesRss.VLC_PLAYER.getVolume());
+        trackInfo.setLength(status.getLength());
+        trackInfo.setPlaying(status.isPlaying());
+        trackInfo.setVolume(status.getPercentageVolume());
         return trackInfo;
     }
 

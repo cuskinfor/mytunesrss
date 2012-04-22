@@ -1162,6 +1162,11 @@ tr.remoteplaybackplaying td {
     color: #fff;
 }
 
+tr.remoteplayback td {
+    background: #419df9;
+    color: #fff;
+}
+
 td.remotecontrolTrackImage {
 	width: 30px;
 	padding: 2px;

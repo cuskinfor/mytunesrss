@@ -143,7 +143,6 @@ public class MyTunesRssUtils {
         LOGGER.debug("Shutting down gracefully.");
         try {
             if (MyTunesRss.VLC_PLAYER != null) {
-                MyTunesRss.VLC_PLAYER.stop();
                 MyTunesRss.VLC_PLAYER.destroy();
             }
         } catch (VlcPlayerException e) {

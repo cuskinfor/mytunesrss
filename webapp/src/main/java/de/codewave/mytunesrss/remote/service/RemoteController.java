@@ -38,7 +38,7 @@ public interface RemoteController {
 
     void prev() throws Exception;
 
-    void jumpTo(int percentage) throws Exception;
+    void seek(int percentage) throws Exception;
 
     RemoteTrackInfo getCurrentTrackInfo() throws Exception;
 

@@ -221,7 +221,7 @@
         $jQ("#progress").slider({
             value:0,
             slide:function(event, ui) {
-                execJsonRpc('RemoteControlService.jumpTo', [ui.value], getStateAndUpdateInterface);
+                execJsonRpc('RemoteControlService.seek', [ui.value], getStateAndUpdateInterface);
             }
         });
       });

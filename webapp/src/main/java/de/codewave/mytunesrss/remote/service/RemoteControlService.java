@@ -83,9 +83,9 @@ public class RemoteControlService implements RemoteController {
         getController().prev();
     }
 
-    public void jumpTo(int percentage) throws Exception {
+    public void seek(int percentage) throws Exception {
         assertAuthenticated();
-        getController().jumpTo(percentage);
+        getController().seek(percentage);
     }
 
     public RemoteTrackInfo getCurrentTrackInfo() throws Exception {
