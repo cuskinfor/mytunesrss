@@ -146,6 +146,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
                     LOG.debug("executing HTTP Live Streaming command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
                 }
                 process = new ProcessBuilder(transcodeCommand).start();
+                MyTunesRss.SPAWNED_PROCESSES.add(process);
                 new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                 new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                 process.waitFor();
@@ -154,6 +155,7 @@ public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
             } finally {
                 if (process != null) {
                     process.destroy();
+                    MyTunesRss.SPAWNED_PROCESSES.remove(process);
                 }
             }
         }

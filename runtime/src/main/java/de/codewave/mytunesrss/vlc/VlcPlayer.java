@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class VlcPlayer {
         MAPPER.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    private List<Track> myTracks = Collections.emptyList();
+    private List<Track> myTracks = new ArrayList<Track>();
 
     private int myCurrent;
 
@@ -74,6 +75,7 @@ public class VlcPlayer {
                             processBuilder.redirectErrorStream(true);
                             LOGGER.info("Starting VLC player with HTTP interface on port " + myVlcPort + ".");
                             process = processBuilder.start();
+                            MyTunesRss.SPAWNED_PROCESSES.add(process);
                             new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
                             myHttpClient = new HttpClient();
                             for (int i = 0; i < 10; i++) {
@@ -84,26 +86,34 @@ public class VlcPlayer {
                                     if (i == 9) {
                                         LOGGER.warn("Could not set volume for VLC player.", e);
                                     }
-                                    Thread.sleep(1000);
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException ie) {
+                                        Thread.currentThread().interrupt();
+                                        break;
+                                    }
                                 }
                             }
-                            if (myTracks != null && !myTracks.isEmpty()) {
+                            if (!Thread.currentThread().isInterrupted() && myTracks != null && !myTracks.isEmpty()) {
                                 try {
                                     setTracks(myTracks);
                                 } catch (VlcPlayerException e) {
                                     LOGGER.warn("Could not set existing playlist again.", e);
                                 }
                             }
-                            process.waitFor();
+                            if (!Thread.currentThread().isInterrupted()) {
+                                process.waitFor();
+                            }
                         } catch (IOException e) {
                             LOGGER.warn("Could not start VLC player.", e);
                             break;
                         } catch (InterruptedException e) {
-                            LOGGER.warn("Interrupted while waiting for process to exit.", e);
+                            LOGGER.debug("Interrupted while waiting for process to exit.", e);
                             break;
                         } finally {
                             if (process != null) {
                                 process.destroy();
+                                MyTunesRss.SPAWNED_PROCESSES.remove(process);
                             }
                         }
                     }
@@ -140,6 +150,10 @@ public class VlcPlayer {
         send("/status.json?command=pl_empty");
     }
 
+    public synchronized void setTracks(Track... tracks) throws VlcPlayerException {
+        setTracks(Arrays.asList(tracks));
+    }
+
     public synchronized void setTracks(List<Track> tracks) throws VlcPlayerException {
         clearPlaylist();
         LOGGER.debug("Setting playlist of " + tracks.size() + " tracks.");
@@ -149,20 +163,45 @@ public class VlcPlayer {
         for (Track track : tracks) {
             send("/status.json?command=in_enqueue&input=" + MiscUtils.getUtf8UrlEncoded(track.getFile().getAbsolutePath()));
             if (myOffset == -1) {
-                myOffset = 1; // default if no numbers are available
-                HttpResponsePlaylist playlist = send("/playlist.json", HttpResponsePlaylist.class);
-                if (playlist != null) {
-                    List<HttpResponsePlaylist> playlistTracks = getTracks(playlist);
-                    if (!playlistTracks.isEmpty()) {
-                        try {
-                            myOffset = Math.max(myOffset, Integer.parseInt(playlistTracks.get(0).getId()));
-                        } catch (NumberFormatException e) {
-                            // ignore
-                        }
-                    }
-                }
-                LOGGER.debug("First track has index " + myOffset);
+                myOffset = getFirstTrackIndex();
             }
+        }
+    }
+
+    private int getFirstTrackIndex() throws VlcPlayerException {
+        int offset = 1; // default if no numbers are available
+        HttpResponsePlaylist playlist = send("/playlist.json", HttpResponsePlaylist.class);
+        if (playlist != null) {
+            List<HttpResponsePlaylist> playlistTracks = getTracks(playlist);
+            if (!playlistTracks.isEmpty()) {
+                try {
+                    offset = Math.max(offset, Integer.parseInt(playlistTracks.get(0).getId()));
+                } catch (NumberFormatException e) {
+                    // ignore
+                }
+            }
+        }
+        LOGGER.debug("First track has index " + offset);
+        return offset;
+    }
+
+    public synchronized void addTrack(Track track) throws VlcPlayerException {
+        addTracks(Collections.singletonList(track));
+    }
+
+    public synchronized void addTracks(Track... tracks) throws VlcPlayerException {
+        addTracks(Arrays.asList(tracks));
+    }
+
+    public synchronized void addTracks(List<Track> tracks) throws VlcPlayerException {
+        int oldSize = myTracks.size();
+        myTracks.addAll(tracks);
+        if (oldSize == 0) {
+            myOffset = getFirstTrackIndex();
+        }
+        if (getStatus().isStopped()) {
+            // start playback of first new track if currently in stopped mode
+            play(oldSize);
         }
     }
 

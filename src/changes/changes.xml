@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-360] Make sure all external processes are destroyed
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-20] Use VLC instead of QTJava for remote control
             </action>
             <action dev="mdescher" type="add">

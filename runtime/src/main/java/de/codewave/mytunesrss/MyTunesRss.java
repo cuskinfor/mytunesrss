@@ -131,6 +131,7 @@ public class MyTunesRss {
     public static String PREFERENCES_DATA_PATH;
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
+    public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -157,6 +158,11 @@ public class MyTunesRss {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                // try to kill all still running processes
+                LOGGER.info("Trying to kill " + SPAWNED_PROCESSES.size() + " previously spawned processes.");
+                for (Process process : SPAWNED_PROCESSES) {
+                    process.destroy();
+                }
                 // try to do the best to shutdown the store in a clean way to keep H2 databases intact
                 LOGGER.info("Running shutdown hook.");
                 if (STORE != null && STORE.isInitialized()) {
@@ -224,15 +230,13 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             MyTunesRssJobUtils.scheduleStatisticEventsJob();
             MyTunesRssJobUtils.scheduleDatabaseJob();
+            MyTunesRss.VLC_PLAYER.init();
         }
         startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
                 RUN_DATABASE_REFRESH_ON_STARTUP = false;
                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
-            }
-            if (!SHUTDOWN_IN_PROGRESS.get() && MyTunesRss.VLC_PLAYER != null) {
-                MyTunesRss.VLC_PLAYER.init();
             }
             while (true) {
                 try {

@@ -68,7 +68,12 @@
                     <fmt:message key="browseServers" />
                 </a></li>
             </c:if>
-            <c:if test="${authUser.editWebSettings || globalConfig.serverBrowserActive}">
+            <c:if test="${showRemoteControl}">
+                <li class="servers <c:if test="${!authUser.editWebSettings && !globalConfig.serverBrowserActive}">first</c:if>"><a id="linkRemoteControl" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                    <fmt:message key="showRemoteControl" />
+                </a></li>
+            </c:if>
+            <c:if test="${authUser.editWebSettings || globalConfig.serverBrowserActive || showRemoteControl}">
 	            <li class="spacer">&nbsp;</li>
             </c:if>
             <c:if test="${empty globalConfig.autoLogin}">

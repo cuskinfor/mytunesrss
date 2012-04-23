@@ -39,6 +39,7 @@ public class TranscoderStream extends InputStream {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
         }
         myProcess = new ProcessBuilder(transcodeCommand).start();
+        MyTunesRss.SPAWNED_PROCESSES.add(myProcess);
         myInputStream = myProcess.getInputStream();
         new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
     }
@@ -111,6 +112,7 @@ public class TranscoderStream extends InputStream {
         myInputStream = null;
         if (myProcess != null) {
             myProcess.destroy();
+            MyTunesRss.SPAWNED_PROCESSES.remove(myProcess);
         }
     }
 
