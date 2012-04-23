@@ -1604,7 +1604,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isRemoteControl() {
-        return MyTunesRss.VLC_PLAYER != null;
+        return isVlc();
     }
 
     public boolean isMyTunesRssComActive() {

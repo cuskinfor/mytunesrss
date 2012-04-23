@@ -53,6 +53,16 @@ public class RemoteControlService implements RemoteController {
         getController().loadTracks(trackIds);
     }
 
+    public void addTrack(String trackId) throws Exception {
+        assertAuthenticated();
+        getController().addTrack(trackId);
+    }
+
+    public void addTracks(String[] trackIds) throws Exception {
+        assertAuthenticated();
+        getController().addTracks(trackIds);
+    }
+
     public void clearPlaylist() throws Exception {
         assertAuthenticated();
         getController().clearPlaylist();

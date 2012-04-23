@@ -13,6 +13,7 @@
         <a id="functions_edittags" class="tags" onclick="functionMenuClick('edittags');">dummy</a>
         <a id="functions_share" class="share" onclick="functionMenuClick('share');">dummy</a>
         <a id="functions_remotecontrol" class="remote" onclick="functionMenuClick('remotecontrol');">dummy</a>
+        <a id="functions_addremotecontrol" class="addremote" onclick="functionMenuClick('addremotecontrol');">dummy</a>
         <a id="functions_rss" class="rss" onclick="functionMenuClick('rss');">dummy</a>
         <a id="functions_playlist" class="playlist" onclick="functionMenuClick('playlist');">dummy</a>
         <a id="functions_player" class="flash" onclick="functionMenuClick('player');">dummy</a>
@@ -29,6 +30,7 @@
         $jQ('#functions_edittags').text($jQ('#fn_edittags' + index).attr('title'));
         $jQ('#functions_share').text($jQ('#fn_share' + index).attr('title'));
         $jQ('#functions_remotecontrol').text($jQ('#fn_remotecontrol' + index).attr('title'));
+        $jQ('#functions_addremotecontrol').text($jQ('#fn_addremotecontrol' + index).attr('title'));
         $jQ('#functions_rss').text($jQ('#fn_rss' + index).attr('title'));
         $jQ('#functions_playlist').text($jQ('#fn_playlist' + index).attr('title'));
         $jQ('#functions_player').text($jQ('#fn_player' + index).attr('title'));
@@ -38,6 +40,7 @@
         showHideLink("edittags");
         showHideLink("share");
         showHideLink("remotecontrol");
+        showHideLink("addremotecontrol");
         showHideLink("rss");
         showHideLink("playlist");
         showHideLink("player");

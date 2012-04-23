@@ -33,6 +33,14 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
+    public void addTrack(String trackId) {
+        // intentionally left blank
+    }
+
+    public void addTracks(String[] trackIds) {
+        // intentionally left blank
+    }
+
     public void clearPlaylist() {
         // intentionally left blank
     }

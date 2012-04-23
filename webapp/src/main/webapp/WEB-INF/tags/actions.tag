@@ -45,6 +45,10 @@
 	<a id="fn_remotecontrol${index}" class="remote" onclick="self.document.location.href='${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/backUrl=${backUrl}</mt:encrypt>'" <c:if test="${!config.remoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote</span></a>
     <c:if test="${!config.remoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
+<c:if test="${authUser.remoteControl && globalConfig.remoteControl && !empty track}">
+	<a id="fn_addremotecontrol${index}" class="addremote" onclick="showLoading('<fmt:message key="loading.addRemoteControl"/>');jsonRpcNoLoadingIndicator('${servletUrl}', 'RemoteControlService.addTrack', ['${track.id}'], function(json) {hideLoading()}, '${remoteApiSessionId}');return false;" <c:if test="${!config.addRemoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.addremotecontrol"/>"><span>Add to remote</span></a>
+    <c:if test="${!config.addRemoteControl}"><c:set var="displayMenu" value="true"/></c:if>
+</c:if>
 <c:if test="${authUser.rss}">
 	<a id="fn_rss${index}" class="rss" onclick="self.document.location.href=$jQ('#fn_rss${index}'.attr('href')); return false" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
     <c:if test="${!config.showRss}"><c:set var="displayMenu" value="true"/></c:if>

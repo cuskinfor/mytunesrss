@@ -393,6 +393,13 @@
                                     <img src="${appUrl}/images/action-remote.png" alt="remote control" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
+                            <tr <mt:flipFlop/>>
+                                <td class="label"><fmt:message key="settings.showAddRemoteControl" /></td>
+                                <td>
+                                    <input type="checkbox" name="addRemoteControl" value="true" <c:if test="${config.addRemoteControl}">checked="checked"</c:if> />
+                                    <img src="${appUrl}/images/action-addremote.png" alt="add to remote control" style="vertical-align:text-top;" />
+                                </td>
+                            </tr>
                         </c:if>
                         <c:if test="${authUser.externalSites}">
                             <tr <mt:flipFlop/>>

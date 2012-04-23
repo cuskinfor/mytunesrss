@@ -20,6 +20,10 @@ public interface RemoteController {
 
     void loadTracks(String[] trackIds) throws Exception;
 
+    void addTrack(String trackId) throws Exception;
+
+    void addTracks(String[] trackIds) throws Exception;
+
     void clearPlaylist() throws Exception;
 
     /**

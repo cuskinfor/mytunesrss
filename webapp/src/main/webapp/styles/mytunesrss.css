@@ -405,6 +405,11 @@ table.navigation {
     background: url("../images/action-remote.png") left top no-repeat;
 }
 
+.actions .addremote,
+.actionsMenu .addremote {
+    background: url("../images/action-addremote.png") left top no-repeat;
+}
+
 .actions .tags,
 .actionsMenu .tags {
     background: url("../images/action-tags.png") left top no-repeat;

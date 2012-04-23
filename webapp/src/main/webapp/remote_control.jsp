@@ -246,6 +246,10 @@
 	    	<div class="content-inner">
 
 		        <ul class="menu">
+                    <li class="settings first"><a id="linkClear" href="${servletUrl}/clearRemotePlaylist/${auth}">
+                        <fmt:message key="doClearRemotePlaylist" />
+                    </a></li>
+                    <li class="spacer">&nbsp;</li>
 		            <li class="back"><a id="linkBack" style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
 		                <fmt:message key="back" />
 		            </a></li>

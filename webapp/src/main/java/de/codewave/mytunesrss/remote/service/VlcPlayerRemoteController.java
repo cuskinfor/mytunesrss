@@ -31,6 +31,11 @@ public class VlcPlayerRemoteController implements RemoteController {
         MyTunesRss.VLC_PLAYER.setTracks(tracks);
     }
 
+    private void addItems(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException, VlcPlayerException {
+        List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
+        MyTunesRss.VLC_PLAYER.addTracks(tracks);
+    }
+
     public void loadAlbum(String albumName) throws SQLException, VlcPlayerException { // TODO album artist
         DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, new String[0], SortOrder.Album);
         loadItems(query);
@@ -54,6 +59,16 @@ public class VlcPlayerRemoteController implements RemoteController {
     public void loadTracks(String[] trackIds) throws SQLException, VlcPlayerException {
         DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         loadItems(query);
+    }
+
+    public void addTrack(String trackId) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(new String[]{trackId});
+        addItems(query);
+    }
+
+    public void addTracks(String[] trackIds) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
+        addItems(query);
     }
 
     public void clearPlaylist() throws VlcPlayerException {

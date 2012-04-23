@@ -49,6 +49,7 @@ public class WebConfig {
     private static final String CFG_RANDOM_PROTECTED = "rndProt";
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
     private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
+    private static final String CFG_SHOW_ADD_REMOTE_CONTROL = "addRmCtrl";
     private static final String CFG_ACTIVE_TRANSCODERS = "actTra";
     private static final String CFG_KEEP_ALIVE = "keepAlive";
     private static final String CFG_SEARCH_FUZZINESS = "searchFuzziness";
@@ -65,7 +66,7 @@ public class WebConfig {
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
             CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
-            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS,
+            CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_SHOW_ADD_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS, CFG_SHOW_THUMBNAILS_FOR_ALBUMS,
             CFG_SHOW_THUMBNAILS_FOR_TRACKS, CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
             CFG_MAX_SEARCH_RESULTS};
 
@@ -158,6 +159,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
+        myConfigValues.put(CFG_SHOW_ADD_REMOTE_CONTROL, "false");
         myConfigValues.put(CFG_PHOTO_SIZE, "600");
     }
 
@@ -507,6 +509,14 @@ public class WebConfig {
 
     public void setRemoteControl(boolean remoteControl) {
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, Boolean.toString(remoteControl));
+    }
+
+    public boolean isAddRemoteControl() {
+        return Boolean.parseBoolean(myConfigValues.get(CFG_SHOW_ADD_REMOTE_CONTROL));
+    }
+
+    public void setAddRemoteControl(boolean addRemoteControl) {
+        myConfigValues.put(CFG_SHOW_ADD_REMOTE_CONTROL, Boolean.toString(addRemoteControl));
     }
 
     public String getActiveTranscoders() {

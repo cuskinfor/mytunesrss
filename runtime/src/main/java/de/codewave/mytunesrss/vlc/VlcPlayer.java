@@ -42,7 +42,7 @@ public class VlcPlayer {
 
     private int myCurrent;
 
-    private int myOffset;
+    private int myOffset = -1;
 
     private Thread myWatchdog;
 
@@ -147,6 +147,7 @@ public class VlcPlayer {
         LOGGER.debug("Clearing playlist.");
         myTracks = Collections.emptyList();
         myCurrent = -1;
+        myOffset = -1;
         send("/status.json?command=pl_empty");
     }
 
@@ -158,8 +159,6 @@ public class VlcPlayer {
         clearPlaylist();
         LOGGER.debug("Setting playlist of " + tracks.size() + " tracks.");
         myTracks = new ArrayList<Track>(tracks);
-        myCurrent = -1;
-        myOffset = -1;
         for (Track track : tracks) {
             send("/status.json?command=in_enqueue&input=" + MiscUtils.getUtf8UrlEncoded(track.getFile().getAbsolutePath()));
             if (myOffset == -1) {
@@ -195,9 +194,15 @@ public class VlcPlayer {
 
     public synchronized void addTracks(List<Track> tracks) throws VlcPlayerException {
         int oldSize = myTracks.size();
-        myTracks.addAll(tracks);
         if (oldSize == 0) {
-            myOffset = getFirstTrackIndex();
+            myOffset = -1;
+        }
+        myTracks.addAll(tracks);
+        for (Track track : tracks) {
+            send("/status.json?command=in_enqueue&input=" + MiscUtils.getUtf8UrlEncoded(track.getFile().getAbsolutePath()));
+            if (myOffset == -1) {
+                myOffset = getFirstTrackIndex();
+            }
         }
         if (getStatus().isStopped()) {
             // start playback of first new track if currently in stopped mode
