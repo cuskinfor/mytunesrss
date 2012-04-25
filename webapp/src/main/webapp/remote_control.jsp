@@ -249,6 +249,9 @@
                     <li class="settings first"><a id="linkClear" href="${servletUrl}/clearRemotePlaylist/${auth}">
                         <fmt:message key="doClearRemotePlaylist" />
                     </a></li>
+                    <li class="settings"><a id="linkSpeaker" style="cursor:pointer" onclick="openDialog('#airtunesTargetDialog')">
+                        <fmt:message key="selectAirtunesSpeaker" />
+                    </a></li>
                     <li class="spacer">&nbsp;</li>
 		            <li class="back"><a id="linkBack" style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
 		                <fmt:message key="back" />
@@ -313,6 +316,40 @@
 		</div>
 
 	</div>
+
+    <script type="text/javascript">
+        function selectAirtunesTarget(airtunesTarget) {
+            $jQ.modal.close();
+            showLoading('<fmt:message key="switchingAirtunesTarget"/>');
+            jsonRpcNoLoadingIndicator(
+                    '${servletUrl}',
+                    'RemoteControlService.setAirtunesTarget',
+                    [
+                        airtunesTarget
+                    ],
+                    function(json) {
+                        hideLoading();
+                    },
+                    '${remoteApiSessionId}'
+            );
+        }
+    </script>
+
+    <div id="airtunesTargetDialog" class="dialog">
+        <h2>
+            <fmt:message key="airtunesTargetDialog.title" />
+        </h2>
+
+        <p>
+            <fmt:message key="airtunesTargetDialog.text" />
+        </p>
+
+        <p>
+            <a style="cursor:pointer" onclick="selectAirtunesTarget('')"><fmt:message key="airtunesTargetDialog.localPlayback" /></a><br />
+            <a style="cursor:pointer" onclick="selectAirtunesTarget('192.168.0.4')">Esszimmer</a>
+        </p>
+
+    </div>
 
 </body>
 

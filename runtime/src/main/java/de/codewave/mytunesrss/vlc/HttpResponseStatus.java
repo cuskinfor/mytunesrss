@@ -19,6 +19,10 @@ public class HttpResponseStatus {
         return myFullscreen;
     }
 
+    public boolean isFullscreen() {
+        return getFullscreen() != 0;
+    }
+
     public void setFullscreen(int fullscreen) {
         myFullscreen = fullscreen;
     }
@@ -69,5 +73,9 @@ public class HttpResponseStatus {
 
     public boolean isStopped() {
         return "stopped".equalsIgnoreCase(getState());
+    }
+
+    public void setPercentageVolume(int percentageVolume) {
+        setVolume((512 * percentageVolume) / 100);
     }
 }

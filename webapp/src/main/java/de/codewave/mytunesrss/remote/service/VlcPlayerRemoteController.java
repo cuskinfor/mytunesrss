@@ -133,4 +133,8 @@ public class VlcPlayerRemoteController implements RemoteController {
         }
         return tracks.get(index);
     }
+
+    public void setAirtunesTarget(String airtunesTarget) throws Exception {
+        MyTunesRss.VLC_PLAYER.setAirtunesTarget(airtunesTarget);
+    }
 }

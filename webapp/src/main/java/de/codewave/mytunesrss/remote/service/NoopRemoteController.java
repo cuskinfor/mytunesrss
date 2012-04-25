@@ -92,4 +92,8 @@ public class NoopRemoteController implements RemoteController {
     public Track getTrack(int index) {
         return null;
     }
+
+    public void setAirtunesTarget(String airtunesTarget) throws Exception {
+        // intentionally left blank
+    }
 }

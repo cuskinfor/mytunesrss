@@ -11,7 +11,7 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -25,6 +25,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class VlcPlayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VlcPlayer.class);
@@ -52,8 +56,20 @@ public class VlcPlayer {
 
     private HttpClient myHttpClient;
 
+    private String myAirtunesTarget;
+
     public synchronized void init() throws VlcPlayerException {
-        if (myWatchdog == null && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+        HttpResponseStatus status = new HttpResponseStatus();
+        status.setFullscreen(0);
+        status.setState("stopped");
+        status.setTime(0);
+        status.setPercentageVolume(70);
+        init(status, -1);
+    }
+
+    private void init(final HttpResponseStatus status, final int current) throws VlcPlayerException {
+        if ((myWatchdog == null || !myWatchdog.isAlive() ) && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+            final Semaphore semaphore = new Semaphore(0);
             myWatchdog = new Thread(new Runnable() {
                 public void run() {
                     while (!Thread.interrupted()) {
@@ -71,6 +87,9 @@ public class VlcPlayer {
                             command.add("--intf=http");
                             command.add("--http-host=" + myVlcHost);
                             command.add("--http-port=" + myVlcPort);
+                            if (StringUtils.isNotBlank(myAirtunesTarget)) {
+                                command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myAirtunesTarget + ",volume=128}");
+                            }
                             ProcessBuilder processBuilder = new ProcessBuilder(command);
                             processBuilder.redirectErrorStream(true);
                             LOGGER.info("Starting VLC player with HTTP interface on port " + myVlcPort + ".");
@@ -80,7 +99,7 @@ public class VlcPlayer {
                             myHttpClient = new HttpClient();
                             for (int i = 0; i < 10; i++) {
                                 try {
-                                    setVolume(70); // default volume to 70%
+                                    setVolume(status.getPercentageVolume());
                                     break;
                                 } catch (VlcPlayerException e) {
                                     if (i == 9) {
@@ -101,6 +120,21 @@ public class VlcPlayer {
                                     LOGGER.warn("Could not set existing playlist again.", e);
                                 }
                             }
+                            myCurrent = current;
+                            try {
+                                setFullScreen(status.isFullscreen());
+                                if (status.isPaused() || status.isPlaying()) {
+                                    play(myCurrent);
+                                    seek((status.getTime() * 100) / status.getLength());
+                                    pause();
+                                }
+                                if (status.isPlaying()) {
+                                    play(-1);
+                                }
+                            } catch (VlcPlayerException e) {
+                                LOGGER.warn("Could not restore old status.", e);
+                            }
+                            semaphore.release();
                             if (!Thread.currentThread().isInterrupted()) {
                                 process.waitFor();
                             }
@@ -111,6 +145,7 @@ public class VlcPlayer {
                             LOGGER.debug("Interrupted while waiting for process to exit.", e);
                             break;
                         } finally {
+                            semaphore.release();
                             if (process != null) {
                                 process.destroy();
                                 MyTunesRss.SPAWNED_PROCESSES.remove(process);
@@ -121,6 +156,14 @@ public class VlcPlayer {
             });
             myWatchdog.setDaemon(true);
             myWatchdog.start();
+            try {
+                while (!semaphore.tryAcquire()) {
+                    notifyAll();
+                    wait(1000);
+                }
+            } catch (InterruptedException e) {
+                throw new VlcPlayerException("Interrupted while waiting for VLC player to become initialized.", e);
+            }
         }
     }
 
@@ -134,6 +177,16 @@ public class VlcPlayer {
                 throw new VlcPlayerException("Interrupted while waiting for watchdog thread to exit.", e);
             }
             myWatchdog = null;
+        }
+    }
+
+    public synchronized void setAirtunesTarget(String airtunesTarget) throws VlcPlayerException {
+        airtunesTarget = StringUtils.trimToNull(airtunesTarget);
+        if (!StringUtils.equalsIgnoreCase(myAirtunesTarget, airtunesTarget)) {
+            HttpResponseStatus oldStatus = getStatus();
+            destroy();
+            myAirtunesTarget = airtunesTarget;
+            init(oldStatus, myCurrent);
         }
     }
 

@@ -55,4 +55,6 @@ public interface RemoteController {
     List<Track> getPlaylist() throws Exception;
 
     Track getTrack(int index) throws Exception;
+
+    void setAirtunesTarget(String airtunesTarget) throws Exception;
 }
