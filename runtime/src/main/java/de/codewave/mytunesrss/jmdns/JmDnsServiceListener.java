@@ -34,6 +34,10 @@ public class JmDnsServiceListener implements ServiceListener {
     }
 
     public void serviceRemoved(ServiceEvent event) {
+        removeDevice(event);
+    }
+
+    protected JmDnsDevice removeDevice(ServiceEvent event) {
         LOGGER.debug("JmDNS service removed.");
         ServiceInfo serviceInfo = event.getInfo();
         if (serviceInfo == null || serviceInfo.getInetAddress() == null) {
@@ -41,7 +45,7 @@ public class JmDnsServiceListener implements ServiceListener {
         }
         String id = new JmDnsDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort()).getId();
         LOGGER.debug("Adding device with id \"" + id + "\".");
-        myDevices.remove(id);
+        return myDevices.remove(id);
     }
 
     public void serviceResolved(ServiceEvent event) {

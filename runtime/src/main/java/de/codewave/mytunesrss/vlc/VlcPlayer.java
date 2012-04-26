@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.vlc;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jmdns.JmDnsDevice;
+import de.codewave.mytunesrss.jmdns.JmDnsServiceListener;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.httpclient.HttpClient;
@@ -19,6 +21,7 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jmdns.ServiceEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
@@ -30,7 +33,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class VlcPlayer {
+public class VlcPlayer extends JmDnsServiceListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(VlcPlayer.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -187,6 +190,24 @@ public class VlcPlayer {
             destroy();
             myAirtunesTarget = airtunesTarget;
             init(oldStatus, myCurrent);
+        }
+    }
+
+    @Override
+    public void serviceRemoved(ServiceEvent event) {
+        JmDnsDevice removedDevice = removeDevice(event);
+        if (StringUtils.equalsIgnoreCase(myAirtunesTarget, removedDevice.getInetAddress().getHostAddress())) {
+            try {
+                setAirtunesTarget(null);
+            } catch (VlcPlayerException e) {
+                LOGGER.warn("Could not reset speaker to local playback.");
+            }
+        }
+    }
+
+    public void handleAirtunesTargetRemoved(String airtunesTarget) throws VlcPlayerException {
+        if (StringUtils.equalsIgnoreCase(myAirtunesTarget, airtunesTarget)) {
+            setAirtunesTarget(null);
         }
     }
 

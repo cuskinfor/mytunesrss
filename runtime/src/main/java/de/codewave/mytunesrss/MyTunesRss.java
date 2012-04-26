@@ -134,8 +134,6 @@ public class MyTunesRss {
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
-    public static JmDnsServiceListener AIRPLAY_LISTENER = new JmDnsServiceListener();
-    public static JmDnsServiceListener RAOP_LISTENER = new JmDnsServiceListener();
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -176,8 +174,7 @@ public class MyTunesRss {
             }
         });
         JmDNS jmDNS = JmDNS.create();
-        jmDNS.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
-        jmDNS.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
+        jmDNS.addServiceListener("_raop._tcp.local.", VLC_PLAYER);
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();

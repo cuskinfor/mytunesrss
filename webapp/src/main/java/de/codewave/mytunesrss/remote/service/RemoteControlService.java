@@ -137,12 +137,7 @@ public class RemoteControlService implements RemoteController {
     }
 
     public Object getRaopDevices() {
-        Collection<JmDnsDevice> devices = MyTunesRss.RAOP_LISTENER.getDevices();
-        return RenderMachine.getInstance().render(devices.toArray(new JmDnsDevice[devices.size()]));
-    }
-
-    public Object getAirplayDevices() {
-        Collection<JmDnsDevice> devices = MyTunesRss.AIRPLAY_LISTENER.getDevices();
+        Collection<JmDnsDevice> devices = MyTunesRss.VLC_PLAYER.getDevices();
         return RenderMachine.getInstance().render(devices.toArray(new JmDnsDevice[devices.size()]));
     }
 }
