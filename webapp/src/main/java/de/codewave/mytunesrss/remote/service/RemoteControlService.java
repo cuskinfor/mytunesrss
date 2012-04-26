@@ -3,8 +3,11 @@ package de.codewave.mytunesrss.remote.service;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.jmdns.JmDnsDevice;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
+import de.codewave.mytunesrss.remote.render.RenderMachine;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -131,5 +134,15 @@ public class RemoteControlService implements RemoteController {
     public Track getTrack(int index) throws Exception {
         assertAuthenticated();
         return getController().getTrack(index);
+    }
+
+    public Object getRaopDevices() {
+        Collection<JmDnsDevice> devices = MyTunesRss.RAOP_LISTENER.getDevices();
+        return RenderMachine.getInstance().render(devices.toArray(new JmDnsDevice[devices.size()]));
+    }
+
+    public Object getAirplayDevices() {
+        Collection<JmDnsDevice> devices = MyTunesRss.AIRPLAY_LISTENER.getDevices();
+        return RenderMachine.getInstance().render(devices.toArray(new JmDnsDevice[devices.size()]));
     }
 }

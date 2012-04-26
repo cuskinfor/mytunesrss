@@ -249,7 +249,7 @@
                     <li class="settings first"><a id="linkClear" href="${servletUrl}/clearRemotePlaylist/${auth}">
                         <fmt:message key="doClearRemotePlaylist" />
                     </a></li>
-                    <li class="settings"><a id="linkSpeaker" style="cursor:pointer" onclick="openDialog('#airtunesTargetDialog')">
+                    <li class="settings"><a id="linkSpeaker" style="cursor:pointer" onclick="openSpeakerSelection()">
                         <fmt:message key="selectAirtunesSpeaker" />
                     </a></li>
                     <li class="spacer">&nbsp;</li>
@@ -333,6 +333,23 @@
                     '${remoteApiSessionId}'
             );
         }
+
+        function openSpeakerSelection() {
+            jsonRpc(
+                    "${servletUrl}",
+                    "RemoteControlService.getRaopDevices",
+                    [],
+                    function(json) {
+                        $jQ("#devicelist").empty();
+                        $jQ("#devicelist").append("<a style=\"cursor:pointer\" onclick=\"selectAirtunesTarget('')\"><fmt:message key="airtunesTargetDialog.localPlayback" /></a><br />");
+                        for (var i = 0; i < json.length; i++) {
+                            $jQ("#devicelist").append("<a style=\"cursor:pointer\" onclick=\"selectAirtunesTarget('" + json[i].host + "')\">" + json[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</a><br/>");
+                        }
+                        openDialog("#airtunesTargetDialog");
+                    },
+                    "${remoteApiSessionId}"
+            )
+        }
     </script>
 
     <div id="airtunesTargetDialog" class="dialog">
@@ -344,10 +361,7 @@
             <fmt:message key="airtunesTargetDialog.text" />
         </p>
 
-        <p>
-            <a style="cursor:pointer" onclick="selectAirtunesTarget('')"><fmt:message key="airtunesTargetDialog.localPlayback" /></a><br />
-            <a style="cursor:pointer" onclick="selectAirtunesTarget('192.168.0.4')">Esszimmer</a>
-        </p>
+        <p id="devicelist"></p>
 
     </div>
 

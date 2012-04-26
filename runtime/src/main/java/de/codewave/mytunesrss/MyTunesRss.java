@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
+import de.codewave.mytunesrss.jmdns.JmDnsServiceListener;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
@@ -43,6 +44,7 @@ import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.jmdns.JmDNS;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
 import java.awt.*;
@@ -132,6 +134,8 @@ public class MyTunesRss {
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
+    public static JmDnsServiceListener AIRPLAY_LISTENER = new JmDnsServiceListener();
+    public static JmDnsServiceListener RAOP_LISTENER = new JmDnsServiceListener();
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -171,6 +175,9 @@ public class MyTunesRss {
                 }
             }
         });
+        JmDNS jmDNS = JmDNS.create();
+        jmDNS.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
+        jmDNS.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();
