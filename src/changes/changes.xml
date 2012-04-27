@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-365] Option for OpenID login form
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-360] Make sure all external processes are destroyed
             </action>
             <action dev="mdescher" type="update">

@@ -35,7 +35,7 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DoLoginWithOpenIdCommandHandler.class);
 
     public void execute() throws Exception {
-        if (!MyTunesRss.CONFIG.isDisableWebLogin() && !isSessionAuthorized()) {
+        if (!MyTunesRss.CONFIG.isDisableWebLogin() && MyTunesRss.CONFIG.isOpenIdActive() && !isSessionAuthorized()) {
             String openId = getRequest().getParameter("openId");
             try {
                 // TODO this should be set each time the proxy config changes but the http4 client is in the web app only at the moment

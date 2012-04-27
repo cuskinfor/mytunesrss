@@ -107,58 +107,60 @@
 
             </form>
 
-            <form id="loginWithOpenId" action="${servletUrl}/loginWithOpenId" method="post">
+            <c:if test="${globalConfig.openIdActive}">
+                <form id="loginWithOpenId" action="${servletUrl}/loginWithOpenId" method="post">
 
-                <div class="login">
+                    <div class="login">
 
-                    <h2><fmt:message key="loginCaptionOpenId"/></h2>
+                        <h2><fmt:message key="loginCaptionOpenId"/></h2>
 
-                    <table cellspacing="0">
-                        <tr>
-                            <td class="label">
-                                <label for="lc">
-                                    <fmt:message key="languageSelection"/>
-                                </label>
-                            </td>
-                            <td>
-                                <select name="lc" id="lcOpenId">
-                                    <option value=""><fmt:message key="languageSelectionDefault"/></option>
-                                    <c:forEach items="${mtfn:availableLanguages(mtfn:preferredLocale(pageContext, true))}" var="lang">
-                                        <option value="${lang[0]}" <c:if test="${lang[0] == mtfn:preferredLocale(pageContext, false).language}">selected="selected"</c:if>><c:out value="${lang[1]}"/></option>
-                                    </c:forEach>
-                                </select>
-                            </td>
-                            <td class="label">&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td class="label">
-                                <label for="openId">
-                                    <fmt:message key="openId"/>
-                                </label>
-                            </td>
-                            <td>
-                                <input class="text" type="text" name="openId" id="openId" value="<c:out value="${param.openId}"/>" tabindex="5"/>
-                            </td>
-                            <td>&nbsp;</td>
-                        </tr>
-                        <tr>
-                            <td>&nbsp;</td>
-                            <td>
-                                <div class="rememberChk">
-                                    <input type="checkbox" name="rememberLogin" value="true" id="rememberCheckOpenId" tabindex="6"/>
-                                    <label for="rememberCheck"><fmt:message key="rememberLogin"/></label>
-                                </div>
-                                <div class="submitBtn">
-                                    <input id="linkSubmitLoginOpenId" class="button" type="submit" value="<fmt:message key="doLogin"/>" tabindex="7"/>
-                                </div>
-                            </td>
-                            <td>&nbsp;</td>
-                        </tr>
-                    </table>
+                        <table cellspacing="0">
+                            <tr>
+                                <td class="label">
+                                    <label for="lc">
+                                        <fmt:message key="languageSelection"/>
+                                    </label>
+                                </td>
+                                <td>
+                                    <select name="lc" id="lcOpenId">
+                                        <option value=""><fmt:message key="languageSelectionDefault"/></option>
+                                        <c:forEach items="${mtfn:availableLanguages(mtfn:preferredLocale(pageContext, true))}" var="lang">
+                                            <option value="${lang[0]}" <c:if test="${lang[0] == mtfn:preferredLocale(pageContext, false).language}">selected="selected"</c:if>><c:out value="${lang[1]}"/></option>
+                                        </c:forEach>
+                                    </select>
+                                </td>
+                                <td class="label">&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td class="label">
+                                    <label for="openId">
+                                        <fmt:message key="openId"/>
+                                    </label>
+                                </td>
+                                <td>
+                                    <input class="text" type="text" name="openId" id="openId" value="<c:out value="${param.openId}"/>" tabindex="5"/>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                            <tr>
+                                <td>&nbsp;</td>
+                                <td>
+                                    <div class="rememberChk">
+                                        <input type="checkbox" name="rememberLogin" value="true" id="rememberCheckOpenId" tabindex="6"/>
+                                        <label for="rememberCheck"><fmt:message key="rememberLogin"/></label>
+                                    </div>
+                                    <div class="submitBtn">
+                                        <input id="linkSubmitLoginOpenId" class="button" type="submit" value="<fmt:message key="doLogin"/>" tabindex="7"/>
+                                    </div>
+                                </td>
+                                <td>&nbsp;</td>
+                            </tr>
+                        </table>
 
-                </div>
+                    </div>
 
-            </form>
+                </form>
+            </c:if>
 
         </div>
 

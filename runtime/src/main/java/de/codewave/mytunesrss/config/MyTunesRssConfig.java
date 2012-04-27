@@ -112,6 +112,7 @@ public class MyTunesRssConfig {
     private String myAutoLogin;
     private boolean myDisableBrowser;
     private boolean myServerBrowserActive;
+    private boolean myOpenIdActive;
     private boolean myDisableWebLogin;
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
@@ -732,6 +733,14 @@ public class MyTunesRssConfig {
         myServerBrowserActive = serverBrowserActive;
     }
 
+    public boolean isOpenIdActive() {
+        return myOpenIdActive;
+    }
+
+    public void setOpenIdActive(boolean openIdActive) {
+        myOpenIdActive = openIdActive;
+    }
+
     public boolean isDisableWebLogin() {
         return myDisableWebLogin;
     }
@@ -1088,6 +1097,7 @@ public class MyTunesRssConfig {
             myExternalSites.add(new ExternalSiteDefinition(type, name, url));
         }
         setServerBrowserActive(JXPathUtils.getBooleanValue(settings, "serverBrowserActive", true));
+        setOpenIdActive(JXPathUtils.getBooleanValue(settings, "openIdActive", true));
         setAutoLogin(JXPathUtils.getStringValue(settings, "autoLogin", null));
         setDisableBrowser(JXPathUtils.getBooleanValue(settings, "disableBrowser", false));
         setDisableWebLogin(JXPathUtils.getBooleanValue(settings, "disableWebLogin", false));
@@ -1437,6 +1447,7 @@ public class MyTunesRssConfig {
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "serverBrowserActive", isServerBrowserActive()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "openIdActive", isOpenIdActive()));
             root.appendChild(myLdapConfig.createSettingsElement(settings));
             if (!getFlashPlayers().isEmpty()) {
                 Element flashPlayers = settings.createElement("flash-players");
