@@ -3,19 +3,19 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.jmdns;
+package de.codewave.mytunesrss.bonjour;
 
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.security.MessageDigest;
 
-public class JmDnsDevice {
+public class BonjourDevice {
     private String id;
     private String name;
     private InetAddress inetAddress;
     private int port;
 
-    public JmDnsDevice(String name, InetAddress inetAddress, int port) {
+    public BonjourDevice(String name, InetAddress inetAddress, int port) {
         this.name = name;
         this.inetAddress = inetAddress;
         this.port = port;
@@ -48,7 +48,7 @@ public class JmDnsDevice {
 
     @Override
     public String toString() {
-        return "JmDnsDevice{" +
+        return "BonjourDevice{" +
                 "id='" + getId() + '\'' +
                 ", name='" + name + '\'' +
                 ", inetAddress='" + inetAddress + '\'' +

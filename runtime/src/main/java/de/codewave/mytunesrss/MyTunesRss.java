@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.camel.mp4.Mp4Parser;
+import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
@@ -12,7 +13,6 @@ import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
-import de.codewave.mytunesrss.jmdns.JmDnsServiceListener;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
@@ -115,7 +115,9 @@ public class MyTunesRss {
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
-    public static VlcPlayer VLC_PLAYER = new VlcPlayer();
+    public static BonjourServiceListener RAOP_LISTENER = new BonjourServiceListener();
+    public static BonjourServiceListener AIRPLAY_LISTENER = new BonjourServiceListener();
+    public static VlcPlayer VLC_PLAYER = new VlcPlayer(RAOP_LISTENER, AIRPLAY_LISTENER);
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
@@ -173,8 +175,9 @@ public class MyTunesRss {
                 }
             }
         });
-        JmDNS jmDNS = JmDNS.create();
-        jmDNS.addServiceListener("_raop._tcp.local.", VLC_PLAYER);
+        JmDNS bonjour = JmDNS.create();
+        bonjour.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
+        bonjour.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();

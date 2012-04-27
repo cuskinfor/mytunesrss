@@ -3,7 +3,7 @@ package de.codewave.mytunesrss.remote.service;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.jmdns.JmDnsDevice;
+import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.render.RenderMachine;
 
@@ -137,7 +137,7 @@ public class RemoteControlService implements RemoteController {
     }
 
     public Object getRaopDevices() {
-        Collection<JmDnsDevice> devices = MyTunesRss.VLC_PLAYER.getDevices();
-        return RenderMachine.getInstance().render(devices.toArray(new JmDnsDevice[devices.size()]));
+        Collection<BonjourDevice> devices = MyTunesRss.VLC_PLAYER.getRaopDevices();
+        return RenderMachine.getInstance().render(devices.toArray(new BonjourDevice[devices.size()]));
     }
 }

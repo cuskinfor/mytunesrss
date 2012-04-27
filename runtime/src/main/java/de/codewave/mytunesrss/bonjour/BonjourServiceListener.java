@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.jmdns;
+package de.codewave.mytunesrss.bonjour;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,22 +13,21 @@ import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class JmDnsServiceListener implements ServiceListener {
+public class BonjourServiceListener implements ServiceListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JmDnsServiceListener.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BonjourServiceListener.class);
 
-    private ConcurrentHashMap<String, JmDnsDevice> myDevices = new ConcurrentHashMap<String, JmDnsDevice>();
+    private ConcurrentHashMap<String, BonjourDevice> myDevices = new ConcurrentHashMap<String, BonjourDevice>();
 
     public void serviceAdded(ServiceEvent event) {
-        LOGGER.debug("JmDNS service added.");
+        LOGGER.debug("Bonjour service added.");
         ServiceInfo serviceInfo = event.getInfo();
         if (serviceInfo == null || serviceInfo.getInetAddress() == null) {
             serviceInfo = event.getDNS().getServiceInfo(event.getType(), event.getName(), 2000);
         }
-        JmDnsDevice device = new JmDnsDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort());
+        BonjourDevice device = new BonjourDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort());
         LOGGER.debug("Adding device with id \"" + device.getId() + "\".");
         myDevices.putIfAbsent(device.getId(), device);
     }
@@ -37,22 +36,22 @@ public class JmDnsServiceListener implements ServiceListener {
         removeDevice(event);
     }
 
-    protected JmDnsDevice removeDevice(ServiceEvent event) {
-        LOGGER.debug("JmDNS service removed.");
+    protected BonjourDevice removeDevice(ServiceEvent event) {
+        LOGGER.debug("Bonjour service removed.");
         ServiceInfo serviceInfo = event.getInfo();
         if (serviceInfo == null || serviceInfo.getInetAddress() == null) {
             serviceInfo = event.getDNS().getServiceInfo(event.getType(), event.getName(), 2000);
         }
-        String id = new JmDnsDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort()).getId();
+        String id = new BonjourDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort()).getId();
         LOGGER.debug("Adding device with id \"" + id + "\".");
         return myDevices.remove(id);
     }
 
     public void serviceResolved(ServiceEvent event) {
-        LOGGER.debug("JmDNS service resolved.");
+        LOGGER.debug("Bonjour service resolved.");
     }
 
-    public Collection<JmDnsDevice> getDevices() {
-        return new HashSet<JmDnsDevice>(myDevices.values());
+    public Collection<BonjourDevice> getDevices() {
+        return new HashSet<BonjourDevice>(myDevices.values());
     }
 }

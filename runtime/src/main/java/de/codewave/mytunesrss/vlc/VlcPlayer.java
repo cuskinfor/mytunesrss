@@ -7,8 +7,8 @@ package de.codewave.mytunesrss.vlc;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.jmdns.JmDnsDevice;
-import de.codewave.mytunesrss.jmdns.JmDnsServiceListener;
+import de.codewave.mytunesrss.bonjour.BonjourDevice;
+import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.httpclient.HttpClient;
@@ -24,16 +24,10 @@ import org.slf4j.LoggerFactory;
 import javax.jmdns.ServiceEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
+import java.util.*;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 
-public class VlcPlayer extends JmDnsServiceListener {
+public class VlcPlayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VlcPlayer.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
@@ -60,6 +54,15 @@ public class VlcPlayer extends JmDnsServiceListener {
     private HttpClient myHttpClient;
 
     private String myAirtunesTarget;
+
+    private BonjourServiceListener myRaopListener;
+
+    private BonjourServiceListener myAirplayListener;
+
+    public VlcPlayer(BonjourServiceListener raopListener, BonjourServiceListener airplayListener) {
+        myRaopListener = raopListener;
+        myAirplayListener = airplayListener;
+    }
 
     public synchronized void init() throws VlcPlayerException {
         HttpResponseStatus status = new HttpResponseStatus();
@@ -190,18 +193,6 @@ public class VlcPlayer extends JmDnsServiceListener {
             destroy();
             myAirtunesTarget = airtunesTarget;
             init(oldStatus, myCurrent);
-        }
-    }
-
-    @Override
-    public void serviceRemoved(ServiceEvent event) {
-        JmDnsDevice removedDevice = removeDevice(event);
-        if (StringUtils.equalsIgnoreCase(myAirtunesTarget, removedDevice.getInetAddress().getHostAddress())) {
-            try {
-                setAirtunesTarget(null);
-            } catch (VlcPlayerException e) {
-                LOGGER.warn("Could not reset speaker to local playback.");
-            }
         }
     }
 
@@ -384,5 +375,9 @@ public class VlcPlayer extends JmDnsServiceListener {
             myCurrent = index;
             send("/status.json?command=pl_play&id=" + (myOffset + index));
         }
+    }
+
+    public Collection<BonjourDevice> getRaopDevices() {
+        return myRaopListener.getDevices();
     }
 }
