@@ -52,7 +52,7 @@ public class RenderMachine {
         addRenderer(Track.class, new TrackRenderer());
         addRenderer(RemoteServer.class, new RemoteServerRenderer());
         addRenderer(User.class, new UserRenderer());
-        addRenderer(BonjourDevice.class, new JmDnsDeviceRenderer());
+        addRenderer(BonjourDevice.class, new BonjourDeviceRenderer());
     }
 
     public void addRenderer(Class type, Renderer renderer) {

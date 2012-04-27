@@ -21,7 +21,6 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jmdns.ServiceEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.*;
@@ -53,7 +52,7 @@ public class VlcPlayer {
 
     private HttpClient myHttpClient;
 
-    private String myAirtunesTarget;
+    private String myRaopTarget;
 
     private BonjourServiceListener myRaopListener;
 
@@ -93,8 +92,8 @@ public class VlcPlayer {
                             command.add("--intf=http");
                             command.add("--http-host=" + myVlcHost);
                             command.add("--http-port=" + myVlcPort);
-                            if (StringUtils.isNotBlank(myAirtunesTarget)) {
-                                command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myAirtunesTarget + ",volume=128}");
+                            if (StringUtils.isNotBlank(myRaopTarget)) {
+                                command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myRaopTarget + ",volume=128}");
                             }
                             ProcessBuilder processBuilder = new ProcessBuilder(command);
                             processBuilder.redirectErrorStream(true);
@@ -186,19 +185,13 @@ public class VlcPlayer {
         }
     }
 
-    public synchronized void setAirtunesTarget(String airtunesTarget) throws VlcPlayerException {
-        airtunesTarget = StringUtils.trimToNull(airtunesTarget);
-        if (!StringUtils.equalsIgnoreCase(myAirtunesTarget, airtunesTarget)) {
+    public synchronized void setRaopTarget(String raopTarget) throws VlcPlayerException {
+        raopTarget = StringUtils.trimToNull(raopTarget);
+        if (!StringUtils.equalsIgnoreCase(myRaopTarget, raopTarget)) {
             HttpResponseStatus oldStatus = getStatus();
             destroy();
-            myAirtunesTarget = airtunesTarget;
+            myRaopTarget = raopTarget;
             init(oldStatus, myCurrent);
-        }
-    }
-
-    public void handleAirtunesTargetRemoved(String airtunesTarget) throws VlcPlayerException {
-        if (StringUtils.equalsIgnoreCase(myAirtunesTarget, airtunesTarget)) {
-            setAirtunesTarget(null);
         }
     }
 

@@ -135,6 +135,6 @@ public class VlcPlayerRemoteController implements RemoteController {
     }
 
     public void setAirtunesTarget(String airtunesTarget) throws Exception {
-        MyTunesRss.VLC_PLAYER.setAirtunesTarget(airtunesTarget);
+        MyTunesRss.VLC_PLAYER.setRaopTarget(airtunesTarget);
     }
 }
