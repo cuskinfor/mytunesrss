@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.config;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
@@ -1143,7 +1144,7 @@ public class MyTunesRssConfig {
             mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
         }
         setTrackImageMappings(mappings);
-        String vlc = JXPathUtils.getStringValue(settings, "vlc", null);
+        String vlc = JXPathUtils.getStringValue(settings, "vlc", MyTunesRssUtils.findVlcExecutable());
         setVlcExecutable(vlc != null ? new File(vlc) : null);
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
     }

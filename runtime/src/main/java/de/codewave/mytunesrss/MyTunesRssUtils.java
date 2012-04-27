@@ -742,4 +742,38 @@ public class MyTunesRssUtils {
         }
         return command;
     }
+
+    /**
+     * Try to find a VLC executable. Depending on the operating system some standard paths are searched.
+     *
+     * @return The path of a VLC executable or NULL if none was found.
+     */
+    public static String findVlcExecutable() {
+        File[] files;
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            files = new File[] {
+                    new File("/Applications/VLC.app/Contents/MacOS/VLC")
+            };
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            files = new File[] {
+                    new File(System.getenv("ProgramFiles") + "/VideoLAN/VLC/vlc.exe"),
+                    new File(System.getenv("ProgramFiles") + " (x86)/VideoLAN/VLC/vlc.exe")
+            };
+        } else {
+            files = new File[] {
+                    new File("/usr/bin/vlc")
+            };
+        }
+        for (File file : files) {
+            if (MyTunesRssConfig.isVlc(file)) {
+                try {
+                    return file.getCanonicalPath();
+                } catch (IOException e) {
+                    LOGGER.warn("Could not get canonical path for VLC file. Using absolute path instead.");
+                }
+                return file.getAbsolutePath();
+            }
+        }
+        return null;
+    }
 }
