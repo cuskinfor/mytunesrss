@@ -357,11 +357,13 @@
             <fmt:message key="airtunesTargetDialog.title" />
         </h2>
 
-        <p>
-            <fmt:message key="airtunesTargetDialog.text" />
-        </p>
+        <div>
+            <p>
+                <fmt:message key="airtunesTargetDialog.text" />
+            </p>
 
-        <p id="devicelist"></p>
+            <p id="devicelist"></p>
+        </div>
 
     </div>
 
