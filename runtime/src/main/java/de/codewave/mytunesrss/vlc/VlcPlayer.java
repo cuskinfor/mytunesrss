@@ -130,7 +130,9 @@ public class VlcPlayer {
                                 setFullScreen(status.isFullscreen());
                                 if (status.isPaused() || status.isPlaying()) {
                                     play(myCurrent);
-                                    seek((status.getTime() * 100) / status.getLength());
+                                    if (status.getLength() > 0 && status.getTime() > 0) {
+                                        seek((status.getTime() * 100) / status.getLength());
+                                    }
                                     pause();
                                 }
                                 if (status.isPlaying()) {
