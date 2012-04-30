@@ -50,7 +50,7 @@
     <c:if test="${!config.addRemoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.rss}">
-	<a id="fn_rss${index}" class="rss" onclick="self.document.location.href=$jQ('#fn_rss${index}'.attr('href')); return false" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+	<a id="fn_rss${index}" class="rss" onclick="self.document.location.href=$jQ('#fn_rss${index}').attr('href'); return false" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
     <c:if test="${!config.showRss}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.playlist}">
