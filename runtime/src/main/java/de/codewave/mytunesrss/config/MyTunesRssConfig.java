@@ -134,6 +134,7 @@ public class MyTunesRssConfig {
     private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
     private File myVlcExecutable;
     private int myVlcSocketTimeout;
+    private String myRssDescription;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -919,6 +920,14 @@ public class MyTunesRssConfig {
         myVlcSocketTimeout = vlcSocketTimeout;
     }
 
+    public String getRssDescription() {
+        return myRssDescription;
+    }
+
+    public void setRssDescription(String rssDescription) {
+        myRssDescription = rssDescription;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1147,6 +1156,7 @@ public class MyTunesRssConfig {
         String vlc = JXPathUtils.getStringValue(settings, "vlc", MyTunesRssUtils.findVlcExecutable());
         setVlcExecutable(vlc != null ? new File(vlc) : null);
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
+        setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
     }
 
     /**
@@ -1490,6 +1500,7 @@ public class MyTunesRssConfig {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
                 root.appendChild(DOMUtils.createIntElement(settings, "vlc-timeout", getVlcSocketTimeout()));
             }
+            root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

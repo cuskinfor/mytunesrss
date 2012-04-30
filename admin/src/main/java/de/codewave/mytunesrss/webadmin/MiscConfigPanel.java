@@ -26,6 +26,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myMyTunesRssComSsl;
     private SmartTextField myWebLoginMessage;
     private SmartTextField myWebWelcomeMessage;
+    private SmartTextField myRssDescription;
     private CheckBox myServerBrowserActive;
     private CheckBox myOpenIdActive;
     private SmartTextField myProxyHost;
@@ -50,6 +51,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMyTunesRssComSsl = getComponentFactory().createCheckBox("miscConfigPanel.myTunesRssComSsl");
         myWebLoginMessage = getComponentFactory().createTextField("miscConfigPanel.webLoginMessage");
         myWebWelcomeMessage = getComponentFactory().createTextField("miscConfigPanel.webWelcomeMessage");
+        myRssDescription = getComponentFactory().createTextField("miscConfigPanel.rssDescription");
         myServerBrowserActive = getComponentFactory().createCheckBox("miscConfigPanel.serverBrowserActive");
         myOpenIdActive = getComponentFactory().createCheckBox("miscConfigPanel.openIdActive");
         myProxyHost = getComponentFactory().createTextField("miscConfigPanel.proxyHost");
@@ -83,6 +85,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         addComponent(smtpPanel);
         myWebInterfaceForm.addField(myWebLoginMessage, myWebLoginMessage);
         myWebInterfaceForm.addField(myWebWelcomeMessage, myWebWelcomeMessage);
+        myWebInterfaceForm.addField(myRssDescription, myRssDescription);
         myWebInterfaceForm.addField(myServerBrowserActive, myServerBrowserActive);
         myWebInterfaceForm.addField(myOpenIdActive, myOpenIdActive);
         Panel webInterfacePanel = getComponentFactory().surroundWithPanel(myWebInterfaceForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.webInterface"));
@@ -100,6 +103,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMyTunesRssComSsl.setEnabled(MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536);
         myWebLoginMessage.setValue(MyTunesRss.CONFIG.getWebLoginMessage());
         myWebWelcomeMessage.setValue(MyTunesRss.CONFIG.getWebWelcomeMessage());
+        myRssDescription.setValue(MyTunesRss.CONFIG.getRssDescription());
         myServerBrowserActive.setValue(MyTunesRss.CONFIG.isServerBrowserActive());
         myOpenIdActive.setValue(MyTunesRss.CONFIG.isOpenIdActive());
         myProxyHost.setValue(MyTunesRss.CONFIG.getProxyHost());
@@ -121,6 +125,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         }
         MyTunesRss.CONFIG.setWebLoginMessage(myWebLoginMessage.getStringValue(null));
         MyTunesRss.CONFIG.setWebWelcomeMessage(myWebWelcomeMessage.getStringValue(null));
+        MyTunesRss.CONFIG.setRssDescription(myRssDescription.getStringValue(null));
         MyTunesRss.CONFIG.setServerBrowserActive(myServerBrowserActive.booleanValue());
         MyTunesRss.CONFIG.setOpenIdActive(myOpenIdActive.booleanValue());
         MyTunesRss.CONFIG.setProxyHost(myProxyHost.getStringValue(null));
