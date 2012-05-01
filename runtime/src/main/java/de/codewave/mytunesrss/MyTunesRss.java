@@ -51,6 +51,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetSocketAddress;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.MessageDigest;
@@ -68,6 +69,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * de.codewave.mytunesrss.MyTunesRss
  */
 public class MyTunesRss {
+    // Specify admin server host on command line (e.g. -adminHost 192.168.0.3)
+    public static final String CMD_ADMIN_HOST = "adminHost";
+
     // Specify admin server port on command line (e.g. -adminPort 9090)
     public static final String CMD_ADMIN_PORT = "adminPort";
 
@@ -186,9 +190,9 @@ public class MyTunesRss {
             EXECUTOR_SERVICE.scheduleWithFixedDelay(new MaintenanceRunnable(), 0, 3600, TimeUnit.SECONDS);
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
-            if (!startAdminServer(getAdminPortFromConfigOrCommandLine())) {
+            if (!startAdminServer(getAdminHostFromConfigOrCommandLine(), getAdminPortFromConfigOrCommandLine())) {
                 MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
-                if (!startAdminServer(0)) {
+                if (!startAdminServer(null, 0)) {
                     MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartFailed"));
                 }
             }
@@ -538,9 +542,9 @@ public class MyTunesRss {
         }
     }
 
-    public static boolean startAdminServer(int adminPort) {
+    public static boolean startAdminServer(String adminHost, int adminPort) {
         try {
-            ADMIN_SERVER = new Server(adminPort);
+            ADMIN_SERVER = new Server(new InetSocketAddress(StringUtils.defaultIfBlank(adminHost, "0.0.0.0"), adminPort));
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
             adminContext.setSystemClasses((String[]) ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
             File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-admin-work");
@@ -562,7 +566,7 @@ public class MyTunesRss {
         }
         int localPort = ADMIN_SERVER.getConnectors()[0].getLocalPort();
         if (FORM != null) {
-            FORM.setAdminUrl(localPort);
+            FORM.setAdminUrl(ADMIN_SERVER.getConnectors()[0].getHost(), localPort);
         }
         try {
             FileUtils.writeStringToFile(new File(MyTunesRss.CACHE_DATA_PATH, "adminport"), localPort + "\n");
@@ -579,6 +583,14 @@ public class MyTunesRss {
             System.out.println("Started admin server on port " + localPort);
         }
         return true;
+    }
+
+    private static String getAdminHostFromConfigOrCommandLine() {
+        String adminHost = CONFIG.getAdminHost();
+        if (COMMAND_LINE_ARGS.get(CMD_ADMIN_HOST) != null) {
+            adminHost = COMMAND_LINE_ARGS.get(CMD_ADMIN_HOST)[0].toString();
+        }
+        return adminHost;
     }
 
     private static int getAdminPortFromConfigOrCommandLine() {

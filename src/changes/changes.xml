@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.2.5" date="___?___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-367] Optionally select a single network interface to listen on (only via settings.xml, no admin interface)
+            </action>
+        </release>
+
         <release version="4.2.4" date="2012-04-01">
             <action dev="mdescher" type="fix">
                 Fixed possible NPEs for several File.listXXX calls.

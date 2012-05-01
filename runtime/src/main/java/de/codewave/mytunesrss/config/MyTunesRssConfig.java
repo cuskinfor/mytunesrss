@@ -40,6 +40,7 @@ public class MyTunesRssConfig {
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
     private static final String CREATION_TIME_KEY = "playmode";
 
+    private String myHost;
     private int myPort;
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
@@ -79,9 +80,11 @@ public class MyTunesRssConfig {
     private String myWebappContext;
     private String myId3v2TrackComment;
     private String myTomcatMaxThreads;
+    private String myAjpHost;
     private int myTomcatAjpPort;
     private String mySslKeystoreFile;
     private String mySslKeystorePass;
+    private String mySslHost;
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
     private List<FileType> myFileTypes = new ArrayList<FileType>();
@@ -114,6 +117,7 @@ public class MyTunesRssConfig {
     private boolean myQuicktime64BitWarned;
     private LdapConfig myLdapConfig;
     private byte[] myAdminPasswordHash;
+    private String myAdminHost;
     private int myAdminPort;
     private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
@@ -137,6 +141,14 @@ public class MyTunesRssConfig {
     public void setDatasources(List<DatasourceConfig> datasources) {
         myDatasources = new ArrayList<DatasourceConfig>(datasources);
         Collections.sort(myDatasources);
+    }
+
+    public String getHost() {
+        return myHost;
+    }
+
+    public void setHost(String host) {
+        myHost = StringUtils.trimToNull(host);
     }
 
     public int getPort() {
@@ -471,6 +483,14 @@ public class MyTunesRssConfig {
         myTomcatMaxThreads = tomcatMaxThreads;
     }
 
+    public String getAjpHost() {
+        return myAjpHost;
+    }
+
+    public void setAjpHost(String ajpHost) {
+        myAjpHost = StringUtils.trimToNull(ajpHost);
+    }
+
     public int getTomcatAjpPort() {
         return myTomcatAjpPort;
     }
@@ -501,6 +521,14 @@ public class MyTunesRssConfig {
 
     public void setSslKeystorePass(String sslKeystorePass) {
         mySslKeystorePass = sslKeystorePass;
+    }
+
+    public String getSslHost() {
+        return mySslHost;
+    }
+
+    public void setSslHost(String sslHost) {
+        mySslHost = StringUtils.trimToNull(sslHost);
     }
 
     public int getSslPort() {
@@ -761,6 +789,14 @@ public class MyTunesRssConfig {
         myAdminPasswordHash = adminPasswordHash;
     }
 
+    public String getAdminHost() {
+        return myAdminHost;
+    }
+
+    public void setAdminHost(String adminHost) {
+        myAdminHost = StringUtils.trimToNull(adminHost);
+    }
+
     public int getAdminPort() {
         return myAdminPort;
     }
@@ -969,8 +1005,10 @@ public class MyTunesRssConfig {
 
     private void load(JXPathContext settings) throws IOException {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
+        setAjpHost(JXPathUtils.getStringValue(settings, "adminHost", getAjpHost()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
         setImportOriginalImageSize(JXPathUtils.getBooleanValue(settings, "importOriginalImageSize", isImportOriginalImageSize()));
+        setHost(JXPathUtils.getStringValue(settings, "serverHost", getHost()));
         setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
@@ -1024,12 +1062,14 @@ public class MyTunesRssConfig {
         loadDatabaseSettings(settings);
         setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
         setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
+        setAjpHost(JXPathUtils.getStringValue(settings, "tomcat/ajp-host", getAjpHost()));
         setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
         String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
         setWebappContext(context != null ? "/" + context : "");
         setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
         setSslKeystoreKeyAlias(JXPathUtils.getStringValue(settings, "ssl/keystore/keyalias", null));
         setSslKeystorePass(JXPathUtils.getStringValue(settings, "ssl/keystore/pass", null));
+        setSslHost(JXPathUtils.getStringValue(settings, "ssl/host", getSslHost()));
         setSslPort(JXPathUtils.getIntValue(settings, "ssl/port", 0));
         setMailHost(JXPathUtils.getStringValue(settings, "mail-host", null));
         setMailPort(JXPathUtils.getIntValue(settings, "mail-port", -1));
@@ -1287,9 +1327,13 @@ public class MyTunesRssConfig {
             Element root = settings.createElement("settings");
             settings.appendChild(root);
             root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", getAdminPasswordHash()));
+            root.appendChild(DOMUtils.createTextElement(settings, "adminHost", myAdminHost));
             root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
             root.appendChild(DOMUtils.createBooleanElement(settings, "importOriginalImageSize", myImportOriginalImageSize));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
+            if (StringUtils.isNotBlank(myHost)) {
+                root.appendChild(DOMUtils.createTextElement(settings, "serverHost", myHost));
+            }
             root.appendChild(DOMUtils.createIntElement(settings, "serverPort", myPort));
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
@@ -1367,12 +1411,18 @@ public class MyTunesRssConfig {
             Element tomcat = settings.createElement("tomcat");
             root.appendChild(tomcat);
             tomcat.appendChild(DOMUtils.createTextElement(settings, "max-threads", getTomcatMaxThreads()));
+            if (StringUtils.isNotBlank(getAjpHost())) {
+                tomcat.appendChild(DOMUtils.createTextElement(settings, "ajp-host", getAjpHost()));
+            }
             if (getTomcatAjpPort() > 0) {
                 tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
             }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);
+            if (StringUtils.isNotBlank(getSslHost())) {
+                ssl.appendChild(DOMUtils.createTextElement(settings, "host", getSslHost()));
+            }
             ssl.appendChild(DOMUtils.createIntElement(settings, "port", getSslPort()));
             Element keystore = settings.createElement("keystore");
             ssl.appendChild(keystore);
