@@ -4,6 +4,9 @@ REM
 REM Optional command line options, please add them at the end of the command line at the end of
 REM this file, after the JAR file name.
 REM
+REM Admin host (otherwise MyTunesRSS will listen on all interfaces)
+REM -adminHost 127.0.0.1
+REM
 REM Admin port (otherwise a rendomly chosen free port will be used)
 REM -adminPort 12345
 REM

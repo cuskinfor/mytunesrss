@@ -4,6 +4,9 @@
 # Optional command line options, please add them at the end of the command line at the end of
 # this file, after the JAR file name.
 #
+# Admin host (otherwise MyTunesRSS will listen on all interfaces)
+# -adminHost 127.0.0.1
+#
 # Admin port (otherwise a rendomly chosen free port will be used)
 # -adminPort 12345
 #

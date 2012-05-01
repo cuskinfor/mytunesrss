@@ -72,6 +72,7 @@ public class WebServer {
                 }
                 SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(sslContextFactory);
                 sslConnector.setPort(MyTunesRss.CONFIG.getSslPort());
+                sslConnector.setHost(MyTunesRss.CONFIG.getSslHost());
                 myServer.addConnector(sslConnector);
             }
             if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
@@ -79,6 +80,7 @@ public class WebServer {
                 try {
                     ajpConnector = new Ajp13SocketConnector();
                     ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
+                    ajpConnector.setHost(MyTunesRss.CONFIG.getAjpHost());
                     myServer.addConnector(ajpConnector);
                 } catch (Exception e) {
                     LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
@@ -97,9 +99,10 @@ public class WebServer {
             myServer.setHandler(myContext);
             SelectChannelConnector httpConnector = new SelectChannelConnector();
             httpConnector.setPort(MyTunesRss.CONFIG.getPort());
+            httpConnector.setHost(MyTunesRss.CONFIG.getHost());
             myServer.addConnector(httpConnector);
             myServer.start();
-            byte health = checkServerHealth(MyTunesRss.CONFIG.getPort());
+            byte health = checkServerHealth(MyTunesRss.CONFIG.getHost(), MyTunesRss.CONFIG.getPort());
             if (health != CheckHealthResult.OK) {
                 stop();
                 myServer = null;
@@ -153,10 +156,10 @@ public class WebServer {
         }
     }
 
-    private byte checkServerHealth(int port) {
+    private byte checkServerHealth(String host, int port) {
         HttpURLConnection connection = null;
         try {
-            URL targetUrl = new URL("http://127.0.0.1:" + port + getContext() + "/mytunesrss/checkHealth?ignoreSession=true");
+            URL targetUrl = new URL("http://" + StringUtils.defaultIfBlank(host, "127.0.0.1") + ":" + port + getContext() + "/mytunesrss/checkHealth?ignoreSession=true");
             LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
             connection = (HttpURLConnection) targetUrl.openConnection();
             int responseCode = connection.getResponseCode();

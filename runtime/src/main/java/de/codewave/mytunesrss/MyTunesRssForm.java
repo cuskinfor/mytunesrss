@@ -130,8 +130,8 @@ public class MyTunesRssForm {
     }
 
 
-    public void setAdminUrl(int port) {
-        myAdminUrl.setText(port > 0 ? "http://127.0.0.1:" + port : "");
+    public void setAdminUrl(String host, int port) {
+        myAdminUrl.setText(port > 0 ? "http://" + ("0.0.0.0".equals(host) ? "127.0.0.1" : host) + ":" + port : "");
         myAdminUrl.setToolTipText(myAdminUrl.getText());
         myStartAdminBrowser.setEnabled(port > 0 && myQuit.isEnabled());
         if (port > 0 && myQuit.isEnabled() && MyTunesRss.CONFIG.isShowInitialWizard()) {
@@ -157,7 +157,7 @@ public class MyTunesRssForm {
 
 
     public void setUserUrl(int port) {
-        myUserUrl.setText(port > 0 ? "http://127.0.0.1:" + port + WebServer.getContext() : "");
+        myUserUrl.setText(port > 0 ? "http://" + StringUtils.defaultIfBlank(MyTunesRss.CONFIG.getHost(), "127.0.0.1") + ":" + port + WebServer.getContext() : "");
         myUserUrl.setToolTipText(myUserUrl.getText());
         myStartUserBrowser.setEnabled(port > 0 && myQuit.isEnabled());
     }

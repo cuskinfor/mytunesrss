@@ -564,11 +564,17 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     }
 
     private String[] getLocalAddresses() {
-        String[] addresses = NetworkUtils.getLocalNetworkAddresses();
-        for (int i = 0; i < addresses.length; i++) {
-            addresses[i] = "http://" + addresses[i] + ":" + MyTunesRss.CONFIG.getPort();
+        if (StringUtils.isBlank(MyTunesRss.CONFIG.getHost())) {
+            String[] addresses = NetworkUtils.getLocalNetworkAddresses();
+            for (int i = 0; i < addresses.length; i++) {
+                addresses[i] = "http://" + addresses[i] + ":" + MyTunesRss.CONFIG.getPort();
+            }
+            return addresses;
+        } else {
+            return new String[] {
+                    "http://" + MyTunesRss.CONFIG.getHost() + ":" + MyTunesRss.CONFIG.getPort()
+            };
         }
-        return addresses;
     }
 
     public static class SessionInfo {
