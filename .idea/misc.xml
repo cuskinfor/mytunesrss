@@ -97,6 +97,13 @@
             </SvnBranchConfiguration>
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/admin">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="trunkUrl" value="svn://svn.codewave.biz/mytunesrss/branches/mytunesrss-4.2.x/admin" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
       </map>
     </option>
     <option name="mySupportsUserInfoFilter" value="true" />
