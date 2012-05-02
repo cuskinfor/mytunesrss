@@ -54,6 +54,11 @@ public class VlcPlayer {
 
         private volatile boolean myAdvanceListener;
 
+        public StatusUpdater() {
+            setDaemon(true);
+            setName("VlcPlayerStatusUpdater");
+        }
+
         public void run() {
             while (!myCancel) {
                 try {
@@ -210,6 +215,7 @@ public class VlcPlayer {
                     }
                 }
             });
+            myWatchdog.setName("VlcPlayerWatchdog");
             myWatchdog.setDaemon(true);
             myWatchdog.start();
             try {

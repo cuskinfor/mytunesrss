@@ -887,7 +887,10 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
                     }
                 }
             };
-            new Thread(runnable).start();
+            Thread thread = new Thread(runnable);
+            thread.setDaemon(true);
+            thread.setName("LastFmSubmitter");
+            thread.start();
         }
     }
 

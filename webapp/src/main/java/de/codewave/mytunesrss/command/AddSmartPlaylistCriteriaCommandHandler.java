@@ -25,7 +25,7 @@ public class AddSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCom
             newModel.put("invert", "true");
         } else {
             newModel.put("fieldType", fieldType);
-            newModel.put("invert", "true");
+            newModel.put("invert", "false");
         }
         newModel.put("pattern", "");
         ((List <Map<String, String>>)redisplayModel.get("smartInfos")).add(newModel);
