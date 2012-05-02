@@ -31,9 +31,9 @@ public class VlcPlayerRemoteController implements RemoteController {
         MyTunesRss.VLC_PLAYER.setTracks(tracks);
     }
 
-    private void addItems(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException, VlcPlayerException {
+    private void addItems(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
-        MyTunesRss.VLC_PLAYER.addTracks(tracks);
+        MyTunesRss.VLC_PLAYER.addTracks(tracks, startPlaybackIfStopped);
     }
 
     public void loadAlbum(String albumName) throws SQLException, VlcPlayerException { // TODO album artist
@@ -61,14 +61,14 @@ public class VlcPlayerRemoteController implements RemoteController {
         loadItems(query);
     }
 
-    public void addTrack(String trackId) throws SQLException, VlcPlayerException {
+    public void addTrack(String trackId, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
         DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(new String[]{trackId});
-        addItems(query);
+        addItems(query, startPlaybackIfStopped);
     }
 
-    public void addTracks(String[] trackIds) throws SQLException, VlcPlayerException {
+    public void addTracks(String[] trackIds, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
         DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
-        addItems(query);
+        addItems(query, startPlaybackIfStopped);
     }
 
     public void clearPlaylist() throws VlcPlayerException {

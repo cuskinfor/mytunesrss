@@ -42,11 +42,49 @@ public class VlcPlayer {
     private static HttpResponseStatus newInitialStatus() {
         HttpResponseStatus status = new HttpResponseStatus();
         status.setFullscreen(0);
-        status.setState("stopped");
+        status.setState(VlcPlaybackState.stopped);
         status.setTime(0);
         status.setPercentageVolume(70);
         return status;
+    }
 
+    public class StatusUpdater extends Thread {
+
+        private volatile boolean myCancel;
+
+        private volatile boolean myAdvanceListener;
+
+        public void run() {
+            while (!myCancel) {
+                try {
+                    HttpResponseStatus status = send("/status.json", HttpResponseStatus.class);
+                    VlcPlayer.this.myCurrentStatus.set(status);
+                    if (myAdvanceListener && status.isStopped()) {
+                        advance();
+                    }
+                } catch (VlcPlayerException e) {
+                    LOGGER.info("Exception in status updater.", e);
+                }
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    // ignore and refresh status (this is what the interrupt signal is used for in this thread)
+                }
+            }
+        }
+
+        public void cancel() {
+            myAdvanceListener = false;
+            myCancel = true;
+        }
+
+        public void startAdvanceListener() {
+            myAdvanceListener = true;
+        }
+
+        public void stopAdvanceListener() {
+            myAdvanceListener = false;
+        }
     }
 
     private List<Track> myTracks = new ArrayList<Track>();
@@ -57,7 +95,7 @@ public class VlcPlayer {
 
     private String myVlcHost = "127.0.0.1";
 
-    private int myVlcPort = 18675;
+    private int myVlcPort;
 
     private HttpClient myHttpClient;
 
@@ -69,7 +107,7 @@ public class VlcPlayer {
 
     private AtomicReference<HttpResponseStatus> myCurrentStatus = new AtomicReference<HttpResponseStatus>(newInitialStatus());
 
-    private Thread myTrackAdvanceListener;
+    private StatusUpdater myStatusUpdater = new StatusUpdater();
 
     public VlcPlayer(BonjourServiceListener raopListener, BonjourServiceListener airplayListener) {
         myRaopListener = raopListener;
@@ -86,7 +124,6 @@ public class VlcPlayer {
             myWatchdog = new Thread(new Runnable() {
                 public void run() {
                     while (!Thread.interrupted()) {
-                        Thread statusPoller = null;
                         LOGGER.debug("Initializing VLC player.");
                         Process process = null;
                         try {
@@ -150,22 +187,7 @@ public class VlcPlayer {
                             } catch (VlcPlayerException e) {
                                 LOGGER.warn("Could not restore old status.", e);
                             }
-                            statusPoller = new Thread(new Runnable() {
-                                public void run() {
-                                    while (!Thread.interrupted()) {
-                                        try {
-                                            myCurrentStatus.set(send("/status.json", HttpResponseStatus.class));
-                                            Thread.sleep(500);
-                                        } catch (VlcPlayerException e) {
-                                            LOGGER.debug("Could not get status update from VLC player.", e);
-                                        } catch (InterruptedException e) {
-                                            break;
-                                        }
-                                    }
-                                }
-                            });
-                            statusPoller.setDaemon(true);
-                            statusPoller.start();
+                            myStatusUpdater.start();
                             semaphore.release();
                             if (!Thread.currentThread().isInterrupted()) {
                                 process.waitFor();
@@ -177,13 +199,12 @@ public class VlcPlayer {
                             LOGGER.debug("Interrupted while waiting for process to exit.", e);
                             break;
                         } finally {
+                            myStatusUpdater.cancel();
+                            myStatusUpdater = new StatusUpdater();
                             semaphore.release();
                             if (process != null) {
                                 process.destroy();
                                 MyTunesRss.SPAWNED_PROCESSES.remove(process);
-                            }
-                            if (statusPoller != null) {
-                                statusPoller.interrupt();
                             }
                         }
                     }
@@ -229,10 +250,12 @@ public class VlcPlayer {
         stop();
         Collections.shuffle(myTracks);
         setTracks(myTracks);
+        play(0);
     }
 
     public synchronized void clearPlaylist() throws VlcPlayerException {
         LOGGER.debug("Clearing playlist.");
+        stop();
         myTracks = Collections.emptyList();
         myCurrent = -1;
         send("/status.json?command=pl_empty");
@@ -248,18 +271,10 @@ public class VlcPlayer {
         myTracks = new ArrayList<Track>(tracks);
     }
 
-    public synchronized void addTrack(Track track) throws VlcPlayerException {
-        addTracks(Collections.singletonList(track));
-    }
-
-    public synchronized void addTracks(Track... tracks) throws VlcPlayerException {
-        addTracks(Arrays.asList(tracks));
-    }
-
-    public synchronized void addTracks(List<Track> tracks) throws VlcPlayerException {
+    public synchronized void addTracks(List<Track> tracks, boolean startPlaybackIfStopped) throws VlcPlayerException {
         int oldSize = myTracks.size();
         myTracks.addAll(tracks);
-        if (getStatus().isStopped()) {
+        if (startPlaybackIfStopped && getStatus().isStopped()) {
             // start playback of first new track if currently in stopped mode
             play(oldSize);
         }
@@ -284,7 +299,9 @@ public class VlcPlayer {
             throw new IllegalArgumentException("Volume must be a value from 0 to 100 but was " + volume);
         }
         LOGGER.debug("Setting volume to " + volume + "%.");
-        send("/status.json?command=volume&val=" + (volume * 512) / 100);
+        int newVolumeValue = (volume * 512) / 100;
+        send("/status.json?command=volume&val=" + newVolumeValue);
+        myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
     private synchronized void send(String command) throws VlcPlayerException {
@@ -309,16 +326,17 @@ public class VlcPlayer {
 
     public synchronized void stop() throws VlcPlayerException {
         LOGGER.debug("Stopping playback.");
-        if (myTrackAdvanceListener != null && myTrackAdvanceListener.isAlive()) {
-            myTrackAdvanceListener.interrupt();
-        }
+        myStatusUpdater.stopAdvanceListener();
         setFullScreen(false);
         send("/status.json?command=pl_stop");
+        myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
     public synchronized void pause() throws VlcPlayerException {
         LOGGER.debug("Pausing playback.");
+        myStatusUpdater.stopAdvanceListener();
         send("/status.json?command=pl_forcepause");
+        myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
     public synchronized void seek(int percentage) throws VlcPlayerException {
@@ -327,6 +345,7 @@ public class VlcPlayer {
         }
         LOGGER.debug("Seeking to " + percentage + "% of current track.");
         send("/status.json?command=seek&val=" + MiscUtils.getUtf8UrlEncoded(percentage + "%"));
+        myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
     public synchronized List<Track> getPlaylist() {
@@ -350,6 +369,7 @@ public class VlcPlayer {
             LOGGER.debug("Switching to window mode.");
             send("/status.json?command=fullscreen");
         }
+        myStatusUpdater.interrupt(); // trigger an immediate update
         return fullScreen;
     }
 
@@ -365,37 +385,13 @@ public class VlcPlayer {
                 play(myCurrent);
             }
         } else {
-            if (myTrackAdvanceListener != null && myTrackAdvanceListener.isAlive()) {
-                myTrackAdvanceListener.interrupt();
-            }
+            myStatusUpdater.stopAdvanceListener();
             myCurrent = index;
             send("/status.json?command=pl_empty");
             send("/status.json?command=in_play&input=" + MiscUtils.getUtf8UrlEncoded(myTracks.get(index).getFile().getAbsolutePath()));
-            myTrackAdvanceListener = new Thread(new Runnable() {
-                public void run() {
-                    boolean hasStarted = false;
-                    while (!Thread.interrupted()) {
-                        try {
-                            if (hasStarted && getStatus().isStopped() && !Thread.currentThread().isInterrupted()) {
-                                advance();
-                                break;
-                            } else if (!hasStarted && getStatus().isPlaying() && !Thread.currentThread().isInterrupted()) {
-                                hasStarted = true;
-                            }
-                        } catch (VlcPlayerException e) {
-                            LOGGER.warn("Could not advance to next track.");
-                        }
-                        try {
-                            Thread.sleep(250);
-                        } catch (InterruptedException e) {
-                            break;
-                        }
-                    }
-                }
-            });
-            myTrackAdvanceListener.setDaemon(true);
-            myTrackAdvanceListener.start();
         }
+        myStatusUpdater.startAdvanceListener();
+        myStatusUpdater.interrupt();
     }
 
     private synchronized void advance() throws VlcPlayerException {
@@ -406,5 +402,15 @@ public class VlcPlayer {
 
     public Collection<BonjourDevice> getRaopDevices() {
         return myRaopListener.getDevices();
+    }
+
+    private synchronized void removeTrack(int index) throws VlcPlayerException {
+        if (index < 0 || index >= myTracks.size()) {
+            throw new IllegalArgumentException("Illegal index \"" + index + "\" for list of \"" + myTracks.size() + "\" tracks.");
+        }
+        if (myCurrent == index) {
+            stop();
+        }
+        myTracks.remove(index);
     }
 }

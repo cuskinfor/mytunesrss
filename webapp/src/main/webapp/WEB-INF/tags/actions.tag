@@ -46,7 +46,7 @@
     <c:if test="${!config.remoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.remoteControl && globalConfig.remoteControl && !empty track}">
-	<a id="fn_addremotecontrol${index}" class="addremote" onclick="showLoading('<fmt:message key="loading.addRemoteControl"/>');jsonRpcNoLoadingIndicator('${servletUrl}', 'RemoteControlService.addTrack', ['${track.id}'], function(json) {hideLoading()}, '${remoteApiSessionId}');return false;" <c:if test="${!config.addRemoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.addremotecontrol"/>"><span>Add to remote</span></a>
+	<a id="fn_addremotecontrol${index}" class="addremote" onclick="showLoading('<fmt:message key="loading.addRemoteControl"/>');jsonRpcNoLoadingIndicator('${servletUrl}', 'RemoteControlService.addTrack', ['${track.id}', true], function(json) {hideLoading()}, '${remoteApiSessionId}');return false;" <c:if test="${!config.addRemoteControl}">style="display:none"</c:if> title="<fmt:message key="tooltip.addremotecontrol"/>"><span>Add to remote</span></a>
     <c:if test="${!config.addRemoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.rss}">

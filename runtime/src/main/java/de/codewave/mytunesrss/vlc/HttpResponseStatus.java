@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class HttpResponseStatus {
     private int myFullscreen;
     private int myVolume;
-    private String myState;
+    private VlcPlaybackState myState;
     private int myTime;
     private int myLength;
 
@@ -39,11 +39,11 @@ public class HttpResponseStatus {
         myVolume = volume;
     }
 
-    public String getState() {
+    public VlcPlaybackState getState() {
         return myState;
     }
 
-    public void setState(String state) {
+    public void setState(VlcPlaybackState state) {
         myState = state;
     }
 
@@ -64,15 +64,15 @@ public class HttpResponseStatus {
     }
 
     public boolean isPlaying() {
-        return "playing".equalsIgnoreCase(getState());
+        return getState() == VlcPlaybackState.playing;
     }
 
     public boolean isPaused() {
-        return "paused".equalsIgnoreCase(getState());
+        return getState() == VlcPlaybackState.paused;
     }
 
     public boolean isStopped() {
-        return "stopped".equalsIgnoreCase(getState());
+        return getState() == VlcPlaybackState.stopped;
     }
 
     public void setPercentageVolume(int percentageVolume) {

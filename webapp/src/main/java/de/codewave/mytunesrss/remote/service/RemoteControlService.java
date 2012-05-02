@@ -61,14 +61,14 @@ public class RemoteControlService implements RemoteController {
         getController().loadTracks(trackIds);
     }
 
-    public void addTrack(String trackId) throws Exception {
+    public void addTrack(String trackId, boolean startPlaybackIfStopped) throws Exception {
         assertAuthenticated();
-        getController().addTrack(trackId);
+        getController().addTrack(trackId, startPlaybackIfStopped);
     }
 
-    public void addTracks(String[] trackIds) throws Exception {
+    public void addTracks(String[] trackIds, boolean startPlaybackIfStopped) throws Exception {
         assertAuthenticated();
-        getController().addTracks(trackIds);
+        getController().addTracks(trackIds, startPlaybackIfStopped);
     }
 
     public void clearPlaylist() throws Exception {
