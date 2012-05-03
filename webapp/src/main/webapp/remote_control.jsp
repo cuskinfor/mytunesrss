@@ -38,6 +38,10 @@
         var currentPage = ${currentPage};
         var myFullScreen = false;
 
+        function getFirstPage(){
+            return (Math.floor(currentPage / pagesPerPager) * pagesPerPager);
+        }
+
         function createPlaylist() {
             unhighlightAllTracks();
             var start = currentPage * itemsPerPage;
@@ -58,7 +62,7 @@
                     document.getElementById("trackrow" + i).style.display = "none";
                 }
             }
-            if (currentPage > 0) {
+            if (currentPage >= pagesPerPager) {
                 document.getElementById("pager_first").style.display = "inline-block";
                 document.getElementById("pager_previous").style.display = "inline-block";
             } else {
@@ -295,14 +299,14 @@
                 <div id="pager" class="pager">
 
 		            <a id="pager_first" onclick="currentPage = 0;createPlaylist()" class="first">First</a>
-		            <a id="pager_previous" onclick="currentPage--;createPlaylist()" class="previous">Previous</a>
+		            <a id="pager_previous" onclick="currentPage = getFirstPage() - 1;createPlaylist()" class="previous">Previous</a>
 
 		            <c:forEach begin="0" end="9" varStatus="status">
 		                <a id="pager_active_${status.index}" class="active">&nbsp;</a>
-		                <a id="pager_inactive_${status.index}" style="cursor:pointer" onclick="currentPage = (Math.floor(currentPage / pagesPerPager) * pagesPerPager) + ${status.index};createPlaylist()">&nbsp;</a>
+		                <a id="pager_inactive_${status.index}" style="cursor:pointer" onclick="currentPage = getFirstPage() + ${status.index};createPlaylist()">&nbsp;</a>
 		            </c:forEach>
 
-		            <a id="pager_next" onclick="currentPage++;createPlaylist()" class="next">Next</a>
+		            <a id="pager_next" onclick="currentPage = getFirstPage() + pagesPerPager;createPlaylist()" class="next">Next</a>
 		            <a id="pager_last" onclick="currentPage = Math.floor(trackNames.length / itemsPerPage);createPlaylist()" class="last">Last</a>
 
 		        </div>
