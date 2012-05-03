@@ -33,9 +33,9 @@
                 </c:forEach>
         );
 
-        var itemsPerPage = 10;
-        var pagesPerPager = 10;
-        var currentPage = 0;
+        var itemsPerPage = ${itemsPerPage};
+        var pagesPerPager = ${pagesPerPager};
+        var currentPage = ${currentPage};
         var myFullScreen = false;
 
         function createPlaylist() {
@@ -80,11 +80,11 @@
                 for (i = 0; i < pagesPerPager; i++) {
                     if ((start + i) * itemsPerPage < trackNames.length) {
                         if (start + i == currentPage) {
-                            document.getElementById("pager_active_" + i).innerHTML = (start + i);
+                            document.getElementById("pager_active_" + i).innerHTML = (start + i + 1);
                             document.getElementById("pager_active_" + i).style.display = "inline-block";
                             document.getElementById("pager_inactive_" + i).style.display = "none";
                         } else {
-                            document.getElementById("pager_inactive_" + i).innerHTML = (start + i);
+                            document.getElementById("pager_inactive_" + i).innerHTML = (start + i + 1);
                             document.getElementById("pager_active_" + i).style.display = "none";
                             document.getElementById("pager_inactive_" + i).style.display = "inline-block";
                         }

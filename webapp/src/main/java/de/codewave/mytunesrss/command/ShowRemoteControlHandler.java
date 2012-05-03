@@ -23,6 +23,9 @@ public class ShowRemoteControlHandler extends CreatePlaylistBaseCommandHandler {
             MyTunesRss.VLC_PLAYER.shuffle();
         }
         getRequest().setAttribute("tracks", MyTunesRss.VLC_PLAYER.getPlaylist());
+        getRequest().setAttribute("itemsPerPage", 10); // TODO config
+        getRequest().setAttribute("pagesPerPager", 10); // TODO config
+        getRequest().setAttribute("currentPage", MyTunesRss.VLC_PLAYER.getCurrentIndex() / 10); // TODO config
         forward(MyTunesRssResource.RemoteControl);
     }
 }
