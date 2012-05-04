@@ -5,9 +5,6 @@
 
 package de.codewave.mytunesrss.vlc;
 
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.codehaus.jackson.map.deser.std.StdDeserializer;
-
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
