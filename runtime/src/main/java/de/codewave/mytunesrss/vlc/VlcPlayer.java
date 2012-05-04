@@ -41,7 +41,7 @@ public class VlcPlayer {
 
     private static HttpResponseStatus newInitialStatus() {
         HttpResponseStatus status = new HttpResponseStatus();
-        status.setFullscreen(0);
+        status.setFullscreen(false);
         status.setState(VlcPlaybackState.stopped);
         status.setTime(0);
         status.setPercentageVolume(70);
@@ -205,7 +205,9 @@ public class VlcPlayer {
                             break;
                         } finally {
                             myStatusUpdater.cancel();
-                            myStatusUpdater = new StatusUpdater();
+                            if (!Thread.currentThread().isInterrupted()) {
+                                myStatusUpdater = new StatusUpdater();
+                            }
                             semaphore.release();
                             if (process != null) {
                                 process.destroy();
@@ -368,10 +370,10 @@ public class VlcPlayer {
 
     public synchronized boolean setFullScreen(boolean fullScreen) throws VlcPlayerException {
         HttpResponseStatus status = send("/status.json", HttpResponseStatus.class);
-        if (status != null && status.getFullscreen() == 0 && fullScreen) {
+        if (status != null && !status.isFullscreen() && fullScreen) {
             LOGGER.debug("Switching to fullscreen mode.");
             send("/status.json?command=fullscreen");
-        } else if (status != null && status.getFullscreen() == 1 && !fullScreen) {
+        } else if (status != null && status.isFullscreen() && !fullScreen) {
             LOGGER.debug("Switching to window mode.");
             send("/status.json?command=fullscreen");
         }

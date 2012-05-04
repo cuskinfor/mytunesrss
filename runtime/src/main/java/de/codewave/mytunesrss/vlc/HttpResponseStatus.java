@@ -5,25 +5,24 @@
 
 package de.codewave.mytunesrss.vlc;
 
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.codehaus.jackson.map.deser.std.StdDeserializer;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class HttpResponseStatus {
-    private int myFullscreen;
+    private boolean myFullscreen;
     private int myVolume;
     private VlcPlaybackState myState;
     private int myTime;
     private int myLength;
 
-    public int getFullscreen() {
+    public boolean isFullscreen() {
         return myFullscreen;
     }
 
-    public boolean isFullscreen() {
-        return getFullscreen() != 0;
-    }
-
-    public void setFullscreen(int fullscreen) {
+    public void setFullscreen(boolean fullscreen) {
         myFullscreen = fullscreen;
     }
 
