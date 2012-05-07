@@ -95,7 +95,6 @@ public class MyTunesRssUtils {
     }
 
     public static void showErrorMessageWithDialog(String message) {
-        LOGGER.error(message);
         if (!isHeadless()) {
             JOptionPane.showMessageDialog(null, message);
         } else {
@@ -104,7 +103,7 @@ public class MyTunesRssUtils {
     }
 
     public static boolean isHeadless() {
-        return MyTunesRss.CONFIG.isHeadless() || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) || GraphicsEnvironment.isHeadless();
+        return (MyTunesRss.CONFIG != null && MyTunesRss.CONFIG.isHeadless()) || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) || GraphicsEnvironment.isHeadless();
     }
 
     public static void showErrorMessage(String message) {
@@ -321,9 +320,6 @@ public class MyTunesRssUtils {
             file.deleteOnExit();
             LOCK_FILE = new RandomAccessFile(file, "rw");
         } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not check for other running instance.", e);
-            }
             return false;
         }
         long endTime = System.currentTimeMillis() + timeoutMillis;
@@ -334,9 +330,7 @@ public class MyTunesRssUtils {
                 }
                 Thread.sleep(500);
             } catch (IOException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Could not check for other running instance.", e);
-                }
+                // intentionally left blank
             } catch (InterruptedException e) {
                 // intentionally left blank
             }

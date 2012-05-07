@@ -142,6 +142,9 @@ public class MyTunesRss {
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
+        CACHE_DATA_PATH = getCacheDataPath();
+        PREFERENCES_DATA_PATH = getPreferencesDataPath();
+        // shutdown command
         if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
             try {
                 Integer port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN)[0]);
@@ -162,6 +165,16 @@ public class MyTunesRss {
             }
             System.exit(0);
         }
+        // locking
+        if (MyTunesRssUtils.lockInstance(3000)) {
+            if (!MyTunesRssUtils.isHeadless()) {
+                JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
+            } else {
+                System.err.println(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
+            }
+            System.exit(0);
+        }
+        // shutdown hook
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
@@ -182,8 +195,6 @@ public class MyTunesRss {
         bonjour.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
         bonjour.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
-        CACHE_DATA_PATH = getCacheDataPath();
-        PREFERENCES_DATA_PATH = getPreferencesDataPath();
         copyOldPrefsAndCache();
         createMissingPrefDirs();
         createDigests();
@@ -540,10 +551,6 @@ public class MyTunesRss {
     }
 
     private static void processSanityChecks() {
-        if (MyTunesRssUtils.lockInstance(3000)) {
-            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.otherInstanceRunning"));
-            MyTunesRssUtils.shutdownGracefully();
-        }
         if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
             MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
             MyTunesRssUtils.shutdownGracefully();

@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-370] Locking and instance-running check as early as possible
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-367] Optionally select a single network interface to listen on
             </action>
             <action dev="mdescher" type="update">
