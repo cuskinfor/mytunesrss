@@ -175,6 +175,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection,
                             "findAllTracksForImageUpdate");
                     statement.setLong("timeUpdateStart", timeUpdateStart);
+                    statement.setItems("source_id", getDataSourceIds());
                     return execute(statement, new ResultBuilder<Track>() {
                         public Track create(ResultSet resultSet) throws SQLException {
                             Track track = new Track();
@@ -300,7 +301,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         return missingItunesFiles;
     }
 
-    private Collection<String> getDataSourceIds() {
+    protected Collection<String> getDataSourceIds() {
         Set<String> ids = new HashSet<String>();
         for (DatasourceConfig datasourceConfig : myDatasources) {
             ids.add(datasourceConfig.getId());
