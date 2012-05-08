@@ -139,6 +139,7 @@ public class MyTunesRss {
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
+    public static JmDNS BONJOUR;
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -191,9 +192,6 @@ public class MyTunesRss {
                 }
             }
         });
-        JmDNS bonjour = JmDNS.create();
-        bonjour.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
-        bonjour.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         copyOldPrefsAndCache();
         createMissingPrefDirs();
@@ -239,6 +237,11 @@ public class MyTunesRss {
             } catch (NumberFormatException e) {
                 MyTunesRssUtils.showErrorMessage("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0] + "\" specified.");
             }
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            BONJOUR = JmDNS.create();
+            BONJOUR.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
+            BONJOUR.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminHostFromConfigOrCommandLine(), getAdminPortFromConfigOrCommandLine())) {
