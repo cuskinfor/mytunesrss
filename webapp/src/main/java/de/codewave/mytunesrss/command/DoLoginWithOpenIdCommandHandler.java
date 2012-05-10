@@ -48,8 +48,8 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
                     HttpClientFactory.setProxyProperties(null);
                 }
                 ConsumerManager manager = new ConsumerManager();
-                manager.setConnectTimeout(10000);
-                manager.setSocketTimeout(10000);
+                manager.setConnectTimeout(30000);
+                manager.setSocketTimeout(30000);
                 List discoveries = manager.discover(openId);
                 DiscoveryInformation discovered = manager.associate(discoveries);
                 getSession().setAttribute("openIdConsumerManager", manager);
