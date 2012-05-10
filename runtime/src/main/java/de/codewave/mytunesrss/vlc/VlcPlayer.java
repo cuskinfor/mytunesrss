@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
@@ -104,7 +105,7 @@ public class VlcPlayer {
 
     private HttpClient myHttpClient;
 
-    private String myRaopTarget;
+    private String[] myRaopTargets;
 
     private BonjourServiceListener myRaopListener;
 
@@ -143,8 +144,24 @@ public class VlcPlayer {
                             command.add("--intf=http");
                             command.add("--http-host=" + myVlcHost);
                             command.add("--http-port=" + myVlcPort);
-                            if (StringUtils.isNotBlank(myRaopTarget)) {
-                                command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myRaopTarget + ",volume=128}");
+                            if (myRaopTargets != null && myRaopTargets.length > 0) {
+                                if (myRaopTargets.length == 1) {
+                                    command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myRaopTargets[0] + ",volume=128}");
+                                } else {
+                                    StringBuilder builder = new StringBuilder("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:duplicate{");
+                                    for (int i = 0; i < myRaopTargets.length; i++) {
+                                        if (StringUtils.isNotBlank(myRaopTargets[i])) {
+                                            builder.append("dst=raop{host=" + myRaopTargets[i] + ",volume=128}");
+                                        } else {
+                                            builder.append("dst=display");
+                                        }
+                                        if (i + 1 < myRaopTargets.length) {
+                                            builder.append(",");
+                                        }
+                                    }
+                                    builder.append("}");
+                                    command.add(builder.toString());
+                                }
                             }
                             ProcessBuilder processBuilder = new ProcessBuilder(command);
                             processBuilder.redirectErrorStream(true);
@@ -244,12 +261,19 @@ public class VlcPlayer {
         }
     }
 
-    public synchronized void setRaopTarget(String raopTarget) throws VlcPlayerException {
-        raopTarget = StringUtils.trimToNull(raopTarget);
-        if (!StringUtils.equalsIgnoreCase(myRaopTarget, raopTarget)) {
+    public synchronized void setRaopTargets(String[] raopTargets) throws VlcPlayerException {
+        Set<String> trimmedTargets = new HashSet<String>();
+        for (String raopTarget : raopTargets) {
+            trimmedTargets.add(StringUtils.trimToEmpty(raopTarget));
+        }
+        if (trimmedTargets.size() == 1 && StringUtils.isBlank(trimmedTargets.iterator().next())) {
+            // only local playback
+            trimmedTargets.clear();
+        }
+        if ((myRaopTargets == null && trimmedTargets != null && !trimmedTargets.isEmpty()) || !CollectionUtils.isEqualCollection(Arrays.asList(myRaopTargets), trimmedTargets)) {
             HttpResponseStatus oldStatus = getStatus();
             destroy();
-            myRaopTarget = raopTarget;
+            myRaopTargets = trimmedTargets.toArray(new String[trimmedTargets.size()]);
             init(oldStatus, myCurrent);
         }
     }

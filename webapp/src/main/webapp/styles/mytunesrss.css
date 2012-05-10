@@ -1227,7 +1227,8 @@ div.dialog {
     display: none;
     border: solid 1px black;
     border-radius: 5px;
-    background-color: #FFF
+    background-color: #FFF;
+    text-align: left;
 }
 
 div.dialog h2 {

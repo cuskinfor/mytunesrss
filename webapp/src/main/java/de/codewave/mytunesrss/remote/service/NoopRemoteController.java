@@ -93,7 +93,7 @@ public class NoopRemoteController implements RemoteController {
         return null;
     }
 
-    public void setAirtunesTarget(String airtunesTarget) throws Exception {
+    public void setAirtunesTargets(String[] airtunesTargets) throws Exception {
         // intentionally left blank
     }
 }

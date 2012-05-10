@@ -322,20 +322,28 @@
 	</div>
 
     <script type="text/javascript">
-        function selectAirtunesTarget(airtunesTarget) {
-            $jQ.modal.close();
-            showLoading('<fmt:message key="switchingAirtunesTarget"/>');
-            jsonRpcNoLoadingIndicator(
-                    '${servletUrl}',
-                    'RemoteControlService.setAirtunesTarget',
-                    [
-                        airtunesTarget
-                    ],
-                    function(json) {
-                        hideLoading();
-                    },
-                    '${remoteApiSessionId}'
-            );
+        function selectAirtunesTargets() {
+            var targets = [];
+            $jQ('#devicelist :checked').each(function() {
+                targets.push($jQ(this).val());
+            });
+            if (targets.length > 0) {
+                $jQ.modal.close();
+                showLoading('<fmt:message key="switchingAirtunesTarget"/>');
+                jsonRpcNoLoadingIndicator(
+                        '${servletUrl}',
+                        'RemoteControlService.setAirtunesTargets',
+                        [
+                            targets
+                        ],
+                        function(json) {
+                            hideLoading();
+                        },
+                        '${remoteApiSessionId}'
+                );
+            } else {
+                displayError('<fmt:message key="airtunesTargetDialog.selectAtLeastOneSpeaker"/>');
+            }
         }
 
         function openSpeakerSelection() {
@@ -345,9 +353,9 @@
                     [],
                     function(json) {
                         $jQ("#devicelist").empty();
-                        $jQ("#devicelist").append("<a style=\"cursor:pointer\" onclick=\"selectAirtunesTarget('')\"><fmt:message key="airtunesTargetDialog.localPlayback" /></a><br />");
+                        $jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");
                         for (var i = 0; i < json.length; i++) {
-                            $jQ("#devicelist").append("<a style=\"cursor:pointer\" onclick=\"selectAirtunesTarget('" + json[i].host + "')\">" + json[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</a><br/>");
+                            $jQ("#devicelist").append("<input type='checkbox' value='" + json[i].host + "' /> " + json[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "<br/>");
                         }
                         openDialog("#airtunesTargetDialog");
                     },
@@ -367,6 +375,11 @@
             </p>
 
             <p id="devicelist"></p>
+
+            <p align="right">
+                <button id="linkAirtunesTargetDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
+                <button id="linkAirtunesTargetDialogOk" onclick="selectAirtunesTargets()"><fmt:message key="airtunesTargetDialog.ok"/></button>
+            </p>
         </div>
 
     </div>

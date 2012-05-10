@@ -56,5 +56,5 @@ public interface RemoteController {
 
     Track getTrack(int index) throws Exception;
 
-    void setAirtunesTarget(String airtunesTarget) throws Exception;
+    void setAirtunesTargets(String[] airtunesTargets) throws Exception;
 }

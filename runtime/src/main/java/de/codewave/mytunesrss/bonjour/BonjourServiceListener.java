@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 import javax.jmdns.ServiceEvent;
 import javax.jmdns.ServiceInfo;
 import javax.jmdns.ServiceListener;
+import java.io.IOException;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
@@ -24,27 +28,46 @@ public class BonjourServiceListener implements ServiceListener {
     public void serviceAdded(ServiceEvent event) {
         LOGGER.debug("Bonjour service added.");
         ServiceInfo serviceInfo = event.getInfo();
-        if (serviceInfo == null || serviceInfo.getInetAddress() == null) {
+        if (serviceInfo == null || serviceInfo.getInetAddresses() == null || serviceInfo.getInetAddresses().length == 0) {
             serviceInfo = event.getDNS().getServiceInfo(event.getType(), event.getName(), 2000);
         }
-        BonjourDevice device = new BonjourDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort());
+        BonjourDevice device = null;
+        for (InetAddress inetAddress : serviceInfo.getInetAddresses()) {
+            if (isReachable(inetAddress, serviceInfo.getPort())) {
+                device = new BonjourDevice(event.getName(), inetAddress, serviceInfo.getPort());
+            }
+        }
         LOGGER.debug("Adding device with id \"" + device.getId() + "\".");
         myDevices.putIfAbsent(device.getId(), device);
+    }
+
+    private boolean isReachable(InetAddress inetAddress, int port) {
+        try {
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(inetAddress, port), 2000);
+            socket.close();
+            return true;
+        } catch (IOException e) {
+            LOGGER.info("Could not connect to \"" + inetAddress + "\" on port " + port + ".");
+            return false;
+        }
     }
 
     public void serviceRemoved(ServiceEvent event) {
         removeDevice(event);
     }
 
-    protected BonjourDevice removeDevice(ServiceEvent event) {
+    protected void removeDevice(ServiceEvent event) {
         LOGGER.debug("Bonjour service removed.");
         ServiceInfo serviceInfo = event.getInfo();
-        if (serviceInfo == null || serviceInfo.getInetAddress() == null) {
+        if (serviceInfo == null || serviceInfo.getInetAddresses() == null || serviceInfo.getInetAddresses().length == 0) {
             serviceInfo = event.getDNS().getServiceInfo(event.getType(), event.getName(), 2000);
         }
-        String id = new BonjourDevice(event.getName(), serviceInfo.getInetAddress(), serviceInfo.getPort()).getId();
-        LOGGER.debug("Adding device with id \"" + id + "\".");
-        return myDevices.remove(id);
+        for (InetAddress inetAddress : serviceInfo.getInetAddresses()) {
+            String id = new BonjourDevice(event.getName(), inetAddress, serviceInfo.getPort()).getId();
+            LOGGER.debug("Removing device with id \"" + id + "\".");
+            myDevices.remove(id);
+        }
     }
 
     public void serviceResolved(ServiceEvent event) {

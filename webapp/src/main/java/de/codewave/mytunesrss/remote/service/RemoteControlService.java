@@ -26,9 +26,9 @@ public class RemoteControlService implements RemoteController {
         return MyTunesRss.VLC_PLAYER != null ? new VlcPlayerRemoteController() : new NoopRemoteController();
     }
 
-    public void setAirtunesTarget(String airtunesTarget) throws Exception {
+    public void setAirtunesTargets(String[] airtunesTargets) throws Exception {
         assertAuthenticated();
-        getController().setAirtunesTarget(airtunesTarget);
+        getController().setAirtunesTargets(airtunesTargets);
     }
 
     public void loadPlaylist(String playlistId) throws Exception {
