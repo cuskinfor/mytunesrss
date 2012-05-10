@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss;
 
+import com.sun.management.HotSpotDiagnosticMXBean;
 import de.codewave.camel.mp4.Mp4Parser;
 import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
@@ -45,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.jmdns.JmDNS;
+import javax.management.MBeanServer;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
 import java.awt.*;
@@ -52,6 +54,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -140,6 +144,7 @@ public class MyTunesRss {
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
     public static JmDNS BONJOUR;
+    public static String HEAPDUMP_FILENAME;
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -198,6 +203,7 @@ public class MyTunesRss {
         createDigests();
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
+        enableHeapDumpOnOutOfMemoryError();
         WEBSERVER = new WebServer();
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
@@ -270,6 +276,25 @@ public class MyTunesRss {
                     MyTunesRssUtils.shutdownGracefully();
                 }
             }
+        }
+    }
+
+    private static void enableHeapDumpOnOutOfMemoryError() {
+        try {
+            MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+            HotSpotDiagnosticMXBean hotSpotDiagnosticMXBean = ManagementFactory.newPlatformMXBeanProxy(server, "com.sun.management:type=HotSpotDiagnostic", HotSpotDiagnosticMXBean.class);
+            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+            File heapdumpFolder = new File(CACHE_DATA_PATH + "/heapdumps");
+            if (!heapdumpFolder.isDirectory()) {
+                heapdumpFolder.mkdirs();
+            }
+            FileUtils.cleanDirectory(heapdumpFolder);
+            HEAPDUMP_FILENAME = heapdumpFolder.getAbsolutePath() + "/mytunesrss-" + runtimeMXBean.getName().split("@")[0] + ".hprof";
+            hotSpotDiagnosticMXBean.setVMOption("HeapDumpPath", HEAPDUMP_FILENAME);
+            hotSpotDiagnosticMXBean.setVMOption("HeapDumpOnOutOfMemoryError", "true");
+        } catch (Throwable e) {
+            // no exception here shall ever break MyTunesRSS
+            LOGGER.warn("Could not completely enable heap dumps on OutOfMemory error.", e);
         }
     }
 

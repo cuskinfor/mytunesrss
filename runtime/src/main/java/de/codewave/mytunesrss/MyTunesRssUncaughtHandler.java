@@ -1,9 +1,11 @@
 package de.codewave.mytunesrss;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
+import java.io.File;
 import java.util.Locale;
 
 /**
@@ -15,8 +17,14 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
     public void uncaughtException(Thread t, final Throwable e) {
         try {
             LOGGER.error("Uncaught exception in thread \"" + t.getName() + "\".", e);
+            String message = MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.message", getLogFilePath());
+            if (e instanceof OutOfMemoryError && StringUtils.isNotBlank(MyTunesRss.HEAPDUMP_FILENAME) && new File(MyTunesRss.HEAPDUMP_FILENAME).isFile()) {
+                message = MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.oom.message", getLogFilePath(), MyTunesRss.HEAPDUMP_FILENAME);
+            }
             if (!MyTunesRssUtils.isHeadless()) {
-                JOptionPane.showMessageDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.message", getLogFilePath()), MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.title"), JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, message, MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.title"), JOptionPane.ERROR_MESSAGE);
+            } else {
+                System.err.println(message);
             }
             MyTunesRss.ADMIN_NOTIFY.notifyInternalError(e);
         } finally {
