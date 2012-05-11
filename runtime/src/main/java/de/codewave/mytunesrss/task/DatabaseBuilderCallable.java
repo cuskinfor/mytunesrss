@@ -201,6 +201,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         }
         for (ImageUpdateInfo imageUpdateInfo : imageUpdateInfos) {
+            if (Thread.currentThread().isInterrupted()) {
+                break;
+            }
             try {
                 myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate, imageUpdateInfo.myImageType), false));
             } catch (Exception e) {

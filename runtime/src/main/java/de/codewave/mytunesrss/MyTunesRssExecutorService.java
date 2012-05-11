@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.concurrent.*;
 
 public class MyTunesRssExecutorService {
@@ -56,10 +55,10 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources) {
+    public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
         cancelDatabaseUpdateAndResetJob();
         try {
-            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ForcedImageUpdateCallable(dataSources, MyTunesRss.CONFIG.isIgnoreTimestamps()));
+            DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ImageUpdateCallable(dataSources, ignoreTimestamps));
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule image update task.", e);
         }

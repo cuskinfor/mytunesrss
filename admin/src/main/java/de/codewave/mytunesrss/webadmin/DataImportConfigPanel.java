@@ -33,7 +33,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myDisabledMp4Codecs;
     private CheckBox myIgnoreArtwork;
     private CheckBox myImportOriginalImageSize;
-    private CheckBox myIgnoreTimestamps;
     private Form myMiscForm;
     private Table myTrackImageMappingsTable;
     private Button myAddTrackImageMapping;
@@ -64,13 +63,11 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myDisabledMp4Codecs = getComponentFactory().createTextField("dataimportConfigPanel.disabledMp4Codecs");
         myIgnoreArtwork = getComponentFactory().createCheckBox("dataimportConfigPanel.ignoreArtwork");
         myImportOriginalImageSize = getComponentFactory().createCheckBox("dataimportConfigPanel.importOriginalImageSize");
-        myIgnoreTimestamps = getComponentFactory().createCheckBox("dataimportConfigPanel.ignoreTimestamps");
         myMiscForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         myMiscForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscForm.addField(myIgnoreArtwork, myIgnoreArtwork);
         myMiscForm.addField(myImportOriginalImageSize, myImportOriginalImageSize);
-        myMiscForm.addField(myIgnoreTimestamps, myIgnoreTimestamps);
         Panel imageMappingsPanel = new Panel(getBundleString("dataimportConfigPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(imageMappingsPanel);
         myTrackImageMappingsTable = new Table();
@@ -102,7 +99,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myDisabledMp4Codecs.setValue(MyTunesRss.CONFIG.getDisabledMp4Codecs());
         myIgnoreArtwork.setValue(MyTunesRss.CONFIG.isIgnoreArtwork());
         myImportOriginalImageSize.setValue(MyTunesRss.CONFIG.isImportOriginalImageSize());
-        myIgnoreTimestamps.setValue(MyTunesRss.CONFIG.isIgnoreTimestamps());
         myTrackImageMappingsTable.removeAllItems();
         for (ReplacementRule mapping : MyTunesRss.CONFIG.getTrackImageMappings()) {
             addTrackImageMapping(mapping);
@@ -154,7 +150,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
         MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtwork.booleanValue());
         MyTunesRss.CONFIG.setImportOriginalImageSize(myImportOriginalImageSize.booleanValue());
-        MyTunesRss.CONFIG.setIgnoreTimestamps(myIgnoreTimestamps.booleanValue());
         List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
         for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
             mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));

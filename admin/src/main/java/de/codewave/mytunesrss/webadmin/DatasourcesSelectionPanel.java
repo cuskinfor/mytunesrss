@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
-
+    private CheckBox myIgnoreTimestamps;
     private Table myDataSources;
     private Button mySelectAllButton;
     private Button myDeselectAllButton;
@@ -26,7 +26,10 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 2, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
+
+        myIgnoreTimestamps = getComponentFactory().createCheckBox("datasourceSelection.ignoreTimestamps");
+        addComponent(myIgnoreTimestamps);
 
         myDataSources = new Table();
         myDataSources.setCacheRate(50);
@@ -55,7 +58,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
         mainButtons.addComponent(myDeselectAllButton);
         mainButtons.addComponent(myCancelButton);
         mainButtons.addComponent(myContinueButton);
-        getGridLayout().addComponent(mainButtons, 0, 1, 0, 1);
+        getGridLayout().addComponent(mainButtons, 0, 2, 0, 2);
         getGridLayout().setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
     }
@@ -70,7 +73,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
             if (datasources.isEmpty()) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourceSelection.error.noDatasource");
             } else {
-                onContinue(datasources);
+                onContinue(datasources, myIgnoreTimestamps.booleanValue());
                 closeWindow();
             }
         } else if (clickEvent.getSource() == myCancelButton) {
@@ -86,7 +89,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
         }
     }
 
-    protected abstract void onContinue(Collection<DatasourceConfig> datasources);
+    protected abstract void onContinue(Collection<DatasourceConfig> datasources, boolean ignoreTimestamps);
 
     public Collection<DatasourceConfig> getSelectedDatasources() {
         Collection<DatasourceConfig> selectedDatasources = new HashSet<DatasourceConfig>();

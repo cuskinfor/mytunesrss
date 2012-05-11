@@ -50,7 +50,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), item.getSize()));
                 info.append(item.getName()).append("\n");
             }
-            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.<DatasourceConfig>singleton(new WatchfolderDatasourceConfig("system_upload_folder", MyTunesRss.CONFIG.getUploadDir())), MyTunesRss.CONFIG.isIgnoreTimestamps());
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.<DatasourceConfig>singleton(new WatchfolderDatasourceConfig("system_upload_folder", MyTunesRss.CONFIG.getUploadDir())), false);
             MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
             forward(MyTunesRssResource.UploadFinished);
         } else {

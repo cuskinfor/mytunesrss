@@ -8,6 +8,11 @@
     <body>
 
         <release version="4.3" date="___D___">
+            <action dev="mdescher" type="update">
+                Corrected database and image update/refresh. Removed explicit refresh button. Added
+                option to ignore timestamp to data source selection dialog. Removed global option to
+                ignore timestamps during update.
+            </action>
             <action dev="mdescher" type="add">
                 Write heapdump on OutOfMemoryError.
             </action>

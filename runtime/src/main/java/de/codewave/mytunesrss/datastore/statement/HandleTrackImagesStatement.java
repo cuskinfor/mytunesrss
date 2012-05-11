@@ -77,40 +77,69 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
                 }
-                if (!myPhoto && !imageSizes.contains(Integer.valueOf(32))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 32.");
-                    }
+                if (!myPhoto) {
                     Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 32);
-                    new InsertImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
-                }
-                if (!myPhoto && !imageSizes.contains(Integer.valueOf(64))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 64.");
+                    if (!imageSizes.contains(Integer.valueOf(32))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 32.");
+                        }
+                        new InsertImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
+                    } else {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Updating image with size 32.");
+                        }
+                        new UpdateImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
                     }
                     Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 64);
-                    new InsertImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
+                    if (!imageSizes.contains(Integer.valueOf(64))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 64.");
+                        }
+                        new InsertImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
+                    } else {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Updating image with size 64.");
+                        }
+                        new UpdateImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
+                    }
+                    Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 256);
+                    if (!imageSizes.contains(Integer.valueOf(256))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 256.");
+                        }
+                        new InsertImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
+                    } else {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Updating image with size 256.");
+                        }
+                        new UpdateImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
+                    }
+                    int originalSize = MyTunesRssUtils.getMaxImageSize(myImage);
+                    if (originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize()) {
+                        if (!imageSizes.contains(Integer.valueOf(originalSize))) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Inserting image with size " + originalSize + ".");
+                            }
+                            new InsertImageStatement(imageHash, originalSize, myImage.getMimeType(), myImage.getData()).execute(connection);
+                        } else {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Updating image with size " + originalSize + ".");
+                            }
+                            new UpdateImageStatement(imageHash, originalSize, myImage.getMimeType(), myImage.getData()).execute(connection);
+                        }
+                    }
                 }
+                Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 128);
                 if (!imageSizes.contains(Integer.valueOf(128))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }
-                    Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 128);
                     new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
-                }
-                if (!myPhoto && !imageSizes.contains(Integer.valueOf(256))) {
+                } else {
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 256.");
+                        LOGGER.debug("Updating image with size 128.");
                     }
-                    Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 256);
-                    new InsertImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
-                }
-                int originalSize = MyTunesRssUtils.getMaxImageSize(myImage);
-                if (!myPhoto && originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize() && !imageSizes.contains(Integer.valueOf(originalSize))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size " + originalSize + ".");
-                    }
-                    new InsertImageStatement(imageHash, originalSize, myImage.getMimeType(), myImage.getData()).execute(connection);
+                    new UpdateImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             }

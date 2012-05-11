@@ -50,7 +50,6 @@ public class MyTunesRssConfig {
     private List<DatasourceConfig> myDatasources = new ArrayList<DatasourceConfig>();
     private boolean myCheckUpdateOnStart = true;
     private String myVersion;
-    private boolean myIgnoreTimestamps;
     private Collection<User> myUsers = new HashSet<User>();
     private String mySupportName = "";
     private String mySupportEmail = "";
@@ -197,14 +196,6 @@ public class MyTunesRssConfig {
 
     public void setVersion(String version) {
         myVersion = version;
-    }
-
-    public boolean isIgnoreTimestamps() {
-        return myIgnoreTimestamps;
-    }
-
-    public void setIgnoreTimestamps(boolean ignoreTimestamps) {
-        myIgnoreTimestamps = ignoreTimestamps;
     }
 
     public boolean isUploadCreateUserDir() {
@@ -1043,7 +1034,6 @@ public class MyTunesRssConfig {
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
-        setIgnoreTimestamps(JXPathUtils.getBooleanValue(settings, "ignoreTimestamps", isIgnoreTimestamps()));
         readDataSources(settings);
         setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
         setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
@@ -1377,7 +1367,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "serverName", myServerName));
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreTimestamps", myIgnoreTimestamps));
             writeDataSources(settings, root);
             root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));

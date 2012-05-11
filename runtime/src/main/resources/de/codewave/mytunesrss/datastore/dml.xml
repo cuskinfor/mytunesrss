@@ -269,10 +269,6 @@
         </sql>
     </statement>
 
-    <statement name="resetLastImageUpdateForAllTracks">
-        <sql>UPDATE track SET last_image_update = NULL</sql>
-    </statement>
-
     <statement name="getImageSizes">
         <sql>SELECT size FROM image WHERE hash = :hash ORDER BY size</sql>
     </statement>
@@ -302,6 +298,10 @@
 
     <statement name="insertImage">
         <sql>INSERT INTO image (hash, size, mimetype, data) VALUES (:hash, :size, :mimetype, :data)</sql>
+    </statement>
+
+    <statement name="updateImage">
+        <sql>UPDATE image SET data = :data, mimetype = :mimetype WHERE hash = :hash AND size = :size</sql>
     </statement>
 
     <statement name="updateImageForTrack">

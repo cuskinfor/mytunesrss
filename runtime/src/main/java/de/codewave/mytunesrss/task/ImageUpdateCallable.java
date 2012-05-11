@@ -19,11 +19,11 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
 
-public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
+public class ImageUpdateCallable extends DatabaseBuilderCallable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ForcedImageUpdateCallable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageUpdateCallable.class);
 
-    public ForcedImageUpdateCallable(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
+    public ImageUpdateCallable(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
         super(dataSources, ignoreTimestamps);
     }
 
@@ -32,11 +32,7 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
         try {
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateInvalidatingImages")));
             if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Invalidating all existing images.");
-            }
-            resetLastImageUpdateForAllTracks();
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Starting forced image update.");
+                LOGGER.info("Starting image update.");
             }
             if (!Thread.currentThread().isInterrupted()) {
                 runImageUpdate(System.currentTimeMillis());
@@ -55,13 +51,5 @@ public class ForcedImageUpdateCallable extends DatabaseBuilderCallable {
             myQueue.offer(new TerminateEvent());
         }
         return true;
-    }
-
-    private void resetLastImageUpdateForAllTracks() throws InterruptedException {
-        myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                MyTunesRssUtils.createStatement(connection, "resetLastImageUpdateForAllTracks").execute();
-            }
-        }, false));
     }
 }

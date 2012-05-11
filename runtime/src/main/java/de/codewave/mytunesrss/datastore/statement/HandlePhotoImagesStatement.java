@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
+ * de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement
  */
 public class HandlePhotoImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlePhotoImagesStatement.class);
@@ -41,19 +41,11 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
     private long myLastUpdateTime;
     private File myFile;
     private String myPhotoId;
-    private Image myImage;
 
     public HandlePhotoImagesStatement(File file, String photoId, long lastUpdateTime) {
         myLastUpdateTime = lastUpdateTime;
         myPhotoId = photoId;
         myFile = file;
-    }
-
-    public HandlePhotoImagesStatement(File file, String photoId, Image image, long lastUpdateTime) {
-        myLastUpdateTime = lastUpdateTime;
-        myPhotoId = photoId;
-        myFile = file;
-        myImage = image;
     }
 
     public void execute(Connection connection) throws SQLException {
@@ -82,9 +74,6 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
     }
 
     private Image getImage() throws IOException {
-        if (myImage != null) {
-            return myImage;
-        }
         if (myFile.isFile() && myFile.lastModified() >= myLastUpdateTime) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
