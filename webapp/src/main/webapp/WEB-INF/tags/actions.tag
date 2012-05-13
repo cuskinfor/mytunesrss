@@ -68,7 +68,7 @@
             <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" style="display:none" alt=""/>
         </a>
         <c:if test="${!empty track && authUser.download}">
-            <a style="display:none" id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('fn_download${index}').attr('href'); return false" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
+            <a style="display:none" id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('#fn_download${index}').attr('href'); return false" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
         </c:if>
     </c:when>
     <c:when test="${!empty track && authUser.download}">
