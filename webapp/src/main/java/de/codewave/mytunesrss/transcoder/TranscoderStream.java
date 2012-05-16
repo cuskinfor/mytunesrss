@@ -34,6 +34,7 @@ public class TranscoderStream extends InputStream {
     TranscoderStream(TranscoderConfig transcoderConfig, File inputFile) throws IOException {
         myTranscoderConfig = transcoderConfig;
         List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(inputFile);
+        transcodeCommand.add("--no-sout-smem-time-sync");
         transcodeCommand.add("--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}");
         if (LOG.isDebugEnabled()) {
             LOG.debug("executing " + getName() + " command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
