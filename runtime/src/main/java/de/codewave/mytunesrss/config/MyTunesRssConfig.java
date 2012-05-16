@@ -1026,7 +1026,7 @@ public class MyTunesRssConfig {
 
     private void load(JXPathContext settings) throws IOException {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
-        setAjpHost(JXPathUtils.getStringValue(settings, "adminHost", getAjpHost()));
+        setAdminHost(JXPathUtils.getStringValue(settings, "adminHost", getAdminHost()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
         setImportOriginalImageSize(JXPathUtils.getBooleanValue(settings, "importOriginalImageSize", isImportOriginalImageSize()));
         setHost(JXPathUtils.getStringValue(settings, "serverHost", getHost()));

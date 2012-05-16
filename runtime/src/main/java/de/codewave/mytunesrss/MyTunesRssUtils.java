@@ -45,6 +45,10 @@ import java.io.*;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.net.InetAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
@@ -769,5 +773,22 @@ public class MyTunesRssUtils {
             }
         }
         return null;
+    }
+
+    public static Collection<String> getAvailableListenAddresses() {
+        Set<String> result = new HashSet<String>();
+        try {
+            Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+            while (networkInterfaces != null && networkInterfaces.hasMoreElements()) {
+                NetworkInterface networkInterface = networkInterfaces.nextElement();
+                for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
+                    InetAddress inetAddress = interfaceAddress.getAddress();
+                    result.add(inetAddress.getHostAddress());
+                }
+            }
+        } catch (SocketException e) {
+            LOGGER.warn("Could not get network interfaces.", e);
+        }
+        return result;
     }
 }

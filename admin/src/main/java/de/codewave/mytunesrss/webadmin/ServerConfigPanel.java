@@ -7,10 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.Panel;
+import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.vaadin.SmartTextField;
@@ -22,15 +19,48 @@ import de.codewave.vaadin.validation.SameValidator;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class ServerConfigPanel extends MyTunesRssConfigPanel {
+
+    private static class ListenAddress {
+        private String myValue;
+        private String myDisplayName;
+
+        private ListenAddress(String value, String displayName) {
+            myValue = value;
+            myDisplayName = displayName;
+        }
+
+        @Override
+        public int hashCode() {
+            return myValue != null ? myValue.hashCode() : 0;
+        }
+
+        @Override
+        public boolean equals(Object other) {
+            return other != null && other.getClass().equals(getClass()) && StringUtils.equals(myValue, ((ListenAddress) other).myValue);
+        }
+
+        @Override
+        public String toString() {
+            return myDisplayName;
+        }
+
+        public String getValue() {
+            return myValue;
+        }
+    }
 
     private Form myAdminForm;
     private Form myGeneralForm;
     private Form myExtendedForm;
     private Form myHttpForm;
     private Form myHttpsForm;
+    private Select myAdminListenAddress;
     private SmartTextField myAdminPort;
     private SmartTextField myAdminPassword;
     private SmartTextField myRetypeAdminPassword;
@@ -39,8 +69,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myServerName;
     private SmartTextField myWebappContext;
     private SmartTextField myTomcatMaxThreads;
+    private Select myTomcatAjpListenAddress;
     private SmartTextField myTomcatAjpPort;
+    private Select myListenAddress;
     private SmartTextField myPort;
+    private Select mySslListenAddress;
     private SmartTextField mySslPort;
     private SmartTextField mySslKeystoreFile;
     private Button mySslKeystoreFileSelect;
@@ -53,6 +86,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     public void attach() {
         super.attach();
         init(getBundleString("serverConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
+        myAdminListenAddress = getComponentFactory().createSelect("serverConfigPanel.adminListenAddress", getListenAddresses());
         myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
         myRetypeAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.retypeAdminPassword", new SameValidator(myAdminPassword, getBundleString("serverConfigPanel.error.retypeAdminPassword")));
@@ -67,9 +101,12 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myWebappContext = getComponentFactory().createTextField("serverConfigPanel.webappContext");
         myTomcatMaxThreads = getComponentFactory().createTextField("serverConfigPanel.tomcatMaxThreads", getApplication().getValidatorFactory().createMinMaxValidator(5, 1000));
         setRequired(myTomcatMaxThreads);
+        myTomcatAjpListenAddress = getComponentFactory().createSelect("serverConfigPanel.tomcatAjpListenAddress", getListenAddresses());
         myTomcatAjpPort = getComponentFactory().createTextField("serverConfigPanel.tomcatAjpPort", getApplication().getValidatorFactory().createPortValidator());
+        myListenAddress = getComponentFactory().createSelect("serverConfigPanel.listenAddress", getListenAddresses());
         myPort = getComponentFactory().createTextField("serverConfigPanel.port", getApplication().getValidatorFactory().createPortValidator());
         setRequired(myPort);
+        mySslListenAddress = getComponentFactory().createSelect("serverConfigPanel.sslListenAddress", getListenAddresses());
         mySslPort = getComponentFactory().createTextField("serverConfigPanel.sslPort", getApplication().getValidatorFactory().createPortValidator());
         mySslKeystoreFile = getComponentFactory().createTextField("serverConfigPanel.sslKeystoreFile", new FileValidator(getBundleString("serverConfigPanel.error.invalidKeystore"), null, FileValidator.PATTERN_ALL));
         mySslKeystoreFileSelect = getComponentFactory().createButton("serverConfigPanel.sslKeystoreFile.select", this);
@@ -80,6 +117,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myUpnpUserHttps = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
 
         myAdminForm = getComponentFactory().createForm(null, true);
+        myAdminForm.addField(myAdminListenAddress, myAdminListenAddress);
         myAdminForm.addField(myAdminPort, myAdminPort);
         myAdminForm.addField(myUpnpAdmin, myUpnpAdmin);
         myAdminForm.addField(myAdminPassword, myAdminPassword);
@@ -95,12 +133,14 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         addComponent(generalPanel);
 
         myHttpForm = getComponentFactory().createForm(null, true);
+        myHttpForm.addField(myListenAddress, myListenAddress);
         myHttpForm.addField(myPort, myPort);
         myHttpForm.addField(myUpnpUserHttp, myUpnpUserHttp);
         Panel httpPanel = getComponentFactory().surroundWithPanel(myHttpForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.http"));
         addComponent(httpPanel);
 
         myHttpsForm = getComponentFactory().createForm(null, true);
+        myHttpsForm.addField(mySslListenAddress, mySslListenAddress);
         myHttpsForm.addField(mySslPort, mySslPort);
         myHttpsForm.addField(myUpnpUserHttps, myUpnpUserHttps);
         myHttpsForm.addField(mySslKeystoreFile, mySslKeystoreFile);
@@ -113,6 +153,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myExtendedForm = getComponentFactory().createForm(null, true);
         myExtendedForm.addField(myWebappContext, myWebappContext);
         myExtendedForm.addField(myTomcatMaxThreads, myTomcatMaxThreads);
+        myExtendedForm.addField(myTomcatAjpListenAddress, myTomcatAjpListenAddress);
         myExtendedForm.addField(myTomcatAjpPort, myTomcatAjpPort);
         Panel extendedPanel = getComponentFactory().surroundWithPanel(myExtendedForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.extended"));
         addComponent(extendedPanel);
@@ -122,7 +163,17 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    private Collection<ListenAddress> getListenAddresses() {
+        List<ListenAddress> addresses = new ArrayList<ListenAddress>();
+        addresses.add(new ListenAddress(null, getBundleString("serverConfigPanel.listenAddress.all")));
+        for (String address : MyTunesRssUtils.getAvailableListenAddresses()) {
+            addresses.add(new ListenAddress(address, address));
+        }
+        return addresses;
+    }
+
     protected void initFromConfig() {
+        myAdminListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getAdminHost(), null));
         myAdminPort.setValue(MyTunesRss.CONFIG.getAdminPort(), 1, 65535, "");
         myAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
         myRetypeAdminPassword.setValue(MyTunesRss.CONFIG.getAdminPasswordHash());
@@ -132,8 +183,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myServerName.setEnabled(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         myWebappContext.setValue(MyTunesRss.CONFIG.getWebappContext());
         myTomcatMaxThreads.setValue(MyTunesRss.CONFIG.getTomcatMaxThreads());
+        myTomcatAjpListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getAjpHost(), null));
         myTomcatAjpPort.setValue(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, "");
+        myListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getHost(), null));
         myPort.setValue(MyTunesRss.CONFIG.getPort(), 1, 65535, "");
+        mySslListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getSslHost(), null));
         mySslPort.setValue(MyTunesRss.CONFIG.getSslPort(), 1, 65535, "");
         mySslKeystoreFile.setValue(MyTunesRss.CONFIG.getSslKeystoreFile());
         mySslKeystorePass.setValue(MyTunesRss.CONFIG.getSslKeystorePass());
@@ -146,6 +200,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     protected void writeToConfig() {
         boolean adminServerConfigChanged = isAdminServerConfigChanged();
         boolean musicServerConfigChanged = isMusicServerConfigChanged();
+        MyTunesRss.CONFIG.setAdminHost(((ListenAddress)myAdminListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setAdminPort(myAdminPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setAdminPasswordHash(myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
         MyTunesRss.CONFIG.setLocalTempArchive(myLocalTempArchive.booleanValue());
@@ -153,8 +208,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setServerName(myServerName.getStringValue(null));
         MyTunesRss.CONFIG.setWebappContext(myWebappContext.getStringValue(null));
         MyTunesRss.CONFIG.setTomcatMaxThreads(myTomcatMaxThreads.getStringValue(null));
+        MyTunesRss.CONFIG.setAjpHost(((ListenAddress) myTomcatAjpListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setTomcatAjpPort(myTomcatAjpPort.getIntegerValue(0));
+        MyTunesRss.CONFIG.setHost(((ListenAddress)myListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setPort(myPort.getIntegerValue(0));
+        MyTunesRss.CONFIG.setSslHost(((ListenAddress)mySslListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setSslPort(mySslPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setSslKeystoreFile(mySslKeystoreFile.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystorePass(mySslKeystorePass.getStringValue(null));
@@ -197,6 +255,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private boolean isAdminServerConfigChanged() {
         boolean changed = !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPort(), myAdminPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminHost(), ((ListenAddress)myAdminListenAddress.getValue()).getValue());
         return changed;
     }
 
@@ -205,8 +264,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getServerName()), myServerName.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getWebappContext()), myWebappContext.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatMaxThreads()), myTomcatMaxThreads.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAjpHost(), ((ListenAddress)myTomcatAjpListenAddress.getValue()).getValue());
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatAjpPort(), myTomcatAjpPort.getIntegerValue(0));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getHost(), ((ListenAddress)myListenAddress.getValue()).getValue());
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getPort(), myPort.getIntegerValue(0));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslHost(), ((ListenAddress)mySslListenAddress.getValue()).getValue());
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslPort(), mySslPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreFile()), mySslKeystoreFile.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystorePass()), mySslKeystorePass.getStringValue(null));
