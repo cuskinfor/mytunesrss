@@ -188,7 +188,7 @@
                                                    shareText="${playlistName}"/>
                                 </c:when>
                                 <c:otherwise>
-                                    <c:if test="${authUser.player && config.showPlayer}">
+                                    <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                                         <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash"
                                            onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${linkFragment}/filename=${filename}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;"
                                            title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>

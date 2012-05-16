@@ -56,6 +56,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Upload myUploadTheme;
     private Button myAddSite;
     private Button myAddFlashPlayer;
+    private Button myRestoreDefaultJukeboxes;
     private Button myAddLanguage;
     private Button myDownloadLanguage;
 
@@ -125,7 +126,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myFlashPlayersTable.addContainerProperty("delete", Button.class, null, "", null, null);
         flashPlayersPanel.addComponent(myFlashPlayersTable);
         myAddFlashPlayer = getComponentFactory().createButton("addonsConfigPanel.addFlashPlayer", this);
-        flashPlayersPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFlashPlayer));
+        myRestoreDefaultJukeboxes = getComponentFactory().createButton("addonsConfigPanel.restoreDefaultJukeboxes", this);
+        flashPlayersPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFlashPlayer, myRestoreDefaultJukeboxes));
         addComponent(themesPanel);
         addComponent(languagesPanel);
         addComponent(sitesPanel);
@@ -351,6 +353,14 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         } else if (clickEvent.getSource() == myAddSite) {
             addSite(new ExternalSiteDefinition("album", "new site", "http://"));
             setTablePageLengths();
+        } else if (clickEvent.getSource() == myRestoreDefaultJukeboxes) {
+            for (FlashPlayerConfig defaultConfig : FlashPlayerConfig.getDefaults()) {
+                MyTunesRss.CONFIG.removeFlashPlayer(defaultConfig.getId());
+                MyTunesRss.CONFIG.addFlashPlayer(defaultConfig);
+            }
+            refreshFlashPlayers();
+            setTablePageLengths();
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.defaultJukeboxesRestored");
         } else if (clickEvent.getSource() == myAddFlashPlayer) {
             FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", FlashPlayerConfig.DEFAULT_HTML, PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS));
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);

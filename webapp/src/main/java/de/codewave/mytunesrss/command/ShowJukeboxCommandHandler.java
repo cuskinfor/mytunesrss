@@ -18,7 +18,7 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         String playerId = StringUtils.defaultIfEmpty(getRequestParameter("playerId", getWebConfig().getFlashplayer()), FlashPlayerConfig.ABSOLUTE_DEFAULT.getId());
         FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer(playerId);
         if (flashPlayerConfig == null) {
-            flashPlayerConfig = FlashPlayerConfig.getDefault(playerId);
+            flashPlayerConfig = FlashPlayerConfig.getDefault();
         }
         redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MiscUtils.getUtf8UrlEncoded(getPlaylistUrl(flashPlayerConfig.getPlaylistFileType(), flashPlayerConfig.getTimeUnit())));
     }

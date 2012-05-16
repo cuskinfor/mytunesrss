@@ -364,7 +364,7 @@
                                 </td>
                             </tr>
                         </c:if>
-                        <c:if test="${authUser.player}">
+                        <c:if test="${globalConfig.flashPlayer && authUser.player}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.showPlayer" /></td>
                                 <td>

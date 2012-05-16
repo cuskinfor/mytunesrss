@@ -814,6 +814,10 @@ public class MyTunesRssConfig {
         return new HashSet<FlashPlayerConfig>(myFlashPlayers);
     }
 
+    public boolean isFlashPlayer() {
+        return myFlashPlayers != null && !myFlashPlayers.isEmpty();
+    }
+
     public FlashPlayerConfig getFlashPlayer(String id) {
         for (FlashPlayerConfig flashPlayer : myFlashPlayers) {
             if (flashPlayer.getId().equals(id)) {
@@ -1005,10 +1009,10 @@ public class MyTunesRssConfig {
                 // fresh evaluation period if the last version was a different major or minor version
                 myCryptedCreationTime = freshCryptedCreationTime;
             }
-            if (currentConfigVersion.compareTo(currentAppVersion) < 0) {
-                migrate();
-            }
             loadFromContext(settings);
+            if (currentConfigVersion.compareTo(currentAppVersion) < 0) {
+                migrate(currentConfigVersion);
+            }
         } catch (IOException e) {
             LOGGER.error("Could not read configuration file.", e);
         }
@@ -1634,8 +1638,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    private void migrate() {
-        Version current = new Version(getVersion());
+    private void migrate(Version current) {
         if (current.compareTo(new Version("4.1.0")) < 0) {
             setVersion("4.1.0");
             for (DatasourceConfig dc : getDatasources()) {
@@ -1649,6 +1652,7 @@ public class MyTunesRssConfig {
         if (current.compareTo(new Version("4.3.0")) < 0) {
             setVersion("4.3.0");
             myTranscoderConfigs = new ArrayList<TranscoderConfig>(TranscoderConfig.DEFAULT_TRANSCODERS);
+            myFlashPlayers.addAll(FlashPlayerConfig.getDefaults());
         }
     }
 

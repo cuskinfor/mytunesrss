@@ -114,7 +114,7 @@
                                                shareText="${track.name}" />
                             </c:when>
                             <c:otherwise>
-                                <c:if test="${authUser.player && config.showPlayer}">
+                                <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                                     <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>track=${track.id}/filename=${mtfn:virtualTrackName(track)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                 </c:if>
                                 <a id="linkAddToPlaylist${loopStatus.index}" class="add" onclick="addTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.id)}']))" title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message key="playlist.addToPlaylist"/></span></a>

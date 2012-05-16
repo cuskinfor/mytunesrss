@@ -43,7 +43,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     private static final String getPlayerCode(String file) {
         InputStream stream = FlashPlayerConfig.class.getResourceAsStream(file);
         try {
-            return StringUtils.join((List<String>) IOUtils.readLines(stream), System.getProperty("line.separator"));
+            return StringUtils.join(IOUtils.readLines(stream), System.getProperty("line.separator"));
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not read stream from \"" + file + "\".");
@@ -61,16 +61,15 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     }
 
     public static Set<FlashPlayerConfig> getDefaults() {
-        return new HashSet<FlashPlayerConfig>(DEFAULTS);
+        HashSet<FlashPlayerConfig> defaults = new HashSet<FlashPlayerConfig>();
+        for (FlashPlayerConfig config : DEFAULTS) {
+            defaults.add((FlashPlayerConfig) config.clone());
+        }
+        return defaults;
     }
 
-    public static FlashPlayerConfig getDefault(String id) {
-        for (FlashPlayerConfig flashPlayer : DEFAULTS) {
-            if (flashPlayer.getId().equals(id)) {
-                return flashPlayer;
-            }
-        }
-        return JW46;
+    public static FlashPlayerConfig getDefault() {
+        return (FlashPlayerConfig) JW46.clone();
     }
 
     private String myId;

@@ -408,15 +408,14 @@ public class MyTunesFunctions {
     }
 
     public static List<FlashPlayerConfig> flashPlayerConfigs() {
-        List<FlashPlayerConfig> flashPlayerConfigs = new ArrayList<FlashPlayerConfig>(FlashPlayerConfig.getDefaults());
-        flashPlayerConfigs.addAll(MyTunesRss.CONFIG.getFlashPlayers());
+        List<FlashPlayerConfig> flashPlayerConfigs = new ArrayList<FlashPlayerConfig>(MyTunesRss.CONFIG.getFlashPlayers());
         Collections.sort(flashPlayerConfigs);
         return flashPlayerConfigs;
     }
 
     public static FlashPlayerConfig flashPlayerConfig(String id) {
         FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer(id);
-        return flashPlayerConfig != null ? flashPlayerConfig : FlashPlayerConfig.getDefault(id);
+        return flashPlayerConfig != null ? flashPlayerConfig : FlashPlayerConfig.getDefault();
     }
 
     public static String escapeJson(String json) {

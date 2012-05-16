@@ -47,7 +47,7 @@ public class FlashPlayerServlet extends HttpServlet {
         if (pathInfo.length == 1) {
             FlashPlayerConfig playerConfig = MyTunesRss.CONFIG.getFlashPlayer(pathInfo[0]);
             if (playerConfig == null) {
-                playerConfig = FlashPlayerConfig.getDefault(pathInfo[0]);
+                playerConfig = FlashPlayerConfig.getDefault();
             }
             httpServletResponse.setContentType("text/html");
             httpServletResponse.getWriter().println(playerConfig.getHtml().replace("{PLAYLIST_URL}", httpServletRequest.getParameter("url")));
