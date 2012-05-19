@@ -517,7 +517,14 @@ public class MyTunesRssUtils {
             LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
             ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(backupFile);
             try {
-                ZipUtils.addFilesToZipRecursively("", databaseDir, null, zipOutputStream);
+                ZipUtils.addFilesToZipRecursively("", databaseDir, new FileFilter() {
+                    public boolean accept(File file) {
+                        if (file.getName().toLowerCase(Locale.ENGLISH).contains(".lock.db")) {
+                            return false;
+                        }
+                        return true;
+                    }
+                }, zipOutputStream);
             } finally {
                 zipOutputStream.close();
             }

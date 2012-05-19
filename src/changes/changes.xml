@@ -86,6 +86,21 @@
             </action>
         </release>
 
+        <release version="4.2.6" date="___D___">
+            <action dev="mdescher" type="fix">
+                Do not backup the lock file of the H2 database which might cause file not found exceptions.
+            </action>
+        </release>
+
+        <release version="4.2.5" date="2012-05-02">
+            <action dev="mdescher" type="add">
+                Updated codewave-utils to 1.6 to restore JDK 1.5 compatibility.
+            </action>
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-367] Optionally select a single network interface to listen on (only via settings.xml, no admin interface)
+            </action>
+        </release>
+
         <release version="4.2.4" date="2012-04-01">
             <action dev="mdescher" type="fix">
                 Fixed possible NPEs for several File.listXXX calls.
