@@ -138,6 +138,7 @@ public class MyTunesRssConfig {
     private File myVlcExecutable;
     private int myVlcSocketTimeout;
     private String myRssDescription;
+    private int myVlcRaopVolume = 75;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -951,6 +952,14 @@ public class MyTunesRssConfig {
         myVlcSocketTimeout = vlcSocketTimeout;
     }
 
+    public int getVlcRaopVolume() {
+        return myVlcRaopVolume;
+    }
+
+    public void setVlcRaopVolume(int vlcRaopVolume) {
+        myVlcRaopVolume = vlcRaopVolume;
+    }
+
     public String getRssDescription() {
         return myRssDescription;
     }
@@ -1190,6 +1199,7 @@ public class MyTunesRssConfig {
         String vlc = JXPathUtils.getStringValue(settings, "vlc", MyTunesRssUtils.findVlcExecutable());
         setVlcExecutable(vlc != null ? new File(vlc) : null);
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
+        setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
         setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
     }
 
@@ -1542,6 +1552,7 @@ public class MyTunesRssConfig {
             if (getVlcExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
                 root.appendChild(DOMUtils.createIntElement(settings, "vlc-timeout", getVlcSocketTimeout()));
+                root.appendChild(DOMUtils.createIntElement(settings, "vlc-raop-volume", getVlcRaopVolume()));
             }
             root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
             FileOutputStream outputStream = null;

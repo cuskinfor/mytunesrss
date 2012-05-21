@@ -48,6 +48,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myVlcBinary;
     private Button myVlcBinarySelect;
     private SmartTextField myVlcSocketTimeout;
+    private SmartTextField myVlcRaopVolume;
     private Form myVlcForm;
     private Button myVlcHomepageButton;
 
@@ -57,11 +58,13 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary")));
         myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
         myVlcSocketTimeout = getComponentFactory().createTextField("streamingConfigPanel.vlcTimeout", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcTimeout.invalidTimeout", 1, 1000), 1, 1000));
+        myVlcRaopVolume = getComponentFactory().createTextField("streamingConfigPanel.vlcRaopVolume", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcRaopVolume.invalidVolume", 1, 100), 1, 100));
         myVlcHomepageButton = getComponentFactory().createButton("streamingConfigPanel.vlcHomepage", this);
         myVlcForm = getComponentFactory().createForm(null, true);
         myVlcForm.addField(myVlcBinary, myVlcBinary);
         myVlcForm.addField(myVlcBinarySelect, myVlcBinarySelect);
         myVlcForm.addField(myVlcSocketTimeout, myVlcSocketTimeout);
+        myVlcForm.addField(myVlcRaopVolume, myVlcRaopVolume);
         myVlcForm.addField(myVlcHomepageButton, myVlcHomepageButton);
         Panel vlcPanel = getComponentFactory().surroundWithPanel(myVlcForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.vlc"));
         addComponent(vlcPanel);
@@ -146,6 +149,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
         myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
         myVlcSocketTimeout.setValue(MyTunesRss.CONFIG.getVlcSocketTimeout());
+        myVlcRaopVolume.setValue(MyTunesRss.CONFIG.getVlcRaopVolume());
     }
 
     protected void writeToConfig() {
@@ -192,6 +196,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }
         }
         MyTunesRss.CONFIG.setVlcSocketTimeout(myVlcSocketTimeout.getIntegerValue(5));
+        MyTunesRss.CONFIG.setVlcRaopVolume(myVlcRaopVolume.getIntegerValue(75));
         MyTunesRss.CONFIG.save();
     }
 

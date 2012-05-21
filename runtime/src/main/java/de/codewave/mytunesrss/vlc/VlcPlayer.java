@@ -146,7 +146,7 @@ public class VlcPlayer {
                             command.add("--http-port=" + myVlcPort);
                             if (myRaopTargets != null && myRaopTargets.length > 0) {
                                 if (myRaopTargets.length == 1) {
-                                    command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myRaopTargets[0] + ",volume=128}");
+                                    command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myRaopTargets[0] + ",volume=" + ((255 * MyTunesRss.CONFIG.getVlcRaopVolume()) / 100) + "}");
                                 } else {
                                     StringBuilder builder = new StringBuilder("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:duplicate{");
                                     for (int i = 0; i < myRaopTargets.length; i++) {
