@@ -5,6 +5,11 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">    <description>MyTunesRSS web application</description>
 
     <display-name>MyTunesRSS</display-name>
+    <!-- resteasy logging type -->
+    <context-param>
+        <param-name>resteasy.logger.type</param-name>
+        <param-value>SLF4J</param-value>
+    </context-param>
     <!-- Session cookie name -->
     <context-param>
         <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
@@ -150,6 +155,10 @@
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/xmlrpc/*</url-pattern>
     </filter-mapping>
+    <filter-mapping>
+        <filter-name>TransactionFilter</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>
         <display-name>CommandServlet</display-name>
@@ -184,6 +193,18 @@
             <param-value>-1</param-value>
         </init-param>
     </servlet>
+    <servlet>
+        <servlet-name>resteasy</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <init-param>
+            <param-name>resteasy.servlet.mapping.prefix</param-name>
+            <param-value>/rest</param-value>
+        </init-param>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>de.codewave.mytunesrss.rest.RestApplication</param-value>
+        </init-param>
+    </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
         <url-pattern>/mytunesrss/*</url-pattern>
@@ -207,6 +228,10 @@
     <servlet-mapping>
         <servlet-name>JsonRpcServlet</servlet-name>
         <url-pattern>/jsonrpc/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>resteasy</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>

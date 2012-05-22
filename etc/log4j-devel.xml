@@ -18,6 +18,11 @@
     </logger>
     <logger name="org.apache.commons.httpclient.HttpMethodDirector" additivity="false">
         <level value="error"/>
+        <appender-ref ref="file"/>
+    </logger>
+    <logger name="org.jboss" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="file"/>
     </logger>
     <root>
         <level value="info"/>

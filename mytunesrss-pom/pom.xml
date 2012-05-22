@@ -349,6 +349,21 @@
             	<artifactId>jmdns</artifactId>
             	<version>3.4.1</version>
             </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jaxrs</artifactId>
+                <version>2.3.3.Final</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-jackson-provider</artifactId>
+                <version>2.3.3.Final</version>
+            </dependency>
+            <dependency>
+               <groupId>org.jboss.resteasy</groupId>
+               <artifactId>resteasy-hibernatevalidator-provider</artifactId>
+               <version>2.3.3.Final</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

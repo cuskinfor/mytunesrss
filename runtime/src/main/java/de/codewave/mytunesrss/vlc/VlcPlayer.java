@@ -145,15 +145,16 @@ public class VlcPlayer {
                             command.add("--http-host=" + myVlcHost);
                             command.add("--http-port=" + myVlcPort);
                             if (myRaopTargets != null && myRaopTargets.length > 0) {
+                                command.add("--sout-keep");
                                 if (myRaopTargets.length == 1) {
-                                    command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:raop{host=" + myRaopTargets[0] + ",volume=" + ((255 * MyTunesRss.CONFIG.getVlcRaopVolume()) / 100) + "}");
+                                    command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:gather:raop{host=" + myRaopTargets[0] + ",volume=" + ((255 * MyTunesRss.CONFIG.getVlcRaopVolume()) / 100) + "}");
                                 } else {
                                     StringBuilder builder = new StringBuilder("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:duplicate{");
                                     for (int i = 0; i < myRaopTargets.length; i++) {
                                         if (StringUtils.isNotBlank(myRaopTargets[i])) {
-                                            builder.append("dst=raop{host=" + myRaopTargets[i] + ",volume=128}");
+                                            builder.append("dst=gather:raop{host=" + myRaopTargets[i] + ",volume=128}");
                                         } else {
-                                            builder.append("dst=display");
+                                            builder.append("dst=gather:display");
                                         }
                                         if (i + 1 < myRaopTargets.length) {
                                             builder.append(",");
