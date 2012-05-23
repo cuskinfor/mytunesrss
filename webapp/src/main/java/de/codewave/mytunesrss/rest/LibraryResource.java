@@ -5,14 +5,19 @@
 
 package de.codewave.mytunesrss.rest;
 
+import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.StringUtils;
+import org.apache.lucene.queryParser.ParseException;
 import org.hibernate.validator.constraints.Range;
+import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.ws.rs.*;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -23,6 +28,7 @@ public class LibraryResource extends RestResource {
     @GET
     @Path("albums")
     @Produces({"application/json"})
+    @GZIP
     public List<Album> getAlbums(
             @QueryParam("filter") String filter,
             @QueryParam("artist") String artist,
@@ -40,6 +46,7 @@ public class LibraryResource extends RestResource {
     @GET
     @Path("artists")
     @Produces({"application/json"})
+    @GZIP
     public List<Artist> getArtists(
             @QueryParam("filter") String filter,
             @QueryParam("album") String album,
@@ -53,6 +60,7 @@ public class LibraryResource extends RestResource {
     @GET
     @Path("genres")
     @Produces({"application/json"})
+    @GZIP
     public List<Genre> getGenres(
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
@@ -64,6 +72,7 @@ public class LibraryResource extends RestResource {
     @GET
     @Path("playlists")
     @Produces({"application/json"})
+    @GZIP
     public List<Playlist> getPlaylists(
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("owner") @DefaultValue("false") boolean matchingOwner,
@@ -77,6 +86,7 @@ public class LibraryResource extends RestResource {
     @GET
     @Path("movies")
     @Produces({"application/json"})
+    @GZIP
     public List<Track> getMovies() throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getMovies(getAuthUser()));
         return queryResult.getResults();
@@ -85,6 +95,7 @@ public class LibraryResource extends RestResource {
     @GET
     @Path("tvshows")
     @Produces({"application/json"})
+    @GZIP
     public Map<String, Map<Integer, List<Track>>> getTvShows() throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(getAuthUser()));
         Map<String, Map<Integer, List<Track>>> result = new LinkedHashMap<String, Map<Integer, List<Track>>>();
@@ -100,4 +111,23 @@ public class LibraryResource extends RestResource {
         return result;
     }
 
+    @GET
+    @Path("tracks")
+    @Produces({"application/json"})
+    @GZIP
+    public List<Track> findTracks(
+            @QueryParam("term") String term,
+            @QueryParam("expert") @DefaultValue("false") boolean expert,
+            @QueryParam("fuzziness") @DefaultValue("35") @Range(min = 0, max = 100, message = "Fuzziness must a be a value from 0 to 100.") int fuzziness,
+            @QueryParam("max") @DefaultValue("1000") @Range(min = 1, max = 1000, message = "Max must be a value from 1 to 1000.") int maxItems,
+            @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
+            ) throws IOException, ParseException, SQLException, LuceneQueryParserException {
+        DataStoreQuery.QueryResult<Track> queryResult = null;
+        if (expert) {
+            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForExpertSearchTerm(getAuthUser(), term, sortOrder, maxItems));
+        } else {
+            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(getAuthUser(), term, fuzziness, sortOrder, maxItems));
+        }
+        return queryResult.getResults();
+    }
 }

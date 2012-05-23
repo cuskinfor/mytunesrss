@@ -20,6 +20,8 @@ public class RestApplication extends Application {
                 LibraryResource.class,
                 PlaylistResource.class,
                 ArtistResource.class,
+                GenreResource.class,
+                SessionResource.class,
                 TvShowResource.class,
                 AlbumResource.class}));
     }

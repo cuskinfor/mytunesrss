@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.ws.rs.*;
@@ -23,6 +24,7 @@ public class TvShowResource extends RestResource {
     @GET
     @Path("seasons")
     @Produces({"application/json"})
+    @GZIP
     public Map<Integer, List<Track>> getSeasons(
             @PathParam("show") String show
     ) throws SQLException {
@@ -40,6 +42,7 @@ public class TvShowResource extends RestResource {
     @GET
     @Path("season/{season}/episodes")
     @Produces({"application/json"})
+    @GZIP
     public List<Track> getEpisodes(
             @PathParam("show") String show,
             @PathParam("season") int season
