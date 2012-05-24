@@ -36,7 +36,7 @@ public class TrackResource extends RestResource {
     @POST
     @Path("tags")
     @Consumes("application/x-www-form-urlencoded")
-    public void getTags(
+    public void setTags(
             @PathParam("track") String track,
             @FormParam("tag") List<String> tags
     ) throws SQLException {

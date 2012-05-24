@@ -8,9 +8,7 @@ package de.codewave.mytunesrss.rest.resource;
 import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
-import de.codewave.mytunesrss.rest.representation.ArtistRepresentation;
-import de.codewave.mytunesrss.rest.representation.LibraryRepresentation;
+import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.lucene.queryParser.ParseException;
@@ -20,7 +18,6 @@ import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -61,7 +58,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
         DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), filter, artist, genre, index, minYear, maxYear, sortYear, type));
-        return toAlbumRepresentation(queryResult.getResults());
+        return toAlbumRepresentations(queryResult.getResults());
     }
 
     @GET
@@ -75,59 +72,59 @@ public class LibraryResource extends RestResource {
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
         DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(getAuthUser(), filter, album, genre, index));
-        return toArtistRepresentation(queryResult.getResults());
+        return toArtistRepresentations(queryResult.getResults());
     }
 
     @GET
     @Path("genres")
     @Produces({"application/json"})
     @GZIP
-    public List<Genre> getGenres(
+    public List<GenreRepresentation> getGenres(
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
         DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), includeHidden, index));
-        return queryResult.getResults();
+        return toGenreRepresentations(queryResult.getResults());
     }
 
     @GET
     @Path("playlists")
     @Produces({"application/json"})
     @GZIP
-    public List<Playlist> getPlaylists(
+    public List<PlaylistRepresentation> getPlaylists(
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("owner") @DefaultValue("false") boolean matchingOwner,
             @QueryParam("type") List<PlaylistType> types,
             @QueryParam("root") @DefaultValue("false") boolean root
     ) throws SQLException {
         DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), types, null, root ? "ROOT": null, includeHidden, matchingOwner));
-        return queryResult.getResults();
+        return toPlaylistRepresentations(queryResult.getResults());
     }
 
     @GET
     @Path("movies")
     @Produces({"application/json"})
     @GZIP
-    public List<Track> getMovies() throws SQLException {
+    public List<TrackRepresentation> getMovies() throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getMovies(getAuthUser()));
-        return queryResult.getResults();
+        return toTrackRepresentations(queryResult.getResults());
     }
 
     @GET
     @Path("tvshows")
     @Produces({"application/json"})
     @GZIP
-    public Map<String, Map<Integer, List<Track>>> getTvShows() throws SQLException {
+    public Map<String, Map<Integer, List<TrackRepresentation>>> getTvShows() throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(getAuthUser()));
-        Map<String, Map<Integer, List<Track>>> result = new LinkedHashMap<String, Map<Integer, List<Track>>>();
+        Map<String, Map<Integer, List<TrackRepresentation>>> result = new LinkedHashMap<String, Map<Integer, List<TrackRepresentation>>>();
         for (Track track : queryResult.getResults()) {
             if (!result.containsKey(track.getSeries())) {
-                result.put(track.getSeries(), new LinkedHashMap<Integer, List<Track>>());
+                result.put(track.getSeries(), new LinkedHashMap<Integer, List<TrackRepresentation>>());
             }
             if (!result.get(track.getSeries()).containsKey(track.getSeason())) {
-                result.get(track.getSeries()).put(track.getSeason(), new ArrayList<Track>());
+                result.get(track.getSeries()).put(track.getSeason(), new ArrayList<TrackRepresentation>());
             }
-            result.get(track.getSeries()).get(track.getSeason()).add(track);
+            result.get(track.getSeries()).get(track.getSeason()).add(toTrackRepresentation(track));
         }
         return result;
     }
@@ -136,7 +133,7 @@ public class LibraryResource extends RestResource {
     @Path("tracks")
     @Produces({"application/json"})
     @GZIP
-    public List<Track> findTracks(
+    public List<TrackRepresentation> findTracks(
             @QueryParam("term") String term,
             @QueryParam("expert") @DefaultValue("false") boolean expert,
             @QueryParam("fuzziness") @DefaultValue("35") @Range(min = 0, max = 100, message = "Fuzziness must a be a value from 0 to 100.") int fuzziness,
@@ -149,6 +146,6 @@ public class LibraryResource extends RestResource {
         } else {
             queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(getAuthUser(), term, fuzziness, sortOrder, maxItems));
         }
-        return queryResult.getResults();
+        return toTrackRepresentations(queryResult.getResults());
     }
 }

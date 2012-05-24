@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.jboss.resteasy.annotations.GZIP;
@@ -26,12 +27,12 @@ public class AlbumResource extends RestResource {
     @Path("tracks")
     @Produces({"application/json"})
     @GZIP
-    public List<Track> getAlbumTracks(
+    public List<TrackRepresentation> getAlbumTracks(
             @PathParam("album") String album,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[]{MyTunesRssBase64Utils.decodeToString(album)}, null, sortOrder));
-        return queryResult.getResults();
+        return toTrackRepresentations(queryResult.getResults());
     }
 
     @GET
@@ -47,7 +48,7 @@ public class AlbumResource extends RestResource {
     @POST
     @Path("tags")
     @Consumes("application/x-www-form-urlencoded")
-    public void getTags(
+    public void setTags(
             @PathParam("album") String album,
             @FormParam("tag") List<String> tags
     ) throws SQLException {
@@ -57,7 +58,7 @@ public class AlbumResource extends RestResource {
     }
 
     private String[] getTracks(String album) throws SQLException {
-        List<Track> tracks = getAlbumTracks(album, SortOrder.KeepOrder);
+        List<? extends Track> tracks = getAlbumTracks(album, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
         for (Track track : tracks) {
             trackIds.add(track.getId());
