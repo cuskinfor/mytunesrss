@@ -3,10 +3,9 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.rest;
+package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;

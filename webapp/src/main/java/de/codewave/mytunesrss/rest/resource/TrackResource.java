@@ -3,12 +3,11 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.rest;
+package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -23,38 +22,6 @@ import java.util.List;
 @ValidateRequest
 @Path("track/{track}")
 public class TrackResource extends RestResource {
-
-    @GET
-    @Path("uri/download")
-    @Produces({"text/plain"})
-    public String getDownloadUri(
-            @PathParam("track") String track,
-            @QueryParam("transcoder") List<String> transcoders,
-            @Context HttpServletRequest request
-    ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {track}));
-        return MyTunesFunctions.downloadUrl(request, queryResult.getResult(0), getExtraPathInfo(transcoders));
-    }
-
-    private String getExtraPathInfo(List<String> transcoders) {
-        if (transcoders != null && !transcoders.isEmpty()) {
-            return "tc=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssWebUtils.createTranscodingParamValue(transcoders.toArray(new String[transcoders.size()])));
-        } else {
-            return null;
-        }
-    }
-
-    @GET
-    @Path("uri/playback")
-    @Produces({"text/plain"})
-    public String getPlaybackUri(
-            @PathParam("track") String track,
-            @QueryParam("transcoder") List<String> transcoders,
-            @Context HttpServletRequest request
-    ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {track}));
-        return MyTunesFunctions.playbackUrl(request, queryResult.getResult(0), getExtraPathInfo(transcoders));
-    }
 
     @GET
     @Path("tags")
