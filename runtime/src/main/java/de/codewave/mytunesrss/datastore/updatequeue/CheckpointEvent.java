@@ -23,9 +23,11 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
 
     public boolean execute(DataStoreSession session) {
         try {
+            session.commit();
             session.executeStatement(new RecreateHelpTablesStatement());
             session.executeStatement(new RefreshSmartPlaylistsStatement());
             session.executeStatement(new UpdateStatisticsStatement());
+            session.commit();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         }

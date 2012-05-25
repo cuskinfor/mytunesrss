@@ -50,6 +50,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             for (SmartPlaylist smartPlaylist : smartPlaylists) {
                 Collection<SmartInfo> smartInfos = smartPlaylist.getSmartInfos();
                 refreshSmartPlaylist(connection, smartInfos, smartPlaylist.getPlaylist().getId());
+                connection.commit();
             }
         } else {
             refreshSmartPlaylist(connection, mySmartInfos, myPlaylistId);

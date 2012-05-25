@@ -9,6 +9,9 @@
 
         <release version="4.3" date="___D___">
             <action dev="mdescher" type="update">
+                Added COMMITs into checkpoint event to prevent long lasting locks on the database.
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-363] Try to position the modal dialogs better
             </action>
             <action dev="mdescher" type="update">
