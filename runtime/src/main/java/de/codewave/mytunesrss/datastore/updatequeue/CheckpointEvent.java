@@ -23,27 +23,31 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
 
     public boolean execute(DataStoreSession session) {
         try {
-            session.commit();
-            session.executeStatement(new RecreateHelpTablesStatement());
-            session.executeStatement(new RefreshSmartPlaylistsStatement());
-            session.executeStatement(new UpdateStatisticsStatement());
-            session.commit();
-        } catch (SQLException e) {
-            LOGGER.warn("Could not execute data store statement.", e);
+            try {
+                session.commit();
+                session.executeStatement(new RecreateHelpTablesStatement());
+                session.executeStatement(new RefreshSmartPlaylistsStatement());
+                session.executeStatement(new UpdateStatisticsStatement());
+                session.commit();
+            } catch (SQLException e) {
+                LOGGER.warn("Could not execute data store statement.", e);
+            }
+            try {
+                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+            } catch (IOException e) {
+                LOGGER.warn("Could not rebuild track index.", e);
+            } catch (SQLException e) {
+                LOGGER.warn("Could not rebuild track index.", e);
+            }
+            try {
+                MyTunesRssUtils.updateUserDatabaseReferences(session);
+            } catch (SQLException e) {
+                LOGGER.warn("Could not update user database references.", e);
+            }
+        } finally {
+            session.commit(); // make sure we have a proper state
         }
-        try {
-            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
-        } catch (IOException e) {
-            LOGGER.warn("Could not rebuild track index.", e);
-        } catch (SQLException e) {
-            LOGGER.warn("Could not rebuild track index.", e);
-        }
-        try {
-            MyTunesRssUtils.updateUserDatabaseReferences(session);
-        } catch (SQLException e) {
-            LOGGER.warn("Could not update user database references.", e);
-        }
-        return true;
+        return false;
     }
 
     public boolean isCheckpointRelevant() {
