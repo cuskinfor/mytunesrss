@@ -69,6 +69,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     statement.setBoolean("protected", smartPlaylist.getSmartInfo().getProtected());
                 }
                 statement.execute();
+                connection.commit();
             } catch (IOException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could update smart playlist.", e);
