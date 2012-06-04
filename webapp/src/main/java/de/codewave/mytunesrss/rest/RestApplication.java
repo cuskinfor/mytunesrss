@@ -19,8 +19,10 @@ public class RestApplication extends Application {
         return new HashSet<Class<?>>(Arrays.asList(new Class<?>[]{
                 MethodConstraintViolationExceptionMapper.class,
                 AuthInterceptor.class,
+                EditPlaylistInterceptor.class,
                 LibraryResource.class,
                 PlaylistResource.class,
+                EditPlaylistResource.class,
                 ArtistResource.class,
                 GenreResource.class,
                 SessionResource.class,

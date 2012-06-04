@@ -6,25 +6,51 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
+import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @ValidateRequest
-@Path("playlist/{playlist}")
+@Path("playlist")
 public class PlaylistResource extends RestResource {
 
+    @POST
+    @Path("edit")
+    public Response startEditPaylist() throws SQLException {
+        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, new Playlist());
+        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>());
+        return Response.created(UriBuilder.fromResource(EditPlaylistResource.class).build()).build();
+    }
+
+    @POST
+    @Path("{playlist}/edit")
+    public Response startEditPaylist(
+            @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist
+    ) throws SQLException {
+        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlist, null, true, false));
+        if (queryResult.getResultSize() == 0) {
+            throw new NotFoundException("Playlist \"" + playlist + "\" not found.");
+        }
+        List<Track> tracks = new ArrayList<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlist, null)).getResults());
+        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, playlist);
+        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, tracks);
+        return Response.created(UriBuilder.fromResource(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylist").build()).build();
+    }
+
     @GET
+    @Path("{playlist}")
     @Produces({"application/json"})
     @GZIP
     public PlaylistRepresentation getPlaylist(
@@ -35,7 +61,7 @@ public class PlaylistResource extends RestResource {
     }
 
     @GET
-    @Path("tracks")
+    @Path("{playlist}/tracks")
     @Produces({"application/json"})
     @GZIP
     public List<TrackRepresentation> getTracks(
@@ -47,7 +73,7 @@ public class PlaylistResource extends RestResource {
     }
 
     @GET
-    @Path("playlists")
+    @Path("{playlist}/playlists")
     @Produces({"application/json"})
     @GZIP
     public List<PlaylistRepresentation> getPlaylistChildren(
@@ -61,7 +87,7 @@ public class PlaylistResource extends RestResource {
     }
 
     @GET
-    @Path("tags")
+    @Path("{playlist}/tags")
     @Produces({"application/json"})
     public List<String> getTags(
             @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist
@@ -71,7 +97,7 @@ public class PlaylistResource extends RestResource {
     }
 
     @POST
-    @Path("tags")
+    @Path("{playlist}/tags")
     @Consumes("application/x-www-form-urlencoded")
     public void setTags(
             @PathParam("playlist") String playlist,
@@ -92,7 +118,7 @@ public class PlaylistResource extends RestResource {
     }
 
     @DELETE
-    @Path("tags")
+    @Path("{playlist}/tags")
     @Consumes("application/x-www-form-urlencoded")
     public void deleteTags(
             @PathParam("playlist") String playlist,

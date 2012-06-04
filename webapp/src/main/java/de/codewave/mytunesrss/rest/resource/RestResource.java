@@ -30,7 +30,7 @@ public class RestResource {
     private UriInfo myUriInfo;
 
     @Context
-    private HttpServletRequest myRequest;
+    protected HttpServletRequest myRequest;
 
     protected User getAuthUser() {
         return MyTunesRssWebUtils.getAuthUser(myRequest);
