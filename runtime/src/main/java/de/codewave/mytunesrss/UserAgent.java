@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss;
 
 public enum UserAgent {
-    Iphone("iphone"), Psp("psp"), Unknown("default"), NintendoWii("wii");
+    Iphone("iphone"), Unknown("default"), NintendoWii("wii");
 
     public static UserAgent fromConfigKey(String configKey) {
         for (UserAgent userAgent : UserAgent.values()) {

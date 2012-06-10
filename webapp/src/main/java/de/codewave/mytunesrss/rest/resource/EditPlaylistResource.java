@@ -51,7 +51,7 @@ public class EditPlaylistResource extends RestResource {
             @QueryParam("count") @DefaultValue("0") int count
     ) throws SQLException {
         List<Track> playlistTracks = (List<Track>) myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
-        if (first >0 && first < playlistTracks.size()) {
+        if (first > 0 && first < playlistTracks.size()) {
             return toTrackRepresentations(MyTunesRssUtils.getSubList(playlistTracks, first, count));
         }
         return Collections.emptyList();

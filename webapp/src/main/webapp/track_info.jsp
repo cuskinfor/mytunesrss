@@ -275,7 +275,7 @@
                             </td>
                         </tr>
                     </c:if>
-                    <c:if test="${!empty(track.imageHash) || (track.mediaType == 'Video' && userAgent != 'Psp')}">
+                    <c:if test="${!empty(track.imageHash) || (track.mediaType == 'Video')}">
                         <tr>
                             <th colspan="2" class="active">
                                 <c:choose>

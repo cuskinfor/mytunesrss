@@ -85,10 +85,10 @@ public enum MyTunesRssResource {
             }
         }
         if (this == PlaylistManager) {
-            request.setAttribute("deleteConfirmation", MyTunesRssWebUtils.getUserAgent(request) != UserAgent.Psp);
+            request.setAttribute("deleteConfirmation", true);
         }
         if (this == BrowseAlbum || this == BrowseArtist || this == BrowseGenre || this == BrowseTrack) {
-            request.setAttribute("simpleNewPlaylist", MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Psp);
+            request.setAttribute("simpleNewPlaylist", false);
         }
     }
 

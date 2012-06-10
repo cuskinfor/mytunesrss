@@ -111,9 +111,7 @@ public class WebConfig {
 
     public void initWithDefaults(HttpServletRequest request) {
         initWithDefaults();
-        if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Psp) {
-            initWithPspDefaults();
-        } else if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone) {
+        if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone) {
             initWithIphoneDefaults();
         } else if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.NintendoWii) {
             initWithNintendoWiiDefaults();
@@ -160,15 +158,6 @@ public class WebConfig {
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
         myConfigValues.put(CFG_SHOW_ADD_REMOTE_CONTROL, "false");
-        myConfigValues.put(CFG_PHOTO_SIZE, "600");
-    }
-
-    private void initWithPspDefaults() {
-        myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
-        myConfigValues.put(CFG_RSS_LIMIT, "100");
-        myConfigValues.put(CFG_PAGE_SIZE, "30");
-        myConfigValues.put(CFG_SHOW_PLAYER, "false");
-        myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
         myConfigValues.put(CFG_PHOTO_SIZE, "600");
     }
 
