@@ -245,9 +245,13 @@ public class MyTunesRss {
             }
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
-            BONJOUR = JmDNS.create();
-            BONJOUR.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
-            BONJOUR.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
+            try {
+                BONJOUR = JmDNS.create();
+                BONJOUR.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
+                BONJOUR.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
+            } catch (IOException e) {
+                LOGGER.warn("Could not add service listeners for RAOP and AIRPLAY.", e);
+            }
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminHostFromConfigOrCommandLine(), getAdminPortFromConfigOrCommandLine())) {
