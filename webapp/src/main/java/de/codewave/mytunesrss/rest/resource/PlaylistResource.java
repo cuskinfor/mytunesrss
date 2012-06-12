@@ -17,8 +17,10 @@ import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -28,7 +30,7 @@ public class PlaylistResource extends RestResource {
 
     @POST
     @Path("edit")
-    public Response startEditPaylist() throws SQLException {
+    public Response startEditNewPlaylist() throws SQLException {
         myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, new Playlist());
         myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>());
         return Response.created(UriBuilder.fromResource(EditPlaylistResource.class).build()).build();
@@ -37,6 +39,7 @@ public class PlaylistResource extends RestResource {
     @POST
     @Path("{playlist}/edit")
     public Response startEditPaylist(
+            @Context UriInfo uriInfo,
             @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist
     ) throws SQLException {
         DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlist, null, true, false));
@@ -44,9 +47,9 @@ public class PlaylistResource extends RestResource {
             throw new NotFoundException("Playlist \"" + playlist + "\" not found.");
         }
         List<Track> tracks = new ArrayList<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlist, null)).getResults());
-        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, playlist);
+        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, queryResult.nextResult());
         myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, tracks);
-        return Response.created(UriBuilder.fromResource(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylist").build()).build();
+        return Response.created(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).build()).build();
     }
 
     @GET

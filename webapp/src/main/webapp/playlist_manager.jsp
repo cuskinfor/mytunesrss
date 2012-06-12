@@ -18,12 +18,15 @@
 
     <jsp:include page="incl_head.jsp"/>
 
+    <script src="${appUrl}/rest.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+
     <script type="text/javascript">
 
         function loadAndEditPlaylist(id) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [id], function() {
-                document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
-            }, "${remoteApiSessionId}");
+            PlaylistResource.startEditPaylist({
+                playlist : id
+            });
+            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
         }
 
     </script>

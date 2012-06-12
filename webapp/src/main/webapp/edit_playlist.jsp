@@ -77,7 +77,7 @@
 
         function swapTracks(index) {
             EditPlaylistResource.moveTracks({
-                first : firstItem + index,
+                from : firstItem + index,
                 count : 1,
                 offset : 1
             });
@@ -97,33 +97,36 @@
         }
 
         function loadRows(from, count) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.getPlaylist", [firstItem + from, count], function(result) {
-                if (Math.floor((totalCount - 1) / itemsPerPage) != Math.floor((result.playlist.count - 1) / itemsPerPage)) {
-                    totalCount = result.playlist.count;
-                    refreshPager();
-                } else {
-                    totalCount = result.playlist.count;
-                }
-                if (result.playlist.userPrivate) {
-                    $jQ("#privatePlaylist").attr("checked",  "checked");
-                } else {
-                    $jQ("#privatePlaylist").removeAttr("checked");
-                }
-                for (var i = from; i < from + count; i++) {
-                    if (i >= 0 && i < itemsPerPage) {
-                        if (firstItem + i >= totalCount) {
-                            $jQ("#trackTableRow" + i).remove();
-                        } else  {
-                            var row = $jQ("#trackTableRow" + i);
-                            if (row.size() == 0) {
-                                $jQ("#trackTable > tbody").append(createTableRow(i, result.tracks[i - from]));
-                            } else {
-                                row.replaceWith(createTableRow(i, result.tracks[i - from]));
-                            }
+            var playlist = EditPlaylistResource.getPlaylist();
+            var tracks = EditPlaylistResource.getPlaylistTracks({
+                from : from,
+                count : count
+            });
+            if (Math.floor((totalCount - 1) / itemsPerPage) != Math.floor((playlist.trackCount - 1) / itemsPerPage)) {
+                totalCount = playlist.trackCount;
+                refreshPager();
+            } else {
+                totalCount = playlist.trackCount;
+            }
+            if (playlist.userPrivate) {
+                $jQ("#privatePlaylist").attr("checked", "checked");
+            } else {
+                $jQ("#privatePlaylist").removeAttr("checked");
+            }
+            for (var i = from; i < from + count; i++) {
+                if (i >= 0 && i < itemsPerPage) {
+                    if (firstItem + i >= totalCount) {
+                        $jQ("#trackTableRow" + i).remove();
+                    } else  {
+                        var row = $jQ("#trackTableRow" + i);
+                        if (row.size() == 0) {
+                            $jQ("#trackTable > tbody").append(createTableRow(i, tracks[i - from]));
+                        } else {
+                            row.replaceWith(createTableRow(i, tracks[i - from]));
                         }
                     }
                 }
-            }, "${remoteApiSessionId}");
+            }
         }
 
         function swapRemoteCall(swapTopIndex, callback) {
@@ -162,9 +165,8 @@
         }
 
         function cancelEditPlaylist() {
-            jsonRpc('${servletUrl}', "EditPlaylistService.cancelEditPlaylist", [], function() {
-                document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
-            }, "${remoteApiSessionId}");
+            EditPlaylistResource.cancelPlaylist();
+            document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
         }
     </script>
 

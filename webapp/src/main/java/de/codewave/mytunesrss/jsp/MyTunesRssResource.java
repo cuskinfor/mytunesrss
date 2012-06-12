@@ -61,7 +61,7 @@ public enum MyTunesRssResource {
     }
 
     public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
-        Playlist playlist = (Playlist) MyTunesRssRemoteEnv.getSessionForRegularSession(request).getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+        Playlist playlist = (Playlist) request.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
         if (playlist != null) {
             request.setAttribute("stateEditPlaylist", true);
             request.setAttribute("editPlaylistName", playlist.getName());

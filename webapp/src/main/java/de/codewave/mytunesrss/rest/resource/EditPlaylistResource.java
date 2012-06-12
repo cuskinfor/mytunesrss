@@ -9,25 +9,17 @@ import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.remote.Session;
-import de.codewave.mytunesrss.remote.render.RenderMachine;
 import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.BadRequestException;
-import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -36,7 +28,7 @@ import java.util.*;
 public class EditPlaylistResource extends RestResource {
 
     @GET
-    @Produces({"application/json"})
+    @Produces("application/json")
     @GZIP
     public PlaylistRepresentation getPlaylist() throws SQLException {
         return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST));
@@ -44,29 +36,29 @@ public class EditPlaylistResource extends RestResource {
 
     @GET
     @Path("tracks")
-    @Produces({"application/json"})
+    @Produces("application/json")
     @GZIP
     public List<TrackRepresentation> getPlaylistTracks(
-            @QueryParam("first") @DefaultValue("0") int first,
+            @QueryParam("from") @DefaultValue("0") int from,
             @QueryParam("count") @DefaultValue("0") int count
     ) throws SQLException {
         List<Track> playlistTracks = (List<Track>) myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS);
-        if (first > 0 && first < playlistTracks.size()) {
-            return toTrackRepresentations(MyTunesRssUtils.getSubList(playlistTracks, first, count));
+        if (from >= 0 && from < playlistTracks.size()) {
+            return toTrackRepresentations(MyTunesRssUtils.getSubList(playlistTracks, from, count));
         }
         return Collections.emptyList();
     }
 
     @POST
-    @Produces({"application/json"})
+    @Produces("application/json")
     @GZIP
     public PlaylistRepresentation addTracks(
-            @QueryParam("track") String[] track,
-            @QueryParam("album") String[] album,
-            @QueryParam("albumArtist") String[] albumArtist,
-            @QueryParam("artist") String[] artist,
-            @QueryParam("genre") String[] genre,
-            @QueryParam("playlist") String[] playlist
+            @FormParam("track") String[] track,
+            @FormParam("album") String[] album,
+            @FormParam("albumArtist") String[] albumArtist,
+            @FormParam("artist") String[] artist,
+            @FormParam("genre") String[] genre,
+            @FormParam("playlist") String[] playlist
     ) throws SQLException {
         if (track != null && track.length > 0) {
             addTracks(FindTrackQuery.getForIds(track));
@@ -89,7 +81,7 @@ public class EditPlaylistResource extends RestResource {
     }
 
     @DELETE
-    @Produces({"application/json"})
+    @Produces("application/json")
     @GZIP
     public PlaylistRepresentation removeTracks(
             @QueryParam("track") String[] track,
@@ -152,8 +144,8 @@ public class EditPlaylistResource extends RestResource {
     @POST
     @Path("save")
     public void savePlaylist(
-            @QueryParam("name") String playlistName,
-            @QueryParam("private") Boolean userPrivate
+            @FormParam("name") String playlistName,
+            @FormParam("private") Boolean userPrivate
     ) throws SQLException {
         Playlist playlist = (Playlist) myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
         if (StringUtils.isNotBlank(playlistName)) {
@@ -198,12 +190,12 @@ public class EditPlaylistResource extends RestResource {
      */
     @POST
     @Path("move")
-    @Produces({"application/json"})
+    @Produces("application/json")
     @GZIP
     public PlaylistRepresentation moveTracks(
-            @QueryParam("first") @DefaultValue("0") int first,
-            @QueryParam("count") @DefaultValue("0") int count,
-            @QueryParam("offset") @DefaultValue("0") int offset
+            @FormParam("from") @DefaultValue("0") int first,
+            @FormParam("count") @DefaultValue("0") int count,
+            @FormParam("offset") @DefaultValue("0") int offset
     ) {
         MyTunesRssWebUtils.movePlaylistTracks((List<Track>) myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS), first, count, offset);
         return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST));
