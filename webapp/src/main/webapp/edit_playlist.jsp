@@ -17,6 +17,7 @@
 
     <jsp:include page="incl_service_messages.jsp" />
 
+    <script src="${appUrl}/rest.js?ts=${sessionCreationTime}" type="text/javascript"></script>
     <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 
     <script type="text/javascript">
@@ -75,20 +76,24 @@
         }
 
         function swapTracks(index) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.moveTracks", [firstItem + index, 1, 1], function() {
-                loadRows(index, 2);
-            }, "${remoteApiSessionId}");
+            EditPlaylistResource.moveTracks({
+                first : firstItem + index,
+                count : 1,
+                offset : 1
+            });
+            loadRows(index, 2);
         }
 
         function removeTrack(index, id) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.removeTracks", [jQuery.makeArray([id])], function() {
-                if (index == 0 && firstItem == totalCount - 1) {
-                    firstItem -= itemsPerPage;
-                    loadView();
-                } else {
-                    loadRows(index, itemsPerPage - index);
-                }
-            }, "${remoteApiSessionId}");
+            EditPlaylistResource.removeTracks({
+                track : jQuery.makeArray([id])
+            });
+            if (index == 0 && firstItem == totalCount - 1) {
+                firstItem -= itemsPerPage;
+                loadView();
+            } else {
+                loadRows(index, itemsPerPage - index);
+            }
         }
 
         function loadRows(from, count) {
