@@ -204,6 +204,12 @@
             <param-name>javax.ws.rs.Application</param-name>
             <param-value>de.codewave.mytunesrss.rest.RestApplication</param-value>
         </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet>
+        <servlet-name>resteasy-jsapi</servlet-name>
+        <servlet-class>org.jboss.resteasy.jsapi.JSAPIServlet</servlet-class>
+        <load-on-startup>2</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
@@ -232,6 +238,10 @@
     <servlet-mapping>
         <servlet-name>resteasy</servlet-name>
         <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>resteasy-jsapi</servlet-name>
+        <url-pattern>/rest.js</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>30</session-timeout>
