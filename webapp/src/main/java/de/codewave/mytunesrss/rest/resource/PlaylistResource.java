@@ -39,7 +39,7 @@ public class PlaylistResource extends RestResource {
     @Path("{playlist}/edit")
     public Response startEditPaylist(
             @Context UriInfo uriInfo,
-            @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist
+            @PathParam("playlist") String playlist
     ) throws SQLException {
         DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlist, null, true, false));
         if (queryResult.getResultSize() == 0) {
@@ -56,7 +56,7 @@ public class PlaylistResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public PlaylistRepresentation getPlaylist(
-            @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist
+            @PathParam("playlist") String playlist
     ) throws SQLException {
         DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlist, null, true, false));
         return queryResult.getResultSize() == 1 ? toPlaylistRepresentation(queryResult.getResult(1)) : null;
@@ -67,7 +67,7 @@ public class PlaylistResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<TrackRepresentation> getTracks(
-            @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist,
+            @PathParam("playlist") String playlist,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlist, sortOrder));
@@ -79,7 +79,7 @@ public class PlaylistResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<PlaylistRepresentation> getPlaylistChildren(
-            @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist,
+            @PathParam("playlist") String playlist,
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("owner") @DefaultValue("false") boolean matchingOwner,
             @QueryParam("type") List<PlaylistType> types
@@ -92,26 +92,25 @@ public class PlaylistResource extends RestResource {
     @Path("{playlist}/tags")
     @Produces({"application/json"})
     public List<String> getTags(
-            @PathParam("playlist") @NotBlank(message = "Playlist id must not be blank.") String playlist
+            @PathParam("playlist") String playlist
     ) throws SQLException {
         DataStoreQuery.QueryResult<String> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAllTagsForPlaylistQuery(playlist));
         return queryResult.getResults();
     }
 
-    @POST
-    @Path("{playlist}/tags")
-    @Consumes("application/x-www-form-urlencoded")
-    public void setTags(
+    @PUT
+    @Path("{playlist}/tag/{tag}")
+    @Produces({"application/json"})
+    public List<String> setTag(
             @PathParam("playlist") String playlist,
-            @FormParam("tag") List<String> tags
+            @PathParam("tag") String tag
     ) throws SQLException {
-        for (String tag : tags) {
-            TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(getTracks(playlist), tag));
-        }
+        TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(getTrackIds(playlist), tag));
+        return getTags(playlist);
     }
 
-    private String[] getTracks(String playlist) throws SQLException {
-        List<? extends Track> tracks = getTracks(playlist, SortOrder.KeepOrder);
+    private String[] getTrackIds(String playlist) throws SQLException {
+        List<TrackRepresentation> tracks = getTracks(playlist, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
         for (Track track : tracks) {
             trackIds.add(track.getId());
@@ -120,14 +119,13 @@ public class PlaylistResource extends RestResource {
     }
 
     @DELETE
-    @Path("{playlist}/tags")
-    @Consumes("application/x-www-form-urlencoded")
-    public void deleteTags(
+    @Path("{playlist}/tag/{tag}")
+    @Produces({"application/json"})
+    public List<String> deleteTag(
             @PathParam("playlist") String playlist,
-            @FormParam("tag") List<String> tags
+            @PathParam("tag") String tag
     ) throws SQLException {
-        for (String tag : tags) {
-            TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(getTracks(playlist), tag));
-        }
+        TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(getTrackIds(playlist), tag));
+        return getTags(playlist);
     }
 }

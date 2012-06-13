@@ -7,9 +7,11 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
@@ -20,18 +22,36 @@ import java.util.List;
 import java.util.Set;
 
 @ValidateRequest
-@Path("album/{album}")
+@Path("artist/{artist}/album/{album}")
 public class AlbumResource extends RestResource {
+
+    @GET
+    @Produces({"application/json"})
+    @GZIP
+    public AlbumRepresentation getAlbum(
+            @PathParam("artist") String artist,
+            @PathParam("album") String album
+    ) throws SQLException {
+        String decodedAlbum = MyTunesRssBase64Utils.decodeToString(album);
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), decodedAlbum, MyTunesRssBase64Utils.decodeToString(artist), null, 0, -1, -1, true, FindAlbumQuery.AlbumType.ALL));
+        for (Album result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
+            if (result.getName().equals(decodedAlbum)) {
+                return toAlbumRepresentation(result);
+            }
+        }
+        return null;
+    }
 
     @GET
     @Path("tracks")
     @Produces({"application/json"})
     @GZIP
     public List<TrackRepresentation> getAlbumTracks(
+            @PathParam("artist") String artist,
             @PathParam("album") String album,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[]{MyTunesRssBase64Utils.decodeToString(album)}, null, sortOrder));
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[]{album}, new String[]{artist}, sortOrder));
         return toTrackRepresentations(queryResult.getResults());
     }
 
@@ -39,26 +59,27 @@ public class AlbumResource extends RestResource {
     @Path("tags")
     @Produces({"application/json"})
     public List<String> getTags(
+            @PathParam("artist") String artist,
             @PathParam("album") String album
     ) throws SQLException {
-        DataStoreQuery.QueryResult<String> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAllTagsForAlbumQuery(MyTunesRssBase64Utils.decodeToString(album)));
+        DataStoreQuery.QueryResult<String> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAllTagsForAlbumQuery(artist, album));
         return queryResult.getResults();
     }
 
-    @POST
-    @Path("tags")
-    @Consumes("application/x-www-form-urlencoded")
-    public void setTags(
+    @PUT
+    @Path("tag/{tag}")
+    @Produces({"application/json"})
+    public List<String> setTag(
+            @PathParam("artist") String artist,
             @PathParam("album") String album,
-            @FormParam("tag") List<String> tags
+            @PathParam("tag") String tag
     ) throws SQLException {
-        for (String tag : tags) {
-            TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(getTracks(MyTunesRssBase64Utils.decodeToString(album)), tag));
-        }
+        TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(getTrackIds(artist, album), tag));
+        return getTags(artist, album);
     }
 
-    private String[] getTracks(String album) throws SQLException {
-        List<? extends Track> tracks = getAlbumTracks(album, SortOrder.KeepOrder);
+    private String[] getTrackIds(String artist, String album) throws SQLException {
+        List<TrackRepresentation> tracks = getAlbumTracks(artist, album, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
         for (Track track : tracks) {
             trackIds.add(track.getId());
@@ -67,14 +88,14 @@ public class AlbumResource extends RestResource {
     }
 
     @DELETE
-    @Path("tags")
-    @Consumes("application/x-www-form-urlencoded")
-    public void deleteTags(
+    @Path("tag/{tag}")
+    @Produces({"application/json"})
+    public List<String> deleteTag(
+            @PathParam("artist") String artist,
             @PathParam("album") String album,
-            @FormParam("tag") List<String> tags
+            @PathParam("tag") String tag
     ) throws SQLException {
-        for (String tag : tags) {
-            TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(getTracks(MyTunesRssBase64Utils.decodeToString(album)), tag));
-        }
+        TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(getTrackIds(artist, album), tag));
+        return getTags(artist, album);
     }
 }

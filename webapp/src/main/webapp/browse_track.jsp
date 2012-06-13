@@ -36,6 +36,8 @@
 
 <body class="browse">
 
+<jsp:include page="incl_edit_tags.jsp" />
+
 <div class="body">
 
 <div class="head">
@@ -96,8 +98,8 @@
                                        linkFragment="${linkFragment}"
                                        filename="${mtfn:webSafeFileName(filename)}"
                                        zipFileCount="${fn:length(tracks)}"
-                                       editTagsType="Playlist"
-                                       editTagsId="${param.playlist}"
+                                       editTagsResource="PlaylistResource"
+                                       editTagsParams="{playlist:'${param.playlist}'}"
                                        defaultPlaylistName="${mtfn:webSafeFileName(filename)}"
                                        shareText="${filename}"/>
 
@@ -166,8 +168,8 @@
                                            linkFragment="${sectionArguments}"
                                            filename="${mtfn:webSafeFileName(sectionFileName)}"
                                            zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
-                                           editTagsType="${cwfn:choose(empty track.sectionPlaylistId, 'Track', 'Playlist')}"
-                                           editTagsId="${cwfn:choose(empty track.sectionPlaylistId, cwfn:encodeUrl(track.sectionIds), track.sectionPlaylistId)}"
+                                           editTagsResource="${cwfn:choose(empty track.sectionPlaylistId, 'TrackResource', 'PlaylistResource')}"
+                                           editTagsParams="{${cwfn:choose(empty track.sectionPlaylistId, track.sectionIds, track.sectionPlaylistId)}}"
                                            defaultPlaylistName="${sectionFileName}"
                                            shareText="${sectionFileName}" />
 
@@ -249,8 +251,8 @@
                                        filename="${mtfn:virtualTrackName(track)}"
                                        track="${track}"
                                        externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
-                                       editTagsType="Track"
-                                       editTagsId="${track.id}"
+                                       editTagsResource="TrackResource"
+                                       editTagsParams="{track:'${track.id}'}"
                                        defaultPlaylistName="${track.name}"
                                        shareText="${shareText}" />
                     </c:when>
@@ -296,7 +298,6 @@
 <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('title')}"/>
 <jsp:include page="incl_external_sites_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp"/>
-<jsp:include page="incl_edit_tags.jsp" />
 
 <c:if test="${yahoo}">
     <script type="text/javascript" src="http://mediaplayer.yahoo.com/js"></script>

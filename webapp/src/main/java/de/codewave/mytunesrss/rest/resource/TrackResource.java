@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,27 +34,25 @@ public class TrackResource extends RestResource {
         return queryResult.getResults();
     }
 
-    @POST
-    @Path("tags")
-    @Consumes("application/x-www-form-urlencoded")
-    public void setTags(
+    @PUT
+    @Path("tag/{tag}")
+    @Produces({"application/json"})
+    public List<String> setTag(
             @PathParam("track") String track,
-            @FormParam("tag") List<String> tags
+            @PathParam("tag") String tag
     ) throws SQLException {
-        for (String tag : tags) {
-            TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(new String[] {track}, tag));
-        }
+        TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(new String[] {track}, tag));
+        return getTags(track);
     }
 
     @DELETE
-    @Path("tags")
-    @Consumes("application/x-www-form-urlencoded")
-    public void deleteTags(
+    @Path("tag/{tag}")
+    @Produces({"application/json"})
+    public List<String> deleteTag(
             @PathParam("track") String track,
-            @FormParam("tag") List<String> tags
+            @PathParam("tag") String tag
     ) throws SQLException {
-        for (String tag : tags) {
-            TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(new String[] {track}, tag));
-        }
+        TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(new String[] {track}, tag));
+        return getTags(track);
     }
 }

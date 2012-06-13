@@ -47,7 +47,7 @@ public class RestResource {
 
     protected ArtistRepresentation toArtistRepresentation(Artist artist) {
         ArtistRepresentation representation = new ArtistRepresentation(artist);
-        representation.getUri().put("albums", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").build(MyTunesRssBase64Utils.encode(artist.getName())));
+        representation.getUri().put("albums", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").build(artist.getName()));
         if (getAuthUser().isPlaylist()) {
             representation.getUri().put("m3u", getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), fn(artist, "m3u")));
             representation.getUri().put("xspf", getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), fn(artist, "xspf")));
@@ -71,8 +71,8 @@ public class RestResource {
 
     protected AlbumRepresentation toAlbumRepresentation(Album album) {
         AlbumRepresentation representation = new AlbumRepresentation(album);
-        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getArtistAlbumTracks").build(MyTunesRssBase64Utils.encode(album.getArtist()), MyTunesRssBase64Utils.encode(album.getName())));
-        representation.getUri().put("artist", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).build(MyTunesRssBase64Utils.encode(album.getArtist()), MyTunesRssBase64Utils.encode(album.getName())));
+        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").build(album.getArtist(), album.getName()));
+        representation.getUri().put("artist", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).build(album.getArtist()));
         if (StringUtils.isNotBlank(album.getImageHash())) {
             representation.getUri().put("image", getAppURI(MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
         }

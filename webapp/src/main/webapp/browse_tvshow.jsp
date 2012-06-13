@@ -35,6 +35,8 @@
 
 <body class="browse">
 
+<jsp:include page="incl_edit_tags.jsp"/>
+
 <div class="body">
 
     <div class="head">
@@ -155,23 +157,23 @@
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seriesSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seriesSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seriesSectionPlaylistId)}</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${mtfn:webSafeFileName(track.series)}</c:set>
                                     <c:set var="playlistName">${track.series}</c:set>
-                                    <c:set var="editTagsType">Playlist</c:set>
-                                    <c:set var="editTagsId">${track.seriesSectionPlaylistId}</c:set>
+                                    <c:set var="editTagsResource">PlaylistResource</c:set>
+                                    <c:set var="editTagsParams">{track:'${track.seriesSectionPlaylistId}'}</c:set>
                                 </c:when>
                                 <c:when test="${empty track.id}">
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seasonSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seasonSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seasonSectionPlaylistId)}</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
                                     <c:set var="filename">${mtfn:webSafeFileName(filename)}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
-                                    <c:set var="editTagsType">Playlist</c:set>
-                                    <c:set var="editTagsId">${track.seasonSectionPlaylistId}</c:set>
+                                    <c:set var="editTagsResource">PlaylistResource</c:set>
+                                    <c:set var="editTagsParams">{playlist:'${track.seasonSectionPlaylistId}'}</c:set>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="linkFragment">track=${track.id}</c:set>
                                     <c:set var="filename">${mtfn:webSafeFileName(track.name)}</c:set>
                                     <c:set var="playlistName">${track.name}</c:set>
-                                    <c:set var="editTagsType">Track</c:set>
-                                    <c:set var="editTagsId">${track.id}</c:set>
+                                    <c:set var="editTagsResource">TrackResource</c:set>
+                                    <c:set var="editTagsParams">{track:'${track.id}'}</c:set>
                                 </c:otherwise>
                             </c:choose>
                             <c:choose>
@@ -182,8 +184,8 @@
                                                    filename="${filename}"
                                                    track="${cwfn:choose(!empty track.id , track, null)}"
                                                    externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
-                                                   editTagsType="${editTagsType}"
-                                                   editTagsId="${editTagsId}"
+                                                   editTagsResource="${editTagsResource}"
+                                                   editTagsParams="${editTagsParams}"
                                                    defaultPlaylistName="${playlistName}"
                                                    shareText="${playlistName}"/>
                                 </c:when>
@@ -229,7 +231,6 @@
 <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('title')}"/>
 <jsp:include page="incl_external_sites_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp"/>
-<jsp:include page="incl_edit_tags.jsp"/>
 
 </body>
 

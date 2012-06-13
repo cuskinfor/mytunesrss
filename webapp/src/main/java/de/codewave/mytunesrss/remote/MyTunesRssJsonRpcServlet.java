@@ -31,7 +31,6 @@ public class MyTunesRssJsonRpcServlet extends JSONRPCServlet {
         JSONRPCBridge.getGlobalBridge().registerObject("GenreService", new GenreService());
         JSONRPCBridge.getGlobalBridge().registerObject("TranscodingService", new TranscodingService());
         JSONRPCBridge.getGlobalBridge().registerObject("RemoteControlService", new RemoteControlService());
-        JSONRPCBridge.getGlobalBridge().registerObject("TagService", new TagService());
         JSONRPCBridge.getGlobalBridge().registerObject("SessionService", new SessionService());
         try {
             JSONRPCBridge.setSerializer(new MyTunesRssJsonSerializer());

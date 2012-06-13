@@ -22,53 +22,56 @@
 
 <script type="text/javascript">
     $jQ("#editTagsDialog_newTag").autocomplete("${servletUrl}/getTagsForAutocomplete");
-    function initExistingTags(json) {
+    function initExistingTags(tags) {
         $jQ("#editTagsDialog_existingTags").empty();
-        for (var i = 0; i < json.results.length; i++) {
-            $jQ("#editTagsDialog_existingTags").append("<option value='" + json.results[i] + "'>" + json.results[i] + "</option>");
+        for (var i = 0; i < tags.length; i++) {
+            $jQ("#editTagsDialog_existingTags").append("<option value='" + tags[i] + "'>" + tags[i] + "</option>");
         }
     }
-    function openEditTagsDialog(json, editTagsType, editTagsId, title) {
-        initExistingTags(json);
-        $jQ("#editTagsDialog").data("editTagsType", editTagsType);
-        $jQ("#editTagsDialog").data("editTagsId", editTagsId);
+    function openEditTagsDialog(editTagsResource, editTagsParams, title) {
+        initExistingTags(editTagsResource.getTags(editTagsParams));
+        $jQ("#editTagsDialog").data("editTagsResource", editTagsResource);
+        $jQ("#editTagsDialog").data("editTagsParams", editTagsParams);
         $jQ("#editTagsDialog_targetInfo").text("\"" + jQuery.trim(title) + "\"");
         openDialog("#editTagsDialog");
     }
+    function getSelectedTags() {
+        return $jQ.map($jQ('#editTagsDialog_existingTags :selected'), function(e) {
+            return $jQ(e).text();
+        });
+    }
+    function getParams(tag) {
+        return $jQ.extend({tag:tag}, $jQ("#editTagsDialog").data("editTagsParams"));
+    }
     function removeTags() {
-        var tagIds = $jQ.map($jQ('#editTagsDialog_existingTags :selected'), function(e) { return $jQ(e).text(); });
-        jsonRpc('${servletUrl}', 'TagService.removeTagsFrom' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId"), tagIds], function() {
-            jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId")], function(json) {
-                initExistingTags(json);
-            } ,'${remoteApiSessionId}');
-        } ,'${remoteApiSessionId}');
+        var result;
+        var tags = getSelectedTags();
+        for (var i = 0; i < tags.length; i++) {
+            result = $jQ("#editTagsDialog").data("editTagsResource").deleteTag(getParams(tags[i]));
+        }
+        initExistingTags(result);
     }
     function addTag() {
-        var tags = jQuery.trim($jQ("#editTagsDialog_newTag").val());
-        if (tags != '') {
-            jsonRpc('${servletUrl}', 'TagService.setTagsTo' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId"), tags.split(" ")], function() {
-                $jQ("#editTagsDialog_newTag").val("");
-                jsonRpc('${servletUrl}', 'TagService.getTagsFor' + $jQ("#editTagsDialog").data("editTagsType"), [$jQ("#editTagsDialog").data("editTagsId")], function(json) {
-                    initExistingTags(json);
-                } ,'${remoteApiSessionId}');
-            } ,'${remoteApiSessionId}');
+        var tag = jQuery.trim($jQ("#editTagsDialog_newTag").val());
+        if (tag != "") {
+            var tags = $jQ("#editTagsDialog").data("editTagsResource").setTag(getParams(tag));
+            initExistingTags(tags);
         }
     }
-    function showEditTagsTooltip(element, type, id) {
+    function showEditTagsTooltip(element, editTagsResource, editTagsParams) {
         $jQ(element).removeAttr('title');
         $jQ(element).removeAttr('alt');
-        jsonRpc("${servletUrl}", "TagService.getTagsFor" + type, [id], function(json) {
-            if (json.results.length > 0) {
-                $jQ("#tooltip_edittags").empty();
-                for (var i = 0; i < json.results.length; i++) {
-                    $jQ("#tooltip_edittags").append(json.results[i] + "<br />");
-                }
-                showTooltipElement(document.getElementById("tooltip_edittags"));
-            } else {
-                $jQ(element).attr('title', '<fmt:message key="tooltip.editTags"/>');
-                $jQ(element).attr('alt', '<fmt:message key="tooltip.editTags"/>');
+        var tags = editTagsResource.getTags(editTagsParams);
+        if (tags.length > 0) {
+            $jQ("#tooltip_edittags").empty();
+            for (var i = 0; i < tags.length; i++) {
+                $jQ("#tooltip_edittags").append(tags[i] + "<br />");
             }
-        }, '${remoteApiSessionId}');
+            showTooltipElement(document.getElementById("tooltip_edittags"));
+        } else {
+            $jQ(element).attr('title', '<fmt:message key="tooltip.editTags"/>');
+            $jQ(element).attr('alt', '<fmt:message key="tooltip.editTags"/>');
+        }
     }
 </script>
 

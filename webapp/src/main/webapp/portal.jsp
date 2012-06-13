@@ -48,6 +48,8 @@
 
 <body onload="document.forms[0].elements['searchTerm'].focus()" class="startpage">
 
+<jsp:include page="incl_edit_tags.jsp" />
+
 <div class="body">
 
     <div class="head">
@@ -184,7 +186,7 @@
 
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td id="playlistNameColumn${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'"</c:if>>
+                <td id="functionsDialogName${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'"</c:if>>
                     <c:choose>
                         <c:when test="${playlist.type != 'ITunesFolder' && playlist.trackCount >= 0}">
                             <a id="linkNameBrowseTrack${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playlistName=${mtfn:encode64(playlist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${playlist.name}" /></a>
@@ -211,8 +213,8 @@
                                    linkFragment="playlist=${playlist.id}"
                                    filename="${mtfn:webSafeFileName(playlist.name)}"
                                    zipFileCount="${playlist.trackCount}"
-                                   editTagsType="Playlist"
-                                   editTagsId="${playlist.id}" />
+                                   editTagsResource="PlaylistResource"
+                                   editTagsParams="{playlist:'${playlist.id}'}" />
                 </td>
             </tr>
         </c:forEach>
@@ -254,7 +256,6 @@
 
 <jsp:include page="incl_select_flashplayer_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp"/>
-<jsp:include page="incl_edit_tags.jsp" />
 
 </body>
 

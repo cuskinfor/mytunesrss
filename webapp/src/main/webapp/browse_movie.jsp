@@ -33,6 +33,8 @@
 
 <body class="browse">
 
+    <jsp:include page="incl_edit_tags.jsp" />
+
     <div class="body">
 
         <div class="head">
@@ -108,8 +110,8 @@
                                                filename="${mtfn:virtualTrackName(track)}"
                                                track="${track}"
                                                externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
-                                               editTagsType="Track"
-                                               editTagsId="${track.id}"
+                                               editTagsResource="TrackResource"
+                                               editTagsParams="{track:'${track.id}'}"
                                                defaultPlaylistName="${track.name}"
                                                shareText="${track.name}" />
                             </c:when>
@@ -149,7 +151,6 @@
     <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('title')}"/>
     <jsp:include page="incl_external_sites_dialog.jsp"/>
     <jsp:include page="incl_functions_menu.jsp"/>
-    <jsp:include page="incl_edit_tags.jsp" />
 
 </body>
 

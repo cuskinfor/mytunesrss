@@ -1,5 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/tags" prefix="mt" %>
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
@@ -11,8 +12,8 @@
 <%@ attribute name="zipFileCount" required="false" type="java.lang.Integer" %>
 <%@ attribute name="track" required="false" type="de.codewave.mytunesrss.datastore.statement.Track" %>
 <%@ attribute name="externalSitesFlag" required="false" type="java.lang.Boolean" %>
-<%@ attribute name="editTagsType" required="false" type="java.lang.String" %>
-<%@ attribute name="editTagsId" required="false" type="java.lang.String" %>
+<%@ attribute name="editTagsResource" required="false" type="java.lang.String" %>
+<%@ attribute name="editTagsParams" required="false" type="java.lang.String" %>
 <%@ attribute name="defaultPlaylistName" required="false" type="java.lang.String" %>
 <%@ attribute name="shareText" required="false" type="java.lang.String" %>
 
@@ -29,8 +30,8 @@
     <a id="fn_externalsites${index}" class="links" title="<fmt:message key="tooltip.externalSites"/>" <c:if test="${!config.showExternalSites}">style="display:none"</c:if> onclick="openExternalSitesDialog($jQ('#functionsDialogName${index}').text()); return false;"><span>External Sites</span></a>
     <c:if test="${!config.showExternalSites}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
-<c:if test="${authUser.editTags && !empty editTagsType && !empty editTagsId}">
-	<a id="fn_edittags${index}" class="tags" <c:if test="${!config.showEditTags}">style="display:none"</c:if> onclick="jsonRpc('${servletUrl}', 'TagService.getTagsFor${editTagsType}', ['${editTagsId}'], function(json) {openEditTagsDialog(json, '${editTagsType}', '${editTagsId}', $jQ('#functionsDialogName${index}').text());}, '${remoteApiSessionId}');return false;"  onmouseover="showEditTagsTooltip(this, '${editTagsType}', '${editTagsId}');" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));" title="<fmt:message key="tooltip.editTags"/>"><span>Edit Tags</span></a>
+<c:if test="${authUser.editTags && !empty editTagsResource && !empty editTagsParams}">
+	<a id="fn_edittags${index}" class="tags" <c:if test="${!config.showEditTags}">style="display:none"</c:if> onclick="openEditTagsDialog(${editTagsResource}, ${editTagsParams}, $jQ('#functionsDialogName${index}').text());return false" onmouseover="showEditTagsTooltip(this, ${editTagsResource}, ${editTagsParams});" onmouseout="hideTooltipElement(document.getElementById('tooltip_edittags'));" title="<fmt:message key="tooltip.editTags"/>"><span>Edit Tags</span></a>
     <c:if test="${!config.showEditTags}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.share && !empty shareText}"> <%-- TODO: config.showShare, do we need it? if so => implement it --%>

@@ -69,11 +69,11 @@ public class CompleteTest {
         driver.findElement(By.id("password")).clear();
         driver.findElement(By.id("password")).sendKeys(password);
         driver.findElement(By.id("linkSubmitLogin")).click();
-        driver.findElement(By.id("playlistNameColumn10")).click();
+        driver.findElement(By.id("functionsDialogName10")).click();
         driver.findElement(By.id("linkParentFolder")).click();
-        driver.findElement(By.id("playlistNameColumn14")).click();
+        driver.findElement(By.id("functionsDialogName14")).click();
         driver.findElement(By.id("linkHomeFolder")).click();
-        driver.findElement(By.id("playlistNameColumn10")).click();
+        driver.findElement(By.id("functionsDialogName10")).click();
         driver.findElement(By.id("linkButtonBrowseTrack1")).click();
         driver.findElement(By.id("linkPage3")).click();
         driver.findElement(By.id("linkPage2")).click();

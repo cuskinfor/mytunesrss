@@ -27,6 +27,7 @@ public class RestApplication extends Application {
                 GenreResource.class,
                 SessionResource.class,
                 TvShowResource.class,
+                TrackResource.class,
                 AlbumResource.class}));
     }
 }

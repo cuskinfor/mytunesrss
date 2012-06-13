@@ -57,6 +57,8 @@
 
 <body class="browse">
 
+<jsp:include page="incl_edit_tags.jsp" />
+
 <div class="body">
 
 <div class="head">
@@ -177,8 +179,8 @@
                                        filename="${mtfn:virtualAlbumName(album)}"
                                        zipFileCount="${album.trackCount}"
                                        externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}"
-                                       editTagsType="Album"
-                                       editTagsId="${album.name}"
+                                       editTagsResource="AlbumResource"
+                                       editTagsParams="{album:'${album.name}',artist:'${album.albumartist}'}"
                                        defaultPlaylistName="${album.name}"
                                        shareText="${album.name}" />
 
@@ -292,7 +294,6 @@
 <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('album')}"/>
 <jsp:include page="incl_external_sites_dialog.jsp"/>
 <jsp:include page="incl_functions_menu.jsp"/>
-<jsp:include page="incl_edit_tags.jsp" />
 
 </body>
 

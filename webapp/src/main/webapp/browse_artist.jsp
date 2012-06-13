@@ -52,6 +52,8 @@
 
 <body class="browse">
 
+    <jsp:include page="incl_edit_tags.jsp" />
+
     <div class="body">
 
         <div class="head">
@@ -145,8 +147,8 @@
                                                        filename="${mtfn:virtualArtistName(artist)}"
                                                        zipFileCount="${artist.trackCount}"
                                                        externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}"
-                                                       editTagsType="Artist"
-                                                       editTagsId="${artist.name}"
+                                                       editTagsResource="ArtistResource"
+                                                       editTagsParams="{artist:'${artist.name}'}"
                                                        defaultPlaylistName="${artist.name}"
                                                        shareText="${artist.name}" />
                                     </c:when>
@@ -185,7 +187,6 @@
     <c:set var="externalSiteDefinitions" scope="request" value="${mtfn:externalSiteDefinitions('artist')}"/>
     <jsp:include page="incl_external_sites_dialog.jsp"/>
     <jsp:include page="incl_functions_menu.jsp"/>
-    <jsp:include page="incl_edit_tags.jsp" />
 
 </body>
 
