@@ -113,14 +113,22 @@ public class RestResource {
 
     protected PlaylistRepresentation toPlaylistRepresentation(Playlist playlist) {
         PlaylistRepresentation representation = new PlaylistRepresentation(playlist);
-        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
-        representation.getUri().put("children", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
-        if (StringUtils.isNotBlank(playlist.getContainerId())) {
-            representation.getUri().put("parent", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
+        Playlist currentlyEditedPlaylist = (Playlist) myRequest.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
+        if (playlist == currentlyEditedPlaylist) {
+            representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build());
+        } else {
+            representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
         }
-        representation.getUri().put("tags", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
-        if (getAuthUser().isDownload()) {
-            representation.getUri().put("download", getAppURI(MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
+        if (playlist.getId() != null) {
+            // persistent playlist
+            representation.getUri().put("children", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
+            if (StringUtils.isNotBlank(playlist.getContainerId())) {
+                representation.getUri().put("parent", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
+            }
+            representation.getUri().put("tags", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
+            if (getAuthUser().isDownload()) {
+                representation.getUri().put("download", getAppURI(MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
+            }
         }
         return representation;
     }

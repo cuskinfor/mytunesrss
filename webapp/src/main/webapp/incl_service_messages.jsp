@@ -12,8 +12,8 @@ var serviceMessages = {
     LocalizationContext context = (LocalizationContext)request.getSession().getAttribute(Config.FMT_LOCALIZATION_CONTEXT + ".session");
     ResourceBundle resourceBundle=context.getResourceBundle();for (Enumeration keys = resourceBundle.getKeys(); keys.hasMoreElements(); ) {
         String key = (String)keys.nextElement();
-        if (key.startsWith("service.")) {
-            out.println("\"" + key + "\" : \"" + resourceBundle.getString(key) + "\",");
+        if (key.startsWith("resterror.")) {
+            out.println("\"" + key.substring("resterror.".length()) + "\" : \"" + resourceBundle.getString(key) + "\",");
         }
     }
 

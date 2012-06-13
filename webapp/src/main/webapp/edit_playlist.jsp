@@ -17,7 +17,6 @@
 
     <jsp:include page="incl_service_messages.jsp" />
 
-    <script src="${appUrl}/rest.js?ts=${sessionCreationTime}" type="text/javascript"></script>
     <script src="${appUrl}/js/prototype.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 
     <script type="text/javascript">
@@ -129,10 +128,6 @@
             }
         }
 
-        function swapRemoteCall(swapTopIndex, callback) {
-            jsonRpc('${servletUrl}', "EditPlaylistService.moveTracks", [firstItem + swapTopIndex, 1, 1], callback, "${remoteApiSessionId}");
-        }
-
         function createPager() {
             var templatePager = new Template($jQ("#templatePager").text());
             var templatePagerCommand = new Template($jQ("#templatePagerCommand").text());
@@ -155,13 +150,17 @@
         }
 
         function savePlaylist() {
-            jsonRpc('${servletUrl}', "EditPlaylistService.savePlaylist", [$jQ("#playlistName").val(), $jQ("#privatePlaylist:checked").size() == 1], function(result, error) {
-                if (error) {
-                    displayError(serviceMessages[error.msg]);
-                } else {
-                    document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
+            EditPlaylistResource.savePlaylist({
+                name : $jQ("#playlistName").val(),
+                private : $jQ("#privatePlaylist:checked").size() == 1,
+                $callback : function(code, request, result) {
+                    if (Math.floor(code / 100) != 2) {
+                        displayError(serviceMessages[request.responseText]);
+                    } else {
+                        document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
+                    }
                 }
-            }, "${remoteApiSessionId}");
+            });
         }
 
         function cancelEditPlaylist() {

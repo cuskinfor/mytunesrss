@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.rest.resource.LibraryResource;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 import org.slf4j.Logger;
@@ -19,9 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 
@@ -43,7 +40,7 @@ public class AuthInterceptor implements PreProcessInterceptor {
         }
         User user = MyTunesRssWebUtils.getAuthUser(myRequest);
         if (user == null) {
-            return ServerResponse.copyIfNotServerResponse(Response.status(HttpServletResponse.SC_UNAUTHORIZED).build());
+            throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
         }
         return null;
     }

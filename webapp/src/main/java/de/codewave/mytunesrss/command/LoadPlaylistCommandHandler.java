@@ -8,8 +8,7 @@ import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.remote.service.EditPlaylistService;
+import de.codewave.mytunesrss.rest.resource.EditPlaylistResource;
 import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
@@ -28,8 +27,8 @@ public abstract class LoadPlaylistCommandHandler extends MyTunesRssCommandHandle
             List<Track> tracks = new ArrayList<Track>(getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(),
                                                                                                                 playlistId,
                                                                                                                 null)).getResults());
-            MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, playlist);
-            MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest()).setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, tracks);
+            getRequest().getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, playlist);
+            getRequest().getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS, tracks);
         } else {
             throw new IllegalArgumentException("Missing parameter!");
         }

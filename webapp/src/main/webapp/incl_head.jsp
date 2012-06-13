@@ -22,6 +22,7 @@
 <script src="${appUrl}/ctnotify/jquery.ctNotify.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.simplemodal.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.cookie.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+<script src="${appUrl}/rest.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script type="text/javascript">
     var $jQ=jQuery.noConflict();
 

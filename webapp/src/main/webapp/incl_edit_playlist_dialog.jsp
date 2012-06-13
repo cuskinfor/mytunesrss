@@ -29,16 +29,16 @@
     </div>
     <script type="text/javascript">
         function editPlaylistDialog_edit() {
-            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [$jQ("#playlistSelection option:selected").val()], function() {
-                document.location.href = "${backUrl}";
-            }, "${remoteApiSessionId}");
+            PlaylistResource.startEditPaylist({
+                playlist : $jQ("#playlistSelection option:selected").val()
+            });
             $jQ.modal.close();
+            document.location.href = "${backUrl}";
         }
         function editPlaylistDialog_new() {
-            jsonRpc('${servletUrl}', "EditPlaylistService.startEditPlaylist", [null], function() {
-                document.location.href = "${backUrl}";
-            }, "${remoteApiSessionId}");
+            PlaylistResource.startEditNewPlaylist();
             $jQ.modal.close();
+            document.location.href = "${backUrl}";
         }
     </script>
 </c:if>

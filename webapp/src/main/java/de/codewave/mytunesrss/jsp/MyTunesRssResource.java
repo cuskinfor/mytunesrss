@@ -6,10 +6,8 @@ package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.UserAgent;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.remote.service.EditPlaylistService;
+import de.codewave.mytunesrss.rest.resource.EditPlaylistResource;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +59,7 @@ public enum MyTunesRssResource {
     }
 
     public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
-        Playlist playlist = (Playlist) request.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST);
+        Playlist playlist = (Playlist) request.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
         if (playlist != null) {
             request.setAttribute("stateEditPlaylist", true);
             request.setAttribute("editPlaylistName", playlist.getName());

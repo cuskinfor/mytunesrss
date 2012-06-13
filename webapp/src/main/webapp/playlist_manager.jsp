@@ -18,8 +18,6 @@
 
     <jsp:include page="incl_head.jsp"/>
 
-    <script src="${appUrl}/rest.js?ts=${sessionCreationTime}" type="text/javascript"></script>
-
     <script type="text/javascript">
 
         function loadAndEditPlaylist(id) {

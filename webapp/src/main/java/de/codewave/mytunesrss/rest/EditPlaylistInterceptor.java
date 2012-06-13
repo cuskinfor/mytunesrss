@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest;
 
-import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.rest.resource.EditPlaylistResource;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
@@ -30,8 +29,8 @@ public class EditPlaylistInterceptor implements PreProcessInterceptor {
         if (!method.getResourceClass().equals(EditPlaylistResource.class)) {
             return null;
         }
-        if (myRequest.getSession().getAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST) == null) {
-            return ServerResponse.copyIfNotServerResponse(Response.status(HttpServletResponse.SC_CONFLICT).entity("Not currently editing a playlist").build());
+        if (myRequest.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST) == null) {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_PRECONDITION_FAILED, "NOT_EDITING_PLAYLIST");
         }
         return null;
     }

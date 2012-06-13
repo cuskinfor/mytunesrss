@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.remote.service.EditPlaylistService;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -31,8 +30,8 @@ public class PlaylistResource extends RestResource {
     @POST
     @Path("edit")
     public Response startEditNewPlaylist() throws SQLException {
-        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, new Playlist());
-        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>());
+        myRequest.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, new Playlist());
+        myRequest.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>());
         return Response.created(UriBuilder.fromResource(EditPlaylistResource.class).build()).build();
     }
 
@@ -47,8 +46,8 @@ public class PlaylistResource extends RestResource {
             throw new NotFoundException("Playlist \"" + playlist + "\" not found.");
         }
         List<Track> tracks = new ArrayList<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(), playlist, null)).getResults());
-        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST, queryResult.nextResult());
-        myRequest.getSession().setAttribute(EditPlaylistService.KEY_EDIT_PLAYLIST_TRACKS, tracks);
+        myRequest.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, queryResult.nextResult());
+        myRequest.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS, tracks);
         return Response.created(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).build()).build();
     }
 

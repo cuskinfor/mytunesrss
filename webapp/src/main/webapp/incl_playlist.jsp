@@ -23,31 +23,46 @@
 </c:if>
 
 <script type="text/javascript">
-    function addToPlaylist(artists, genres, tracks, fullAlbums) {
+    function addToPlaylist(artists, genres, tracks) {
         if (artists != null && artists.length > 0 && artists[0] != '') {
-            addArtistsToPlaylist(artists, fullAlbums);
+            addArtistsToPlaylist(artists);
         } else if (genres != null && genres.length > 0 && genres[0] != '') {
-            addGenresToPlaylist(genres, fullAlbums);
+            addGenresToPlaylist(genres);
         } else {
             addTracksToPlaylist(tracks);
         }
     }
+    function addTracksToPlaylistInternal(params) {
+        var playlist  = EditPlaylistResource.addTracks(params);
+        $jQ("#editPlaylistTrackCount").html(playlist.trackCount);
+    }
     function addAlbumsToPlaylist(albums, albumArtists) {
-        jsonRpc('${servletUrl}', 'EditPlaylistService.addAlbums', [albums, albumArtists], updateEditPlaylistCount, '${remoteApiSessionId}');
+        addTracksToPlaylistInternal({
+            album : albums,
+            albumArtist : albumArtists
+        });
     }
-    function addArtistsToPlaylist(artists, fullAlbums) {
-        jsonRpc('${servletUrl}', 'EditPlaylistService.addArtists', [artists, fullAlbums], updateEditPlaylistCount, '${remoteApiSessionId}');
+    function addArtistsToPlaylist(artists) {
+        addTracksToPlaylistInternal({
+            artist : artists
+            // fullAlbums
+        });
     }
-    function addGenresToPlaylist(genres, fullAlbums) {
-        jsonRpc('${servletUrl}', 'EditPlaylistService.addGenres', [genres, fullAlbums], updateEditPlaylistCount, '${remoteApiSessionId}');
+    function addGenresToPlaylist(genres) {
+        addTracksToPlaylistInternal({
+            genre : genres
+            // fullAlbums
+        });
     }
     function addTracksToPlaylist(tracks) {
-        jsonRpc('${servletUrl}', 'EditPlaylistService.addTracks', [tracks], updateEditPlaylistCount, '${remoteApiSessionId}');
+        addTracksToPlaylistInternal({
+            track : tracks
+        });
     }
     function addPlaylistTracksToPlaylist(playlist) {
-        jsonRpc('${servletUrl}', 'EditPlaylistService.addPlaylistTracks', [playlist], updateEditPlaylistCount, '${remoteApiSessionId}');
-    }
-    function updateEditPlaylistCount(result) {
-        $jQ("#editPlaylistTrackCount").html(result.count);
+        addTracksToPlaylistInternal({
+            playlist : playlist
+            // fullAlbums
+        });
     }
 </script>
