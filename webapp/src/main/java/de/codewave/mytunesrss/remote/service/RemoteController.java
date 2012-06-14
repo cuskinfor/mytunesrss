@@ -4,9 +4,6 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 
 import java.util.List;
 
-/**
- * de.codewave.mytunesrss.remote.service.RemoteControlService
- */
 public interface RemoteController {
     void loadPlaylist(String playlistId) throws Exception;
 

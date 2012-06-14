@@ -100,9 +100,9 @@
             }
         }
 
-        function startPlayback(index, callback) {
+        function startPlayback(index) {
             unhighlightAllTracks();
-            execJsonRpc('RemoteControlService.play', [currentPage * itemsPerPage + index], callback);
+            MediaPlayerResource.setStatus({action:PLAY,track:currentPage * itemsPerPage + index});
         }
 
         function highlightTrack(index, className) {
@@ -151,28 +151,29 @@
             }
         }
 
-        function getStateAndUpdateInterface() {
-            execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], updateInterface);
-        }
-
         function play() {
-            execJsonRpc('RemoteControlService.play', [-1], getStateAndUpdateInterface);
+            MediaPlayerResource.setStatus({action:PLAY});
+            updateInterface(MediaPlayerResource.getStatus());
         }
 
         function pause() {
-            execJsonRpc('RemoteControlService.pause', [], getStateAndUpdateInterface);
+            MediaPlayerResource.setStatus({action:PAUSE});
+            updateInterface(MediaPlayerResource.getStatus());
         }
 
         function stop() {
-            execJsonRpc('RemoteControlService.stop', [], getStateAndUpdateInterface);
+            MediaPlayerResource.setStatus({action:STOP});
+            updateInterface(MediaPlayerResource.getStatus());
         }
 
         function nextTrack() {
-            execJsonRpc('RemoteControlService.next', [], getStateAndUpdateInterface);
+            MediaPlayerResource.setStatus({action:NEXT});
+            updateInterface(MediaPlayerResource.getStatus());
         }
 
         function previousTrack() {
-            execJsonRpc('RemoteControlService.prev', [], getStateAndUpdateInterface);
+            MediaPlayerResource.setStatus({action:PREVIOUS});
+            updateInterface(MediaPlayerResource.getStatus());
         }
 
         function shuffle() {
@@ -180,18 +181,18 @@
         }
 
         function toggleFullScreen() {
-            execJsonRpc('RemoteControlService.setFullScreen', [!myFullScreen], function(result) {
-                myFullScreen = result;
-            });
+            MediaPlayerResource.setStatus({fullscreen:!myFullScreen});
+            myFullScreen = !myFullScreen;
+            updateInterface(MediaPlayerResource.getStatus());
         }
 
         function init() {
             createPlaylist();
-            execJsonRpc('RemoteControlService.getCurrentTrackInfo', [], init2);
+            init2(MediaPlayerResource.getStatus());
         }
 
         function getStateAndUpdateInterfacePeriodic() {
-            getStateAndUpdateInterface();
+            updateInterface(MediaPlayerResource.getStatus());
             setTimeout(getStateAndUpdateInterfacePeriodic, 2000);
         }
 
@@ -200,9 +201,8 @@
             if (!trackInfo.playing) {
                 <c:choose>
                     <c:when test="${param.fullScreen == 'true'}">
-                        startPlayback(0, function() {
-                            toggleFullScreen();
-                        })
+                        startPlayback(0);
+                        toggleFullScreen();
                     </c:when>
                     <c:otherwise>
                         startPlayback(0);
@@ -211,21 +211,19 @@
             }
         }
 
-        function execJsonRpc(method, params, callback) {
-            jsonRpcNoLoadingIndicator("${servletUrl}", method, params, callback, "${remoteApiSessionId}");
-        }
-
       $jQ(document).ready(function(){
         $jQ("#volume").slider({
             value:0,
             slide:function(event, ui) {
-                execJsonRpc('RemoteControlService.setVolume', [ui.value], getStateAndUpdateInterface);
+                MediaPlayerResource.setStatus({volume:ui.value});
+                updateInterface(MediaPlayerResource.getStatus());
             }
         });
         $jQ("#progress").slider({
             value:0,
             slide:function(event, ui) {
-                execJsonRpc('RemoteControlService.seek', [ui.value], getStateAndUpdateInterface);
+                MediaPlayerResource.setStatus({action:SEEK,seek:ui.value});
+                updateInterface(MediaPlayerResource.getStatus());
             }
         });
       });
@@ -330,37 +328,21 @@
             if (targets.length > 0) {
                 $jQ.modal.close();
                 showLoading('<fmt:message key="switchingAirtunesTarget"/>');
-                jsonRpcNoLoadingIndicator(
-                        '${servletUrl}',
-                        'RemoteControlService.setAirtunesTargets',
-                        [
-                            targets
-                        ],
-                        function(json) {
-                            hideLoading();
-                        },
-                        '${remoteApiSessionId}'
-                );
+                MediaPlayerResource.setStatus({airtunes:targets});
+                hideLoading();
             } else {
                 displayError('<fmt:message key="airtunesTargetDialog.selectAtLeastOneSpeaker"/>');
             }
         }
 
         function openSpeakerSelection() {
-            jsonRpc(
-                    "${servletUrl}",
-                    "RemoteControlService.getRaopDevices",
-                    [],
-                    function(json) {
-                        $jQ("#devicelist").empty();
-                        $jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");
-                        for (var i = 0; i < json.length; i++) {
-                            $jQ("#devicelist").append("<input type='checkbox' value='" + json[i].host + "' /> " + json[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "<br/>");
-                        }
-                        openDialog("#airtunesTargetDialog");
-                    },
-                    "${remoteApiSessionId}"
-            )
+            var airtunesTargets = SessionResource.getSettings().airtunesTargets;
+            $jQ("#devicelist").empty();
+            $jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");
+            for (var i = 0; i < airtunesTargets.length; i++) {
+                $jQ("#devicelist").append("<input type='checkbox' value='" + airtunesTargets[i].host + "' /> " + airtunesTargets[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "<br/>");
+            }
+            openDialog("#airtunesTargetDialog");
         }
     </script>
 

@@ -25,18 +25,25 @@
         }
 
         function showExif(exifUrl) {
-            ajax(exifUrl, function(data) {
-                $jQ("#exifData").empty();
-                if (data.length > 0) {
-                    $jQ("#exifData").append("<table>");
-                    $jQ.each(data, function(index, field) {
-                        $jQ("#exifData").append("<tr><td align=\"right\">" + field.name + ":</td><td id=\"value_" + field.name.replace(/[^a-zA-Z0-9]/g, "_") + "\" align=\"left\">" + field.value + "</td></tr>");
-                    });
-                    $jQ("#exifData").append("<table>");
-                } else {
-                    $jQ("#exifData").append("<p><fmt:message key="noExifData"/></p>");
+            showLoading("loading...");
+            new $jQ.ajax({
+                url : exifUrl,
+                type : "GET",
+                processData : false,
+                success : function(data) {
+                    hideLoading();
+                    $jQ("#exifData").empty();
+                    if (data.length > 0) {
+                        $jQ("#exifData").append("<table>");
+                        $jQ.each(data, function(index, field) {
+                            $jQ("#exifData").append("<tr><td align=\"right\">" + field.name + ":</td><td id=\"value_" + field.name.replace(/[^a-zA-Z0-9]/g, "_") + "\" align=\"left\">" + field.value + "</td></tr>");
+                        });
+                        $jQ("#exifData").append("<table>");
+                    } else {
+                        $jQ("#exifData").append("<p><fmt:message key="noExifData"/></p>");
+                    }
+                    openDialog("#displayExifDialog");
                 }
-                openDialog("#displayExifDialog");
             });
         }
     </script>

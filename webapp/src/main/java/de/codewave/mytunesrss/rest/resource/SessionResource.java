@@ -6,8 +6,10 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -34,7 +36,17 @@ public class SessionResource extends RestResource {
         Map settings = new HashMap();
         settings.put("transcoders", getTranscoders());
         settings.put("permissions", getPermissions());
+        settings.put("airtunesTargets", getAirtunesTargets());
         return settings;
+    }
+
+    private List<BonjourDeviceRepresentation> getAirtunesTargets() {
+        Collection<BonjourDevice> devices = MyTunesRss.VLC_PLAYER.getRaopDevices();
+        List<BonjourDeviceRepresentation> airtunesTargets = new ArrayList<BonjourDeviceRepresentation>(devices.size());
+        for (BonjourDevice device : devices) {
+            airtunesTargets.add(new BonjourDeviceRepresentation(device));
+        }
+        return airtunesTargets;
     }
 
     public List<String> getTranscoders() {
