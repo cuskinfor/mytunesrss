@@ -21,6 +21,11 @@
 
     <script type="text/javascript">
 
+        // make JSON arrays work in REST client framework
+        JSON = JSON || {};
+        JSON.stringify = function(value) { return value.toJSON(); };
+        JSON.parse = JSON.parse || function(jsonsring) { return jsonsring.evalJSON(true); };
+
         var trackNames = new Array(
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
                 "<c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />"<c:if test="${!trackLoopStatus.last}">,</c:if>
@@ -102,7 +107,7 @@
 
         function startPlayback(index) {
             unhighlightAllTracks();
-            MediaPlayerResource.setStatus({action:PLAY,track:currentPage * itemsPerPage + index});
+            MediaPlayerResource.setStatus({action:"PLAY",track:"" + (currentPage * itemsPerPage + index)});
         }
 
         function highlightTrack(index, className) {
@@ -152,27 +157,27 @@
         }
 
         function play() {
-            MediaPlayerResource.setStatus({action:PLAY});
+            MediaPlayerResource.setStatus({action:"PLAY"});
             updateInterface(MediaPlayerResource.getStatus());
         }
 
         function pause() {
-            MediaPlayerResource.setStatus({action:PAUSE});
+            MediaPlayerResource.setStatus({action:"PAUSE"});
             updateInterface(MediaPlayerResource.getStatus());
         }
 
         function stop() {
-            MediaPlayerResource.setStatus({action:STOP});
+            MediaPlayerResource.setStatus({action:"STOP"});
             updateInterface(MediaPlayerResource.getStatus());
         }
 
         function nextTrack() {
-            MediaPlayerResource.setStatus({action:NEXT});
+            MediaPlayerResource.setStatus({action:"NEXT"});
             updateInterface(MediaPlayerResource.getStatus());
         }
 
         function previousTrack() {
-            MediaPlayerResource.setStatus({action:PREVIOUS});
+            MediaPlayerResource.setStatus({action:"PREVIOUS"});
             updateInterface(MediaPlayerResource.getStatus());
         }
 
@@ -222,7 +227,7 @@
         $jQ("#progress").slider({
             value:0,
             slide:function(event, ui) {
-                MediaPlayerResource.setStatus({action:SEEK,seek:ui.value});
+                MediaPlayerResource.setStatus({action:"SEEK",seek:ui.value});
                 updateInterface(MediaPlayerResource.getStatus());
             }
         });
@@ -328,7 +333,8 @@
             if (targets.length > 0) {
                 $jQ.modal.close();
                 showLoading('<fmt:message key="switchingAirtunesTarget"/>');
-                MediaPlayerResource.setStatus({airtunes:targets});
+                MediaPlayerResource.setAirtunes({$entity:targets});
+                //MediaPlayerResource.setStatus({airtunes:targets});
                 hideLoading();
             } else {
                 displayError('<fmt:message key="airtunesTargetDialog.selectAtLeastOneSpeaker"/>');
