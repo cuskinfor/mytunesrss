@@ -1,12 +1,18 @@
 <?xml version="1.0"?>
 <enunciate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://enunciate.codehaus.org/schemas/enunciate-1.25.xsd">
 
+    <api-classes>
+        <include pattern="de.codewave.mytunesrss.rest.representation.*" />
+        <include pattern="de.codewave.mytunesrss.rest.resource.*" />
+    </api-classes>
+
     <modules>
         <c disabled="true" />
         <csharp disabled="true" />
         <java-client disabled="true" />
         <obj-c disabled="true" />
         <xml disabled="true" />
+        <docs disabled="false" title="Codewave MyTunesRSS REST API" includeExampleXml="true" includeExampleJson="true" />
     </modules>
 
 </enunciate>
