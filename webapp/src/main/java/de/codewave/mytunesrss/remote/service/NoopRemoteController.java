@@ -25,15 +25,7 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void loadTrack(String trackId) {
-        // intentionally left blank
-    }
-
     public void loadTracks(String[] trackIds) {
-        // intentionally left blank
-    }
-
-    public void addTrack(String trackId, boolean startPlaybackIfStopped) {
         // intentionally left blank
     }
 

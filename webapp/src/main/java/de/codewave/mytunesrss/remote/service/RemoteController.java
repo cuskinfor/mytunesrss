@@ -13,11 +13,7 @@ public interface RemoteController {
 
     void loadGenre(String genreName) throws Exception;
 
-    void loadTrack(String trackId) throws Exception;
-
     void loadTracks(String[] trackIds) throws Exception;
-
-    void addTrack(String trackId, boolean startPlaybackIfStopped) throws Exception;
 
     void addTracks(String[] trackIds, boolean startPlaybackIfStopped) throws Exception;
 
