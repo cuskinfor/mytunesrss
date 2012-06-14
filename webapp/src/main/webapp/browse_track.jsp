@@ -168,8 +168,6 @@
                                            linkFragment="${sectionArguments}"
                                            filename="${mtfn:webSafeFileName(sectionFileName)}"
                                            zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
-                                           editTagsResource="${cwfn:choose(empty track.sectionPlaylistId, 'TrackResource', 'PlaylistResource')}"
-                                           editTagsParams="{${cwfn:choose(empty track.sectionPlaylistId, track.sectionIds, track.sectionPlaylistId)}}"
                                            defaultPlaylistName="${sectionFileName}"
                                            shareText="${sectionFileName}" />
 

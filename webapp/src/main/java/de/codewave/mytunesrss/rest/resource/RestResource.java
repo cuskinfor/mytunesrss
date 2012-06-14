@@ -11,8 +11,6 @@ import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
@@ -99,7 +97,7 @@ public class RestResource {
 
     protected GenreRepresentation toGenreRepresentation(Genre genre) {
         GenreRepresentation representation = new GenreRepresentation(genre);
-        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").build(MyTunesRssBase64Utils.encode(genre.getName())));
+        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").build(genre.getName()));
         return representation;
     }
 

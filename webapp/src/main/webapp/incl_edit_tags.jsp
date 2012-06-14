@@ -40,21 +40,19 @@
             return $jQ(e).text();
         });
     }
-    function getParams(tag) {
-        return $jQ.extend({tag:tag}, $jQ("#editTagsDialog").data("editTagsParams"));
-    }
     function removeTags() {
         var result;
         var tags = getSelectedTags();
         for (var i = 0; i < tags.length; i++) {
-            result = $jQ("#editTagsDialog").data("editTagsResource").deleteTag(getParams(tags[i]));
+            result = $jQ("#editTagsDialog").data("editTagsResource").deleteTag($jQ.extend({tag:tags[i]}, $jQ("#editTagsDialog").data("editTagsParams")));
         }
         initExistingTags(result);
     }
     function addTag() {
         var tag = jQuery.trim($jQ("#editTagsDialog_newTag").val());
         if (tag != "") {
-            var tags = $jQ("#editTagsDialog").data("editTagsResource").setTag(getParams(tag));
+            var tags = $jQ("#editTagsDialog").data("editTagsResource").setTag($jQ.extend({tag:tag}, $jQ("#editTagsDialog").data("editTagsParams")));
+            $jQ("#editTagsDialog_newTag").val("");
             initExistingTags(tags);
         }
     }

@@ -738,7 +738,7 @@
         <sql>
             SELECT DISTINCT(t.tag) FROM tag t, track tr
             WHERE tr.album = :album
-            AND tr.albumartist = :artist
+            AND tr.album_artist = :artist
             AND tr.id = t.track_id
         </sql>
     </statement>

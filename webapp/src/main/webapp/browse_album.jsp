@@ -180,7 +180,7 @@
                                        zipFileCount="${album.trackCount}"
                                        externalSitesFlag="${mtfn:externalSites('album') && !mtfn:unknown(album.name) && authUser.externalSites}"
                                        editTagsResource="AlbumResource"
-                                       editTagsParams="{album:'${album.name}',artist:'${album.albumartist}'}"
+                                       editTagsParams="{album:'${album.name}',artist:'${album.artist}'}"
                                        defaultPlaylistName="${album.name}"
                                        shareText="${album.name}" />
 

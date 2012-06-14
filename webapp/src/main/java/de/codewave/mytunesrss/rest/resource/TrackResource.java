@@ -5,18 +5,14 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
+import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.RemoveTagFromTracksStatement;
+import de.codewave.mytunesrss.datastore.statement.SetTagToTracksStatement;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
-import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import java.sql.SQLException;
 import java.util.List;
 

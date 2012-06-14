@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -31,7 +30,7 @@ public class GenreResource extends RestResource {
             @PathParam("genre") String genre,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForGenre(getAuthUser(), new String[] {MyTunesRssBase64Utils.decodeToString(genre)}, sortOrder));
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForGenre(getAuthUser(), new String[] {genre}, sortOrder));
         return toTrackRepresentations(queryResult.getResults());
     }
 
