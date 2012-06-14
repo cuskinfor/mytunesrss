@@ -125,7 +125,9 @@ public class MediaPlayerResource extends RestResource {
 
     @GET
     @Path("playlist/track/{index}")
-    public TrackRepresentation getTrack(int index) throws Exception {
+    public TrackRepresentation getTrack(
+            @PathParam("index") int index
+    ) throws Exception {
         return toTrackRepresentation(getController().getTrack(index));
     }
 

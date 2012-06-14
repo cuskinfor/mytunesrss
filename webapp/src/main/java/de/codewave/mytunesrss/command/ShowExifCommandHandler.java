@@ -36,6 +36,9 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
         private String myName;
         private String myValue;
 
+        public ExifField() {
+        }
+
         public ExifField(String name, String value) {
             myName = name;
             myValue = value;

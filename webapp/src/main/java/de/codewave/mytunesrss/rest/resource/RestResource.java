@@ -45,16 +45,17 @@ public class RestResource {
 
     protected ArtistRepresentation toArtistRepresentation(Artist artist) {
         ArtistRepresentation representation = new ArtistRepresentation(artist);
-        representation.getUri().put("albums", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").build(artist.getName()));
+        representation.setAlbumsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").build(artist.getName()));
+        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").build(artist.getName()));
         if (getAuthUser().isPlaylist()) {
-            representation.getUri().put("m3u", getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), fn(artist, "m3u")));
-            representation.getUri().put("xspf", getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), fn(artist, "xspf")));
+            representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), fn(artist, "m3u")));
+            representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), fn(artist, "xspf")));
         }
         if (getAuthUser().isRss()) {
-            representation.getUri().put("rss", getAppURI(MyTunesRssCommand.CreateRss, enc("artist=" + b64(artist.getName())), fn(artist, "rss")));
+            representation.setRssUri(getAppURI(MyTunesRssCommand.CreateRss, enc("artist=" + b64(artist.getName())), fn(artist, "rss")));
         }
         if (getAuthUser().isDownload()) {
-            representation.getUri().put("download", getAppURI(MyTunesRssCommand.GetZipArchive, enc("artist=" + b64(artist.getName())), fn(artist, "zip")));
+            representation.setDownloadUri(getAppURI(MyTunesRssCommand.GetZipArchive, enc("artist=" + b64(artist.getName())), fn(artist, "zip")));
         }
         return representation;
     }
@@ -69,20 +70,21 @@ public class RestResource {
 
     protected AlbumRepresentation toAlbumRepresentation(Album album) {
         AlbumRepresentation representation = new AlbumRepresentation(album);
-        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").build(album.getArtist(), album.getName()));
-        representation.getUri().put("artist", myUriInfo.getBaseUriBuilder().path(ArtistResource.class).build(album.getArtist()));
+        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").build(album.getArtist(), album.getName()));
+        representation.setArtistUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).build(album.getArtist()));
+        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getTags").build(album.getArtist(), album.getName()));
         if (StringUtils.isNotBlank(album.getImageHash())) {
-            representation.getUri().put("image", getAppURI(MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
+            representation.setImageUri(getAppURI(MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
         }
         if (getAuthUser().isPlaylist()) {
-            representation.getUri().put("m3u", getAppURI(MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=M3u"), fn(album, "m3u")));
-            representation.getUri().put("xspf", getAppURI(MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=Xspf"), fn(album, "xspf")));
+            representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=M3u"), fn(album, "m3u")));
+            representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=Xspf"), fn(album, "xspf")));
         }
         if (getAuthUser().isRss()) {
-            representation.getUri().put("rss", getAppURI(MyTunesRssCommand.CreateRss, enc("album=" + b64(album.getName())), fn(album, "rss")));
+            representation.setRssUri(getAppURI(MyTunesRssCommand.CreateRss, enc("album=" + b64(album.getName())), fn(album, "rss")));
         }
         if (getAuthUser().isDownload()) {
-            representation.getUri().put("download", getAppURI(MyTunesRssCommand.GetZipArchive, enc("album=" + b64(album.getName())), enc("albumartist=" + b64(album.getArtist())), fn(album, "zip")));
+            representation.setDownloadUri(getAppURI(MyTunesRssCommand.GetZipArchive, enc("album=" + b64(album.getName())), enc("albumartist=" + b64(album.getArtist())), fn(album, "zip")));
         }
         return representation;
     }
@@ -97,7 +99,7 @@ public class RestResource {
 
     protected GenreRepresentation toGenreRepresentation(Genre genre) {
         GenreRepresentation representation = new GenreRepresentation(genre);
-        representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").build(genre.getName()));
+        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").build(genre.getName()));
         return representation;
     }
 
@@ -113,19 +115,19 @@ public class RestResource {
         PlaylistRepresentation representation = new PlaylistRepresentation(playlist);
         Playlist currentlyEditedPlaylist = (Playlist) myRequest.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
         if (playlist == currentlyEditedPlaylist) {
-            representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build());
+            representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build());
         } else {
-            representation.getUri().put("tracks", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
+            representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
         }
         if (playlist.getId() != null) {
             // persistent playlist
-            representation.getUri().put("children", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
+            representation.setChildrenUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
             if (StringUtils.isNotBlank(playlist.getContainerId())) {
-                representation.getUri().put("parent", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
+                representation.setParentUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
             }
-            representation.getUri().put("tags", myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
+            representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
             if (getAuthUser().isDownload()) {
-                representation.getUri().put("download", getAppURI(MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
+                representation.setDownloadUri(getAppURI(MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
             }
         }
         return representation;
@@ -142,24 +144,25 @@ public class RestResource {
     protected TrackRepresentation toTrackRepresentation(Track track) {
         TrackRepresentation representation = new TrackRepresentation(track);
         if (StringUtils.isNotBlank(track.getImageHash())) {
-            representation.getUri().put("image", getAppURI(MyTunesRssCommand.ShowImage, "hash=" + track.getImageHash()));
+            representation.setImageUri(getAppURI(MyTunesRssCommand.ShowImage, "hash=" + track.getImageHash()));
         }
         if (getAuthUser().isPlaylist()) {
-            representation.getUri().put("m3u", getAppURI(MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=M3u", fn(track, "m3u")));
-            representation.getUri().put("xspf", getAppURI(MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=Xspf", fn(track, "xspf")));
+            representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=M3u", fn(track, "m3u")));
+            representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=Xspf", fn(track, "xspf")));
         }
         if (getAuthUser().isRss()) {
-            representation.getUri().put("rss", getAppURI(MyTunesRssCommand.CreateRss, "track=" + track.getId(), fn(track, "rss")));
+            representation.setRssUri(getAppURI(MyTunesRssCommand.CreateRss, "track=" + track.getId(), fn(track, "rss")));
         }
         myRequest.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(myRequest)); // prepare MyTunesFunctions
         if (getAuthUser().isDownload()) {
-            representation.getUri().put("download", UriBuilder.fromUri(MyTunesFunctions.downloadUrl(myRequest, track, null)).build());
+            representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(myRequest, track, null)).build());
         }
         if (MyTunesRssWebUtils.isHttpLiveStreaming(myRequest, track, true)) {
-            representation.getUri().put("playback", UriBuilder.fromUri(MyTunesFunctions.playbackUrl(myRequest, track, null)).build());
+            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(myRequest, track, null)).build());
         } else {
-            representation.getUri().put("playback", UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(myRequest, track, null)).build());
+            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(myRequest, track, null)).build());
         }
+        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(TrackResource.class).path(TrackResource.class, "getTags").build(track.getId()));
         return representation;
     }
 

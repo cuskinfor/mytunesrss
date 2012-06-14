@@ -7,13 +7,26 @@ package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Genre;
 
+import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GenreRepresentation extends Genre {
+/**
+ * Representation of a genre.
+ */
+@XmlRootElement
+public class GenreRepresentation {
 
-    private Map<String, URI> myUri = new HashMap<String, URI>();
+    private URI myTracksUri;
+    private int myAlbumCount;
+    private int myArtistCount;
+    private boolean myHidden;
+    private String myName;
+    private int myTrackCount;
+
+    public GenreRepresentation() {
+    }
 
     public GenreRepresentation(Genre genre) {
         setAlbumCount(genre.getAlbumCount());
@@ -23,7 +36,69 @@ public class GenreRepresentation extends Genre {
         setTrackCount(genre.getTrackCount());
     }
 
-    public Map<String, URI> getUri() {
-        return myUri;
+    /**
+     * URI for getting the tracks of this genre.
+     */
+    public URI getTracksUri() {
+        return myTracksUri;
+    }
+
+    public void setTracksUri(URI tracksUri) {
+        myTracksUri = tracksUri;
+    }
+
+    /**
+     * Number of albums which contain tracks with this genre.
+     */
+    public int getAlbumCount() {
+        return myAlbumCount;
+    }
+
+    public void setAlbumCount(int albumCount) {
+        myAlbumCount = albumCount;
+    }
+
+    /**
+     * Number of artists which have tracks with the genre.
+     */
+    public int getArtistCount() {
+        return myArtistCount;
+    }
+
+    public void setArtistCount(int artistCount) {
+        myArtistCount = artistCount;
+    }
+
+    /**
+     * TRUE of this genre should be hidden from the interface or FALSE otherwise.
+     */
+    public boolean isHidden() {
+        return myHidden;
+    }
+
+    public void setHidden(boolean hidden) {
+        myHidden = hidden;
+    }
+
+    /**
+     * Name of the genre.
+     */
+    public String getName() {
+        return myName;
+    }
+
+    public void setName(String name) {
+        myName = name;
+    }
+
+    /**
+     * Number of tracks with this genre.
+     */
+    public int getTrackCount() {
+        return myTrackCount;
+    }
+
+    public void setTrackCount(int trackCount) {
+        myTrackCount = trackCount;
     }
 }

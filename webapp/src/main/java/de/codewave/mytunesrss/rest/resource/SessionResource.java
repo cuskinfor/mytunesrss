@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
+import de.codewave.mytunesrss.rest.representation.SettingsRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -29,14 +30,19 @@ public class SessionResource extends RestResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionResource.class);
 
+    /**
+     * Get the settings for the current session.
+     *
+     * @return The settings of the current session.
+     */
     @GET
     @Produces({"application/json"})
     @GZIP
-    public Map getSettings() {
-        Map settings = new HashMap();
-        settings.put("transcoders", getTranscoders());
-        settings.put("permissions", getPermissions());
-        settings.put("airtunesTargets", getAirtunesTargets());
+    public SettingsRepresentation getSettings() {
+        SettingsRepresentation settings = new SettingsRepresentation();
+        settings.setTranscoders(getTranscoders());
+        settings.setPermissions(getPermissions());
+        settings.setAirtunesTargets(getAirtunesTargets());
         return settings;
     }
 
@@ -60,12 +66,14 @@ public class SessionResource extends RestResource {
         return transcoderNames;
     }
 
-    public Map<String, Boolean> getPermissions() {
-        Map<String, Boolean> permissions = new HashMap<String, Boolean>();
+    public List<String> getPermissions() {
+        List<String> permissions = new ArrayList<String>();
         User user = getAuthUser();
         for (String permission : new String[] {"audio", "changeEmail", "changePassword", "createPlaylists", "createPublicPlaylists", "download"}) { // TODO
             try {
-                permissions.put(permission, (Boolean) User.class.getMethod("is" + StringUtils.capitalize(permission)).invoke(user));
+                if ((Boolean) User.class.getMethod("is" + StringUtils.capitalize(permission)).invoke(user)) {
+                    permissions.add(permission);
+                }
             } catch (IllegalAccessException e) {
                 LOGGER.warn("Could not get permission \"" + permission + "\".", e);
             } catch (InvocationTargetException e) {
@@ -77,6 +85,9 @@ public class SessionResource extends RestResource {
         return permissions;
     }
 
+    /**
+     * Pings the current session to keep it alive.
+     */
     @POST
     public void ping() {
         // nothing to do, just keep the session alive
