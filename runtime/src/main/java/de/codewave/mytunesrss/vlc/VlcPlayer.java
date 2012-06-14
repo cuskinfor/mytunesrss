@@ -271,7 +271,7 @@ public class VlcPlayer {
             // only local playback
             trimmedTargets.clear();
         }
-        if ((myRaopTargets == null && trimmedTargets != null && !trimmedTargets.isEmpty()) || !CollectionUtils.isEqualCollection(Arrays.asList(myRaopTargets), trimmedTargets)) {
+        if ((myRaopTargets == null && trimmedTargets != null && !trimmedTargets.isEmpty()) || (myRaopTargets != null && !CollectionUtils.isEqualCollection(Arrays.asList(myRaopTargets), trimmedTargets))) {
             HttpResponseStatus oldStatus = getStatus();
             destroy();
             myRaopTargets = trimmedTargets.toArray(new String[trimmedTargets.size()]);

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2012. Codewave Software Michael Descher.
+ * All rights reserved.
+ */
+
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
@@ -6,6 +11,7 @@ import de.codewave.mytunesrss.remote.service.RemoteController;
 import de.codewave.mytunesrss.remote.service.RemoteTrackInfo;
 import de.codewave.mytunesrss.remote.service.VlcPlayerRemoteController;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
+import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
@@ -29,7 +35,9 @@ public class MediaPlayerResource extends RestResource {
 
     @PUT
     @Path("playlist")
-    public void setPlaylist(
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+    public List<TrackRepresentation> setPlaylist(
             @FormParam("playlist") String playlist,
             @FormParam("album") String album,
             @FormParam("artist") String artist,
@@ -47,15 +55,19 @@ public class MediaPlayerResource extends RestResource {
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(tracks);
         }
+        return toTrackRepresentations(getController().getPlaylist());
     }
 
     @POST
     @Path("playlist")
-    public void addToPlaylist(
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+    public List<TrackRepresentation> addToPlaylist(
             @FormParam("track") @NotBlank(message = "No tracks specified.") String[] tracks,
             @FormParam("autostart") @DefaultValue("false") boolean autostart
     ) throws Exception {
         getController().addTracks(tracks, autostart);
+        return toTrackRepresentations(getController().getPlaylist());
     }
 
     @DELETE
@@ -64,8 +76,21 @@ public class MediaPlayerResource extends RestResource {
         getController().clearPlaylist();
     }
 
+    @PUT
+    @Path("airtunes")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public MediaPlayerRepresentation setAirtunes(String[] targets) throws Exception {
+        if (targets != null && targets.length > 0) {
+            getController().setAirtunesTargets(targets);
+        }
+        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
+    }
+
     @POST
-    public void setStatus(
+    @Consumes("application/x-www-form-urlencoded")
+    @Produces("application/json")
+    public MediaPlayerRepresentation setStatus(
             @FormParam("volume") Integer volume,
             @FormParam("fullscreen") Boolean fullscreen,
             @FormParam("airtunes") String[] targets,
@@ -82,7 +107,7 @@ public class MediaPlayerResource extends RestResource {
         if (seek != null) {
             getController().seek(seek);
         }
-        if (targets != null) {
+        if (targets != null && targets.length > 0) {
             getController().setAirtunesTargets(targets);
         }
         if (action != null) {
@@ -115,16 +140,19 @@ public class MediaPlayerResource extends RestResource {
                     throw new IllegalArgumentException("Illegal action \"" + action + "\".");
             }
         }
+        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
     }
 
     @GET
     @Path("playlist")
+    @Produces("application/json")
     public List<TrackRepresentation> getPlaylist() throws Exception {
         return toTrackRepresentations(getController().getPlaylist());
     }
 
     @GET
     @Path("playlist/track/{index}")
+    @Produces("application/json")
     public TrackRepresentation getTrack(
             @PathParam("index") int index
     ) throws Exception {
@@ -132,6 +160,7 @@ public class MediaPlayerResource extends RestResource {
     }
 
     @GET
+    @Produces("application/json")
     public MediaPlayerRepresentation getStatus() throws Exception {
         return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
     }
