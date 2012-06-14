@@ -81,7 +81,7 @@ public class AlbumResource extends RestResource {
     private String[] getTrackIds(String artist, String album) throws SQLException {
         List<TrackRepresentation> tracks = getAlbumTracks(artist, album, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
-        for (Track track : tracks) {
+        for (TrackRepresentation track : tracks) {
             trackIds.add(track.getId());
         }
         return trackIds.toArray(new String[trackIds.size()]);

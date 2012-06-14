@@ -94,7 +94,7 @@ public class ArtistResource extends RestResource {
     private String[] getTrackIds(String artist) throws SQLException {
         List<TrackRepresentation> tracks = getTracks(artist, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
-        for (Track track : tracks) {
+        for (TrackRepresentation track : tracks) {
             trackIds.add(track.getId());
         }
         return trackIds.toArray(new String[trackIds.size()]);

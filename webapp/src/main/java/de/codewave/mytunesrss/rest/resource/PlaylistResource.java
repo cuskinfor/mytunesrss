@@ -114,7 +114,7 @@ public class PlaylistResource extends RestResource {
     private String[] getTrackIds(String playlist) throws SQLException {
         List<TrackRepresentation> tracks = getTracks(playlist, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
-        for (Track track : tracks) {
+        for (TrackRepresentation track : tracks) {
             trackIds.add(track.getId());
         }
         return trackIds.toArray(new String[trackIds.size()]);
