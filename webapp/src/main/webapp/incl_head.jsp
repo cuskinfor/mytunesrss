@@ -162,9 +162,9 @@
                             }
                         } else {
                             if(i > 0)
-                       						data += "&";
-                       					data += REST.Encoding.encodeFormNameOrValue(this.formParameters[i][0]);
-                       					data += "=" + REST.Encoding.encodeFormNameOrValue(this.formParameters[i][1]);
+                                data += "&";
+                            data += REST.Encoding.encodeFormNameOrValue(this.formParameters[i][0]);
+                            data += "=" + REST.Encoding.encodeFormNameOrValue(this.formParameters[i][1]);
                         }
     				}
     			}
