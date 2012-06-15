@@ -326,8 +326,7 @@
             if (targets.length > 0) {
                 $jQ.modal.close();
                 showLoading('<fmt:message key="switchingAirtunesTarget"/>');
-                MediaPlayerResource.setAirtunes({$entity:targets});
-                //MediaPlayerResource.setStatus({airtunes:targets});
+                MediaPlayerResource.setStatus({airtunes:targets});
                 hideLoading();
             } else {
                 displayError('<fmt:message key="airtunesTargetDialog.selectAtLeastOneSpeaker"/>');

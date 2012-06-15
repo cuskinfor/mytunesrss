@@ -52,6 +52,7 @@ public class EditPlaylistResource extends RestResource {
     }
 
     @POST
+    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation addTracks(
@@ -83,6 +84,7 @@ public class EditPlaylistResource extends RestResource {
     }
 
     @DELETE
+    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation removeTracks(
@@ -133,6 +135,7 @@ public class EditPlaylistResource extends RestResource {
     }
 
     @POST
+    @Consumes("application/x-www-form-urlencoded")
     @Path("save")
     public void savePlaylist(
             @FormParam("name") @NotBlank(message = "NO_PLAYLIST_NAME") String playlistName,
@@ -170,6 +173,7 @@ public class EditPlaylistResource extends RestResource {
      */
     @POST
     @Path("move")
+    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation moveTracks(

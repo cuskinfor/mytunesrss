@@ -76,17 +76,6 @@ public class MediaPlayerResource extends RestResource {
         getController().clearPlaylist();
     }
 
-    @PUT
-    @Path("airtunes")
-    @Consumes("application/json")
-    @Produces("application/json")
-    public MediaPlayerRepresentation setAirtunes(String[] targets) throws Exception {
-        if (targets != null && targets.length > 0) {
-            getController().setAirtunesTargets(targets);
-        }
-        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
-    }
-
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
