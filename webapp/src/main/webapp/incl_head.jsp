@@ -76,12 +76,23 @@
     				url += "=" + REST.Encoding.encodePathParamValue(this.matrixParameters[i][1]);
     			}
     			for(var i=0;i<this.queryParameters.length;i++){
-    				if(i == 0)
-    					url += "?";
-    				else
-    					url += "&";
-    				url += REST.Encoding.encodeQueryParamNameOrValue(this.queryParameters[i][0]);
-    				url += "=" + REST.Encoding.encodeQueryParamNameOrValue(this.queryParameters[i][1]);
+                    if (Array.isArray(this.queryParameters[i][1])) {
+                        for (var k = 0; k < this.queryParameters[i][1].length; k++) {
+                            if(i == 0 && k == 0)
+                                url += "?";
+                            else
+                                url += "&";
+                            url += REST.Encoding.encodeQueryParamNameOrValue(this.queryParameters[i][0]);
+                            url += "=" + REST.Encoding.encodeQueryParamNameOrValue(this.queryParameters[i][1][k]);
+                        }
+                    } else {
+                        if(i == 0)
+                            url += "?";
+                        else
+                            url += "&";
+                        url += REST.Encoding.encodeQueryParamNameOrValue(this.queryParameters[i][0]);
+                        url += "=" + REST.Encoding.encodeQueryParamNameOrValue(this.queryParameters[i][1]);
+                    }
     			}
     			for(var i=0;i<this.cookies.length;i++){
     				document.cookie = escape(this.cookies[i][0])
