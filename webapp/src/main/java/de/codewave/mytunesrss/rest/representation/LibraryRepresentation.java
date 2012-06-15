@@ -1,15 +1,16 @@
 package de.codewave.mytunesrss.rest.representation;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Representation of the complete MyTunesRSS library.
  */
 @XmlRootElement
-public class LibraryRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class LibraryRepresentation implements RestRepresentation {
     private URI myAlbumsUri;
     private URI myArtistsUri;
     private URI myGenresUri;
@@ -17,6 +18,8 @@ public class LibraryRepresentation {
     private URI myPlaylistsUri;
     private URI myTracksUri;
     private URI myTvShowsUri;
+    private URI myMediaPlayerUri;
+    private URI mySessionUri;
     private String myVersion;
 
     /**
@@ -30,6 +33,9 @@ public class LibraryRepresentation {
         myVersion = version;
     }
 
+    /**
+     * URI to the list of all albums.
+     */
     public URI getAlbumsUri() {
         return myAlbumsUri;
     }
@@ -38,6 +44,9 @@ public class LibraryRepresentation {
         myAlbumsUri = albumsUri;
     }
 
+    /**
+     * URI to the list of all artists.
+     */
     public URI getArtistsUri() {
         return myArtistsUri;
     }
@@ -46,6 +55,9 @@ public class LibraryRepresentation {
         myArtistsUri = artistsUri;
     }
 
+    /**
+     * URI to the list of all genres.
+     */
     public URI getGenresUri() {
         return myGenresUri;
     }
@@ -54,6 +66,9 @@ public class LibraryRepresentation {
         myGenresUri = genresUri;
     }
 
+    /**
+     * URI to the list of all movies.
+     */
     public URI getMoviesUri() {
         return myMoviesUri;
     }
@@ -62,6 +77,9 @@ public class LibraryRepresentation {
         myMoviesUri = moviesUri;
     }
 
+    /**
+     * URI to the list of all playlists.
+     */
     public URI getPlaylistsUri() {
         return myPlaylistsUri;
     }
@@ -70,6 +88,9 @@ public class LibraryRepresentation {
         myPlaylistsUri = playlistsUri;
     }
 
+    /**
+     * URI to the list of all tracks.
+     */
     public URI getTracksUri() {
         return myTracksUri;
     }
@@ -78,11 +99,36 @@ public class LibraryRepresentation {
         myTracksUri = tracksUri;
     }
 
+    /**
+     * URI to the list of all TV shows.
+     */
     public URI getTvShowsUri() {
         return myTvShowsUri;
     }
 
     public void setTvShowsUri(URI tvShowsUri) {
         myTvShowsUri = tvShowsUri;
+    }
+
+    /**
+     * URI to the media player resource.
+     */
+    public URI getMediaPlayerUri() {
+        return myMediaPlayerUri;
+    }
+
+    public void setMediaPlayerUri(URI mediaPlayerUri) {
+        myMediaPlayerUri = mediaPlayerUri;
+    }
+
+    /**
+     * URI to the session resource.
+     */
+    public URI getSessionUri() {
+        return mySessionUri;
+    }
+
+    public void setSessionUri(URI sessionUri) {
+        mySessionUri = sessionUri;
     }
 }

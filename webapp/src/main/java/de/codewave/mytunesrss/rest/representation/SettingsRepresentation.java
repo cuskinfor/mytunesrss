@@ -1,5 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
 import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
@@ -7,7 +9,8 @@ import java.util.List;
  * Settings of the current session.
  */
 @XmlRootElement
-public class SettingsRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class SettingsRepresentation implements RestRepresentation {
     private List<String> myTranscoders;
 
     private List<BonjourDeviceRepresentation> myAirtunesTargets;

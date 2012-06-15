@@ -7,12 +7,17 @@ package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 
+/**
+ * Representation of a playlist.
+ */
 @XmlRootElement
-public class PlaylistRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class PlaylistRepresentation implements RestRepresentation {
 
     private URI myTracksUri;
     private URI myChildrenUri;
@@ -42,6 +47,9 @@ public class PlaylistRepresentation {
         setPrivate(playlist.isUserPrivate());
     }
 
+    /**
+     * URI to the tracks of the playlist.
+     */
     public URI getTracksUri() {
         return myTracksUri;
     }
@@ -50,6 +58,9 @@ public class PlaylistRepresentation {
         myTracksUri = tracksUri;
     }
 
+    /**
+     * URI to the child playlists.
+     */
     public URI getChildrenUri() {
         return myChildrenUri;
     }
@@ -58,6 +69,9 @@ public class PlaylistRepresentation {
         myChildrenUri = childrenUri;
     }
 
+    /**
+     * URI to the parent playlist.
+     */
     public URI getParentUri() {
         return myParentUri;
     }
@@ -66,6 +80,9 @@ public class PlaylistRepresentation {
         myParentUri = parentUri;
     }
 
+    /**
+     * URI to the tags of the playlist.
+     */
     public URI getTagsUri() {
         return myTagsUri;
     }
@@ -74,6 +91,9 @@ public class PlaylistRepresentation {
         myTagsUri = tagsUri;
     }
 
+    /**
+     * URI for downloading a ZIP archive with all tracks of the playlist.
+     */
     public URI getDownloadUri() {
         return myDownloadUri;
     }
@@ -82,6 +102,9 @@ public class PlaylistRepresentation {
         myDownloadUri = downloadUri;
     }
 
+    /**
+     * Name of the playlist.
+     */
     public String getName() {
         return myName;
     }
@@ -90,6 +113,9 @@ public class PlaylistRepresentation {
         myName = name;
     }
 
+    /**
+     * Playlist ID of the parent playlist.
+     */
     public String getContainerId() {
         return myContainerId;
     }
@@ -98,6 +124,9 @@ public class PlaylistRepresentation {
         myContainerId = containerId;
     }
 
+    /**
+     * TRUE if the playlist should be hidden from user interfaces.
+     */
     public boolean isHidden() {
         return myHidden;
     }
@@ -106,6 +135,9 @@ public class PlaylistRepresentation {
         myHidden = hidden;
     }
 
+    /**
+     * ID of the playlist.
+     */
     public String getId() {
         return myId;
     }
@@ -114,6 +146,9 @@ public class PlaylistRepresentation {
         myId = id;
     }
 
+    /**
+     * Number of tracks in the playlist.
+     */
     public int getTrackCount() {
         return myTrackCount;
     }
@@ -122,6 +157,9 @@ public class PlaylistRepresentation {
         myTrackCount = trackCount;
     }
 
+    /**
+     * Type of the playlist.
+     */
     public PlaylistType getType() {
         return myType;
     }
@@ -130,7 +168,10 @@ public class PlaylistRepresentation {
         myType = type;
     }
 
-    public String isUserOwner() {
+    /**
+     * Owner of the playlist (user name).
+     */
+    public String getOwner() {
         return myOwner;
     }
 
@@ -138,6 +179,9 @@ public class PlaylistRepresentation {
         myOwner = owner;
     }
 
+    /**
+     * TRUE if the playlist is a private playlist of the owner or FALSE for a public playlist.
+     */
     public boolean isPrivate() {
         return myPrivate;
     }

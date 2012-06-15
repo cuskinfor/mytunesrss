@@ -107,7 +107,7 @@
 
         function startPlayback(index) {
             unhighlightAllTracks();
-            MediaPlayerResource.setStatus({action:"PLAY",track:"" + (currentPage * itemsPerPage + index)});
+            updateInterface(MediaPlayerResource.setStatus({action:"PLAY",track:"" + (currentPage * itemsPerPage + index)}));
         }
 
         function highlightTrack(index, className) {
@@ -157,28 +157,23 @@
         }
 
         function play() {
-            MediaPlayerResource.setStatus({action:"PLAY"});
-            updateInterface(MediaPlayerResource.getStatus());
+            updateInterface(MediaPlayerResource.setStatus({action:"PLAY"}));
         }
 
         function pause() {
-            MediaPlayerResource.setStatus({action:"PAUSE"});
-            updateInterface(MediaPlayerResource.getStatus());
+            updateInterface(MediaPlayerResource.setStatus({action:"PAUSE"}));
         }
 
         function stop() {
-            MediaPlayerResource.setStatus({action:"STOP"});
-            updateInterface(MediaPlayerResource.getStatus());
+            updateInterface(MediaPlayerResource.setStatus({action:"STOP"}));
         }
 
         function nextTrack() {
-            MediaPlayerResource.setStatus({action:"NEXT"});
-            updateInterface(MediaPlayerResource.getStatus());
+            updateInterface(MediaPlayerResource.setStatus({action:"NEXT"}));
         }
 
         function previousTrack() {
-            MediaPlayerResource.setStatus({action:"PREVIOUS"});
-            updateInterface(MediaPlayerResource.getStatus());
+            updateInterface(MediaPlayerResource.setStatus({action:"PREVIOUS"}));
         }
 
         function shuffle() {
@@ -186,9 +181,9 @@
         }
 
         function toggleFullScreen() {
-            MediaPlayerResource.setStatus({fullscreen:!myFullScreen});
+            var newStatus = MediaPlayerResource.setStatus({fullscreen:!myFullScreen});
             myFullScreen = !myFullScreen;
-            updateInterface(MediaPlayerResource.getStatus());
+            updateInterface(newStatus);
         }
 
         function init() {
@@ -220,15 +215,13 @@
         $jQ("#volume").slider({
             value:0,
             slide:function(event, ui) {
-                MediaPlayerResource.setStatus({volume:ui.value});
-                updateInterface(MediaPlayerResource.getStatus());
+                updateInterface(MediaPlayerResource.setStatus({volume:ui.value}));
             }
         });
         $jQ("#progress").slider({
             value:0,
             slide:function(event, ui) {
-                MediaPlayerResource.setStatus({action:"SEEK",seek:ui.value});
-                updateInterface(MediaPlayerResource.getStatus());
+                updateInterface(MediaPlayerResource.setStatus({action:"SEEK",seek:ui.value}));
             }
         });
       });

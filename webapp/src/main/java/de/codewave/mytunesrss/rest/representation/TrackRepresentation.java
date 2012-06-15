@@ -9,12 +9,17 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
 
+/**
+ * Representation of a track.
+ */
 @XmlRootElement
-public class TrackRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class TrackRepresentation implements RestRepresentation {
 
     private URI myImageUri;
     private URI myM3uUri;
@@ -23,34 +28,36 @@ public class TrackRepresentation {
     private URI myDownloadUri;
     private URI myPlaybackUri;
     private URI myTagsUri;
+    private URI myArtistUri;
+    private URI myAlbumUri;
     private String myId;
     private String myAlbum;
     private String myAlbumArtist;
     private String myArtist;
     private String myComment;
     private String myComposer;
-    private int myEpisode;
+    private Integer myEpisode;
     private String myFilename;
     private String myGenre;
     private String myImageHash;
-    private long myLastImageUpdate;
+    private Long myLastImageUpdate;
     private MediaType myMediaType;
     private String myMp4Codec;
     private String myName;
     private String myOriginalArtist;
-    private long myPlayCount;
-    private int myPosNumber;
-    private int myPosSize;
-    private boolean myProtected;
-    private long myTsPlayed;
-    private long myTsUpdated;
-    private int mySeason;
+    private Long myPlayCount;
+    private Integer myDiscNumber;
+    private Integer myDiscCount;
+    private Boolean myProtected;
+    private Long myTsPlayed;
+    private Long myTsUpdated;
+    private Integer mySeason;
     private String myTvShow;
     private TrackSource mySource;
-    private int myTime;
-    private int myTrackNumber;
+    private Integer myTime;
+    private Integer myTrackNumber;
     private VideoType myVideoType;
-    private int myYear;
+    private Integer myYear;
 
     public TrackRepresentation() {
     }
@@ -72,8 +79,8 @@ public class TrackRepresentation {
         setName(track.getName());
         setOriginalArtist(track.getOriginalArtist());
         setPlayCount(track.getPlayCount());
-        setPosNumber(track.getPosNumber());
-        setPosSize(track.getPosSize());
+        setDiscNumber(track.getPosNumber());
+        setDiscCount(track.getPosSize());
         setProtected(track.isProtected());
         setTsPlayed(track.getTsPlayed());
         setTsUpdated(track.getTsUpdated());
@@ -86,6 +93,9 @@ public class TrackRepresentation {
         setYear(track.getYear());
     }
 
+    /**
+     * URI to the image of the track.
+     */
     public URI getImageUri() {
         return myImageUri;
     }
@@ -94,6 +104,9 @@ public class TrackRepresentation {
         myImageUri = imageUri;
     }
 
+    /**
+     * URI to an M3U playlist of the track.
+     */
     public URI getM3uUri() {
         return myM3uUri;
     }
@@ -102,6 +115,9 @@ public class TrackRepresentation {
         myM3uUri = m3uUri;
     }
 
+    /**
+     * URI to an XSPF playlist of the track.
+     */
     public URI getXspfUri() {
         return myXspfUri;
     }
@@ -110,6 +126,9 @@ public class TrackRepresentation {
         myXspfUri = xspfUri;
     }
 
+    /**
+     * URI to an RSS feed of the track.
+     */
     public URI getRssUri() {
         return myRssUri;
     }
@@ -118,6 +137,9 @@ public class TrackRepresentation {
         myRssUri = rssUri;
     }
 
+    /**
+     * Download URI of the track.
+     */
     public URI getDownloadUri() {
         return myDownloadUri;
     }
@@ -126,6 +148,9 @@ public class TrackRepresentation {
         myDownloadUri = downloadUri;
     }
 
+    /**
+     * Playback URI of the track.
+     */
     public URI getPlaybackUri() {
         return myPlaybackUri;
     }
@@ -134,6 +159,9 @@ public class TrackRepresentation {
         myPlaybackUri = playbackUri;
     }
 
+    /**
+     * URI to the tags of the track.
+     */
     public URI getTagsUri() {
         return myTagsUri;
     }
@@ -142,6 +170,31 @@ public class TrackRepresentation {
         myTagsUri = tagsUri;
     }
 
+    /**
+     * URI to the artist of the track.
+     */
+    public URI getArtistUri() {
+        return myArtistUri;
+    }
+
+    public void setArtistUri(URI artistUri) {
+        myArtistUri = artistUri;
+    }
+
+    /**
+     * URI to the album of the track.
+     */
+    public URI getAlbumUri() {
+        return myAlbumUri;
+    }
+
+    public void setAlbumUri(URI albumUri) {
+        myAlbumUri = albumUri;
+    }
+
+    /**
+     * Unique ID of the track.
+     */
     public String getId() {
         return myId;
     }
@@ -150,6 +203,9 @@ public class TrackRepresentation {
         myId = id;
     }
 
+    /**
+     * Album of the track.
+     */
     public String getAlbum() {
         return myAlbum;
     }
@@ -158,6 +214,9 @@ public class TrackRepresentation {
         myAlbum = album;
     }
 
+    /**
+     * Artist of the album of the track.
+     */
     public String getAlbumArtist() {
         return myAlbumArtist;
     }
@@ -166,6 +225,9 @@ public class TrackRepresentation {
         myAlbumArtist = albumArtist;
     }
 
+    /**
+     * Artist of the track.
+     */
     public String getArtist() {
         return myArtist;
     }
@@ -174,6 +236,9 @@ public class TrackRepresentation {
         myArtist = artist;
     }
 
+    /**
+     * Track comment.
+     */
     public String getComment() {
         return myComment;
     }
@@ -182,6 +247,9 @@ public class TrackRepresentation {
         myComment = comment;
     }
 
+    /**
+     * Track composer.
+     */
     public String getComposer() {
         return myComposer;
     }
@@ -190,14 +258,20 @@ public class TrackRepresentation {
         myComposer = composer;
     }
 
-    public int getEpisode() {
+    /**
+     * Episode if the track is a TV show episode.
+     */
+    public Integer getEpisode() {
         return myEpisode;
     }
 
-    public void setEpisode(int episode) {
+    public void setEpisode(Integer episode) {
         myEpisode = episode;
     }
 
+    /**
+     * Filename of the track.
+     */
     public String getFilename() {
         return myFilename;
     }
@@ -206,6 +280,9 @@ public class TrackRepresentation {
         myFilename = filename;
     }
 
+    /**
+     * Genre of the track.
+     */
     public String getGenre() {
         return myGenre;
     }
@@ -214,6 +291,9 @@ public class TrackRepresentation {
         myGenre = genre;
     }
 
+    /**
+     * Unique hash of the image of the track.
+     */
     public String getImageHash() {
         return myImageHash;
     }
@@ -222,14 +302,20 @@ public class TrackRepresentation {
         myImageHash = imageHash;
     }
 
-    public long getLastImageUpdate() {
+    /**
+     * Timestamp of the last track image update.
+     */
+    public Long getLastImageUpdate() {
         return myLastImageUpdate;
     }
 
-    public void setLastImageUpdate(long lastImageUpdate) {
+    public void setLastImageUpdate(Long lastImageUpdate) {
         myLastImageUpdate = lastImageUpdate;
     }
 
+    /**
+     * Media type of the track.
+     */
     public MediaType getMediaType() {
         return myMediaType;
     }
@@ -238,6 +324,9 @@ public class TrackRepresentation {
         myMediaType = mediaType;
     }
 
+    /**
+     * MP4 codec if the track is an MP4 file.
+     */
     public String getMp4Codec() {
         return myMp4Codec;
     }
@@ -246,6 +335,9 @@ public class TrackRepresentation {
         myMp4Codec = mp4Codec;
     }
 
+    /**
+     * Name of the track.
+     */
     public String getName() {
         return myName;
     }
@@ -254,6 +346,9 @@ public class TrackRepresentation {
         myName = name;
     }
 
+    /**
+     * Original artist name of the track.
+     */
     public String getOriginalArtist() {
         return myOriginalArtist;
     }
@@ -262,62 +357,86 @@ public class TrackRepresentation {
         myOriginalArtist = originalArtist;
     }
 
-    public long getPlayCount() {
+    /**
+     * Number of times the track has been played.
+     */
+    public Long getPlayCount() {
         return myPlayCount;
     }
 
-    public void setPlayCount(long playCount) {
+    public void setPlayCount(Long playCount) {
         myPlayCount = playCount;
     }
 
-    public int getPosNumber() {
-        return myPosNumber;
+    /**
+     * Disc number of the album of the track.
+     */
+    public Integer getDiscNumber() {
+        return myDiscNumber;
     }
 
-    public void setPosNumber(int posNumber) {
-        myPosNumber = posNumber;
+    public void setDiscNumber(Integer discNumber) {
+        myDiscNumber = discNumber;
     }
 
-    public int getPosSize() {
-        return myPosSize;
+    /**
+     * Number of discs of the album of the track.
+     */
+    public Integer getDiscCount() {
+        return myDiscCount;
     }
 
-    public void setPosSize(int posSize) {
-        myPosSize = posSize;
+    public void setDiscCount(Integer discCount) {
+        myDiscCount = discCount;
     }
 
-    public boolean isProtected() {
+    /**
+     * TRUE if the track is DRM protected.
+     */
+    public Boolean isProtected() {
         return myProtected;
     }
 
-    public void setProtected(boolean aProtected) {
+    public void setProtected(Boolean aProtected) {
         myProtected = aProtected;
     }
 
-    public long getTsPlayed() {
+    /**
+     * Timestamp the track has been played the last time.
+     */
+    public Long getTsPlayed() {
         return myTsPlayed;
     }
 
-    public void setTsPlayed(long tsPlayed) {
+    public void setTsPlayed(Long tsPlayed) {
         myTsPlayed = tsPlayed;
     }
 
-    public long getTsUpdated() {
+    /**
+     * Timestamp the track has been updated.
+     */
+    public Long getTsUpdated() {
         return myTsUpdated;
     }
 
-    public void setTsUpdated(long tsUpdated) {
+    public void setTsUpdated(Long tsUpdated) {
         myTsUpdated = tsUpdated;
     }
 
-    public int getSeason() {
+    /**
+     * Season if the track is a TV show episode.
+     */
+    public Integer getSeason() {
         return mySeason;
     }
 
-    public void setSeason(int season) {
+    public void setSeason(Integer season) {
         mySeason = season;
     }
 
+    /**
+     * Name of the show if the track is a TV show episode.
+     */
     public String getTvShow() {
         return myTvShow;
     }
@@ -326,6 +445,9 @@ public class TrackRepresentation {
         myTvShow = tvShow;
     }
 
+    /**
+     * Source of the track.
+     */
     public TrackSource getSource() {
         return mySource;
     }
@@ -334,22 +456,31 @@ public class TrackRepresentation {
         mySource = source;
     }
 
-    public int getTime() {
+    /**
+     * Length of the track in seconds.
+     */
+    public Integer getTime() {
         return myTime;
     }
 
-    public void setTime(int time) {
+    public void setTime(Integer time) {
         myTime = time;
     }
 
-    public int getTrackNumber() {
+    /**
+     * Track number.
+     */
+    public Integer getTrackNumber() {
         return myTrackNumber;
     }
 
-    public void setTrackNumber(int trackNumber) {
+    public void setTrackNumber(Integer trackNumber) {
         myTrackNumber = trackNumber;
     }
 
+    /**
+     * Video type if the track is a video.
+     */
     public VideoType getVideoType() {
         return myVideoType;
     }
@@ -358,11 +489,14 @@ public class TrackRepresentation {
         myVideoType = videoType;
     }
 
-    public int getYear() {
+    /**
+     * Year of the track.
+     */
+    public Integer getYear() {
         return myYear;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         myYear = year;
     }
 }

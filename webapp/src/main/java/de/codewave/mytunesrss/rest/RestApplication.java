@@ -20,6 +20,7 @@ public class RestApplication extends Application {
                 MethodConstraintViolationExceptionMapper.class,
                 AuthInterceptor.class,
                 EditPlaylistInterceptor.class,
+                IncludeExcludeInterceptor.class,
                 LibraryResource.class,
                 PlaylistResource.class,
                 EditPlaylistResource.class,

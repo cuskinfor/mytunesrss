@@ -6,24 +6,24 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Genre;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Representation of a genre.
  */
 @XmlRootElement
-public class GenreRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class GenreRepresentation implements RestRepresentation {
 
     private URI myTracksUri;
-    private int myAlbumCount;
-    private int myArtistCount;
-    private boolean myHidden;
+    private Integer myAlbumCount;
+    private Integer myArtistCount;
+    private Boolean myHidden;
     private String myName;
-    private int myTrackCount;
+    private Integer myTrackCount;
 
     public GenreRepresentation() {
     }
@@ -50,33 +50,33 @@ public class GenreRepresentation {
     /**
      * Number of albums which contain tracks with this genre.
      */
-    public int getAlbumCount() {
+    public Integer getAlbumCount() {
         return myAlbumCount;
     }
 
-    public void setAlbumCount(int albumCount) {
+    public void setAlbumCount(Integer albumCount) {
         myAlbumCount = albumCount;
     }
 
     /**
      * Number of artists which have tracks with the genre.
      */
-    public int getArtistCount() {
+    public Integer getArtistCount() {
         return myArtistCount;
     }
 
-    public void setArtistCount(int artistCount) {
+    public void setArtistCount(Integer artistCount) {
         myArtistCount = artistCount;
     }
 
     /**
      * TRUE of this genre should be hidden from the interface or FALSE otherwise.
      */
-    public boolean isHidden() {
+    public Boolean isHidden() {
         return myHidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public void setHidden(Boolean hidden) {
         myHidden = hidden;
     }
 
@@ -94,11 +94,11 @@ public class GenreRepresentation {
     /**
      * Number of tracks with this genre.
      */
-    public int getTrackCount() {
+    public Integer getTrackCount() {
         return myTrackCount;
     }
 
-    public void setTrackCount(int trackCount) {
+    public void setTrackCount(Integer trackCount) {
         myTrackCount = trackCount;
     }
 }

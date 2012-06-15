@@ -5,13 +5,11 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
@@ -32,10 +30,9 @@ public class AlbumResource extends RestResource {
             @PathParam("artist") String artist,
             @PathParam("album") String album
     ) throws SQLException {
-        String decodedAlbum = MyTunesRssBase64Utils.decodeToString(album);
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), decodedAlbum, MyTunesRssBase64Utils.decodeToString(artist), null, 0, -1, -1, true, FindAlbumQuery.AlbumType.ALL));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), album, artist, null, -1, -1, -1, true, FindAlbumQuery.AlbumType.ALL));
         for (Album result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
-            if (result.getName().equals(decodedAlbum)) {
+            if (result.getName().equals(album)) {
                 return toAlbumRepresentation(result);
             }
         }

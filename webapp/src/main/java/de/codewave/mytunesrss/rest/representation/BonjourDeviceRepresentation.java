@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.bonjour.BonjourDevice;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -8,12 +9,13 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Bonjour endpoint description.
  */
 @XmlRootElement
-public class BonjourDeviceRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class BonjourDeviceRepresentation implements RestRepresentation {
 
     private String myId;
     private String myName;
     private String myHost;
-    private int myPort;
+    private Integer myPort;
 
     public BonjourDeviceRepresentation() {
     }
@@ -61,11 +63,11 @@ public class BonjourDeviceRepresentation {
     /**
      * The port of the endpoint.
      */
-    public int getPort() {
+    public Integer getPort() {
         return myPort;
     }
 
-    public void setPort(int port) {
+    public void setPort(Integer port) {
         myPort = port;
     }
 }

@@ -1,14 +1,17 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Album;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
+/**
+ * Representation of an album.
+ */
 @XmlRootElement
-public class AlbumRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class AlbumRepresentation implements RestRepresentation {
 
     private URI myTracksUri;
     private URI myArtistUri;
@@ -19,11 +22,11 @@ public class AlbumRepresentation {
     private URI myDownloadUri;
     private URI myTagsUri;
     private String myArtist;
-    private int myArtistCount;
+    private Integer myArtistCount;
     private String myImageHash;
     private String myName;
-    private int myTrackCount;
-    private int myYear;
+    private Integer myTrackCount;
+    private Integer myYear;
 
     public AlbumRepresentation() {
     }
@@ -37,6 +40,9 @@ public class AlbumRepresentation {
         setYear(album.getYear());
     }
 
+    /**
+     * URI to the tracks of the album.
+     */
     public URI getTracksUri() {
         return myTracksUri;
     }
@@ -45,6 +51,9 @@ public class AlbumRepresentation {
         myTracksUri = tracksUri;
     }
 
+    /**
+     * URI to the album artist.
+     */
     public URI getArtistUri() {
         return myArtistUri;
     }
@@ -53,6 +62,9 @@ public class AlbumRepresentation {
         myArtistUri = artistUri;
     }
 
+    /**
+     * URI to the album image.
+     */
     public URI getImageUri() {
         return myImageUri;
     }
@@ -61,6 +73,9 @@ public class AlbumRepresentation {
         myImageUri = imageUri;
     }
 
+    /**
+     * URI for an M3U playlist of the album.
+     */
     public URI getM3uUri() {
         return myM3uUri;
     }
@@ -69,6 +84,9 @@ public class AlbumRepresentation {
         myM3uUri = m3uUri;
     }
 
+    /**
+     * URI for an XSPF playlist of the album.
+     */
     public URI getXspfUri() {
         return myXspfUri;
     }
@@ -77,6 +95,9 @@ public class AlbumRepresentation {
         myXspfUri = xspfUri;
     }
 
+    /**
+     * URI for an RSS feed of the album.
+     */
     public URI getRssUri() {
         return myRssUri;
     }
@@ -85,6 +106,9 @@ public class AlbumRepresentation {
         myRssUri = rssUri;
     }
 
+    /**
+     * URI to an ZIP archive with all tracks of the album.
+     */
     public URI getDownloadUri() {
         return myDownloadUri;
     }
@@ -93,6 +117,9 @@ public class AlbumRepresentation {
         myDownloadUri = downloadUri;
     }
 
+    /**
+     * URI to the tags of the album.
+     */
     public URI getTagsUri() {
         return myTagsUri;
     }
@@ -101,6 +128,9 @@ public class AlbumRepresentation {
         myTagsUri = tagsUri;
     }
 
+    /**
+     * Artist of the album.
+     */
     public String getArtist() {
         return myArtist;
     }
@@ -109,14 +139,20 @@ public class AlbumRepresentation {
         myArtist = artist;
     }
 
-    public int getArtistCount() {
+    /**
+     * Number of individual artists of the tracks of this album.
+     */
+    public Integer getArtistCount() {
         return myArtistCount;
     }
 
-    public void setArtistCount(int artistCount) {
+    public void setArtistCount(Integer artistCount) {
         myArtistCount = artistCount;
     }
 
+    /**
+     * Unique hash for the image of the album.
+     */
     public String getImageHash() {
         return myImageHash;
     }
@@ -125,6 +161,9 @@ public class AlbumRepresentation {
         myImageHash = imageHash;
     }
 
+    /**
+     * Name of the album.
+     */
     public String getName() {
         return myName;
     }
@@ -133,19 +172,25 @@ public class AlbumRepresentation {
         myName = name;
     }
 
-    public int getTrackCount() {
+    /**
+     * Number of tracks of this album.
+     */
+    public Integer getTrackCount() {
         return myTrackCount;
     }
 
-    public void setTrackCount(int trackCount) {
+    public void setTrackCount(Integer trackCount) {
         myTrackCount = trackCount;
     }
 
-    public int getYear() {
+    /**
+     * Year of the album.
+     */
+    public Integer getYear() {
         return myYear;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         myYear = year;
     }
 }

@@ -1,17 +1,22 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.remote.service.RemoteTrackInfo;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * Representation of the server local media player status.
+ */
 @XmlRootElement
-public class MediaPlayerRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class MediaPlayerRepresentation implements RestRepresentation {
 
-    private int myCurrentTime;
-    private int myCurrentTrack;
-    private int myLength;
-    private boolean myPlaying;
-    private int myVolume;
+    private Integer myCurrentTime;
+    private Integer myCurrentTrack;
+    private Integer myLength;
+    private Boolean myPlaying;
+    private Integer myVolume;
 
     public MediaPlayerRepresentation() {
     }
@@ -24,43 +29,58 @@ public class MediaPlayerRepresentation {
         setVolume(remoteTrackInfo.getVolume());
     }
 
-    public int getCurrentTime() {
+    /**
+     * Current time in seconds of the current track.
+     */
+    public Integer getCurrentTime() {
         return myCurrentTime;
     }
 
-    public void setCurrentTime(int currentTime) {
+    public void setCurrentTime(Integer currentTime) {
         myCurrentTime = currentTime;
     }
 
-    public int getCurrentTrack() {
+    /**
+     * Current track.
+     */
+    public Integer getCurrentTrack() {
         return myCurrentTrack;
     }
 
-    public void setCurrentTrack(int currentTrack) {
+    public void setCurrentTrack(Integer currentTrack) {
         myCurrentTrack = currentTrack;
     }
 
-    public int getLength() {
+    /**
+     * Length of the current track in seconds.
+     */
+    public Integer getLength() {
         return myLength;
     }
 
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         myLength = length;
     }
 
-    public boolean isPlaying() {
+    /**
+     * TRUE if currently a track is playing or FALSE otherwise (stopped or paused).
+     */
+    public Boolean isPlaying() {
         return myPlaying;
     }
 
-    public void setPlaying(boolean playing) {
+    public void setPlaying(Boolean playing) {
         myPlaying = playing;
     }
 
-    public int getVolume() {
+    /**
+     * The current volume (0 - 100).
+     */
+    public Integer getVolume() {
         return myVolume;
     }
 
-    public void setVolume(int volume) {
+    public void setVolume(Integer volume) {
         myVolume = volume;
     }
 }

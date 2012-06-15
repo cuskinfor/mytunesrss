@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
@@ -45,8 +46,8 @@ public class RestResource {
 
     protected ArtistRepresentation toArtistRepresentation(Artist artist) {
         ArtistRepresentation representation = new ArtistRepresentation(artist);
-        representation.setAlbumsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").build(artist.getName()));
-        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").build(artist.getName()));
+        representation.setAlbumsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
+        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
         if (getAuthUser().isPlaylist()) {
             representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), fn(artist, "m3u")));
             representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), fn(artist, "xspf")));
@@ -70,9 +71,9 @@ public class RestResource {
 
     protected AlbumRepresentation toAlbumRepresentation(Album album) {
         AlbumRepresentation representation = new AlbumRepresentation(album);
-        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").build(album.getArtist(), album.getName()));
-        representation.setArtistUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).build(album.getArtist()));
-        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getTags").build(album.getArtist(), album.getName()));
+        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
+        representation.setArtistUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist())));
+        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
         if (StringUtils.isNotBlank(album.getImageHash())) {
             representation.setImageUri(getAppURI(MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
         }
@@ -99,7 +100,7 @@ public class RestResource {
 
     protected GenreRepresentation toGenreRepresentation(Genre genre) {
         GenreRepresentation representation = new GenreRepresentation(genre);
-        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").build(genre.getName()));
+        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
         return representation;
     }
 
@@ -163,6 +164,8 @@ public class RestResource {
             representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(myRequest, track, null)).build());
         }
         representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(TrackResource.class).path(TrackResource.class, "getTags").build(track.getId()));
+        representation.setArtistUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getArtist())));
+        representation.setAlbumUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getAlbumArtist()), MiscUtils.getUtf8UrlEncoded(track.getAlbum())));
         return representation;
     }
 

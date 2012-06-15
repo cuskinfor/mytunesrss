@@ -1,26 +1,26 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Artist;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Representation of an artist.
  */
 @XmlRootElement
-public class ArtistRepresentation {
+@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+public class ArtistRepresentation implements RestRepresentation {
     private URI myAlbumsUri;
     private URI myM3uUri;
     private URI myXspfUri;
     private URI myRssUri;
     private URI myDownloadUri;
     private URI myTagsUri;
-    private int myAlbumCount;
+    private Integer myAlbumCount;
     private String myName;
-    private int myTrackCount;
+    private Integer myTrackCount;
 
     public ArtistRepresentation() {
     }
@@ -97,11 +97,11 @@ public class ArtistRepresentation {
     /**
      * The number of albums with tracks of this artist.
      */
-    public int getAlbumCount() {
+    public Integer getAlbumCount() {
         return myAlbumCount;
     }
 
-    public void setAlbumCount(int albumCount) {
+    public void setAlbumCount(Integer albumCount) {
         myAlbumCount = albumCount;
     }
 
@@ -119,11 +119,11 @@ public class ArtistRepresentation {
     /**
      * The number of tracks of this artist.
      */
-    public int getTrackCount() {
+    public Integer getTrackCount() {
         return myTrackCount;
     }
 
-    public void setTrackCount(int trackCount) {
+    public void setTrackCount(Integer trackCount) {
         myTrackCount = trackCount;
     }
 }

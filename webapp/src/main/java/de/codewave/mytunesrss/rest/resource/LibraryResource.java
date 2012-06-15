@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 @ValidateRequest
-@Path("library")
+@Path("/")
 public class LibraryResource extends RestResource {
 
     @GET
@@ -43,6 +43,8 @@ public class LibraryResource extends RestResource {
         libraryRepresentation.setPlaylistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPlaylists").build());
         libraryRepresentation.setTracksUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "findTracks").build());
         libraryRepresentation.setTvShowsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getTvShows").build());
+        libraryRepresentation.setMediaPlayerUri(uriInfo.getBaseUriBuilder().path(MediaPlayerResource.class).build());
+        libraryRepresentation.setSessionUri(uriInfo.getBaseUriBuilder().path(SessionResource.class).build());
         return libraryRepresentation;
     }
 
