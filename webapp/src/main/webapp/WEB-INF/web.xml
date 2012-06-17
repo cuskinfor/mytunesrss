@@ -15,8 +15,12 @@
         <param-value>/rest</param-value>
     </context-param>
     <context-param>
-        <param-name>javax.ws.rs.Application</param-name>
-        <param-value>de.codewave.mytunesrss.rest.RestApplication</param-value>
+        <param-name>resteasy.scan.providers</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <context-param>
+        <param-name>resteasy.scan.resources</param-name>
+        <param-value>true</param-value>
     </context-param>
     <!-- Session cookie name -->
     <context-param>
