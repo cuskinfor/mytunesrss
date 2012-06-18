@@ -40,6 +40,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(),
                                                                getDisplayFilter().getTextFilter(),
                                                                artist,
+                                                               false,
                                                                genre,
                                                                getIntegerRequestParameter("page", -1),
                                                                getDisplayFilter().getMinYear(),

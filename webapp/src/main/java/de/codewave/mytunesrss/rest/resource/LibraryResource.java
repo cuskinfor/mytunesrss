@@ -87,7 +87,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("sortYear") @DefaultValue("false") boolean sortYear,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), filter, artist, genre, index, minYear, maxYear, sortYear, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), filter, artist, false, genre, index, minYear, maxYear, sortYear, type));
         return toAlbumRepresentations(queryResult.getResults());
     }
 

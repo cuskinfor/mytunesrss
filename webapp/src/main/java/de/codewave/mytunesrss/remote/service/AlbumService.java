@@ -19,7 +19,7 @@ public class AlbumService {
             throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
-            FindAlbumQuery query = new FindAlbumQuery(user, StringUtils.trimToNull(filter), StringUtils.trimToNull(artist), StringUtils.trimToNull(
+            FindAlbumQuery query = new FindAlbumQuery(user, StringUtils.trimToNull(filter), StringUtils.trimToNull(artist), false, StringUtils.trimToNull(
                     genre), letterIndex, minYear, maxYear, sortByYear, FindAlbumQuery.AlbumType.ALL);
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(query),
                                                                              startItem,

@@ -38,10 +38,12 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private AlbumType myType;
     private boolean mySortByYear;
+    private boolean myMatchAlbumArtist;
 
-    public FindAlbumQuery(User user, String filter, String artist, String genre, int index, int minYear, int maxYear, boolean sortByYear, AlbumType type) {
+    public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String genre, int index, int minYear, int maxYear, boolean sortByYear, AlbumType type) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
         myArtist = artist;
+        myMatchAlbumArtist = matchAlbumArtist;
         myGenre = genre;
         myIndex = index;
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
@@ -57,7 +59,8 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
         conditionals.put("track", StringUtils.isNotBlank(myArtist) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
-        conditionals.put("artist", StringUtils.isNotBlank(myArtist));
+        conditionals.put("artist", StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist);
+        conditionals.put("albumartist", StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist);
         conditionals.put("genre", StringUtils.isNotBlank(myGenre));
         conditionals.put("year", myMinYear > Integer.MIN_VALUE || myMaxYear < Integer.MAX_VALUE);
         conditionals.put("albumorder", !mySortByYear);
