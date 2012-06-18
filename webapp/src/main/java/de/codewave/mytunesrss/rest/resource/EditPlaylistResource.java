@@ -29,6 +29,12 @@ public class EditPlaylistResource extends RestResource {
     public static final String KEY_EDIT_PLAYLIST = "playlist";
     public static final String KEY_EDIT_PLAYLIST_TRACKS = "playlistContent";
 
+    /**
+     * Get the currently edited playlist from the session.
+     *
+     * @return A playlist.
+     * @throws SQLException
+     */
     @GET
     @Produces("application/json")
     @GZIP
@@ -36,6 +42,14 @@ public class EditPlaylistResource extends RestResource {
         return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
+    /**
+     * Get the list of tracks of the currently edited playlist from the session.
+     *
+     * @param from  Index of first track to return.
+     * @param count Maximum number of tracks to return.
+     * @return A list of tracks.
+     * @throws SQLException
+     */
     @GET
     @Path("tracks")
     @Produces("application/json")
@@ -51,6 +65,18 @@ public class EditPlaylistResource extends RestResource {
         return Collections.emptyList();
     }
 
+    /**
+     * Add tracks to the currently edited playlist.
+     *
+     * @param track       IDs of tracks to add.
+     * @param album       Album names to add (all tracks of the album).
+     * @param albumArtist Album artist of albums to add.
+     * @param artist      Artist names to add (all tracks of the artists).
+     * @param genre       Genres to add (all tracks of the genres).
+     * @param playlist    IDs of playlists to add (all tracks of the playlists).
+     * @return The playlist after adding the tracks.
+     * @throws SQLException
+     */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
@@ -83,6 +109,18 @@ public class EditPlaylistResource extends RestResource {
         return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
+    /**
+     * Delete tracks from the currently edited playlist.
+     *
+     * @param track       IDs of tracks to delete.
+     * @param album       Album names to delete (all tracks of the album).
+     * @param albumArtist Album artist of albums to delete.
+     * @param artist      Artist names to delete (all tracks of the artists).
+     * @param genre       Genres to delete (all tracks of the genres).
+     * @param playlist    IDs of playlists to delete (all tracks of the playlists).
+     * @return The playlist after deleting the tracks.
+     * @throws SQLException
+     */
     @DELETE
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
@@ -134,6 +172,14 @@ public class EditPlaylistResource extends RestResource {
         }
     }
 
+    /**
+     * Save the currently edited playlist to the database and finish editing the playlist.
+     *
+     * @param playlistName Name of the playlist.
+     * @param userPrivate  "true" to save as a user private list or "false" to save as a public list.
+     * @throws SQLException
+     * @throws MyTunesRssRestException
+     */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Path("save")
@@ -157,6 +203,9 @@ public class EditPlaylistResource extends RestResource {
         myRequest.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
     }
 
+    /**
+     * Cancel editing a playlist, all changes are lost.
+     */
     @POST
     @Path("cancel")
     public void cancelPlaylist() {
