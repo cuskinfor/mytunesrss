@@ -25,6 +25,15 @@ import java.util.Set;
 @Path("artist/{artist}")
 public class ArtistResource extends RestResource {
 
+    /**
+     * Get the representation of an artist.
+     *
+     * @param artist The artist name.
+     *
+     * @return The artist representation.
+     *
+     * @throws SQLException
+     */
     @GET
     @Produces({"application/json"})
     @GZIP
@@ -40,6 +49,21 @@ public class ArtistResource extends RestResource {
         return null;
     }
 
+    /**
+     * Get the albums of an artist.
+     *
+     * @param filter Filter for album name (ony matching ones are returned).
+     * @param artist Artist name.
+     * @param genre Filter for album genre (ony matching ones are returned).
+     * @param minYear Filter for minimum album year (ony matching ones are returned).
+     * @param maxYear Filter for maximum album year (ony matching ones are returned).
+     * @param sortYear "true" to sort results by year or "false" to return in database order.
+     * @param type Filter for album type (One of "COMPILATIONS", "ALBUMS", "ALL").
+     *
+     * @return List of albums.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("albums")
     @Produces({"application/json"})
@@ -48,16 +72,25 @@ public class ArtistResource extends RestResource {
             @QueryParam("filter") String filter,
             @PathParam("artist") String artist,
             @QueryParam("genre") String genre,
-            @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index,
             @QueryParam("minYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Minimum year must be a value from -1 to 9999.") int minYear,
             @QueryParam("maxYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Maximum year must be a value from -1 to 9999.") int maxYear,
             @QueryParam("sortYear") @DefaultValue("false") boolean sortYear,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), filter, artist, genre, index, minYear, maxYear, sortYear, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), filter, artist, genre, -1, minYear, maxYear, sortYear, type));
         return toAlbumRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get the tracks of an artist.
+     *
+     * @param artist Artist name.
+     * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
+     *
+     * @return List of tracks.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tracks")
     @Produces({"application/json"})
@@ -70,6 +103,16 @@ public class ArtistResource extends RestResource {
         return toTrackRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of tags for the artist, i.e. a list of tags for all tracks. All tags of all tracks of the artist are returned,
+     * i.e. not all tracks have all the tags returned but only at least one track has each of the tags.
+     *
+     * @param artist The artist name.
+     *
+     * @return List of all tags.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tags")
     @Produces({"application/json"})
@@ -80,6 +123,16 @@ public class ArtistResource extends RestResource {
         return queryResult.getResults();
     }
 
+    /**
+     * Set a tag to all tracks of the artist.
+     *
+     * @param artist The artist name.
+     * @param tag The tag to set.
+     *
+     * @return List of all tags after adding the specified one.
+     *
+     * @throws SQLException
+     */
     @PUT
     @Path("tag/{tag}")
     @Produces({"application/json"})
@@ -100,6 +153,16 @@ public class ArtistResource extends RestResource {
         return trackIds.toArray(new String[trackIds.size()]);
     }
 
+    /**
+     * Delete a tag from all tracks of an album.
+     *
+     * @param artist The artist name.
+     * @param tag The tag to delete.
+     *
+     * @return List of all tags after deleting the specified one.
+     *
+     * @throws SQLException
+     */
     @DELETE
     @Path("tag/{tag}")
     @Produces({"application/json"})

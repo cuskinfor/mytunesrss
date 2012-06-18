@@ -30,6 +30,13 @@ import java.util.Map;
 @Path("/")
 public class LibraryResource extends RestResource {
 
+    /**
+     * Get URIs of all kind of data in the library.
+     *
+     * @param uriInfo
+     *
+     * @return Tbe library representation which contains several URIs for further data retrieval.
+     */
     @GET
     @Produces({"application/json"})
     @GZIP
@@ -48,6 +55,24 @@ public class LibraryResource extends RestResource {
         return libraryRepresentation;
     }
 
+    /**
+     * Get a list of albums according to the specified optional filter critria.
+     *
+     * @param filter Album name filter.
+     * @param artist Artist name filter.
+     * @param genre Genre filter.
+     * @param index The index can be "-1" for all, "0" for albums in the section "0-9", "1" for the section "A-C",
+     *              "2" for "D-F", "3" for "G-I", "4" for "J-L", "5" for "M-O", "6" for "P-S", "7" for "T-V" and
+     *              "8" for "W-Z".
+     * @param minYear Minimum album year filter.
+     * @param maxYear Maximum album year filter.
+     * @param sortYear "true" to sort albums by year or "false" to sort by name.
+     * @param type Filter for album type (One of "COMPILATIONS", "ALBUMS", "ALL").
+     *
+     * @return A list of albums.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("albums")
     @Produces({"application/json"})
@@ -66,6 +91,20 @@ public class LibraryResource extends RestResource {
         return toAlbumRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of artists according to the specified optional filter criteria.
+     *
+     * @param filter Artist name filter.
+     * @param album Album name filter (i.e. only artist with matching albums are returned).
+     * @param genre Genre name filter.
+     * @param index The index can be "-1" for all, "0" for albums in the section "0-9", "1" for the section "A-C",
+     *              "2" for "D-F", "3" for "G-I", "4" for "J-L", "5" for "M-O", "6" for "P-S", "7" for "T-V" and
+     *              "8" for "W-Z".
+     *
+     * @return A list of artists.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("artists")
     @Produces({"application/json"})
@@ -80,6 +119,18 @@ public class LibraryResource extends RestResource {
         return toArtistRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of genres according to the specified optional filter criteria.
+     *
+     * @param includeHidden "true" to include genres which should be hidden from user interfaces (admin setting).
+     * @param index The index can be "-1" for all, "0" for albums in the section "0-9", "1" for the section "A-C",
+     *              "2" for "D-F", "3" for "G-I", "4" for "J-L", "5" for "M-O", "6" for "P-S", "7" for "T-V" and
+     *              "8" for "W-Z".
+     *
+     * @return A list of genres.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("genres")
     @Produces({"application/json"})
@@ -92,6 +143,18 @@ public class LibraryResource extends RestResource {
         return toGenreRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of playlists according to the specified optional filter criteria.
+     *
+     * @param includeHidden "true" to include playlists which should be hidden from user interfaces (admin setting).
+     * @param matchingOwner "true" to return only playlists owned by the currently logged in user.
+     * @param types List of playlist types to return (Possible values: "ITunes", "MyTunes", "M3uFile", "ITunesFolder", "MyTunesSmart", "Random", "System").
+     * @param root "true" to return only root playlists, i.e. playlists which do not have a parent playlist (iTunes folder).
+     *
+     * @return A list of playlists.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("playlists")
     @Produces({"application/json"})
@@ -106,6 +169,13 @@ public class LibraryResource extends RestResource {
         return toPlaylistRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of movies.
+     *
+     * @return A list of movies.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("movies")
     @Produces({"application/json"})
@@ -115,6 +185,13 @@ public class LibraryResource extends RestResource {
         return toTrackRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of TV shows.
+     *
+     * @return A list of TV shows.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tvshows")
     @Produces({"application/json"})
@@ -134,6 +211,22 @@ public class LibraryResource extends RestResource {
         return result;
     }
 
+    /**
+     * Get a list of tracks.
+     *
+     * @param term Search term.
+     * @param expert "true" for expert search, i.e. search term can contain Lucene seatch syntax.
+     * @param fuzziness Search fuzziness (see Lucene documentation where 0% fuzziness is exact search and 100% fuzziness is a similarity of 0).
+     * @param maxItems Maximum number of results to return.
+     * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
+     *
+     * @return A list of tracks.
+     *
+     * @throws IOException
+     * @throws ParseException
+     * @throws SQLException
+     * @throws LuceneQueryParserException
+     */
     @GET
     @Path("tracks")
     @Produces({"application/json"})

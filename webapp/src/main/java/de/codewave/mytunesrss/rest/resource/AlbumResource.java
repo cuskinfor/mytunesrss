@@ -23,6 +23,16 @@ import java.util.Set;
 @Path("artist/{artist}/album/{album}")
 public class AlbumResource extends RestResource {
 
+    /**
+     * Get the representation of a single album specified by albuma artist and album name.
+     *
+     * @param artist The album artist.
+     * @param album The album name.
+     *
+     * @return The representation of the album.
+     *
+     * @throws SQLException
+     */
     @GET
     @Produces({"application/json"})
     @GZIP
@@ -39,6 +49,17 @@ public class AlbumResource extends RestResource {
         return null;
     }
 
+    /**
+     * Get a list of tracks of an album specified by album artist and album name.
+     *
+     * @param artist The album artist.
+     * @param album The album name.
+     * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
+     *
+     * @return List of track representations.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tracks")
     @Produces({"application/json"})
@@ -52,6 +73,17 @@ public class AlbumResource extends RestResource {
         return toTrackRepresentations(queryResult.getResults());
     }
 
+    /**
+     * Get a list of tags for the album, i.e. a list of tags for all tracks. All tags of all tracks of the album are returned,
+     * i.e. not all tracks have all the tags returned but only at least one track has each of the tags.
+     *
+     * @param artist The album artist.
+     * @param album The album name.
+     *
+     * @return List of all tags.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tags")
     @Produces({"application/json"})
@@ -63,6 +95,17 @@ public class AlbumResource extends RestResource {
         return queryResult.getResults();
     }
 
+    /**
+     * Set a tag to all tracks of the album.
+     *
+     * @param artist The album artist.
+     * @param album The album name.
+     * @param tag The tag to set.
+     *
+     * @return List of all tags after adding the specified one.
+     *
+     * @throws SQLException
+     */
     @PUT
     @Path("tag/{tag}")
     @Produces({"application/json"})
@@ -84,6 +127,17 @@ public class AlbumResource extends RestResource {
         return trackIds.toArray(new String[trackIds.size()]);
     }
 
+    /**
+     * Delete a tag from all tracks of an album.
+     *
+     * @param artist The album artist.
+     * @param album The album name.
+     * @param tag The tag to delete.
+     *
+     * @return List of all tags after deleting the specified one.
+     *
+     * @throws SQLException
+     */
     @DELETE
     @Path("tag/{tag}")
     @Produces({"application/json"})

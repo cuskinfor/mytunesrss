@@ -22,6 +22,16 @@ import java.util.List;
 @Path("genre/{genre}")
 public class GenreResource extends RestResource {
 
+    /**
+     * Get the tracks of the genre.
+     *
+     * @param genre The genre.
+     * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
+     *
+     * @return List of tracks.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tracks")
     @Produces({"application/json"})
