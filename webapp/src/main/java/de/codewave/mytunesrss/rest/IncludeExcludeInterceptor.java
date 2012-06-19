@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.rest.representation.RestRepresentation;
 import org.apache.commons.collections.CollectionUtils;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ServerResponse;
+import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +22,14 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Provider
 @ServerInterceptor
-public class IncludeExcludeInterceptor implements PostProcessInterceptor {
+public class IncludeExcludeInterceptor implements PostProcessInterceptor, AcceptedByMethod {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(IncludeExcludeInterceptor.class);
 
@@ -69,4 +71,7 @@ public class IncludeExcludeInterceptor implements PostProcessInterceptor {
         }
     }
 
+    public boolean accept(Class declaring, Method method) {
+        return !method.getReturnType().equals(Void.class);
+    }
 }

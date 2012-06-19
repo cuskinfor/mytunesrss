@@ -13,7 +13,7 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void loadAlbum(String albumName) {
+    public void loadAlbum(String albumName, String albumArtistName) {
         // intentionally left blank
     }
 

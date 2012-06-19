@@ -144,6 +144,10 @@
         <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
+        <filter-name>SessionManagerFilter</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
         <filter-name>CompressingFilter</filter-name>
         <url-pattern>/jsonrpc/*</url-pattern>
     </filter-mapping>

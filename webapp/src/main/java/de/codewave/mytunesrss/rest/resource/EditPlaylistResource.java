@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
@@ -18,7 +19,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -38,8 +42,11 @@ public class EditPlaylistResource extends RestResource {
     @GET
     @Produces("application/json")
     @GZIP
-    public PlaylistRepresentation getPlaylist() throws SQLException {
-        return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST));
+    public PlaylistRepresentation getPlaylist(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request
+    ) throws SQLException {
+        return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
     /**
@@ -55,12 +62,14 @@ public class EditPlaylistResource extends RestResource {
     @Produces("application/json")
     @GZIP
     public List<TrackRepresentation> getPlaylistTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @QueryParam("from") @DefaultValue("0") int from,
             @QueryParam("count") @DefaultValue("0") int count
     ) throws SQLException {
-        List<Track> playlistTracks = (List<Track>) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+        List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         if (from >= 0 && from < playlistTracks.size()) {
-            return toTrackRepresentations(MyTunesRssUtils.getSubList(playlistTracks, from, count));
+            return toTrackRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistTracks, from, count));
         }
         return Collections.emptyList();
     }
@@ -82,6 +91,8 @@ public class EditPlaylistResource extends RestResource {
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation addTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @FormParam("track") String[] track,
             @FormParam("album") String[] album,
             @FormParam("albumArtist") String[] albumArtist,
@@ -90,23 +101,24 @@ public class EditPlaylistResource extends RestResource {
             @FormParam("playlist") String[] playlist
     ) throws SQLException {
         if (track != null && track.length > 0) {
-            addTracks(FindTrackQuery.getForIds(track));
+            addTracks(request, FindTrackQuery.getForIds(track));
         }
+        User user = MyTunesRssWebUtils.getAuthUser(request);
         if (album != null && album.length > 0) {
-            addTracks(FindTrackQuery.getForAlbum(getAuthUser(), album, albumArtist, SortOrder.KeepOrder));
+            addTracks(request, FindTrackQuery.getForAlbum(user, album, albumArtist, SortOrder.KeepOrder));
         }
         if (artist != null && artist.length > 0) {
-            addTracks(FindTrackQuery.getForArtist(getAuthUser(), artist, SortOrder.KeepOrder));
+            addTracks(request, FindTrackQuery.getForArtist(user, artist, SortOrder.KeepOrder));
         }
         if (genre != null && genre.length > 0) {
-            addTracks(FindTrackQuery.getForGenre(getAuthUser(), genre, SortOrder.KeepOrder));
+            addTracks(request, FindTrackQuery.getForGenre(user, genre, SortOrder.KeepOrder));
         }
         if (playlist != null && playlist.length > 0) {
             for (String eachPlaylist : playlist) {
-                addTracks(new FindPlaylistTracksQuery(getAuthUser(), eachPlaylist, SortOrder.KeepOrder));
+                addTracks(request, new FindPlaylistTracksQuery(user, eachPlaylist, SortOrder.KeepOrder));
             }
         }
-        return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST));
+        return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
     /**
@@ -126,6 +138,8 @@ public class EditPlaylistResource extends RestResource {
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation removeTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @FormParam("track") String[] track,
             @FormParam("album") String[] album,
             @FormParam("albumArtist") String[] albumArtist,
@@ -134,37 +148,38 @@ public class EditPlaylistResource extends RestResource {
             @FormParam("playlist") String[] playlist
     ) throws SQLException {
         if (track != null && track.length > 0) {
-            removeTracks(FindTrackQuery.getForIds(track));
+            removeTracks(request, FindTrackQuery.getForIds(track));
         }
+        User user = MyTunesRssWebUtils.getAuthUser(request);
         if (album != null && album.length > 0) {
-            removeTracks(FindTrackQuery.getForAlbum(getAuthUser(), album, albumArtist, SortOrder.KeepOrder));
+            removeTracks(request, FindTrackQuery.getForAlbum(user, album, albumArtist, SortOrder.KeepOrder));
         }
         if (artist != null && artist.length > 0) {
-            removeTracks(FindTrackQuery.getForArtist(getAuthUser(), artist, SortOrder.KeepOrder));
+            removeTracks(request, FindTrackQuery.getForArtist(user, artist, SortOrder.KeepOrder));
         }
         if (genre != null && genre.length > 0) {
-            removeTracks(FindTrackQuery.getForGenre(getAuthUser(), genre, SortOrder.KeepOrder));
+            removeTracks(request, FindTrackQuery.getForGenre(user, genre, SortOrder.KeepOrder));
         }
         if (playlist != null && playlist.length > 0) {
             for (String eachPlaylist : playlist) {
-                removeTracks(new FindPlaylistTracksQuery(getAuthUser(), eachPlaylist, SortOrder.KeepOrder));
+                removeTracks(request, new FindPlaylistTracksQuery(user, eachPlaylist, SortOrder.KeepOrder));
             }
         }
-        return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST));
+        return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
-    private void addTracks(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
-        Playlist playlist = (Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST);
-        Collection<Track> playlistTracks = new LinkedHashSet<Track>((Collection<Track>) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS));
+    private void addTracks(HttpServletRequest request, DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
+        Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
+        Collection<Track> playlistTracks = new LinkedHashSet<Track>((Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS));
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
         playlistTracks.addAll(tracks);
-        myRequest.getSession().setAttribute(KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>(playlistTracks));
+        request.getSession().setAttribute(KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>(playlistTracks));
         playlist.setTrackCount(playlistTracks.size());
     }
 
-    private void removeTracks(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
-        Playlist playlist = (Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST);
-        Collection<Track> playlistTracks = (Collection<Track>) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+    private void removeTracks(HttpServletRequest request, DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
+        Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
+        Collection<Track> playlistTracks = (Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         List<Track> tracks = query != null ? TransactionFilter.getTransaction().executeQuery(query).getResults() : Collections.<Track>emptyList();
         if (tracks != null && !tracks.isEmpty()) {
             playlistTracks.removeAll(tracks);
@@ -184,12 +199,13 @@ public class EditPlaylistResource extends RestResource {
     @Consumes("application/x-www-form-urlencoded")
     @Path("save")
     public void savePlaylist(
+            @Context HttpServletRequest request,
             @FormParam("name") @NotBlank(message = "NO_PLAYLIST_NAME") String playlistName,
             @FormParam("private") @DefaultValue("false") boolean userPrivate
     ) throws SQLException, MyTunesRssRestException {
-        Playlist playlist = (Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST);
-        Collection<Track> playlistTracks = (Collection<Track>) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
-        SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement(getAuthUser().getName(), userPrivate);
+        Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
+        Collection<Track> playlistTracks = (Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+        SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement(MyTunesRssWebUtils.getAuthUser(request).getName(), userPrivate);
         statement.setId(playlist.getId());
         statement.setName(playlistName);
         statement.setUpdate(StringUtils.isNotEmpty(playlist.getId()));
@@ -199,8 +215,8 @@ public class EditPlaylistResource extends RestResource {
         }
         statement.setTrackIds(trackIds);
         TransactionFilter.getTransaction().executeStatement(statement);
-        myRequest.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
-        myRequest.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+        request.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
+        request.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
     }
 
     /**
@@ -208,9 +224,11 @@ public class EditPlaylistResource extends RestResource {
      */
     @POST
     @Path("cancel")
-    public void cancelPlaylist() {
-        myRequest.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
-        myRequest.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+    public void cancelPlaylist(
+            @Context HttpServletRequest request
+    ) {
+        request.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
+        request.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
     }
 
     /**
@@ -226,11 +244,13 @@ public class EditPlaylistResource extends RestResource {
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation moveTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @FormParam("from") @DefaultValue("0") int first,
             @FormParam("count") @DefaultValue("0") int count,
             @FormParam("offset") @DefaultValue("0") int offset
     ) {
-        MyTunesRssWebUtils.movePlaylistTracks((List<Track>) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS), first, count, offset);
-        return toPlaylistRepresentation((Playlist) myRequest.getSession().getAttribute(KEY_EDIT_PLAYLIST));
+        MyTunesRssWebUtils.movePlaylistTracks((List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS), first, count, offset);
+        return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 }

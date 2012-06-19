@@ -6,21 +6,29 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.bonjour.BonjourDevice;
+import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import de.codewave.mytunesrss.rest.representation.SettingsRepresentation;
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
@@ -38,10 +46,13 @@ public class SessionResource extends RestResource {
     @GET
     @Produces({"application/json"})
     @GZIP
-    public SettingsRepresentation getSettings() {
+    public SettingsRepresentation getSettings(
+            @Context HttpServletRequest request
+    ) {
         SettingsRepresentation settings = new SettingsRepresentation();
-        settings.setTranscoders(getTranscoders());
-        settings.setPermissions(getPermissions());
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        settings.setTranscoders(getTranscoders(user));
+        settings.setPermissions(getPermissions(user));
         settings.setAirtunesTargets(getAirtunesTargets());
         return settings;
     }
@@ -55,9 +66,9 @@ public class SessionResource extends RestResource {
         return airtunesTargets;
     }
 
-    public List<String> getTranscoders() {
+    public List<String> getTranscoders(User user) {
         List<String> transcoderNames = new ArrayList<String>();
-        if (getAuthUser().isTranscoder()) {
+        if (user.isTranscoder()) {
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 transcoderNames.add(config.getName());
             }
@@ -66,9 +77,8 @@ public class SessionResource extends RestResource {
         return transcoderNames;
     }
 
-    public List<String> getPermissions() {
+    public List<String> getPermissions(User user) {
         List<String> permissions = new ArrayList<String>();
-        User user = getAuthUser();
         for (String permission : new String[] {"audio", "changeEmail", "changePassword", "createPlaylists", "createPublicPlaylists", "download"}) { // TODO
             try {
                 if ((Boolean) User.class.getMethod("is" + StringUtils.capitalize(permission)).invoke(user)) {
@@ -91,5 +101,47 @@ public class SessionResource extends RestResource {
     @POST
     public void ping() {
         // nothing to do, just keep the session alive
+    }
+
+    /**
+     * Login a user.
+     *
+     * @param uriInfo
+     * @param username A user name.
+     * @param password A password.
+     *
+     * @return
+     *
+     * @throws UnsupportedEncodingException
+     */
+    @POST
+    @Path("/login")
+    public Response login(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
+            @FormParam("username") @NotBlank(message = "Username must not be blank.") String username,
+            @FormParam("password") @NotBlank(message = "Password must not be blank.") String password
+    ) throws UnsupportedEncodingException {
+        if (MyTunesRssWebUtils.getAuthUser(request) != null) {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "EXISTING_USER_SESSION");
+        }
+        byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
+        if (MyTunesRssWebUtils.isAuthorized(username, password, passwordHash) && !MyTunesRss.CONFIG.getUser(username).isEmptyPassword()) {
+            MyTunesRssWebUtils.authorize(WebAppScope.Session, request, username);
+        } else {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
+        }
+        return Response.created(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build()).build();
+    }
+
+    /**
+     * Logout a user.
+     */
+    @POST
+    @Path("/logout")
+    public void logout(
+            @Context HttpServletRequest request
+    ) {
+        request.getSession().invalidate();
     }
 }

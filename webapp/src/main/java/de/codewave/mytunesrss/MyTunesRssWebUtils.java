@@ -2,7 +2,9 @@ package de.codewave.mytunesrss;
 
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -10,10 +12,13 @@ import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.remote.Session;
+import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.Base64Utils;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.ServletUtils;
+import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.*;
 import org.apache.commons.codec.binary.Base64;
@@ -506,4 +511,48 @@ public class MyTunesRssWebUtils {
         transaction.executeStatement(statement);
         return new Playlist(playlistId, PlaylistType.Random, playlistName, webConfig.getRandomPlaylistSize());
     }
+
+    public static boolean isAuthorized(String userName, String password, byte[] passwordHash) {
+        return isAuthorized(userName, passwordHash) || isAuthorizedLdapUser(userName, password);
+    }
+
+    private static boolean isAuthorizedLdapUser(String userName, String password) {
+        return MyTunesRssUtils.loginLDAP(userName, password);
+    }
+
+    public static boolean isAuthorized(String userName, byte[] passwordHash) {
+        return StringUtils.isNotBlank(userName) && passwordHash != null && passwordHash.length > 0 && isAuthorizedLocalUsers(userName, passwordHash);
+    }
+
+    private static boolean isAuthorizedLocalUsers(String userName, byte[] passwordHash) {
+        LOGGER.debug("Checking authorization with local users.");
+        User user = MyTunesRss.CONFIG.getUser(userName);
+        return user != null && !user.isGroup() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
+    }
+
+    public static void authorize(WebAppScope scope, HttpServletRequest request, String userName) {
+        User user = MyTunesRss.CONFIG.getUser(userName);
+        if (scope == WebAppScope.Request) {
+            LOGGER.debug("Authorizing request for user \"" + userName + "\".");
+            request.setAttribute("authUser", user);
+            request.setAttribute("auth", createAuthToken(request, user));
+        } else if (scope == WebAppScope.Session) {
+            LOGGER.debug("Authorizing session for user \"" + userName + "\".");
+            request.getSession().setAttribute("authUser", user);
+            request.getSession().setAttribute("auth", createAuthToken(request, user));
+        }
+        if (getAuthUser(request) != null && !getAuthUser(request).isSharedUser()) {
+            getWebConfig(request).clearWithDefaults(request);
+            getWebConfig(request).load(request, getAuthUser(request));
+        }
+        ((MyTunesRssSessionInfo) SessionManager.getSessionInfo(request)).setUser(user);
+        request.getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
+    }
+
+    private static String createAuthToken(HttpServletRequest request, User user) {
+        return MyTunesRssWebUtils.encryptPathInfo(request,
+                "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
+                        MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+    }
+
 }

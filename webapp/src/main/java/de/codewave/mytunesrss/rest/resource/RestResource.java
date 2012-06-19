@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
@@ -17,7 +16,6 @@ import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -26,155 +24,148 @@ import java.util.List;
 
 public class RestResource {
 
-    @Context
-    private UriInfo myUriInfo;
-
-    @Context
-    protected HttpServletRequest myRequest;
-
-    protected User getAuthUser() {
-        return MyTunesRssWebUtils.getAuthUser(myRequest);
-    }
-
-    protected List<ArtistRepresentation> toArtistRepresentations(List<Artist> artists) {
+    protected List<ArtistRepresentation> toArtistRepresentations(UriInfo uriInfo, HttpServletRequest request, List<Artist> artists) {
         List<ArtistRepresentation> representations = new ArrayList<ArtistRepresentation>();
         for (Artist artist : artists) {
-            representations.add(toArtistRepresentation(artist));
+            representations.add(toArtistRepresentation(uriInfo, request, artist));
         }
         return representations;
     }
 
-    protected ArtistRepresentation toArtistRepresentation(Artist artist) {
+    protected ArtistRepresentation toArtistRepresentation(UriInfo uriInfo, HttpServletRequest request, Artist artist) {
         ArtistRepresentation representation = new ArtistRepresentation(artist);
-        representation.setAlbumsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
-        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
-        if (getAuthUser().isPlaylist()) {
-            representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), fn(artist, "m3u")));
-            representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), fn(artist, "xspf")));
+        representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
+        representation.setTagsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        if (user.isPlaylist()) {
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=M3u"), fn(artist, "m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=Xspf"), fn(artist, "xspf")));
         }
-        if (getAuthUser().isRss()) {
-            representation.setRssUri(getAppURI(MyTunesRssCommand.CreateRss, enc("artist=" + b64(artist.getName())), fn(artist, "rss")));
+        if (user.isRss()) {
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "artist=" + b64(artist.getName())), fn(artist, "rss")));
         }
-        if (getAuthUser().isDownload()) {
-            representation.setDownloadUri(getAppURI(MyTunesRssCommand.GetZipArchive, enc("artist=" + b64(artist.getName())), fn(artist, "zip")));
+        if (user.isDownload()) {
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "artist=" + b64(artist.getName())), fn(artist, "zip")));
         }
         return representation;
     }
 
-    protected List<AlbumRepresentation> toAlbumRepresentations(List<Album> albums) {
+    protected List<AlbumRepresentation> toAlbumRepresentations(UriInfo uriInfo, HttpServletRequest request, List<Album> albums) {
         List<AlbumRepresentation> representations = new ArrayList<AlbumRepresentation>();
         for (Album album : albums) {
-            representations.add(toAlbumRepresentation(album));
+            representations.add(toAlbumRepresentation(uriInfo, request, album));
         }
         return representations;
     }
 
-    protected AlbumRepresentation toAlbumRepresentation(Album album) {
+    protected AlbumRepresentation toAlbumRepresentation(UriInfo uriInfo, HttpServletRequest request, Album album) {
         AlbumRepresentation representation = new AlbumRepresentation(album);
-        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
-        representation.setArtistUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist())));
-        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
+        representation.setTracksUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
+        representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist())));
+        representation.setTagsUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
         if (StringUtils.isNotBlank(album.getImageHash())) {
-            representation.setImageUri(getAppURI(MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + album.getImageHash())));
         }
-        if (getAuthUser().isPlaylist()) {
-            representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=M3u"), fn(album, "m3u")));
-            representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=Xspf"), fn(album, "xspf")));
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        if (user.isPlaylist()) {
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=M3u"), fn(album, "m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=Xspf"), fn(album, "xspf")));
         }
-        if (getAuthUser().isRss()) {
-            representation.setRssUri(getAppURI(MyTunesRssCommand.CreateRss, enc("album=" + b64(album.getName())), fn(album, "rss")));
+        if (user.isRss()) {
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "album=" + b64(album.getName())), fn(album, "rss")));
         }
-        if (getAuthUser().isDownload()) {
-            representation.setDownloadUri(getAppURI(MyTunesRssCommand.GetZipArchive, enc("album=" + b64(album.getName())), enc("albumartist=" + b64(album.getArtist())), fn(album, "zip")));
+        if (user.isDownload()) {
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "album=" + b64(album.getName())), enc(request, "albumartist=" + b64(album.getArtist())), fn(album, "zip")));
         }
         return representation;
     }
 
-    protected List<GenreRepresentation> toGenreRepresentations(List<Genre> genres) {
+    protected List<GenreRepresentation> toGenreRepresentations(UriInfo uriInfo, List<Genre> genres) {
         List<GenreRepresentation> representations = new ArrayList<GenreRepresentation>();
         for (Genre genre : genres) {
-            representations.add(toGenreRepresentation(genre));
+            representations.add(toGenreRepresentation(uriInfo, genre));
         }
         return representations;
     }
 
-    protected GenreRepresentation toGenreRepresentation(Genre genre) {
+    protected GenreRepresentation toGenreRepresentation(UriInfo uriInfo, Genre genre) {
         GenreRepresentation representation = new GenreRepresentation(genre);
-        representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+        representation.setTracksUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
         return representation;
     }
 
-    protected List<PlaylistRepresentation> toPlaylistRepresentations(List<Playlist> playlists) {
+    protected List<PlaylistRepresentation> toPlaylistRepresentations(UriInfo uriInfo, HttpServletRequest request, List<Playlist> playlists) {
         List<PlaylistRepresentation> representations = new ArrayList<PlaylistRepresentation>();
         for (Playlist playlist : playlists) {
-            representations.add(toPlaylistRepresentation(playlist));
+            representations.add(toPlaylistRepresentation(uriInfo, request, playlist));
         }
         return representations;
     }
 
-    protected PlaylistRepresentation toPlaylistRepresentation(Playlist playlist) {
+    protected PlaylistRepresentation toPlaylistRepresentation(UriInfo uriInfo, HttpServletRequest request, Playlist playlist) {
         PlaylistRepresentation representation = new PlaylistRepresentation(playlist);
-        Playlist currentlyEditedPlaylist = (Playlist) myRequest.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
+        Playlist currentlyEditedPlaylist = (Playlist) request.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
         if (playlist == currentlyEditedPlaylist) {
-            representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build());
+            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build());
         } else {
-            representation.setTracksUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
+            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
         }
         if (playlist.getId() != null) {
             // persistent playlist
-            representation.setChildrenUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
+            representation.setChildrenUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
             if (StringUtils.isNotBlank(playlist.getContainerId())) {
-                representation.setParentUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
+                representation.setParentUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
             }
-            representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
-            if (getAuthUser().isDownload()) {
-                representation.setDownloadUri(getAppURI(MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
+            representation.setTagsUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
+            if (MyTunesRssWebUtils.getAuthUser(request).isDownload()) {
+                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
             }
         }
         return representation;
     }
 
-    protected List<TrackRepresentation> toTrackRepresentations(List<Track> tracks) {
+    protected List<TrackRepresentation> toTrackRepresentations(UriInfo uriInfo, HttpServletRequest request, List<Track> tracks) {
         List<TrackRepresentation> representations = new ArrayList<TrackRepresentation>();
         for (Track track : tracks) {
-            representations.add(toTrackRepresentation(track));
+            representations.add(toTrackRepresentation(uriInfo, request, track));
         }
         return representations;
     }
 
-    protected TrackRepresentation toTrackRepresentation(Track track) {
+    protected TrackRepresentation toTrackRepresentation(UriInfo uriInfo, HttpServletRequest request, Track track) {
         TrackRepresentation representation = new TrackRepresentation(track);
         if (StringUtils.isNotBlank(track.getImageHash())) {
-            representation.setImageUri(getAppURI(MyTunesRssCommand.ShowImage, "hash=" + track.getImageHash()));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + track.getImageHash()));
         }
-        if (getAuthUser().isPlaylist()) {
-            representation.setM3uUri(getAppURI(MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=M3u", fn(track, "m3u")));
-            representation.setXspfUri(getAppURI(MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=Xspf", fn(track, "xspf")));
+        User user = MyTunesRssWebUtils.getAuthUser(request);
+        if (user.isPlaylist()) {
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=M3u", fn(track, "m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=Xspf", fn(track, "xspf")));
         }
-        if (getAuthUser().isRss()) {
-            representation.setRssUri(getAppURI(MyTunesRssCommand.CreateRss, "track=" + track.getId(), fn(track, "rss")));
+        if (user.isRss()) {
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, "track=" + track.getId(), fn(track, "rss")));
         }
-        myRequest.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(myRequest)); // prepare MyTunesFunctions
-        if (getAuthUser().isDownload()) {
-            representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(myRequest, track, null)).build());
+        request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(request)); // prepare MyTunesFunctions
+        if (user.isDownload()) {
+            representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(request, track, null)).build());
         }
-        if (getAuthUser().isDownload() && MyTunesRssWebUtils.isHttpLiveStreaming(myRequest, track, true)) {
-            representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(myRequest, track, null)).build());
+        if (user.isDownload() && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true)) {
+            representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
         }
-        if (getAuthUser().isDownload()) {
-            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(myRequest, track, null)).build());
+        if (user.isDownload()) {
+            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
         }
-        representation.setTagsUri(myUriInfo.getBaseUriBuilder().path(TrackResource.class).path(TrackResource.class, "getTags").build(track.getId()));
-        representation.setArtistUri(myUriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getArtist())));
-        representation.setAlbumUri(myUriInfo.getBaseUriBuilder().path(AlbumResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getAlbumArtist()), MiscUtils.getUtf8UrlEncoded(track.getAlbum())));
+        representation.setTagsUri(uriInfo.getBaseUriBuilder().path(TrackResource.class).path(TrackResource.class, "getTags").build(track.getId()));
+        representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getArtist())));
+        representation.setAlbumUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getAlbumArtist()), MiscUtils.getUtf8UrlEncoded(track.getAlbum())));
         return representation;
     }
 
-    public URI getAppURI(MyTunesRssCommand command, String... paths) {
-        UriBuilder uriBuilder = UriBuilder.fromUri(MyTunesRssWebUtils.getCommandCall(myRequest, command));
-        User authUser = getAuthUser();
+    public URI getAppURI(HttpServletRequest request, MyTunesRssCommand command, String... paths) {
+        UriBuilder uriBuilder = UriBuilder.fromUri(MyTunesRssWebUtils.getCommandCall(request, command));
+        User authUser = MyTunesRssWebUtils.getAuthUser(request);
         if (authUser != null) {
-            uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(myRequest, "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
+            uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(request, "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
         }
         for (String path : paths) {
             uriBuilder.path(path);
@@ -182,8 +173,8 @@ public class RestResource {
         return uriBuilder.build();
     }
 
-    protected String enc(String s) {
-        return MyTunesRssWebUtils.encryptPathInfo(myRequest, s);
+    protected String enc(HttpServletRequest request, String s) {
+        return MyTunesRssWebUtils.encryptPathInfo(request, s);
     }
 
     protected String b64(String s) {

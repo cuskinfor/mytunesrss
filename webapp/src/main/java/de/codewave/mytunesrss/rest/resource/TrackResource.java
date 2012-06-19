@@ -20,6 +20,15 @@ import java.util.List;
 @Path("track/{track}")
 public class TrackResource extends RestResource {
 
+    /**
+     * Get a list of tags for the track.
+     *
+     * @param track A track ID.
+     *
+     * @return List of all tags.
+     *
+     * @throws SQLException
+     */
     @GET
     @Path("tags")
     @Produces({"application/json"})
@@ -30,6 +39,16 @@ public class TrackResource extends RestResource {
         return queryResult.getResults();
     }
 
+    /**
+     * Set a tag to the track.
+     *
+     * @param track A track ID.
+     * @param tag The tag to set.
+     *
+     * @return List of all tags after adding the specified one.
+     *
+     * @throws SQLException
+     */
     @PUT
     @Path("tag/{tag}")
     @Produces({"application/json"})
@@ -41,6 +60,16 @@ public class TrackResource extends RestResource {
         return getTags(track);
     }
 
+    /**
+     * Delete a tag from a track.
+     *
+     * @param track A track ID.
+     * @param tag The tag to delete.
+     *
+     * @return List of all tags after deleting the specified one.
+     *
+     * @throws SQLException
+     */
     @DELETE
     @Path("tag/{tag}")
     @Produces({"application/json"})

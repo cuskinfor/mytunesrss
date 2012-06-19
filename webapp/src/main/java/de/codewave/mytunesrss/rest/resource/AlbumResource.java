@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
@@ -13,7 +14,10 @@ import de.codewave.utils.sql.DataStoreQuery;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
@@ -37,13 +41,15 @@ public class AlbumResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public AlbumRepresentation getAlbum(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @PathParam("artist") String artist,
             @PathParam("album") String album
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), album, artist, true, null, -1, -1, -1, true, FindAlbumQuery.AlbumType.ALL));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), album, artist, true, null, -1, -1, -1, true, FindAlbumQuery.AlbumType.ALL));
         for (Album result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
             if (result.getName().equals(album)) {
-                return toAlbumRepresentation(result);
+                return toAlbumRepresentation(uriInfo, request, result);
             }
         }
         return null;
@@ -65,12 +71,14 @@ public class AlbumResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<TrackRepresentation> getAlbumTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @PathParam("artist") String artist,
             @PathParam("album") String album,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(getAuthUser(), new String[]{album}, new String[]{artist}, sortOrder));
-        return toTrackRepresentations(queryResult.getResults());
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), new String[]{album}, new String[]{artist}, sortOrder));
+        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
     }
 
     /**
@@ -110,16 +118,18 @@ public class AlbumResource extends RestResource {
     @Path("tag/{tag}")
     @Produces({"application/json"})
     public List<String> setTag(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @PathParam("artist") String artist,
             @PathParam("album") String album,
             @PathParam("tag") String tag
     ) throws SQLException {
-        TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(getTrackIds(artist, album), tag));
+        TransactionFilter.getTransaction().executeStatement(new SetTagToTracksStatement(getTrackIds(uriInfo, request, artist, album), tag));
         return getTags(artist, album);
     }
 
-    private String[] getTrackIds(String artist, String album) throws SQLException {
-        List<TrackRepresentation> tracks = getAlbumTracks(artist, album, SortOrder.KeepOrder);
+    private String[] getTrackIds(UriInfo uriInfo, HttpServletRequest request, String artist, String album) throws SQLException {
+        List<TrackRepresentation> tracks = getAlbumTracks(uriInfo, request, artist, album, SortOrder.KeepOrder);
         Set<String> trackIds = new HashSet<String>();
         for (TrackRepresentation track : tracks) {
             trackIds.add(track.getId());
@@ -142,11 +152,13 @@ public class AlbumResource extends RestResource {
     @Path("tag/{tag}")
     @Produces({"application/json"})
     public List<String> deleteTag(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @PathParam("artist") String artist,
             @PathParam("album") String album,
             @PathParam("tag") String tag
     ) throws SQLException {
-        TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(getTrackIds(artist, album), tag));
+        TransactionFilter.getTransaction().executeStatement(new RemoveTagFromTracksStatement(getTrackIds(uriInfo, request, artist, album), tag));
         return getTags(artist, album);
     }
 }

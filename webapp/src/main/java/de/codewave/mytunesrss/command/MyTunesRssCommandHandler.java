@@ -45,59 +45,16 @@ import java.util.*;
 public abstract class MyTunesRssCommandHandler extends CommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssCommandHandler.class);
 
-    protected MyTunesRssConfig getMyTunesRssConfig() {
-        return (MyTunesRssConfig) getSession().getServletContext().getAttribute(MyTunesRssConfig.class.getName());
-    }
-
     protected boolean isAuthorized(String userName, String password, byte[] passwordHash) {
-        return isAuthorized(userName, passwordHash) || isAuthorizedLdapUser(userName, password);
-    }
-
-    private boolean isAuthorizedLdapUser(String userName, String password) {
-        return MyTunesRssUtils.loginLDAP(userName, password);
+        return MyTunesRssWebUtils.isAuthorized(userName, password, passwordHash);
     }
 
     protected boolean isAuthorized(String userName, byte[] passwordHash) {
-        return StringUtils.isNotBlank(userName) && passwordHash != null && passwordHash.length > 0 && isAuthorizedLocalUsers(userName, passwordHash);
-    }
-
-    private boolean isAuthorizedLocalUsers(String userName, byte[] passwordHash) {
-        LOG.debug("Checking authorization with local users.");
-        MyTunesRssConfig config = getMyTunesRssConfig();
-        User user = config.getUser(userName);
-        return user != null && !user.isGroup() && Arrays.equals(user.getPasswordHash(), passwordHash) && user.isActive();
-    }
-
-    protected boolean isActiveUser(String userName) {
-        LOG.debug("Checking users state.");
-        MyTunesRssConfig config = getMyTunesRssConfig();
-        User user = config.getUser(userName);
-        return user != null && !user.isGroup() && user.isActive();
+        return MyTunesRssWebUtils.isAuthorized(userName, passwordHash);
     }
 
     protected void authorize(WebAppScope scope, String userName) {
-        User user = getMyTunesRssConfig().getUser(userName);
-        if (scope == WebAppScope.Request) {
-            LOG.debug("Authorizing request for user \"" + userName + "\".");
-            getRequest().setAttribute("authUser", user);
-            getRequest().setAttribute("auth", createAuthToken(user));
-        } else if (scope == WebAppScope.Session) {
-            LOG.debug("Authorizing session for user \"" + userName + "\".");
-            getSession().setAttribute("authUser", user);
-            getSession().setAttribute("auth", createAuthToken(user));
-        }
-        if (getAuthUser() != null && !getAuthUser().isSharedUser()) {
-            getWebConfig().clearWithDefaults(getRequest());
-            getWebConfig().load(getRequest(), getAuthUser());
-        }
-        ((MyTunesRssSessionInfo) SessionManager.getSessionInfo(getRequest())).setUser(user);
-        getSession().setMaxInactiveInterval(user.getSessionTimeout() * 60);
-    }
-
-    protected String createAuthToken(User user) {
-        return MyTunesRssWebUtils.encryptPathInfo(getRequest(),
-                "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
-                        MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+        MyTunesRssWebUtils.authorize(scope, getRequest(), userName);
     }
 
     protected User getAuthUser() {
@@ -129,7 +86,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     protected boolean isSessionAuthorized() {
         if (getSession().getAttribute("auth") != null) {
             User user = (User) getSession().getAttribute("authUser");
-            if (user.isActive() && getMyTunesRssConfig().getUser(user.getName()) != null) {
+            if (user.isActive() && MyTunesRss.CONFIG.getUser(user.getName()) != null) {
                 return true;
             }
         }

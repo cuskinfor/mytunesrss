@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.vlc.HttpResponseStatus;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.StringUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -36,8 +37,8 @@ public class VlcPlayerRemoteController implements RemoteController {
         MyTunesRss.VLC_PLAYER.addTracks(tracks, startPlaybackIfStopped);
     }
 
-    public void loadAlbum(String albumName) throws SQLException, VlcPlayerException { // TODO album artist
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, new String[0], SortOrder.Album);
+    public void loadAlbum(String albumName, String albumArtistName) throws SQLException, VlcPlayerException { // TODO album artist
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
         loadItems(query);
     }
 

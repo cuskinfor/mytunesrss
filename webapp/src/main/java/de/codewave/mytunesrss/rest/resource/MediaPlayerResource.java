@@ -18,7 +18,10 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
 @ValidateRequest
@@ -33,13 +36,30 @@ public class MediaPlayerResource extends RestResource {
         return MyTunesRss.VLC_PLAYER != null ? new VlcPlayerRemoteController() : new NoopRemoteController();
     }
 
+    /**
+     * Replace the current playlists with the specified tracks.
+     *
+     * @param playlist A playlist ID (all tracks of the playlist will be added).
+     * @param album An album name (all tracks of the album will be added).
+     * @param albumArtist An album artist name to exactly specify the album.
+     * @param artist An artist name (all tracks of the artist will be added).
+     * @param genre A genre name (all tracks if the genre will be added).
+     * @param tracks A list of individual track IDs to add.
+     *
+     * @return List of tracks in the current playlist.
+     *
+     * @throws Exception
+     */
     @PUT
     @Path("playlist")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public List<TrackRepresentation> setPlaylist(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @FormParam("playlist") String playlist,
             @FormParam("album") String album,
+            @FormParam("albumArtist") String albumArtist,
             @FormParam("artist") String artist,
             @FormParam("genre") String genre,
             @FormParam("track") String[] tracks
@@ -47,7 +67,7 @@ public class MediaPlayerResource extends RestResource {
         if (StringUtils.isNotBlank(playlist)) {
             getController().loadPlaylist(playlist);
         } else if (StringUtils.isNotBlank(album)) {
-            getController().loadAlbum(album);
+            getController().loadAlbum(album, albumArtist);
         } else if (StringUtils.isNotBlank(artist)) {
             getController().loadArtist(artist, false);
         } else if (StringUtils.isNotBlank(genre)) {
@@ -55,27 +75,58 @@ public class MediaPlayerResource extends RestResource {
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(tracks);
         }
-        return toTrackRepresentations(getController().getPlaylist());
+        return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
 
+    /**
+     * Add tracks to the current paylist.
+     *
+     * @param tracks List of track IDs to add.
+     * @param autostart Start playback after adding the tracks if not currently playing.
+     *
+     * @return List of tracks in the current playlist.
+     *
+     * @throws Exception
+     */
     @POST
     @Path("playlist")
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public List<TrackRepresentation> addToPlaylist(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @FormParam("track") @NotBlank(message = "No tracks specified.") String[] tracks,
             @FormParam("autostart") @DefaultValue("false") boolean autostart
     ) throws Exception {
         getController().addTracks(tracks, autostart);
-        return toTrackRepresentations(getController().getPlaylist());
+        return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
 
+    /**
+     * Remove the current playlist and stop playback.
+     *
+     * @throws Exception
+     */
     @DELETE
     @Path("playlist")
     public void clearPlaylist() throws Exception {
         getController().clearPlaylist();
     }
 
+    /**
+     * Set player status.
+     *
+     * @param volume Volume [0-100].
+     * @param fullscreen "true" to activate fullscreen playback of video files or "false" to decative fullscreen playback.
+     * @param targets List of airtunes targets.
+     * @param action Controller action (One of "PLAY", "PAUSE", "STOP", "SEEK", "SHUFFLE", "NEXT", "PREVIOUS").
+     * @param track Track index (when using action "PLAY").
+     * @param seek Seek position (when usin action "SEEK").
+     *
+     * @return The current media player status.
+     *
+     * @throws Exception
+     */
     @POST
     @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
@@ -132,22 +183,50 @@ public class MediaPlayerResource extends RestResource {
         return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
     }
 
+    /**
+     * Get the current playlist.
+     *
+     * @return List of tracks in the current playlist.
+     *
+     * @throws Exception
+     */
     @GET
     @Path("playlist")
     @Produces("application/json")
-    public List<TrackRepresentation> getPlaylist() throws Exception {
-        return toTrackRepresentations(getController().getPlaylist());
+    public List<TrackRepresentation> getPlaylist(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request
+    ) throws Exception {
+        return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
 
+    /**
+     * Get information about a certain track.
+     *
+     * @param index Index of the track in the playlist.
+     *
+     * @return Track information.
+     *
+     * @throws Exception
+     */
     @GET
     @Path("playlist/track/{index}")
     @Produces("application/json")
     public TrackRepresentation getTrack(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @PathParam("index") int index
     ) throws Exception {
-        return toTrackRepresentation(getController().getTrack(index));
+        return toTrackRepresentation(uriInfo, request, getController().getTrack(index));
     }
 
+    /**
+     * Get the current media player status.
+     *
+     * @return The current media player status.
+     *
+     * @throws Exception
+     */
     @GET
     @Produces("application/json")
     public MediaPlayerRepresentation getStatus() throws Exception {

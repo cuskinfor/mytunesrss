@@ -24,7 +24,7 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
     public void execute() throws IOException, ServletException {
         String userName = getRequest().getParameter("username");
         if (StringUtils.isNotEmpty(userName)) {
-            User user = getMyTunesRssConfig().getUser(userName);
+            User user = MyTunesRss.CONFIG.getUser(userName);
             if (user != null) {
                 if (user.isChangePassword() && !user.isEmptyPassword()) {
                     if (StringUtils.isNotEmpty(user.getEmail())) {

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -16,6 +17,7 @@ import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -78,6 +80,8 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<AlbumRepresentation> getAlbums(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
             @QueryParam("artist") String artist,
             @QueryParam("genre") String genre,
@@ -87,8 +91,8 @@ public class LibraryResource extends RestResource {
             @QueryParam("sortYear") @DefaultValue("false") boolean sortYear,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(getAuthUser(), filter, artist, false, genre, index, minYear, maxYear, sortYear, type));
-        return toAlbumRepresentations(queryResult.getResults());
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genre, index, minYear, maxYear, sortYear, type));
+        return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
     /**
@@ -110,13 +114,15 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<ArtistRepresentation> getArtists(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
             @QueryParam("album") String album,
             @QueryParam("genre") String genre,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(getAuthUser(), filter, album, genre, index));
-        return toArtistRepresentations(queryResult.getResults());
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genre, index));
+        return toArtistRepresentations(uriInfo, request, queryResult.getResults());
     }
 
     /**
@@ -136,11 +142,13 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<GenreRepresentation> getGenres(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), includeHidden, index));
-        return toGenreRepresentations(queryResult.getResults());
+        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index));
+        return toGenreRepresentations(uriInfo, queryResult.getResults());
     }
 
     /**
@@ -160,13 +168,15 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<PlaylistRepresentation> getPlaylists(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("owner") @DefaultValue("false") boolean matchingOwner,
             @QueryParam("type") List<PlaylistType> types,
             @QueryParam("root") @DefaultValue("false") boolean root
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), types, null, root ? "ROOT": null, includeHidden, matchingOwner));
-        return toPlaylistRepresentations(queryResult.getResults());
+        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, root ? "ROOT": null, includeHidden, matchingOwner));
+        return toPlaylistRepresentations(uriInfo, request, queryResult.getResults());
     }
 
     /**
@@ -180,9 +190,12 @@ public class LibraryResource extends RestResource {
     @Path("movies")
     @Produces({"application/json"})
     @GZIP
-    public List<TrackRepresentation> getMovies() throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getMovies(getAuthUser()));
-        return toTrackRepresentations(queryResult.getResults());
+    public List<TrackRepresentation> getMovies(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request
+    ) throws SQLException {
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getMovies(MyTunesRssWebUtils.getAuthUser(request)));
+        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
     }
 
     /**
@@ -196,8 +209,11 @@ public class LibraryResource extends RestResource {
     @Path("tvshows")
     @Produces({"application/json"})
     @GZIP
-    public Map<String, Map<Integer, List<TrackRepresentation>>> getTvShows() throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(getAuthUser()));
+    public Map<String, Map<Integer, List<TrackRepresentation>>> getTvShows(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request
+    ) throws SQLException {
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(MyTunesRssWebUtils.getAuthUser(request)));
         Map<String, Map<Integer, List<TrackRepresentation>>> result = new LinkedHashMap<String, Map<Integer, List<TrackRepresentation>>>();
         for (Track track : queryResult.getResults()) {
             if (!result.containsKey(track.getSeries())) {
@@ -206,7 +222,7 @@ public class LibraryResource extends RestResource {
             if (!result.get(track.getSeries()).containsKey(track.getSeason())) {
                 result.get(track.getSeries()).put(track.getSeason(), new ArrayList<TrackRepresentation>());
             }
-            result.get(track.getSeries()).get(track.getSeason()).add(toTrackRepresentation(track));
+            result.get(track.getSeries()).get(track.getSeason()).add(toTrackRepresentation(uriInfo, request, track));
         }
         return result;
     }
@@ -232,6 +248,8 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     public List<TrackRepresentation> findTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
             @QueryParam("term") String term,
             @QueryParam("expert") @DefaultValue("false") boolean expert,
             @QueryParam("fuzziness") @DefaultValue("35") @Range(min = 0, max = 100, message = "Fuzziness must a be a value from 0 to 100.") int fuzziness,
@@ -240,10 +258,10 @@ public class LibraryResource extends RestResource {
             ) throws IOException, ParseException, SQLException, LuceneQueryParserException {
         DataStoreQuery.QueryResult<Track> queryResult = null;
         if (expert) {
-            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForExpertSearchTerm(getAuthUser(), term, sortOrder, maxItems));
+            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForExpertSearchTerm(MyTunesRssWebUtils.getAuthUser(request), term, sortOrder, maxItems));
         } else {
-            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(getAuthUser(), term, fuzziness, sortOrder, maxItems));
+            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(MyTunesRssWebUtils.getAuthUser(request), term, fuzziness, sortOrder, maxItems));
         }
-        return toTrackRepresentations(queryResult.getResults());
+        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
     }
 }

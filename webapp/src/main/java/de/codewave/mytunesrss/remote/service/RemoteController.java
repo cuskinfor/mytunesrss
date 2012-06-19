@@ -7,7 +7,7 @@ import java.util.List;
 public interface RemoteController {
     void loadPlaylist(String playlistId) throws Exception;
 
-    void loadAlbum(String albumName) throws Exception;
+    void loadAlbum(String albumName, String albumArtistName) throws Exception;
 
     void loadArtist(String artistName, boolean fullAlbums) throws Exception;
 
