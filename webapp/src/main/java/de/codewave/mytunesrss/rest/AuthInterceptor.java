@@ -42,7 +42,7 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
         if (declaring.equals(LibraryResource.class) && "getLibrary".equals(method.getName())) {
             return false;
         }
-        if (declaring.equals(SessionResource.class) && "login".equals(method.getName())) {
+        if (declaring.equals(SessionResource.class) && "loginOrPing".equals(method.getName())) {
             return false;
         }
         return true;

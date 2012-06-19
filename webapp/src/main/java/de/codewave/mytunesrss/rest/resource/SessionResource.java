@@ -79,7 +79,7 @@ public class SessionResource extends RestResource {
 
     public List<String> getPermissions(User user) {
         List<String> permissions = new ArrayList<String>();
-        for (String permission : new String[] {"audio", "changeEmail", "changePassword", "createPlaylists", "createPublicPlaylists", "download"}) { // TODO
+        for (String permission : new String[]{"audio", "changeEmail", "changePassword", "createPlaylists", "createPublicPlaylists", "download"}) { // TODO
             try {
                 if ((Boolean) User.class.getMethod("is" + StringUtils.capitalize(permission)).invoke(user)) {
                     permissions.add(permission);
@@ -96,49 +96,48 @@ public class SessionResource extends RestResource {
     }
 
     /**
-     * Pings the current session to keep it alive.
-     */
-    @POST
-    public void ping() {
-        // nothing to do, just keep the session alive
-    }
-
-    /**
      * Login a user.
      *
      * @param uriInfo
      * @param username A user name.
      * @param password A password.
-     *
      * @return
-     *
      * @throws UnsupportedEncodingException
      */
     @POST
-    @Path("/login")
-    public Response login(
+    public Response loginOrPing(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
-            @FormParam("username") @NotBlank(message = "Username must not be blank.") String username,
-            @FormParam("password") @NotBlank(message = "Password must not be blank.") String password
+            @FormParam("username") String username,
+            @FormParam("password") String password
     ) throws UnsupportedEncodingException {
+        if (StringUtils.isBlank(username) && StringUtils.isBlank(password)) {
+            // ping session
+            if (MyTunesRssWebUtils.getAuthUser(request) == null) {
+                throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
+            } else {
+                return Response.ok().build();
+            }
+        }
         if (MyTunesRssWebUtils.getAuthUser(request) != null) {
+            // login with existing session
             throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "EXISTING_USER_SESSION");
         }
         byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
         if (MyTunesRssWebUtils.isAuthorized(username, password, passwordHash) && !MyTunesRss.CONFIG.getUser(username).isEmptyPassword()) {
+            // login successful
             MyTunesRssWebUtils.authorize(WebAppScope.Session, request, username);
+            return Response.created(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build()).build();
         } else {
-            throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
+            // invalid login
+            throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "INVALID_LOGIN");
         }
-        return Response.created(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build()).build();
     }
 
     /**
      * Logout a user.
      */
-    @POST
-    @Path("/logout")
+    @DELETE
     public void logout(
             @Context HttpServletRequest request
     ) {
