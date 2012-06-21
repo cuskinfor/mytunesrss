@@ -11,6 +11,9 @@
     <logger name="org.apache.commons.httpclient.HttpMethodDirector" additivity="false">
         <level value="error"/>
     </logger>
+    <logger name="de.codewave.mytunesrss.servlet.resteasyfix" additivity="false">
+        <level value="error"/>
+    </logger>
     <root>
         <level value="error"/>
         <appender-ref ref="console"/>
