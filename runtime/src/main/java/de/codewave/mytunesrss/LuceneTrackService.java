@@ -307,8 +307,12 @@ public class LuceneTrackService {
                     addToAndQuery(andQuery, "album", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case artist:
-                    addToAndQuery(andQuery, "artist", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
-                    addToAndQuery(andQuery, "album_artist", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    for (String term : StringUtils.split(smartInfo.getPattern())) {
+                        BooleanQuery orQuery = new BooleanQuery();
+                        addToOrQuery(orQuery, "artist", StringUtils.lowerCase(term), fuzziness);
+                        addToOrQuery(orQuery, "album_artist", StringUtils.lowerCase(term), fuzziness);
+                        andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    }
                     break;
                 case comment:
                     addToAndQuery(andQuery, "comment", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
@@ -336,12 +340,24 @@ public class LuceneTrackService {
         return andQuery;
     }
 
-    private void addToAndQuery(BooleanQuery andQuery, String field, boolean not, String pattern, int fuzziness) {
+    private void addToAndQuery(BooleanQuery query, String field, boolean not, String pattern, int fuzziness) {
+        if (StringUtils.isNotEmpty(pattern)) {
+            for (String term : StringUtils.split(pattern)) {
+                if (fuzziness > 0) {
+                    query.add(new FuzzyQuery(new Term(field, QueryParser.escape(term)), ((float) (100 - fuzziness)) / 100f), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                } else {
+                    query.add(new WildcardQuery(new Term(field, "*" + QueryParser.escape(term) + "*")), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                }
+            }
+        }
+    }
+
+    private void addToOrQuery(BooleanQuery query, String field, String pattern, int fuzziness) {
         if (StringUtils.isNotEmpty(pattern)) {
             if (fuzziness > 0) {
-                andQuery.add(new FuzzyQuery(new Term(field, QueryParser.escape(pattern)), ((float) (100 - fuzziness)) / 100f), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                query.add(new FuzzyQuery(new Term(field, QueryParser.escape(pattern)), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
             } else {
-                andQuery.add(new WildcardQuery(new Term(field, "*" + QueryParser.escape(pattern) + "*")), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                query.add(new WildcardQuery(new Term(field, "*" + QueryParser.escape(pattern) + "*")), BooleanClause.Occur.SHOULD);
             }
         }
     }

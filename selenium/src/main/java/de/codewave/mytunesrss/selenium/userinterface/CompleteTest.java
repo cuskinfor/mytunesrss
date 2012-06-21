@@ -127,13 +127,13 @@ public class CompleteTest {
         driver.findElement(By.id("filterText")).clear();
         driver.findElement(By.id("filterText")).sendKeys("");
         driver.findElement(By.id("linkApplyFilter")).click();
-        driver.findElement(By.id("linkTracksOfArtist15")).click();
+        driver.findElement(By.id("linkTracksOfArtist14")).click(); // Alice Cooper
         driver.findElement(By.id("linkPage1")).click();
         driver.findElement(By.id("linkPage2")).click();
         driver.findElement(By.id("linkPage3")).click();
         driver.findElement(By.id("linkPage4")).click();
         driver.findElement(By.id("linkBack")).click();
-        driver.findElement(By.id("linkAlbumsOfArtistAlbum3")).click();
+        driver.findElement(By.id("linkAlbumsOfArtistAlbum4")).click(); // AC/DC
         driver.findElement(By.id("linkPage1")).click();
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkBrowseMovie")).click();
@@ -177,10 +177,10 @@ public class CompleteTest {
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkBrowseArtist")).click();
         driver.findElement(By.id("linkNewPlaylist")).click();
-        driver.findElement(By.id("linkAddToPlaylist8")).click();
-        waitForElementText(driver, By.id("editPlaylistTrackCount"), "12");
-        driver.findElement(By.id("linkAddToPlaylist11")).click();
-        waitForElementText(driver, By.id("editPlaylistTrackCount"), "34");
+        driver.findElement(By.id("linkAddToPlaylist1")).click();
+        waitForElementText(driver, By.id("editPlaylistTrackCount"), "12"); // A-Teens
+        driver.findElement(By.id("linkAddToPlaylist3")).click();
+        waitForElementText(driver, By.id("editPlaylistTrackCount"), "34"); // ABBA
         driver.findElement(By.id("linkFinish")).click();
         driver.findElement(By.id("playlistName")).clear();
         driver.findElement(By.id("playlistName")).sendKeys("Ateens und Abba");
@@ -202,8 +202,10 @@ public class CompleteTest {
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkManagePlaylists")).click();
         driver.findElement(By.id("linkEditSmartPlayist")).click();
-        driver.findElement(By.name("smartPlaylist.smartInfo.artistPattern")).clear();
-        driver.findElement(By.name("smartPlaylist.smartInfo.artistPattern")).sendKeys("lady gaga");
+        new Select(driver.findElement(By.id("newFieldType"))).selectByValue("artist");
+        driver.findElement(By.id("linkAddCriteria")).click();
+        driver.findElement(By.id("smartCriteriaValue0")).clear();
+        driver.findElement(By.id("smartCriteriaValue0")).sendKeys("lady gaga");
         driver.findElement(By.id("linkSubmit")).click();
         driver.findElement(By.name("smartPlaylist.playlist.name")).clear();
         driver.findElement(By.name("smartPlaylist.playlist.name")).sendKeys("Lady Gaga");
