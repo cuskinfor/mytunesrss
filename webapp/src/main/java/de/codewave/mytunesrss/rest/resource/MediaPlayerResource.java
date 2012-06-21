@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.remote.service.NoopRemoteController;
 import de.codewave.mytunesrss.remote.service.RemoteController;
 import de.codewave.mytunesrss.remote.service.RemoteTrackInfo;
 import de.codewave.mytunesrss.remote.service.VlcPlayerRemoteController;
+import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
@@ -19,6 +20,7 @@ import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -95,9 +97,12 @@ public class MediaPlayerResource extends RestResource {
     public List<TrackRepresentation> addToPlaylist(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
-            @FormParam("track") @NotBlank(message = "No tracks specified.") String[] tracks,
+            @FormParam("track") String[] tracks,
             @FormParam("autostart") @DefaultValue("false") boolean autostart
     ) throws Exception {
+        if (tracks == null || tracks.length == 0) {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "MISSING_TRACK_IDS");
+        }
         getController().addTracks(tracks, autostart);
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
