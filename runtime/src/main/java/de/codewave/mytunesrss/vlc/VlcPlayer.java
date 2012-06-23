@@ -198,7 +198,11 @@ public class VlcPlayer {
                             try {
                                 setFullScreen(status.isFullscreen());
                                 if (status.isPaused() || status.isPlaying()) {
-                                    play(myCurrent);
+                                    try {
+                                        play(myCurrent);
+                                    } catch (IllegalArgumentException e) {
+                                        LOGGER.warn("Could not start playback according to previous state.", e);
+                                    }
                                     if (status.getLength() > 0 && status.getTime() > 0) {
                                         seek((status.getTime() * 100) / status.getLength());
                                     }
