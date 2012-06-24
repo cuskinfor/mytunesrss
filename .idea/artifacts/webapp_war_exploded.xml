@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="webapp:war exploded">
-    <output-path>$PROJECT_DIR$/webapp/target/webapp-4.3-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/webapp/target/webapp-4.5-SNAPSHOT</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="webapp/web/Web" />
       <element id="directory" name="WEB-INF">
@@ -10,7 +10,7 @@
         <element id="directory" name="lib">
           <element id="library" level="project" name="Maven: commons-httpclient:commons-httpclient:3.1" />
           <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.6" />
-          <element id="library" level="project" name="Maven: de.codewave:codewave-utils:1.7-SNAPSHOT" />
+          <element id="library" level="project" name="Maven: de.codewave:codewave-utils:1.7" />
           <element id="library" level="project" name="Maven: org.apache.commons:commons-compress:1.3" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1.1" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-core-asl:1.9.3" />
