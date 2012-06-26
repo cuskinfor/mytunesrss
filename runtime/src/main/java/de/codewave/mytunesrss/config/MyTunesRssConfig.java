@@ -1701,6 +1701,6 @@ public class MyTunesRssConfig {
     }
 
     public static boolean isVlc(File executable) {
-        return executable != null && executable.canExecute() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName()));
+        return executable == null || (executable.isFile() && executable.canExecute() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName())));
     }
 }

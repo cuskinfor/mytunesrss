@@ -5,9 +5,11 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
+import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.TranscoderConfig;
@@ -24,6 +26,7 @@ import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.VlcExecutableFileValidator;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +59,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
         myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary")));
+        myVlcBinary.setImmediate(false);
         myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
         myVlcSocketTimeout = getComponentFactory().createTextField("streamingConfigPanel.vlcTimeout", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcTimeout.invalidTimeout", 1, 1000), 1, 1000));
         myVlcRaopVolume = getComponentFactory().createTextField("streamingConfigPanel.vlcRaopVolume", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcRaopVolume.invalidVolume", 1, 100), 1, 100));
@@ -187,6 +191,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 MyTunesRss.VLC_PLAYER.destroy();
             } catch (VlcPlayerException e) {
                 LOG.warn("Could not destroy VLC player.");
+            }
+            if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {
+                vlcExecutable = new File(vlcExecutable, "Contents/MacOS/VLC");
             }
             MyTunesRss.CONFIG.setVlcExecutable(vlcExecutable);
             try {

@@ -166,7 +166,7 @@ public class VlcPlayer {
                             }
                             ProcessBuilder processBuilder = new ProcessBuilder(command);
                             processBuilder.redirectErrorStream(true);
-                            LOGGER.info("Starting VLC player with HTTP interface on port " + myVlcPort + ".");
+                            LOGGER.info("Starting VLC player: \"" + StringUtils.join(command.toArray(new String[command.size()]), " ") + "\".");
                             process = processBuilder.start();
                             MyTunesRss.SPAWNED_PROCESSES.add(process);
                             new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
