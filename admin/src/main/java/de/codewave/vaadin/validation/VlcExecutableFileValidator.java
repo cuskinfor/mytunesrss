@@ -23,6 +23,14 @@ public class VlcExecutableFileValidator extends AbstractStringValidator {
 
     @Override
     protected boolean isValidString(String value) {
-        return MyTunesRssConfig.isVlc(new File(value));
+        if (value != null) {
+            File file = null;
+            file = new File(value);
+            if (file.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(file.getName())) {
+                file = new File(file, "Contents/MacOS/VLC");
+            }
+            return MyTunesRssConfig.isVlc(file);
+        }
+        return true;
     }
 }
