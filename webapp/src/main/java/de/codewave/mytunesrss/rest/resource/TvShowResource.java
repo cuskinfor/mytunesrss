@@ -9,8 +9,11 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
+import de.codewave.mytunesrss.rest.representation.TvShowRepresentation;
+import de.codewave.mytunesrss.rest.representation.TvShowSeasonRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.mutable.MutableInt;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
@@ -22,10 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @ValidateRequest
 @Path("tvshow/{show}")
@@ -44,20 +44,30 @@ public class TvShowResource extends RestResource {
     @Path("seasons")
     @Produces({"application/json"})
     @GZIP
-    public Map<Integer, List<TrackRepresentation>> getSeasons(
+    public List<TvShowSeasonRepresentation> getSeasons(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @PathParam("show") String show
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowSeriesEpisodes(MyTunesRssWebUtils.getAuthUser(request), show));
-        Map<Integer, List<TrackRepresentation>> result = new LinkedHashMap<Integer, List<TrackRepresentation>>();
-        for (Track track : queryResult.getResults()) {
-            if (!result.containsKey(track.getSeason())) {
-                result.put(track.getSeason(), new ArrayList<TrackRepresentation>());
+        Map<Integer, MutableInt> episodesPerSeason = new HashMap<Integer, MutableInt>();
+        for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+            if (episodesPerSeason.containsKey(track.getSeason())) {
+                episodesPerSeason.get(track.getSeason()).increment();
+            } else {
+                episodesPerSeason.put(track.getSeason(), new MutableInt(1));
             }
-            result.get(track.getSeason()).add(toTrackRepresentation(uriInfo, request, track));
         }
-        return result;
+        List<TvShowSeasonRepresentation> seasons = new ArrayList<TvShowSeasonRepresentation>();
+        for (Map.Entry<Integer, MutableInt> entry : episodesPerSeason.entrySet()) {
+            TvShowSeasonRepresentation representation = new TvShowSeasonRepresentation();
+            representation.setName(entry.getKey());
+            representation.setEpisodeCount(entry.getValue().intValue());
+            representation.setEpisodesUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getEpisodes").build(show, entry.getKey()));
+            seasons.add(representation);
+        }
+        Collections.sort(seasons);
+        return seasons;
     }
 
     /**
