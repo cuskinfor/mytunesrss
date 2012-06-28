@@ -4,11 +4,13 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
@@ -16,13 +18,10 @@ import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
-import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.CommandHandler;
-import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -252,9 +251,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 forward(MyTunesRssResource.Login);
             } else {
                 handleDisplayFilter();
-                if (isSessionAuthorized()) {
-                    MyTunesRssRemoteEnv.addOrTouchSessionForRegularSession(getRequest(), getAuthUser());
-                }
                 executeAuthorized();
             }
         } catch (Exception e) {

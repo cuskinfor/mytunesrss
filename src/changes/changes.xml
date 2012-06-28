@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="fix">
+                REST service calls sometimes had access to other user's sessions from old remote api.
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed REST calls for tv shows and tv shows seasons. They now return show/season representations.
             </action>
             <action dev="mdescher" type="fix">

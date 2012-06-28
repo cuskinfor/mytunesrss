@@ -4,7 +4,6 @@ import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -61,10 +60,6 @@ public class MyTunesRssWebUtils {
         User user = (User) request.getSession().getAttribute("authUser");
         if (user == null) {
             user = (User) request.getAttribute("authUser");
-            if (user == null) {
-                Session session = MyTunesRssRemoteEnv.getSession();
-                user = session != null ? session.getUser() : null;
-            }
         }
         return user;
     }
