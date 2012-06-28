@@ -29,7 +29,8 @@ import java.lang.reflect.Method;
 @ServerInterceptor
 public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod {
 
-    @Context private HttpServletRequest myRequest;
+    @Context
+    private HttpServletRequest myRequest;
 
     public ServerResponse preProcess(HttpRequest request, ResourceMethod method) {
         if (MyTunesRssWebUtils.getAuthUser(myRequest) == null) {

@@ -84,24 +84,6 @@ public class MyTunesRssRemoteEnv {
         THREAD_SESSIONS.set(session);
     }
 
-    public static void addOrTouchSessionForRegularSession(HttpServletRequest request, User user) {
-        String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
-        if (StringUtils.isBlank(sid)) {
-            sid = createSessionId();
-            LOGGER.debug("Adding remote API session with user \"" + user.getName() + "\" and \"" + sid + "\"");
-            addSession(request, new Session(sid, user, user.getSessionTimeout() * 60000));
-            request.getSession().setAttribute("remoteApiSessionId", sid);
-        } else {
-            RemoteApiSessionManager.getInstance(request).getSession(sid);
-        }
-    }
-
-    public static Session getSessionForRegularSession(HttpServletRequest request) {
-        String sid = (String) request.getSession().getAttribute("remoteApiSessionId");
-        Session session = RemoteApiSessionManager.getInstance(request).getSession(sid);
-        return session != null ? session : getDummySession();
-    }
-
     public static String createSessionId() {
         return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString() + System.currentTimeMillis()))));
     }

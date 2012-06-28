@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,9 +18,6 @@ public class KeepSessionAliveCommandHandler extends MyTunesRssCommandHandler {
         String sessionId = session != null ? session.getId() : null;
         if (sessionId != null) {
             LOGGER.debug("Keeping session with ID \"" + sessionId + "\" alive.");
-            // Web session is kep alive through the current request. Remote API session
-            // is triggered now.
-            MyTunesRssRemoteEnv.getSessionForRegularSession(getRequest());
         }
         getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
