@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.5" date="___D___">
+        <release version="4.3.1" date="___D___">
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-377] Invalid VLC executable results in endless loop during initialization
             </action>
