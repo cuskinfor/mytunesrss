@@ -9,6 +9,9 @@
 
         <release version="4.3.1" date="___D___">
             <action dev="mdescher" type="update">
+                Set refresh interval to 5 seconds for wizard. Hopefully this resolves the ConcurrentModificationException.
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-377] Invalid VLC executable results in endless loop during initialization
             </action>
             <action dev="mdescher" type="fix">
