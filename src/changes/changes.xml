@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.5" date="___D___">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-377] Invalid VLC executable results in endless loop during initialization
+            </action>
             <action dev="mdescher" type="fix">
                 Return HttpLiveStreaming URI for all video tracks in the REST service, regardless
                 of the user agent.

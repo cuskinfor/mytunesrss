@@ -4,6 +4,7 @@ import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -296,7 +297,7 @@ public class MyTunesRssWebUtils {
     }
 
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
-        if (MyTunesRss.CONFIG.isVlc()) {
+        if (MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false)) {
             boolean notranscode = "true".equals(request.getParameter("notranscode"));
             boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
             User authUser = getAuthUser(request);
@@ -334,7 +335,7 @@ public class MyTunesRssWebUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Checking for HTTP Live Streaming.");
         }
-        if (MyTunesRss.CONFIG.isVlc() && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
+        if (MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("HTTP Live Streaming available, user agent is iPhone and media type is video.");
             }

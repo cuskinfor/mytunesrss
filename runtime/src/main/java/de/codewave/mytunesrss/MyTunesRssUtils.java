@@ -770,7 +770,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isVlc(file)) {
+            if (MyTunesRssConfig.isVlc(file, true)) {
                 try {
                     return file.getCanonicalPath();
                 } catch (IOException e) {
