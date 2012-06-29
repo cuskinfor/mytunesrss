@@ -24,7 +24,7 @@ public class WizardWorkingPanel extends Panel implements Refresher.RefreshListen
         setCaption(getApplication().getBundleString("wizardPanel.caption"));
         setContent(getApplication().getComponentFactory().createVerticalLayout(true, true));
         Refresher refresher = new Refresher();
-        refresher.setRefreshInterval(2000); // refresh every 2 seconds
+        refresher.setRefreshInterval(5000); // refresh every 5 seconds
         refresher.addListener(this);
         addComponent(refresher);
         addComponent(new Label(getApplication().getBundleString("wizardWorkingPanel.message")));
