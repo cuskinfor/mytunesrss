@@ -149,7 +149,7 @@ public class RestResource {
         if (user.isDownload()) {
             representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(request, track, null)).build());
         }
-        if (user.isDownload() && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true)) {
+        if (user.isDownload() && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true, true)) {
             representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
         }
         if (user.isDownload()) {
