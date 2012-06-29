@@ -330,11 +330,11 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static boolean isHttpLiveStreaming(HttpServletRequest request, Track track, boolean ignoreContentType) {
+    public static boolean isHttpLiveStreaming(HttpServletRequest request, Track track, boolean ignoreContentType, boolean ignoreUserAgent) {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Checking for HTTP Live Streaming.");
         }
-        if (MyTunesRss.CONFIG.isVlc() && getUserAgent(request) == UserAgent.Iphone && track.getMediaType() == MediaType.Video) {
+        if (MyTunesRss.CONFIG.isVlc() && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("HTTP Live Streaming available, user agent is iPhone and media type is video.");
             }

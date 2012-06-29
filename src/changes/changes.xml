@@ -9,6 +9,10 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="fix">
+                Return HttpLiveStreaming URI for all video tracks in the REST service, regardless
+                of the user agent.
+            </action>
+            <action dev="mdescher" type="fix">
                 REST service calls sometimes had access to other user's sessions from old remote api.
             </action>
             <action dev="mdescher" type="fix">
