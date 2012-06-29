@@ -17,7 +17,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -1681,7 +1678,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isRemoteControl() {
-        return isVlc();
+        return isVlc(getVlcExecutable(), false);
     }
 
     public boolean isMyTunesRssComActive() {
@@ -1696,11 +1693,41 @@ public class MyTunesRssConfig {
         return isInitialWizard() && getUsers().isEmpty() && getDatasources().isEmpty();
     }
 
-    public boolean isVlc() {
-        return isVlc(getVlcExecutable());
-    }
-
-    public static boolean isVlc(File executable) {
-        return executable == null || (executable.isFile() && executable.canExecute() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName())));
+    public static boolean isVlc(final File executable, boolean checkOutput) {
+        if (executable == null || (executable.isFile() && executable.canExecute() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName())))) {
+            if (checkOutput) {
+                try {
+                    ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "--version");
+                    processBuilder.redirectErrorStream(true);
+                    final Process process = processBuilder.start();
+                    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    try {
+                        Thread checkThread = new Thread(new Runnable() {
+                            public void run() {
+                                try {
+                                    org.apache.commons.io.IOUtils.copy(process.getInputStream(), baos);
+                                } catch (IOException e) {
+                                    LOGGER.info("Could not copy process stream.", e);
+                                }
+                            }
+                        });
+                        checkThread.start();
+                        try {
+                            checkThread.join(3000);
+                        } catch (InterruptedException e) {
+                            // ignore
+                        }
+                        return StringUtils.containsIgnoreCase(org.apache.commons.io.IOUtils.toString(new ByteArrayInputStream(baos.toByteArray())), "vlc");
+                    } finally {
+                        process.destroy();
+                    }
+                } catch (IOException e) {
+                    LOGGER.info("Could not start process.", e);
+                }
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 }
