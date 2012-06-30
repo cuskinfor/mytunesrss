@@ -157,6 +157,7 @@
                                 <configuration>
                                     <makensisBin>makensis</makensisBin>
                                     <setupScript>etc/windows-installer.nsi</setupScript>
+                                    <outputFile>${project.build.directory}/${project.build.finalName}-setup.exe</outputFile>
                                 </configuration>
                             </execution>
                         </executions>
