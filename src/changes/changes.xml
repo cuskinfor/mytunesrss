@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.3.1" date="___D___">
+        <release version="4.3.1" date="2012-06-30">
             <action dev="mdescher" type="update">
                 Set refresh interval to 5 seconds for wizard. Hopefully this resolves the ConcurrentModificationException.
             </action>
