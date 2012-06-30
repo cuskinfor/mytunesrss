@@ -30,7 +30,7 @@ public class CompleteTest {
                     }
                 }
             }, threadName);
-            thread.setDaemon(false);
+            thread.setDaemon(true);
             thread.start();
         }
     }
