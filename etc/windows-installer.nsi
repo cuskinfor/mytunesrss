@@ -12,7 +12,6 @@
 
   ;Name and file
   Name "MyTunesRSS ${PROJECT_VERSION}"
-  OutFile "..\target\${PROJECT_FINAL_NAME}-setup.exe"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\${PROJECT_FINAL_NAME}"
