@@ -16,6 +16,7 @@ public class CompleteTest {
     private static final int TIMEOUT = 60000;
     private static final String BASE_URL = "http://localhost:47110";
     private static final int MAX_THREADS = 1;
+    private static final int MAX_LOOPS = 5;
 
     public static void main(String[] args) throws Exception {
         for (int i = 1; i <= MAX_THREADS; i++) {
@@ -23,7 +24,7 @@ public class CompleteTest {
             new Thread(new Runnable() {
                 public void run() {
                     try {
-                        runLoop(UUID.randomUUID().toString(), "selenium", threadName, 1000);
+                        runLoop(UUID.randomUUID().toString(), "selenium", threadName, MAX_LOOPS);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
