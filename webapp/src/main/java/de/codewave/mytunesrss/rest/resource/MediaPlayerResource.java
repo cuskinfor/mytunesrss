@@ -54,7 +54,6 @@ public class MediaPlayerResource extends RestResource {
      */
     @PUT
     @Path("playlist")
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public List<TrackRepresentation> setPlaylist(
             @Context UriInfo uriInfo,
@@ -92,7 +91,6 @@ public class MediaPlayerResource extends RestResource {
      */
     @POST
     @Path("playlist")
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public List<TrackRepresentation> addToPlaylist(
             @Context UriInfo uriInfo,
@@ -133,7 +131,6 @@ public class MediaPlayerResource extends RestResource {
      * @throws Exception
      */
     @POST
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     public MediaPlayerRepresentation setStatus(
             @FormParam("volume") Integer volume,
