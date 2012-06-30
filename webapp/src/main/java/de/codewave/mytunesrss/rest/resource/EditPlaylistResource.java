@@ -87,7 +87,6 @@ public class EditPlaylistResource extends RestResource {
      * @throws SQLException
      */
     @POST
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation addTracks(
@@ -134,7 +133,6 @@ public class EditPlaylistResource extends RestResource {
      * @throws SQLException
      */
     @DELETE
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation removeTracks(
@@ -196,7 +194,6 @@ public class EditPlaylistResource extends RestResource {
      * @throws MyTunesRssRestException
      */
     @POST
-    @Consumes("application/x-www-form-urlencoded")
     @Path("save")
     public void savePlaylist(
             @Context HttpServletRequest request,
@@ -240,7 +237,6 @@ public class EditPlaylistResource extends RestResource {
      */
     @POST
     @Path("move")
-    @Consumes("application/x-www-form-urlencoded")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation moveTracks(
