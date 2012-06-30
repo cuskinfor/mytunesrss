@@ -21,7 +21,7 @@ public class CompleteTest {
     public static void main(String[] args) throws Exception {
         for (int i = 1; i <= MAX_THREADS; i++) {
             final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + i;
-            new Thread(new Runnable() {
+            Thread thread = new Thread(new Runnable() {
                 public void run() {
                     try {
                         runLoop(UUID.randomUUID().toString(), "selenium", threadName, MAX_LOOPS);
@@ -29,7 +29,9 @@ public class CompleteTest {
                         e.printStackTrace();
                     }
                 }
-            }, threadName).start();
+            }, threadName);
+            thread.setDaemon(false);
+            thread.start();
         }
     }
 
