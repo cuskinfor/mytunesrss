@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="4.3.2" date="___D___">
+            <action dev="mdescher" type="update">
+                Some changes for the REST session resource. The POST request returns the session representation now, just like
+                the GET request. The response now contains the library URI.
+            </action>
+        </release>
+
         <release version="4.3.1" date="___D___">
             <action dev="mdescher" type="update">
                 Set refresh interval to 5 seconds for wizard. Hopefully this resolves the ConcurrentModificationException.

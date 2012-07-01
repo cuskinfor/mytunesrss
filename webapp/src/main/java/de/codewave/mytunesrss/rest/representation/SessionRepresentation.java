@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.rest.representation;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -10,12 +11,26 @@ import java.util.List;
  */
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class SettingsRepresentation implements RestRepresentation {
+public class SessionRepresentation implements RestRepresentation {
+
+    private URI myLibraryUri;
+
     private List<String> myTranscoders;
 
     private List<BonjourDeviceRepresentation> myAirtunesTargets;
 
     private List<String> myPermissions;
+
+    /**
+     * Main library URI.
+     */
+    public URI getLibraryUri() {
+        return myLibraryUri;
+    }
+
+    public void setLibraryUri(URI libraryUri) {
+        myLibraryUri = libraryUri;
+    }
 
     /**
      * List of available transcoders.
