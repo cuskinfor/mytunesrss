@@ -13,9 +13,8 @@ import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
-import de.codewave.mytunesrss.rest.representation.SettingsRepresentation;
+import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 import org.slf4j.Logger;
@@ -25,8 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -46,15 +43,17 @@ public class SessionResource extends RestResource {
     @GET
     @Produces({"application/json"})
     @GZIP
-    public SettingsRepresentation getSettings(
+    public SessionRepresentation getSession(
+            @Context UriInfo uriInfo,
             @Context HttpServletRequest request
     ) {
-        SettingsRepresentation settings = new SettingsRepresentation();
+        SessionRepresentation session = new SessionRepresentation();
         User user = MyTunesRssWebUtils.getAuthUser(request);
-        settings.setTranscoders(getTranscoders(user));
-        settings.setPermissions(getPermissions(user));
-        settings.setAirtunesTargets(getAirtunesTargets());
-        return settings;
+        session.setLibraryUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build());
+        session.setTranscoders(getTranscoders(user));
+        session.setPermissions(getPermissions(user));
+        session.setAirtunesTargets(getAirtunesTargets());
+        return session;
     }
 
     private List<BonjourDeviceRepresentation> getAirtunesTargets() {
@@ -105,7 +104,8 @@ public class SessionResource extends RestResource {
      * @throws UnsupportedEncodingException
      */
     @POST
-    public Response loginOrPing(
+    @Produces({"application/json"})
+    public SessionRepresentation loginOrPing(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @FormParam("username") String username,
@@ -116,7 +116,7 @@ public class SessionResource extends RestResource {
             if (MyTunesRssWebUtils.getAuthUser(request) == null) {
                 throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
             } else {
-                return Response.ok().build();
+                return getSession(uriInfo, request);
             }
         }
         if (MyTunesRssWebUtils.getAuthUser(request) != null) {
@@ -127,7 +127,7 @@ public class SessionResource extends RestResource {
         if (MyTunesRssWebUtils.isAuthorized(username, password, passwordHash) && !MyTunesRss.CONFIG.getUser(username).isEmptyPassword()) {
             // login successful
             MyTunesRssWebUtils.authorize(WebAppScope.Session, request, username);
-            return Response.created(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build()).build();
+            return getSession(uriInfo, request);
         } else {
             // invalid login
             throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "INVALID_LOGIN");
