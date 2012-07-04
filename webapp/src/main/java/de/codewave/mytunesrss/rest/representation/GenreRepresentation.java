@@ -19,6 +19,8 @@ import java.net.URI;
 public class GenreRepresentation implements RestRepresentation {
 
     private URI myTracksUri;
+    private URI myAlbumsUri;
+    private URI myArtistsUri;
     private Integer myAlbumCount;
     private Integer myArtistCount;
     private Boolean myHidden;
@@ -100,5 +102,27 @@ public class GenreRepresentation implements RestRepresentation {
 
     public void setTrackCount(Integer trackCount) {
         myTrackCount = trackCount;
+    }
+
+    /**
+     * URI of the albums with tracks of this genre.
+     */
+    public URI getAlbumsUri() {
+        return myAlbumsUri;
+    }
+
+    public void setAlbumsUri(URI albumsUri) {
+        myAlbumsUri = albumsUri;
+    }
+
+    /**
+     * URI of the artists with tracks of this genre.
+     */
+    public URI getArtistsUri() {
+        return myArtistsUri;
+    }
+
+    public void setArtistsUri(URI artistsUri) {
+        myArtistsUri = artistsUri;
     }
 }

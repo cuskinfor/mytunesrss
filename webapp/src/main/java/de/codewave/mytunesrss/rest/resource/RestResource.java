@@ -91,6 +91,8 @@ public class RestResource {
     protected GenreRepresentation toGenreRepresentation(UriInfo uriInfo, Genre genre) {
         GenreRepresentation representation = new GenreRepresentation(genre);
         representation.setTracksUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+        representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+        representation.setArtistsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreArtists").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
         return representation;
     }
 
@@ -150,7 +152,7 @@ public class RestResource {
             representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(request, track, null)).build());
         }
         if (user.isDownload() && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true, true)) {
-            representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
+            representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(request, track, null)).build());
         }
         if (user.isDownload()) {
             representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
