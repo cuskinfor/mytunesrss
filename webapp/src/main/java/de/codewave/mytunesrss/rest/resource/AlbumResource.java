@@ -75,7 +75,7 @@ public class AlbumResource extends RestResource {
             @Context HttpServletRequest request,
             @PathParam("artist") String artist,
             @PathParam("album") String album,
-            @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
+            @QueryParam("sort") @DefaultValue("Album") SortOrder sortOrder
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), new String[]{album}, new String[]{artist}, sortOrder));
         return toTrackRepresentations(uriInfo, request, queryResult.getResults());

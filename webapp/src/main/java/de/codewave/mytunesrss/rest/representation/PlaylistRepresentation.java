@@ -26,12 +26,12 @@ public class PlaylistRepresentation implements RestRepresentation {
     private URI myDownloadUri;
     private String myName;
     private String myContainerId;
-    private boolean myHidden;
+    private Boolean myHidden;
     private String myId;
-    private int myTrackCount;
+    private Integer myTrackCount;
     private PlaylistType myType;
     private String myOwner;
-    private boolean myPrivate;
+    private Boolean myPrivate;
 
     public PlaylistRepresentation() {
     }
@@ -127,11 +127,11 @@ public class PlaylistRepresentation implements RestRepresentation {
     /**
      * TRUE if the playlist should be hidden from user interfaces.
      */
-    public boolean isHidden() {
+    public Boolean isHidden() {
         return myHidden;
     }
 
-    public void setHidden(boolean hidden) {
+    public void setHidden(Boolean hidden) {
         myHidden = hidden;
     }
 
@@ -149,11 +149,11 @@ public class PlaylistRepresentation implements RestRepresentation {
     /**
      * Number of tracks in the playlist.
      */
-    public int getTrackCount() {
+    public Integer getTrackCount() {
         return myTrackCount;
     }
 
-    public void setTrackCount(int trackCount) {
+    public void setTrackCount(Integer trackCount) {
         myTrackCount = trackCount;
     }
 
@@ -182,11 +182,11 @@ public class PlaylistRepresentation implements RestRepresentation {
     /**
      * TRUE if the playlist is a private playlist of the owner or FALSE for a public playlist.
      */
-    public boolean isPrivate() {
+    public Boolean isPrivate() {
         return myPrivate;
     }
 
-    public void setPrivate(boolean aPrivate) {
+    public void setPrivate(Boolean aPrivate) {
         myPrivate = aPrivate;
     }
 }

@@ -8,6 +8,15 @@
     <body>
 
         <release version="4.3.2" date="___D___">
+            <action dev="mdescher" type="fix">
+                REST: fixed httpLiveStreamUri in track representation (it was the normal playback URI).
+            </action>
+            <action dev="mdescher" type="add">
+                REST: added albumsUri and artistsUri to genre representation.
+            </action>
+            <action dev="mdescher" type="fix">
+                REST: default sort order for tracks of an album should be "Album" instead of "KeepOrder" (which is database order).
+            </action>
             <action dev="mdescher" type="update">
                 Some changes for the REST session resource. The POST request returns the session representation now, just like
                 the GET request. The response now contains the library URI.
