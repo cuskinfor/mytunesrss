@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.lucene.queryParser.ParseException;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -259,7 +260,7 @@ public class LibraryResource extends RestResource {
     public List<TrackRepresentation> findTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
-            @QueryParam("term") String term,
+            @QueryParam("term") @NotBlank(message = "Missing search term.") String term,
             @QueryParam("expert") @DefaultValue("false") boolean expert,
             @QueryParam("fuzziness") @DefaultValue("35") @Range(min = 0, max = 100, message = "Fuzziness must a be a value from 0 to 100.") int fuzziness,
             @QueryParam("max") @DefaultValue("1000") @Range(min = 1, max = 1000, message = "Max must be a value from 1 to 1000.") int maxItems,
