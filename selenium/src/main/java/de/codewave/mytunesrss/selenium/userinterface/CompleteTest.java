@@ -15,13 +15,14 @@ public class CompleteTest {
     private static final int WAIT_INTERVAL = 100;
     private static final int TIMEOUT = 60000;
     private static final String BASE_URL = "http://localhost:47110";
-    private static final int MAX_THREADS = 1;
-    private static final int MAX_LOOPS = 5;
+    private static final int MAX_THREADS = 2;
+    private static final int MAX_LOOPS = 2;
 
     public static void main(String[] args) throws Exception {
-        for (int i = 1; i <= MAX_THREADS; i++) {
-            final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + i;
-            Thread thread = new Thread(new Runnable() {
+        Thread[] threads = new Thread[MAX_THREADS];
+        for (int i = 0; i < MAX_THREADS; i++) {
+            final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + (i + 1);
+            threads[i] = new Thread(new Runnable() {
                 public void run() {
                     try {
                         runLoop(UUID.randomUUID().toString(), "selenium", threadName, MAX_LOOPS);
@@ -30,8 +31,7 @@ public class CompleteTest {
                     }
                 }
             }, threadName);
-            thread.setDaemon(true);
-            thread.start();
+            threads[i].start();
         }
     }
 
@@ -47,21 +47,25 @@ public class CompleteTest {
                 return super.findElement(by);
             }
         };
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        driver.get(BASE_URL + "/mytunesrss/");
-        driver.findElement(By.id("linkSelfReg")).click();
-        driver.findElement(By.id("reg_username")).clear();
-        driver.findElement(By.id("reg_username")).sendKeys(username);
-        driver.findElement(By.id("reg_password")).clear();
-        driver.findElement(By.id("reg_password")).sendKeys(password);
-        driver.findElement(By.id("reg_retypepassword")).clear();
-        driver.findElement(By.id("reg_retypepassword")).sendKeys(password);
-        driver.findElement(By.id("reg_email")).clear();
-        driver.findElement(By.id("reg_email")).sendKeys("mdescher@codewave.de");
-        driver.findElement(By.id("linkSubmit")).click();
-        for (int i = 1; i <= times; i++) {
-            LOGGER.debug("Starting {} of {} for thread {}.", new Object[] {i, times, threadName});
-            testComplete(driver, BASE_URL, username, password);
+        try {
+            driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+            driver.get(BASE_URL + "/mytunesrss/");
+            driver.findElement(By.id("linkSelfReg")).click();
+            driver.findElement(By.id("reg_username")).clear();
+            driver.findElement(By.id("reg_username")).sendKeys(username);
+            driver.findElement(By.id("reg_password")).clear();
+            driver.findElement(By.id("reg_password")).sendKeys(password);
+            driver.findElement(By.id("reg_retypepassword")).clear();
+            driver.findElement(By.id("reg_retypepassword")).sendKeys(password);
+            driver.findElement(By.id("reg_email")).clear();
+            driver.findElement(By.id("reg_email")).sendKeys("mdescher@codewave.de");
+            driver.findElement(By.id("linkSubmit")).click();
+            for (int i = 1; i <= times; i++) {
+                LOGGER.debug("Starting {} of {} for thread {}.", new Object[] {i, times, threadName});
+                testComplete(driver, BASE_URL, username, password);
+            }
+        } finally {
+            driver.quit();
         }
     }
 

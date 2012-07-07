@@ -7,7 +7,10 @@
 
     <body>
 
-        <release version="4.3.2" date="___D___">
+        <release version="4.3.2" date="2012-07-07">
+            <action dev="mdescher" type="fix">
+                REST: new representation of the server version, separate values for major, minor, bugfix and the complete version text.
+            </action>
             <action dev="mdescher" type="fix">
                 REST: fixed httpLiveStreamUri in track representation (it was the normal playback URI).
             </action>
@@ -23,7 +26,7 @@
             </action>
         </release>
 
-        <release version="4.3.1" date="___D___">
+        <release version="4.3.1" date="2012-06-30">
             <action dev="mdescher" type="update">
                 Set refresh interval to 5 seconds for wizard. Hopefully this resolves the ConcurrentModificationException.
             </action>

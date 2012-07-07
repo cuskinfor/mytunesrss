@@ -20,16 +20,16 @@ public class LibraryRepresentation implements RestRepresentation {
     private URI myTvShowsUri;
     private URI myMediaPlayerUri;
     private URI mySessionUri;
-    private String myVersion;
+    private VersionRepresentation myVersion;
 
     /**
      * Version of the MyTunesRSS server instance.
      */
-    public String getVersion() {
+    public VersionRepresentation getVersion() {
         return myVersion;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(VersionRepresentation version) {
         myVersion = version;
     }
 
