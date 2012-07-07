@@ -7,10 +7,12 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.utils.Version;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.apache.lucene.queryParser.ParseException;
@@ -43,7 +45,7 @@ public class LibraryResource extends RestResource {
     @GZIP
     public LibraryRepresentation getLibrary(@Context UriInfo uriInfo) {
         LibraryRepresentation libraryRepresentation = new LibraryRepresentation();
-        libraryRepresentation.setVersion(MyTunesRss.VERSION);
+        libraryRepresentation.setVersion(new VersionRepresentation(new Version(MyTunesRss.VERSION)));
         libraryRepresentation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getAlbums").build());
         libraryRepresentation.setArtistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getArtists").build());
         libraryRepresentation.setGenresUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getGenres").build());

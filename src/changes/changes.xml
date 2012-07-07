@@ -9,6 +9,9 @@
 
         <release version="4.3.2" date="___D___">
             <action dev="mdescher" type="fix">
+                REST: new representation of the server version, separate values for major, minor, bugfix and the complete version text.
+            </action>
+            <action dev="mdescher" type="fix">
                 REST: fixed httpLiveStreamUri in track representation (it was the normal playback URI).
             </action>
             <action dev="mdescher" type="add">
