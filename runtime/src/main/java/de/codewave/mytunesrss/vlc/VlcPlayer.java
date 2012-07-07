@@ -125,7 +125,7 @@ public class VlcPlayer {
     }
 
     private void init(final HttpResponseStatus status, final int current) throws VlcPlayerException {
-        if ((myWatchdog == null || !myWatchdog.isAlive() ) && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+        if ((myWatchdog == null || !myWatchdog.isAlive() ) && MyTunesRss.CONFIG.getVlcExecutable() != null) {
             final Semaphore semaphore = new Semaphore(0);
             myWatchdog = new Thread(new Runnable() {
                 public void run() {

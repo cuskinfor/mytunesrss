@@ -351,9 +351,9 @@
                 <version>3.0.3</version>
             </dependency>
             <dependency>
-            	<groupId>javax.jmdns</groupId>
-            	<artifactId>jmdns</artifactId>
-            	<version>3.4.1.jdk15</version>
+                <groupId>javax.jmdns</groupId>
+                <artifactId>jmdns</artifactId>
+                <version>3.4.1.jdk15</version>
             </dependency>
             <dependency>
                 <groupId>org.jboss.resteasy</groupId>
@@ -376,14 +376,30 @@
                 <version>2.3.4.Final.jdk15</version>
             </dependency>
             <dependency>
-               <groupId>org.jboss.resteasy</groupId>
-               <artifactId>resteasy-hibernatevalidator-provider</artifactId>
-               <version>2.3.4.Final.jdk15</version>
+                <groupId>org.jboss.resteasy</groupId>
+                <artifactId>resteasy-hibernatevalidator-provider</artifactId>
+                <version>2.3.4.Final.jdk15</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-  <scm>
-    <developerConnection>scm:svn:svn://svn.codewave.biz/codewave-base/branches/mytunesrss-4.3.x/mytunesrss-pom</developerConnection>
-  </scm>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>animal-sniffer-maven-plugin</artifactId>
+                <version>1.8</version>
+                <configuration>
+                    <signature>
+                        <groupId>org.codehaus.mojo.signature</groupId>
+                        <artifactId>java15</artifactId>
+                        <version>1.0</version>
+                    </signature>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+    <scm>
+        <developerConnection>scm:svn:svn://svn.codewave.biz/codewave-base/branches/mytunesrss-4.3.x/mytunesrss-pom</developerConnection>
+    </scm>
 </project>
