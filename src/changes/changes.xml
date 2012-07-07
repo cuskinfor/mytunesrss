@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.3.2" date="___D___">
+        <release version="4.3.2" date="2012-07-07">
             <action dev="mdescher" type="fix">
                 REST: new representation of the server version, separate values for major, minor, bugfix and the complete version text.
             </action>
