@@ -788,8 +788,8 @@ public class MyTunesRssUtils {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             while (networkInterfaces != null && networkInterfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = networkInterfaces.nextElement();
-                for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-                    InetAddress inetAddress = interfaceAddress.getAddress();
+                for (Enumeration<InetAddress> addEnum = networkInterface.getInetAddresses(); addEnum.hasMoreElements(); ) {
+                    InetAddress inetAddress = addEnum.nextElement();
                     result.add(inetAddress.getHostAddress());
                 }
             }
