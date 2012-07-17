@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -244,7 +245,8 @@ public class LibraryResource extends RestResource {
      *
      * @param term Search term.
      * @param expert "true" for expert search, i.e. search term can contain Lucene seatch syntax.
-     * @param fuzziness Search fuzziness (see Lucene documentation where 0% fuzziness is exact search and 100% fuzziness is a similarity of 0).
+     * @param fuzziness Search fuzziness (see Lucene documentation where 0% fuzziness is exact search and 100% fuzziness is a similarity of 0). If the session representation has a value
+     *                  for the search fuzziness (i.e. a value is configured in the user settings), this parameter is ignored and the value from the user settings is used.
      * @param maxItems Maximum number of results to return.
      * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
      *
@@ -269,10 +271,15 @@ public class LibraryResource extends RestResource {
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
             ) throws IOException, ParseException, SQLException, LuceneQueryParserException {
         DataStoreQuery.QueryResult<Track> queryResult = null;
+        User user = MyTunesRssWebUtils.getAuthUser(request);
         if (expert) {
-            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForExpertSearchTerm(MyTunesRssWebUtils.getAuthUser(request), term, sortOrder, maxItems));
+            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForExpertSearchTerm(user, term, sortOrder, maxItems));
         } else {
-            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(MyTunesRssWebUtils.getAuthUser(request), term, fuzziness, sortOrder, maxItems));
+            int userSearchFuzziness = user.getSearchFuzziness();
+            if (userSearchFuzziness >= 0 && userSearchFuzziness <= 100) {
+                fuzziness = userSearchFuzziness; // use configured value if any and ignore parameter value
+            }
+            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(user, term, fuzziness, sortOrder, maxItems));
         }
         return toTrackRepresentations(uriInfo, request, queryResult.getResults());
     }

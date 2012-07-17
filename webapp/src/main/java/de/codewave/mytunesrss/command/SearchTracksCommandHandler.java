@@ -18,7 +18,12 @@ public class SearchTracksCommandHandler extends BrowseTrackCommandHandler {
     public void executeAuthorized() throws Exception {
         getRequest().getSession().setAttribute("lastSearchTerm", getRequestParameter("searchTerm", null));
         WebConfig webConfig = getWebConfig();
-        webConfig.setSearchFuzziness(getIntegerRequestParameter("searchFuzziness", 0));
+        int userConfigFuzziness = getAuthUser().getSearchFuzziness();
+        if (userConfigFuzziness >= 0 && userConfigFuzziness <= 100) {
+            webConfig.setSearchFuzziness(userConfigFuzziness); // is use config has a value, use it and ignore any parameter value
+        } else {
+            webConfig.setSearchFuzziness(getIntegerRequestParameter("searchFuzziness", 0));
+        }
         MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);
         super.executeAuthorized();
     }

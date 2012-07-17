@@ -7,6 +7,19 @@
 
     <body>
 
+        <release version="4.3.4" date="___D___">
+            <action dev="mdescher" type="add">
+                Use the configured search fuzziness of the user (if any) and ignore any parameter values in the library resource and the
+                web interface command handler.
+            </action>
+            <action dev="mdescher" type="add">
+                REST: Session representation now has the session timeout and the search fuzziness of the user.
+            </action>
+            <action dev="mdescher" type="fix">
+                REST: All permissions are returned in the session representation now.
+            </action>
+        </release>
+
         <release version="4.3.3" date="2012-07-08">
             <action dev="mdescher" type="fix">
                 Removed another Java 6 dependency.

@@ -34,6 +34,11 @@ import java.util.*;
 public class SessionResource extends RestResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionResource.class);
+    private static final String[] PERMISSION_NAMES = new String[] {
+            "audio", "movies", "tvShows", "rss", "playlist", "download", "yahooPlayer", "specialPlaylists", "player", "remoteControl", "externalSites", "editTags",
+            "upload", "transcoder", "changePassword", "changeEmail", "editLastFmAccount", "editWebSettings", "createPlaylists", "createPublicPlaylists", "photos",
+            "downloadPhotoAlbum", "share"
+    };
 
     /**
      * Get the settings for the current session.
@@ -53,6 +58,8 @@ public class SessionResource extends RestResource {
         session.setTranscoders(getTranscoders(user));
         session.setPermissions(getPermissions(user));
         session.setAirtunesTargets(getAirtunesTargets());
+        session.setSessionTimeoutSeconds(user.getSessionTimeout());
+        session.setSearchFuzziness(user.getSearchFuzziness());
         return session;
     }
 
@@ -78,7 +85,7 @@ public class SessionResource extends RestResource {
 
     public List<String> getPermissions(User user) {
         List<String> permissions = new ArrayList<String>();
-        for (String permission : new String[]{"audio", "changeEmail", "changePassword", "createPlaylists", "createPublicPlaylists", "download"}) { // TODO
+        for (String permission : PERMISSION_NAMES) {
             try {
                 if ((Boolean) User.class.getMethod("is" + StringUtils.capitalize(permission)).invoke(user)) {
                     permissions.add(permission);
