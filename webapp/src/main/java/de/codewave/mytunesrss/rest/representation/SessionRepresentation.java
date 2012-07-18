@@ -21,6 +21,10 @@ public class SessionRepresentation implements RestRepresentation {
 
     private List<String> myPermissions;
 
+    private Integer mySessionTimeoutSeconds;
+
+    private Integer mySearchFuzziness;
+
     /**
      * Main library URI.
      */
@@ -63,5 +67,28 @@ public class SessionRepresentation implements RestRepresentation {
 
     public void setPermissions(List<String> permissions) {
         myPermissions = permissions;
+    }
+
+    /**
+     * Session timeout in seconds, use this interval minus a few seconds for pinging the server to keep the session alive if necessary.
+     */
+    public Integer getSessionTimeoutSeconds() {
+        return mySessionTimeoutSeconds;
+    }
+
+    public void setSessionTimeoutSeconds(Integer sessionTimeoutSeconds) {
+        mySessionTimeoutSeconds = sessionTimeoutSeconds;
+    }
+
+    /**
+     * The configured search fuzziness for the user which is either a value from 0 to 100 or -1 for no default value. In case a value from 0 to 100 is returned,
+     * any parameter for the track search is ignored and the returned value is used.
+     */
+    public Integer getSearchFuzziness() {
+        return mySearchFuzziness;
+    }
+
+    public void setSearchFuzziness(Integer searchFuzziness) {
+        mySearchFuzziness = searchFuzziness;
     }
 }
