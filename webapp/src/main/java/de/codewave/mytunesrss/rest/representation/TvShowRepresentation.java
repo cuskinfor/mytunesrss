@@ -19,6 +19,8 @@ import java.net.URI;
 public class TvShowRepresentation implements RestRepresentation, Comparable<TvShowRepresentation> {
 
     private URI mySeasonsUri;
+    private URI myImageUri;
+    private String myImageHash;
     private Integer mySeasonCount;
     private Integer myEpisodeCount;
     private String myName;
@@ -35,6 +37,28 @@ public class TvShowRepresentation implements RestRepresentation, Comparable<TvSh
 
     public void setSeasonsUri(URI seasonsUri) {
         mySeasonsUri = seasonsUri;
+    }
+
+    /**
+     * The URI of the TV show image.
+     */
+    public URI getImageUri() {
+        return myImageUri;
+    }
+
+    public void setImageUri(URI imageUri) {
+        myImageUri = imageUri;
+    }
+
+    /**
+     * The unique hash of the TV show image.
+     */
+    public String getImageHash() {
+        return myImageHash;
+    }
+
+    public void setImageHash(String imageHash) {
+        myImageHash = imageHash;
     }
 
     /**
