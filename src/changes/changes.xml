@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.3.5" date="___D___">
+            <action dev="mdescher" type="update">
+                REST: Added imageUri and imageHash to TV show and TV show season representation.
+            </action>
+        </release>
+
         <release version="4.3.4" date="2012-07-18">
             <action dev="mdescher" type="add">
                 Use the configured search fuzziness of the user (if any) and ignore any parameter values in the library resource and the

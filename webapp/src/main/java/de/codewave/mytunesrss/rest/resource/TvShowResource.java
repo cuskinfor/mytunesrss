@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
@@ -51,7 +52,11 @@ public class TvShowResource extends RestResource {
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowSeriesEpisodes(MyTunesRssWebUtils.getAuthUser(request), show));
         Map<Integer, MutableInt> episodesPerSeason = new HashMap<Integer, MutableInt>();
+        Map<Integer, String> imageHashPerEpisode = new HashMap<Integer, String>();
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+            if (!imageHashPerEpisode.containsKey(track.getSeason())) {
+                imageHashPerEpisode.put(track.getSeason(), track.getImageHash());
+            }
             if (episodesPerSeason.containsKey(track.getSeason())) {
                 episodesPerSeason.get(track.getSeason()).increment();
             } else {
@@ -64,6 +69,10 @@ public class TvShowResource extends RestResource {
             representation.setName(entry.getKey());
             representation.setEpisodeCount(entry.getValue().intValue());
             representation.setEpisodesUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getEpisodes").build(show, entry.getKey()));
+            if (imageHashPerEpisode.containsKey(entry.getKey())) {
+                representation.setImageHash(imageHashPerEpisode.get(entry.getKey()));
+                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + imageHashPerEpisode.get(entry.getKey())));
+            }
             seasons.add(representation);
         }
         Collections.sort(seasons);

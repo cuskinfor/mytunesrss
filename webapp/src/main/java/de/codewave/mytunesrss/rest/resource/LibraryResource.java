@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.representation.*;
@@ -218,7 +219,11 @@ public class LibraryResource extends RestResource {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(MyTunesRssWebUtils.getAuthUser(request)));
         Map<String, Set<Integer>> seasonsPerShow = new HashMap<String, Set<Integer>>();
         Map<String, MutableInt> episodeCountPerShow = new HashMap<String, MutableInt>();
+        Map<String, String> imageHashPerShow = new HashMap<String, String>();
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
+            if (!imageHashPerShow.containsKey(track.getSeries())) {
+                imageHashPerShow.put(track.getSeries(), track.getImageHash());
+            }
             if (episodeCountPerShow.containsKey(track.getSeries())) {
                 episodeCountPerShow.get(track.getSeries()).increment();
                 seasonsPerShow.get(track.getSeries()).add(track.getSeason());
@@ -234,6 +239,10 @@ public class LibraryResource extends RestResource {
             representation.setSeasonCount(seasonsPerShow.get(name).size());
             representation.setEpisodeCount(episodeCountPerShow.get(name).intValue());
             representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name));
+            if (imageHashPerShow.containsKey(name)) {
+                representation.setImageHash(imageHashPerShow.get(name));
+                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + imageHashPerShow.get(name)));
+            }
             shows.add(representation);
         }
         Collections.sort(shows);
