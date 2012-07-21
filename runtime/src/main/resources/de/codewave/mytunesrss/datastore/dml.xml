@@ -491,6 +491,15 @@
         </sql>
     </statement>
 
+    <statement name="getDataSourceIds">
+        <sql>
+            SELECT source_id FROM track
+            UNION SELECT source_id FROM photo
+            UNION SELECT source_id FROM photoalbum
+            UNION SELECT source_id FROM playlist
+        </sql>
+    </statement>
+
     <statement name="cleanupPlaylistsAndPhotoAlbumsAfterUpdate">
         <sql>DELETE FROM playlist WHERE updated = FALSE AND source_id in (:source_id[])</sql>
         <sql>UPDATE playlist SET updated = FALSE</sql>
