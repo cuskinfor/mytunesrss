@@ -274,17 +274,43 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 // intentionally left blank
             }
         }
+        final Collection<String> updatedDataSourceIds = getDataSourceIds();
+        if (!Thread.currentThread().isInterrupted()) {
+            // Add all removed data sources to the list of updated ones, so all tracks, photos, etc. from those data sources is removed now
+            Set<String> dataSourceIdsFromDatabase = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Set<String>>() {
+                public Set<String> execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getDataSourceIds");
+                    ResultSet rs = statement.executeQuery();
+                    Set<String> ids = new HashSet<String>();
+                    while (rs.next()) {
+                        ids.add(rs.getString("source_id"));
+                    }
+                    return ids;
+                }
+            });
+            for (String dataSourceId : dataSourceIdsFromDatabase) {
+                boolean found = false;
+                for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
+                    if (datasourceConfig.getId().equals(dataSourceId)) {
+                        found = true;
+                    }
+                }
+                if (!found && !updatedDataSourceIds.contains(dataSourceId)) {
+                    updatedDataSourceIds.add(dataSourceId);
+                }
+            }
+        }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + trackIds.size() + " tracks from database.");
             }
-            myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds, getDataSourceIds()), true));
+            myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackIds, updatedDataSourceIds), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Trying to remove up to " + photoIds.size() + " photos from database.");
             }
-            myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds, getDataSourceIds()), true));
+            myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoIds, updatedDataSourceIds), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
             if (LOGGER.isInfoEnabled()) {
@@ -293,7 +319,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAndPhotoAlbumsAfterUpdate");
-                    statement.setItems("source_id", getDataSourceIds());
+                    statement.setItems("source_id", updatedDataSourceIds);
                     statement.execute();
                 }
             }, true));
