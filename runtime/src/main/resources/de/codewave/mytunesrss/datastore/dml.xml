@@ -493,10 +493,10 @@
 
     <statement name="getDataSourceIds">
         <sql>
-            SELECT source_id FROM track
-            UNION SELECT source_id FROM photo
-            UNION SELECT source_id FROM photoalbum
-            UNION SELECT source_id FROM playlist
+            SELECT source_id FROM track WHERE source_id IS NOT NULL
+            UNION SELECT source_id FROM photo WHERE source_id IS NOT NULL
+            UNION SELECT source_id FROM photoalbum WHERE source_id IS NOT NULL
+            UNION SELECT source_id FROM playlist WHERE source_id IS NOT NULL
         </sql>
     </statement>
 
