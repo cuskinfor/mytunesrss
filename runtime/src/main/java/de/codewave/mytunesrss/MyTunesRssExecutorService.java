@@ -46,8 +46,10 @@ public class MyTunesRssExecutorService {
         ROUTER_CONFIG_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
     }
 
-    public synchronized void scheduleDatabaseUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
-        cancelDatabaseUpdateAndResetJob();
+    public synchronized void scheduleDatabaseUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) throws DatabaseJobRunningException {
+        if (isDatabaseJobRunning()) {
+            throw new DatabaseJobRunningException();
+        }
         try {
             DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseBuilderCallable(dataSources, ignoreTimestamps));
         } catch (RejectedExecutionException e) {
@@ -55,8 +57,10 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) {
-        cancelDatabaseUpdateAndResetJob();
+    public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) throws DatabaseJobRunningException {
+        if (isDatabaseJobRunning()) {
+            throw new DatabaseJobRunningException();
+        }
         try {
             DATABASE_UPDATE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new ImageUpdateCallable(dataSources, ignoreTimestamps));
         } catch (RejectedExecutionException e) {
@@ -64,8 +68,10 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public synchronized void scheduleDatabaseReset() {
-        cancelDatabaseUpdateAndResetJob();
+    public synchronized void scheduleDatabaseReset() throws DatabaseJobRunningException {
+        if (isDatabaseJobRunning()) {
+            throw new DatabaseJobRunningException();
+        }
         try {
             DATABASE_RESET_FUTURE = DATABASE_JOB_EXECUTOR.submit(new RecreateDatabaseCallable());
         } catch (RejectedExecutionException e) {
@@ -82,13 +88,14 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public synchronized void cancelDatabaseUpdateAndResetJob() {
+    public synchronized boolean isDatabaseJobRunning() {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
-            DATABASE_UPDATE_FUTURE.cancel(true);
+            return true;
         }
         if (DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone()) {
-            DATABASE_RESET_FUTURE.cancel(true);
+            return true;
         }
+        return false;
     }
 
     public synchronized void cancelDatabaseBackupJob() {

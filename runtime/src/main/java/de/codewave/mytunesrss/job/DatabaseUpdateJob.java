@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.job;
 
+import de.codewave.mytunesrss.DatabaseJobRunningException;
 import de.codewave.mytunesrss.MyTunesRss;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -18,7 +19,11 @@ public class DatabaseUpdateJob implements Job {
      * @throws JobExecutionException
      */
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), false);
+        try {
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), false);
+        } catch (DatabaseJobRunningException e) {
+            MyTunesRss.ADMIN_NOTIFY.notifySkippedDatabaseUpdate(jobExecutionContext);
+        }
     }
 
 }
