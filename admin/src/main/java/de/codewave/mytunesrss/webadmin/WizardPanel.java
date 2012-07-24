@@ -9,6 +9,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
+import de.codewave.mytunesrss.DatabaseJobRunningException;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
@@ -17,12 +18,16 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Collections;
 import java.util.UUID;
 
 public class WizardPanel extends Panel implements Button.ClickListener {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(WizardPanel.class);
 
     private Button myAddDatasourceButton;
     private SmartTextField myDatasourcePath;
@@ -90,7 +95,11 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                     MyTunesRss.CONFIG.addUser(user);
                     MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
                     MyTunesRss.CONFIG.save();
-                    MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
+                    try {
+                        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
+                    } catch (DatabaseJobRunningException e) {
+                        LOGGER.error("There was already a database job running!", e);
+                    }
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());
                 }
             }

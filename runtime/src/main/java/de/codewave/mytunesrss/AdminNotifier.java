@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;
+import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mail.MailException;
@@ -11,10 +12,17 @@ import org.springframework.mail.MailException;
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.Map;
 
 public class AdminNotifier {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminNotifier.class);
+    private static final ThreadLocal<SimpleDateFormat> DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        }
+    };
 
     public void notifyDatabaseUpdate(long time, Map<String, Long> missingItunesFiles, SystemInformation systemInformation) {
         if (MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
@@ -94,19 +102,6 @@ public class AdminNotifier {
         }
     }
 
-    public void notifyTranscodingFailure(String[] sourceCommand, String[] targetCommand, Exception e) {
-        if (MyTunesRss.CONFIG.isNotifyOnTranscodingFailure() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            e.printStackTrace(pw);
-            String subject = "Transcoding failure";
-            String body = "Transcoding failed.\n\n" + "Source command was \"" + StringUtils.join(sourceCommand, ' ') + "\"\n\n" +
-                    "Target command was \"" + StringUtils.join(targetCommand, ' ') + "\"\n\n" + sw.toString();
-            sendAdminMail(subject, body);
-
-        }
-    }
-
     public void notifyWebUpload(User user, String fileInfos) {
         if (MyTunesRss.CONFIG.isNotifyOnWebUpload() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Web interface file upload";
@@ -119,6 +114,15 @@ public class AdminNotifier {
         if (MyTunesRss.CONFIG.isNotifyOnMissingFile() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Missing track file";
             String body = "The file \"" + track.getFile() + "\" was requested but is missing.";
+            sendAdminMail(subject, body);
+        }
+    }
+
+    public void notifySkippedDatabaseUpdate(JobExecutionContext jobExecutionContext) {
+        if (MyTunesRss.CONFIG.isNotifyOnSkippedDatabaseUpdate() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
+            String subject = "Skipped database update";
+            String body = "The database update scheduled for " + DATE_FORMAT.get().format(jobExecutionContext.getFireTime()) + " has not been started since another database task was active.\n" +
+                    "The next update is scheduled for " + DATE_FORMAT.get().format(jobExecutionContext.getNextFireTime()) + ".";
             sendAdminMail(subject, body);
         }
     }

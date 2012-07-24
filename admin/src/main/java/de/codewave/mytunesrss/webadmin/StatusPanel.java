@@ -22,7 +22,6 @@ import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.network.UpdateInfo;
-import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
@@ -276,7 +275,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myBackupDatabase.setEnabled(false);
                     new Thread(new Runnable() {
                         public void run() {
-                            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(datasources, ignoreTimestamps);
+                            try {
+                                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(datasources, ignoreTimestamps);
+                            } catch (DatabaseJobRunningException e) {
+                                LOGGER.error("There was already a database job running!", e);
+                            }
                         }
                     }).start();
                 }
@@ -292,7 +295,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myBackupDatabase.setEnabled(false);
                     new Thread(new Runnable() {
                         public void run() {
-                            MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate(datasources, ignoreTimestamps);
+                            try {
+                                MyTunesRss.EXECUTOR_SERVICE.scheduleImageUpdate(datasources, ignoreTimestamps);
+                            } catch (DatabaseJobRunningException e) {
+                                LOGGER.error("There was already a database job running!", e);
+                            }
                         }
                     }).start();
                 }
@@ -303,14 +310,18 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             myBackupDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseUpdateAndResetJob();
+            MyTunesRss.EXECUTOR_SERVICE.isDatabaseJobRunning();
         } else if (clickEvent.getSource() == myResetDatabase) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
             myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             myBackupDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
+            try {
+                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
+            } catch (DatabaseJobRunningException e) {
+                LOGGER.error("There was already a database job running!", e);
+            }
         } else if (clickEvent.getSource() == myBackupDatabase) {
             myUpdateDatabase.setEnabled(false);
             myUpdateImages.setEnabled(false);
