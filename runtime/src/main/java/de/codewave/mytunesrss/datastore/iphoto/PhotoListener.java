@@ -118,8 +118,8 @@ public abstract class PhotoListener implements PListHandlerListener {
                     statement.setDate(createDate);
                     statement.setFile(filename);
                     myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
-                    HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
-                    myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
+                    //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
+                    //myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
                     myPhotoIdToPersId.put(key, photoId);
                     return true;
                 } else if (existing) {

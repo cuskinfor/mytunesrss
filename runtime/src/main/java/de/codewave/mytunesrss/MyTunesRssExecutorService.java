@@ -35,6 +35,10 @@ public class MyTunesRssExecutorService {
 
     private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
 
+    private ScheduledFuture PHOTO_THUMBNAIL_GENERATOR_FUTURE;
+
+    private ScheduledFuture TRACK_IMAGE_GENERATOR_FUTURE;
+
     public void shutdown() throws InterruptedException {
         DATABASE_JOB_EXECUTOR.shutdownNow();
         DATABASE_JOB_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
@@ -57,7 +61,7 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) throws DatabaseJobRunningException {
+    /*public void scheduleImageUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) throws DatabaseJobRunningException {
         if (isDatabaseJobRunning()) {
             throw new DatabaseJobRunningException();
         }
@@ -66,7 +70,7 @@ public class MyTunesRssExecutorService {
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule image update task.", e);
         }
-    }
+    }*/
 
     public synchronized void scheduleDatabaseReset() throws DatabaseJobRunningException {
         if (isDatabaseJobRunning()) {
@@ -122,6 +126,11 @@ public class MyTunesRssExecutorService {
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule lucene and smart playlist update task.", e);
         }
+    }
+
+    public synchronized void scheduleImageGenerators() {
+        PHOTO_THUMBNAIL_GENERATOR_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new PhotoThumbnailGeneratorRunnable(), 0, 60, TimeUnit.SECONDS);
+        TRACK_IMAGE_GENERATOR_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new TrackImageGeneratorRunnable(), 0, 60, TimeUnit.SECONDS);
     }
 
     public synchronized void scheduleMyTunesRssComUpdate() {

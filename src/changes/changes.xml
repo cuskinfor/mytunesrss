@@ -7,6 +7,16 @@
 
     <body>
 
+        <release version="4.5" date="___D___">
+            <action dev="mdescher" type="update">
+                Replaced "update images" function with "remove images" function. This removes images for selected datasources
+                (track artwork and photo thumbnails). The re-import is triggered automatically through the background jobs.
+            </action>
+            <action dev="mdescher" type="add">
+                Do not generate photo thumbnails and track artwork during import but run a background jobs for this purpose.
+            </action>
+        </release>
+
         <release version="4.3.6" date="___D___">
             <action dev="mdescher" type="add">
                 Scheduled database updates will no longer cancel already running jobs but they will be skipped now.

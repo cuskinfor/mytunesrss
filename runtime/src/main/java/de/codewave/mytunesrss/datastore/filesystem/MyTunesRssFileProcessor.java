@@ -129,11 +129,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, FileType type) throws IOException, InterruptedException {
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
-        if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+        /*if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
             statement = existingTrack ? new UpdateTrackAndImageStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackAndImageStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
-        } else {
+        } else {*/
             statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
-        }
+        //}
         statement.clear();
         // never set any statement information here, since they are cleared once again later for MP4 file
         // if meta data from files should be ignored.
@@ -155,13 +155,13 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setMediaType(type.getMediaType());
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
-        if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
+        /*if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
             HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
             myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, false, "Could not insert track \"" + canonicalFilePath + "\" into database"));
         } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-            HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0, type.getMediaType() == MediaType.Image);
+            HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0);
             myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, false, "Could not insert track \"" + canonicalFilePath + "\" into database"));
-        }
+        }*/
         myUpdatedCount++;
         myExistingIds.add(fileId);
         return false;
@@ -194,8 +194,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
-        HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
-        myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
+        //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
+        //myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
         String albumName = getPhotoAlbum(photoFile);
         try {
             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));

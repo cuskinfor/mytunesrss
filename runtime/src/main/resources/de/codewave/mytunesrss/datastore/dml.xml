@@ -322,6 +322,11 @@
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">DELETE FROM track WHERE id = :loopitem_track_id AND source_id in (:source_id[])</sql>
     </statement>
 
+    <statement name="removeImagesForDataSources">
+        <sql>UPDATE track SET image_hash = NULL WHERE source_id IN (:source_id[])</sql>
+        <sql>UPDATE photo SET image_hash = NULL WHERE source_id IN (:source_id[])</sql>
+    </statement>
+
     <statement name="removePhoto">
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">DELETE FROM photo WHERE id = :loopitem_photo_id AND source_id in (:source_id[])</sql>
     </statement>
@@ -389,7 +394,7 @@
                              lower_name = LOWER(:name), lower_album = LOWER(:album), lower_comment = LOWER(:comment), year = :year,
                              series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
                              album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist, composer = :composer,
-                             compilation = :compilation, source_id = :source_id
+                             compilation = :compilation, source_id = :source_id, image_hash = NULL
             WHERE id = :id
         </sql>
     </statement>
@@ -446,7 +451,7 @@
     </statement>
 
     <statement name="updatePhoto">
-        <sql>UPDATE photo SET name = :name, date = :date, file = :file, source_id = :source_id WHERE id = :id</sql>
+        <sql>UPDATE photo SET name = :name, date = :date, file = :file, source_id = :source_id, image_hash = NULL WHERE id = :id</sql>
     </statement>
 
     <statement name="getPhotoAlbumIds">
@@ -902,6 +907,14 @@
             ORDER BY first_date, last_date, name
             ]]>
         </sql>
+    </statement>
+
+    <statement name="getPhotosWithMissingThumbnails">
+        <sql>SELECT id, file FROM photo WHERE image_hash IS NULL</sql>
+    </statement>
+
+    <statement name="getTracksWithMissingImages">
+        <sql>SELECT id, file, source FROM track WHERE image_hash IS NULL</sql>
     </statement>
 
     <!-- reusable sql fragments -->

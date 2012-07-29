@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
+    private boolean myShowIgnoreTimestamps;
     private CheckBox myIgnoreTimestamps;
     private Table myDataSources;
     private Button mySelectAllButton;
@@ -23,14 +24,18 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
     private Button myContinueButton;
     private Button myCancelButton;
 
+    protected DatasourcesSelectionPanel(boolean showIgnoreTimestamps) {
+        myShowIgnoreTimestamps = showIgnoreTimestamps;
+    }
+
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 3, true, true));
-
-        myIgnoreTimestamps = getComponentFactory().createCheckBox("datasourceSelection.ignoreTimestamps");
-        addComponent(myIgnoreTimestamps);
-
+        init(null, getComponentFactory().createGridLayout(1, myShowIgnoreTimestamps ? 3 : 2, true, true));
+        if (myShowIgnoreTimestamps) {
+            myIgnoreTimestamps = getComponentFactory().createCheckBox("datasourceSelection.ignoreTimestamps");
+            addComponent(myIgnoreTimestamps);
+        }
         myDataSources = new Table();
         myDataSources.setCacheRate(50);
         myDataSources.setWidth(100, Sizeable.UNITS_PERCENTAGE);
@@ -58,7 +63,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
         mainButtons.addComponent(myDeselectAllButton);
         mainButtons.addComponent(myCancelButton);
         mainButtons.addComponent(myContinueButton);
-        getGridLayout().addComponent(mainButtons, 0, 2, 0, 2);
+        getGridLayout().addComponent(mainButtons, 0, myShowIgnoreTimestamps ? 2 : 1, 0, myShowIgnoreTimestamps ? 2 : 1);
         getGridLayout().setComponentAlignment(mainButtons, Alignment.MIDDLE_RIGHT);
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
     }
@@ -73,7 +78,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
             if (datasources.isEmpty()) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourceSelection.error.noDatasource");
             } else {
-                onContinue(datasources, myIgnoreTimestamps.booleanValue());
+                onContinue(datasources, myShowIgnoreTimestamps ? myIgnoreTimestamps.booleanValue() : false);
                 closeWindow();
             }
         } else if (clickEvent.getSource() == myCancelButton) {

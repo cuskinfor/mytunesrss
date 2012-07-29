@@ -798,4 +798,12 @@ public class MyTunesRssUtils {
         }
         return result;
     }
+
+    public static Collection<String> toDatasourceIds(Collection<DatasourceConfig> configs) {
+        Set<String> ids = new HashSet<String>();
+        for (DatasourceConfig datasourceConfig : configs) {
+            ids.add(datasourceConfig.getId());
+        }
+        return ids;
+    }
 }

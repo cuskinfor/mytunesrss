@@ -233,6 +233,9 @@ public class MyTunesRss {
             initializeDatabase();
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
+            EXECUTOR_SERVICE.scheduleImageGenerators();
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
             StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
             EXECUTOR_SERVICE.scheduleWithFixedDelay(new MaintenanceRunnable(), 0, 3600, TimeUnit.SECONDS);
         }

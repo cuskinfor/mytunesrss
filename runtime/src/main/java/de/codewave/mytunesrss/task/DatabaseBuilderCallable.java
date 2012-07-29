@@ -14,7 +14,6 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.updatequeue.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.utils.sql.*;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,14 +40,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         private File myFile;
         private String myId;
         private long myTimeLastImageUpdate;
-        private boolean myImageType;
 
         public ImageUpdateInfo(Track track, long timeLastImageUpdate) {
             myTrackSource = track.getSource();
             myFile = track.getFile();
             myId = track.getId();
             myTimeLastImageUpdate = timeLastImageUpdate;
-            myImageType = track.getMediaType() == MediaType.Image;
         }
     }
 
@@ -133,9 +130,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     }
                 }, false));
             }
-            if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
+            /*if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
                 runImageUpdate(timeUpdateStart);
-            }
+            }*/
             if (!Thread.currentThread().isInterrupted()) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
@@ -160,6 +157,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
     }
 
+    /*
     protected void runImageUpdate(final long timeUpdateStart) throws InterruptedException {
         myState = State.UpdatingTrackImages;
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImages");
@@ -205,12 +203,13 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 break;
             }
             try {
-                myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate, imageUpdateInfo.myImageType), false));
+                myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate), false));
             } catch (Exception e) {
                 LOGGER.warn("Could not extract image from file \"" + imageUpdateInfo.myFile.getAbsolutePath() + "\".", e);
             }
         }
     }
+    */
 
     /**
      * @param systemInformation
@@ -274,7 +273,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 // intentionally left blank
             }
         }
-        final Collection<String> updatedDataSourceIds = getDataSourceIds();
+        final Collection<String> updatedDataSourceIds = MyTunesRssUtils.toDatasourceIds(myDatasources);
         if (!Thread.currentThread().isInterrupted()) {
             // Add all removed data sources to the list of updated ones, so all tracks, photos, etc. from those data sources is removed now
             Set<String> dataSourceIdsFromDatabase = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Set<String>>() {
@@ -328,14 +327,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         }
         return missingItunesFiles;
-    }
-
-    protected Collection<String> getDataSourceIds() {
-        Set<String> ids = new HashSet<String>();
-        for (DatasourceConfig datasourceConfig : myDatasources) {
-            ids.add(datasourceConfig.getId());
-        }
-        return ids;
     }
 
     public static State getState() {

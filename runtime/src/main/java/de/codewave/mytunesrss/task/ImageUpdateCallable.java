@@ -29,7 +29,7 @@ public class ImageUpdateCallable extends DatabaseBuilderCallable {
 
     @Override
     public Boolean call() throws InterruptedException {
-        try {
+/*        try {
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateInvalidatingImages")));
             if (LOGGER.isInfoEnabled()) {
                 LOGGER.info("Starting image update.");
@@ -49,7 +49,7 @@ public class ImageUpdateCallable extends DatabaseBuilderCallable {
             }
             myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
             myQueue.offer(new TerminateEvent());
-        }
+        }*/
         return true;
     }
 }
