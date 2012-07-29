@@ -8,9 +8,6 @@
     <body>
 
         <release version="4.3.6" date="___D___">
-            <action dev="mdescher" type="update">
-                Try up to 5 times to get a 200-OK response code in the server health check.
-            </action>
             <action dev="mdescher" type="add">
                 Scheduled database updates will no longer cancel already running jobs but they will be skipped now.
                 An optional admin notification for this event can be enabled.

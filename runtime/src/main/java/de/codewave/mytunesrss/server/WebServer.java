@@ -160,37 +160,31 @@ public class WebServer {
         HttpURLConnection connection = null;
         try {
             URL targetUrl = new URL("http://" + StringUtils.defaultIfBlank(host, "127.0.0.1") + ":" + port + getContext() + "/mytunesrss/checkHealth?ignoreSession=true");
-            for (int requestCount = 0; requestCount < 5; requestCount++) {
-                LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
-                connection = (HttpURLConnection) targetUrl.openConnection();
-                int responseCode = connection.getResponseCode();
-                LOGGER.info("HTTP response code is " + responseCode);
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    InputStream inputStream = connection.getInputStream();
-                    int result = -1;
-                    int trial = 0;
-                    while (result == -1 && trial < 10) {
-                        result = inputStream.read();
-                        trial++;
-                        if (result == -1) {
-                            try {
-                                Thread.sleep(100);
-                            } catch (InterruptedException e) {
-                                // intentionally left blank
-                            }
+            LOGGER.info("Trying server health URL \"" + targetUrl.toExternalForm() + "\".");
+            connection = (HttpURLConnection) targetUrl.openConnection();
+            int responseCode = connection.getResponseCode();
+            LOGGER.info("HTTP response code is " + responseCode);
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                InputStream inputStream = connection.getInputStream();
+                int result = -1;
+                int trial = 0;
+                while (result == -1 && trial < 10) {
+                    result = inputStream.read();
+                    trial++;
+                    if (result == -1) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            // intentionally left blank
                         }
                     }
-                    LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
-                    return result != -1 ? (byte) result : CheckHealthResult.EOF;
                 }
-                connection.disconnect();
-                Thread.sleep(500);
+                LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
+                return result != -1 ? (byte) result : CheckHealthResult.EOF;
+            } else {
+                return CheckHealthResult.INVALID_HTTP_RESPONSE;
             }
-            return CheckHealthResult.INVALID_HTTP_RESPONSE;
         } catch (IOException e) {
-            LOGGER.error("Could not get a proper server health status.", e);
-            return CheckHealthResult.SERVER_COMMUNICATION_FAILURE;
-        } catch (InterruptedException e) {
             LOGGER.error("Could not get a proper server health status.", e);
             return CheckHealthResult.SERVER_COMMUNICATION_FAILURE;
         } finally {
