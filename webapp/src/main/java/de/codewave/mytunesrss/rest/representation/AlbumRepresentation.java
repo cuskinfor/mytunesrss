@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Album;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -34,7 +35,7 @@ public class AlbumRepresentation implements RestRepresentation {
     public AlbumRepresentation(Album album) {
         setArtist(album.getArtist());
         setArtistCount(album.getArtistCount());
-        setImageHash(album.getImageHash());
+        setImageHash(StringUtils.trimToNull(album.getImageHash()));
         setName(album.getName());
         setTrackCount(album.getTrackCount());
         setYear(album.getYear());

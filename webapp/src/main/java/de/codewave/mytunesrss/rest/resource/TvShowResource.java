@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.TvShowRepresentation;
 import de.codewave.mytunesrss.rest.representation.TvShowSeasonRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.mutable.MutableInt;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -70,7 +71,7 @@ public class TvShowResource extends RestResource {
             representation.setEpisodeCount(entry.getValue().intValue());
             representation.setEpisodesUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getEpisodes").build(show, entry.getKey()));
             if (imageHashPerEpisode.containsKey(entry.getKey())) {
-                representation.setImageHash(imageHashPerEpisode.get(entry.getKey()));
+                representation.setImageHash(StringUtils.trimToNull(imageHashPerEpisode.get(entry.getKey())));
                 representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + imageHashPerEpisode.get(entry.getKey())));
             }
             seasons.add(representation);

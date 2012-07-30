@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -73,7 +74,7 @@ public class TrackRepresentation implements RestRepresentation {
         setEpisode(track.getEpisode());
         setFilename(track.getFilename());
         setGenre(track.getGenre());
-        setImageHash(track.getImageHash());
+        setImageHash(StringUtils.trimToNull(track.getImageHash()));
         setLastImageUpdate(track.getLastImageUpdate());
         setMediaType(track.getMediaType());
         setMp4Codec(track.getMp4Codec());
