@@ -29,7 +29,6 @@ import java.util.Map;
 public class HandlePhotoImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlePhotoImagesStatement.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
-    private static final Image IMAGE_UP_TO_DATE = new Image(null, (byte[]) null);
 
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
@@ -37,22 +36,20 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
         IMAGE_TO_MIME.put("png", "image/png");
     }
 
-
-    private long myLastUpdateTime;
     private File myFile;
     private String myPhotoId;
 
-    public HandlePhotoImagesStatement(File file, String photoId, long lastUpdateTime) {
-        myLastUpdateTime = lastUpdateTime;
+    public HandlePhotoImagesStatement(File file, String photoId) {
         myPhotoId = photoId;
         myFile = file;
     }
 
     public void execute(Connection connection) throws SQLException {
+        String imageHash = "";
         try {
             Image image = getImage();
-            if (image != IMAGE_UP_TO_DATE && image != null && image.getData() != null && image.getData().length > 0) {
-                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
+            if (image != null && image.getData() != null && image.getData().length > 0) {
+                imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
@@ -64,23 +61,24 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                     Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128);
                     new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
-                new UpdateImageForPhotoStatement(myPhotoId, imageHash).execute(connection);
             }
         } catch (Exception e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", e);
             }
+        } finally {
+            new UpdateImageForPhotoStatement(myPhotoId, imageHash).execute(connection);
         }
     }
 
     private Image getImage() throws IOException {
-        if (myFile.isFile() && myFile.lastModified() >= myLastUpdateTime) {
+        if (myFile.isFile()) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
             }
             return new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(myFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(myFile));
         } else {
-            return IMAGE_UP_TO_DATE;
+            return null;
         }
     }
 

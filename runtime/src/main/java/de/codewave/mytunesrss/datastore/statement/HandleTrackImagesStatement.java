@@ -38,7 +38,6 @@ import java.util.Map;
 public class HandleTrackImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
-    private static final Image IMAGE_UP_TO_DATE = new Image(null, (byte[]) null);
 
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
@@ -46,31 +45,23 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         IMAGE_TO_MIME.put("png", "image/png");
     }
 
-    private long myLastUpdateTime;
     private File myFile;
     private String myTrackId;
     private Image myImage;
     private TrackSource mySource;
 
-    public HandleTrackImagesStatement(TrackSource source, File file, String trackId, long lastUpdateTime) throws IOException {
-        myLastUpdateTime = lastUpdateTime;
+    public HandleTrackImagesStatement(TrackSource source, File file, String trackId) throws IOException {
         myFile = file;
         myTrackId = trackId;
         mySource = source;
         myImage = getLocalFileImage();
     }
 
-    public HandleTrackImagesStatement(File file, String trackId, Image image, long lastUpdateTime) throws IOException {
-        myLastUpdateTime = lastUpdateTime;
-        myFile = file;
-        myTrackId = trackId;
-        myImage = image != null ? image : getLocalFileImage();
-    }
-
     public void execute(Connection connection) throws SQLException {
+        String imageHash = "";
         try {
-            if (myImage != IMAGE_UP_TO_DATE && myImage != null && myImage.getData() != null && myImage.getData().length > 0) {
-                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(myImage.getData()));
+            if (myImage != null && myImage.getData() != null && myImage.getData().length > 0) {
+                imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(myImage.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
@@ -137,12 +128,13 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     }
                     new UpdateImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
-                new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             }
         } catch (Exception e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", e);
             }
+        } finally {
+            new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
         }
     }
 
@@ -168,38 +160,26 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     private Image readImageFromTrackFile(Image image) {
         if (myFile.isFile() && FileSupportUtils.isMp3(myFile)) {
-            if (myFile.lastModified() >= myLastUpdateTime) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
-                }
-                image = MyTunesRssMp3Utils.getImage(myFile);
-            } else {
-                image = IMAGE_UP_TO_DATE;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
             }
+            image = MyTunesRssMp3Utils.getImage(myFile);
         } else if (myFile.isFile() && FileSupportUtils.isMp4(myFile)) {
-            if (myFile.lastModified() >= myLastUpdateTime) {
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
-                }
-                image = MyTunesRssMp4Utils.getImage(myFile);
-            } else {
-                image = IMAGE_UP_TO_DATE;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
             }
+            image = MyTunesRssMp4Utils.getImage(myFile);
         }
         return image;
     }
 
     private Image readImageFromImageFile(File imageFile) throws IOException {
         Image image;
-        if (imageFile.isFile() && imageFile.lastModified() >= myLastUpdateTime) {
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
-            }
-            image = new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(
-                    imageFile));
-        } else {
-            image = IMAGE_UP_TO_DATE;
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
         }
+        image = new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(
+                imageFile));
         return image;
     }
 
@@ -251,7 +231,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                     }
                                 }
                             }
-                            if (itcFile.isFile() && itcFile.lastModified() >= myLastUpdateTime) {
+                            if (itcFile.isFile()) {
                                 LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
                                 Mp4Atom itemAtom = MyTunesRss.MP4_PARSER.parseAndGet(itcFile, "item");
                                 if (itemAtom != null) {

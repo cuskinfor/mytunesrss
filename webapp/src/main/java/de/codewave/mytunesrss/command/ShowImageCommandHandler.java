@@ -78,7 +78,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 LOG.warn("Not authorized to request image, sending default MyTunesRSS image.");
             }
         } else {
-            if (StringUtils.isNotEmpty(hash)) {
+            if (StringUtils.isNotEmpty(hash) && !MyTunesRssUtils.IMAGE_HASH_NO_IMAGE.equals(hash)) {
                 image = getTransaction().executeQuery(new FindImageQuery(hash, size));
             }
         }

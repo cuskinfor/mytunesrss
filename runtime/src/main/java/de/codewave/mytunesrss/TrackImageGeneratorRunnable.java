@@ -5,9 +5,7 @@
 
 package de.codewave.mytunesrss;
 
-import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
-import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
@@ -24,7 +22,7 @@ import java.util.Collection;
 
 public class TrackImageGeneratorRunnable implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(TrackImageGeneratorRunnable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackImageGeneratorRunnable.class);
 
     private static class SimpleTrack {
         private String myId;
@@ -57,22 +55,32 @@ public class TrackImageGeneratorRunnable implements Runnable {
                         break;
                     }
                     try {
-                        MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, new File(track.myFile), track.myId, 0));
+                        MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, new File(track.myFile), track.myId));
                         count++;
                         if (count % 250 == 0) {
-                            MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
-                                public void execute(Connection connection) throws SQLException {
-                                    MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
-                                }
-                            });
+                            recreateAlbums();
                         }
                     } catch (IOException e) {
-                        log.error("Could not insert track image.", e);
+                        LOGGER.error("Could not insert track image.", e);
                     }
                 }
             } catch (SQLException e) {
-                log.error("Could not fetch photos with missing thumbnails.", e);
+                LOGGER.error("Could not fetch photos with missing thumbnails.", e);
+            } finally {
+                try {
+                    recreateAlbums();
+                } catch (SQLException e) {
+                    LOGGER.error("Could not recreate albums.", e);
+                }
             }
         }
+    }
+
+    private void recreateAlbums() throws SQLException {
+        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
+            }
+        });
     }
 }
