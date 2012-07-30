@@ -2,16 +2,23 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
+import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,6 +78,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         Image image = null;
+        String photoId = getRequest().getParameter("photoId");
         String hash = getRequest().getParameter("hash");
         int size = getIntegerRequestParameter("size", -1);
         if (!isRequestAuthorized()) {
@@ -78,8 +86,10 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 LOG.warn("Not authorized to request image, sending default MyTunesRSS image.");
             }
         } else {
-            if (StringUtils.isNotEmpty(hash) && !MyTunesRssUtils.IMAGE_HASH_NO_IMAGE.equals(hash)) {
+            if (StringUtils.isNotBlank(hash)) {
                 image = getTransaction().executeQuery(new FindImageQuery(hash, size));
+            } else if (StringUtils.isNotBlank(photoId)) {
+                image = getImageForPhotoId(photoId, size);
             }
         }
         if (image == null) {
@@ -91,4 +101,42 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             sendImage(image);
         }
     }
+
+    private static class SimplePhoto {
+        private String myImageHash;
+        private File myFile;
+
+        private SimplePhoto(String imageHash, File file) {
+            myImageHash = imageHash;
+            myFile = file;
+        }
+    }
+
+    private Image getImageForPhotoId(final String photoId, int size) throws SQLException {
+        LOG.debug("Trying to generate thumbnail for photo \"" + photoId + "\".");
+        DataStoreSession session = getTransaction();
+        SimplePhoto photo = session.executeQuery(new DataStoreQuery<SimplePhoto>() {
+            @Override
+            public SimplePhoto execute(Connection connection) throws SQLException {
+                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoImageHashAndFile");
+                statement.setString("id", photoId);
+                ResultSet resultSet = statement.executeQuery();
+                if (resultSet.next()) {
+                    return new SimplePhoto(resultSet.getString("image_hash"), new File(resultSet.getString("file")));
+                }
+                return null;
+            }
+        });
+        if (photo != null && !"".equals(photo.myImageHash) && photo.myFile != null && photo.myFile.exists()) {
+            LOG.debug("Photo file is \"" + photo.myFile.getAbsolutePath() + "\".");
+            HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photo.myFile, photoId);
+            session.executeStatement(handlePhotoImagesStatement);
+            LOG.debug("Photo image hash is \"" + handlePhotoImagesStatement.getImageHash() + "\".");
+            if (StringUtils.isNotBlank(handlePhotoImagesStatement.getImageHash())) {
+                return session.executeQuery(new FindImageQuery(handlePhotoImagesStatement.getImageHash(), size));
+            }
+        }
+        return null;
+    }
+
 }

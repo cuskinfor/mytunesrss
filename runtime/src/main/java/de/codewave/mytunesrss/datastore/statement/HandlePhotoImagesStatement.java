@@ -38,6 +38,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
 
     private File myFile;
     private String myPhotoId;
+    private String myImageHash;
 
     public HandlePhotoImagesStatement(File file, String photoId) {
         myPhotoId = photoId;
@@ -45,21 +46,20 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        String imageHash = "";
         try {
             Image image = getImage();
             if (image != null && image.getData() != null && image.getData().length > 0) {
-                imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
-                List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
+                myImageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
+                List<Integer> imageSizes = new GetImageSizesQuery(myImageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
+                    LOGGER.debug("Image with hash \"" + myImageHash + "\" has " + imageSizes.size() + " entries in database.");
                 }
                 if (!imageSizes.contains(Integer.valueOf(128))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }
                     Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128);
-                    new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
+                    new InsertImageStatement(myImageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
             }
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                 LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", e);
             }
         } finally {
-            new UpdateImageForPhotoStatement(myPhotoId, imageHash).execute(connection);
+            new UpdateImageForPhotoStatement(myPhotoId, myImageHash).execute(connection);
         }
     }
 
@@ -82,4 +82,13 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
         }
     }
 
+    /**
+     * Get the photo's thumbnail image hash. Only useful after the {@link #execute(java.sql.Connection)} method has been
+     * called.
+     *
+     * @return The hash of the photo's thumbnail image.
+     */
+    public String getImageHash() {
+        return myImageHash;
+    }
 }

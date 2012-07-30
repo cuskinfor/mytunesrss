@@ -913,6 +913,10 @@
         <sql>SELECT id, file FROM photo WHERE image_hash IS NULL</sql>
     </statement>
 
+    <statement name="getPhotoImageHashAndFile">
+        <sql>SELECT image_hash, file FROM photo WHERE id = :id</sql>
+    </statement>
+
     <statement name="getTracksWithMissingImages">
         <sql>SELECT id, file, source FROM track WHERE image_hash IS NULL</sql>
     </statement>
