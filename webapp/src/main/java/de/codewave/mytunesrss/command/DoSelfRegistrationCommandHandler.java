@@ -33,7 +33,7 @@ public class DoSelfRegistrationCommandHandler extends MyTunesRssCommandHandler {
         if (!isError()) {
             User user = (User) MyTunesRss.CONFIG.getUser(MyTunesRss.CONFIG.getSelfRegisterTemplateUser()).clone();
             user.setName(username);
-            user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8")));
+            user.setPasswordHash(MyTunesRss.SHA1_DIGEST.get().digest(password.getBytes("UTF-8")));
             user.setEmptyPassword(false);
             user.setEmail(email);
             if (!MyTunesRss.CONFIG.addUser(user)) {

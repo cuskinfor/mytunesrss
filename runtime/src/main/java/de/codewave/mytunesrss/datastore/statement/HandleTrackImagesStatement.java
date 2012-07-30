@@ -72,7 +72,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         try {
             if (myImage != IMAGE_UP_TO_DATE && myImage != null && myImage.getData() != null && myImage.getData().length > 0) {
-                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(myImage.getData()));
+                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(myImage.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");

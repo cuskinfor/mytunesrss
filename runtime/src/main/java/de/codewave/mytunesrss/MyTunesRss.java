@@ -112,8 +112,34 @@ public class MyTunesRss {
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG;
     public static WebServer WEBSERVER = new WebServer();
-    public static MessageDigest SHA1_DIGEST;
-    public static MessageDigest MD5_DIGEST;
+    public static final ThreadLocal<MessageDigest> SHA1_DIGEST = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("SHA-1");
+            } catch (NoSuchAlgorithmException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not create SHA-1 digest.", e);
+                }
+            }
+            remove();
+            return null;
+        }
+    };
+    public static final ThreadLocal<MessageDigest> MD5_DIGEST = new ThreadLocal<MessageDigest>() {
+        @Override
+        protected MessageDigest initialValue() {
+            try {
+                return MessageDigest.getInstance("MD5");
+            } catch (NoSuchAlgorithmException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Could not create MD5 digest.", e);
+                }
+            }
+            remove();
+            return null;
+        }
+    };
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static FileCache STREAMING_CACHE;
@@ -200,7 +226,6 @@ public class MyTunesRss {
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         copyOldPrefsAndCache();
         createMissingPrefDirs();
-        createDigests();
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
         enableHeapDumpOnOutOfMemoryError();
@@ -441,23 +466,6 @@ public class MyTunesRss {
         };
         org.apache.log4j.Logger.getRootLogger().addAppender(appender);
         org.apache.log4j.Logger.getLogger("de.codewave").addAppender(appender);
-    }
-
-    private static void createDigests() {
-        try {
-            SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
-        } catch (NoSuchAlgorithmException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create SHA-1 digest.", e);
-            }
-        }
-        try {
-            MD5_DIGEST = MessageDigest.getInstance("MD5");
-        } catch (NoSuchAlgorithmException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not create MD5 digest.", e);
-            }
-        }
     }
 
     private static void copyOldPrefsAndCache() {

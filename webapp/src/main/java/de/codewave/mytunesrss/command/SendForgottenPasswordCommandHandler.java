@@ -32,7 +32,7 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
                         for (int i = 0; i < 10; i++) {
                             password.append((char)((byte)'a' + (byte)myRandom.nextInt(26)));
                         }
-                        user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(password.toString().getBytes("UTF-8")));
+                        user.setPasswordHash(MyTunesRss.SHA1_DIGEST.get().digest(password.toString().getBytes("UTF-8")));
                         MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(user);
                         de.codewave.mytunesrss.jsp.Error error = sendPasswordToUser(user, password);
                         if (error != null) {

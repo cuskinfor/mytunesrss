@@ -130,7 +130,7 @@ public class SessionResource extends RestResource {
             // login with existing session
             throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "EXISTING_USER_SESSION");
         }
-        byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
+        byte[] passwordHash = MyTunesRss.SHA1_DIGEST.get().digest(password.getBytes("UTF-8"));
         if (MyTunesRssWebUtils.isAuthorized(username, password, passwordHash) && !MyTunesRss.CONFIG.getUser(username).isEmptyPassword()) {
             // login successful
             MyTunesRssWebUtils.authorize(WebAppScope.Session, request, username);

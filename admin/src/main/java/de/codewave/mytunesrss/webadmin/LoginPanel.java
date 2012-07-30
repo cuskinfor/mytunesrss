@@ -36,7 +36,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST))) {
+        if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()))) {
             getApplication().setUser("USER"); // we just need any non-NULL objects here
             ((WebApplicationContext)getApplication().getContext()).getHttpSession().setAttribute("MyTunesRSSWebAdmin", Boolean.TRUE);
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new StatusPanel());

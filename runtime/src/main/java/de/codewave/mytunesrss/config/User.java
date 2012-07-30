@@ -67,7 +67,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     private String myName;
-    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString()));
+    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString()));
     private boolean myEmptyPassword = true;
     private boolean myDownload = true;
     private boolean myRss = true;
@@ -747,7 +747,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setMovies(JXPathUtils.getBooleanValue(settings, "featureMovies", myMovies));
         setTvShows(JXPathUtils.getBooleanValue(settings, "featureTvShows", myTvShows));
         //        try {
-        //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
+        //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.get().digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
         //                LOG.error("Could not create password hash for last fm user.", e);
         //        }

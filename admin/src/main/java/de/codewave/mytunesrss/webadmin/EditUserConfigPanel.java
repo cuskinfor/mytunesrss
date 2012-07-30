@@ -417,17 +417,17 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setEditWebSettings(myPermEditSettings.booleanValue());
         myUser.setEmail((String) myEmail.getValue());
         myUser.setExternalSites(myPermExternalLinks.booleanValue());
-        myUser.setLastFmPasswordHash(myLastFmPassword.getStringHashValue(MyTunesRss.MD5_DIGEST));
+        myUser.setLastFmPasswordHash(myLastFmPassword.getStringHashValue(MyTunesRss.MD5_DIGEST.get()));
         myUser.setLastFmUsername((String) myLastFmUsername.getValue());
         myUser.setMaximumZipEntries(myMaxFilesPerArchive.getIntegerValue(-1));
         final String oldUsername = myUser.getName();
         final String newUsername = (String) myUsername.getValue();
         myUser.setName(newUsername);
         if (StringUtils.isBlank(myPassword.getStringValue("")) && !myUser.isEmptyPassword()) {
-            myUser.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString())));
+            myUser.setPasswordHash(MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString())));
             myUser.setEmptyPassword(true);
         } else if (StringUtils.isNotBlank(myPassword.getStringValue(""))) {
-            myUser.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+            myUser.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
             myUser.setEmptyPassword(false);
         }
         myUser.setPlayer(myPermFlashPlayer.booleanValue());

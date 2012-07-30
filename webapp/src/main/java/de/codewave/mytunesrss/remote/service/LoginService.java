@@ -28,7 +28,7 @@ public class LoginService {
     public String login(String username, String password, int sessionTimeoutMinutes) throws UnsupportedEncodingException, IllegalAccessException {
         User user = MyTunesRss.CONFIG.getUser(username);
         if (user != null) {
-            byte[] passwordHash1 = MyTunesRss.SHA1_DIGEST.digest(password.getBytes("UTF-8"));
+            byte[] passwordHash1 = MyTunesRss.SHA1_DIGEST.get().digest(password.getBytes("UTF-8"));
             byte[] passwordHash2 = new byte[0];
             try {
                 passwordHash2 = Hex.decodeHex(password.toCharArray());
@@ -82,14 +82,14 @@ public class LoginService {
                 user.setEmail(StringUtils.trim(email));
             }
             if (user.isChangePassword() && StringUtils.isNotBlank(password)) {
-                user.setPasswordHash(MyTunesRss.SHA1_DIGEST.digest(StringUtils.trim(password).getBytes("UTF-8")));
+                user.setPasswordHash(MyTunesRss.SHA1_DIGEST.get().digest(StringUtils.trim(password).getBytes("UTF-8")));
             }
             if (user.isEditLastFmAccount()) {
                 if (StringUtils.isNotBlank(lastFmUser)) {
                     user.setLastFmUsername(StringUtils.trim(lastFmUser));
                 }
                 if (StringUtils.isNotBlank(lastFmPassword)) {
-                    user.setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(StringUtils.trim(lastFmPassword).getBytes("UTF-8")));
+                    user.setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.get().digest(StringUtils.trim(lastFmPassword).getBytes("UTF-8")));
                 }
             }
         } else {

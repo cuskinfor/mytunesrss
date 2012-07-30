@@ -85,7 +85,7 @@ public class MyTunesRssRemoteEnv {
     }
 
     public static String createSessionId() {
-        return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString() + System.currentTimeMillis()))));
+        return new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.get().digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString() + System.currentTimeMillis()))));
     }
 
     public static void initRequestWebConfig() {
