@@ -61,7 +61,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         String imageHash = "";
         try {
             if (myImage != null && myImage.getData() != null && myImage.getData().length > 0) {
-                imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(myImage.getData()));
+                imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(myImage.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");

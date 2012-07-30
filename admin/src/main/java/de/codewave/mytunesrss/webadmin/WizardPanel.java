@@ -90,7 +90,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                 } else {
                     MyTunesRss.CONFIG.setDatasources(Collections.singletonList(datasourceConfig));
                     User user = new User(myUsername.getStringValue(null));
-                    user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+                    user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
                     user.setEmptyPassword(false);
                     MyTunesRss.CONFIG.addUser(user);
                     MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again

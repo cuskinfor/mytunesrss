@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -120,11 +121,12 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             public SimplePhoto execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoImageHashAndFile");
                 statement.setString("id", photoId);
-                ResultSet resultSet = statement.executeQuery();
-                if (resultSet.next()) {
-                    return new SimplePhoto(resultSet.getString("image_hash"), new File(resultSet.getString("file")));
-                }
-                return null;
+                QueryResult<SimplePhoto> queryResult = execute(statement, new ResultBuilder<SimplePhoto>() {
+                    public SimplePhoto create(ResultSet resultSet) throws SQLException {
+                        return new SimplePhoto(resultSet.getString("image_hash"), new File(resultSet.getString("file")));
+                    }
+                });
+                return queryResult.getResultSize() == 1 ? queryResult.getResult(0) : null;
             }
         });
         if (photo != null && !"".equals(photo.myImageHash) && photo.myFile != null && photo.myFile.exists()) {

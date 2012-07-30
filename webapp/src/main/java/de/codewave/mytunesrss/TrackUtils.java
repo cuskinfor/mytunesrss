@@ -124,7 +124,7 @@ public class TrackUtils {
 
     private static String createTemporarySectionPlaylist(DataStoreSession transaction, String sectionIds) {
         try {
-            final String sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(sectionIds)));
+            final String sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(sectionIds)));
             LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
             transaction.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {

@@ -36,7 +36,7 @@ public class LastFmUtils {
         try {
             String passwordHashHex = new String(Hex.encodeHex(user.getLastFmPasswordHash()));
             LOG.debug("Password hash in hex is \"" + passwordHashHex + "\".");
-            String authToken = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.digest((passwordHashHex + timestamp).getBytes("UTF-8"))));
+            String authToken = new String(Hex.encodeHex(MyTunesRss.MD5_DIGEST.get().digest((passwordHashHex + timestamp).getBytes("UTF-8"))));
             String uri = "http://post.audioscrobbler.com/?hs=true&p=1.2&c=" + CLIENT_ID + "&v=" + CLIENT_VERSION + "&u=" + user.getLastFmUsername() +
                     "&t=" + timestamp + "&a=" + authToken;
             LOG.debug("Last.fm URI is \"" + uri + "\".");

@@ -67,7 +67,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     private String myName;
-    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString()));
+    private byte[] myPasswordHash = MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(UUID.randomUUID().toString()));
     private boolean myEmptyPassword = true;
     private boolean myDownload = true;
     private boolean myRss = true;

@@ -119,7 +119,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setMyTunesRssComUser(myMyTunesRssComUser.getStringValue(null));
-        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myMyTunesRssComPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myMyTunesRssComPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
         if (myMyTunesRssComSsl.isEnabled()) {
             MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.booleanValue());
         }

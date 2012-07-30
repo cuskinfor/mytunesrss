@@ -202,7 +202,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         boolean musicServerConfigChanged = isMusicServerConfigChanged();
         MyTunesRss.CONFIG.setAdminHost(((ListenAddress)myAdminListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setAdminPort(myAdminPort.getIntegerValue(0));
-        MyTunesRss.CONFIG.setAdminPasswordHash(myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+        MyTunesRss.CONFIG.setAdminPasswordHash(myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
         MyTunesRss.CONFIG.setLocalTempArchive(myLocalTempArchive.booleanValue());
         MyTunesRss.CONFIG.setAvailableOnLocalNet(myAvailableOnLocalNet.booleanValue());
         MyTunesRss.CONFIG.setServerName(myServerName.getStringValue(null));
@@ -254,7 +254,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
 
     private boolean isAdminServerConfigChanged() {
         boolean changed = !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPort(), myAdminPort.getIntegerValue(0));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminHost(), ((ListenAddress)myAdminListenAddress.getValue()).getValue());
         return changed;
     }

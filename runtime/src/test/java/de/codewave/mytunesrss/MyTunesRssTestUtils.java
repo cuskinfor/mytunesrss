@@ -34,7 +34,6 @@ public class MyTunesRssTestUtils {
         } finally {
             session.rollback();
         }
-        MyTunesRss.SHA1_DIGEST = MessageDigest.getInstance("SHA-1");
     }
 
     public static void after() {

@@ -97,7 +97,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             getAuthUser().setLastFmUsername(username);
             if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
                 if (StringUtils.equals(password1, password2)) {
-                    getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.digest(MiscUtils.getUtf8Bytes(password1)));
+                    getAuthUser().setLastFmPasswordHash(MyTunesRss.MD5_DIGEST.get().digest(MiscUtils.getUtf8Bytes(password1)));
                 } else {
                     addError(new BundleError("error.settingsLastFmPasswordMismatch"));
                     return true;
@@ -113,7 +113,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
             String password2 = getRequestParameter("password2", null);
             if (StringUtils.isNotEmpty(password1) || StringUtils.isNotEmpty(password2)) {
                 if (StringUtils.equals(password1, password2)) {
-                    byte[] passwordHash = MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(password1));
+                    byte[] passwordHash = MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(password1));
                     if (!Arrays.equals(passwordHash, getAuthUser().getPasswordHash())) {
                         getAuthUser().setPasswordHash(passwordHash);
                         MyTunesRss.ADMIN_NOTIFY.notifyPasswordChange(getAuthUser());

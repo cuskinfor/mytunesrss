@@ -49,7 +49,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
         try {
             Image image = getImage();
             if (image != null && image.getData() != null && image.getData().length > 0) {
-                myImageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.digest(image.getData()));
+                myImageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(myImageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + myImageHash + "\" has " + imageSizes.size() + " entries in database.");

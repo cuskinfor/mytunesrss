@@ -782,11 +782,11 @@ public class MyTunesRssConfig {
     }
 
     public boolean isAdminPassword() {
-        return !Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), MyTunesRss.SHA1_DIGEST.digest(new byte[0]));
+        return !Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), MyTunesRss.SHA1_DIGEST.get().digest(new byte[0]));
     }
 
     public byte[] getAdminPasswordHash() {
-        return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.digest(MiscUtils.getUtf8Bytes(""));
+        return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(""));
     }
 
     public void setAdminPasswordHash(byte[] adminPasswordHash) {
