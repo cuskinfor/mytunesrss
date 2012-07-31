@@ -1706,7 +1706,7 @@ public class MyTunesRssConfig {
     }
 
     public static boolean isVlc(final File executable, boolean checkOutput) {
-        if (executable == null || (executable.isFile() && executable.canExecute() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName())))) {
+        if (executable != null && executable.isFile() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName()))) {
             if (checkOutput) {
                 try {
                     ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "--version");

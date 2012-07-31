@@ -24,7 +24,13 @@
             </action>
         </release>
 
-        <release version="4.3.6" date="___D___">
+        <release version="4.3.6" date="2012-07-31">
+            <action dev="mdescher" type="fix">
+                Fixed VLC executable detection.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed a threading issue with digest instances.
+            </action>
             <action dev="mdescher" type="add">
                 Scheduled database updates will no longer cancel already running jobs but they will be skipped now.
                 An optional admin notification for this event can be enabled.
