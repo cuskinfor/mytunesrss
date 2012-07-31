@@ -879,7 +879,7 @@
     <statement name="getPhotoAlbums">
         <sql>
             <![CDATA[
-            SELECT pa.id AS id, pa.name AS name, pa.first_date AS first_date, pa.last_date AS last_date
+            SELECT pa.id AS id, pa.name AS name, pa.first_date AS first_date, pa.last_date AS last_date, pa.photo_count AS photo_count
             FROM photoalbum pa<restricted>, link_photo_album rlpa</restricted><restricted_or_excluded>, link_photo_album lpa</restricted_or_excluded>
             WHERE {alwaysTrueCondition}
             <restricted>

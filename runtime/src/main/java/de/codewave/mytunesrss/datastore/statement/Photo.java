@@ -10,8 +10,8 @@ public class Photo {
     private String myName;
     private String myFile;
     private long myDate;
-    private String imageHash;
-    private long lastImageUpdate;
+    private String myImageHash;
+    private long myLastImageUpdate;
 
     public String getId() {
         return myId;
@@ -46,18 +46,18 @@ public class Photo {
     }
 
     public String getImageHash() {
-        return imageHash;
+        return myImageHash;
     }
 
     public void setImageHash(String imageHash) {
-        this.imageHash = imageHash;
+        this.myImageHash = imageHash;
     }
 
     public long getLastImageUpdate() {
-        return lastImageUpdate;
+        return myLastImageUpdate;
     }
 
     public void setLastImageUpdate(long lastImageUpdate) {
-        this.lastImageUpdate = lastImageUpdate;
+        this.myLastImageUpdate = lastImageUpdate;
     }
 }

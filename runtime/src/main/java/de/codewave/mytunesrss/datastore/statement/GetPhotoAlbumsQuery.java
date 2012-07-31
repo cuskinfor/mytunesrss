@@ -62,7 +62,8 @@ public class GetPhotoAlbumsQuery extends DataStoreQuery<DataStoreQuery.QueryResu
                         resultSet.getString("id"),
                         resultSet.getString("name"),
                         resultSet.getLong("first_date"),
-                        resultSet.getLong("last_date")
+                        resultSet.getLong("last_date"),
+                        resultSet.getInt("photo_count")
                 );
                 return photoAlbum;
             }

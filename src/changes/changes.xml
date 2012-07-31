@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.5" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-335] Remote API for photos
+            </action>
             <action dev="mdescher" type="update">
                 Replaced "update images" function with "remove images" function. This removes images for selected datasources
                 (track artwork and photo thumbnails). The re-import is triggered automatically through the background jobs.

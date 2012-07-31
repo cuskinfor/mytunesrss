@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
@@ -56,6 +55,7 @@ public class LibraryResource extends RestResource {
         libraryRepresentation.setPlaylistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPlaylists").build());
         libraryRepresentation.setTracksUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "findTracks").build());
         libraryRepresentation.setTvShowsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getTvShows").build());
+        libraryRepresentation.setPhotoAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPhotoAlbums").build());
         libraryRepresentation.setMediaPlayerUri(uriInfo.getBaseUriBuilder().path(MediaPlayerResource.class).build());
         libraryRepresentation.setSessionUri(uriInfo.getBaseUriBuilder().path(SessionResource.class).build());
         return libraryRepresentation;
@@ -248,6 +248,29 @@ public class LibraryResource extends RestResource {
         }
         Collections.sort(shows);
         return shows;
+    }
+
+    /**
+     * Get a list of photo albums.
+
+     * @return A list of photo albums.
+     */
+    @GET
+    @Path("photoalbums")
+    @Produces({"application/json"})
+    @GZIP
+    public List<PhotoAlbumRepresentation> getPhotoAlbums(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request
+    ) throws SQLException {
+        DataStoreQuery.QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(new GetPhotoAlbumsQuery(MyTunesRssWebUtils.getAuthUser(request)));
+        List<PhotoAlbumRepresentation> results = new ArrayList<PhotoAlbumRepresentation>();
+        for (PhotoAlbum photoAlbum : queryResult.getResults()) {
+            PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
+            photoAlbumRepresentation.setPhotosUri(uriInfo.getBaseUriBuilder().path(PhotoAlbumResource.class).path(PhotoAlbumResource.class, "getPhotos").build(photoAlbum.getId()));
+            results.add(photoAlbumRepresentation);
+        }
+        return results;
     }
 
     /**

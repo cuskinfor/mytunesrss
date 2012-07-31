@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
@@ -170,7 +171,7 @@ public class RestResource {
             uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(request, "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
         }
         for (String path : paths) {
-            uriBuilder.path(path);
+            uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(request, path));
         }
         return uriBuilder.build();
     }

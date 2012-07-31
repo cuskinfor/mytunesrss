@@ -20,6 +20,7 @@ public class LibraryRepresentation implements RestRepresentation {
     private URI myTvShowsUri;
     private URI myMediaPlayerUri;
     private URI mySessionUri;
+    private URI myPhotoAlbumsUri;
     private VersionRepresentation myVersion;
 
     /**
@@ -130,5 +131,16 @@ public class LibraryRepresentation implements RestRepresentation {
 
     public void setSessionUri(URI sessionUri) {
         mySessionUri = sessionUri;
+    }
+
+    /**
+     * URI to the list of photo albums.
+     */
+    public URI getPhotoAlbumsUri() {
+        return myPhotoAlbumsUri;
+    }
+
+    public void setPhotoAlbumsUri(URI photoAlbumsUri) {
+        myPhotoAlbumsUri = photoAlbumsUri;
     }
 }
