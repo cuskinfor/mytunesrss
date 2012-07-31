@@ -37,7 +37,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
     }
 
     public void run() {
-        if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
+        if (MyTunesRss.CONFIG.getTrackImageImportType() == ImageImportType.Auto) {
             try {
                 Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimpleTrack>>() {
                     @Override

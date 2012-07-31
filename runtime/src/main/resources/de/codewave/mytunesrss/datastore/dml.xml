@@ -903,7 +903,7 @@
                     WHERE edsp.source_id IN (:excludedDataSourceIds[])
                 )
             </excludedDatasources>
-            GROUP BY id, name, first_date, last_date
+            GROUP BY id, name, first_date, last_date, photo_count
             ORDER BY first_date, last_date, name
             ]]>
         </sql>

@@ -9,6 +9,10 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="add">
+                Cover artwork always imported at sull size. Removed option to ignore cover artwork. Added import options for cover artwork
+                (auto|never) and photo thumbnails (auto|on-demand). Both default to "auto".
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-335] Remote API for photos
             </action>
             <action dev="mdescher" type="update">

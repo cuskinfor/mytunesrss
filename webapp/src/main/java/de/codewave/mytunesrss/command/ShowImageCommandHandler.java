@@ -1,14 +1,15 @@
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.ImageImportType;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
+import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
+import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,8 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +31,16 @@ import java.util.Map;
  */
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
+
+    private static class SimplePhoto {
+        private String myImageHash;
+        private File myFile;
+
+        private SimplePhoto(String imageHash, File file) {
+            myImageHash = imageHash;
+            myFile = file;
+        }
+    }
 
     private Map<Integer, Image> myDefaultImages = new HashMap<Integer, Image>();
 
@@ -100,16 +113,6 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             sendDefaultImage(size);
         } else {
             sendImage(image);
-        }
-    }
-
-    private static class SimplePhoto {
-        private String myImageHash;
-        private File myFile;
-
-        private SimplePhoto(String imageHash, File file) {
-            myImageHash = imageHash;
-            myFile = file;
         }
     }
 

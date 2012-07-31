@@ -103,7 +103,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     new UpdateImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
                 }
                 int originalSize = MyTunesRssUtils.getMaxImageSize(myImage);
-                if (originalSize > 256 && MyTunesRss.CONFIG.isImportOriginalImageSize()) {
+                if (originalSize > 256) {
                     if (!imageSizes.contains(Integer.valueOf(originalSize))) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Inserting image with size " + originalSize + ".");

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.config.FileType;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
@@ -16,12 +17,11 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
+    private final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
     public final Protection PROTECTED = new Protection(true);
     public final Protection UNPROTECTED = new Protection(false);
 
@@ -31,11 +31,17 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myArtistDropWords;
     private SmartTextField myId3v2TrackComment;
     private SmartTextField myDisabledMp4Codecs;
-    private CheckBox myIgnoreArtwork;
-    private CheckBox myImportOriginalImageSize;
+    private Select myTrackImageImportType;
+    private Select myPhotoThumbnailImportType;
     private Form myMiscForm;
     private Table myTrackImageMappingsTable;
     private Button myAddTrackImageMapping;
+
+    public DataImportConfigPanel() {
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
+    }
 
     public void attach() {
         super.attach();
@@ -61,13 +67,13 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myArtistDropWords = getComponentFactory().createTextField("dataimportConfigPanel.artistDropWords");
         myId3v2TrackComment = getComponentFactory().createTextField("dataimportConfigPanel.id3v2TrackComment");
         myDisabledMp4Codecs = getComponentFactory().createTextField("dataimportConfigPanel.disabledMp4Codecs");
-        myIgnoreArtwork = getComponentFactory().createCheckBox("dataimportConfigPanel.ignoreArtwork");
-        myImportOriginalImageSize = getComponentFactory().createCheckBox("dataimportConfigPanel.importOriginalImageSize");
+        myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
+        myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myMiscForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         myMiscForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
-        myMiscForm.addField(myIgnoreArtwork, myIgnoreArtwork);
-        myMiscForm.addField(myImportOriginalImageSize, myImportOriginalImageSize);
+        myMiscForm.addField(myTrackImageImportType, myTrackImageImportType);
+        myMiscForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         Panel imageMappingsPanel = new Panel(getBundleString("dataimportConfigPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(imageMappingsPanel);
         myTrackImageMappingsTable = new Table();
@@ -97,8 +103,8 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myArtistDropWords.setValue(MyTunesRss.CONFIG.getArtistDropWords());
         myId3v2TrackComment.setValue(MyTunesRss.CONFIG.getId3v2TrackComment());
         myDisabledMp4Codecs.setValue(MyTunesRss.CONFIG.getDisabledMp4Codecs());
-        myIgnoreArtwork.setValue(MyTunesRss.CONFIG.isIgnoreArtwork());
-        myImportOriginalImageSize.setValue(MyTunesRss.CONFIG.isImportOriginalImageSize());
+        myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getTrackImageImportType()));
+        myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getPhotoThumbnailImportType()));
         myTrackImageMappingsTable.removeAllItems();
         for (ReplacementRule mapping : MyTunesRss.CONFIG.getTrackImageMappings()) {
             addTrackImageMapping(mapping);
@@ -148,8 +154,8 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getStringValue(null));
         MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
         MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
-        MyTunesRss.CONFIG.setIgnoreArtwork(myIgnoreArtwork.booleanValue());
-        MyTunesRss.CONFIG.setImportOriginalImageSize(myImportOriginalImageSize.booleanValue());
+        MyTunesRss.CONFIG.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
+        MyTunesRss.CONFIG.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
         for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
             mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
@@ -227,6 +233,24 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             } else {
                 return getBundleString("dataimportConfigPanel.fileTypes.protection.false");
             }
+        }
+    }
+
+    public class ImageImportTypeRepresentation {
+
+        private ImageImportType myImageImportType;
+
+        public ImageImportTypeRepresentation(ImageImportType imageImportType) {
+            myImageImportType = imageImportType;
+        }
+
+        public ImageImportType getImageImportType() {
+            return myImageImportType;
+        }
+
+        @Override
+        public String toString() {
+            return getBundleString("dataimportConfigPanel.importType." + myImageImportType.name());
         }
     }
 }

@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.PhotoRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -57,7 +58,11 @@ public class PhotoAlbumResource extends RestResource {
         }
         for (Photo photo : photos.getResults(first, count)) {
             PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
-            photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + photo.getImageHash(), "photoId=" + photo.getId()));
+            if (StringUtils.isNotBlank(photo.getImageHash())) {
+                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + photo.getImageHash()));
+            } else {
+                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "photoId=" + photo.getId()));
+            }
             if (photoSize != null) {
                 photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, "photo=" + photo.getId(), "size=" + photoSize));
             } else {

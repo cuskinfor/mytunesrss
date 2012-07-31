@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
@@ -64,7 +65,6 @@ public class MyTunesRssConfig {
     private String myWebLoginMessage = "";
     private int myStreamingCacheTimeout = 20;
     private int myStreamingCacheMaxFiles = 300;
-    private boolean myIgnoreArtwork;
     private Level myCodewaveLogLevel;
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
@@ -119,7 +119,6 @@ public class MyTunesRssConfig {
     private byte[] myAdminPasswordHash;
     private String myAdminHost;
     private int myAdminPort;
-    private boolean myImportOriginalImageSize = false;
     private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
     private boolean myInitialWizard;
     private boolean myUpnpAdmin;
@@ -137,6 +136,8 @@ public class MyTunesRssConfig {
     private int myVlcSocketTimeout;
     private String myRssDescription;
     private int myVlcRaopVolume = 75;
+    private ImageImportType myTrackImageImportType;
+    private ImageImportType myPhotoThumbnailImportType;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -255,14 +256,6 @@ public class MyTunesRssConfig {
 
     public void setStreamingCacheMaxFiles(int streamingCacheMaxFiles) {
         myStreamingCacheMaxFiles = streamingCacheMaxFiles;
-    }
-
-    public boolean isIgnoreArtwork() {
-        return myIgnoreArtwork;
-    }
-
-    public void setIgnoreArtwork(boolean ignoreArtwork) {
-        myIgnoreArtwork = ignoreArtwork;
     }
 
     public Level getCodewaveLogLevel() {
@@ -809,14 +802,6 @@ public class MyTunesRssConfig {
         myAdminPort = adminPort;
     }
 
-    public boolean isImportOriginalImageSize() {
-        return myImportOriginalImageSize;
-    }
-
-    public void setImportOriginalImageSize(boolean importOriginalImageSize) {
-        myImportOriginalImageSize = importOriginalImageSize;
-    }
-
     public Set<FlashPlayerConfig> getFlashPlayers() {
         return new HashSet<FlashPlayerConfig>(myFlashPlayers);
     }
@@ -974,6 +959,22 @@ public class MyTunesRssConfig {
         myRssDescription = rssDescription;
     }
 
+    public ImageImportType getTrackImageImportType() {
+        return myTrackImageImportType;
+    }
+
+    public void setTrackImageImportType(ImageImportType trackImageImportType) {
+        myTrackImageImportType = trackImageImportType;
+    }
+
+    public ImageImportType getPhotoThumbnailImportType() {
+        return myPhotoThumbnailImportType;
+    }
+
+    public void setPhotoThumbnailImportType(ImageImportType photoThumbnailImportType) {
+        myPhotoThumbnailImportType = photoThumbnailImportType;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1047,7 +1048,6 @@ public class MyTunesRssConfig {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
         setAdminHost(JXPathUtils.getStringValue(settings, "adminHost", getAdminHost()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
-        setImportOriginalImageSize(JXPathUtils.getBooleanValue(settings, "importOriginalImageSize", isImportOriginalImageSize()));
         setHost(JXPathUtils.getStringValue(settings, "serverHost", getHost()));
         setPort(JXPathUtils.getIntValue(settings, "serverPort", getPort()));
         setServerName(JXPathUtils.getStringValue(settings, "serverName", getServerName()));
@@ -1084,7 +1084,6 @@ public class MyTunesRssConfig {
         readPathInfoEncryptionKey(settings);
         setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
         setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
-        setIgnoreArtwork(JXPathUtils.getBooleanValue(settings, "ignoreArtwork", false));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
@@ -1208,6 +1207,8 @@ public class MyTunesRssConfig {
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
         setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
         setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
+        setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
+        setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
     }
 
     /**
@@ -1379,7 +1380,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createByteArrayElement(settings, "adminPassword", getAdminPasswordHash()));
             root.appendChild(DOMUtils.createTextElement(settings, "adminHost", myAdminHost));
             root.appendChild(DOMUtils.createIntElement(settings, "adminPort", myAdminPort));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "importOriginalImageSize", myImportOriginalImageSize));
             root.appendChild(DOMUtils.createTextElement(settings, "version", myVersion));
             if (StringUtils.isNotBlank(myHost)) {
                 root.appendChild(DOMUtils.createTextElement(settings, "serverHost", myHost));
@@ -1428,7 +1428,6 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
             root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "ignoreArtwork", myIgnoreArtwork));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
@@ -1563,6 +1562,8 @@ public class MyTunesRssConfig {
                 root.appendChild(DOMUtils.createIntElement(settings, "vlc-raop-volume", getVlcRaopVolume()));
             }
             root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
+            root.appendChild(DOMUtils.createTextElement(settings, "track-image-import", getTrackImageImportType().name()));
+            root.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", getPhotoThumbnailImportType().name()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

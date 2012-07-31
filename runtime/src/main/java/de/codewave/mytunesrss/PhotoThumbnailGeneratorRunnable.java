@@ -32,25 +32,27 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
     }
 
     public void run() {
-        try {
-            Collection<SimplePhoto> photos = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimplePhoto>>() {
-                @Override
-                public Collection<SimplePhoto> execute(Connection connection) throws SQLException {
-                    return execute(MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails"), new ResultBuilder<SimplePhoto>() {
-                        public SimplePhoto create(ResultSet resultSet) throws SQLException {
-                            return new SimplePhoto(resultSet.getString("id"), resultSet.getString("file"));
-                        }
-                    }).getResults();
+        if (MyTunesRss.CONFIG.getPhotoThumbnailImportType() == ImageImportType.Auto) {
+            try {
+                Collection<SimplePhoto> photos = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimplePhoto>>() {
+                    @Override
+                    public Collection<SimplePhoto> execute(Connection connection) throws SQLException {
+                        return execute(MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails"), new ResultBuilder<SimplePhoto>() {
+                            public SimplePhoto create(ResultSet resultSet) throws SQLException {
+                                return new SimplePhoto(resultSet.getString("id"), resultSet.getString("file"));
+                            }
+                        }).getResults();
+                    }
+                });
+                for (SimplePhoto photo : photos) {
+                    if (Thread.interrupted()) {
+                        break;
+                    }
+                    MyTunesRss.STORE.executeStatement(new HandlePhotoImagesStatement(new File(photo.myFile), photo.myId));
                 }
-            });
-            for (SimplePhoto photo : photos) {
-                if (Thread.interrupted()) {
-                    break;
-                }
-                MyTunesRss.STORE.executeStatement(new HandlePhotoImagesStatement(new File(photo.myFile), photo.myId));
+            } catch (SQLException e) {
+                log.error("Could not fetch photos with missing thumbnails.", e);
             }
-        } catch (SQLException e) {
-            log.error("Could not fetch photos with missing thumbnails.", e);
         }
     }
 }
