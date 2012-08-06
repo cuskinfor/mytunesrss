@@ -58,7 +58,7 @@ public class SessionResource extends RestResource {
         session.setTranscoders(getTranscoders(user));
         session.setPermissions(getPermissions(user));
         session.setAirtunesTargets(getAirtunesTargets());
-        session.setSessionTimeoutSeconds(user.getSessionTimeout());
+        session.setSessionTimeoutMinutes(user.getSessionTimeout());
         session.setSearchFuzziness(user.getSearchFuzziness());
         return session;
     }
