@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.3.6" date="___D___">
+        <release version="4.3.7" date="___D___">
             <action dev="mdescher" type="fix">
                 REST: Corrected session representation attribute name "sessionTimeoutMinutes" (was "sessionTimeoutSeconds").
             </action>
