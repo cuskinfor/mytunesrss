@@ -26,7 +26,7 @@
 
         <release version="4.3.7" date="___D___">
             <action dev="mdescher" type="fix">
-                REST: Corrected session representation attribute name "sessionTimeoutMinutes" (was "sessionTimeoutSeconds").
+                [MYTUNESRSS-385] Session timeout is in minutes, not seconds
             </action>
         </release>
 
