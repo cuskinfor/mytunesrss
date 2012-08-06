@@ -21,7 +21,7 @@ public class SessionRepresentation implements RestRepresentation {
 
     private List<String> myPermissions;
 
-    private Integer mySessionTimeoutSeconds;
+    private Integer mySessionTimeoutMinutes;
 
     private Integer mySearchFuzziness;
 
@@ -70,14 +70,15 @@ public class SessionRepresentation implements RestRepresentation {
     }
 
     /**
-     * Session timeout in seconds, use this interval minus a few seconds for pinging the server to keep the session alive if necessary.
+     * Session timeout in minutes, use this interval minus at least a few seconds (for latency reasons) for pinging
+     * the server to keep the session alive if necessary.
      */
-    public Integer getSessionTimeoutSeconds() {
-        return mySessionTimeoutSeconds;
+    public Integer getSessionTimeoutMinutes() {
+        return mySessionTimeoutMinutes;
     }
 
-    public void setSessionTimeoutSeconds(Integer sessionTimeoutSeconds) {
-        mySessionTimeoutSeconds = sessionTimeoutSeconds;
+    public void setSessionTimeoutMinutes(Integer sessionTimeoutMinutes) {
+        mySessionTimeoutMinutes = sessionTimeoutMinutes;
     }
 
     /**
