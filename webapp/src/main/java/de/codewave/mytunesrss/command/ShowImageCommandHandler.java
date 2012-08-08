@@ -74,9 +74,13 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         if (defaultImage != null) {
             getResponse().setContentType(defaultImage.getMimeType());
             getResponse().setContentLength(defaultImage.getData().length);
+            getResponse().setHeader("Cache-Control", "max-age=" + MyTunesRss.CONFIG.getImageExpirationMillis());
+            getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
             getResponse().getOutputStream().write(defaultImage.getData());
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
+            getResponse().setHeader("Cache-Control", "max-age=" + MyTunesRss.CONFIG.getImageExpirationMillis());
+            getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
         }
     }
 
@@ -86,6 +90,8 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         }
         getResponse().setContentType(image.getMimeType());
         getResponse().setContentLength(image.getData().length);
+        getResponse().setHeader("Cache-Control", "max-age=" + MyTunesRss.CONFIG.getImageExpirationMillis());
+        getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
         getResponse().getOutputStream().write(image.getData());
     }
 

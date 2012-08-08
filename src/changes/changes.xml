@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="add">
+                Added cache control headers for cover images, photo thumbnails and photos.
+            </action>
+            <action dev="mdescher" type="add">
                 Cover artwork always imported at sull size. Removed option to ignore cover artwork. Added import options for cover artwork
                 (auto|never) and photo thumbnails (auto|on-demand). Both default to "auto".
             </action>

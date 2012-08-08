@@ -39,6 +39,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
                 DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
                 if (tracks.getResultSize() > 0) {
                     track = tracks.nextResult();
+
                     File file = track.getFile();
                     if (file.exists()) {
                         getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getRequest(), getWebConfig(), getAuthUser(), track) + "\"");

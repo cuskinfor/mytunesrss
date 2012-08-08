@@ -138,6 +138,7 @@ public class MyTunesRssConfig {
     private int myVlcRaopVolume = 75;
     private ImageImportType myTrackImageImportType;
     private ImageImportType myPhotoThumbnailImportType;
+    private long myImageExpirationMillis;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -975,6 +976,14 @@ public class MyTunesRssConfig {
         myPhotoThumbnailImportType = photoThumbnailImportType;
     }
 
+    public long getImageExpirationMillis() {
+        return myImageExpirationMillis;
+    }
+
+    public void setImageExpirationMillis(long imageExpirationMillis) {
+        myImageExpirationMillis = imageExpirationMillis;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1209,6 +1218,7 @@ public class MyTunesRssConfig {
         setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
         setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
         setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
+        setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
     }
 
     /**
@@ -1564,6 +1574,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
             root.appendChild(DOMUtils.createTextElement(settings, "track-image-import", getTrackImageImportType().name()));
             root.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", getPhotoThumbnailImportType().name()));
+            root.appendChild(DOMUtils.createLongElement(settings, "image-expiration-millis", getImageExpirationMillis()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
