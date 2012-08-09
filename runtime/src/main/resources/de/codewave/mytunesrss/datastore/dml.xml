@@ -29,7 +29,7 @@
                 )
             </excluded>
             GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year
-            <albumorder>ORDER BY LOWER(albumname), albumname</albumorder>
+            <albumorder>ORDER BY LOWER(a.name), a.name</albumorder>
             <yearorder>ORDER BY year</yearorder>
             ]]>
         </sql>

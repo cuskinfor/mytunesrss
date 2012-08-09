@@ -59,9 +59,9 @@ public class JSAPIServlet extends HttpServlet
 			logger.debug("Serving " + pathInfo);
 			logger.debug("Query " + req.getQueryString());
 		}
-		PrintWriter printWriter = resp.getWriter();
         resp.setHeader("Cache-Control", "max-age=" + (MyTunesRss.CONFIG.getRestApiJsExpirationMillis() / 1000));
         resp.setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getRestApiJsExpirationMillis());
+        PrintWriter printWriter = resp.getWriter();
         this.apiWriter.writeJavaScript(uri, printWriter, service);
 	}
 
