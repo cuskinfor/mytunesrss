@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import org.jboss.resteasy.core.ResourceMethodRegistry;
 import org.jboss.resteasy.jsapi.ServiceRegistry;
 import org.jboss.resteasy.logging.Logger;
@@ -59,7 +60,9 @@ public class JSAPIServlet extends HttpServlet
 			logger.debug("Query " + req.getQueryString());
 		}
 		PrintWriter printWriter = resp.getWriter();
-		this.apiWriter.writeJavaScript(uri, printWriter, service);
+        resp.setHeader("Cache-Control", "max-age=" + MyTunesRss.CONFIG.getRestApiJsExpirationMillis());
+        resp.setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getRestApiJsExpirationMillis());
+        this.apiWriter.writeJavaScript(uri, printWriter, service);
 	}
 
 	public void scanResources(){

@@ -139,6 +139,7 @@ public class MyTunesRssConfig {
     private ImageImportType myTrackImageImportType;
     private ImageImportType myPhotoThumbnailImportType;
     private long myImageExpirationMillis;
+    private long myRestApiJsExpirationMillis;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -984,6 +985,14 @@ public class MyTunesRssConfig {
         myImageExpirationMillis = imageExpirationMillis;
     }
 
+    public long getRestApiJsExpirationMillis() {
+        return myRestApiJsExpirationMillis;
+    }
+
+    public void setRestApiJsExpirationMillis(long restApiJsExpirationMillis) {
+        myRestApiJsExpirationMillis = restApiJsExpirationMillis;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1219,6 +1228,7 @@ public class MyTunesRssConfig {
         setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
         setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
         setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
+        setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
     }
 
     /**
@@ -1575,6 +1585,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "track-image-import", getTrackImageImportType().name()));
             root.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", getPhotoThumbnailImportType().name()));
             root.appendChild(DOMUtils.createLongElement(settings, "image-expiration-millis", getImageExpirationMillis()));
+            root.appendChild(DOMUtils.createLongElement(settings, "restapijs-expiration-millis", getRestApiJsExpirationMillis()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
