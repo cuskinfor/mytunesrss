@@ -50,9 +50,9 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         authorize(WebAppScope.Session, userName);
         WebConfig webConfig = getWebConfig();
         if (rememberLogin) {
-            MyTunesRssWebUtils.rememberLogin(getRequest(), getResponse(), userName, getAuthUser().getPasswordHash());
+            MyTunesRssWebUtils.rememberLogin(getResponse(), userName, getAuthUser().getPasswordHash());
         } else {
-            MyTunesRssWebUtils.forgetLogin(getRequest(), getResponse());
+            MyTunesRssWebUtils.forgetLogin(getResponse());
         }
         MyTunesRssWebUtils.setCookieLanguage(getRequest(), getResponse(), lc);
         MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);

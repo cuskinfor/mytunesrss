@@ -8,6 +8,10 @@
     <body>
 
         <release version="4.5" date="___D___">
+            <action dev="mdescher" type="update">
+                New login cookie name "MyTunesRSS4UserV2" with path "/" which works for the mytunesrss servlet
+                as well as for the REST servlet, i.e. session keep-alive works for REST as well now.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-392] PSQLException: ERROR: invalid escape string
             </action>

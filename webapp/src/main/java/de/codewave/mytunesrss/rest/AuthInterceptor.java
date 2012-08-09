@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.resource.LibraryResource;
 import de.codewave.mytunesrss.rest.resource.SessionResource;
@@ -34,6 +35,10 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
 
     public ServerResponse preProcess(HttpRequest request, ResourceMethod method) {
         if (MyTunesRssWebUtils.getAuthUser(myRequest) == null) {
+            if (MyTunesRssWebUtils.isAuthorized(MyTunesRssWebUtils.getRememberedUsername(myRequest), MyTunesRssWebUtils.getRememberedPasswordHash(myRequest))) {
+                MyTunesRssWebUtils.authorize(WebAppScope.Session, myRequest, MyTunesRssWebUtils.getRememberedUsername(myRequest));
+                return null;
+            }
             throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
         }
         return null;

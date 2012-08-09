@@ -361,11 +361,11 @@ public class MyTunesRssWebUtils {
         return false;
     }
 
-    public static void rememberLogin(HttpServletRequest request, HttpServletResponse response, String username, byte[] passwordHash) {
+    public static void rememberLogin(HttpServletResponse response, String username, byte[] passwordHash) {
         try {
             StringBuilder cookieValue = new StringBuilder(Base64.encodeBase64String(username.getBytes("UTF-8")).trim());
             cookieValue.append(";").append(new String(Base64.encodeBase64(passwordHash), "UTF-8").trim());
-            response.addCookie(createLoginCookie(request, cookieValue.toString()));
+            response.addCookie(createLoginCookie(cookieValue.toString()));
         } catch (UnsupportedEncodingException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Character set UTF-8 not found.");
@@ -374,18 +374,17 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    private static Cookie createLoginCookie(HttpServletRequest request, String cookieValue) {
-        Cookie cookie = new Cookie(MyTunesRss.APPLICATION_IDENTIFIER + "User", Base64Utils.encode(cookieValue));
+    private static Cookie createLoginCookie(String cookieValue) {
+        Cookie cookie = new Cookie(MyTunesRss.APPLICATION_IDENTIFIER + "UserV2", Base64Utils.encode(cookieValue));
         cookie.setVersion(1);
         cookie.setComment("MyTunesRSS user cookie");
-        cookie.setMaxAge(3600 * 24 * 60);// 60 days
-        String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
-        cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
+        cookie.setMaxAge(3600 * 24 * 60); // 60 days
+        cookie.setPath("/");
         return cookie;
     }
 
-    public static void forgetLogin(HttpServletRequest request, HttpServletResponse response) {
-        Cookie cookie = createLoginCookie(request, "");
+    public static void forgetLogin(HttpServletResponse response) {
+        Cookie cookie = createLoginCookie("");
         cookie.setMaxAge(0); // delete cookie
         response.addCookie(cookie);
     }
@@ -393,7 +392,7 @@ public class MyTunesRssWebUtils {
     public static String getRememberedUsername(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "User")) {
+                if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "UserV2")) {
                     try {
                         return new String(Base64.decodeBase64(Base64Utils.decodeToString(cookie.getValue()).split(";")[0]), "UTF-8");
                     } catch (UnsupportedEncodingException e) {
@@ -410,7 +409,7 @@ public class MyTunesRssWebUtils {
     public static byte[] getRememberedPasswordHash(HttpServletRequest request) {
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "User")) {
+                if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "UserV2")) {
                     try {
                         return Base64.decodeBase64(Base64Utils.decodeToString(cookie.getValue()).split(";")[1]);
                     } catch (Exception e) {
