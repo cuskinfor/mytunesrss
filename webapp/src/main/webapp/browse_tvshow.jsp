@@ -108,7 +108,7 @@
                                     </div>
                                 </c:if>
                                 <c:if test="${track.protected}"><img
-                                        src="${appUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
+                                        src="${themeUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                         alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
                                 <a id="functionsDialogName${fnCount}"
                                    <c:choose>

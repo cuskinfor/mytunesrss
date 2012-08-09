@@ -15,7 +15,7 @@
 
     <jsp:include page="incl_head.jsp"/>
     <script src="${appUrl}/js/jquery-ui.js?ts=${sessionCreationTime}" type="text/javascript"></script>
-    <link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery-ui/jquery-ui.css?ts=${sessionCreationTime}" />
+    <link rel="stylesheet" type="text/css" href="${themeUrl}/styles/jquery-ui/jquery-ui.css" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0" />
 
@@ -261,13 +261,13 @@
 		        <div class="navigation">
 
 			        <div class="remotecontrolPanel">
-			            <img id="linkPrevious" src="${appUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
-			            <img id="rc_play" src="${appUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
-			            <img id="rc_pause" src="${appUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
-			            <img id="linkStop" src="${appUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
-			            <img id="linkNext" src="${appUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
-			            <img id="linkShuffle" src="${appUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
-			            <img id="linkFullscreen" src="${appUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
+			            <img id="linkPrevious" src="${themeUrl}/images/rc_prev.png" alt="prev" onclick="previousTrack()" style="cursor:pointer"/>
+			            <img id="rc_play" src="${themeUrl}/images/rc_play.png" alt="prev" onclick="play()" style="cursor:pointer;display:none"/>
+			            <img id="rc_pause" src="${themeUrl}/images/rc_pause.png" alt="prev" onclick="pause()" style="cursor:pointer"/>
+			            <img id="linkStop" src="${themeUrl}/images/rc_stop.png" alt="stop" onclick="stop()" style="cursor:pointer"/>
+			            <img id="linkNext" src="${themeUrl}/images/rc_next.png" alt="next" onclick="nextTrack()" style="cursor:pointer"/>
+			            <img id="linkShuffle" src="${themeUrl}/images/rc_shuffle.png" alt="shuffle" onclick="shuffle()" style="cursor:pointer"/>
+			            <img id="linkFullscreen" src="${themeUrl}/images/rc_fullscreen.png" alt="fullscreen" onclick="toggleFullScreen()" style="cursor:pointer"/>
 			        </div>
 
 			        <div class="volumeContainer">

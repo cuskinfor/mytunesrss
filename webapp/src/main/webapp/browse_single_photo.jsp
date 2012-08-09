@@ -81,7 +81,7 @@
             </table>
 
             <div class="photoback">
-                <img id="photoimage" class="singlephoto" src="${appUrl}/images/animated_progress.gif" />
+                <img id="photoimage" class="singlephoto" src="${themeUrl}/images/animated_progress.gif" />
                 <c:if test="${param.photoIndex > 0}">
                     <div id="leftphotobutton" class="leftphotobutton" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${param.photoIndex - 1}</mt:encrypt>/photosBackUrl=${param.photosBackUrl}/size=' + $jQ('div.content-inner').innerWidth()"></div>
                 </c:if>
@@ -91,8 +91,8 @@
             </div>
 
             <div class="photolinks">
-                <a id="downfullphotolink" href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${cwfn:encodeUrl(photos[param.photoIndex].id)}</mt:encrypt>"><img src="${appUrl}/images/action-download.png"><span><fmt:message key="downloadFullSizedPhoto"/></span></a><br/>
-                <a id="exiflink" onclick="showExif('${servletUrl}/showExif/${auth}/<mt:encrypt key="${encryptionKey}">photo=${cwfn:encodeUrl(photos[param.photoIndex].id)}</mt:encrypt>')"><img src="${appUrl}/images/action-tags.png"><span><fmt:message key="showExifData"/></span></a>
+                <a id="downfullphotolink" href="${servletUrl}/downloadPhoto/${auth}/<mt:encrypt key="${encryptionKey}">photo=${cwfn:encodeUrl(photos[param.photoIndex].id)}</mt:encrypt>"><img src="${themeUrl}/images/action-download.png"><span><fmt:message key="downloadFullSizedPhoto"/></span></a><br/>
+                <a id="exiflink" onclick="showExif('${servletUrl}/showExif/${auth}/<mt:encrypt key="${encryptionKey}">photo=${cwfn:encodeUrl(photos[param.photoIndex].id)}</mt:encrypt>')"><img src="${themeUrl}/images/action-tags.png"><span><fmt:message key="showExifData"/></span></a>
             </div>
 
         </div>

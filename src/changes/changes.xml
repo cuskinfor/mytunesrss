@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-393] Enable browser caching for images and style sheets
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-390] Albenliste und Ansicht eines Albums nicht korrekt bei identischen Albennamen verschiedener Künstler
             </action>
             <action dev="mdescher" type="update">

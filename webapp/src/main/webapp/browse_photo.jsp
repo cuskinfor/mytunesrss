@@ -74,7 +74,7 @@
             <ul class="thumblist">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span></span><img id="img${photo.id}" src="${appUrl}/images/animated_progress.gif" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
+                        <div><span></span><img id="img${photo.id}" src="${themeUrl}/images/animated_progress.gif" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
                     </li>
                 </c:forEach>
             </ul>

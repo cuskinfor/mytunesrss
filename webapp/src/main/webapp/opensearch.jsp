@@ -9,7 +9,7 @@
     <ShortName>MyTunesRSS (${mtfn:decode64(param.username)} @ ${mtfn:hostFromUrl(appUrl)})</ShortName>
     <Description>MyTunesRSS Media Search.</Description>
     <Contact>info@codewave.de</Contact>
-    <Image height="16" width="16" type="image/x-icon">${appUrl}/images/favicon.ico</Image>
+    <Image height="16" width="16" type="image/x-icon">${themeUrl}/images/favicon.ico</Image>
     <Url type="text/html" template="${servletUrl}/searchTracks/backUrl=${mtfn:encode64(backUrl)}/searchFuzziness=30/searchTerm={searchTerms}"/>
     <moz:SearchForm>${backUrl}</moz:SearchForm>
 </OpenSearchDescription>

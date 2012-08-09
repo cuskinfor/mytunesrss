@@ -29,10 +29,10 @@ public class ThemeServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(ThemeServlet.class);
 
     protected File getFile(HttpServletRequest httpServletRequest) {
-        String resourcePath = httpServletRequest.getRequestURI().substring(StringUtils.trimToEmpty(httpServletRequest.getContextPath()).length());
-        String theme = StringUtils.defaultIfEmpty(MyTunesRssWebUtils.getWebConfig(httpServletRequest).getTheme(), MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
+        String resourcePath = httpServletRequest.getPathInfo().substring(httpServletRequest.getPathInfo().indexOf("/", 1));
+        String theme = httpServletRequest.getPathInfo().substring(2, httpServletRequest.getPathInfo().indexOf("/", 2));
         if (LOG.isDebugEnabled()) {
-            LOG.debug("File \"" + httpServletRequest.getPathInfo() + "\" for theme \"" + StringUtils.defaultIfEmpty(theme, "BUILT-IN DEFAULT") + "\" requested.");
+            LOG.debug("File \"" + resourcePath + "\" for theme \"" + StringUtils.defaultIfEmpty(theme, "BUILT-IN DEFAULT") + "\" requested.");
         }
         if (StringUtils.isNotEmpty(theme)) {
             File file = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes/" + theme + resourcePath);
@@ -64,21 +64,33 @@ public class ThemeServlet extends HttpServlet {
 
     protected void doGetStyle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         File stylesheet = getFile(httpServletRequest);
-        httpServletResponse.setContentType("text/css");
-        httpServletResponse.setContentLength((int) stylesheet.length());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending stylesheet \"" + stylesheet.getAbsolutePath() + "\".");
+        if (stylesheet.lastModified() / 1000 <= httpServletRequest.getDateHeader("If-Modified-Since") / 1000) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        } else {
+            httpServletResponse.setDateHeader("Last-Modified", stylesheet.lastModified());
+            httpServletResponse.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
+            httpServletResponse.setContentType("text/css");
+            httpServletResponse.setContentLength((int) stylesheet.length());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending stylesheet \"" + stylesheet.getAbsolutePath() + "\".");
+            }
+            IOUtils.copy(new FileReader(stylesheet), httpServletResponse.getWriter());
         }
-        IOUtils.copy(new FileReader(stylesheet), httpServletResponse.getWriter());
     }
 
     protected void doGetImage(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         File image = getFile(httpServletRequest);
-        httpServletResponse.setContentType(URLConnection.guessContentTypeFromName(image.getName()));
-        httpServletResponse.setContentLength((int) image.length());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending image \"" + image.getAbsolutePath() + "\" with content type \"" + httpServletResponse.getContentType() + "\".");
+        if (image.lastModified() / 1000 <= httpServletRequest.getDateHeader("If-Modified-Since") / 1000) {
+            httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        } else {
+            httpServletResponse.setDateHeader("Last-Modified", image.lastModified());
+            httpServletResponse.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
+            httpServletResponse.setContentType(URLConnection.guessContentTypeFromName(image.getName()));
+            httpServletResponse.setContentLength((int) image.length());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending image \"" + image.getAbsolutePath() + "\" with content type \"" + httpServletResponse.getContentType() + "\".");
+            }
+            IOUtils.copy(new FileInputStream(image), httpServletResponse.getOutputStream());
         }
-        IOUtils.copy(new FileInputStream(image), httpServletResponse.getOutputStream());
     }
 }

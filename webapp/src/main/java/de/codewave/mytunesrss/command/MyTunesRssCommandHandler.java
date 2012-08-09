@@ -21,6 +21,7 @@ import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.CommandHandler;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang.ObjectUtils;
@@ -136,7 +137,8 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         getRequest().setAttribute("permFeedServletUrl", getRequest().getAttribute("permServletUrl"));
         getRequest().setAttribute("appUrl", MyTunesRssWebUtils.getApplicationUrl(getRequest()));
-        //getRequest().setAttribute("absoluteAppUrl", ServletUtils.getApplicationUrl(getRequest()));
+        String theme = StringUtils.defaultIfEmpty(MyTunesRssWebUtils.getWebConfig(getRequest()).getTheme(), MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
+        getRequest().setAttribute("themeUrl", MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/theme/" + MiscUtils.getUtf8UrlEncoded("_" + theme));
         getRequest().setAttribute("mytunesrssVersion", MyTunesRss.VERSION);
         getRequest().setAttribute("sessionCreationTime", getSession().getCreationTime());
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {

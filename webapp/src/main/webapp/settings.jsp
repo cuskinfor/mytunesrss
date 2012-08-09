@@ -328,7 +328,7 @@
                                 <td class="label"><fmt:message key="settings.playlistTypes.rss" /></td>
                                 <td>
                                     <input type="checkbox" name="feedType" value="rss" <c:if test="${config.showRss}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-rss.png" alt="RSS" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-rss.png" alt="RSS" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -337,7 +337,7 @@
                                 <td class="label"><fmt:message key="settings.playlistTypes.playlist" /></td>
                                 <td>
                                     <input type="checkbox" name="feedType" value="playlist" <c:if test="${config.showPlaylist}"> checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-playlist.png" alt="playlist" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-playlist.png" alt="playlist" style="vertical-align:text-top;" />
                                     <!--<fmt:message key="settings.playlistType" />:-->
                                     <select name="playlistType">
                                         <option value="M3u" <c:if test="${config.playlistType eq 'M3u'}">selected="selected"</c:if>>m3u</option>
@@ -351,7 +351,7 @@
                                 <td class="label"><fmt:message key="settings.showDownload" /></td>
                                 <td>
                                     <input id="downloadCheckbox" type="checkbox" name="showDownload" value="true" <c:if test="${config.showDownload}">checked="checked"</c:if> onclick="toggleDownload()"/>
-                                    <img src="${appUrl}/images/action-download.png" alt="playlist" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-download.png" alt="playlist" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -360,7 +360,7 @@
                                 <td class="label"><fmt:message key="settings.showYahooMediaPlayer" /></td>
                                 <td>
                                     <input id="yahooPlayerCheckbox" type="checkbox" name="showYahooMediaPlayer" value="true" <c:if test="${config.yahooMediaPlayer}">checked="checked"</c:if> <c:if test="${!config.showDownload}">disabled="disabled"</c:if> />
-                                    <img src="${appUrl}/images/action-yahoo.png" alt="playlist" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-yahoo.png" alt="playlist" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -369,7 +369,7 @@
                                 <td class="label"><fmt:message key="settings.showPlayer" /></td>
                                 <td>
                                     <input type="checkbox" name="showPlayer" value="true" <c:if test="${config.showPlayer}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-flash.png" alt="player" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-flash.png" alt="player" style="vertical-align:text-top;" />
                                     <c:if test="${fn:length(mtfn:flashPlayerConfigs()) > 1}">
                                         <select name="flashplayer">
                                             <option value="" <c:if test="${empty config.flashplayer}">selected="selected"</c:if>>
@@ -390,14 +390,14 @@
                                 <td class="label"><fmt:message key="settings.showRemoteControl" /></td>
                                 <td>
                                     <input type="checkbox" name="remoteControl" value="true" <c:if test="${config.remoteControl}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-remote.png" alt="remote control" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-remote.png" alt="remote control" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.showAddRemoteControl" /></td>
                                 <td>
                                     <input type="checkbox" name="addRemoteControl" value="true" <c:if test="${config.addRemoteControl}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-addremote.png" alt="add to remote control" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-addremote.png" alt="add to remote control" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -406,7 +406,7 @@
                                 <td class="label"><fmt:message key="settings.showExternalSites" /></td>
                                 <td>
                                     <input type="checkbox" name="showExternalSites" value="true" <c:if test="${config.showExternalSites}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-links.png" alt="external links" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-links.png" alt="external links" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -415,7 +415,7 @@
                                 <td class="label"><fmt:message key="settings.showEditTags" /></td>
                                 <td>
                                     <input type="checkbox" name="showEditTags" value="true" <c:if test="${config.showEditTags}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-tags.png" alt="edit tags" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-tags.png" alt="edit tags" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>
@@ -424,7 +424,7 @@
                                 <td class="label"><fmt:message key="settings.showAddToPlaylist" /></td>
                                 <td>
                                     <input type="checkbox" name="showAddToPlaylist" value="true" <c:if test="${config.showAddToPlaylist}">checked="checked"</c:if> />
-                                    <img src="${appUrl}/images/action-oneclickplaylist.png" alt="add to playlist" style="vertical-align:text-top;" />
+                                    <img src="${themeUrl}/images/action-oneclickplaylist.png" alt="add to playlist" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>

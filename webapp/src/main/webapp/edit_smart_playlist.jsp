@@ -81,7 +81,7 @@
                                             </select>
                                         </td>
                                         <td class="smartPlaylistDelCriteria">
-                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
+                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
                                     <c:when test="${smartInfo.fieldType == 'videotype'}">
@@ -92,7 +92,7 @@
                                             </select>
                                         </td>
                                         <td class="smartPlaylistDelCriteria">
-                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
+                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
                                     <c:when test="${smartInfo.fieldType == 'protection'}">
@@ -103,13 +103,13 @@
                                             </select>
                                         </td>
                                         <td class="smartPlaylistDelCriteria">
-                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
+                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
                                     <c:otherwise>
                                         <td><input id="smartCriteriaValue${loopStatus.index}" type="text" name="pattern_${loopStatus.index}" value="<c:out value="${smartInfo.pattern}"/>" /></td>
                                         <td class="smartPlaylistDelCriteria">
-                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${appUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
+                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:otherwise>
                                 </c:choose>

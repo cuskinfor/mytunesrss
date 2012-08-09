@@ -4,15 +4,15 @@
 <title><fmt:message key="applicationTitle" /> v${mytunesrssVersion}</title>
 <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
 <meta http-equiv="Content-Script-Type" content="text/javascript" />
-<link rel="stylesheet" type="text/css" href="${appUrl}/styles/mytunesrss.css?ts=${sessionCreationTime}" />
+<link rel="stylesheet" type="text/css" href="${themeUrl}/styles/mytunesrss.css" />
 <!--[if IE]>
-  <link rel="stylesheet" type="text/css" href="${appUrl}/styles/ie.css?ts=${sessionCreationTime}" />
+  <link rel="stylesheet" type="text/css" href="${themeUrl}/styles/ie.css" />
 <![endif]-->
-<link rel="stylesheet" type="text/css" href="${appUrl}/styles/jquery.autocomplete.css?ts=${sessionCreationTime}" />
+<link rel="stylesheet" type="text/css" href="${themeUrl}/styles/jquery.autocomplete.css" />
 <link href="${appUrl}/fullsize/fullsize.css" media="screen" rel="stylesheet" type="text/css"/>
 <link href="${appUrl}/loadmask/jquery.loadmask.css" media="screen" rel="stylesheet" type="text/css"/>
 <link href="${appUrl}/ctnotify/jquery.ctNotify.css" media="screen" rel="stylesheet" type="text/css"/>
-<link rel="shortcut icon" href="${appUrl}/images/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="${themeUrl}/images/favicon.ico" type="image/x-icon" />
 <script src="${appUrl}/js/jquery.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.autocomplete.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.json.js?ts=${sessionCreationTime}" type="text/javascript"></script>

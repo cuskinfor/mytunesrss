@@ -141,7 +141,7 @@
                             </c:when>
                             <c:otherwise>
                                 <a id="linkFinishPlaylist" class="playlists" href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>"
-                                   style="background-image:url('${appUrl}/images/feeds_small.gif');">
+                                   style="background-image:url('${themeUrl}/images/feeds_small.gif');">
                                     <fmt:message key="finishPlaylist" />
                                 </a>
                             </c:otherwise>
@@ -195,7 +195,7 @@
                             <c:out value="${playlist.name}" />
                         </c:otherwise>
                     </c:choose>
-                    <c:if test="${playlist.type == 'Random'}"><img id="linkRefreshRandomPlaylist" style="vertical-align:middle;cursor:pointer" src="${appUrl}/images/refresh.png" onclick="showLoading('<fmt:message key="loading.createRandomPlaylist"><fmt:param><c:out value="${playlist.name}" /></fmt:param></fmt:message>');self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">forceNewRandomPlaylist=true</mt:encrypt>'"/></c:if>
+                    <c:if test="${playlist.type == 'Random'}"><img id="linkRefreshRandomPlaylist" style="vertical-align:middle;cursor:pointer" src="${themeUrl}/images/refresh.png" onclick="showLoading('<fmt:message key="loading.createRandomPlaylist"><fmt:param><c:out value="${playlist.name}" /></fmt:param></fmt:message>');self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">forceNewRandomPlaylist=true</mt:encrypt>'"/></c:if>
                 </td>
                 <td class="tracks">
                     <c:choose>

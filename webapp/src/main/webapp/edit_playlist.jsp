@@ -245,12 +245,12 @@
 <textarea id="templatePlaylistRow" style="display:none">
     <tr id="trackTableRow#{index}" class="#{rowClass}">
         <td class="iconleft">
-            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img id="linkUp#{index}" src="${appUrl}/images/move_up.png" alt="U"/></a>
-            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img id="linkDown#{index}" src="${appUrl}/images/move_down.png" alt="D"/></a>
+            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img id="linkUp#{index}" src="${themeUrl}/images/move_up.png" alt="U"/></a>
+            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img id="linkDown#{index}" src="${themeUrl}/images/move_down.png" alt="D"/></a>
         </td>
         <td>
-            <img src="${appUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
-            <img src="${appUrl}/images/movie.png" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
+            <img src="${themeUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
+            <img src="${themeUrl}/images/movie.png" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
             #{trackName}
         </td>
         <td>#{trackArtist}</td>

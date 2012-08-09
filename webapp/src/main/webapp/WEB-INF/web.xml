@@ -227,11 +227,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ThemeServlet</servlet-name>
-        <url-pattern>/styles/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>ThemeServlet</servlet-name>
-        <url-pattern>/images/*</url-pattern>
+        <url-pattern>/theme/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>FlashPlayerServlet</servlet-name>
