@@ -13,7 +13,7 @@
             <index>AND ({letterRegionByIndex})</index>
             <filter>AND a.lower_name LIKE :filter {likeEscape}</filter>
             <albumartist>AND t.lower_album_artist = :artist AND t.album = a.name</albumartist>
-            <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album = a.name</artist>
+            <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album = a.name AND t.album_artist = a.artist</artist>
             <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             <restricted>
