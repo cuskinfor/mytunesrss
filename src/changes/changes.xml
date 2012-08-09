@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.5" date="___D___">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-389] Sortierung der Albenübersicht bei Groß- und Kleinschreibung nicht korrekt.
+            </action>
             <action dev="mdescher" type="add">
                 Added cache control headers for cover images, photo thumbnails and photos.
             </action>
