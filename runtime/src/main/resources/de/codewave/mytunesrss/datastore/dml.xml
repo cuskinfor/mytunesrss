@@ -11,7 +11,7 @@
             WHERE {alwaysTrueCondition}
             <compilation>AND a.compilation = :compilation</compilation>
             <index>AND ({letterRegionByIndex})</index>
-            <filter>AND a.lower_name LIKE :filter {likeEscape}</filter>
+            <filter>AND a.lower_name LIKE :filter ESCAPE '!'</filter>
             <albumartist>AND t.lower_album_artist = :artist AND t.album = a.name</albumartist>
             <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album = a.name AND t.album_artist = a.artist</artist>
             <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
@@ -43,7 +43,7 @@
             FROM artist a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
-            <filter>AND a.lower_name LIKE :filter {likeEscape}</filter>
+            <filter>AND a.lower_name LIKE :filter ESCAPE '!'</filter>
             <album>AND t.lower_album = :album AND (t.artist = a.name OR t.album_artist = a.name)</album>
             <genre>AND t.lower_genre = :genre AND (t.artist = a.name OR t.album_artist = a.name)</genre>
             <restricted>
@@ -729,7 +729,7 @@
             <![CDATA[
             SELECT DISTINCT(tag)
             FROM tag
-            <query>WHERE tag LIKE :query {likeEscape}</query>
+            <query>WHERE tag LIKE :query ESCAPE '!'</query>
             ORDER BY LOWER(tag), tag
             ]]>
         </sql>

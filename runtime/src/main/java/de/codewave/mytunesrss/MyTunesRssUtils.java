@@ -808,4 +808,8 @@ public class MyTunesRssUtils {
         }
         return ids;
     }
+
+    public static String toSqlLikeExpression(String text) {
+        return text.replace("!", "!!").replace("%", "!%").replace("_", "!_");
+    }
 }

@@ -34,6 +34,4 @@
 
     <fragment name="findRecentlyPlayedTracksOrderClause">ORDER BY ts_played DESC LIMIT :maxCount OFFSET 0</fragment>
 
-    <fragment name="likeEscape">ESCAPE '\\'</fragment>
-
 </statements>

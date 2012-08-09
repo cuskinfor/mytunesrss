@@ -32,7 +32,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     ;
 
     public FindArtistQuery(User user, String filter, String album, String genre, int index) {
-        myFilter = StringUtils.isNotEmpty(filter) ? "%" + filter + "%" : null;
+        myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myAlbum = album;
         myGenre = genre;
         myIndex = index;
@@ -50,7 +50,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists", conditionals);
-        statement.setString("filter", StringUtils.lowerCase(myFilter));
+        statement.setString("filter", myFilter);
         statement.setString("album", StringUtils.lowerCase(myAlbum));
         statement.setString("genre", StringUtils.lowerCase(myGenre));
         statement.setInt("index", myIndex);

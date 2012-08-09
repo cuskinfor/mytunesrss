@@ -9,7 +9,7 @@ function getElementParams(elements, separator) {
     var buffer = '';
     for (var i = 0; i < elementNames.length; i++) {
         var val = $jQ("#" + elementNames[i]).val();
-        buffer += elementNames[i] + "=" + (val ? val : "");
+        buffer += elementNames[i] + "=" + (val ? encodeURI(encodeURI(val)) : ""); // duplicate encoding since server and pathinfofilter both decode
         if (i + 1 < elementNames.length) {
             buffer += separator;
         }

@@ -35,7 +35,7 @@ public class FindAllTagsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("query", StringUtils.isNotBlank(myStartsWith));
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAllTags", conditionals);
-        statement.setString("query", myStartsWith + "%");
+        statement.setString("query", MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(myStartsWith)) + "%");
         return execute(statement, new ResultBuilder<String>() {
             public String create(ResultSet resultSet) throws SQLException {
                 return resultSet.getString(1);
