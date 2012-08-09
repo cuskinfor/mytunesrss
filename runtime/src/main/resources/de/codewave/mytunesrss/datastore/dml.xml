@@ -727,17 +727,20 @@
     <statement name="findAllTags">
         <sql>
             <![CDATA[
-            SELECT DISTINCT(tag)
+            SELECT DISTINCT(tag) AS tag, LOWER(tag) AS lower_tag
             FROM tag
             <query>WHERE tag LIKE :query ESCAPE '!'</query>
-            ORDER BY LOWER(tag), tag
+            ORDER BY lower_tag, tag
             ]]>
         </sql>
     </statement>
 
     <statement name="findAllTagsForTrack">
         <sql>
-            SELECT DISTINCT(tag) FROM tag WHERE track_id = :track_id ORDER BY LOWER(tag), tag;
+            SELECT DISTINCT(tag) AS tag, LOWER(tag) AS lower_tag
+            FROM tag
+            WHERE track_id = :track_id
+            ORDER BY lower_tag, tag;
         </sql>
     </statement>
 

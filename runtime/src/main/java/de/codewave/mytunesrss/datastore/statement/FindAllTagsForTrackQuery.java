@@ -29,7 +29,7 @@ public class FindAllTagsForTrackQuery extends DataStoreQuery<DataStoreQuery.Quer
         statement.setString("track_id", myTrackId);
         return execute(statement, new ResultBuilder<String>() {
             public String create(ResultSet resultSet) throws SQLException {
-                return resultSet.getString(1);
+                return resultSet.getString("tag");
             }
         });
     }

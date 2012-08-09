@@ -38,7 +38,7 @@ public class FindAllTagsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<
         statement.setString("query", MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(myStartsWith)) + "%");
         return execute(statement, new ResultBuilder<String>() {
             public String create(ResultSet resultSet) throws SQLException {
-                return resultSet.getString(1);
+                return resultSet.getString("tag");
             }
         });
     }
