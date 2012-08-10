@@ -31,7 +31,7 @@
     <script type="text/javascript">
         function loadThumbnails() {
             <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
-                $jQ("#img${photo.id}").attr("src", "${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/photoId=${photo.id}/size=${imageSize}</mt:encrypt>");
+                $jQ("#img${loopStatus.index}").attr("src", "${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/photoId=${photo.id}/size=${imageSize}</mt:encrypt>");
             </c:forEach>
         }
     </script>
@@ -74,7 +74,7 @@
             <ul class="thumblist">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span></span><img id="img${photo.id}" src="${themeUrl}/images/animated_progress.gif" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
+                        <div><span></span><img id="img${loopStatus.index}" src="${themeUrl}/images/animated_progress.gif" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
                     </li>
                 </c:forEach>
             </ul>
