@@ -146,7 +146,7 @@
                         <fmt:message key="unknownAlbum"/>
                     </c:when>
                     <c:otherwise>
-                        <a id="linkAlbumName${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(album.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${album.name}"/></a>
+                        <a id="linkAlbumName${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(album.name)}/albumartist=${mtfn:encode64(album.artist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${album.name}"/></a>
                     </c:otherwise>
                 </c:choose>
             </div>

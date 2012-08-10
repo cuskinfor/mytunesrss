@@ -22,7 +22,7 @@
 <%--@elvariable id="msgUnknownTrack" type="java.lang.String"--%>
 <%--@elvariable id="tracks" type="java.util.Collection<de.codewave.mytunesrss.TrackUtils.EnhancedTrack>"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/albumartist=${cwfn:encodeUrl(param.albumartist)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -54,8 +54,8 @@
 <ul class="menu">
     <c:if test="${sortOrderLink}">
         <li class="first">
-            <c:if test="${sortOrder != 'Album'}"><a id="linkByAlbum" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Album</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByAlbum" /></a></c:if>
-            <c:if test="${sortOrder != 'Artist'}"><a id="linkByArtist" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Artist</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByArtist" /></a></c:if>
+            <c:if test="${sortOrder != 'Album'}"><a id="linkByAlbum" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/albumartist=${cwfn:encodeUrl(param.albumartist)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Album</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByAlbum" /></a></c:if>
+            <c:if test="${sortOrder != 'Artist'}"><a id="linkByArtist" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/albumartist=${cwfn:encodeUrl(param.albumartist)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/index=${param.index}/sortOrder=Artist</mt:encrypt>/backUrl=${param.backUrl}"><fmt:message key="groupByArtist" /></a></c:if>
         </li>
     </c:if>
     <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
@@ -139,7 +139,7 @@
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.albumArtist), msgUnknownArtist, track.albumArtist)}" />
                             </a>
                             -
-                            <a id="linkBrowseTrackSection${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                            <a id="linkBrowseTrackSection${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}/albumartist=${mtfn:encode64(track.albumArtist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" />
                             </a>
                             <c:set var="sectionFileName">${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)} - ${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}</c:set>
@@ -152,7 +152,7 @@
                             <c:if test="${track.simple}">
                                 <c:set var="sectionFileName">${sectionFileName} - ${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}</c:set>
                                 -
-                                <a id="linkBrowseTrackSection${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                                <a id="linkBrowseTrackSection${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}/albumartist=${mtfn:encode64(track.albumArtist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                                     <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" />
                                 </a>
                             </c:if>
@@ -233,7 +233,7 @@
                 </c:when>
                 <c:when test="${showAlbumColumn}">
                     <td>
-                        <a id="linkBrowseAlbum${fnCount}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
+                        <a id="linkBrowseAlbum${fnCount}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">album=${mtfn:encode64(track.album)}/albumartist=${mtfn:encode64(track.albumArtist)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">
                             <c:out value="${track.album}" />
                         </a>
                     </td>
@@ -275,7 +275,7 @@
 
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
-           scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
+           scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/albumartist=${cwfn:encodeUrl(param.albumartist)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>
