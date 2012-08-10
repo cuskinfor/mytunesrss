@@ -99,7 +99,7 @@
                                 <c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}">
                                     <div class="albumCover">
                                         <img id="trackthumb_${loopStatus.index}"
-                                             src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=32</mt:encrypt>"
+                                             src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>"
                                              onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
 
                                         <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img
