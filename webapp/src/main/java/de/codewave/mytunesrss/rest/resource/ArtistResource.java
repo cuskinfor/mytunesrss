@@ -64,6 +64,7 @@ public class ArtistResource extends RestResource {
      * @param minYear Filter for minimum album year (ony matching ones are returned).
      * @param maxYear Filter for maximum album year (ony matching ones are returned).
      * @param sortYear "true" to sort results by year or "false" to return in database order.
+     * @param groupByType "true" to return normal albums before compilations or "false" to mix both types.
      * @param type Filter for album type (One of "COMPILATIONS", "ALBUMS", "ALL").
      *
      * @return List of albums.
@@ -83,9 +84,10 @@ public class ArtistResource extends RestResource {
             @QueryParam("minYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Minimum year must be a value from -1 to 9999.") int minYear,
             @QueryParam("maxYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Maximum year must be a value from -1 to 9999.") int maxYear,
             @QueryParam("sortYear") @DefaultValue("false") boolean sortYear,
+            @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genre, -1, minYear, maxYear, sortYear, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genre, -1, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 

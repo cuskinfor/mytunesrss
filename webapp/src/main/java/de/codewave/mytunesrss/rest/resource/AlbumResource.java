@@ -46,7 +46,7 @@ public class AlbumResource extends RestResource {
             @PathParam("artist") String artist,
             @PathParam("album") String album
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), album, artist, true, null, -1, -1, -1, true, FindAlbumQuery.AlbumType.ALL));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), album, artist, true, null, -1, -1, -1, true, false, FindAlbumQuery.AlbumType.ALL));
         for (Album result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
             if (result.getName().equals(album)) {
                 return toAlbumRepresentation(uriInfo, request, result);

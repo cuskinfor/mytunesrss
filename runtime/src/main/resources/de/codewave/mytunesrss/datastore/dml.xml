@@ -28,9 +28,11 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year
+            GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year, a.compilation
             <albumorder>ORDER BY LOWER(a.name), a.name</albumorder>
+            <compilationalbumorder>ORDER BY a.compilation, LOWER(a.name), a.name</compilationalbumorder>
             <yearorder>ORDER BY year</yearorder>
+            <compilationyearorder>ORDER BY a.compilation, year</compilationyearorder>
             ]]>
         </sql>
     </statement>

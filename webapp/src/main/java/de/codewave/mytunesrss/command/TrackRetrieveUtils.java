@@ -81,7 +81,7 @@ public class TrackRetrieveUtils {
             if (fullAlbums) {
                 Collection<String> albumNames = new HashSet<String>();
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
-                    FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, false, null, -1, -1, -1, false, FindAlbumQuery.AlbumType.ALL);
+                    FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, false, null, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
                     DataStoreQuery.QueryResult<Album> albumsWithArtist = session.executeQuery(findAlbumQuery);
                     for (Album albumWithArtist = albumsWithArtist.nextResult(); albumWithArtist != null;
                             albumWithArtist = albumsWithArtist.nextResult()) {
@@ -96,7 +96,7 @@ public class TrackRetrieveUtils {
             }
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
-                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, genre, -1, -1, -1, false, FindAlbumQuery.AlbumType.ALL);
+                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, genre, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
                 DataStoreQuery.QueryResult<Album> albumsWithGenre = session.executeQuery(findAlbumQuery);
                 List<String> albumNames = new ArrayList<String>();
                 for (Album albumWithGenre = albumsWithGenre.nextResult(); albumWithGenre != null; albumWithGenre = albumsWithGenre.nextResult()) {

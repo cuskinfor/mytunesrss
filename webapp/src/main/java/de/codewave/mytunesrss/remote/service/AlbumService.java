@@ -15,12 +15,12 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.remote.service.AlbumService
  */
 public class AlbumService {
-    public Object getAlbums(String filter, String artist, String genre, int letterIndex, int minYear, int maxYear, boolean sortByYear, int startItem, int maxItems)
+    public Object getAlbums(String filter, String artist, String genre, int letterIndex, int minYear, int maxYear, boolean sortByYear, boolean groupByType, int startItem, int maxItems)
             throws SQLException, IllegalAccessException {
         User user = MyTunesRssRemoteEnv.getSession().getUser();
         if (user != null) {
             FindAlbumQuery query = new FindAlbumQuery(user, StringUtils.trimToNull(filter), StringUtils.trimToNull(artist), false, StringUtils.trimToNull(
-                    genre), letterIndex, minYear, maxYear, sortByYear, FindAlbumQuery.AlbumType.ALL);
+                    genre), letterIndex, minYear, maxYear, sortByYear, groupByType, FindAlbumQuery.AlbumType.ALL);
             return RenderMachine.getInstance().render(new QueryResultWrapper(TransactionFilter.getTransaction().executeQuery(query),
                                                                              startItem,
                                                                              maxItems));
