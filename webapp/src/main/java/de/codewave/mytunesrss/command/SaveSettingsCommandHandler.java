@@ -58,8 +58,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setRemoteControl(getBooleanRequestParameter("remoteControl", false));
         webConfig.setAddRemoteControl(getBooleanRequestParameter("addRemoteControl", false));
         webConfig.setKeepAlive(getBooleanRequestParameter("keepAlive", false));
-        webConfig.setShowThumbnailsForAlbums(getBooleanRequestParameter("showThumbnailsForAlbums", false));
-        webConfig.setShowThumbnailsForTracks(getBooleanRequestParameter("showThumbnailsForTracks", false));
         webConfig.setShowExternalSites(getBooleanRequestParameter("showExternalSites", false));
         webConfig.setShowEditTags(getBooleanRequestParameter("showEditTags", false));
         webConfig.setShowAddToPlaylist(getBooleanRequestParameter("showAddToPlaylist", false));

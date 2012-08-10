@@ -133,9 +133,9 @@
     <mt:initFlipFlop value1="odd" value2="even"/>
     <c:forEach items="${albums}" var="album" varStatus="loopStatus">
         <tr class="<mt:flipFlop/>">
-            <td id="functionsDialogName${loopStatus.index}" <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">class="coverThumbnailColumn"</c:if>">
+            <td id="functionsDialogName${loopStatus.index}" <c:if test="${!empty(album.imageHash)}">class="coverThumbnailColumn"</c:if>">
             <div class="trackName">
-                <c:if test="${config.showThumbnailsForAlbums && !empty(album.imageHash)}">
+                <c:if test="${!empty(album.imageHash)}">
                     <div class="albumCover">
                         <img id="albumthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${album.imageHash}/size=${config.albumImageSize}</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
                         <div class="tooltip" id="tooltip_albumthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${album.imageHash}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>

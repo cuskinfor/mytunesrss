@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-397] Better cover artwork display logic
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-398] Cover-Vorschau im Web-Client: nur eine Grafik statt Thumbnail und Preview laden
             </action>
             <action dev="mdescher" type="fix">

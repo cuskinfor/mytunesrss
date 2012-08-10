@@ -94,9 +94,9 @@
                 </c:if>
                 <c:forEach items="${tracks}" var="track" varStatus="loopStatus">
                     <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                        <td class="artist<c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}"> coverThumbnailColumn</c:if>">
+                        <td class="artist<c:if test="${!empty(track.imageHash)}"> coverThumbnailColumn</c:if>">
                             <div class="trackName">
-                                <c:if test="${config.showThumbnailsForTracks && !empty(track.imageHash)}">
+                                <c:if test="${!empty(track.imageHash)}">
                                     <div class="albumCover">
                                         <img id="trackthumb_${loopStatus.index}"
                                              src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>"

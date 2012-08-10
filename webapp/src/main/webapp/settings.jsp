@@ -301,18 +301,6 @@
                             </tr>
                         </c:if>
                         <tr <mt:flipFlop/>>
-                            <td class="label"><fmt:message key="settings.showThumbnailsForAlbums" /></td>
-                            <td>
-                                <input type="checkbox" name="showThumbnailsForAlbums" value="true" <c:if test="${config.showThumbnailsForAlbums}">checked="checked"</c:if> />
-                            </td>
-                        </tr>
-                        <tr <mt:flipFlop/>>
-                            <td class="label"><fmt:message key="settings.showThumbnailsForTracks" /></td>
-                            <td>
-                                <input type="checkbox" name="showThumbnailsForTracks" value="true" <c:if test="${config.showThumbnailsForTracks}">checked="checked"</c:if> />
-                            </td>
-                        </tr>
-                        <tr <mt:flipFlop/>>
                             <td class="label"><fmt:message key="settings.albumImageSize" /></td>
                             <td>
                                 <select name="albImgSize">
