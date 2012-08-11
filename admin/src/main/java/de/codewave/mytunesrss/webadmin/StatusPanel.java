@@ -278,10 +278,13 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myBackupDatabase.setEnabled(false);
                     new Thread(new Runnable() {
                         public void run() {
+                            MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
                             try {
                                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(datasources, ignoreTimestamps);
                             } catch (DatabaseJobRunningException e) {
                                 LOGGER.error("There was already a database job running!", e);
+                            } finally {
+                                MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
                             }
                         }
                     }).start();
@@ -297,6 +300,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myBackupDatabase.setEnabled(false);
                     new Thread(new Runnable() {
                         public void run() {
+                            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImageRemoval"));
+                            MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
                             try {
                                 MyTunesRss.STORE.executeStatement(new RemoveImagesForDataSourcesStatement(MyTunesRssUtils.toDatasourceIds(datasources)));
                                 MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
@@ -308,6 +313,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                                 LOGGER.error("Could not remove images.", e);
                             } finally {
                                 MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
+                                MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
                             }
                         }
                     }).start();
@@ -326,10 +332,13 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             myBackupDatabase.setEnabled(false);
+            MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
             try {
                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseReset();
             } catch (DatabaseJobRunningException e) {
                 LOGGER.error("There was already a database job running!", e);
+            } finally {
+                MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
             }
         } else if (clickEvent.getSource() == myBackupDatabase) {
             myUpdateDatabase.setEnabled(false);
@@ -337,7 +346,12 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             myBackupDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseBackup();
+            MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
+            try {
+                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseBackup();
+            } finally {
+                MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
+            }
         } else if (clickEvent.getSource() == myForceMyTunesRssComUpdate) {
             if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
                 MyTunesRss.EXECUTOR_SERVICE.executeMyTunesRssComUpdate();

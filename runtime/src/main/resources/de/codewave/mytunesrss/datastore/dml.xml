@@ -327,6 +327,13 @@
     <statement name="removeImagesForDataSources">
         <sql>UPDATE track SET image_hash = NULL WHERE source_id IN (:source_id[])</sql>
         <sql>UPDATE photo SET image_hash = NULL WHERE source_id IN (:source_id[])</sql>
+        <sql>
+            DELETE FROM image
+            WHERE NOT EXISTS
+            ( SELECT * FROM track t WHERE t.image_hash = hash )
+            AND NOT EXISTS
+            ( SELECT * FROM photo p WHERE p.image_hash = hash )
+        </sql>
     </statement>
 
     <statement name="removePhoto">

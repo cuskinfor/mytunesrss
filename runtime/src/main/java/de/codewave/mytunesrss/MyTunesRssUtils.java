@@ -29,7 +29,11 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.MemoryCacheImageOutputStream;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.naming.AuthenticationException;
@@ -614,12 +618,22 @@ public class MyTunesRssUtils {
                 height = maxSize;
             }
             Image scaledImage = original.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
             targetImage.getGraphics().drawImage(scaledImage, 0, 0, null);
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             try {
-                ImageIO.write(targetImage, "png", byteArrayOutputStream);
-                return new de.codewave.mytunesrss.meta.Image("image/png", byteArrayOutputStream.toByteArray());
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+                try {
+                    writer.setOutput(new MemoryCacheImageOutputStream(byteArrayOutputStream));
+                    ImageWriteParam param = writer.getDefaultWriteParam();
+                    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                    param.setCompressionQuality((float)MyTunesRss.CONFIG.getJpegQuality() / 100f);
+                    param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+                    writer.write(null, new IIOImage(targetImage, null, null), param);
+                } finally {
+                    writer.dispose();
+                }
+                return new de.codewave.mytunesrss.meta.Image("image/jpeg", byteArrayOutputStream.toByteArray());
             } finally {
                 byteArrayOutputStream.close();
             }

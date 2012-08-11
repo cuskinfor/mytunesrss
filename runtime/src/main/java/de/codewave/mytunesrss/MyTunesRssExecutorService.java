@@ -133,6 +133,11 @@ public class MyTunesRssExecutorService {
         TRACK_IMAGE_GENERATOR_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new TrackImageGeneratorRunnable(), 0, 60, TimeUnit.SECONDS);
     }
 
+    public synchronized void cancelImageGenerators() {
+        PHOTO_THUMBNAIL_GENERATOR_FUTURE.cancel(true);
+        TRACK_IMAGE_GENERATOR_FUTURE.cancel(true);
+    }
+
     public synchronized void scheduleMyTunesRssComUpdate() {
         try {
             MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 300, TimeUnit.SECONDS);

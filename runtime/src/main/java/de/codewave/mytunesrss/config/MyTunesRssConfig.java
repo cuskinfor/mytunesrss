@@ -140,6 +140,7 @@ public class MyTunesRssConfig {
     private ImageImportType myPhotoThumbnailImportType;
     private long myImageExpirationMillis;
     private long myRestApiJsExpirationMillis;
+    private int jpegQuality;
 
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
@@ -993,6 +994,14 @@ public class MyTunesRssConfig {
         myRestApiJsExpirationMillis = restApiJsExpirationMillis;
     }
 
+    public int getJpegQuality() {
+        return jpegQuality;
+    }
+
+    public void setJpegQuality(int jpegQuality) {
+        this.jpegQuality = jpegQuality;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1229,6 +1238,7 @@ public class MyTunesRssConfig {
         setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
         setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
         setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
+        setJpegQuality(JXPathUtils.getIntValue(settings, "jpeg-quality", 80));
     }
 
     /**
@@ -1586,6 +1596,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", getPhotoThumbnailImportType().name()));
             root.appendChild(DOMUtils.createLongElement(settings, "image-expiration-millis", getImageExpirationMillis()));
             root.appendChild(DOMUtils.createLongElement(settings, "restapijs-expiration-millis", getRestApiJsExpirationMillis()));
+            root.appendChild(DOMUtils.createIntElement(settings, "jpeg-quality", getJpegQuality()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
