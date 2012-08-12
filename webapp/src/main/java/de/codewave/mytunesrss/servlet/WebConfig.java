@@ -120,7 +120,7 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
         myConfigValues.put(CFG_RSS_LIMIT, "0");
-        myConfigValues.put(CFG_PAGE_SIZE, "0");
+        myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "20");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
@@ -149,7 +149,6 @@ public class WebConfig {
     private void initWithIphoneDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
-        myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "256");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "false");
@@ -161,7 +160,6 @@ public class WebConfig {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "false");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "false");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "false");
-        myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
         myConfigValues.put(CFG_FLASH_PLAYER, FlashPlayerConfig.SIMPLE.getId());
         myConfigValues.put(CFG_PHOTO_SIZE, "600");
