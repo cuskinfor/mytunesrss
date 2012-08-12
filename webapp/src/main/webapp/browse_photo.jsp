@@ -31,7 +31,7 @@
     <script type="text/javascript">
         function loadThumbnails() {
             <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
-                $jQ("#img${loopStatus.index}").attr("src", "${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/photoId=${photo.id}/size=${imageSize}</mt:encrypt>");
+                $jQ("#img${loopStatus.index}").attr("src", "${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/photoId=${cwfn:encodeUrl(photo.id)}/size=${imageSize}</mt:encrypt>");
             </c:forEach>
         }
     </script>
