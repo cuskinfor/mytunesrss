@@ -5,12 +5,15 @@
 
 package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.ImageImportType;
+
 import java.util.HashSet;
 import java.util.Set;
 
-public abstract class PhotoDatasourceConfig extends DatasourceConfig {
+public abstract class PhotoDatasourceConfig extends DatasourceConfig implements CommonPhotoDatasourceConfig {
 
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
+    private ImageImportType myPhotoThumbnailImportType;
 
     public PhotoDatasourceConfig(String id, String definition) {
         super(id, definition);
@@ -19,6 +22,7 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig {
     public PhotoDatasourceConfig(PhotoDatasourceConfig source) {
         super(source);
         myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
+        myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
     }
 
     public Set<ReplacementRule> getPathReplacements() {
@@ -33,4 +37,11 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig {
         myPathReplacements.add(pathReplacement);
     }
 
+    public ImageImportType getPhotoThumbnailImportType() {
+        return myPhotoThumbnailImportType;
+    }
+
+    public void setPhotoThumbnailImportType(ImageImportType photoThumbnailImportType) {
+        myPhotoThumbnailImportType = photoThumbnailImportType;
+    }
 }

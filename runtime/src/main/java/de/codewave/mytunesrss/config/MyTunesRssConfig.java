@@ -132,7 +132,6 @@ public class MyTunesRssConfig {
     private int myVlcSocketTimeout;
     private String myRssDescription;
     private int myVlcRaopVolume = 75;
-    private ImageImportType myPhotoThumbnailImportType;
     private long myImageExpirationMillis;
     private long myRestApiJsExpirationMillis;
     private int jpegQuality;
@@ -934,14 +933,6 @@ public class MyTunesRssConfig {
         myRssDescription = rssDescription;
     }
 
-    public ImageImportType getPhotoThumbnailImportType() {
-        return myPhotoThumbnailImportType;
-    }
-
-    public void setPhotoThumbnailImportType(ImageImportType photoThumbnailImportType) {
-        myPhotoThumbnailImportType = photoThumbnailImportType;
-    }
-
     public long getImageExpirationMillis() {
         return myImageExpirationMillis;
     }
@@ -1188,7 +1179,6 @@ public class MyTunesRssConfig {
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
         setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
         setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
-        setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
         setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
         setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
         setJpegQuality(JXPathUtils.getIntValue(settings, "jpeg-quality", 80));
@@ -1252,6 +1242,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
                             watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
+                            watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1293,6 +1284,7 @@ public class MyTunesRssConfig {
                             }
                             iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
+                            iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         case Aperture:
@@ -1305,6 +1297,7 @@ public class MyTunesRssConfig {
                                 String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
                                 apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
                             }
+                            apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.Auto.name())));
                             dataSources.add(apertureDatasourceConfig);
                             break;
                         default:
@@ -1551,7 +1544,6 @@ public class MyTunesRssConfig {
                 root.appendChild(DOMUtils.createIntElement(settings, "vlc-raop-volume", getVlcRaopVolume()));
             }
             root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
-            root.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", getPhotoThumbnailImportType().name()));
             root.appendChild(DOMUtils.createLongElement(settings, "image-expiration-millis", getImageExpirationMillis()));
             root.appendChild(DOMUtils.createLongElement(settings, "restapijs-expiration-millis", getRestApiJsExpirationMillis()));
             root.appendChild(DOMUtils.createIntElement(settings, "jpeg-quality", getJpegQuality()));
@@ -1598,6 +1590,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", watchfolderDatasourceConfig.getId3v2TrackComment()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", watchfolderDatasourceConfig.getDisabledMp4Codecs()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", watchfolderDatasourceConfig.getTrackImageImportType().name()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", watchfolderDatasourceConfig.getPhotoThumbnailImportType().name()));
                     writeTrackImageMappings(settings, dataSource, watchfolderDatasourceConfig);
                     break;
                 case Itunes:
@@ -1639,6 +1632,7 @@ public class MyTunesRssConfig {
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importRolls", iphotoDatasourceConfig.isImportRolls()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importAlbums", iphotoDatasourceConfig.isImportAlbums()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", iphotoDatasourceConfig.getPhotoThumbnailImportType().name()));
                     break;
                 case Aperture:
                     ApertureDatasourceConfig apertureDatasourceConfig = (ApertureDatasourceConfig) myDatasources.get(i);
@@ -1652,6 +1646,7 @@ public class MyTunesRssConfig {
                             pathReplacementElement.appendChild(DOMUtils.createTextElement(settings, "replacement", pathReplacement.getReplacement()));
                         }
                     }
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", apertureDatasourceConfig.getPhotoThumbnailImportType().name()));
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");

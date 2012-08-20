@@ -21,25 +21,16 @@ import java.util.*;
 
 public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
-    private final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
     public final Protection PROTECTED = new Protection(true);
     public final Protection UNPROTECTED = new Protection(false);
 
     private Table myFileTypes;
     private Button myAddFileType;
     private Button myResetFileTypes;
-    private Select myPhotoThumbnailImportType;
-    private Form myMiscForm;
-
-    public DataImportConfigPanel() {
-        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
-        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
-        IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
-    }
 
     public void attach() {
         super.attach();
-        init(getBundleString("dataimportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("dataimportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 2, true, true));
         Panel typesPanel = new Panel(getBundleString("dataimportConfigPanel.caption.types"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(typesPanel);
         myFileTypes = new Table();
@@ -55,20 +46,14 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myAddFileType = getComponentFactory().createButton("dataimportConfigPanel.fileTypes.add", this);
         myResetFileTypes = getComponentFactory().createButton("dataimportConfigPanel.fileTypes.reset", this);
         typesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFileType, myResetFileTypes));
-        myMiscForm = new Form();
-        myMiscForm.setImmediate(true);
-        addComponent(getComponentFactory().surroundWithPanel(myMiscForm, new Layout.MarginInfo(false, true, false, true), getBundleString("dataimportConfigPanel.misc.caption")));
 
-        myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
-        myMiscForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 1, 0, 1, false);
 
         initFromConfig();
     }
 
     protected void initFromConfig() {
         setFileTypes(MyTunesRss.CONFIG.getFileTypes());
-        myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getPhotoThumbnailImportType()));
         setTablePageLength();
     }
 
@@ -110,7 +95,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
             MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == PROTECTED));
         }
-        MyTunesRss.CONFIG.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         MyTunesRss.CONFIG.save();
     }
 
@@ -147,7 +131,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFileTypes, myMiscForm)) {
+        if (!VaadinUtils.isValid(myFileTypes)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }
@@ -169,24 +153,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             } else {
                 return getBundleString("dataimportConfigPanel.fileTypes.protection.false");
             }
-        }
-    }
-
-    public class ImageImportTypeRepresentation {
-
-        private ImageImportType myImageImportType;
-
-        public ImageImportTypeRepresentation(ImageImportType imageImportType) {
-            myImageImportType = imageImportType;
-        }
-
-        public ImageImportType getImageImportType() {
-            return myImageImportType;
-        }
-
-        @Override
-        public String toString() {
-            return getBundleString("dataimportConfigPanel.importType." + myImageImportType.name());
         }
     }
 }

@@ -924,7 +924,7 @@
     </statement>
 
     <statement name="getPhotosWithMissingThumbnails">
-        <sql>SELECT id, file FROM photo WHERE image_hash IS NULL</sql>
+        <sql>SELECT id, file FROM photo WHERE image_hash IS NULL AND source_id IN (:sourceIds[])</sql>
     </statement>
 
     <statement name="getPhotoImageHashAndFile">

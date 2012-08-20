@@ -55,6 +55,9 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Select myTrackImageImportType;
 
     public ItunesDatasourceOptionsPanel(ItunesDatasourceConfig config) {
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
         myConfig = config;
     }
 

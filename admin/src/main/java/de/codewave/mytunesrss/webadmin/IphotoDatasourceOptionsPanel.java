@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.vaadin.SmartTextField;
@@ -14,7 +15,31 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
+
+    public class ImageImportTypeRepresentation {
+
+        private ImageImportType myImageImportType;
+
+        public ImageImportTypeRepresentation(ImageImportType imageImportType) {
+            myImageImportType = imageImportType;
+        }
+
+        public ImageImportType getImageImportType() {
+            return myImageImportType;
+        }
+
+        @Override
+        public String toString() {
+            return getBundleString("dataimportConfigPanel.importType." + myImageImportType.name());
+        }
+    }
+
+    private final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
 
     private Table myPathReplacements;
     private Button myAddPathReplacement;
@@ -22,8 +47,12 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Form myMiscOptionsForm;
     private CheckBox myImportRolls;
     private CheckBox myImportAlbums;
+    private Select myPhotoThumbnailImportType;
 
     public IphotoDatasourceOptionsPanel(IphotoDatasourceConfig config) {
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
         myConfig = config;
     }
 
@@ -46,8 +75,10 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myImportRolls = getComponentFactory().createCheckBox("datasourceOptionsPanel.iphotoImportRolls");
         myImportAlbums = getComponentFactory().createCheckBox("datasourceOptionsPanel.iphotoImportAlbums");
+        myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myMiscOptionsForm.addField(myImportRolls, myImportRolls);
         myMiscOptionsForm.addField(myImportAlbums, myImportAlbums);
+        myMiscOptionsForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 2, 0, 2, false);
@@ -63,6 +94,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         }
         myConfig.setImportAlbums(myImportAlbums.booleanValue());
         myConfig.setImportRolls(myImportRolls.booleanValue());
+        myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
     }
 
     @Override
@@ -74,6 +106,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         setTablePageLengths();
         myImportAlbums.setValue(myConfig.isImportAlbums());
         myImportRolls.setValue(myConfig.isImportRolls());
+        myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getPhotoThumbnailImportType()));
     }
 
     private void addPathReplacement(ReplacementRule replacement) {
@@ -89,7 +122,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else if (!myImportRolls.booleanValue() && !myImportAlbums.booleanValue()) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourceOptionsPanel.error.importRollsOrAlbums");

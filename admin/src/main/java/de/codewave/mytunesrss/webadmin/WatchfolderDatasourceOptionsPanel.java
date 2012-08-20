@@ -64,8 +64,12 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Table myTrackImageMappingsTable;
     private Button myAddTrackImageMapping;
     private Select myTrackImageImportType;
+    private Select myPhotoThumbnailImportType;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
+        IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
         myConfig = config;
     }
 
@@ -122,12 +126,14 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
         myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
         myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
+        myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscOptionsForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscOptionsForm.addField(myTrackImageImportType, myTrackImageImportType);
+        myMiscOptionsForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 4, 0, 4, false);
@@ -167,6 +173,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         }
         myConfig.setTrackImageMappings(mappings);
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
+        myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
     }
 
     @Override
@@ -196,6 +203,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myId3v2TrackComment.setValue(myConfig.getId3v2TrackComment());
         myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getTrackImageImportType()));
+        myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getPhotoThumbnailImportType()));
         myTrackImageMappingsTable.removeAllItems();
         for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
             addTrackImageMapping(mapping);

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class WatchfolderDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
+public class WatchfolderDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig, CommonPhotoDatasourceConfig {
 
     public static final String DEFAULT_TITLE_FALLBACK = "[[[file:(.*)\\..*]]]";
     public static final String DEFAULT_ALBUM_FALLBACK = "[[[dir:0]]]";
@@ -41,6 +41,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private String myDisabledMp4Codecs;
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType;
+    private ImageImportType myPhotoThumbnailImportType;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -232,5 +233,13 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
 
     public void setTrackImageImportType(ImageImportType trackImageImportType) {
         myTrackImageImportType = trackImageImportType;
+    }
+
+    public ImageImportType getPhotoThumbnailImportType() {
+        return myPhotoThumbnailImportType;
+    }
+
+    public void setPhotoThumbnailImportType(ImageImportType photoThumbnailImportType) {
+        myPhotoThumbnailImportType = photoThumbnailImportType;
     }
 }

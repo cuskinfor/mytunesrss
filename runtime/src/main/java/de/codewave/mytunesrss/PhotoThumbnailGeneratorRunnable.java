@@ -5,9 +5,13 @@
 
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.config.CommonPhotoDatasourceConfig;
+import de.codewave.mytunesrss.config.CommonTrackDatasourceConfig;
+import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +20,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 public class PhotoThumbnailGeneratorRunnable implements Runnable {
 
@@ -32,12 +38,21 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
     }
 
     public void run() {
-        if (MyTunesRss.CONFIG.getPhotoThumbnailImportType() == ImageImportType.Auto) {
+        final Set<String> sourceIds = new HashSet<String>();
+        for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
+            if (datasourceConfig instanceof CommonPhotoDatasourceConfig && ((CommonPhotoDatasourceConfig) datasourceConfig).getPhotoThumbnailImportType() == ImageImportType.Auto) {
+                // only consider photos from data sources which have the thumbnail import set to "AUTO"
+                sourceIds.add(datasourceConfig.getId());
+            }
+        }
+        if (!sourceIds.isEmpty()) {
             try {
                 Collection<SimplePhoto> photos = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimplePhoto>>() {
                     @Override
                     public Collection<SimplePhoto> execute(Connection connection) throws SQLException {
-                        return execute(MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails"), new ResultBuilder<SimplePhoto>() {
+                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails");
+                        statement.setItems("sourceIds", sourceIds);
+                        return execute(statement, new ResultBuilder<SimplePhoto>() {
                             public SimplePhoto create(ResultSet resultSet) throws SQLException {
                                 return new SimplePhoto(resultSet.getString("id"), resultSet.getString("file"));
                             }
