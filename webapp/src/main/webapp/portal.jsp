@@ -106,7 +106,7 @@
                         </c:otherwise>
                     </c:choose>
                     <input type="hidden" name="backUrl" value="${mtfn:encode64(backUrl)}" />
-                    <input type="hidden" name="sortOrder" value="KeepOrder" />
+                    <input type="hidden" name="sortOrder" value="Album" />
                     <input id="linkDoSearch" class="button" type="submit" value="<fmt:message key="doSearch"/>"/>
 	                </td>
 
