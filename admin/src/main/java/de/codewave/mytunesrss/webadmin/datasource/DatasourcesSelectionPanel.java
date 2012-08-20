@@ -3,13 +3,15 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.webadmin;
+package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.webadmin.MainWindow;
+import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
 import de.codewave.vaadin.VaadinUtils;
 
 import java.util.Collection;

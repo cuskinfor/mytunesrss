@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.DatabaseJobRunningException;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.webadmin.datasource.DatasourcesConfigPanel;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;

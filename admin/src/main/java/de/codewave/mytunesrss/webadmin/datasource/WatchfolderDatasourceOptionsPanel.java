@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.webadmin;
+package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
@@ -12,6 +12,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
+import de.codewave.mytunesrss.webadmin.MainWindow;
+import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -19,27 +21,7 @@ import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 import java.util.*;
 
-public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
-
-    public class ImageImportTypeRepresentation {
-
-        private ImageImportType myImageImportType;
-
-        public ImageImportTypeRepresentation(ImageImportType imageImportType) {
-            myImageImportType = imageImportType;
-        }
-
-        public ImageImportType getImageImportType() {
-            return myImageImportType;
-        }
-
-        @Override
-        public String toString() {
-            return getBundleString("dataimportConfigPanel.importType." + myImageImportType.name());
-        }
-    }
-
-    private final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
+public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
 
     private Form myIncludeExcludeForm;
     private SmartTextField myIncludePattern;
@@ -57,26 +39,18 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Form myMiscOptionsForm;
     private Select myVideoType;
     private CheckBox myIgnoreFileMeta;
-    private SmartTextField myArtistDropWords;
     private SmartTextField myId3v2TrackComment;
-    private SmartTextField myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myConfig;
-    private Table myTrackImageMappingsTable;
-    private Button myAddTrackImageMapping;
-    private Select myTrackImageImportType;
-    private Select myPhotoThumbnailImportType;
 
-    public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
-        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
-        IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
-        IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
+    public WatchfolderDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, WatchfolderDatasourceConfig config) {
+        super(datasourcesConfigPanel);
         myConfig = config;
     }
 
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 5, true, true));
+        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 5, true, true));
 
         myIncludeExcludeForm = getComponentFactory().createForm(null, true);
         myIncludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.includePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidIncludePattern"));
@@ -107,26 +81,12 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myFallbackForm.addField(myPhotoAlbumPattern, myPhotoAlbumPattern);
         addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.fallbacks")));
 
-        Panel imageMappingsPanel = new Panel(getBundleString("datasourceOptionsPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
-        addComponent(imageMappingsPanel);
-        myTrackImageMappingsTable = new Table();
-        myTrackImageMappingsTable.setCacheRate(50);
-        myTrackImageMappingsTable.addContainerProperty("search", TextField.class, null, getBundleString("datasourceOptionsPanel.imageMappingSearch"), null, null);
-        myTrackImageMappingsTable.addContainerProperty("replace", TextField.class, null, getBundleString("datasourceOptionsPanel.imageMappingReplace"), null, null);
-        myTrackImageMappingsTable.addContainerProperty("delete", Button.class, null, "", null, null);
-        myTrackImageMappingsTable.setEditable(false);
-        imageMappingsPanel.addComponent(myTrackImageMappingsTable);
-        myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
-        imageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
+        addComponent(myImageMappingsPanel);
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
         myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
-        myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
         myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
-        myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
-        myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
-        myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
@@ -139,14 +99,6 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
-    }
-
-    private void addTrackImageMapping(ReplacementRule replacement) {
-        SmartTextField searchTextField = new SmartTextField();
-        searchTextField.setValue(replacement.getSearchPattern());
-        searchTextField.addValidator(new ValidRegExpValidator("datasourceOptionsPanel.error.invalidSearchExpression"));
-        searchTextField.setImmediate(true);
-        myTrackImageMappingsTable.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     @Override
@@ -214,79 +166,9 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImageMappingsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
-        } else {
-            writeToConfig();
-            closeWindow();
+            return false;
         }
-        return false; // make sure the default operation is not used
+        return true;
     }
 
-    @Override
-    protected boolean beforeCancel() {
-        closeWindow();
-        return false; // make sure the default operation is not used
-    }
-
-    private void closeWindow() {
-        getWindow().getParent().removeWindow(getWindow());
-    }
-
-    @Override
-    public void buttonClick(final Button.ClickEvent clickEvent) {
-        if (clickEvent.getSource() == myAddTrackImageMapping) {
-            addTrackImageMapping(new ReplacementRule("^.*$", "\\0"));
-            setTablePageLengths();
-        } else if (findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()) != null) {
-            final Button yes = new Button(getBundleString("button.yes"));
-            Button no = new Button(getBundleString("button.no"));
-            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.caption"), getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.message"), yes, no) {
-                public void clicked(Button button) {
-                    if (button == yes) {
-                        myTrackImageMappingsTable.removeItem(findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()));
-                        setTablePageLengths();
-                    }
-                }
-            }.show(VaadinUtils.getApplicationWindow(this));
-        } else {
-            super.buttonClick(clickEvent);
-        }
-    }
-
-    private void setTablePageLengths() {
-        myTrackImageMappingsTable.setPageLength(Math.min(myTrackImageMappingsTable.getItemIds().size(), 5));
-    }
-
-    private class VideoTypeRepresentation {
-        private VideoType myVideoType;
-
-        private VideoTypeRepresentation(VideoType videoType) {
-            myVideoType = videoType;
-        }
-
-        private VideoType getVideoType() {
-            return myVideoType;
-        }
-
-        @Override
-        public String toString() {
-            return getBundleString("datasourceOptionsPanel.videoType." + myVideoType.name());
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            VideoTypeRepresentation that = (VideoTypeRepresentation) o;
-
-            if (myVideoType != that.myVideoType) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            return myVideoType != null ? myVideoType.hashCode() : 0;
-        }
-    }
 }

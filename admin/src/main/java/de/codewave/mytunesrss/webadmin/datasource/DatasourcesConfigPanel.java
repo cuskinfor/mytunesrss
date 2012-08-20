@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.webadmin;
+package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.Application;
 import com.vaadin.data.Item;
@@ -13,6 +13,9 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.webadmin.EditUserConfigPanel;
+import de.codewave.mytunesrss.webadmin.MainWindow;
+import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -35,7 +38,7 @@ import java.util.regex.Pattern;
 
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
-    static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
+    public static final Pattern XML_FILE_PATTERN = Pattern.compile("^.*\\.xml$", Pattern.CASE_INSENSITIVE);
     private static final Logger LOGGER = LoggerFactory.getLogger(DatasourcesConfigPanel.class);
 
     private Table myDatasources;
@@ -153,24 +156,20 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 DatasourceConfig datasourceConfig = myConfigs.get(findTableItemWithObject(myDatasources, clickEvent.getSource()));
                 switch (datasourceConfig.getType()) {
                     case Itunes:
-                        ItunesDatasourceOptionsPanel itunesOptionsPanel = new ItunesDatasourceOptionsPanel((ItunesDatasourceConfig) datasourceConfig);
-                        SinglePanelWindow itunesOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), itunesOptionsPanel);
-                        itunesOptionsWindow.show(getWindow());
+                        ItunesDatasourceOptionsPanel itunesOptionsPanel = new ItunesDatasourceOptionsPanel(this, (ItunesDatasourceConfig) datasourceConfig);
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(itunesOptionsPanel);
                         break;
                     case Iphoto:
-                        IphotoDatasourceOptionsPanel iphotoOptionsPanel = new IphotoDatasourceOptionsPanel((IphotoDatasourceConfig) datasourceConfig);
-                        SinglePanelWindow iphotoOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), iphotoOptionsPanel);
-                        iphotoOptionsWindow.show(getWindow());
+                        IphotoDatasourceOptionsPanel iphotoOptionsPanel = new IphotoDatasourceOptionsPanel(this, (IphotoDatasourceConfig) datasourceConfig);
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(iphotoOptionsPanel);
                         break;
                     case Aperture:
-                        ApertureDatasourceOptionsPanel apertureOptionsPanel = new ApertureDatasourceOptionsPanel((ApertureDatasourceConfig) datasourceConfig);
-                        SinglePanelWindow apertureOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), apertureOptionsPanel);
-                        apertureOptionsWindow.show(getWindow());
+                        ApertureDatasourceOptionsPanel apertureOptionsPanel = new ApertureDatasourceOptionsPanel(this, (ApertureDatasourceConfig) datasourceConfig);
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(apertureOptionsPanel);
                         break;
                     case Watchfolder:
-                        WatchfolderDatasourceOptionsPanel watchfolderOptionsPanel = new WatchfolderDatasourceOptionsPanel((WatchfolderDatasourceConfig) datasourceConfig);
-                        SinglePanelWindow watchfolderOptionsWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.caption"), watchfolderOptionsPanel);
-                        watchfolderOptionsWindow.show(getWindow());
+                        WatchfolderDatasourceOptionsPanel watchfolderOptionsPanel = new WatchfolderDatasourceOptionsPanel(this, (WatchfolderDatasourceConfig) datasourceConfig);
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(watchfolderOptionsPanel);
                         break;
                     default:
                         throw new IllegalArgumentException("Unknown datasource type!");

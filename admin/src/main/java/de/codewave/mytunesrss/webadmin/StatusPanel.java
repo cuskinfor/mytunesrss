@@ -20,6 +20,8 @@ import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventListener;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
+import de.codewave.mytunesrss.webadmin.datasource.DatasourcesConfigPanel;
+import de.codewave.mytunesrss.webadmin.datasource.DatasourcesSelectionPanel;
 import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.network.UpdateInfo;
