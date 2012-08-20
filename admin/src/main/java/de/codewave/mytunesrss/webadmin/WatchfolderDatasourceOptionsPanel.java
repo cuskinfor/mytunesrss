@@ -5,17 +5,20 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Form;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Select;
+import com.vaadin.terminal.Sizeable;
+import com.vaadin.ui.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
@@ -39,6 +42,8 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private SmartTextField myId3v2TrackComment;
     private SmartTextField myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myConfig;
+    private Table myTrackImageMappingsTable;
+    private Button myAddTrackImageMapping;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
         myConfig = config;
@@ -47,7 +52,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 4, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 5, true, true));
 
         myIncludeExcludeForm = getComponentFactory().createForm(null, true);
         myIncludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.includePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidIncludePattern"));
@@ -84,6 +89,19 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
         myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
         myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
+
+        Panel imageMappingsPanel = new Panel(getBundleString("datasourceOptionsPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
+        addComponent(imageMappingsPanel);
+        myTrackImageMappingsTable = new Table();
+        myTrackImageMappingsTable.setCacheRate(50);
+        myTrackImageMappingsTable.addContainerProperty("search", TextField.class, null, getBundleString("datasourceOptionsPanel.imageMappingSearch"), null, null);
+        myTrackImageMappingsTable.addContainerProperty("replace", TextField.class, null, getBundleString("datasourceOptionsPanel.imageMappingReplace"), null, null);
+        myTrackImageMappingsTable.addContainerProperty("delete", Button.class, null, "", null, null);
+        myTrackImageMappingsTable.setEditable(false);
+        imageMappingsPanel.addComponent(myTrackImageMappingsTable);
+        myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
+        imageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
+
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
@@ -91,9 +109,17 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
+    }
+
+    private void addTrackImageMapping(ReplacementRule replacement) {
+        SmartTextField searchTextField = new SmartTextField();
+        searchTextField.setValue(replacement.getSearchPattern());
+        searchTextField.addValidator(new ValidRegExpValidator("datasourceOptionsPanel.error.invalidSearchExpression"));
+        searchTextField.setImmediate(true);
+        myTrackImageMappingsTable.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     @Override
@@ -114,6 +140,11 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
         myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
         myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
+        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
+        for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
+            mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
+        }
+        myConfig.setTrackImageMappings(mappings);
     }
 
     @Override
@@ -142,10 +173,15 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myArtistDropWords.setValue(myConfig.getArtistDropWords());
         myId3v2TrackComment.setValue(myConfig.getId3v2TrackComment());
         myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
+        myTrackImageMappingsTable.removeAllItems();
+        for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
+            addTrackImageMapping(mapping);
+        }
+        setTablePageLengths();
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm)) {
+        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImageMappingsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else {
             writeToConfig();
@@ -162,6 +198,29 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     private void closeWindow() {
         getWindow().getParent().removeWindow(getWindow());
+    }
+
+    @Override
+    public void buttonClick(final Button.ClickEvent clickEvent) {
+        if (clickEvent.getSource() == myAddTrackImageMapping) {
+            addTrackImageMapping(new ReplacementRule("^.*$", "\\0"));
+            setTablePageLengths();
+        } else if (findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()) != null) {
+            final Button yes = new Button(getBundleString("button.yes"));
+            Button no = new Button(getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.caption"), getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.message"), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        myTrackImageMappingsTable.removeItem(findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()));
+                        setTablePageLengths();
+                    }
+                }
+            }.show(VaadinUtils.getApplicationWindow(this));
+        }
+    }
+
+    private void setTablePageLengths() {
+        myTrackImageMappingsTable.setPageLength(Math.min(myTrackImageMappingsTable.getItemIds().size(), 5));
     }
 
     private class VideoTypeRepresentation {

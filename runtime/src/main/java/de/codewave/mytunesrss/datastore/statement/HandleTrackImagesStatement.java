@@ -4,10 +4,7 @@ import de.codewave.camel.CamelUtils;
 import de.codewave.camel.Endianness;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.config.CompiledReplacementRule;
-import de.codewave.mytunesrss.config.DatasourceConfig;
-import de.codewave.mytunesrss.config.DatasourceType;
-import de.codewave.mytunesrss.config.ReplacementRule;
+import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
@@ -49,11 +46,13 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private String myTrackId;
     private Image myImage;
     private TrackSource mySource;
+    private String mySourceId;
 
-    public HandleTrackImagesStatement(TrackSource source, File file, String trackId) throws IOException {
+    public HandleTrackImagesStatement(TrackSource source, String sourceId, File file, String trackId) throws IOException {
         myFile = file;
         myTrackId = trackId;
         mySource = source;
+        mySourceId = sourceId;
         myImage = getLocalFileImage();
     }
 
@@ -190,7 +189,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 imageFile = file;
             } else {
                 String basePath = file.getAbsolutePath();
-                for (ReplacementRule rule : MyTunesRss.CONFIG.getTrackImageMappings()) {
+                for (ReplacementRule rule : ((AudioVideoDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
                     CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
                     if (compiledReplacementRule.matches(basePath)) {
                         basePath = compiledReplacementRule.replace(basePath);

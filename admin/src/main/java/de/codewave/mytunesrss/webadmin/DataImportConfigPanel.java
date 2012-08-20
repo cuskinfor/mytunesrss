@@ -31,8 +31,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private Select myTrackImageImportType;
     private Select myPhotoThumbnailImportType;
     private Form myMiscForm;
-    private Table myTrackImageMappingsTable;
-    private Button myAddTrackImageMapping;
 
     public DataImportConfigPanel() {
         IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
@@ -66,38 +64,15 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myMiscForm.addField(myTrackImageImportType, myTrackImageImportType);
         myMiscForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
-        Panel imageMappingsPanel = new Panel(getBundleString("dataimportConfigPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
-        addComponent(imageMappingsPanel);
-        myTrackImageMappingsTable = new Table();
-        myTrackImageMappingsTable.setCacheRate(50);
-        myTrackImageMappingsTable.addContainerProperty("search", TextField.class, null, getBundleString("dataimportConfigPanel.imageMappingSearch"), null, null);
-        myTrackImageMappingsTable.addContainerProperty("replace", TextField.class, null, getBundleString("dataimportConfigPanel.imageMappingReplace"), null, null);
-        myTrackImageMappingsTable.addContainerProperty("delete", Button.class, null, "", null, null);
-        myTrackImageMappingsTable.setEditable(false);
-        imageMappingsPanel.addComponent(myTrackImageMappingsTable);
-        myAddTrackImageMapping = getComponentFactory().createButton("dataimportConfigPanel.addImageMapping", this);
-        imageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
         addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
-    }
-
-    private void addTrackImageMapping(ReplacementRule replacement) {
-        SmartTextField searchTextField = new SmartTextField();
-        searchTextField.setValue(replacement.getSearchPattern());
-        searchTextField.addValidator(new ValidRegExpValidator("dataimportConfigPanel.error.invalidSearchExpression"));
-        searchTextField.setImmediate(true);
-        myTrackImageMappingsTable.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     protected void initFromConfig() {
         setFileTypes(MyTunesRss.CONFIG.getFileTypes());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getTrackImageImportType()));
         myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getPhotoThumbnailImportType()));
-        myTrackImageMappingsTable.removeAllItems();
-        for (ReplacementRule mapping : MyTunesRss.CONFIG.getTrackImageMappings()) {
-            addTrackImageMapping(mapping);
-        }
         setTablePageLength();
     }
 
@@ -127,7 +102,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
     private void setTablePageLength() {
         myFileTypes.setPageLength(Math.min(myFileTypes.size(), 10));
-        myTrackImageMappingsTable.setPageLength(Math.min(myTrackImageMappingsTable.getItemIds().size(), 5));
     }
 
     protected void writeToConfig() {
@@ -142,11 +116,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         }
         MyTunesRss.CONFIG.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         MyTunesRss.CONFIG.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
-        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
-        for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
-            mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
-        }
-        MyTunesRss.CONFIG.setTrackImageMappings(mappings);
         MyTunesRss.CONFIG.save();
     }
 
@@ -177,27 +146,13 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
                     }
                 }
             }.show(getWindow());
-        } else if (clickEvent.getSource() == myAddTrackImageMapping) {
-            addTrackImageMapping(new ReplacementRule("^.*$", "\\0"));
-            setTablePageLength();
-        } else if (findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()) != null) {
-            final Button yes = new Button(getBundleString("button.yes"));
-            Button no = new Button(getBundleString("button.no"));
-            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("dataimportConfigDialog.optionWindowDeleteTrackImageMapping.caption"), getBundleString("dataimportConfigDialog.optionWindowDeleteTrackImageMapping.message"), yes, no) {
-                public void clicked(Button button) {
-                    if (button == yes) {
-                        myTrackImageMappingsTable.removeItem(findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()));
-                        setTablePageLength();
-                    }
-                }
-            }.show(VaadinUtils.getApplicationWindow(this));
         } else {
             super.buttonClick(clickEvent);
         }
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myTrackImageMappingsTable, myFileTypes, myMiscForm)) {
+        if (!VaadinUtils.isValid(myFileTypes, myMiscForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

@@ -128,7 +128,6 @@ public class MyTunesRssConfig {
     private int myNumberKeepDatabaseBackups;
     private boolean myBackupDatabaseAfterInit;
     private boolean myHeadless = false;
-    private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
     private File myVlcExecutable;
     private int myVlcSocketTimeout;
     private String myRssDescription;
@@ -904,14 +903,6 @@ public class MyTunesRssConfig {
         myHeadless = headless;
     }
 
-    public List<ReplacementRule> getTrackImageMappings() {
-        return new ArrayList<ReplacementRule>(trackImageMappings);
-    }
-
-    public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
-        this.trackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
-    }
-
     public File getVlcExecutable() {
         return myVlcExecutable;
     }
@@ -1201,13 +1192,6 @@ public class MyTunesRssConfig {
         setNumberKeepDatabaseBackups(JXPathUtils.getIntValue(settings, "database-backup-max", 5));
         setBackupDatabaseAfterInit(JXPathUtils.getBooleanValue(settings, "database-backup-after-init", true));
         setHeadless(JXPathUtils.getBooleanValue(settings, "headless", false));
-        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
-        Iterator<JXPathContext> trackImageMappingIterator = JXPathUtils.getContextIterator(settings, "track-image-mappings/mapping");
-        while (trackImageMappingIterator.hasNext()) {
-            JXPathContext mappingContext = trackImageMappingIterator.next();
-            mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
-        }
-        setTrackImageMappings(mappings);
         String vlc = JXPathUtils.getStringValue(settings, "vlc", MyTunesRssUtils.findVlcExecutable());
         setVlcExecutable(vlc != null ? new File(vlc) : null);
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
@@ -1276,6 +1260,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
                             watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
+                            watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1301,6 +1286,7 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
                             itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
+                            itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1341,6 +1327,16 @@ public class MyTunesRssConfig {
             }
         }
         setDatasources(dataSources);
+    }
+
+    private List<ReplacementRule> readTrackImageMappings(JXPathContext settings) {
+        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
+        Iterator<JXPathContext> trackImageMappingIterator = JXPathUtils.getContextIterator(settings, "track-image-mappings/mapping");
+        while (trackImageMappingIterator.hasNext()) {
+            JXPathContext mappingContext = trackImageMappingIterator.next();
+            mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
+        }
+        return mappings;
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1557,16 +1553,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "database-backup-max", getNumberKeepDatabaseBackups()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "database-backup-after-init", isBackupDatabaseAfterInit()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "headless", isHeadless()));
-            if (!getTrackImageMappings().isEmpty()) {
-                Element trackImageMappingsElement = settings.createElement("track-image-mappings");
-                root.appendChild(trackImageMappingsElement);
-                for (ReplacementRule rule : trackImageMappings) {
-                    Element mappingElement = settings.createElement("mapping");
-                    trackImageMappingsElement.appendChild(mappingElement);
-                    mappingElement.appendChild(DOMUtils.createTextElement(settings, "search-pattern", rule.getSearchPattern()));
-                    mappingElement.appendChild(DOMUtils.createTextElement(settings, "replacement", rule.getReplacement()));
-                }
-            }
             if (getVlcExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
                 root.appendChild(DOMUtils.createIntElement(settings, "vlc-timeout", getVlcSocketTimeout()));
@@ -1620,6 +1606,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", watchfolderDatasourceConfig.getArtistDropWords()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", watchfolderDatasourceConfig.getId3v2TrackComment()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", watchfolderDatasourceConfig.getDisabledMp4Codecs()));
+                    writeTrackImageMappings(settings, dataSource, watchfolderDatasourceConfig);
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
@@ -1643,6 +1630,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", itunesDatasourceConfig.getArtistDropWords()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", itunesDatasourceConfig.getDisabledMp4Codecs()));
+                    writeTrackImageMappings(settings, dataSource, itunesDatasourceConfig);
                     break;
                 case Iphoto:
                     IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);
@@ -1674,6 +1662,19 @@ public class MyTunesRssConfig {
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");
+            }
+        }
+    }
+
+    private void writeTrackImageMappings(Document settings, Element dataSource, AudioVideoDatasourceConfig datasourceConfig) {
+        if (!datasourceConfig.getTrackImageMappings().isEmpty()) {
+            Element trackImageMappingsElement = settings.createElement("track-image-mappings");
+            dataSource.appendChild(trackImageMappingsElement);
+            for (ReplacementRule rule : datasourceConfig.getTrackImageMappings()) {
+                Element mappingElement = settings.createElement("mapping");
+                trackImageMappingsElement.appendChild(mappingElement);
+                mappingElement.appendChild(DOMUtils.createTextElement(settings, "search-pattern", rule.getSearchPattern()));
+                mappingElement.appendChild(DOMUtils.createTextElement(settings, "replacement", rule.getReplacement()));
             }
         }
     }

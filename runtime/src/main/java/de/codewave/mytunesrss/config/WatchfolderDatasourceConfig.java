@@ -8,9 +8,11 @@ package de.codewave.mytunesrss.config;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
-public class WatchfolderDatasourceConfig extends DatasourceConfig {
+public class WatchfolderDatasourceConfig extends DatasourceConfig implements AudioVideoDatasourceConfig {
 
     public static final String DEFAULT_TITLE_FALLBACK = "[[[file:(.*)\\..*]]]";
     public static final String DEFAULT_ALBUM_FALLBACK = "[[[dir:0]]]";
@@ -36,6 +38,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private String myArtistDropWords;
     private String myId3v2TrackComment;
     private String myDisabledMp4Codecs;
+    private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -208,4 +211,11 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
+    public List<ReplacementRule> getTrackImageMappings() {
+        return new ArrayList<ReplacementRule>(trackImageMappings);
+    }
+
+    public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
+        this.trackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+    }
 }

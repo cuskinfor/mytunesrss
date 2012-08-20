@@ -28,11 +28,13 @@ public class TrackImageGeneratorRunnable implements Runnable {
         private String myId;
         private String myFile;
         private TrackSource mySource;
+        private String mySourceId;
 
-        private SimpleTrack(String id, String file, TrackSource source) {
+        private SimpleTrack(String id, String file, TrackSource source, String sourceId) {
             myId = id;
             myFile = file;
             mySource = source;
+            mySourceId = sourceId;
         }
     }
 
@@ -44,7 +46,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                     public Collection<SimpleTrack> execute(Connection connection) throws SQLException {
                         return execute(MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages"), new ResultBuilder<SimpleTrack>() {
                             public SimpleTrack create(ResultSet resultSet) throws SQLException {
-                                return new SimpleTrack(resultSet.getString("id"), resultSet.getString("file"), TrackSource.valueOf(resultSet.getString("source")));
+                                return new SimpleTrack(resultSet.getString("id"), resultSet.getString("file"), TrackSource.valueOf(resultSet.getString("source")), resultSet.getString("source_id"));
                             }
                         }).getResults();
                     }
@@ -55,7 +57,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                         break;
                     }
                     try {
-                        MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, new File(track.myFile), track.myId));
+                        MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId));
                         count++;
                         if (count % 250 == 0) {
                             recreateAlbums();

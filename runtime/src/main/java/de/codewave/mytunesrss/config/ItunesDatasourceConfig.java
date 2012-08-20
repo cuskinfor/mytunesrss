@@ -7,16 +7,19 @@ package de.codewave.mytunesrss.config;
 
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
-public class ItunesDatasourceConfig extends DatasourceConfig {
+public class ItunesDatasourceConfig extends DatasourceConfig implements AudioVideoDatasourceConfig {
 
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
     private String myArtistDropWords;
     private String myDisabledMp4Codecs;
+    private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
 
     public ItunesDatasourceConfig(String id, String definition) {
         super(id, definition);
@@ -87,4 +90,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
+    public List<ReplacementRule> getTrackImageMappings() {
+        return new ArrayList<ReplacementRule>(trackImageMappings);
+    }
+
+    public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
+        this.trackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+    }
 }

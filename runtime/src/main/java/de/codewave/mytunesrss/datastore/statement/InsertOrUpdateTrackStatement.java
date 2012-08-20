@@ -20,7 +20,7 @@ import java.util.StringTokenizer;
 public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement {
 
     static String dropWordsFromArtist(String artist, String dropWords) {
-        if (StringUtils.isNotEmpty(dropWords) && StringUtils.isNotEmpty(artist)) {
+        if (StringUtils.isNotBlank(dropWords) && StringUtils.isNotBlank(artist)) {
             for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens();) {
                 String word = tokenizer.nextToken().toLowerCase();
                 while (artist.toLowerCase().startsWith(word + " ")) {
@@ -154,16 +154,9 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             String originalArtist = myArtist;
             String originalAlbumArtist = myAlbumArtist;
             DatasourceConfig config = MyTunesRss.CONFIG.getDatasource(mySourceId);
-            String dropWords = null;
-            if (config instanceof WatchfolderDatasourceConfig) {
-                dropWords = ((WatchfolderDatasourceConfig)config).getArtistDropWords();
-            } else if (config instanceof ItunesDatasourceConfig) {
-                dropWords = ((ItunesDatasourceConfig)config).getArtistDropWords();
-            }
-            if (StringUtils.isNotBlank(dropWords)) {
-                myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist, dropWords);
-                myAlbumArtist = UpdateTrackStatement.dropWordsFromArtist(myAlbumArtist, dropWords);
-            }
+            String dropWords = config instanceof AudioVideoDatasourceConfig ? ((AudioVideoDatasourceConfig)config).getArtistDropWords() : null;
+            myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist, dropWords);
+            myAlbumArtist = UpdateTrackStatement.dropWordsFromArtist(myAlbumArtist, dropWords);
             if (myStatement == null) {
                 myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
             }

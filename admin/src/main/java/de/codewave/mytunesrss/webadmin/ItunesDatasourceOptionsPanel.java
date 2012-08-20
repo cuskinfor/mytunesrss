@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
@@ -28,6 +29,8 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private SmartTextField myArtistDropWords;
     private SmartTextField myDisabledMp4Codecs;
     private ItunesDatasourceConfig myConfig;
+    private Table myTrackImageMappingsTable;
+    private Button myAddTrackImageMapping;
 
     public ItunesDatasourceOptionsPanel(ItunesDatasourceConfig config) {
         myConfig = config;
@@ -36,7 +39,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     public void attach() {
         super.attach();
-        init(null, getComponentFactory().createGridLayout(1, 4, true, true));
+        init(null, getComponentFactory().createGridLayout(1, 5, true, true));
 
         Panel replacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.itunes.replacements"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(replacementsPanel);
@@ -68,6 +71,18 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         }
         ignorePlaylistsPanel.addComponent(myIgnoreItunesPlaylists);
 
+        Panel imageMappingsPanel = new Panel(getBundleString("datasourceOptionsPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
+        myTrackImageMappingsTable = new Table();
+        myTrackImageMappingsTable.setCacheRate(50);
+        myTrackImageMappingsTable.addContainerProperty("search", TextField.class, null, getBundleString("datasourceOptionsPanel.imageMappingSearch"), null, null);
+        myTrackImageMappingsTable.addContainerProperty("replace", TextField.class, null, getBundleString("datasourceOptionsPanel.imageMappingReplace"), null, null);
+        myTrackImageMappingsTable.addContainerProperty("delete", Button.class, null, "", null, null);
+        myTrackImageMappingsTable.setEditable(false);
+        imageMappingsPanel.addComponent(myTrackImageMappingsTable);
+        myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
+        imageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
+        addComponent(imageMappingsPanel);
+
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myDeleteMissingFiles = getComponentFactory().createCheckBox("datasourceOptionsPanel.itunesDeleteMissingFiles");
         myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
@@ -77,9 +92,17 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
+    }
+
+    private void addTrackImageMapping(ReplacementRule replacement) {
+        SmartTextField searchTextField = new SmartTextField();
+        searchTextField.setValue(replacement.getSearchPattern());
+        searchTextField.addValidator(new ValidRegExpValidator("datasourceOptionsPanel.error.invalidSearchExpression"));
+        searchTextField.setImmediate(true);
+        myTrackImageMappingsTable.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
     @Override
@@ -99,6 +122,11 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
                 myConfig.addIgnorePlaylist(type);
             }
         }
+        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
+        for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
+            mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
+        }
+        myConfig.setTrackImageMappings(mappings);
     }
 
     @Override
@@ -117,6 +145,10 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
                 ((Property) getTableCellItemValue(myIgnoreItunesPlaylists, itemId, "check")).setValue(true);
             }
         }
+        myTrackImageMappingsTable.removeAllItems();
+        for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
+            addTrackImageMapping(mapping);
+        }
         setTablePageLengths();
     }
 
@@ -131,10 +163,11 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private void setTablePageLengths() {
         myPathReplacements.setPageLength(Math.min(myPathReplacements.getItemIds().size(), 5));
         myIgnoreItunesPlaylists.setPageLength(Math.min(myIgnoreItunesPlaylists.getItemIds().size(), 10));
+        myTrackImageMappingsTable.setPageLength(Math.min(myTrackImageMappingsTable.getItemIds().size(), 5));
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm, myTrackImageMappingsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else {
             writeToConfig();
@@ -164,6 +197,20 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
                 public void clicked(Button button) {
                     if (button == yes) {
                         myPathReplacements.removeItem(findTableItemWithObject(myPathReplacements, clickEvent.getSource()));
+                        setTablePageLengths();
+                    }
+                }
+            }.show(VaadinUtils.getApplicationWindow(this));
+        } else if (clickEvent.getSource() == myAddTrackImageMapping) {
+            addTrackImageMapping(new ReplacementRule("^.*$", "\\0"));
+            setTablePageLengths();
+        } else if (findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()) != null) {
+            final Button yes = new Button(getBundleString("button.yes"));
+            Button no = new Button(getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.caption"), getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.message"), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        myTrackImageMappingsTable.removeItem(findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()));
                         setTablePageLengths();
                     }
                 }
