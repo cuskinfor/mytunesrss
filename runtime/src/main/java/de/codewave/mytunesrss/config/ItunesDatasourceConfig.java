@@ -21,7 +21,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private String myArtistDropWords;
     private String myDisabledMp4Codecs;
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
-    private ImageImportType myTrackImageImportType;
+    private ImageImportType myTrackImageImportType = ImageImportType.Auto;
 
     public ItunesDatasourceConfig(String id, String definition) {
         super(id, definition);

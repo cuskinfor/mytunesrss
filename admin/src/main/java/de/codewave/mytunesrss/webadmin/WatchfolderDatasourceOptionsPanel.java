@@ -247,6 +247,8 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
                     }
                 }
             }.show(VaadinUtils.getApplicationWindow(this));
+        } else {
+            super.buttonClick(clickEvent);
         }
     }
 

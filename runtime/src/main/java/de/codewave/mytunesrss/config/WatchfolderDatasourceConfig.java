@@ -40,8 +40,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private String myId3v2TrackComment;
     private String myDisabledMp4Codecs;
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
-    private ImageImportType myTrackImageImportType;
-    private ImageImportType myPhotoThumbnailImportType;
+    private ImageImportType myTrackImageImportType = ImageImportType.Auto;
+    private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);

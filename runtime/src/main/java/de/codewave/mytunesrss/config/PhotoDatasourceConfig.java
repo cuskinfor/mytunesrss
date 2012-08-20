@@ -13,7 +13,7 @@ import java.util.Set;
 public abstract class PhotoDatasourceConfig extends DatasourceConfig implements CommonPhotoDatasourceConfig {
 
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
-    private ImageImportType myPhotoThumbnailImportType;
+    private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
 
     public PhotoDatasourceConfig(String id, String definition) {
         super(id, definition);
