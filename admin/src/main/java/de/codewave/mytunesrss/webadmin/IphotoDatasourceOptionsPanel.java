@@ -92,7 +92,7 @@ public class IphotoDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         if (!VaadinUtils.isValid(myPathReplacements)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else if (!myImportRolls.booleanValue() && !myImportAlbums.booleanValue()) {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourcesConfigPanel.error.importRollsOrAlbums");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourceOptionsPanel.error.importRollsOrAlbums");
         } else {
             writeToConfig();
             closeWindow();

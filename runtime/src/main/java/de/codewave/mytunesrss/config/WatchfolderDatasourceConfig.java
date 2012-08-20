@@ -33,6 +33,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private VideoType myVideoType = VideoType.Movie;
     private String myPhotoAlbumPattern = DEFAULT_PHOTO_ALBUM_PATTERN;
     private boolean myIgnoreFileMeta = false;
+    private String myArtistDropWords = "";
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -49,6 +50,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
         myVideoType = source.getVideoType();
         myPhotoAlbumPattern = source.getPhotoAlbumPattern();
         myIgnoreFileMeta = source.isIgnoreFileMeta();
+        myArtistDropWords = source.getArtistDropWords();
     }
 
     public WatchfolderDatasourceConfig(String id, String definition) {
@@ -178,5 +180,13 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
     public void setIgnoreFileMeta(boolean ignoreFileMeta) {
         myIgnoreFileMeta = ignoreFileMeta;
+    }
+
+    public String getArtistDropWords() {
+        return myArtistDropWords;
+    }
+
+    public void setArtistDropWords(String artistDropWords) {
+        myArtistDropWords = artistDropWords;
     }
 }

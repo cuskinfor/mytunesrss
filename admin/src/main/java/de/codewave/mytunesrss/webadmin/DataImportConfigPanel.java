@@ -28,7 +28,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private Table myFileTypes;
     private Button myAddFileType;
     private Button myResetFileTypes;
-    private SmartTextField myArtistDropWords;
     private SmartTextField myId3v2TrackComment;
     private SmartTextField myDisabledMp4Codecs;
     private Select myTrackImageImportType;
@@ -64,12 +63,11 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm = new Form();
         myMiscForm.setImmediate(true);
         addComponent(getComponentFactory().surroundWithPanel(myMiscForm, new Layout.MarginInfo(false, true, false, true), getBundleString("dataimportConfigPanel.misc.caption")));
-        myArtistDropWords = getComponentFactory().createTextField("dataimportConfigPanel.artistDropWords");
+
         myId3v2TrackComment = getComponentFactory().createTextField("dataimportConfigPanel.id3v2TrackComment");
         myDisabledMp4Codecs = getComponentFactory().createTextField("dataimportConfigPanel.disabledMp4Codecs");
         myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
         myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
-        myMiscForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         myMiscForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscForm.addField(myTrackImageImportType, myTrackImageImportType);
@@ -100,7 +98,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         setFileTypes(MyTunesRss.CONFIG.getFileTypes());
-        myArtistDropWords.setValue(MyTunesRss.CONFIG.getArtistDropWords());
         myId3v2TrackComment.setValue(MyTunesRss.CONFIG.getId3v2TrackComment());
         myDisabledMp4Codecs.setValue(MyTunesRss.CONFIG.getDisabledMp4Codecs());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getTrackImageImportType()));
@@ -151,7 +148,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
             MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == PROTECTED));
         }
-        MyTunesRss.CONFIG.setArtistDropWords(myArtistDropWords.getStringValue(null));
         MyTunesRss.CONFIG.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
         MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
         MyTunesRss.CONFIG.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());

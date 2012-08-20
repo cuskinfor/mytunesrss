@@ -35,6 +35,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Form myMiscOptionsForm;
     private Select myVideoType;
     private CheckBox myIgnoreFileMeta;
+    private SmartTextField myArtistDropWords;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
@@ -78,8 +79,10 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
         myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
+        myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
+        myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 3, 0, 3, false);
@@ -102,6 +105,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setVideoType(((VideoTypeRepresentation) myVideoType.getValue()).getVideoType());
         myConfig.setIgnoreFileMeta(myIgnoreFileMeta.booleanValue());
         myConfig.setPhotoAlbumPattern(myPhotoAlbumPattern.getStringValue(null));
+        myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
     }
 
     @Override
@@ -127,6 +131,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myVideoType.setValue(new VideoTypeRepresentation(myConfig.getVideoType()));
         myIgnoreFileMeta.setValue(myConfig.isIgnoreFileMeta());
         myPhotoAlbumPattern.setValue(myConfig.getPhotoAlbumPattern());
+        myArtistDropWords.setValue(myConfig.getArtistDropWords());
     }
 
     protected boolean beforeSave() {

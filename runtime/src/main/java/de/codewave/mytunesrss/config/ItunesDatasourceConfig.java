@@ -15,6 +15,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
+    private String myArtistDropWords = "";
 
     public ItunesDatasourceConfig(String id, String definition) {
         super(id, definition);
@@ -25,6 +26,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
         myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
         myIgnorePlaylists = new HashSet<ItunesPlaylistType>(source.getIgnorePlaylists());
         myDeleteMissingFiles = source.isDeleteMissingFiles();
+        myArtistDropWords = source.getArtistDropWords();
     }
 
     @Override
@@ -68,4 +70,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
         myIgnorePlaylists.clear();
     }
 
+    public String getArtistDropWords() {
+        return myArtistDropWords;
+    }
+
+    public void setArtistDropWords(String artistDropWords) {
+        myArtistDropWords = artistDropWords;
+    }
 }

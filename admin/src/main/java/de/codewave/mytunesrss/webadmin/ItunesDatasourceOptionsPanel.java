@@ -25,6 +25,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Table myPathReplacements;
     private Button myAddPathReplacement;
     private Table myIgnoreItunesPlaylists;
+    private SmartTextField myArtistDropWords;
     private ItunesDatasourceConfig myConfig;
 
     public ItunesDatasourceOptionsPanel(ItunesDatasourceConfig config) {
@@ -68,7 +69,9 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myDeleteMissingFiles = getComponentFactory().createCheckBox("datasourceOptionsPanel.itunesDeleteMissingFiles");
+        myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
         myMiscOptionsForm.addField(myDeleteMissingFiles, myDeleteMissingFiles);
+        myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 3, 0, 3, false);
@@ -79,6 +82,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     protected void writeToConfig() {
         myConfig.setDeleteMissingFiles(myDeleteMissingFiles.booleanValue());
+        myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
         myConfig.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
             myConfig.addPathReplacement(new ReplacementRule((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
@@ -96,6 +100,7 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     protected void initFromConfig() {
         myDeleteMissingFiles.setValue(myConfig.isDeleteMissingFiles());
+        myArtistDropWords.setValue(myConfig.getArtistDropWords());
         myPathReplacements.removeAllItems();
         for (ReplacementRule replacement : myConfig.getPathReplacements()) {
             addPathReplacement(replacement);

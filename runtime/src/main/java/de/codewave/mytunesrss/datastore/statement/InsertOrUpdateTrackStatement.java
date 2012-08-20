@@ -5,8 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.VideoType;
+import de.codewave.mytunesrss.config.*;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
@@ -20,8 +19,7 @@ import java.util.StringTokenizer;
  */
 public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement {
 
-    static String dropWordsFromArtist(String artist) {
-        String dropWords = MyTunesRss.CONFIG.getArtistDropWords();
+    static String dropWordsFromArtist(String artist, String dropWords) {
         if (StringUtils.isNotEmpty(dropWords) && StringUtils.isNotEmpty(artist)) {
             for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens();) {
                 String word = tokenizer.nextToken().toLowerCase();
@@ -155,8 +153,17 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         try {
             String originalArtist = myArtist;
             String originalAlbumArtist = myAlbumArtist;
-            myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist);
-            myAlbumArtist = UpdateTrackStatement.dropWordsFromArtist(myAlbumArtist);
+            DatasourceConfig config = MyTunesRss.CONFIG.getDatasource(mySourceId);
+            String dropWords = null;
+            if (config instanceof WatchfolderDatasourceConfig) {
+                dropWords = ((WatchfolderDatasourceConfig)config).getArtistDropWords();
+            } else if (config instanceof ItunesDatasourceConfig) {
+                dropWords = ((ItunesDatasourceConfig)config).getArtistDropWords();
+            }
+            if (StringUtils.isNotBlank(dropWords)) {
+                myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist, dropWords);
+                myAlbumArtist = UpdateTrackStatement.dropWordsFromArtist(myAlbumArtist, dropWords);
+            }
             if (myStatement == null) {
                 myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());
             }

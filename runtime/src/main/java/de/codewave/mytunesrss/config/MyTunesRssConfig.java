@@ -58,7 +58,6 @@ public class MyTunesRssConfig {
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myMyTunesRssComSsl = false;
-    private String myArtistDropWords = "";
     private boolean myLocalTempArchive;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
@@ -146,6 +145,15 @@ public class MyTunesRssConfig {
         return new ArrayList<DatasourceConfig>(myDatasources);
     }
 
+    public DatasourceConfig getDatasource(String sourceId) {
+        for (DatasourceConfig config : getDatasources()) {
+            if (config.getId().equals(sourceId)) {
+                return config;
+            }
+        }
+        throw new IllegalArgumentException("No datasource with ID \"" + sourceId + "\".");
+    }
+
     public void setDatasources(List<DatasourceConfig> datasources) {
         myDatasources = new ArrayList<DatasourceConfig>(datasources);
         Collections.sort(myDatasources);
@@ -219,14 +227,6 @@ public class MyTunesRssConfig {
 
     public List<FileType> getFileTypes() {
         return myFileTypes;
-    }
-
-    public String getArtistDropWords() {
-        return myArtistDropWords;
-    }
-
-    public void setArtistDropWords(String artistDropWords) {
-        myArtistDropWords = artistDropWords;
     }
 
     public boolean isLocalTempArchive() {
@@ -1105,7 +1105,6 @@ public class MyTunesRssConfig {
             fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
             myFileTypes.add(fileType);
         }
-        setArtistDropWords(JXPathUtils.getStringValue(settings, "artistDropWords", getArtistDropWords()));
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
@@ -1294,6 +1293,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setVideoType(VideoType.valueOf(JXPathUtils.getStringValue(datasourceContext, "videoType", VideoType.Movie.name())));
                             watchfolderDatasourceConfig.setPhotoAlbumPattern(JXPathUtils.getStringValue(datasourceContext, "photoAlbumPattern", WatchfolderDatasourceConfig.DEFAULT_PHOTO_ALBUM_PATTERN));
                             watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
+                            watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1317,6 +1317,7 @@ public class MyTunesRssConfig {
                                 }
                             }
                             itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
+                            itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1449,7 +1450,6 @@ public class MyTunesRssConfig {
                 fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "protected", fileType.isProtected()));
                 fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "artistDropWords", myArtistDropWords));
             root.appendChild(DOMUtils.createTextElement(settings, CREATION_TIME_KEY, myCryptedCreationTime));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
             root.appendChild(DOMUtils.createTextElement(settings, "webLoginMessage", myWebLoginMessage));
@@ -1635,6 +1635,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "videoType", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getVideoType().name()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photoAlbumPattern", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getPhotoAlbumPattern()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "ignoreFileMeta", ((WatchfolderDatasourceConfig) myDatasources.get(i)).isIgnoreFileMeta()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", ((WatchfolderDatasourceConfig)myDatasources.get(i)).getArtistDropWords()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
@@ -1656,6 +1657,7 @@ public class MyTunesRssConfig {
                         }
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", itunesDatasourceConfig.getArtistDropWords()));
                     break;
                 case Iphoto:
                     IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);
