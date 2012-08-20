@@ -39,7 +39,7 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
 
         addComponent(myPathReplacementsPanel);
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
-        myMiscOptionsForm.addField(myMiscOptionsForm, myMiscOptionsForm);
+        myMiscOptionsForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 2, 0, 2, false);
