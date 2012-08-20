@@ -45,11 +45,6 @@ public class FileSupportUtils {
         return type != null && type.isProtected();
     }
 
-    public static boolean isVideo(String filename) {
-        FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
-        return type != null && type.getMediaType() == MediaType.Video;
-    }
-
     public static boolean isMp3(File file) {
         return file != null && isMp3(file.getName());
     }
