@@ -140,7 +140,6 @@ public class VlcPlayer {
                             // process builder
                             List<String> command = new ArrayList<String>();
                             command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
-                            command.add("--language=en");
                             command.add("--intf=http");
                             command.add("--http-host=" + myVlcHost);
                             command.add("--http-port=" + myVlcPort);
