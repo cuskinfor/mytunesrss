@@ -7,7 +7,6 @@ import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.utils.sql.DataStoreSession;
 
 import java.io.IOException;
-import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.UUID;

@@ -47,7 +47,7 @@ public class TrackListener implements PListHandlerListener {
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
         myTrackIds = trackIds;
-        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDisabledMp4Codecs())), ",");
+        myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
         myPathReplacements = new HashSet<CompiledReplacementRule>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));

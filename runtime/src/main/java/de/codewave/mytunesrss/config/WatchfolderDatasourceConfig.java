@@ -35,6 +35,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private boolean myIgnoreFileMeta = false;
     private String myArtistDropWords;
     private String myId3v2TrackComment;
+    private String myDisabledMp4Codecs;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -197,6 +198,14 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
 
     public void setId3v2TrackComment(String id3v2TrackComment) {
         myId3v2TrackComment = id3v2TrackComment;
+    }
+
+    public String getDisabledMp4Codecs() {
+        return myDisabledMp4Codecs;
+    }
+
+    public void setDisabledMp4Codecs(String disabledMp4Codecs) {
+        myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
 }

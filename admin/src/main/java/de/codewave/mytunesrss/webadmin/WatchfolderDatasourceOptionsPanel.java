@@ -9,7 +9,6 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Select;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.vaadin.SmartTextField;
@@ -38,6 +37,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private CheckBox myIgnoreFileMeta;
     private SmartTextField myArtistDropWords;
     private SmartTextField myId3v2TrackComment;
+    private SmartTextField myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
@@ -83,10 +83,12 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
         myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
         myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
+        myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscOptionsForm.addField(myId3v2TrackComment, myId3v2TrackComment);
+        myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 3, 0, 3, false);
@@ -111,6 +113,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setPhotoAlbumPattern(myPhotoAlbumPattern.getStringValue(null));
         myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
         myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
+        myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
     }
 
     @Override
@@ -138,6 +141,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myPhotoAlbumPattern.setValue(myConfig.getPhotoAlbumPattern());
         myArtistDropWords.setValue(myConfig.getArtistDropWords());
         myId3v2TrackComment.setValue(myConfig.getId3v2TrackComment());
+        myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
     }
 
     protected boolean beforeSave() {

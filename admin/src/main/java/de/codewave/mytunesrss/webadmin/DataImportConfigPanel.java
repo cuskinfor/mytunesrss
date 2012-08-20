@@ -8,9 +8,9 @@ package de.codewave.mytunesrss.webadmin;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ImageImportType;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.FileType;
 import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -28,7 +28,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private Table myFileTypes;
     private Button myAddFileType;
     private Button myResetFileTypes;
-    private SmartTextField myDisabledMp4Codecs;
     private Select myTrackImageImportType;
     private Select myPhotoThumbnailImportType;
     private Form myMiscForm;
@@ -63,10 +62,8 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm.setImmediate(true);
         addComponent(getComponentFactory().surroundWithPanel(myMiscForm, new Layout.MarginInfo(false, true, false, true), getBundleString("dataimportConfigPanel.misc.caption")));
 
-        myDisabledMp4Codecs = getComponentFactory().createTextField("dataimportConfigPanel.disabledMp4Codecs");
         myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
         myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
-        myMiscForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscForm.addField(myTrackImageImportType, myTrackImageImportType);
         myMiscForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         Panel imageMappingsPanel = new Panel(getBundleString("dataimportConfigPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
@@ -95,7 +92,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         setFileTypes(MyTunesRss.CONFIG.getFileTypes());
-        myDisabledMp4Codecs.setValue(MyTunesRss.CONFIG.getDisabledMp4Codecs());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getTrackImageImportType()));
         myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getPhotoThumbnailImportType()));
         myTrackImageMappingsTable.removeAllItems();
@@ -144,7 +140,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
             MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == PROTECTED));
         }
-        MyTunesRss.CONFIG.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
         MyTunesRss.CONFIG.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         MyTunesRss.CONFIG.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();

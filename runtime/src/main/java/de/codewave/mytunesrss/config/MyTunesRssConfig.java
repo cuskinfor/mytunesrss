@@ -105,7 +105,6 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnSkippedDatabaseUpdate;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
-    private String myDisabledMp4Codecs;
     private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
     private String myAutoLogin;
@@ -685,14 +684,6 @@ public class MyTunesRssConfig {
         myStatisticKeepTime = statisticKeepTime;
     }
 
-    public String getDisabledMp4Codecs() {
-        return myDisabledMp4Codecs;
-    }
-
-    public void setDisabledMp4Codecs(String disabledMp4Codecs) {
-        myDisabledMp4Codecs = disabledMp4Codecs;
-    }
-
     public List<TranscoderConfig> getTranscoderConfigs() {
         return myTranscoderConfigs;
     }
@@ -1152,7 +1143,6 @@ public class MyTunesRssConfig {
             LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
             // intentionally left blank; keep default
         }
-        setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
         Iterator<JXPathContext> transcoderConfigIterator = JXPathUtils.getContextIterator(settings, "transcoders/config");
         myTranscoderConfigs = new ArrayList<TranscoderConfig>();
         while (transcoderConfigIterator.hasNext()) {
@@ -1285,6 +1275,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
                             watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
+                            watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1309,6 +1300,7 @@ public class MyTunesRssConfig {
                             }
                             itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
                             itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
+                            itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", null));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1518,7 +1510,6 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "outdated-itunesxml", isNotifyOnOutdatedItunesXml()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "skipped-db-update", isNotifyOnSkippedDatabaseUpdate()));
             root.appendChild(DOMUtils.createIntElement(settings, "statistics-keep-time", getStatisticKeepTime()));
-            root.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", getDisabledMp4Codecs()));
             Element transcoderConfigs = settings.createElement("transcoders");
             root.appendChild(transcoderConfigs);
             for (TranscoderConfig transcoderConfig : getTranscoderConfigs()) {
@@ -1628,6 +1619,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "ignoreFileMeta", watchfolderDatasourceConfig.isIgnoreFileMeta()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", watchfolderDatasourceConfig.getArtistDropWords()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", watchfolderDatasourceConfig.getId3v2TrackComment()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", watchfolderDatasourceConfig.getDisabledMp4Codecs()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
@@ -1650,6 +1642,7 @@ public class MyTunesRssConfig {
                     }
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", itunesDatasourceConfig.getArtistDropWords()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", itunesDatasourceConfig.getDisabledMp4Codecs()));
                     break;
                 case Iphoto:
                     IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);

@@ -15,7 +15,8 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
-    private String myArtistDropWords = "";
+    private String myArtistDropWords;
+    private String myDisabledMp4Codecs;
 
     public ItunesDatasourceConfig(String id, String definition) {
         super(id, definition);
@@ -77,4 +78,13 @@ public class ItunesDatasourceConfig extends DatasourceConfig {
     public void setArtistDropWords(String artistDropWords) {
         myArtistDropWords = artistDropWords;
     }
+
+    public String getDisabledMp4Codecs() {
+        return myDisabledMp4Codecs;
+    }
+
+    public void setDisabledMp4Codecs(String disabledMp4Codecs) {
+        myDisabledMp4Codecs = disabledMp4Codecs;
+    }
+
 }
