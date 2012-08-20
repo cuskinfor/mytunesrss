@@ -76,7 +76,6 @@ public class MyTunesRssConfig {
     private String myDatabasePassword;
     private String myDatabaseDriver;
     private String myWebappContext;
-    private String myId3v2TrackComment;
     private String myTomcatMaxThreads;
     private String myAjpHost;
     private int myTomcatAjpPort;
@@ -457,14 +456,6 @@ public class MyTunesRssConfig {
 
     public void setWebappContext(String webappContext) {
         myWebappContext = webappContext;
-    }
-
-    public String getId3v2TrackComment() {
-        return myId3v2TrackComment;
-    }
-
-    public void setId3v2TrackComment(String id3v2TrackComment) {
-        myId3v2TrackComment = id3v2TrackComment;
     }
 
     public String getTomcatMaxThreads() {
@@ -1124,7 +1115,6 @@ public class MyTunesRssConfig {
             myDatabaseBackupTriggers.add(JXPathUtils.getStringValue(backupTriggerIterator.next(), ".", ""));
         }
         loadDatabaseSettings(settings);
-        setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
         setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
         setAjpHost(JXPathUtils.getStringValue(settings, "tomcat/ajp-host", getAjpHost()));
         setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
@@ -1294,6 +1284,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setPhotoAlbumPattern(JXPathUtils.getStringValue(datasourceContext, "photoAlbumPattern", WatchfolderDatasourceConfig.DEFAULT_PHOTO_ALBUM_PATTERN));
                             watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
                             watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
+                            watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1485,7 +1476,6 @@ public class MyTunesRssConfig {
                 database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
                 database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", getId3v2TrackComment()));
             Element tomcat = settings.createElement("tomcat");
             root.appendChild(tomcat);
             tomcat.appendChild(DOMUtils.createTextElement(settings, "max-threads", getTomcatMaxThreads()));
@@ -1622,20 +1612,22 @@ public class MyTunesRssConfig {
             dataSource.appendChild(DOMUtils.createTextElement(settings, "id", myDatasources.get(i).getId()));
             switch (myDatasources.get(i).getType()) {
                 case Watchfolder:
-                    dataSource.appendChild(DOMUtils.createLongElement(settings, "minFileSize", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getMinFileSize()));
-                    dataSource.appendChild(DOMUtils.createLongElement(settings, "maxFileSize", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getMaxFileSize()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "include", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getIncludePattern()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getExcludePattern()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getArtistFallback()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "titleFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getTitleFallback()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "albumFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getAlbumFallback()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "seriesFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getSeriesFallback()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "seasonFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getSeasonFallback()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "episodeFallback", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getEpisodeFallback()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "videoType", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getVideoType().name()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "photoAlbumPattern", ((WatchfolderDatasourceConfig) myDatasources.get(i)).getPhotoAlbumPattern()));
-                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "ignoreFileMeta", ((WatchfolderDatasourceConfig) myDatasources.get(i)).isIgnoreFileMeta()));
-                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", ((WatchfolderDatasourceConfig)myDatasources.get(i)).getArtistDropWords()));
+                    WatchfolderDatasourceConfig watchfolderDatasourceConfig = (WatchfolderDatasourceConfig) myDatasources.get(i);
+                    dataSource.appendChild(DOMUtils.createLongElement(settings, "minFileSize", watchfolderDatasourceConfig.getMinFileSize()));
+                    dataSource.appendChild(DOMUtils.createLongElement(settings, "maxFileSize", watchfolderDatasourceConfig.getMaxFileSize()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "include", watchfolderDatasourceConfig.getIncludePattern()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "exclude", watchfolderDatasourceConfig.getExcludePattern()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistFallback", watchfolderDatasourceConfig.getArtistFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "titleFallback", watchfolderDatasourceConfig.getTitleFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "albumFallback", watchfolderDatasourceConfig.getAlbumFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "seriesFallback", watchfolderDatasourceConfig.getSeriesFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "seasonFallback", watchfolderDatasourceConfig.getSeasonFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "episodeFallback", watchfolderDatasourceConfig.getEpisodeFallback()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "videoType", watchfolderDatasourceConfig.getVideoType().name()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "photoAlbumPattern", watchfolderDatasourceConfig.getPhotoAlbumPattern()));
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "ignoreFileMeta", watchfolderDatasourceConfig.isIgnoreFileMeta()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", watchfolderDatasourceConfig.getArtistDropWords()));
+                    dataSource.appendChild(DOMUtils.createTextElement(settings, "id3v2-track-comment", watchfolderDatasourceConfig.getId3v2TrackComment()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);

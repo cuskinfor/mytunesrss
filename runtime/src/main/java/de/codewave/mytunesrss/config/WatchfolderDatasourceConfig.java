@@ -33,7 +33,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     private VideoType myVideoType = VideoType.Movie;
     private String myPhotoAlbumPattern = DEFAULT_PHOTO_ALBUM_PATTERN;
     private boolean myIgnoreFileMeta = false;
-    private String myArtistDropWords = "";
+    private String myArtistDropWords;
+    private String myId3v2TrackComment;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -189,4 +190,13 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig {
     public void setArtistDropWords(String artistDropWords) {
         myArtistDropWords = artistDropWords;
     }
+
+    public String getId3v2TrackComment() {
+        return myId3v2TrackComment;
+    }
+
+    public void setId3v2TrackComment(String id3v2TrackComment) {
+        myId3v2TrackComment = id3v2TrackComment;
+    }
+
 }

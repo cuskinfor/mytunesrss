@@ -9,6 +9,7 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Form;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Select;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.vaadin.SmartTextField;
@@ -36,6 +37,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private Select myVideoType;
     private CheckBox myIgnoreFileMeta;
     private SmartTextField myArtistDropWords;
+    private SmartTextField myId3v2TrackComment;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
@@ -80,9 +82,11 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
         myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
         myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
+        myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
+        myMiscOptionsForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 3, 0, 3, false);
@@ -106,6 +110,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setIgnoreFileMeta(myIgnoreFileMeta.booleanValue());
         myConfig.setPhotoAlbumPattern(myPhotoAlbumPattern.getStringValue(null));
         myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
+        myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
     }
 
     @Override
@@ -132,6 +137,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myIgnoreFileMeta.setValue(myConfig.isIgnoreFileMeta());
         myPhotoAlbumPattern.setValue(myConfig.getPhotoAlbumPattern());
         myArtistDropWords.setValue(myConfig.getArtistDropWords());
+        myId3v2TrackComment.setValue(myConfig.getId3v2TrackComment());
     }
 
     protected boolean beforeSave() {
