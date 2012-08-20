@@ -135,8 +135,8 @@ public class ItunesDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     protected void writeToConfig() {
         myConfig.setDeleteMissingFiles(myDeleteMissingFiles.booleanValue());
-        myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
-        myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
+        myConfig.setArtistDropWords(myArtistDropWords.getStringValue(""));
+        myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(""));
         myConfig.clearPathReplacements();
         for (Object itemId : myPathReplacements.getItemIds()) {
             myConfig.addPathReplacement(new ReplacementRule((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));

@@ -19,7 +19,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
     private String myArtistDropWords;
-    private String myDisabledMp4Codecs;
+    private String myDisabledMp4Codecs = "";
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
 

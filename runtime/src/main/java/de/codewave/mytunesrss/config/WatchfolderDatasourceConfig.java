@@ -36,9 +36,9 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private VideoType myVideoType = VideoType.Movie;
     private String myPhotoAlbumPattern = DEFAULT_PHOTO_ALBUM_PATTERN;
     private boolean myIgnoreFileMeta = false;
-    private String myArtistDropWords;
-    private String myId3v2TrackComment;
-    private String myDisabledMp4Codecs;
+    private String myArtistDropWords = "";
+    private String myId3v2TrackComment = "";
+    private String myDisabledMp4Codecs = "";
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;

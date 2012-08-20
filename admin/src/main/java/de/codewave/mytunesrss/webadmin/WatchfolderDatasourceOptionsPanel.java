@@ -164,9 +164,9 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myConfig.setVideoType(((VideoTypeRepresentation) myVideoType.getValue()).getVideoType());
         myConfig.setIgnoreFileMeta(myIgnoreFileMeta.booleanValue());
         myConfig.setPhotoAlbumPattern(myPhotoAlbumPattern.getStringValue(null));
-        myConfig.setArtistDropWords(myArtistDropWords.getStringValue(null));
-        myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(null));
-        myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(null));
+        myConfig.setArtistDropWords(myArtistDropWords.getStringValue(""));
+        myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(""));
+        myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(""));
         List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
         for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
             mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
