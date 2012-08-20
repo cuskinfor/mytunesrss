@@ -5,9 +5,11 @@
 
 package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.ImageImportType;
+
 import java.util.List;
 
-public interface AudioVideoDatasourceConfig {
+public interface CommonTrackDatasourceConfig {
     String getArtistDropWords();
 
     void setArtistDropWords(String artistDropWords);
@@ -19,4 +21,8 @@ public interface AudioVideoDatasourceConfig {
     List<ReplacementRule> getTrackImageMappings();
 
     void setTrackImageMappings(List<ReplacementRule> trackImageMappings);
+
+    ImageImportType getTrackImageImportType();
+
+    void setTrackImageImportType(ImageImportType trackImageImportType);
 }

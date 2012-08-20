@@ -28,7 +28,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
     private Table myFileTypes;
     private Button myAddFileType;
     private Button myResetFileTypes;
-    private Select myTrackImageImportType;
     private Select myPhotoThumbnailImportType;
     private Form myMiscForm;
 
@@ -60,9 +59,7 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
         myMiscForm.setImmediate(true);
         addComponent(getComponentFactory().surroundWithPanel(myMiscForm, new Layout.MarginInfo(false, true, false, true), getBundleString("dataimportConfigPanel.misc.caption")));
 
-        myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
         myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
-        myMiscForm.addField(myTrackImageImportType, myTrackImageImportType);
         myMiscForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         addDefaultComponents(0, 3, 0, 3, false);
 
@@ -71,7 +68,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         setFileTypes(MyTunesRss.CONFIG.getFileTypes());
-        myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getTrackImageImportType()));
         myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(MyTunesRss.CONFIG.getPhotoThumbnailImportType()));
         setTablePageLength();
     }
@@ -114,7 +110,6 @@ public class DataImportConfigPanel extends MyTunesRssConfigPanel {
             Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
             MyTunesRss.CONFIG.getFileTypes().add(new FileType(active, suffix, mimeType, mediaType, protection == PROTECTED));
         }
-        MyTunesRss.CONFIG.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         MyTunesRss.CONFIG.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         MyTunesRss.CONFIG.save();
     }

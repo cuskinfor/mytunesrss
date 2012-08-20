@@ -932,7 +932,7 @@
     </statement>
 
     <statement name="getTracksWithMissingImages">
-        <sql>SELECT id, file, source, source_id FROM track WHERE image_hash IS NULL</sql>
+        <sql>SELECT id, file, source, source_id FROM track WHERE image_hash IS NULL AND source_id IN (:sourceIds[])</sql>
     </statement>
 
     <!-- reusable sql fragments -->

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
@@ -16,11 +17,29 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
+
+    public class ImageImportTypeRepresentation {
+
+        private ImageImportType myImageImportType;
+
+        public ImageImportTypeRepresentation(ImageImportType imageImportType) {
+            myImageImportType = imageImportType;
+        }
+
+        public ImageImportType getImageImportType() {
+            return myImageImportType;
+        }
+
+        @Override
+        public String toString() {
+            return getBundleString("dataimportConfigPanel.importType." + myImageImportType.name());
+        }
+    }
+
+    private final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
 
     private Form myIncludeExcludeForm;
     private SmartTextField myIncludePattern;
@@ -44,6 +63,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
     private WatchfolderDatasourceConfig myConfig;
     private Table myTrackImageMappingsTable;
     private Button myAddTrackImageMapping;
+    private Select myTrackImageImportType;
 
     public WatchfolderDatasourceOptionsPanel(WatchfolderDatasourceConfig config) {
         myConfig = config;
@@ -83,13 +103,6 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myFallbackForm.addField(myPhotoAlbumPattern, myPhotoAlbumPattern);
         addComponent(getComponentFactory().surroundWithPanel(myFallbackForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.fallbacks")));
 
-        myMiscOptionsForm = getComponentFactory().createForm(null, true);
-        myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
-        myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
-        myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
-        myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
-        myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
-
         Panel imageMappingsPanel = new Panel(getBundleString("datasourceOptionsPanel.trackImageMapping.caption"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(imageMappingsPanel);
         myTrackImageMappingsTable = new Table();
@@ -102,11 +115,19 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
         imageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
 
+        myMiscOptionsForm = getComponentFactory().createForm(null, true);
+        myVideoType = getComponentFactory().createSelect("datasourceOptionsPanel.watchfolderVideoType", Arrays.asList(new VideoTypeRepresentation[]{new VideoTypeRepresentation(VideoType.Movie), new VideoTypeRepresentation(VideoType.TvShow)}));
+        myIgnoreFileMeta = getComponentFactory().createCheckBox("datasourceOptionsPanel.ignoreFileMeta");
+        myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
+        myId3v2TrackComment = getComponentFactory().createTextField("datasourceOptionsPanel.id3v2TrackComment");
+        myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
+        myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
         myMiscOptionsForm.addField(myVideoType, myVideoType);
         myMiscOptionsForm.addField(myIgnoreFileMeta, myIgnoreFileMeta);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscOptionsForm.addField(myId3v2TrackComment, myId3v2TrackComment);
         myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
+        myMiscOptionsForm.addField(myTrackImageImportType, myTrackImageImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 4, 0, 4, false);
@@ -145,6 +166,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
             mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
         }
         myConfig.setTrackImageMappings(mappings);
+        myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
     }
 
     @Override
@@ -173,6 +195,7 @@ public class WatchfolderDatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myArtistDropWords.setValue(myConfig.getArtistDropWords());
         myId3v2TrackComment.setValue(myConfig.getId3v2TrackComment());
         myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
+        myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getTrackImageImportType()));
         myTrackImageMappingsTable.removeAllItems();
         for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
             addTrackImageMapping(mapping);

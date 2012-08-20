@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.ImageImportType;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class WatchfolderDatasourceConfig extends DatasourceConfig implements AudioVideoDatasourceConfig {
+public class WatchfolderDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
 
     public static final String DEFAULT_TITLE_FALLBACK = "[[[file:(.*)\\..*]]]";
     public static final String DEFAULT_ALBUM_FALLBACK = "[[[dir:0]]]";
@@ -38,7 +39,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Aud
     private String myArtistDropWords;
     private String myId3v2TrackComment;
     private String myDisabledMp4Codecs;
-    private List<ReplacementRule> trackImageMappings = new ArrayList<ReplacementRule>();
+    private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
+    private ImageImportType myTrackImageImportType;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -56,6 +58,11 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Aud
         myPhotoAlbumPattern = source.getPhotoAlbumPattern();
         myIgnoreFileMeta = source.isIgnoreFileMeta();
         myArtistDropWords = source.getArtistDropWords();
+        myId3v2TrackComment = source.getId3v2TrackComment();
+        myDisabledMp4Codecs = source.getDisabledMp4Codecs();
+        myTrackImageMappings = source.getTrackImageMappings();
+        myTrackImageImportType = source.getTrackImageImportType();
+
     }
 
     public WatchfolderDatasourceConfig(String id, String definition) {
@@ -212,10 +219,18 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Aud
     }
 
     public List<ReplacementRule> getTrackImageMappings() {
-        return new ArrayList<ReplacementRule>(trackImageMappings);
+        return new ArrayList<ReplacementRule>(myTrackImageMappings);
     }
 
     public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
-        this.trackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+        this.myTrackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+    }
+
+    public ImageImportType getTrackImageImportType() {
+        return myTrackImageImportType;
+    }
+
+    public void setTrackImageImportType(ImageImportType trackImageImportType) {
+        myTrackImageImportType = trackImageImportType;
     }
 }

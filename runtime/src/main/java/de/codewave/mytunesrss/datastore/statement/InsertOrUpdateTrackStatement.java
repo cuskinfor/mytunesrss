@@ -154,7 +154,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             String originalArtist = myArtist;
             String originalAlbumArtist = myAlbumArtist;
             DatasourceConfig config = MyTunesRss.CONFIG.getDatasource(mySourceId);
-            String dropWords = config instanceof AudioVideoDatasourceConfig ? ((AudioVideoDatasourceConfig)config).getArtistDropWords() : null;
+            String dropWords = config instanceof CommonTrackDatasourceConfig ? ((CommonTrackDatasourceConfig)config).getArtistDropWords() : null;
             myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist, dropWords);
             myAlbumArtist = UpdateTrackStatement.dropWordsFromArtist(myAlbumArtist, dropWords);
             if (myStatement == null) {

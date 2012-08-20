@@ -189,7 +189,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 imageFile = file;
             } else {
                 String basePath = file.getAbsolutePath();
-                for (ReplacementRule rule : ((AudioVideoDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
+                for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
                     CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
                     if (compiledReplacementRule.matches(basePath)) {
                         basePath = compiledReplacementRule.replace(basePath);
