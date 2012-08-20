@@ -203,6 +203,8 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         conditionals.put("tvshowseason", mySeries != null && mySeason != null);
         conditionals.put("photosort", mySortOrder == SortOrder.Photos);
         conditionals.put("lucenesort", !CollectionUtils.isEmpty(myIds) && (mySortOrder == null || mySortOrder == SortOrder.KeepOrder));
+        conditionals.put("lucenesortAlbum", !CollectionUtils.isEmpty(myIds) && mySortOrder == SortOrder.Album);
+        conditionals.put("lucenesortArtist", !CollectionUtils.isEmpty(myIds) && mySortOrder == SortOrder.Artist);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
         statement.setItems("artist", myArtists);

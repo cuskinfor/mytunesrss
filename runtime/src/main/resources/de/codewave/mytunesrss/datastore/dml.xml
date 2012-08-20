@@ -244,6 +244,8 @@
         <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY <lucenesort>tluc.pos, </lucenesort>{trackColumnsForGrouping}
         <lucenesort>ORDER BY tluc.pos</lucenesort>
+        <lucensortAlbum>ORDER BY tluc.pos, LOWER(t.album), t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</lucensortAlbum>
+        <lucensortArtist>ORDER BY tluc.pos, LOWER(t.artist), t.artist, t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</lucensortArtist>
         <albumsort>ORDER BY LOWER(t.album), t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</albumsort>
         <artistsort>ORDER BY LOWER(t.artist), t.artist, t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</artistsort>
         <moviesort>ORDER BY LOWER(t.name), t.name</moviesort>

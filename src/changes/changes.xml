@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-396] Search result list improvement
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-387] Generate JPG images instead of PNG images
             </action>
             <action dev="mdescher" type="update">
