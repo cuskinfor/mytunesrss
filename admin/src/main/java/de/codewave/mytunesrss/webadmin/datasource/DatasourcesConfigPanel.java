@@ -57,6 +57,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources.addContainerProperty("edit", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("delete", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("options", Button.class, null, "", null, null);
+        myDatasources.setSortContainerPropertyId("path");
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
@@ -71,21 +72,22 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources.removeAllItems();
         myConfigs.clear();
         for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
-            addDatasource(getApplication(), datasource);
+            addDatasource(datasource);
         }
+        myDatasources.sort();
         setTablePageLengths();
     }
 
-    private void addDatasource(Application application, DatasourceConfig datasource) {
+    private void addDatasource(DatasourceConfig datasource) {
         Button editButton = getComponentFactory().createButton("button.edit", this);
         Button deleteButton = getComponentFactory().createButton("button.delete", this);
         Button optionsButton = getComponentFactory().createButton("button.options", this);
         long id = myItemIdGenerator.getAndIncrement();
-        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(application, datasource.getType())), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
+        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(datasource.getType())), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
         myConfigs.put(id, DatasourceConfig.copy(datasource));
     }
 
-    private Resource getDatasourceImage(Application application, DatasourceType type) {
+    private Resource getDatasourceImage(DatasourceType type) {
         if (type == DatasourceType.Itunes) {
             return new ThemeResource("img/itunes.png");
         } else if (type == DatasourceType.Iphoto) {
@@ -171,7 +173,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 if (newConfig != null) {
                     if (itemId != null) {
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
-                        myDatasources.getItem(itemId).getItemProperty("icon").setValue(new Embedded("", getDatasourceImage(getApplication(), newConfig.getType())));
+                        myDatasources.getItem(itemId).getItemProperty("icon").setValue(new Embedded("", getDatasourceImage(newConfig.getType())));
                         DatasourceConfig oldConfig = myConfigs.get(itemId);
                         if (oldConfig.getType() == newConfig.getType()) {
                             // same local type
@@ -182,7 +184,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                             myConfigs.put((Long) itemId, newConfig);
                         }
                     } else {
-                        addDatasource(getApplication(), newConfig);
+                        addDatasource(newConfig);
                         setTablePageLengths();
                     }
                 } else {

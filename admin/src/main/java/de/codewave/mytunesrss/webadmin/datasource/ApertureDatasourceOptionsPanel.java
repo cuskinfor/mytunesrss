@@ -57,6 +57,7 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
         }
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         myConfig.setFileTypes(getFileTypesAsList());
+        MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
     }
 

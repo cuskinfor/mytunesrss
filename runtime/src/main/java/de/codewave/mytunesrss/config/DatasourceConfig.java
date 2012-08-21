@@ -39,11 +39,13 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     public DatasourceConfig(DatasourceConfig source) {
         myId = source.getId();
         myDefinition = source.getDefinition();
+        myFileTypes = source.getFileTypes();
     }
 
     public DatasourceConfig(String id, String definition) {
         setId(id);
         setDefinition(definition);
+        setFileTypes(getDefaultFileTypes());
     }
 
     public String getId() {

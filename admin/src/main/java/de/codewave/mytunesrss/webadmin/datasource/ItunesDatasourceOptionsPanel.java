@@ -100,6 +100,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImageMappings(mappings);
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setFileTypes(getFileTypesAsList());
+        MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
     }
 

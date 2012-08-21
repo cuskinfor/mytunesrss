@@ -129,6 +129,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         myConfig.setFileTypes(getFileTypesAsList());
+        MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
     }
 

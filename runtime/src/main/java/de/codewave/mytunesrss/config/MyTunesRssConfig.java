@@ -1715,4 +1715,14 @@ public class MyTunesRssConfig {
         }
         return false;
     }
+
+    public void replaceDatasourceConfig(DatasourceConfig config) {
+        for (Iterator<DatasourceConfig> iterConfigs = myDatasources.iterator(); iterConfigs.hasNext(); ) {
+            if (iterConfigs.next().getId().equals(config.getId())) {
+                iterConfigs.remove();
+                myDatasources.add(config);
+                break;
+            }
+        }
+    }
 }
