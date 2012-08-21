@@ -389,14 +389,6 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>animal-sniffer-maven-plugin</artifactId>
                 <version>1.8</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                        <phase>test</phase>
-                    </execution>
-                </executions>
                 <configuration>
                     <signature>
                         <groupId>org.codehaus.mojo.signature</groupId>
