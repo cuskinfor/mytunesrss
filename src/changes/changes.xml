@@ -70,6 +70,12 @@
             </action>
         </release>
 
+        <release version="4.3.8" date="2012-08-21">
+            <action dev="mdescher" type="fix">
+                Fixed a Java 5 incompatibility (and a bug) with camel-1.10
+            </action>
+        </release>
+
         <release version="4.3.7" date="2012-08-06">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-384] Problem with DB connection leads to "leaked connection" message
