@@ -1269,7 +1269,7 @@ public class MyTunesRssConfig {
             fileTypesList.add(fileType);
         }
         if (fileTypesList.isEmpty()) {
-            fileTypesList = FileType.getDefaults();
+            fileTypesList = datasourceConfig.getDefaultFileTypes();
         }
         datasourceConfig.setFileTypes(fileTypesList);
     }

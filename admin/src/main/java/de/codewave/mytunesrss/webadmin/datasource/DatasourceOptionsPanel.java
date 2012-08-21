@@ -109,9 +109,11 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected Button myAddFileType;
     protected Button myResetFileTypes;
     protected Panel myFileTypesPanel;
+    private DatasourceConfig myDatasourceConfig;
 
-    protected DatasourceOptionsPanel(DatasourcesConfigPanel datasourceConfigPanel) {
+    protected DatasourceOptionsPanel(DatasourcesConfigPanel datasourceConfigPanel, DatasourceConfig datasourceConfig) {
         myDatasourceConfigPanel = datasourceConfigPanel;
+        myDatasourceConfig = datasourceConfig;
         IMPORT_TYPE_MAPPINGS.put(ImageImportType.Auto, new ImageImportTypeRepresentation(ImageImportType.Auto));
         IMPORT_TYPE_MAPPINGS.put(ImageImportType.Never, new ImageImportTypeRepresentation(ImageImportType.Never));
         IMPORT_TYPE_MAPPINGS.put(ImageImportType.OnDemand, new ImageImportTypeRepresentation(ImageImportType.OnDemand));
@@ -218,7 +220,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
             new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowResetFileType.caption"), getBundleString("datasourceOptionsPanel.optionWindowResetFileType.message"), yes, no) {
                 public void clicked(Button button) {
                     if (button == yes) {
-                        setFileTypes(FileType.getDefaults());
+                        setFileTypes(myDatasourceConfig.getDefaultFileTypes());
                         setTablePageLengths();
                     }
                 }

@@ -8,10 +8,7 @@ package de.codewave.mytunesrss.config;
 import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
 
@@ -109,5 +106,24 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
 
     public void setTrackImageImportType(ImageImportType trackImageImportType) {
         myTrackImageImportType = trackImageImportType;
+    }
+
+    public List<FileType> getDefaultFileTypes() {
+        List<FileType> types = new ArrayList<FileType>();
+        types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
+        types.add(new FileType(true, "m4p", "audio/x-m4p", MediaType.Audio, true));
+        types.add(new FileType(true, "mp4", "video/x-mp4", MediaType.Video, false));
+        types.add(new FileType(true, "mov", "video/quicktime", MediaType.Video, false));
+        types.add(new FileType(true, "mpg", "audio/mpeg", MediaType.Audio, false));
+        types.add(new FileType(true, "mpeg", "audio/mpeg", MediaType.Audio, false));
+        types.add(new FileType(true, "m4v", "video/x-m4v", MediaType.Video, false));
+        types.add(new FileType(true, "m4b", "audio/x-m4b", MediaType.Audio, false));
+        types.add(new FileType(true, "mp3", "audio/mp3", MediaType.Audio, false));
+        Collections.sort(types, new Comparator<FileType>() {
+            public int compare(FileType o1, FileType o2) {
+                return o1.getSuffix().compareTo(o2.getSuffix());
+            }
+        });
+        return types;
     }
 }

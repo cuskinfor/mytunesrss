@@ -43,7 +43,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, WatchfolderDatasourceConfig config) {
-        super(datasourcesConfigPanel);
+        super(datasourcesConfigPanel, config);
         myConfig = config;
     }
 

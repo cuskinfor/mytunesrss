@@ -21,7 +21,7 @@ public class IphotoDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private CheckBox myImportAlbums;
 
     public IphotoDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, IphotoDatasourceConfig config) {
-        super(datasourcesConfigPanel);
+        super(datasourcesConfigPanel, config);
         myConfig = config;
     }
 

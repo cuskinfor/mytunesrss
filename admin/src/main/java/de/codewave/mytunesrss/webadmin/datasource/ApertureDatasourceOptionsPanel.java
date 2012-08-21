@@ -29,7 +29,7 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private ApertureDatasourceConfig myConfig;
 
     public ApertureDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, ApertureDatasourceConfig config) {
-        super(datasourcesConfigPanel);
+        super(datasourcesConfigPanel, config);
         myConfig = config;
     }
 

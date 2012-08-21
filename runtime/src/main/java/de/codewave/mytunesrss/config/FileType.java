@@ -17,37 +17,6 @@ public class FileType {
     private boolean myActive;
     private String mySuffix;
 
-    public static List<FileType> getDefaults() {
-        List<FileType> types = new ArrayList<FileType>();
-        types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
-        types.add(new FileType(true, "m4p", "audio/x-m4p", MediaType.Audio, true));
-        types.add(new FileType(true, "wav", "audio/wav", MediaType.Audio, false));
-        types.add(new FileType(true, "mp4", "video/x-mp4", MediaType.Video, false));
-        types.add(new FileType(true, "avi", "video/x-msvideo", MediaType.Video, false));
-        types.add(new FileType(true, "mov", "video/quicktime", MediaType.Video, false));
-        types.add(new FileType(true, "wmv", "video/x-ms-wmv", MediaType.Video, false));
-        types.add(new FileType(true, "wma", "audio/x-ms-wma", MediaType.Audio, false));
-        types.add(new FileType(true, "mpg", "audio/mpeg", MediaType.Audio, false));
-        types.add(new FileType(true, "mpeg", "audio/mpeg", MediaType.Audio, false));
-        types.add(new FileType(true, "flac", "application/flac", MediaType.Audio, false));
-        types.add(new FileType(true, "ogg", "application/ogg", MediaType.Audio, false));
-        types.add(new FileType(true, "m4v", "video/x-m4v", MediaType.Video, false));
-        types.add(new FileType(true, "m4b", "audio/x-m4b", MediaType.Audio, false));
-        types.add(new FileType(true, "mp3", "audio/mp3", MediaType.Audio, false));
-        types.add(new FileType(true, "jpg", "image/jpeg", MediaType.Image, false));
-        types.add(new FileType(true, "jpeg", "image/jpeg", MediaType.Image, false));
-        types.add(new FileType(true, "gif", "image/gif", MediaType.Image, false));
-        types.add(new FileType(true, "tif", "image/tiff", MediaType.Image, false));
-        types.add(new FileType(true, "tiff", "image/tiff", MediaType.Image, false));
-        types.add(new FileType(true, "png", "image/png", MediaType.Image, false));
-        Collections.sort(types, new Comparator<FileType>() {
-            public int compare(FileType o1, FileType o2) {
-                return o1.getSuffix().compareTo(o2.getSuffix());
-            }
-        });
-        return types;
-    }
-
     public static boolean isValid(FileType fileType) {
         if (StringUtils.isBlank(fileType.getSuffix())) {
             return false;

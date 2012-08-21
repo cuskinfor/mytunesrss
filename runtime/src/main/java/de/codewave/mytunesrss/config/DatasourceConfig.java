@@ -126,4 +126,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
         FileType type = getFileType(suffix);
         return type != null && type.isActive();
     }
+
+    public abstract List<FileType> getDefaultFileTypes();
 }

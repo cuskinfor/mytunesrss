@@ -30,7 +30,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private ItunesDatasourceConfig myConfig;
 
     public ItunesDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, ItunesDatasourceConfig config) {
-        super(datasourcesConfigPanel);
+        super(datasourcesConfigPanel, config);
         myConfig = config;
     }
 
