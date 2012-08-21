@@ -29,7 +29,6 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myNotifyOnPasswordChange;
     private CheckBox myNotifyOnQuotaExceeded;
     private CheckBox myNotifyOnTranscodingFailure;
-    private CheckBox myNotifyOnWebUpload;
     private CheckBox myNotifyOnOutdatedItunesXml;
     private CheckBox myNotifyOnSkippedDatabaseUpdate;
 
@@ -47,7 +46,6 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         myNotifyOnQuotaExceeded = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnQuotaExceeded");
         myNotifyOnTranscodingFailure = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnTranscodingFailure");
         myNotifyOnMissingFile = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnMissingFile");
-        myNotifyOnWebUpload = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnWebUpdate");
         myNotifyOnOutdatedItunesXml = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnOutdatedItunesXml");
         myNotifyOnSkippedDatabaseUpdate = getComponentFactory().createCheckBox("adminNotificationsConfigPanel.notifyOnSkippedDatabaseUpdate");
         myEmailForm.addField(myAdminEmail, myAdminEmail);
@@ -59,7 +57,6 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         myNotificationsForm.addField(myNotifyOnPasswordChange, myNotifyOnPasswordChange);
         myNotificationsForm.addField(myNotifyOnQuotaExceeded, myNotifyOnQuotaExceeded);
         myNotificationsForm.addField(myNotifyOnTranscodingFailure, myNotifyOnTranscodingFailure);
-        myNotificationsForm.addField(myNotifyOnWebUpload, myNotifyOnWebUpload);
         myNotificationsForm.addField(myNotifyOnOutdatedItunesXml, myNotifyOnOutdatedItunesXml);
         myNotificationsForm.addField(myNotifyOnSkippedDatabaseUpdate, myNotifyOnSkippedDatabaseUpdate);
         addComponent(getComponentFactory().surroundWithPanel(myEmailForm, FORM_PANEL_MARGIN_INFO, getBundleString("adminNotificationsConfigPanel.email.caption")));
@@ -80,7 +77,6 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         myNotifyOnPasswordChange.setValue(MyTunesRss.CONFIG.isNotifyOnPasswordChange());
         myNotifyOnQuotaExceeded.setValue(MyTunesRss.CONFIG.isNotifyOnQuotaExceeded());
         myNotifyOnTranscodingFailure.setValue(MyTunesRss.CONFIG.isNotifyOnTranscodingFailure());
-        myNotifyOnWebUpload.setValue(MyTunesRss.CONFIG.isNotifyOnWebUpload());
         myNotifyOnOutdatedItunesXml.setValue(MyTunesRss.CONFIG.isNotifyOnOutdatedItunesXml());
         myNotifyOnSkippedDatabaseUpdate.setValue(MyTunesRss.CONFIG.isNotifyOnSkippedDatabaseUpdate());
     }
@@ -95,7 +91,6 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setNotifyOnPasswordChange((Boolean) myNotifyOnPasswordChange.getValue());
         MyTunesRss.CONFIG.setNotifyOnQuotaExceeded((Boolean) myNotifyOnQuotaExceeded.getValue());
         MyTunesRss.CONFIG.setNotifyOnTranscodingFailure((Boolean) myNotifyOnTranscodingFailure.getValue());
-        MyTunesRss.CONFIG.setNotifyOnWebUpload((Boolean) myNotifyOnWebUpload.getValue());
         MyTunesRss.CONFIG.setNotifyOnOutdatedItunesXml((Boolean) myNotifyOnOutdatedItunesXml.getValue());
         MyTunesRss.CONFIG.setNotifyOnSkippedDatabaseUpdate((Boolean) myNotifyOnSkippedDatabaseUpdate.getValue());
         MyTunesRss.CONFIG.save();

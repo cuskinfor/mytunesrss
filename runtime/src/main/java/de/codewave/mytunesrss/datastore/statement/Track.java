@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 
@@ -43,6 +44,8 @@ public class Track {
     private int myEpisode;
     private String myAlbumArtist;
     private String myComposer;
+    private String mySourceId;
+    private String myContentType;
 
     public Track() {
         // default constructor
@@ -78,6 +81,8 @@ public class Track {
         setSeries(source.getSeries());
         setAlbumArtist(source.getAlbumArtist());
         setComposer(source.getComposer());
+        setSourceId(source.getSourceId());
+        setContentType(source.getContentType());
     }
 
     public String getAlbum() {
@@ -216,11 +221,6 @@ public class Track {
         myPlayCount = playCount;
     }
 
-    public String getContentType() {
-        String name = getFile().getName().toLowerCase();
-        return FileSupportUtils.getContentType(name);
-    }
-
     public long getContentLength() {
         return getFile().length();
     }
@@ -319,6 +319,22 @@ public class Track {
 
     public void setComposer(String composer) {
         myComposer = composer;
+    }
+
+    public String getSourceId() {
+        return mySourceId;
+    }
+
+    public void setSourceId(String sourceId) {
+        mySourceId = sourceId;
+    }
+
+    public String getContentType() {
+        return myContentType;
+    }
+
+    public void setContentType(String contentType) {
+        myContentType = contentType;
     }
 
     @Override

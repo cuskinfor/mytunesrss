@@ -35,7 +35,7 @@ public class FileSystemLoader {
                         Thread.currentThread().interrupt();
                         throw new ShutdownRequestedException();
                     }
-                    return file.isDirectory() || (datasource.isIncluded(file) && FileSupportUtils.isSupported(file.getName()));
+                    return file.isDirectory() || (datasource.isIncluded(file) && datasource.isSupported(file.getName()));
                 }
             });
             PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());

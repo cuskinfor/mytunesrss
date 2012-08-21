@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.ResultBuilder;
@@ -46,6 +47,8 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setEpisode(resultSet.getInt("EPISODE"));
         track.setAlbumArtist(resultSet.getString("ALBUM_ARTIST"));
         track.setComposer(resultSet.getString("COMPOSER"));
+        track.setSourceId(resultSet.getString("SOURCE_ID"));
+        track.setContentType(MyTunesRss.CONFIG.getDatasource(track.getSourceId()).getContentType(track.getFile().getName().toLowerCase()));
         return track;
     }
 }

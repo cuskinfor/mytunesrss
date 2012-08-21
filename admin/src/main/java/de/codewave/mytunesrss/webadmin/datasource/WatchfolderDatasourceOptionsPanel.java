@@ -50,7 +50,9 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
     @Override
     public void attach() {
         super.attach();
-        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 5, true, true));
+        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 6, true, true));
+
+        addComponent(myFileTypesPanel);
 
         myIncludeExcludeForm = getComponentFactory().createForm(null, true);
         myIncludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.includePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidIncludePattern"));
@@ -96,7 +98,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myMiscOptionsForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 4, 0, 4, false);
+        addDefaultComponents(0, 5, 0, 5, false);
 
         initFromConfig();
     }
@@ -126,6 +128,8 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImageMappings(mappings);
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
+        myConfig.setFileTypes(getFileTypesAsList());
+        MyTunesRss.CONFIG.save();
     }
 
     @Override
@@ -160,11 +164,12 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
             addTrackImageMapping(mapping);
         }
+        setFileTypes(myConfig.getFileTypes());
         setTablePageLengths();
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImageMappingsTable)) {
+        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImageMappingsTable, myFileTypes)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

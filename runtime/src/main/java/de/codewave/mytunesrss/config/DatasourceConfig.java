@@ -5,10 +5,14 @@
 
 package de.codewave.mytunesrss.config;
 
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
@@ -30,6 +34,7 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     private String myDefinition;
     private String myId;
+    private List<FileType> myFileTypes = new ArrayList<FileType>();
 
     public DatasourceConfig(DatasourceConfig source) {
         myId = source.getId();
@@ -79,5 +84,46 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
             default:
                 throw new IllegalArgumentException("Illegal datasource type.");
         }
+    }
+
+    public List<FileType> getFileTypes() {
+        return new ArrayList<FileType>(myFileTypes);
+    }
+
+    public void setFileTypes(List<FileType> fileTypes) {
+        myFileTypes = new ArrayList<FileType>(fileTypes);
+    }
+
+    public FileType getFileType(String suffix) {
+        if (suffix != null) {
+            for (FileType type : myFileTypes) {
+                if (suffix.equalsIgnoreCase(type.getSuffix())) {
+                    return type;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isProtected(String filename) {
+        FileType type = getFileType(FileSupportUtils.getFileSuffix(filename));
+        return type != null && type.isProtected();
+    }
+
+    public String getContentType(String filename) {
+        FileType type = getFileType(FileSupportUtils.getFileSuffix(filename));
+        if (type != null) {
+            return type.getMimeType();
+        }
+        return "application/octet-stream";
+    }
+
+    public boolean isSupported(String filename) {
+        return isSuffixSupported(FileSupportUtils.getFileSuffix(filename));
+    }
+
+    private boolean isSuffixSupported(String suffix) {
+        FileType type = getFileType(suffix);
+        return type != null && type.isActive();
     }
 }

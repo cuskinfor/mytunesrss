@@ -43,15 +43,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private Table myDatasources;
     private Button myAddLocalDatasource;
-    private SmartTextField myUploadDir;
-    private Button mySelectUploadDir;
-    private CheckBox myUploadCreateUserDir;
-    private Form myUploadForm;
     private Map<Long, DatasourceConfig> myConfigs = new HashMap<Long, DatasourceConfig>();
 
     public void attach() {
         super.attach();
-        init(getBundleString("datasourcesConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+        init(getBundleString("datasourcesConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
         Panel sourcesPanel = new Panel(getBundleString("datasourcesConfigPanel.caption.sources"), getComponentFactory().createVerticalLayout(true, true));
         addComponent(sourcesPanel);
         myDatasources = new Table();
@@ -66,17 +62,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
         sourcesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddLocalDatasource));
 
-        myUploadForm = getComponentFactory().createForm(null, true);
-        myUploadDir = getComponentFactory().createTextField("datasourcesConfigPanel.uploadDir", new FileValidator(getBundleString("datasourcesConfigPanel.error.invalidUploadDir"), FileValidator.PATTERN_ALL, null));
-        myUploadDir.setImmediate(true);
-        mySelectUploadDir = getComponentFactory().createButton("datasourcesConfigPanel.selectUploadDir", this);
-        myUploadCreateUserDir = getComponentFactory().createCheckBox("datasourcesConfigPanel.uploadCreateUserDir");
-        myUploadForm.addField(myUploadDir, myUploadDir);
-        myUploadForm.addField(mySelectUploadDir, mySelectUploadDir);
-        myUploadForm.addField(myUploadCreateUserDir, myUploadCreateUserDir);
-        addComponent(getComponentFactory().surroundWithPanel(myUploadForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourcesConfigPanel.caption.upload")));
-
-        addDefaultComponents(0, 4, 0, 4, false);
+        addDefaultComponents(0, 3, 0, 3, false);
 
         initFromConfig();
     }
@@ -87,8 +73,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
             addDatasource(getApplication(), datasource);
         }
-        myUploadDir.setValue(MyTunesRss.CONFIG.getUploadDir());
-        myUploadCreateUserDir.setValue(MyTunesRss.CONFIG.isUploadCreateUserDir());
         setTablePageLengths();
     }
 
@@ -115,8 +99,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
-        MyTunesRss.CONFIG.setUploadDir(myUploadDir.getStringValue(null));
-        MyTunesRss.CONFIG.setUploadCreateUserDir(myUploadCreateUserDir.booleanValue());
         MyTunesRss.CONFIG.save();
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {
@@ -175,16 +157,6 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                         throw new IllegalArgumentException("Unknown datasource type!");
                 }
             }
-        } else if (clickEvent.getSource() == mySelectUploadDir) {
-            File dir = StringUtils.isNotBlank((String) myUploadDir.getValue()) ? new File((String) myUploadDir.getValue()) : null;
-            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigPanel.caption.selectUploadDir"), dir, ServerSideFileChooser.PATTERN_ALL, null, true, getApplication().getServerSideFileChooserLabels()) {
-
-                @Override
-                protected void onFileSelected(File file) {
-                    myUploadDir.setValue(file.getAbsolutePath());
-                    getParent().removeWindow(this);
-                }
-            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }
@@ -219,13 +191,5 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 getParent().removeWindow(this);
             }
         }.show(getWindow());
-    }
-
-    protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myUploadForm)) {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
-            return false;
-        }
-        return true;
     }
 }

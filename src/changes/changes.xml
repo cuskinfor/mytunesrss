@@ -9,6 +9,12 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="update">
+                Removed user interface upload feature.
+            </action>
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-382] File types configuration per data source
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-396] Search result list improvement
             </action>
             <action dev="mdescher" type="update">

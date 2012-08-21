@@ -36,7 +36,7 @@ public class SessionResource extends RestResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionResource.class);
     private static final String[] PERMISSION_NAMES = new String[] {
             "audio", "movies", "tvShows", "rss", "playlist", "download", "yahooPlayer", "specialPlaylists", "player", "remoteControl", "externalSites", "editTags",
-            "upload", "transcoder", "changePassword", "changeEmail", "editLastFmAccount", "editWebSettings", "createPlaylists", "createPublicPlaylists", "photos",
+            "transcoder", "changePassword", "changeEmail", "editLastFmAccount", "editWebSettings", "createPlaylists", "createPublicPlaylists", "photos",
             "downloadPhotoAlbum", "share"
     };
 

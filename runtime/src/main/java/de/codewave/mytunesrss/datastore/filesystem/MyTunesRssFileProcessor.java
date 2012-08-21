@@ -92,7 +92,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     public void process(File file) {
         try {
-            if (file.isFile() && FileSupportUtils.isSupported(file.getName())) {
+            if (file.isFile() && myDatasourceConfig.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myExistingIds.contains(fileId)) {
                     boolean existing = myTrackIds.contains(fileId) || myPhotoIds.contains(fileId);
@@ -103,7 +103,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
-                        FileType type = MyTunesRss.CONFIG.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
+                        FileType type = myDatasourceConfig.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                         if (type.getMediaType() == MediaType.Image) {
                             insertOrUpdateImage(file, fileId, existing);
                         } else {

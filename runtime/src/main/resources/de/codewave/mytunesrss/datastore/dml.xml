@@ -954,12 +954,12 @@
         t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.original_artist AS original_artist, t.album AS album, t.time AS time, t.track_number AS track_number,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
         t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
-        t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode, t.composer AS composer, t.album_artist AS album_artist
+        t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode, t.composer AS composer, t.album_artist AS album_artist, t.source_id AS source_id
     </fragment>
 
     <fragment name="trackColumnsForGrouping">
         t.source, t.id, t.name, t.artist, t.original_artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
-        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode, t.composer, t.album_artist
+        t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode, t.composer, t.album_artist, t.source_id
     </fragment>
 
     <fragment name="updatePlaylistCount">

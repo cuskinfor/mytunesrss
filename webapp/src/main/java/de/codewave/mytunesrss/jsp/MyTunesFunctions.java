@@ -123,7 +123,7 @@ public class MyTunesFunctions {
     }
 
     public static String contentType(PageContext pageContext, WebConfig config, User user, Track track) {
-        return FileSupportUtils.getContentType("dummy." + suffix(pageContext, config, user, track));
+        return MyTunesRss.CONFIG.getDatasource(track.getSourceId()).getContentType("dummy." + suffix(pageContext, config, user, track));
     }
 
     public static boolean transcoding(PageContext pageContext, User user, Track track) {

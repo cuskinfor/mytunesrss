@@ -97,7 +97,7 @@ public class TrackListener implements PListHandlerListener {
             String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
             if (StringUtils.isNotBlank(filename)) {
                 String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
-                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && FileSupportUtils.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
+                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && myDatasourceConfig.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
                     File file = MyTunesRssUtils.searchFile(filename);
                     if (!file.isFile()) {
                         myMissingFiles++;
@@ -121,7 +121,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
                             statement.setFileName(file.getAbsolutePath());
-                            statement.setProtected(FileSupportUtils.isProtected(file.getName()));
+                            statement.setProtected(myDatasourceConfig.isProtected(file.getName()));
                             boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
                             statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
                             if (video) {

@@ -63,7 +63,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Button myServerConfig;
     private Button myDatabaseConfig;
     private Button myDatasourcesConfig;
-    private Button myDataimportConfig;
     private Button myContentConfig;
     private Button myUsersConfig;
     private Button myNotificationsConfig;
@@ -174,7 +173,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.server", StatusPanel.this);
         myDatabaseConfig = getApplication().getComponentFactory().createButton("statusPanel.config.database", StatusPanel.this);
         myDatasourcesConfig = getApplication().getComponentFactory().createButton("statusPanel.config.datasources", StatusPanel.this);
-        myDataimportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.dataimport", StatusPanel.this);
         myContentConfig = getApplication().getComponentFactory().createButton("statusPanel.config.contents", StatusPanel.this);
         myUsersConfig = getApplication().getComponentFactory().createButton("statusPanel.config.users", StatusPanel.this);
         myNotificationsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.notifications", StatusPanel.this);
@@ -186,7 +184,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         configButtons.addComponent(myServerConfig);
         configButtons.addComponent(myDatabaseConfig);
         configButtons.addComponent(myDatasourcesConfig);
-        configButtons.addComponent(myDataimportConfig);
         configButtons.addComponent(myContentConfig);
         configButtons.addComponent(myUsersConfig);
         configButtons.addComponent(myNotificationsConfig);
@@ -245,8 +242,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new DatabaseConfigPanel());
         } else if (clickEvent.getButton() == myDatasourcesConfig) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new DatasourcesConfigPanel());
-        } else if (clickEvent.getButton() == myDataimportConfig) {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new DataImportConfigPanel());
         } else if (clickEvent.getButton() == myContentConfig) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new ContentConfigPanel());
         } else if (clickEvent.getButton() == myUsersConfig) {

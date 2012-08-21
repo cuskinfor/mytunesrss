@@ -8,9 +8,8 @@ package de.codewave.mytunesrss.webadmin.datasource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ImageImportType;
-import de.codewave.mytunesrss.config.ReplacementRule;
-import de.codewave.mytunesrss.config.VideoType;
-import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.webadmin.MainWindow;
 import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
 import de.codewave.vaadin.SmartTextField;
@@ -69,9 +68,29 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
         @Override
         public String toString() {
-            return getBundleString("dataimportConfigPanel.importType." + myImageImportType.name());
+            return getBundleString("datasourceOptionsPanel.importType." + myImageImportType.name());
         }
     }
+
+    public class Protection {
+        boolean myProtected;
+
+        public Protection(boolean aProtected) {
+            myProtected = aProtected;
+        }
+
+        @Override
+        public String toString() {
+            if (myProtected) {
+                return getBundleString("datasourceOptionsPanel.fileTypes.protection.true");
+            } else {
+                return getBundleString("datasourceOptionsPanel.fileTypes.protection.false");
+            }
+        }
+    }
+
+    protected final Protection PROTECTED = new Protection(true);
+    protected final Protection UNPROTECTED = new Protection(false);
 
     protected final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
 
@@ -86,6 +105,10 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected Table myPathReplacements;
     protected Button myAddPathReplacement;
     private DatasourcesConfigPanel myDatasourceConfigPanel;
+    protected Table myFileTypes;
+    protected Button myAddFileType;
+    protected Button myResetFileTypes;
+    protected Panel myFileTypesPanel;
 
     protected DatasourceOptionsPanel(DatasourcesConfigPanel datasourceConfigPanel) {
         myDatasourceConfigPanel = datasourceConfigPanel;
@@ -108,8 +131,8 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myImageMappingsPanel.addComponent(myTrackImageMappingsTable);
         myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
         myImageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
-        myTrackImageImportType = getComponentFactory().createSelect("dataimportConfigPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
-        myPhotoThumbnailImportType = getComponentFactory().createSelect("dataimportConfigPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
+        myTrackImageImportType = getComponentFactory().createSelect("datasourceOptionsPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
+        myPhotoThumbnailImportType = getComponentFactory().createSelect("datasourceOptionsPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
         myDisabledMp4Codecs = getComponentFactory().createTextField("datasourceOptionsPanel.disabledMp4Codecs");
         myPathReplacementsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.replacements"), getComponentFactory().createVerticalLayout(true, true));
@@ -122,11 +145,26 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myPathReplacementsPanel.addComponent(myPathReplacements);
         myAddPathReplacement = getComponentFactory().createButton("datasourceOptionsPanel.addReplacement", this);
         myPathReplacementsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddPathReplacement));
+        myFileTypesPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.types"), getComponentFactory().createVerticalLayout(true, true));
+        myFileTypes = new Table();
+        myFileTypes.setCacheRate(50);
+        myFileTypes.addContainerProperty("active", CheckBox.class, null, getBundleString("datasourceOptionsPanel.fileTypes.active"), null, null);
+        myFileTypes.addContainerProperty("suffix", TextField.class, null, getBundleString("datasourceOptionsPanel.fileTypes.suffix"), null, null);
+        myFileTypes.addContainerProperty("mimeType", TextField.class, null, getBundleString("datasourceOptionsPanel.fileTypes.mimeType"), null, null);
+        myFileTypes.addContainerProperty("mediaType", Select.class, null, getBundleString("datasourceOptionsPanel.fileTypes.mediaType"), null, null);
+        myFileTypes.addContainerProperty("protection", Select.class, null, getBundleString("datasourceOptionsPanel.fileTypes.protection"), null, null);
+        myFileTypes.addContainerProperty("delete", Button.class, null, "", null, null);
+        myFileTypes.setEditable(false);
+        myFileTypesPanel.addComponent(myFileTypes);
+        myAddFileType = getComponentFactory().createButton("datasourceOptionsPanel.fileTypes.add", this);
+        myResetFileTypes = getComponentFactory().createButton("datasourceOptionsPanel.fileTypes.reset", this);
+        myFileTypesPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddFileType, myResetFileTypes));
     }
 
     protected void setTablePageLengths() {
         myPathReplacements.setPageLength(Math.min(myPathReplacements.getItemIds().size(), 5));
         myTrackImageMappingsTable.setPageLength(Math.min(myTrackImageMappingsTable.getItemIds().size(), 5));
+        myFileTypes.setPageLength(Math.min(myFileTypes.size(), 10));
     }
 
     protected void addTrackImageMapping(ReplacementRule replacement) {
@@ -145,8 +183,58 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myPathReplacements.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
+    protected void setFileTypes(List<FileType> fileTypes) {
+        myFileTypes.removeAllItems();
+        for (FileType fileType : fileTypes) {
+            addFileType(fileType);
+        }
+    }
+
+    protected void addFileType(FileType fileType) {
+        CheckBox active = new CheckBox();
+        active.setValue(fileType.isActive());
+        SmartTextField suffix = new SmartTextField();
+        suffix.setValue(fileType.getSuffix());
+        SmartTextField mimeType = new SmartTextField();
+        mimeType.setValue(fileType.getMimeType());
+        Select mediaType = getComponentFactory().createSelect(null, Arrays.asList(MediaType.Audio, MediaType.Video, MediaType.Image, MediaType.Other));
+        mediaType.setValue(fileType.getMediaType());
+        Select protection = getComponentFactory().createSelect(null, Arrays.asList(PROTECTED, UNPROTECTED));
+        protection.setValue(fileType.isProtected() ? PROTECTED : UNPROTECTED);
+        Button delete = new Button(getBundleString("button.delete"), this);
+        long id = myItemIdGenerator.getAndIncrement();
+        delete.setData(id);
+        myFileTypes.addItem(new Object[]{active, suffix, mimeType, mediaType, protection, delete}, id);
+    }
+
     public void buttonClick(final Button.ClickEvent clickEvent) {
-        if (clickEvent.getSource() == myAddPathReplacement) {
+        if (clickEvent.getSource() == myAddFileType) {
+            addFileType(new FileType(false, "", "application/octet-stream", MediaType.Other, false));
+            setTablePageLengths();
+            myFileTypes.setCurrentPageFirstItemIndex(Math.max(myFileTypes.size() - 10, 0));
+        } else if (clickEvent.getSource() == myResetFileTypes) {
+            final Button yes = new Button(getBundleString("button.yes"));
+            Button no = new Button(getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowResetFileType.caption"), getBundleString("datasourceOptionsPanel.optionWindowResetFileType.message"), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        setFileTypes(FileType.getDefaults());
+                        setTablePageLengths();
+                    }
+                }
+            }.show(getWindow());
+        } else if (clickEvent.getSource() instanceof Button && ((Component) clickEvent.getSource()).getParent() == myFileTypes) {
+            final Button yes = new Button(getBundleString("button.yes"));
+            Button no = new Button(getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowDeleteFileType.caption"), getBundleString("datasourceOptionsPanel.optionWindowDeleteFileType.message"), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        myFileTypes.removeItem(((AbstractComponent) clickEvent.getSource()).getData());
+                        setTablePageLengths();
+                    }
+                }
+            }.show(getWindow());
+        } else if (clickEvent.getSource() == myAddPathReplacement) {
             addPathReplacement(new ReplacementRule("^.*$", "\\0"));
             setTablePageLengths();
         } else if (findTableItemWithObject(myPathReplacements, clickEvent.getSource()) != null) {
@@ -187,5 +275,18 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     @Override
     protected Component getCancelFollowUpComponent() {
         return myDatasourceConfigPanel;
+    }
+
+    protected List<FileType> getFileTypesAsList() {
+        List<FileType> fileTypes = new ArrayList<FileType>();
+        for (Object itemId : myFileTypes.getItemIds()) {
+            Boolean active = (Boolean) getTableCellPropertyValue(myFileTypes, itemId, "active");
+            String suffix = (String) getTableCellPropertyValue(myFileTypes, itemId, "suffix");
+            String mimeType = (String) getTableCellPropertyValue(myFileTypes, itemId, "mimeType");
+            MediaType mediaType = (MediaType) getTableCellPropertyValue(myFileTypes, itemId, "mediaType");
+            Protection protection = (Protection) getTableCellPropertyValue(myFileTypes, itemId, "protection");
+            fileTypes.add(new FileType(active, suffix, mimeType, mediaType, protection == PROTECTED));
+        }
+        return fileTypes;
     }
 }

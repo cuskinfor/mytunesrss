@@ -53,8 +53,6 @@ public class MyTunesRssConfig {
     private String mySupportEmail = "";
     private String myProxyHost = "";
     private int myProxyPort = -1;
-    private String myUploadDir = "";
-    private boolean myUploadCreateUserDir = true;
     private String myMyTunesRssComUser = "";
     private byte[] myMyTunesRssComPasswordHash = null;
     private boolean myMyTunesRssComSsl = false;
@@ -84,7 +82,6 @@ public class MyTunesRssConfig {
     private String mySslHost;
     private int mySslPort;
     private String mySslKeystoreKeyAlias;
-    private List<FileType> myFileTypes = new ArrayList<FileType>();
     private String myMailHost;
     private int myMailPort;
     private SmtpProtocol mySmtpProtocol;
@@ -96,7 +93,6 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnEmailChange;
     private boolean myNotifyOnQuotaExceeded;
     private boolean myNotifyOnLoginFailure;
-    private boolean myNotifyOnWebUpload;
     private boolean myNotifyOnTranscodingFailure;
     private boolean myNotifyOnInternalError;
     private boolean myNotifyOnDatabaseUpdate;
@@ -202,26 +198,6 @@ public class MyTunesRssConfig {
 
     public void setVersion(String version) {
         myVersion = version;
-    }
-
-    public boolean isUploadCreateUserDir() {
-        return myUploadCreateUserDir;
-    }
-
-    public void setUploadCreateUserDir(boolean uploadCreateUserDir) {
-        myUploadCreateUserDir = uploadCreateUserDir;
-    }
-
-    public String getUploadDir() {
-        return myUploadDir;
-    }
-
-    public void setUploadDir(String uploadDir) {
-        myUploadDir = uploadDir;
-    }
-
-    public List<FileType> getFileTypes() {
-        return myFileTypes;
     }
 
     public boolean isLocalTempArchive() {
@@ -518,17 +494,6 @@ public class MyTunesRssConfig {
         mySslPort = sslPort;
     }
 
-    public FileType getFileType(String suffix) {
-        if (suffix != null) {
-            for (FileType type : myFileTypes) {
-                if (suffix.equalsIgnoreCase(type.getSuffix())) {
-                    return type;
-                }
-            }
-        }
-        return null;
-    }
-
     public String getMailHost() {
         return myMailHost;
     }
@@ -615,14 +580,6 @@ public class MyTunesRssConfig {
 
     public void setNotifyOnLoginFailure(boolean notifyOnLoginFailure) {
         myNotifyOnLoginFailure = notifyOnLoginFailure;
-    }
-
-    public boolean isNotifyOnWebUpload() {
-        return myNotifyOnWebUpload;
-    }
-
-    public void setNotifyOnWebUpload(boolean notifyOnWebUpload) {
-        myNotifyOnWebUpload = notifyOnWebUpload;
     }
 
     public boolean isNotifyOnTranscodingFailure() {
@@ -1036,8 +993,6 @@ public class MyTunesRssConfig {
         setAvailableOnLocalNet(JXPathUtils.getBooleanValue(settings, "availableOnLocalNet", isAvailableOnLocalNet()));
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
         readDataSources(settings);
-        setUploadDir(JXPathUtils.getStringValue(settings, "uploadDir", getUploadDir()));
-        setUploadCreateUserDir(JXPathUtils.getBooleanValue(settings, "uploadCreateUserDir", isUploadCreateUserDir()));
         setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
         setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
         setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
@@ -1046,20 +1001,6 @@ public class MyTunesRssConfig {
         setMyTunesRssComSsl(JXPathUtils.getBooleanValue(settings, "myTunesRssComSsl", isMyTunesRssComSsl()));
         setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
         setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
-        myFileTypes = new ArrayList<FileType>();
-        Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
-        while (fileTypes != null && fileTypes.hasNext()) {
-            JXPathContext fileTypeContext = fileTypes.next();
-            FileType fileType = new FileType();
-            fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
-            fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
-            // Loading the element "video" is for migration purposes from older versions
-            String mediaTypeFromOldVideoElement = JXPathUtils.getBooleanValue(fileTypeContext, "video", false) ? MediaType.Video.name() : MediaType.Audio.name();
-            fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", mediaTypeFromOldVideoElement)));
-            fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
-            fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
-            myFileTypes.add(fileType);
-        }
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
@@ -1103,13 +1044,9 @@ public class MyTunesRssConfig {
         setNotifyOnPasswordChange(JXPathUtils.getBooleanValue(settings, "admin-notify/password-change", false));
         setNotifyOnQuotaExceeded(JXPathUtils.getBooleanValue(settings, "admin-notify/quota-exceeded", false));
         setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
-        setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
         setNotifyOnMissingFile(JXPathUtils.getBooleanValue(settings, "admin-notify/missing-file", false));
         setNotifyOnOutdatedItunesXml(JXPathUtils.getBooleanValue(settings, "admin-notify/outdated-itunesxml", false));
         setNotifyOnSkippedDatabaseUpdate(JXPathUtils.getBooleanValue(settings, "admin-notify/skipped-db-update", false));
-        if (myFileTypes.isEmpty()) {
-            myFileTypes = FileType.getDefaults();
-        }
         try {
             setStatisticKeepTime(JXPathUtils.getIntValue(settings, "statistics-keep-time", getStatisticKeepTime()));
         } catch (Exception e) {
@@ -1243,6 +1180,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
                             watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            readFileTypes(settings, watchfolderDatasourceConfig);
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1270,6 +1208,7 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", ""));
                             itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
+                            readFileTypes(settings, itunesDatasourceConfig);
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1285,6 +1224,7 @@ public class MyTunesRssConfig {
                             iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
                             iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            readFileTypes(settings, iphotoDatasourceConfig);
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         case Aperture:
@@ -1298,6 +1238,7 @@ public class MyTunesRssConfig {
                                 apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
                             }
                             apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            readFileTypes(settings, apertureDatasourceConfig);
                             dataSources.add(apertureDatasourceConfig);
                             break;
                         default:
@@ -1312,6 +1253,25 @@ public class MyTunesRssConfig {
             }
         }
         setDatasources(dataSources);
+    }
+
+    private void readFileTypes(JXPathContext settings, DatasourceConfig datasourceConfig) {
+        List<FileType> fileTypesList = new ArrayList<FileType>();
+        Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
+        while (fileTypes != null && fileTypes.hasNext()) {
+            JXPathContext fileTypeContext = fileTypes.next();
+            FileType fileType = new FileType();
+            fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
+            fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
+            fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", MediaType.Other.name())));
+            fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
+            fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
+            fileTypesList.add(fileType);
+        }
+        if (fileTypesList.isEmpty()) {
+            fileTypesList = FileType.getDefaults();
+        }
+        datasourceConfig.setFileTypes(fileTypesList);
     }
 
     private List<ReplacementRule> readTrackImageMappings(JXPathContext settings) {
@@ -1384,8 +1344,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "availableOnLocalNet", myAvailableOnLocalNet));
             root.appendChild(DOMUtils.createBooleanElement(settings, "checkUpdateOnStart", myCheckUpdateOnStart));
             writeDataSources(settings, root);
-            root.appendChild(DOMUtils.createTextElement(settings, "uploadDir", myUploadDir));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "uploadCreateUserDir", myUploadCreateUserDir));
             root.appendChild(DOMUtils.createBooleanElement(settings, "localTempArchive", myLocalTempArchive));
             Element users = settings.createElement("users");
             root.appendChild(users);
@@ -1402,17 +1360,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createTextElement(settings, "myTunesRssComUser", myMyTunesRssComUser));
             if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "myTunesRssComPassword", myMyTunesRssComPasswordHash));
-            }
-            Element fileTypes = settings.createElement("file-types");
-            root.appendChild(fileTypes);
-            for (FileType fileType : myFileTypes) {
-                Element fileTypeElement = settings.createElement("type");
-                fileTypes.appendChild(fileTypeElement);
-                fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mime-type", fileType.getMimeType()));
-                fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "suffix", fileType.getSuffix()));
-                fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mediatype", fileType.getMediaType().name()));
-                fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "protected", fileType.isProtected()));
-                fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
             }
             root.appendChild(DOMUtils.createTextElement(settings, CREATION_TIME_KEY, myCryptedCreationTime));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
@@ -1486,7 +1433,6 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "password-change", isNotifyOnPasswordChange()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "quota-exceeded", isNotifyOnQuotaExceeded()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "transcoding-failure", isNotifyOnTranscodingFailure()));
-            notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "outdated-itunesxml", isNotifyOnOutdatedItunesXml()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "skipped-db-update", isNotifyOnSkippedDatabaseUpdate()));
@@ -1592,6 +1538,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", watchfolderDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", watchfolderDatasourceConfig.getPhotoThumbnailImportType().name()));
                     writeTrackImageMappings(settings, dataSource, watchfolderDatasourceConfig);
+                    writeFileTypes(settings, dataSource, watchfolderDatasourceConfig);
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
@@ -1617,6 +1564,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", itunesDatasourceConfig.getDisabledMp4Codecs()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));
                     writeTrackImageMappings(settings, dataSource, itunesDatasourceConfig);
+                    writeFileTypes(settings, dataSource, itunesDatasourceConfig);
                     break;
                 case Iphoto:
                     IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);
@@ -1633,6 +1581,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importRolls", iphotoDatasourceConfig.isImportRolls()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importAlbums", iphotoDatasourceConfig.isImportAlbums()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", iphotoDatasourceConfig.getPhotoThumbnailImportType().name()));
+                    writeFileTypes(settings, dataSource, iphotoDatasourceConfig);
                     break;
                 case Aperture:
                     ApertureDatasourceConfig apertureDatasourceConfig = (ApertureDatasourceConfig) myDatasources.get(i);
@@ -1647,10 +1596,25 @@ public class MyTunesRssConfig {
                         }
                     }
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", apertureDatasourceConfig.getPhotoThumbnailImportType().name()));
+                    writeFileTypes(settings, dataSource, apertureDatasourceConfig);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");
             }
+        }
+    }
+
+    private void writeFileTypes(Document settings, Element dataSource, DatasourceConfig datasourceConfig) {
+        Element fileTypes = settings.createElement("file-types");
+        dataSource.appendChild(fileTypes);
+        for (FileType fileType : datasourceConfig.getFileTypes()) {
+            Element fileTypeElement = settings.createElement("type");
+            fileTypes.appendChild(fileTypeElement);
+            fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mime-type", fileType.getMimeType()));
+            fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "suffix", fileType.getSuffix()));
+            fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mediatype", fileType.getMediaType().name()));
+            fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "protected", fileType.isProtected()));
+            fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
         }
     }
 

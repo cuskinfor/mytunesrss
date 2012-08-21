@@ -102,14 +102,6 @@ public class AdminNotifier {
         }
     }
 
-    public void notifyWebUpload(User user, String fileInfos) {
-        if (MyTunesRss.CONFIG.isNotifyOnWebUpload() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
-            String subject = "Web interface file upload";
-            String body = "User " + user.getName() + " has uploaded the following files to your server:\n\n" + fileInfos;
-            sendAdminMail(subject, body);
-        }
-    }
-
     public void notifyMissingFile(Track track) {
         if (MyTunesRss.CONFIG.isNotifyOnMissingFile() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Missing track file";

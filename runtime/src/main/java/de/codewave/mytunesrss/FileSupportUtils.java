@@ -15,14 +15,6 @@ import java.io.File;
  * de.codewave.mytunesrss.FileSupportUtils
  */
 public class FileSupportUtils {
-    public static boolean isSupported(String filename) {
-        return isSuffixSupported(getFileSuffix(filename));
-    }
-
-    private static boolean isSuffixSupported(String suffix) {
-        FileType type = MyTunesRss.CONFIG.getFileType(suffix);
-        return type != null && type.isActive();
-    }
 
     public static String getFileSuffix(String filename) {
         int i = filename.lastIndexOf(".");
@@ -30,19 +22,6 @@ public class FileSupportUtils {
             return filename.substring(i + 1).trim().toLowerCase();
         }
         return null;
-    }
-
-    public static String getContentType(String filename) {
-        FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
-        if (type != null) {
-            return type.getMimeType();
-        }
-        return "application/octet-stream";
-    }
-
-    public static boolean isProtected(String filename) {
-        FileType type = MyTunesRss.CONFIG.getFileType(getFileSuffix(filename));
-        return type != null && type.isProtected();
     }
 
     public static boolean isMp3(File file) {
@@ -65,4 +44,5 @@ public class FileSupportUtils {
         }
         return false;
     }
+
 }

@@ -4,8 +4,7 @@ public enum StatEventType {
     NULL(0, NullEvent.class),
     DOWNLOAD(1, DownloadEvent.class),
     SESSION_START(2, SessionStartEvent.class),
-    SESSION_END(3, SessionEndEvent.class),
-    UPLOAD(4, UploadEvent.class);
+    SESSION_END(3, SessionEndEvent.class);
 
     public static Class getEventClass(int typeValue) {
         for (StatEventType type : StatEventType.values()) {
