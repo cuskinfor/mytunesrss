@@ -8,10 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
-import de.codewave.mytunesrss.config.ExternalSiteDefinition;
-import de.codewave.mytunesrss.config.FlashPlayerConfig;
-import de.codewave.mytunesrss.config.TranscoderConfig;
-import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
@@ -123,7 +120,12 @@ public class MyTunesFunctions {
     }
 
     public static String contentType(PageContext pageContext, WebConfig config, User user, Track track) {
-        return MyTunesRss.CONFIG.getDatasource(track.getSourceId()).getContentType("dummy." + suffix(pageContext, config, user, track));
+        DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(track.getSourceId());
+        if (datasource != null) {
+            return datasource.getContentType("dummy." + suffix(pageContext, config, user, track));
+        } else {
+            return "application/octet-stream";
+        }
     }
 
     public static boolean transcoding(PageContext pageContext, User user, Track track) {

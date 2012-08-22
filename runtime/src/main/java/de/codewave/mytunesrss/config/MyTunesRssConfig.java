@@ -142,7 +142,7 @@ public class MyTunesRssConfig {
                 return config;
             }
         }
-        throw new IllegalArgumentException("No datasource with ID \"" + sourceId + "\".");
+        return null;
     }
 
     public void setDatasources(List<DatasourceConfig> datasources) {
