@@ -56,6 +56,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.Method;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -240,6 +241,8 @@ public class MyTunesRss {
         processSanityChecks();
         if (!MyTunesRssUtils.isHeadless()) {
             initMainWindow();
+        } else if (!GraphicsEnvironment.isHeadless() && SystemUtils.IS_OS_MAC_OSX) {
+            executeAppleHeadlessOnNonHeadlessSystem();
         }
         logSystemInfo();
         prepareCacheDirs();
@@ -307,6 +310,20 @@ public class MyTunesRss {
                     LOGGER.debug("Main thread was interrupted.", e);
                     MyTunesRssUtils.shutdownGracefully();
                 }
+            }
+        }
+    }
+
+    private static void executeAppleHeadlessOnNonHeadlessSystem() {
+        LOGGER.debug("Trying to execute apple specific code for headless mode on non-headless system.");
+        try {
+            LOGGER.debug("Executing apple specific code for headless mode on non-headless system.");
+            Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
+            Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
+            activateMethod.invoke(null, new AppleExtensionsEventListenerHeadlessMode());
+        } catch (Exception e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not activate apple extensions.", e);
             }
         }
     }
@@ -899,6 +916,17 @@ public class MyTunesRss {
             return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_PREFS_PATH)[0];
         } else {
             return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+        }
+    }
+
+    public static class AppleExtensionsEventListenerHeadlessMode implements EventListener {
+        public void handleQuit() {
+            LOGGER.debug("Apple extension: handleQuit.");
+            MyTunesRssUtils.shutdownGracefully();
+        }
+
+        public void handleReOpenApplication() {
+            LOGGER.debug("Apple extension: handleReOpenApplication. Ignored in headless mode.");
         }
     }
 }

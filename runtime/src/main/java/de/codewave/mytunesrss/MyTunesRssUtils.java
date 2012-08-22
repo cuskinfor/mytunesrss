@@ -116,6 +116,10 @@ public class MyTunesRssUtils {
         return (MyTunesRss.CONFIG != null && MyTunesRss.CONFIG.isHeadless()) || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) || GraphicsEnvironment.isHeadless();
     }
 
+    public static boolean isFakeHeadless() {
+        return ((MyTunesRss.CONFIG != null && MyTunesRss.CONFIG.isHeadless()) || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS)) && !GraphicsEnvironment.isHeadless() && SystemUtils.IS_OS_MAC_OSX;
+    }
+
     public static void showErrorMessage(String message) {
         LOGGER.error(message);
         System.err.println(message);
