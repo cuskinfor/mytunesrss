@@ -27,16 +27,20 @@ public class RemoteApiSessionManager implements ServletContextListener {
         myExecutorService = Executors.newSingleThreadScheduledExecutor();
         myExecutorService.scheduleWithFixedDelay(new Runnable() {
             public void run() {
-                LOGGER.debug("Purging remote API sessions.");
-                synchronized (mySessions) {
-                    for (Iterator<Map.Entry<String, Session>> iter = mySessions.entrySet().iterator(); iter.hasNext();) {
-                        Map.Entry<String, Session> entry = iter.next();
-                        if (entry.getValue().isExpired()) {
-                            LOGGER.debug("Removing expired session \"" + entry.getValue().getId() + "\" of user \"" +
-                                    entry.getValue().getUser().getName() + "\".");
-                            iter.remove();
+                try {
+                    LOGGER.debug("Purging remote API sessions.");
+                    synchronized (mySessions) {
+                        for (Iterator<Map.Entry<String, Session>> iter = mySessions.entrySet().iterator(); iter.hasNext();) {
+                            Map.Entry<String, Session> entry = iter.next();
+                            if (entry.getValue().isExpired()) {
+                                LOGGER.debug("Removing expired session \"" + entry.getValue().getId() + "\" of user \"" +
+                                        entry.getValue().getUser().getName() + "\".");
+                                iter.remove();
+                            }
                         }
                     }
+                } catch (RuntimeException e) {
+                    LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
                 }
             }
         }, 0, 60, TimeUnit.SECONDS);

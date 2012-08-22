@@ -21,32 +21,36 @@ public class FetchExternalAddressRunnable implements Runnable {
     public static String EXTERNAL_ADDRESS;
 
     public void run() {
-        if (MyTunesRss.WEBSERVER.isRunning()) {
-            BufferedReader reader = null;
-            try {
-                URLConnection connection = new URL("http://www.codewave.de/tools/getip.php").openConnection();
-                if (connection != null) {
-                    reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
-                    if (reader != null) {
-                        EXTERNAL_ADDRESS = "http://" + reader.readLine() + ":" + MyTunesRss.CONFIG.getPort();
-                        return;
+        try {
+            if (MyTunesRss.WEBSERVER.isRunning()) {
+                BufferedReader reader = null;
+                try {
+                    URLConnection connection = new URL("http://www.codewave.de/tools/getip.php").openConnection();
+                    if (connection != null) {
+                        reader = new BufferedReader(new InputStreamReader(connection.getInputStream(), "UTF-8"));
+                        if (reader != null) {
+                            EXTERNAL_ADDRESS = "http://" + reader.readLine() + ":" + MyTunesRss.CONFIG.getPort();
+                            return;
+                        }
                     }
-                }
-            } catch (IOException e) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Could not read my external address from \"www.codewave.de/tools/getip.php\".", e);
-                }
-            } finally {
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (IOException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not close reader.", e);
+                } catch (IOException e) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Could not read my external address from \"www.codewave.de/tools/getip.php\".", e);
+                    }
+                } finally {
+                    if (reader != null) {
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                            if (LOG.isErrorEnabled()) {
+                                LOG.error("Could not close reader.", e);
+                            }
                         }
                     }
                 }
             }
+        } catch (RuntimeException e) {
+            LOG.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         }
         EXTERNAL_ADDRESS = null;
     }

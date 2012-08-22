@@ -27,9 +27,13 @@ public class MaintenanceRunnable implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceRunnable.class);
 
     public void run() {
-        LOGGER.debug("Starting maintenance job.");
-        removeOldTempPlaylists();
-        removePlaylistsWithoutUser();
+        try {
+            LOGGER.debug("Starting maintenance job.");
+            removeOldTempPlaylists();
+            removePlaylistsWithoutUser();
+        } catch (RuntimeException e) {
+            LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
+        }
     }
 
     private void removePlaylistsWithoutUser() {

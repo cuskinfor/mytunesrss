@@ -22,16 +22,20 @@ public class MessageOfTheDayRunnable implements Runnable {
     private Queue<MessageOfTheDay> myMessageOfTheDay = new ConcurrentLinkedQueue<MessageOfTheDay>();
 
     public void run() {
-        URI uri = null;
         try {
-            uri = MyTunesRss.REGISTRATION.isReleaseVersion() && !MyTunesRss.REGISTRATION.isUnregistered() ? new URI("http://www.codewave.de/tools/motd/mytunesrss.xml") : new URI("http://www.codewave.de/tools/motd/mytunesrss_unregistered.xml");
-        } catch (URISyntaxException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Invalid message of the day URI.");
-            }
+            URI uri = null;
+            try {
+                uri = MyTunesRss.REGISTRATION.isReleaseVersion() && !MyTunesRss.REGISTRATION.isUnregistered() ? new URI("http://www.codewave.de/tools/motd/mytunesrss.xml") : new URI("http://www.codewave.de/tools/motd/mytunesrss_unregistered.xml");
+            } catch (URISyntaxException e) {
+                if (LOGGER.isErrorEnabled()) {
+                    LOGGER.error("Invalid message of the day URI.");
+                }
 
+            }
+            myMessageOfTheDay.offer(JAXB.unmarshal(uri, MessageOfTheDay.class));
+        } catch (RuntimeException e) {
+            LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         }
-        myMessageOfTheDay.offer(JAXB.unmarshal(uri, MessageOfTheDay.class));
     }
 
     public MessageOfTheDay get() {

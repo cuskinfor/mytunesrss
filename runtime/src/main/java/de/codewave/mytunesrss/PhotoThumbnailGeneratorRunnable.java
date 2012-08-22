@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.config.CommonPhotoDatasourceConfig;
-import de.codewave.mytunesrss.config.CommonTrackDatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -25,7 +24,7 @@ import java.util.Set;
 
 public class PhotoThumbnailGeneratorRunnable implements Runnable {
 
-    private static final Logger log = LoggerFactory.getLogger(PhotoThumbnailGeneratorRunnable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoThumbnailGeneratorRunnable.class);
 
     private static class SimplePhoto {
         private String myId;
@@ -38,36 +37,40 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
     }
 
     public void run() {
-        final Set<String> sourceIds = new HashSet<String>();
-        for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
-            if (datasourceConfig instanceof CommonPhotoDatasourceConfig && ((CommonPhotoDatasourceConfig) datasourceConfig).getPhotoThumbnailImportType() == ImageImportType.Auto) {
-                // only consider photos from data sources which have the thumbnail import set to "AUTO"
-                sourceIds.add(datasourceConfig.getId());
-            }
-        }
-        if (!sourceIds.isEmpty()) {
-            try {
-                Collection<SimplePhoto> photos = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimplePhoto>>() {
-                    @Override
-                    public Collection<SimplePhoto> execute(Connection connection) throws SQLException {
-                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails");
-                        statement.setItems("sourceIds", sourceIds);
-                        return execute(statement, new ResultBuilder<SimplePhoto>() {
-                            public SimplePhoto create(ResultSet resultSet) throws SQLException {
-                                return new SimplePhoto(resultSet.getString("id"), resultSet.getString("file"));
-                            }
-                        }).getResults();
-                    }
-                });
-                for (SimplePhoto photo : photos) {
-                    if (Thread.interrupted()) {
-                        break;
-                    }
-                    MyTunesRss.STORE.executeStatement(new HandlePhotoImagesStatement(new File(photo.myFile), photo.myId));
+        try {
+            final Set<String> sourceIds = new HashSet<String>();
+            for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
+                if (datasourceConfig instanceof CommonPhotoDatasourceConfig && ((CommonPhotoDatasourceConfig) datasourceConfig).getPhotoThumbnailImportType() == ImageImportType.Auto) {
+                    // only consider photos from data sources which have the thumbnail import set to "AUTO"
+                    sourceIds.add(datasourceConfig.getId());
                 }
-            } catch (SQLException e) {
-                log.error("Could not fetch photos with missing thumbnails.", e);
             }
+            if (!sourceIds.isEmpty()) {
+                try {
+                    Collection<SimplePhoto> photos = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimplePhoto>>() {
+                        @Override
+                        public Collection<SimplePhoto> execute(Connection connection) throws SQLException {
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails");
+                            statement.setItems("sourceIds", sourceIds);
+                            return execute(statement, new ResultBuilder<SimplePhoto>() {
+                                public SimplePhoto create(ResultSet resultSet) throws SQLException {
+                                    return new SimplePhoto(resultSet.getString("id"), resultSet.getString("file"));
+                                }
+                            }).getResults();
+                        }
+                    });
+                    for (SimplePhoto photo : photos) {
+                        if (Thread.interrupted()) {
+                            break;
+                        }
+                        MyTunesRss.STORE.executeStatement(new HandlePhotoImagesStatement(new File(photo.myFile), photo.myId));
+                    }
+                } catch (SQLException e) {
+                    LOGGER.error("Could not fetch photos with missing thumbnails.", e);
+                }
+            }
+        } catch (RuntimeException e) {
+            LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         }
     }
 }

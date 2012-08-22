@@ -44,51 +44,55 @@ public class TrackImageGeneratorRunnable implements Runnable {
     }
 
     public void run() {
-        final Set<String> sourceIds = new HashSet<String>();
-        for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
-            if (datasourceConfig instanceof CommonTrackDatasourceConfig && ((CommonTrackDatasourceConfig) datasourceConfig).getTrackImageImportType() == ImageImportType.Auto) {
-                // only consider tracks from data sources which have the image import set to "AUTO"
-                sourceIds.add(datasourceConfig.getId());
-            }
-        }
-        if (!sourceIds.isEmpty()) {
-            try {
-                Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimpleTrack>>() {
-                    @Override
-                    public Collection<SimpleTrack> execute(Connection connection) throws SQLException {
-                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages");
-                        statement.setItems("sourceIds", sourceIds);
-                        return execute(statement, new ResultBuilder<SimpleTrack>() {
-                            public SimpleTrack create(ResultSet resultSet) throws SQLException {
-                                return new SimpleTrack(resultSet.getString("id"), resultSet.getString("file"), TrackSource.valueOf(resultSet.getString("source")), resultSet.getString("source_id"));
-                            }
-                        }).getResults();
-                    }
-                });
-                int count = 0;
-                for (SimpleTrack track : tracks) {
-                    if (Thread.interrupted()) {
-                        break;
-                    }
-                    try {
-                        MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId));
-                        count++;
-                        if (count % 250 == 0) {
-                            recreateAlbums();
-                        }
-                    } catch (IOException e) {
-                        LOGGER.error("Could not insert track image.", e);
-                    }
+        try {
+            final Set<String> sourceIds = new HashSet<String>();
+            for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
+                if (datasourceConfig instanceof CommonTrackDatasourceConfig && ((CommonTrackDatasourceConfig) datasourceConfig).getTrackImageImportType() == ImageImportType.Auto) {
+                    // only consider tracks from data sources which have the image import set to "AUTO"
+                    sourceIds.add(datasourceConfig.getId());
                 }
-            } catch (SQLException e) {
-                LOGGER.error("Could not fetch photos with missing thumbnails.", e);
-            } finally {
+            }
+            if (!sourceIds.isEmpty()) {
                 try {
-                    recreateAlbums();
+                    Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimpleTrack>>() {
+                        @Override
+                        public Collection<SimpleTrack> execute(Connection connection) throws SQLException {
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages");
+                            statement.setItems("sourceIds", sourceIds);
+                            return execute(statement, new ResultBuilder<SimpleTrack>() {
+                                public SimpleTrack create(ResultSet resultSet) throws SQLException {
+                                    return new SimpleTrack(resultSet.getString("id"), resultSet.getString("file"), TrackSource.valueOf(resultSet.getString("source")), resultSet.getString("source_id"));
+                                }
+                            }).getResults();
+                        }
+                    });
+                    int count = 0;
+                    for (SimpleTrack track : tracks) {
+                        if (Thread.interrupted()) {
+                            break;
+                        }
+                        try {
+                            MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId));
+                            count++;
+                            if (count % 250 == 0) {
+                                recreateAlbums();
+                            }
+                        } catch (IOException e) {
+                            LOGGER.error("Could not insert track image.", e);
+                        }
+                    }
                 } catch (SQLException e) {
-                    LOGGER.error("Could not recreate albums.", e);
+                    LOGGER.error("Could not fetch tracks with missing thumbnails.", e);
+                } finally {
+                    try {
+                        recreateAlbums();
+                    } catch (SQLException e) {
+                        LOGGER.error("Could not recreate albums.", e);
+                    }
                 }
             }
+        } catch (RuntimeException e) {
+            LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         }
     }
 
