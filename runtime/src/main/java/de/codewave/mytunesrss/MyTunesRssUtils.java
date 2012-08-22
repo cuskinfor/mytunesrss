@@ -605,6 +605,17 @@ public class MyTunesRssUtils {
         }
     }
 
+    public static boolean isImageUsable(de.codewave.mytunesrss.meta.Image image) {
+        ByteArrayInputStream imageInputStream = new ByteArrayInputStream(image.getData());
+        try {
+            ImageIO.read(imageInputStream);
+        } catch (IOException e) {
+            LOGGER.debug("Could not create buffered image.", e);
+            return false;
+        }
+        return true;
+    }
+
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize) throws IOException {
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {

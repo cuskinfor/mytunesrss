@@ -143,15 +143,29 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         File imageFile = findImageFile(myFile);
         if (imageFile != null) {
             // okay, use special image file
-            return readImageFromImageFile(imageFile);
-        } else {
-            if (mySource == TrackSource.ITunes) {
-                // prefer itunes artwork for performance reasons
-                image = findItunesArtwork();
+            image = readImageFromImageFile(imageFile);
+            if (image != null && !MyTunesRssUtils.isImageUsable(image)) {
+                LOGGER.debug("Image from special file not readable.");
+                // image not readable, try next
+                image = null;
             }
-            if (image == null) {
-                // no itunes artwork or no itunes data source
-                image = readImageFromTrackFile(image);
+        }
+        if (mySource == TrackSource.ITunes && image == null) {
+            // prefer itunes artwork for performance reasons
+            image = findItunesArtwork();
+            if (image != null && !MyTunesRssUtils.isImageUsable(image)) {
+                LOGGER.debug("Itunes artwork not readable.");
+                // image not readable, try next
+                image = null;
+            }
+        }
+        if (image == null) {
+            // no itunes artwork or no itunes data source
+            image = readImageFromTrackFile(image);
+            if (image != null && !MyTunesRssUtils.isImageUsable(image)) {
+                LOGGER.debug("Image from track file not readable.");
+                // image not readable, we don't have one
+                image = null;
             }
         }
         return image;
