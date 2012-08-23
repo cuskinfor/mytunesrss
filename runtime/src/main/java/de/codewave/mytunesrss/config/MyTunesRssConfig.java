@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
+import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
@@ -30,6 +31,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -132,10 +134,24 @@ public class MyTunesRssConfig {
     private long myRestApiJsExpirationMillis;
     private int jpegQuality;
 
+    /**
+     * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
+     * the original data source configs. Modifications to the returned data source configs are stored on the next {@link #save()} call.
+     *
+     * @return A shallow copy of the list of data source configs.
+     */
     public List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
     }
 
+    /**
+     * Returns the data source configuration for the specified source id. The reference to the original config is returned.
+     * Modifications to the returned data source config are stored on the next {@link #save()} call.
+     *
+     * @param sourceId A data source id.
+     *
+     * @return The data source config for the specified source id.
+     */
     public DatasourceConfig getDatasource(String sourceId) {
         for (DatasourceConfig config : getDatasources()) {
             if (config.getId().equals(sourceId)) {
@@ -1143,6 +1159,12 @@ public class MyTunesRssConfig {
     }
 
     private void readDataSources(JXPathContext settings) {
+        long lastDatabaseUpdate = 0;
+        try {
+            lastDatabaseUpdate = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery()).getLastUpdate();
+        } catch (SQLException e) {
+            LOGGER.warn("Could not get last database update for defaulting missing values of data sources.", e);
+        }
         List<DatasourceConfig> dataSources = new ArrayList<DatasourceConfig>();
         Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
         while (contextIterator.hasNext()) {
@@ -1180,6 +1202,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
                             watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
                             readFileTypes(settings, watchfolderDatasourceConfig);
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
@@ -1209,6 +1232,7 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
                             readFileTypes(settings, itunesDatasourceConfig);
+                            itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1225,6 +1249,7 @@ public class MyTunesRssConfig {
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
                             iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             readFileTypes(settings, iphotoDatasourceConfig);
+                            iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         case Aperture:
@@ -1239,6 +1264,7 @@ public class MyTunesRssConfig {
                             }
                             apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             readFileTypes(settings, apertureDatasourceConfig);
+                            apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
                             dataSources.add(apertureDatasourceConfig);
                             break;
                         default:

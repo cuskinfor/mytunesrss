@@ -35,6 +35,7 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     private String myDefinition;
     private String myId;
     private List<FileType> myFileTypes = new ArrayList<FileType>();
+    private long myLastUpdate;
 
     public DatasourceConfig(DatasourceConfig source) {
         myId = source.getId();
@@ -130,4 +131,12 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     }
 
     public abstract List<FileType> getDefaultFileTypes();
+
+    public long getLastUpdate() {
+        return myLastUpdate;
+    }
+
+    public void setLastUpdate(long lastUpdate) {
+        myLastUpdate = lastUpdate;
+    }
 }
