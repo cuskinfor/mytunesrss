@@ -30,10 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
@@ -100,16 +97,27 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
+        final Set<String> removedDatasourceIds = new HashSet<String>(MyTunesRssUtils.toDatasourceIds(MyTunesRss.CONFIG.getDatasources()));
+        removedDatasourceIds.removeAll(MyTunesRssUtils.toDatasourceIds(myConfigs.values()));
         MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
         MyTunesRss.CONFIG.save();
-        DataStoreSession session = MyTunesRss.STORE.getTransaction();
-        try {
-            MyTunesRssUtils.refreshDatasourcePlaylists(session);
-        } catch (SQLException e) {
-            LOGGER.error("Could not refresh datasource playlists.", e);
-        } finally {
-            session.rollback();
-        }
+        // cleanup database in backgoround
+        MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+            public void run() {
+                DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                try {
+                    MyTunesRssUtils.refreshDatasourcePlaylists(session);
+                    if (!removedDatasourceIds.isEmpty()) {
+                        MyTunesRssUtils.removeDataForSources(session, removedDatasourceIds);
+                    }
+                    session.commit();
+                } catch (SQLException e) {
+                    LOGGER.warn("Could not remove obsolete data.", e);
+                } finally {
+                    session.rollback();
+                }
+            }
+        });
     }
 
     private void setTablePageLengths() {

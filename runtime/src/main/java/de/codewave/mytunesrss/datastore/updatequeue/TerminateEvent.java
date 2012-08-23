@@ -17,7 +17,7 @@ public class TerminateEvent extends CheckpointEvent {
         try {
             session.executeStatement(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
-                    MyTunesRssUtils.createStatement(connection, "finishDatabaseUpdate").execute();
+                    MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
                 }
             });
         } catch (SQLException e) {

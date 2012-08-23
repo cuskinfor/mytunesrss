@@ -5,13 +5,13 @@ import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.meta.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -840,5 +840,26 @@ public class MyTunesRssUtils {
 
     public static String toSqlLikeExpression(String text) {
         return text.replace("!", "!!").replace("%", "!%").replace("_", "!_");
+    }
+
+    public static void removeDataForSources(DataStoreSession session, final Set<String> sourceIds) throws SQLException {
+        LOGGER.debug("Removing data for " + sourceIds.size() + " datasource(s).");
+        session.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeDataForSourceIds");
+                statement.setItems("sourceIds", sourceIds);
+                statement.execute();
+            }
+        });
+        LOGGER.debug("Recreating help tables.");
+        session.executeStatement(new RecreateHelpTablesStatement());
+        LOGGER.debug("Removing orphaned images.");
+        session.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
+            }
+        });
+        LOGGER.debug("Updating statistics.");
+        session.executeStatement(new UpdateStatisticsStatement());
     }
 }

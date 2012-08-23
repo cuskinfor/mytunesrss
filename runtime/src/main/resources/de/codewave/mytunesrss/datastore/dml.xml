@@ -523,7 +523,7 @@
         <sql>UPDATE photoalbum SET updated = FALSE</sql>
     </statement>
 
-    <statement name="finishDatabaseUpdate">
+    <statement name="removeOrphanedImages">
         <sql>
             DELETE FROM image
             WHERE NOT EXISTS
@@ -933,6 +933,13 @@
 
     <statement name="getTracksWithMissingImages">
         <sql>SELECT id, file, source, source_id FROM track WHERE image_hash IS NULL AND source_id IN (:sourceIds[])</sql>
+    </statement>
+
+    <statement name="removeDataForSourceIds">
+        <sql>DELETE FROM photoalbum WHERE source_id IN (:sourceIds[])</sql>
+        <sql>DELETE FROM playlist WHERE source_id IN (:sourceIds[])</sql>
+        <sql>DELETE FROM photo WHERE source_id IN (:sourceIds[])</sql>
+        <sql>DELETE FROM track WHERE source_id IN (:sourceIds[])</sql>
     </statement>
 
     <!-- reusable sql fragments -->
