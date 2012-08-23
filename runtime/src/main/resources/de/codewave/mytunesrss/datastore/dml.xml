@@ -523,6 +523,10 @@
         <sql>UPDATE photoalbum SET updated = FALSE</sql>
     </statement>
 
+    <statement name="touchPhotoAlbum">
+        <sql>UPDATE photoalbum SET updated = TRUE WHERE id = :id</sql>
+    </statement>
+
     <statement name="removeOrphanedImages">
         <sql>
             DELETE FROM image

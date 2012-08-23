@@ -22,13 +22,12 @@ import java.util.Collection;
  * de.codewave.mytunesrss.datastore.statement.RemovePhotoStatement
  */
 public class RemovePhotoStatement implements DataStoreStatement {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemovePhotoStatement.class);
 
-    private Collection<String> myTrackIds;
+    private Collection<String> myPhotoIds;
     private Collection<String> myDataSourceIds;
 
-    public RemovePhotoStatement(Collection<String> trackIds, Collection<String> dataSourceIds) {
-        myTrackIds = trackIds;
+    public RemovePhotoStatement(Collection<String> photoIds, Collection<String> dataSourceIds) {
+        myPhotoIds = photoIds;
         myDataSourceIds = dataSourceIds;
     }
 
@@ -37,7 +36,7 @@ public class RemovePhotoStatement implements DataStoreStatement {
         MyTunesRssEventManager.getInstance().fireEvent(event);
         MyTunesRss.LAST_DATABASE_EVENT = event;
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removePhoto");
-        statement.setObject("photo_id", myTrackIds);
+        statement.setObject("photo_id", myPhotoIds);
         statement.setItems("source_id", myDataSourceIds);
         statement.execute();
     }

@@ -23,10 +23,7 @@ import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.TrackMetaData;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.IOUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -99,11 +96,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     if (existing) {
                         myExistingIds.add(fileId);
                     }
+                    FileType type = myDatasourceConfig.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                     if ((file.lastModified() >= myLastUpdateTime || !existing || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
-                        FileType type = myDatasourceConfig.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                         if (type.getMediaType() == MediaType.Image) {
                             insertOrUpdateImage(file, fileId, existing);
                         } else {
@@ -111,6 +108,22 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 return; // early return!!!
                             }
 
+                        }
+                    } else if (type.getMediaType() == MediaType.Image) {
+                        String albumName = getPhotoAlbum(file);
+                        try {
+                            final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
+                            myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
+                                public void execute(Connection connection) throws SQLException {
+                                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "touchPhotoAlbum");
+                                    statement.setString("id", albumId);
+                                    statement.execute();
+                                }
+                            }, true));
+                        } catch (NoSuchAlgorithmException e) {
+                            if (LOGGER.isErrorEnabled()) {
+                                LOGGER.error("Could not create message digest.", e);
+                            }
                         }
                     }
                 }
@@ -122,8 +135,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
-        myTrackIds.removeAll(myExistingIds);
-        myPhotoIds.removeAll(myExistingIds);
     }
 
     private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, FileType type) throws IOException, InterruptedException {

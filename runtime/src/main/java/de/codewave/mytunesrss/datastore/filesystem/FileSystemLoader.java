@@ -38,6 +38,8 @@ public class FileSystemLoader {
                     return file.isDirectory() || (datasource.isIncluded(file) && datasource.isSupported(file.getName()));
                 }
             });
+            trackIds.removeAll(fileProcessor.getExistingIds());
+            photoIds.removeAll(fileProcessor.getExistingIds());
             PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());
             IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                 public boolean accept(File file) {
