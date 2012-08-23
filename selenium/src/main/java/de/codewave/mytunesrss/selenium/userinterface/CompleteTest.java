@@ -163,7 +163,7 @@ public class CompleteTest {
         driver.findElement(By.id("linkBrowsePhotoAlbum")).click();
         driver.findElement(By.id("functionsDialogName0")).click(); // show diddl album
         driver.findElement(By.id("linkPage2")).click();
-        driver.findElement(By.id("imgBshZUqWr0WaK_e3XtjDbYQ")).click(); // show a single photo
+        driver.findElement(By.id("img2")).click(); // show a single photo
         driver.findElement(By.id("leftphotobutton")).click();
         driver.findElement(By.id("leftphotobutton")).click();
         driver.findElement(By.id("rightphotobutton")).click();
