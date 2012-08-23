@@ -1159,12 +1159,6 @@ public class MyTunesRssConfig {
     }
 
     private void readDataSources(JXPathContext settings) {
-        long lastDatabaseUpdate = 0;
-        try {
-            lastDatabaseUpdate = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery()).getLastUpdate();
-        } catch (SQLException e) {
-            LOGGER.warn("Could not get last database update for defaulting missing values of data sources.", e);
-        }
         List<DatasourceConfig> dataSources = new ArrayList<DatasourceConfig>();
         Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
         while (contextIterator.hasNext()) {
@@ -1202,7 +1196,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
                             watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
+                            watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
                             readFileTypes(settings, watchfolderDatasourceConfig);
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
@@ -1232,7 +1226,7 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
                             itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
                             readFileTypes(settings, itunesDatasourceConfig);
-                            itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
+                            itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1249,7 +1243,7 @@ public class MyTunesRssConfig {
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
                             iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             readFileTypes(settings, iphotoDatasourceConfig);
-                            iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
+                            iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         case Aperture:
@@ -1264,7 +1258,7 @@ public class MyTunesRssConfig {
                             }
                             apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             readFileTypes(settings, apertureDatasourceConfig);
-                            apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", lastDatabaseUpdate));
+                            apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
                             dataSources.add(apertureDatasourceConfig);
                             break;
                         default:

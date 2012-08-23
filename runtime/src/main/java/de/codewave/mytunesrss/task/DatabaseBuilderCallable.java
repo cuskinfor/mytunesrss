@@ -246,9 +246,15 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         });
         if (myDatasources != null && !Thread.currentThread().isInterrupted()) {
+            long lastDatabaseUpdate = 0;
+            try {
+                lastDatabaseUpdate = MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery()).getLastUpdate();
+            } catch (SQLException e) {
+                LOGGER.warn("Could not get last database update for defaulting missing values of data sources.", e);
+            }
             try {
                 for (DatasourceConfig datasource : myDatasources) {
-                    long lastUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : datasource.getLastUpdate();
+                    long lastUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : (datasource.getLastUpdate() == 0 ? lastDatabaseUpdate : datasource.getLastUpdate());
                     if (datasource.getType() == DatasourceType.Itunes && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromItunes;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningItunes");
