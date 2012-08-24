@@ -1191,13 +1191,13 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setPhotoAlbumPattern(JXPathUtils.getStringValue(datasourceContext, "photoAlbumPattern", WatchfolderDatasourceConfig.DEFAULT_PHOTO_ALBUM_PATTERN));
                             watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
                             watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
-                            watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(settings, "id3v2-track-comment", ""));
-                            watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", ""));
-                            watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
-                            watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
-                            watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
-                            readFileTypes(settings, watchfolderDatasourceConfig);
+                            watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(datasourceContext, "id3v2-track-comment", ""));
+                            watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
+                            watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(datasourceContext));
+                            watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
+                            watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
+                            readFileTypes(datasourceContext, watchfolderDatasourceConfig);
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1222,11 +1222,11 @@ public class MyTunesRssConfig {
                             }
                             itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
                             itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
-                            itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(settings, "disabled-mp4-codecs", ""));
-                            itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(settings));
-                            itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "track-image-import", ImageImportType.Auto.name())));
-                            readFileTypes(settings, itunesDatasourceConfig);
-                            itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
+                            itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
+                            itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(datasourceContext));
+                            itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
+                            readFileTypes(datasourceContext, itunesDatasourceConfig);
+                            itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1241,9 +1241,9 @@ public class MyTunesRssConfig {
                             }
                             iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
-                            iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            readFileTypes(settings, iphotoDatasourceConfig);
-                            iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
+                            iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            readFileTypes(datasourceContext, iphotoDatasourceConfig);
+                            iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         case Aperture:
@@ -1256,9 +1256,9 @@ public class MyTunesRssConfig {
                                 String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
                                 apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
                             }
-                            apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(settings, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            readFileTypes(settings, apertureDatasourceConfig);
-                            apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(settings, "last-update", 0));
+                            apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                            readFileTypes(datasourceContext, apertureDatasourceConfig);
+                            apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             dataSources.add(apertureDatasourceConfig);
                             break;
                         default:

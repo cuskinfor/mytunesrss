@@ -862,4 +862,12 @@ public class MyTunesRssUtils {
         LOGGER.debug("Updating statistics.");
         session.executeStatement(new UpdateStatisticsStatement());
     }
+
+    public static Collection<DatasourceConfig> deepClone(Collection<DatasourceConfig> datasourceConfigs) {
+        Collection<DatasourceConfig> deepClone = new ArrayList<DatasourceConfig>();
+        for (DatasourceConfig datasourceConfig : datasourceConfigs) {
+            deepClone.add(DatasourceConfig.copy(datasourceConfig));
+        }
+        return deepClone;
+    }
 }

@@ -40,7 +40,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private Table myDatasources;
     private Button myAddLocalDatasource;
-    private Map<Long, DatasourceConfig> myConfigs = new HashMap<Long, DatasourceConfig>();
+    private Map<Long, DatasourceConfig> myConfigs;
 
     public void attach() {
         super.attach();
@@ -67,21 +67,22 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     protected void initFromConfig() {
         myDatasources.removeAllItems();
-        myConfigs.clear();
-        for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
-            addDatasource(datasource);
+        Collection<DatasourceConfig> configs = myConfigs == null ? MyTunesRssUtils.deepClone(MyTunesRss.CONFIG.getDatasources()) : myConfigs.values();
+        myConfigs = new HashMap<Long, DatasourceConfig>();
+        for (DatasourceConfig datasource : configs) {
+            myConfigs.put(addDatasource(datasource), datasource);
         }
         myDatasources.sort();
         setTablePageLengths();
     }
 
-    private void addDatasource(DatasourceConfig datasource) {
+    private long addDatasource(DatasourceConfig datasource) {
         Button editButton = getComponentFactory().createButton("button.edit", this);
         Button deleteButton = getComponentFactory().createButton("button.delete", this);
         Button optionsButton = getComponentFactory().createButton("button.options", this);
         long id = myItemIdGenerator.getAndIncrement();
         myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(datasource.getType())), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
-        myConfigs.put(id, DatasourceConfig.copy(datasource));
+        return id;
     }
 
     private Resource getDatasourceImage(DatasourceType type) {
@@ -122,6 +123,12 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
     private void setTablePageLengths() {
         myDatasources.setPageLength(Math.min(myDatasources.getItemIds().size(), 10));
+    }
+
+    @Override
+    protected boolean beforeReset() {
+        myConfigs = null;
+        return true;
     }
 
     public void buttonClick(final Button.ClickEvent clickEvent) {
@@ -192,7 +199,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                             myConfigs.put((Long) itemId, newConfig);
                         }
                     } else {
-                        addDatasource(newConfig);
+                        myConfigs.put(addDatasource(newConfig), newConfig);
                         setTablePageLengths();
                     }
                 } else {

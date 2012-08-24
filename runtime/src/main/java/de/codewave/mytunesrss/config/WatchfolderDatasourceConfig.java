@@ -65,7 +65,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
         myTrackImageMappings = source.getTrackImageMappings();
         myTrackImageImportType = source.getTrackImageImportType();
-
+        myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
     }
 
     public WatchfolderDatasourceConfig(String id, String definition) {
