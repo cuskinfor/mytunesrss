@@ -1657,8 +1657,8 @@ public class MyTunesRssConfig {
             for (DatasourceConfig dc : getDatasources()) {
                 if (dc.getType() == DatasourceType.Watchfolder) {
                     WatchfolderDatasourceConfig wdc = (WatchfolderDatasourceConfig) dc;
-                    wdc.setAlbumFallback(migrateFallback(wdc.getAlbumFallback()));
-                    wdc.setArtistFallback(migrateFallback(wdc.getArtistFallback()));
+                    wdc.setAlbumFallback(StringUtils.trimToEmpty(migrateFallback(wdc.getAlbumFallback())));
+                    wdc.setArtistFallback(StringUtils.trimToEmpty(migrateFallback(wdc.getArtistFallback())));
                 }
             }
         }
