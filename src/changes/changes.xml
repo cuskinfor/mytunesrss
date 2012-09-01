@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-404] Option to disable VLC (also auto-triggered)
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-399] MacOSX: app seems to hang after startup in headless mode
             </action>
             <action dev="mdescher" type="update">

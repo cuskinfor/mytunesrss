@@ -45,7 +45,6 @@ public class MyTunesRssWebAdmin extends Application {
 
     private ValidatorFactory myValidatorFactory;
 
-
     public void init() {
         myBundle = RESOURCE_BUNDLE_MANAGER.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin", getLocale());
         myComponentFactory = new ComponentFactory(myBundle);

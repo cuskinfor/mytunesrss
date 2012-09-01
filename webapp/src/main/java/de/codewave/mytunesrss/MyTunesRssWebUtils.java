@@ -297,7 +297,7 @@ public class MyTunesRssWebUtils {
     }
 
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
-        if (MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false)) {
+        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false)) {
             boolean notranscode = "true".equals(request.getParameter("notranscode"));
             boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
             User authUser = getAuthUser(request);
@@ -335,7 +335,7 @@ public class MyTunesRssWebUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Checking for HTTP Live Streaming.");
         }
-        if (MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
+        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("HTTP Live Streaming available, user agent is iPhone and media type is video.");
             }

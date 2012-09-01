@@ -26,12 +26,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.*;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class VlcPlayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VlcPlayer.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final int MAX_START_FAILURES = 3;
 
     static {
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
@@ -125,116 +127,133 @@ public class VlcPlayer {
     }
 
     private void init(final HttpResponseStatus status, final int current) throws VlcPlayerException {
-        if ((myWatchdog == null || !myWatchdog.isAlive() ) && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+        if ((myWatchdog == null || !myWatchdog.isAlive()) && MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
             final Semaphore semaphore = new Semaphore(0);
+            final AtomicBoolean startupFailed = new AtomicBoolean(false);
             myWatchdog = new Thread(new Runnable() {
                 public void run() {
-                    while (!Thread.interrupted()) {
-                        LOGGER.debug("Initializing VLC player.");
-                        Process process = null;
-                        try {
-                            // lookup free port
-                            ServerSocket serverSocket = new ServerSocket(0);
-                            myVlcPort = serverSocket.getLocalPort();
-                            serverSocket.close();
-                            // process builder
-                            List<String> command = new ArrayList<String>();
-                            command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
-                            command.add("--intf=http");
-                            command.add("--http-host=" + myVlcHost);
-                            command.add("--http-port=" + myVlcPort);
-                            if (myRaopTargets != null && myRaopTargets.length > 0) {
-                                command.add("--sout-keep");
-                                if (myRaopTargets.length == 1) {
-                                    command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:gather:raop{host=" + myRaopTargets[0] + ",volume=" + ((255 * MyTunesRss.CONFIG.getVlcRaopVolume()) / 100) + "}");
-                                } else {
-                                    StringBuilder builder = new StringBuilder("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:duplicate{");
-                                    for (int i = 0; i < myRaopTargets.length; i++) {
-                                        if (StringUtils.isNotBlank(myRaopTargets[i])) {
-                                            builder.append("dst=gather:raop{host=" + myRaopTargets[i] + ",volume=128}");
-                                        } else {
-                                            builder.append("dst=gather:display");
-                                        }
-                                        if (i + 1 < myRaopTargets.length) {
-                                            builder.append(",");
-                                        }
-                                    }
-                                    builder.append("}");
-                                    command.add(builder.toString());
-                                }
-                            }
-                            ProcessBuilder processBuilder = new ProcessBuilder(command);
-                            processBuilder.redirectErrorStream(true);
-                            LOGGER.info("Starting VLC player: \"" + StringUtils.join(command.toArray(new String[command.size()]), " ") + "\".");
-                            process = processBuilder.start();
-                            MyTunesRss.SPAWNED_PROCESSES.add(process);
-                            new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
-                            myHttpClient = new HttpClient();
-                            for (int i = 0; i < 10; i++) {
-                                try {
-                                    setVolume(status.getPercentageVolume());
-                                    break;
-                                } catch (VlcPlayerException e) {
-                                    if (i == 9) {
-                                        LOGGER.warn("Could not set volume for VLC player.", e);
-                                    }
-                                    try {
-                                        Thread.sleep(1000);
-                                    } catch (InterruptedException ie) {
-                                        Thread.currentThread().interrupt();
-                                        break;
-                                    }
-                                }
-                            }
-                            if (!Thread.currentThread().isInterrupted() && myTracks != null && !myTracks.isEmpty()) {
-                                try {
-                                    setTracks(myTracks);
-                                } catch (VlcPlayerException e) {
-                                    LOGGER.warn("Could not set existing playlist again.", e);
-                                }
-                            }
-                            myCurrent = current;
+                    int startFailures = 0;
+                    try {
+                        while (startFailures < MAX_START_FAILURES && !Thread.interrupted()) {
+                            LOGGER.debug("Initializing VLC player.");
+                            Process process = null;
                             try {
-                                setFullScreen(status.isFullscreen());
-                                if (status.isPaused() || status.isPlaying()) {
+                                // lookup free port
+                                ServerSocket serverSocket = new ServerSocket(0);
+                                myVlcPort = serverSocket.getLocalPort();
+                                serverSocket.close();
+                                // process builder
+                                List<String> command = new ArrayList<String>();
+                                command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
+                                command.add("--xintf=http");
+                                command.add("--xhttp-host=" + myVlcHost);
+                                command.add("--xhttp-port=" + myVlcPort);
+                                if (myRaopTargets != null && myRaopTargets.length > 0) {
+                                    command.add("--sout-keep");
+                                    if (myRaopTargets.length == 1) {
+                                        command.add("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:gather:raop{host=" + myRaopTargets[0] + ",volume=" + ((255 * MyTunesRss.CONFIG.getVlcRaopVolume()) / 100) + "}");
+                                    } else {
+                                        StringBuilder builder = new StringBuilder("--sout=#transcode{acodec=alac,channels=2,samplerate=44100}:duplicate{");
+                                        for (int i = 0; i < myRaopTargets.length; i++) {
+                                            if (StringUtils.isNotBlank(myRaopTargets[i])) {
+                                                builder.append("dst=gather:raop{host=" + myRaopTargets[i] + ",volume=128}");
+                                            } else {
+                                                builder.append("dst=gather:display");
+                                            }
+                                            if (i + 1 < myRaopTargets.length) {
+                                                builder.append(",");
+                                            }
+                                        }
+                                        builder.append("}");
+                                        command.add(builder.toString());
+                                    }
+                                }
+                                ProcessBuilder processBuilder = new ProcessBuilder(command);
+                                processBuilder.redirectErrorStream(true);
+                                LOGGER.info("Starting VLC player: \"" + StringUtils.join(command.toArray(new String[command.size()]), " ") + "\".");
+                                process = processBuilder.start();
+                                MyTunesRss.SPAWNED_PROCESSES.add(process);
+                                new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                                myHttpClient = new HttpClient();
+                                for (int i = 0; isRunning(process) && i < 10; i++) {
                                     try {
-                                        play(myCurrent);
-                                    } catch (IllegalArgumentException e) {
-                                        LOGGER.warn("Could not start playback according to previous state.", e);
+                                        setVolume(status.getPercentageVolume());
+                                        break;
+                                    } catch (VlcPlayerException e) {
+                                        if (i == 9) {
+                                            LOGGER.warn("Could not set volume for VLC player.", e);
+                                        }
+                                        try {
+                                            Thread.sleep(1000);
+                                        } catch (InterruptedException ie) {
+                                            Thread.currentThread().interrupt();
+                                            break;
+                                        }
                                     }
-                                    if (status.getLength() > 0 && status.getTime() > 0) {
-                                        seek((status.getTime() * 100) / status.getLength());
+                                }
+                                if (!Thread.currentThread().isInterrupted() && myTracks != null && !myTracks.isEmpty() && isRunning(process)) {
+                                    try {
+                                        setTracks(myTracks);
+                                    } catch (VlcPlayerException e) {
+                                        LOGGER.warn("Could not set existing playlist again.", e);
                                     }
-                                    pause();
                                 }
-                                if (status.isPlaying()) {
-                                    play(-1);
+                                myCurrent = current;
+                                if (isRunning(process)) {
+                                    try {
+                                        setFullScreen(status.isFullscreen());
+                                        if (status.isPaused() || status.isPlaying()) {
+                                            try {
+                                                play(myCurrent);
+                                            } catch (IllegalArgumentException e) {
+                                                LOGGER.warn("Could not start playback according to previous state.", e);
+                                            }
+                                            if (status.getLength() > 0 && status.getTime() > 0) {
+                                                seek((status.getTime() * 100) / status.getLength());
+                                            }
+                                            pause();
+                                        }
+                                        if (status.isPlaying()) {
+                                            play(-1);
+                                        }
+                                    } catch (VlcPlayerException e) {
+                                        LOGGER.warn("Could not restore old status.", e);
+                                    }
+                                    myStatusUpdater.start();
                                 }
-                            } catch (VlcPlayerException e) {
-                                LOGGER.warn("Could not restore old status.", e);
-                            }
-                            myStatusUpdater.start();
-                            semaphore.release();
-                            if (!Thread.currentThread().isInterrupted()) {
-                                process.waitFor();
-                            }
-                        } catch (IOException e) {
-                            LOGGER.warn("Could not start VLC player.", e);
-                            break;
-                        } catch (InterruptedException e) {
-                            LOGGER.debug("Interrupted while waiting for process to exit.", e);
-                            break;
-                        } finally {
-                            myStatusUpdater.cancel();
-                            if (!Thread.currentThread().isInterrupted()) {
-                                myStatusUpdater = new StatusUpdater();
-                            }
-                            semaphore.release();
-                            if (process != null) {
-                                process.destroy();
-                                MyTunesRss.SPAWNED_PROCESSES.remove(process);
+                                if (!Thread.currentThread().isInterrupted() && isRunning(process)) {
+                                    startFailures = 0;
+                                    LOGGER.debug("Releasing semaphore, waiting for process.");
+                                    semaphore.release();
+                                    process.waitFor();
+                                } else if (!isRunning(process)) {
+                                    startFailures++;
+                                }
+                            } catch (IOException e) {
+                                LOGGER.warn("Could not start VLC player.", e);
+                                startFailures++;
+                                break;
+                            } catch (InterruptedException e) {
+                                LOGGER.debug("Interrupted while waiting for process to exit.", e);
+                                break;
+                            } finally {
+                                myStatusUpdater.cancel();
+                                if (!Thread.currentThread().isInterrupted()) {
+                                    myStatusUpdater = new StatusUpdater();
+                                }
+                                if (process != null) {
+                                    process.destroy();
+                                    MyTunesRss.SPAWNED_PROCESSES.remove(process);
+                                }
                             }
                         }
+                    } finally {
+                        if (startFailures == MAX_START_FAILURES) {
+                            LOGGER.warn("Could not start VLC-Player after " + MAX_START_FAILURES + " attempts.");
+                            startupFailed.set(true);
+                        }
+                        LOGGER.debug("Releasing semaphore.");
+                        semaphore.release();
                     }
                 }
             });
@@ -246,10 +265,23 @@ public class VlcPlayer {
                     notifyAll();
                     wait(1000);
                 }
+                LOGGER.debug("Got semaphore permit!");
             } catch (InterruptedException e) {
                 throw new VlcPlayerException("Interrupted while waiting for VLC player to become initialized.", e);
             }
+            if (startupFailed.get()) {
+                throw new VlcPlayerException("Could not start VLC-Player after " + MAX_START_FAILURES + " attempts.");
+            }
         }
+    }
+
+    private boolean isRunning(Process process) {
+        try {
+            process.exitValue();
+        } catch (IllegalThreadStateException e) {
+            return true;
+        }
+        return false;
     }
 
     public synchronized void destroy() throws VlcPlayerException {

@@ -23,6 +23,7 @@ import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
 import de.codewave.mytunesrss.vlc.VlcPlayer;
+import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -295,7 +296,15 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             MyTunesRssJobUtils.scheduleStatisticEventsJob();
             MyTunesRssJobUtils.scheduleDatabaseJob();
-            MyTunesRss.VLC_PLAYER.init();
+            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                public void run() {
+                    try {
+                        MyTunesRss.VLC_PLAYER.init();
+                    } catch (VlcPlayerException e) {
+                        LOGGER.warn("Could not start VLC-Player.", e);
+                    }
+                }
+            });
         }
         startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {

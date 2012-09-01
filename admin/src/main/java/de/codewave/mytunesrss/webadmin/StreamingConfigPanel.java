@@ -48,27 +48,33 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
     Panel myAddTranscoderButtons;
+    private CheckBox myVlcEnabled;
     private SmartTextField myVlcBinary;
     private Button myVlcBinarySelect;
     private SmartTextField myVlcSocketTimeout;
     private SmartTextField myVlcRaopVolume;
     private Form myVlcForm;
     private Button myVlcHomepageButton;
+    private Button myRestartVlcPlayer;
 
     public void attach() {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+        myVlcEnabled = getComponentFactory().createCheckBox("streamingConfigPanel.vlcEnabled");
         myVlcBinary = getComponentFactory().createTextField("streamingConfigPanel.vlcBinary", new VlcExecutableFileValidator(getBundleString("streamingConfigPanel.vlcBinary.invalidBinary")));
         myVlcBinary.setImmediate(false);
         myVlcBinarySelect = getComponentFactory().createButton("streamingConfigPanel.vlcBinary.select", this);
         myVlcSocketTimeout = getComponentFactory().createTextField("streamingConfigPanel.vlcTimeout", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcTimeout.invalidTimeout", 1, 1000), 1, 1000));
         myVlcRaopVolume = getComponentFactory().createTextField("streamingConfigPanel.vlcRaopVolume", new MinMaxIntegerValidator(getBundleString("streamingConfigPanel.vlcRaopVolume.invalidVolume", 1, 100), 1, 100));
         myVlcHomepageButton = getComponentFactory().createButton("streamingConfigPanel.vlcHomepage", this);
+        myRestartVlcPlayer = getComponentFactory().createButton("streamingConfigPanel.restartVlc", this);
         myVlcForm = getComponentFactory().createForm(null, true);
+        myVlcForm.addField(myVlcEnabled, myVlcEnabled);
         myVlcForm.addField(myVlcBinary, myVlcBinary);
         myVlcForm.addField(myVlcBinarySelect, myVlcBinarySelect);
         myVlcForm.addField(myVlcSocketTimeout, myVlcSocketTimeout);
         myVlcForm.addField(myVlcRaopVolume, myVlcRaopVolume);
+        myVlcForm.addField(myRestartVlcPlayer, myRestartVlcPlayer);
         myVlcForm.addField(myVlcHomepageButton, myVlcHomepageButton);
         Panel vlcPanel = getComponentFactory().surroundWithPanel(myVlcForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.vlc"));
         addComponent(vlcPanel);
@@ -151,6 +157,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         }
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
+        myVlcEnabled.setValue(MyTunesRss.CONFIG.isVlcEnabled());
         myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
         myVlcSocketTimeout.setValue(MyTunesRss.CONFIG.getVlcSocketTimeout());
         myVlcRaopVolume.setValue(MyTunesRss.CONFIG.getVlcRaopVolume());
@@ -186,24 +193,33 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
         String vlcBinary = myVlcBinary.getStringValue(null);
         File vlcExecutable = vlcBinary != null ? new File(vlcBinary) : null;
-        if ((vlcExecutable == null && MyTunesRss.CONFIG.getVlcExecutable() != null) || (vlcExecutable != null && !vlcExecutable.equals(MyTunesRss.CONFIG.getVlcExecutable()))) {
-            try {
-                MyTunesRss.VLC_PLAYER.destroy();
-            } catch (VlcPlayerException e) {
-                LOG.warn("Could not destroy VLC player.");
-            }
-            if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {
-                vlcExecutable = new File(vlcExecutable, "Contents/MacOS/VLC");
-            }
-            MyTunesRss.CONFIG.setVlcExecutable(vlcExecutable);
-            try {
-                MyTunesRss.VLC_PLAYER.init();
-            } catch (VlcPlayerException e) {
-                LOG.warn("Could not initialize VLC player.");
-            }
+        if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {
+            vlcExecutable = new File(vlcExecutable, "Contents/MacOS/VLC");
         }
+        boolean changes = (vlcExecutable == null && MyTunesRss.CONFIG.getVlcExecutable() != null) || (vlcExecutable != null && !vlcExecutable.equals(MyTunesRss.CONFIG.getVlcExecutable()));
+        changes |= (myVlcEnabled.booleanValue() != MyTunesRss.CONFIG.isVlcEnabled());
+        changes |= myVlcSocketTimeout.getIntegerValue(5) != MyTunesRss.CONFIG.getVlcSocketTimeout();
+        changes |= myVlcRaopVolume.getIntegerValue(75) != MyTunesRss.CONFIG.getVlcRaopVolume();
+        MyTunesRss.CONFIG.setVlcExecutable(vlcExecutable);
+        MyTunesRss.CONFIG.setVlcEnabled(myVlcEnabled.booleanValue());
         MyTunesRss.CONFIG.setVlcSocketTimeout(myVlcSocketTimeout.getIntegerValue(5));
         MyTunesRss.CONFIG.setVlcRaopVolume(myVlcRaopVolume.getIntegerValue(75));
+        if (changes) {
+            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                public void run() {
+                    try {
+                        MyTunesRss.VLC_PLAYER.destroy();
+                    } catch (VlcPlayerException e) {
+                        LOG.warn("Could not destroy VLC player.");
+                    }
+                    try {
+                        MyTunesRss.VLC_PLAYER.init();
+                    } catch (VlcPlayerException e) {
+                        LOG.warn("Could not initialize VLC player.");
+                    }
+                }
+            });
+        }
         MyTunesRss.CONFIG.save();
     }
 
@@ -302,6 +318,23 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myVlcHomepageButton) {
             getWindow().open(new ExternalResource("http://www.videolan.org"));
+        } else if (clickEvent.getButton() == myRestartVlcPlayer) {
+            if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("streamingConfigPanel.error.restartingVlc");
+                MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                    public void run() {
+                        try {
+                            MyTunesRss.VLC_PLAYER.destroy();
+                            MyTunesRss.VLC_PLAYER.init();
+                        } catch (VlcPlayerException e) {
+                            LOG.warn("Could not restart VLC player.", e);
+                            ((MainWindow) VaadinUtils.getApplicationWindow(StreamingConfigPanel.this)).showError("streamingConfigPanel.error.vlcRestartFailed");
+                        }
+                    }
+                });
+            } else {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("streamingConfigPanel.error.cannotRestartVlc");
+            }
         } else if (clickEvent.getButton() == myVlcBinarySelect) {
             File dir = StringUtils.isNotBlank((String) myVlcBinary.getValue()) ? new File((String) myVlcBinary.getValue()) : null;
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.caption.selectVlcBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
