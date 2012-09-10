@@ -20,6 +20,7 @@ import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.config.PlaylistFileType;
 import de.codewave.mytunesrss.network.MyTunesRssHttpClient;
 import de.codewave.utils.io.FileProcessor;
+import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -27,6 +28,7 @@ import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -124,6 +126,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myFlashPlayersTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.flash.name"), null, null);
         myFlashPlayersTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myFlashPlayersTable.addContainerProperty("delete", Button.class, null, "", null, null);
+        myFlashPlayersTable.addContainerProperty("download", Button.class, null, "", null, null);
         flashPlayersPanel.addComponent(myFlashPlayersTable);
         myAddFlashPlayer = getComponentFactory().createButton("addonsConfigPanel.addFlashPlayer", this);
         myRestoreDefaultJukeboxes = getComponentFactory().createButton("addonsConfigPanel.restoreDefaultJukeboxes", this);
@@ -158,7 +161,12 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         List<FlashPlayerConfig> flashPlayers = new ArrayList<FlashPlayerConfig>(MyTunesRss.CONFIG.getFlashPlayers());
         Collections.sort(flashPlayers);
         for (FlashPlayerConfig flashPlayer : flashPlayers) {
-            myFlashPlayersTable.addItem(new Object[]{flashPlayer.getName(), createTableRowButton("button.edit", this, flashPlayer.getId(), "EditPlayer"), createTableRowButton("button.delete", this, flashPlayer.getId(), "DeletePlayer")}, flashPlayer.getId());
+            File jukeboxDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer/" + flashPlayer.getId());
+            Button downloadButton = null;
+            if (jukeboxDir.isDirectory()) {
+                downloadButton = createTableRowButton("button.download", this, flashPlayer.getId(), "DownloadPlayer");
+            }
+            myFlashPlayersTable.addItem(new Object[]{flashPlayer.getName(), createTableRowButton("button.edit", this, flashPlayer.getId(), "EditPlayer"), createTableRowButton("button.delete", this, flashPlayer.getId(), "DeletePlayer"), downloadButton}, flashPlayer.getId());
         }
     }
 
@@ -278,6 +286,13 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, MyTunesRss.CONFIG.getFlashPlayer((String) tableRowButton.getItemId()));
                 SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
                 flashPlayerEditWindow.show(getWindow());
+            } else if ("DownloadPlayer".equals(tableRowButton.getData())) {
+                FlashPlayerConfig flashPlayerConfig = MyTunesRss.CONFIG.getFlashPlayer((String) tableRowButton.getItemId());
+                try {
+                    sendJukebox(flashPlayerConfig);
+                } catch (IOException e) {
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.jukeboxDownloadFailed", e.getMessage());
+                }
             } else if ("DefaultTheme".equals(tableRowButton.getData())) {
                 String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
                 MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
@@ -362,7 +377,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             setTablePageLengths();
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.defaultJukeboxesRestored");
         } else if (clickEvent.getSource() == myAddFlashPlayer) {
-            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", FlashPlayerConfig.DEFAULT_HTML, PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS));
+            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS));
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
             flashPlayerEditWindow.show(getWindow());
         } else if (clickEvent.getSource() == myAddLanguage) {
@@ -445,6 +460,23 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 return new ByteArrayInputStream(baos.toByteArray());
             }
         }, baseName + ".zip", getApplication());
+        getWindow().open(streamResource);
+    }
+
+    private void sendJukebox(FlashPlayerConfig flashPlayerConfig) throws IOException {
+        File jukeboxDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer/" + flashPlayerConfig.getId());
+        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(baos);
+        try {
+            ZipUtils.addFilesToZipRecursively("", jukeboxDir, null, zipOutputStream);
+        } finally {
+            zipOutputStream.close();
+        }
+        Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
+            public InputStream getStream() {
+                return new ByteArrayInputStream(baos.toByteArray());
+            }
+        }, flashPlayerConfig.getName() + ".zip", getApplication());
         getWindow().open(streamResource);
     }
 

@@ -20,14 +20,10 @@ import java.util.concurrent.TimeUnit;
 public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneable {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerConfig.class);
 
-    public static final String DEFAULT_PRE = "<html><head><title>MyTunesRSS Jukebox</title></head><body style=\"padding:0 0 0 0; margin:0 0 0 0\">";
-    public static final String DEFAULT_POST = "</body></html>";
-    public static final String DEFAULT_HTML = DEFAULT_PRE + "\n" + DEFAULT_POST;
-
-    public static final FlashPlayerConfig JW316 = new FlashPlayerConfig("mytunesrss_jwmediaplayer316", "JW Media Player 3.16", DEFAULT_PRE + "<embed src=\"mediaplayer-3-16.swf\" width=\"600\" height=\"450\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;autostart=true&amp;repeat=list\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 450, TimeUnit.SECONDS);
-    public static final FlashPlayerConfig JW46 = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", DEFAULT_PRE + "<embed src=\"mediaplayer-4-6.swf\" width=\"600\" height=\"276\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
-    public static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", DEFAULT_PRE + "<embed src=\"mediaplayer-4-6.swf\" width=\"600\" height=\"276\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"file={PLAYLIST_URL}&amp;linktarget=_blank&amp;playlist=right&amp;autostart=true&amp;playlistsize=350&amp;repeat=list&amp;shuffle=true\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
-    public static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", DEFAULT_PRE + "<embed src=\"xspf_player.swf?autoplay=true&amp;autoload=true&amp;playlist_url={PLAYLIST_URL}\" width=\"600\" height=\"450\" allowscriptaccess=\"always\" allowfullscreen=\"true\" flashvars=\"displaywidth=256\"/>" + DEFAULT_POST, PlaylistFileType.Xspf, 600, 450, TimeUnit.MILLISECONDS);
+    public static final FlashPlayerConfig JW316 = new FlashPlayerConfig("mytunesrss_jwmediaplayer316", "JW Media Player 3.16", PlaylistFileType.Xspf, 600, 450, TimeUnit.SECONDS);
+    public static final FlashPlayerConfig JW46 = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
+    public static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
+    public static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", PlaylistFileType.Xspf, 600, 450, TimeUnit.MILLISECONDS);
 
     public static final FlashPlayerConfig ABSOLUTE_DEFAULT = JW46;
 
@@ -74,16 +70,14 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
 
     private String myId;
     private String myName;
-    private String myHtml;
     private PlaylistFileType myPlaylistFileType;
     private int myWidth;
     private int myHeight;
     private TimeUnit myTimeUnit;
 
-    public FlashPlayerConfig(String id, String name, String html, PlaylistFileType playlistFileType, int width, int height, TimeUnit timeUnit) {
+    public FlashPlayerConfig(String id, String name, PlaylistFileType playlistFileType, int width, int height, TimeUnit timeUnit) {
         myId = id;
         myName = name;
-        myHtml = html;
         myPlaylistFileType = playlistFileType;
         myWidth = width;
         myHeight = height;
@@ -104,14 +98,6 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
 
     public void setName(String name) {
         myName = name;
-    }
-
-    public String getHtml() {
-        return myHtml;
-    }
-
-    public void setHtml(String html) {
-        myHtml = html;
     }
 
     public PlaylistFileType getPlaylistFileType() {
@@ -175,7 +161,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
 
     @Override
     public Object clone() {
-        return new FlashPlayerConfig(myId, myName, myHtml, myPlaylistFileType, myWidth, myHeight, myTimeUnit);
+        return new FlashPlayerConfig(myId, myName, myPlaylistFileType, myWidth, myHeight, myTimeUnit);
     }
 
     public File getBaseDir() throws IOException {

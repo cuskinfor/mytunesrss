@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLConnection;
 
 /**
@@ -26,11 +27,7 @@ import java.net.URLConnection;
 public class FlashPlayerServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(FlashPlayerServlet.class);
 
-    protected File getFile(HttpServletRequest httpServletRequest) {
-        String resourcePath = httpServletRequest.getRequestURI().substring(StringUtils.trimToEmpty(httpServletRequest.getContextPath()).length());
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Flash player file \"" + httpServletRequest.getPathInfo() + "\" requested.");
-        }
+    protected File getFile(String resourcePath) {
         File file = new File(MyTunesRss.PREFERENCES_DATA_PATH + resourcePath);
         if (file.exists()) {
             return file;
@@ -45,14 +42,24 @@ public class FlashPlayerServlet extends HttpServlet {
     protected void doGet(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         String[] pathInfo = StringUtils.split(httpServletRequest.getPathInfo(), "/");
         if (pathInfo.length == 1) {
-            FlashPlayerConfig playerConfig = MyTunesRss.CONFIG.getFlashPlayer(pathInfo[0]);
-            if (playerConfig == null) {
-                playerConfig = FlashPlayerConfig.getDefault();
+            String resourcePath = "/flashplayer/" + pathInfo[0] + "/index.html";
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Flash player file \"" + resourcePath + "\" requested.");
             }
             httpServletResponse.setContentType("text/html");
-            httpServletResponse.getWriter().println(playerConfig.getHtml().replace("{PLAYLIST_URL}", httpServletRequest.getParameter("url")));
+            InputStream htmlInputStream = new FileInputStream(getFile(resourcePath));
+            try {
+                String html = IOUtils.toString(htmlInputStream);
+                httpServletResponse.getWriter().println(html.replace("{PLAYLIST_URL}", httpServletRequest.getParameter("url")));
+            } finally {
+                htmlInputStream.close();
+            }
         } else {
-            File file = getFile(httpServletRequest);
+            String resourcePath = httpServletRequest.getRequestURI().substring(StringUtils.trimToEmpty(httpServletRequest.getContextPath()).length());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Flash player file \"" + httpServletRequest.getPathInfo() + "\" requested.");
+            }
+            File file = getFile(resourcePath);
             String contentType = URLConnection.guessContentTypeFromName(file.getName());
             if (StringUtils.isBlank(contentType) && StringUtils.endsWithIgnoreCase(file.getName(), ".swf")) {
                 contentType = "application/x-shockwave-flash"; // special handling

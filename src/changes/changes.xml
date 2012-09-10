@@ -9,6 +9,9 @@
 
         <release version="4.5" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-406] Jukebox refactoring
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-405] Check log configuration
             </action>
             <action dev="mdescher" type="update">

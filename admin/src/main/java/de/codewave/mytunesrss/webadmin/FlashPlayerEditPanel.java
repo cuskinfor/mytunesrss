@@ -10,6 +10,7 @@ import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,7 +57,6 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     private FlashPlayerConfig myFlashPlayerConfig;
     private Form myForm;
     private SmartTextField myName;
-    private SmartTextField myHtml;
     private Select myFileType;
     private Select myTimeUnit;
     private SmartTextField myWidth;
@@ -87,10 +87,6 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         });
         setRequired(myName);
         myForm.addField("name", myName);
-        myHtml = getComponentFactory().createTextField("flashPlayerEditPanel.html");
-        setRequired(myHtml);
-        myHtml.setRows(10);
-        myForm.addField("html", myHtml);
         myFileType = getComponentFactory().createSelect("flashPlayerEditPanel.filetype", Arrays.asList(PlaylistFileType.Xspf, PlaylistFileType.M3u, PlaylistFileType.Json));
         myForm.addField("filetype", myFileType);
         myTimeUnitWrappers = Arrays.asList(new TimeUnitWrapper(TimeUnit.SECONDS, getBundleString("flashPlayerEditPanel.timeunit.seconds")), new TimeUnitWrapper(TimeUnit.MILLISECONDS, getBundleString("flashPlayerEditPanel.timeunit.milliseconds")));
@@ -123,7 +119,6 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     @Override
     protected void writeToConfig() {
         myFlashPlayerConfig.setName(myName.getStringValue("Unknown player"));
-        myFlashPlayerConfig.setHtml(myHtml.getStringValue("<!-- missing flash player html -->"));
         myFlashPlayerConfig.setPlaylistFileType((PlaylistFileType) myFileType.getValue());
         myFlashPlayerConfig.setTimeUnit(((TimeUnitWrapper)myTimeUnit.getValue()).getTimeUnit());
         myFlashPlayerConfig.setWidth(myWidth.getIntegerValue(640));
@@ -135,7 +130,6 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     @Override
     protected void initFromConfig() {
         myName.setValue(myFlashPlayerConfig.getName());
-        myHtml.setValue(myFlashPlayerConfig.getHtml());
         myFileType.setValue(myFlashPlayerConfig.getPlaylistFileType());
         for (TimeUnitWrapper wrapper : myTimeUnitWrappers) {
             if (wrapper.getTimeUnit().equals(myFlashPlayerConfig.getTimeUnit())) {
@@ -196,9 +190,13 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             if (event.getFilename().toLowerCase().endsWith(".zip")) {
                 if (!ZipUtils.unzip(uploadFile, targetDir)) {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.extractFailed");
+                } else {
+                    if (!new File(targetDir, "index.html").isFile()) {
+                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.invalidArchive");
+                    }
                 }
             } else {
-                FileUtils.copyFileToDirectory(uploadFile, targetDir);
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.invalidArchive");
             }
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {

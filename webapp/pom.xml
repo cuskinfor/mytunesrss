@@ -83,10 +83,10 @@
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.openid4java</groupId>
             <artifactId>openid4java-consumer</artifactId>
