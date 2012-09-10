@@ -10,9 +10,11 @@
     </appender>
     <logger name="org.apache.commons.httpclient.HttpMethodDirector" additivity="false">
         <level value="error"/>
+        <appender-ref ref="console" />
     </logger>
     <logger name="de.codewave.mytunesrss.servlet.resteasyfix" additivity="false">
         <level value="error"/>
+        <appender-ref ref="console" />
     </logger>
     <root>
         <level value="error"/>
