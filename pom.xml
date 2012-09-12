@@ -108,6 +108,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
+                                    <skip>${launch4j.skip}</skip>
                                     <executable>java</executable>
                                     <commandlineArgs>-jar etc/launch4j-${launch4j-suffix}/launch4j.jar etc/launch4j.xml</commandlineArgs>
                                 </configuration>
@@ -119,6 +120,7 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
+                                    <skip>${launch4j.skip}</skip>
                                     <executable>java</executable>
                                     <commandlineArgs>-jar etc/launch4j-${launch4j-suffix}/launch4j.jar etc/launch4j-jre.xml</commandlineArgs>
                                 </configuration>
@@ -174,6 +176,7 @@
                 </os>
             </activation>
             <properties>
+                <launch4j-skip>true</launch4j-skip>
                 <launch4j-suffix>windows</launch4j-suffix>
                 <macosx.codesign.skip>true</macosx.codesign.skip>
             </properties>
@@ -186,6 +189,7 @@
                 </os>
             </activation>
             <properties>
+                <launch4j-skip>false</launch4j-skip>
                 <launch4j-suffix>linux</launch4j-suffix>
                 <macosx.codesign.skip>true</macosx.codesign.skip>
             </properties>
@@ -198,6 +202,7 @@
                 </os>
             </activation>
             <properties>
+                <launch4j-skip>false</launch4j-skip>
                 <launch4j-suffix>macosx</launch4j-suffix>
                 <macosx.codesign.skip>false</macosx.codesign.skip>
             </properties>
