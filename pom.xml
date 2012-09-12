@@ -87,7 +87,6 @@
                                         <descriptor>src/assembly/macosx.xml</descriptor>
                                         <descriptor>src/assembly/system-independent.xml</descriptor>
                                         <descriptor>src/assembly/windows.xml</descriptor>
-                                        <!--descriptor>src/assembly/yoics.xml</descriptor-->
                                     </descriptors>
                                 </configuration>
                                 <goals>
@@ -108,7 +107,6 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>${launch4j.skip}</skip>
                                     <executable>java</executable>
                                     <commandlineArgs>-jar etc/launch4j-${launch4j-suffix}/launch4j.jar etc/launch4j.xml</commandlineArgs>
                                 </configuration>
@@ -120,7 +118,6 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>${launch4j.skip}</skip>
                                     <executable>java</executable>
                                     <commandlineArgs>-jar etc/launch4j-${launch4j-suffix}/launch4j.jar etc/launch4j-jre.xml</commandlineArgs>
                                 </configuration>
@@ -132,7 +129,6 @@
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
-                                    <skip>${macosx.codesign.skip}</skip>
                                     <executable>sh</executable>
                                     <commandlineArgs>etc/macosx-codesign.sh</commandlineArgs>
                                 </configuration>
@@ -167,45 +163,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>os-windows</id>
-            <activation>
-                <os>
-                    <family>windows</family>
-                </os>
-            </activation>
-            <properties>
-                <launch4j-skip>true</launch4j-skip>
-                <launch4j-suffix>windows</launch4j-suffix>
-                <macosx.codesign.skip>true</macosx.codesign.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>os-unix</id>
-            <activation>
-                <os>
-                    <family>unix</family>
-                </os>
-            </activation>
-            <properties>
-                <launch4j-skip>false</launch4j-skip>
-                <launch4j-suffix>linux</launch4j-suffix>
-                <macosx.codesign.skip>true</macosx.codesign.skip>
-            </properties>
-        </profile>
-        <profile>
-            <id>os-mac</id>
-            <activation>
-                <os>
-                    <family>mac</family>
-                </os>
-            </activation>
-            <properties>
-                <launch4j-skip>false</launch4j-skip>
-                <launch4j-suffix>macosx</launch4j-suffix>
-                <macosx.codesign.skip>false</macosx.codesign.skip>
-            </properties>
         </profile>
     </profiles>
 </project>
