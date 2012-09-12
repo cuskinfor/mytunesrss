@@ -10,8 +10,6 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
-import de.codewave.mytunesrss.remote.Session;
 import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;

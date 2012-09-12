@@ -17,7 +17,6 @@ import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.task.DatabaseBuilderCallable;

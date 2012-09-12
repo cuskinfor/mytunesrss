@@ -3,14 +3,14 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.remote.service;
+package de.codewave.mytunesrss.remotecontrol;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.remote.MyTunesRssRemoteEnv;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.vlc.HttpResponseStatus;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
@@ -22,8 +22,8 @@ import java.util.List;
 
 public class VlcPlayerRemoteController implements RemoteController {
 
-    public void loadPlaylist(String playlistId) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(MyTunesRssRemoteEnv.getSession().getUser(), playlistId, SortOrder.KeepOrder);
+    public void loadPlaylist(User user, String playlistId) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
         loadItems(query);
     }
 
@@ -37,18 +37,18 @@ public class VlcPlayerRemoteController implements RemoteController {
         MyTunesRss.VLC_PLAYER.addTracks(tracks, startPlaybackIfStopped);
     }
 
-    public void loadAlbum(String albumName, String albumArtistName) throws SQLException, VlcPlayerException { // TODO album artist
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
+    public void loadAlbum(User user, String albumName, String albumArtistName) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(user, new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
         loadItems(query);
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForArtist(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{artistName}, SortOrder.Album);
+    public void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         loadItems(query);
     }
 
-    public void loadGenre(String genreName) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(MyTunesRssRemoteEnv.getSession().getUser(), new String[]{genreName}, SortOrder.Album);
+    public void loadGenre(User user, String genreName) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
         loadItems(query);
     }
 

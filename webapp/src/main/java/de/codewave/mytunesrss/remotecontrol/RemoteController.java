@@ -1,17 +1,23 @@
-package de.codewave.mytunesrss.remote.service;
+/*
+ * Copyright (c) 2012. Codewave Software Michael Descher.
+ * All rights reserved.
+ */
 
+package de.codewave.mytunesrss.remotecontrol;
+
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 
 import java.util.List;
 
 public interface RemoteController {
-    void loadPlaylist(String playlistId) throws Exception;
+    void loadPlaylist(User user, String playlistId) throws Exception;
 
-    void loadAlbum(String albumName, String albumArtistName) throws Exception;
+    void loadAlbum(User user, String albumName, String albumArtistName) throws Exception;
 
-    void loadArtist(String artistName, boolean fullAlbums) throws Exception;
+    void loadArtist(User user, String artistName, boolean fullAlbums) throws Exception;
 
-    void loadGenre(String genreName) throws Exception;
+    void loadGenre(User user, String genreName) throws Exception;
 
     void loadTracks(String[] trackIds) throws Exception;
 

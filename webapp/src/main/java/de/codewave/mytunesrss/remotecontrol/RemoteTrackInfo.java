@@ -1,8 +1,10 @@
-package de.codewave.mytunesrss.remote.service;
-
-/**
- * de.codewave.mytunesrss.remote.service.RemoteTrackInfo
+/*
+ * Copyright (c) 2012. Codewave Software Michael Descher.
+ * All rights reserved.
  */
+
+package de.codewave.mytunesrss.remotecontrol;
+
 public class RemoteTrackInfo {
     private int myCurrentTrack;
     private int myLength = -1;

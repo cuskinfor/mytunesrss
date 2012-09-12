@@ -6,10 +6,10 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.remote.service.NoopRemoteController;
-import de.codewave.mytunesrss.remote.service.RemoteController;
-import de.codewave.mytunesrss.remote.service.RemoteTrackInfo;
-import de.codewave.mytunesrss.remote.service.VlcPlayerRemoteController;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.remotecontrol.NoopRemoteController;
+import de.codewave.mytunesrss.remotecontrol.RemoteController;
+import de.codewave.mytunesrss.remotecontrol.VlcPlayerRemoteController;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
@@ -66,13 +66,13 @@ public class MediaPlayerResource extends RestResource {
             @FormParam("track") String[] tracks
     ) throws Exception {
         if (StringUtils.isNotBlank(playlist)) {
-            getController().loadPlaylist(playlist);
+            getController().loadPlaylist(MyTunesRssWebUtils.getAuthUser(request), playlist);
         } else if (StringUtils.isNotBlank(album)) {
-            getController().loadAlbum(album, albumArtist);
+            getController().loadAlbum(MyTunesRssWebUtils.getAuthUser(request), album, albumArtist);
         } else if (StringUtils.isNotBlank(artist)) {
-            getController().loadArtist(artist, false);
+            getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false);
         } else if (StringUtils.isNotBlank(genre)) {
-            getController().loadGenre(genre);
+            getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(tracks);
         }

@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.5" date="___D___">
+            <action dev="mdescher" type="remove">
+                Removed all JSON- and XML-RPC APIs.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-406] Jukebox refactoring
             </action>

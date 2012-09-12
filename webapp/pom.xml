@@ -72,14 +72,6 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.apache.xmlrpc</groupId>
-            <artifactId>xmlrpc-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>jabsorb</groupId>
-            <artifactId>jabsorb</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
         </dependency>

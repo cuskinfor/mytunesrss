@@ -53,12 +53,6 @@
         <param-name>sessionInfoClass</param-name>
         <param-value>de.codewave.mytunesrss.server.MyTunesRssSessionInfo</param-value>
     </context-param>
-    <!-- Listener for remote API session manager initialization -->
-    <listener>
-        <description>Remote API session manager</description>
-        <display-name>RemoteApiSessionManager</display-name>
-        <listener-class>de.codewave.mytunesrss.remote.RemoteApiSessionManager</listener-class>
-    </listener>
     <!-- Filter for setting the request encoding to UTF-8 if none has been specified -->
     <filter>
         <description>Filter for setting the request encoding.</description>
@@ -102,25 +96,10 @@
         <filter-name>TransactionFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.TransactionFilter</filter-class>
     </filter>
-    <!-- Filter for handling the JSONP parameter -->
-    <filter>
-        <filter-name>JsonpFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.remote.JsonpFilter</filter-class>
-    </filter>
-    <!-- Filter which converts a GET request with the BODY parameter into a POST request -->
-    <filter>
-        <filter-name>PostViaGetFilter</filter-name>
-        <filter-class>de.codewave.mytunesrss.remote.PostViaGetFilter</filter-class>
-    </filter>
     <!-- Filter for compressing the response -->
     <filter>
         <filter-name>CompressingFilter</filter-name>
         <filter-class>de.codewave.utils.servlet.GzipFilter</filter-class>
-        <!--filter-class>com.planetj.servlet.filter.compression.CompressingFilter</filter-class-->
-        <init-param>
-            <param-name>debug</param-name>
-            <param-value>true</param-value>
-        </init-param>
     </filter>
     <!-- Filter mappings -->
     <filter-mapping>
@@ -154,14 +133,6 @@
     <filter-mapping>
         <filter-name>CompressingFilter</filter-name>
         <url-pattern>/xmlrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>JsonpFilter</filter-name>
-        <url-pattern>/jsonrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>PostViaGetFilter</filter-name>
-        <url-pattern>/jsonrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
@@ -198,22 +169,6 @@
         <servlet-class>de.codewave.mytunesrss.servlet.FlashPlayerServlet</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>XmlRpcServlet</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssXmlRpcServlet</servlet-class>
-        <init-param>
-            <param-name>enabledForExceptions</param-name>
-            <param-value>false</param-value>
-        </init-param>
-    </servlet>
-    <servlet>
-        <servlet-name>JsonRpcServlet</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.remote.MyTunesRssJsonRpcServlet</servlet-class>
-        <init-param>
-            <param-name>gzip_threshold</param-name>
-            <param-value>-1</param-value>
-        </init-param>
-    </servlet>
-    <servlet>
         <servlet-name>resteasy</servlet-name>
         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
     </servlet>
@@ -232,14 +187,6 @@
     <servlet-mapping>
         <servlet-name>FlashPlayerServlet</servlet-name>
         <url-pattern>/flashplayer/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>XmlRpcServlet</servlet-name>
-        <url-pattern>/xmlrpc/*</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>JsonRpcServlet</servlet-name>
-        <url-pattern>/jsonrpc/*</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>resteasy</servlet-name>

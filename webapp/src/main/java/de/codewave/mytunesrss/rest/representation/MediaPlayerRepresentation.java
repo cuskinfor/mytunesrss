@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.rest.representation;
 
-import de.codewave.mytunesrss.remote.service.RemoteTrackInfo;
+import de.codewave.mytunesrss.remotecontrol.RemoteTrackInfo;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;

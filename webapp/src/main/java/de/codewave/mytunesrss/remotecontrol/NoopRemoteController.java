@@ -1,27 +1,30 @@
-package de.codewave.mytunesrss.remote.service;
+/*
+ * Copyright (c) 2012. Codewave Software Michael Descher.
+ * All rights reserved.
+ */
 
+package de.codewave.mytunesrss.remotecontrol;
+
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 
 import java.util.Collections;
 import java.util.List;
 
-/**
- * de.codewave.mytunesrss.remote.service.NoopRemoteController
- */
 public class NoopRemoteController implements RemoteController {
-    public void loadPlaylist(String playlistId) {
+    public void loadPlaylist(User user, String playlistId) {
         // intentionally left blank
     }
 
-    public void loadAlbum(String albumName, String albumArtistName) {
+    public void loadAlbum(User user, String albumName, String albumArtistName) {
         // intentionally left blank
     }
 
-    public void loadArtist(String artistName, boolean fullAlbums) {
+    public void loadArtist(User user, String artistName, boolean fullAlbums) {
         // intentionally left blank
     }
 
-    public void loadGenre(String genreName) {
+    public void loadGenre(User user, String genreName) {
         // intentionally left blank
     }
 
