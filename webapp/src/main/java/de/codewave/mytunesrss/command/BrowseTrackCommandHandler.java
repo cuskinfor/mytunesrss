@@ -61,7 +61,6 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             } else {
                 query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
             }
-            getRequest().setAttribute("sortOrder", sortOrderName);
             List<TrackUtils.EnhancedTrack> tracks = null;
             if (query != null) {
                 DataStoreQuery.QueryResult<Track> result = getTransaction().executeQuery(query);
@@ -103,6 +102,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                                                                                                                                 false,
                                                                                                                                 true));
                 getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());
+                getRequest().setAttribute("sortOrder", sortOrderValue.name());
                 forward(MyTunesRssResource.BrowseTrack);
             }
         } else {
