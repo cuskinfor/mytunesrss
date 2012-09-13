@@ -108,7 +108,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>java</executable>
-                                    <commandlineArgs>-jar etc/launch4j-${launch4j-suffix}/launch4j.jar etc/launch4j.xml</commandlineArgs>
+                                    <commandlineArgs>-jar etc/launch4j/launch4j.jar etc/launch4j.xml</commandlineArgs>
                                 </configuration>
                             </execution>
                             <execution>
@@ -119,7 +119,7 @@
                                 </goals>
                                 <configuration>
                                     <executable>java</executable>
-                                    <commandlineArgs>-jar etc/launch4j-${launch4j-suffix}/launch4j.jar etc/launch4j-jre.xml</commandlineArgs>
+                                    <commandlineArgs>-jar etc/launch4j/launch4j.jar etc/launch4j-jre.xml</commandlineArgs>
                                 </configuration>
                             </execution>
                             <execution>
