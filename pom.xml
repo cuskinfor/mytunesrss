@@ -76,8 +76,7 @@
             <id>teamcity</id>
             <activation>
                 <property>
-                    <name>teamcity</name>
-                    <value>true</value>
+                    <name>teamcity.version</name>
                 </property>
             </activation>
             <build>
