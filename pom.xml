@@ -73,6 +73,36 @@
     </dependencies>
     <profiles>
         <profile>
+            <id>teamcity</id>
+            <activation>
+                <property>
+                    <name>teamcity</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+                                    <descriptors>
+                                        <descriptor>src/assembly/system-independent.xml</descriptor>
+                                    </descriptors>
+                                </configuration>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
             <id>release</id>
             <build>
                 <plugins>
@@ -90,7 +120,7 @@
                                     </descriptors>
                                 </configuration>
                                 <goals>
-                                    <goal>attached</goal>
+                                    <goal>single</goal>
                                 </goals>
                             </execution>
                         </executions>
