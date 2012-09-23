@@ -244,7 +244,7 @@ public class LibraryResource extends RestResource {
             representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name));
             if (imageHashPerShow.containsKey(name)) {
                 representation.setImageHash(StringUtils.trimToNull(imageHashPerShow.get(name)));
-                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + imageHashPerShow.get(name)));
+                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + imageHashPerShow.get(name))));
             }
             shows.add(representation);
         }

@@ -121,7 +121,7 @@ public class RestResource {
             }
             representation.setTagsUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
             if (MyTunesRssWebUtils.getAuthUser(request).isDownload()) {
-                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, "playlist=" + playlist.getId(), fn(playlist, "zip")));
+                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "playlist=" + playlist.getId()), fn(playlist, "zip")));
             }
         }
         return representation;
@@ -138,15 +138,15 @@ public class RestResource {
     protected TrackRepresentation toTrackRepresentation(UriInfo uriInfo, HttpServletRequest request, Track track) {
         TrackRepresentation representation = new TrackRepresentation(track);
         if (StringUtils.isNotBlank(track.getImageHash())) {
-            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + track.getImageHash()));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + track.getImageHash())));
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
-            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=M3u", fn(track, "m3u")));
-            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, "track=" + track.getId(), "type=Xspf", fn(track, "xspf")));
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=M3u"), fn(track, "m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=Xspf"), fn(track, "xspf")));
         }
         if (user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, "track=" + track.getId(), fn(track, "rss")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "track=" + track.getId()), fn(track, "rss")));
         }
         request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(request)); // prepare MyTunesFunctions
         if (user.isDownload()) {
@@ -171,7 +171,7 @@ public class RestResource {
             uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(request, "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
         }
         for (String path : paths) {
-            uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(request, path));
+            uriBuilder.path(path);
         }
         return uriBuilder.build();
     }

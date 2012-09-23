@@ -59,14 +59,14 @@ public class PhotoAlbumResource extends RestResource {
         for (Photo photo : photos.getResults(first, count)) {
             PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
             if (StringUtils.isNotBlank(photo.getImageHash())) {
-                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "hash=" + photo.getImageHash()));
+                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + photo.getImageHash())));
             } else {
-                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, "photoId=" + photo.getId()));
+                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "photoId=" + photo.getId())));
             }
             if (photoSize != null) {
-                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, "photo=" + photo.getId(), "size=" + photoSize));
+                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + photo.getId()), enc(request, "size=" + photoSize)));
             } else {
-                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, "photo=" + photo.getId()));
+                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + photo.getId())));
             }
             photoRepresentation.setExifDataUri(uriInfo.getBaseUriBuilder().path(PhotoResource.class).path(PhotoResource.class, "getExifData").build(photo.getId()));
             results.add(photoRepresentation);
