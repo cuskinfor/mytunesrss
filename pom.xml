@@ -90,6 +90,7 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/assembly/system-independent.xml</descriptor>
+                                        <descriptor>src/assembly/macosx.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                                 <goals>
