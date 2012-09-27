@@ -4,7 +4,7 @@
       <jira>
         <server-id>0d43b18f-e01d-49df-9b16-a5cdea7fc1f8</server-id>
         <name>Codewave Jira</name>
-        <url>http://jira.codewave.biz</url>
+        <url>http://jira.codewave.de</url>
         <shared>false</shared>
       </jira>
     </servers>

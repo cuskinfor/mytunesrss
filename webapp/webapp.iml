@@ -25,6 +25,7 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave.mytunesrss:runtime:4.3.8-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="runtime" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave.apple-extensions:apple-extensions:1.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: commons-lang:commons-lang:2.6" level="project" />

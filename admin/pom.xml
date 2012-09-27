@@ -20,7 +20,7 @@
         <repository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -33,7 +33,7 @@
         <pluginRepository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
