@@ -10,8 +10,8 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <connection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk</connection>
-        <developerConnection>scm:svn:svn://svn.codewave.biz/mytunesrss/trunk</developerConnection>
+        <connection>scm:svn:svn://svn.codewave.de/mytunesrss/trunk</connection>
+        <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/trunk</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
@@ -23,7 +23,7 @@
         <repository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -37,7 +37,7 @@
         <pluginRepository>
             <id>codewave-nexus</id>
             <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.biz/nexus/content/groups/public</url>
+            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
