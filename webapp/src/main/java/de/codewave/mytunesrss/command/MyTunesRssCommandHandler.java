@@ -252,6 +252,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 forward(MyTunesRssResource.Login);
             } else {
                 handleDisplayFilter();
+                throttleBandwidth();
                 executeAuthorized();
             }
         } catch (Exception e) {
@@ -261,6 +262,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getSession().removeAttribute("errors");
             redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowFatalError));
         }
+    }
+
+    protected void throttleBandwidth() {
+        // do nothing in base implementation
     }
 
     protected MyTunesRssDataStore getDataStore() {

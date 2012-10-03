@@ -119,6 +119,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myAudio = true;
     private boolean myMovies = true;
     private boolean myTvShows = true;
+    private int myBandwidthLimit;
 
     public User(String name) {
         myName = name;
@@ -514,7 +515,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isYahooPlayer() {
-        return myYahooPlayer;
+        return getParent() != null ? getParent().isYahooPlayer() : myYahooPlayer;
     }
 
     public void setYahooPlayer(boolean yahooPlayer) {
@@ -530,7 +531,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isCreatePublicPlaylists() {
-        return myCreatePublicPlaylists;
+        return getParent() != null ? getParent().isCreatePublicPlaylists() : myCreatePublicPlaylists;
     }
 
     public void setCreatePublicPlaylists(boolean createPublicPlaylists) {
@@ -538,7 +539,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isPhotos() {
-        return myPhotos;
+        return getParent() != null ? getParent().isPhotos() : myPhotos;
     }
 
     public void setPhotos(boolean photos) {
@@ -546,7 +547,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isShare() {
-        return myShare;
+        return getParent() != null ? getParent().isShare() : myShare;
     }
 
     public void setShare(boolean share) {
@@ -554,7 +555,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isDownloadPhotoAlbum() {
-        return myDownloadPhotoAlbum;
+        return getParent() != null ? getParent().isDownloadPhotoAlbum() : myDownloadPhotoAlbum;
     }
 
     public void setDownloadPhotoAlbum(boolean downloadPhotoAlbum) {
@@ -562,7 +563,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isAudio() {
-        return myAudio;
+        return getParent() != null ? getParent().isAudio() : myAudio;
     }
 
     public void setAudio(boolean audio) {
@@ -570,7 +571,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isMovies() {
-        return myMovies;
+        return getParent() != null ? getParent().isMovies() : myMovies;
     }
 
     public void setMovies(boolean movies) {
@@ -578,11 +579,19 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public boolean isTvShows() {
-        return myTvShows;
+        return getParent() != null ? getParent().isTvShows() : myTvShows;
     }
 
     public void setTvShows(boolean tvShows) {
         myTvShows = tvShows;
+    }
+
+    public int getBandwidthLimit() {
+        return getParent() != null ? getParent().getBandwidthLimit() : myBandwidthLimit;
+    }
+
+    public void setBandwidthLimit(int bandwidthLimit) {
+        myBandwidthLimit = bandwidthLimit;
     }
 
     @Override
@@ -736,6 +745,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setAudio(JXPathUtils.getBooleanValue(settings, "featureAudio", myAudio));
         setMovies(JXPathUtils.getBooleanValue(settings, "featureMovies", myMovies));
         setTvShows(JXPathUtils.getBooleanValue(settings, "featureTvShows", myTvShows));
+        setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", myBandwidthLimit));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
         //        } catch (Exception e) {
@@ -838,6 +848,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureAudio", isAudio()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureMovies", isMovies()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureTvShows", isTvShows()));
+        users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
     }
 
     public synchronized void playLastFmTrack(final Track track) {

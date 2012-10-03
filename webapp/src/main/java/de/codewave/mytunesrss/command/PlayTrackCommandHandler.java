@@ -24,7 +24,7 @@ import java.io.IOException;
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
  */
-public class PlayTrackCommandHandler extends MyTunesRssCommandHandler {
+public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(PlayTrackCommandHandler.class);
 
     @Override

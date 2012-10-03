@@ -53,6 +53,13 @@
         <param-name>sessionInfoClass</param-name>
         <param-value>de.codewave.mytunesrss.server.MyTunesRssSessionInfo</param-value>
     </context-param>
+    <!-- Bandwidth limit filter -->
+    <filter>
+        <description>Banwidth limit filter.</description>
+        <display-name>andwidthLimitFilter</display-name>
+        <filter-name>BandwidthLimitFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.BandwidthLimitFilter</filter-class>
+    </filter>
     <!-- Filter for setting the request encoding to UTF-8 if none has been specified -->
     <filter>
         <description>Filter for setting the request encoding.</description>
@@ -102,6 +109,10 @@
         <filter-class>de.codewave.utils.servlet.GzipFilter</filter-class>
     </filter>
     <!-- Filter mappings -->
+    <filter-mapping>
+        <filter-name>BandwidthLimitFilter</filter-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>EncodingFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>

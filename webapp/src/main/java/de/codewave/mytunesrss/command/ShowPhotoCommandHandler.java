@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class ShowPhotoCommandHandler extends MyTunesRssCommandHandler {
+public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowPhotoCommandHandler.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();

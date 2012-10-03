@@ -17,13 +17,11 @@ import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.io.LogStreamCopyThread;
-import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,11 +29,10 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class HttpLiveStreamingCommandHandler extends MyTunesRssCommandHandler {
+public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpLiveStreamingCommandHandler.class);
 

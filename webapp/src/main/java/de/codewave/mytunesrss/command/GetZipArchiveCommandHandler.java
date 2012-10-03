@@ -34,7 +34,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.command.GetZipArchiveCommandHandler
  */
-public class GetZipArchiveCommandHandler extends MyTunesRssCommandHandler {
+public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetZipArchiveCommandHandler.class);
 

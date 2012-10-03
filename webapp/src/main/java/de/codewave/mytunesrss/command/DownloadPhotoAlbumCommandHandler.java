@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.command.GetZipArchiveCommandHandler
  */
-public class DownloadPhotoAlbumCommandHandler extends MyTunesRssCommandHandler {
+public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadPhotoAlbumCommandHandler.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
