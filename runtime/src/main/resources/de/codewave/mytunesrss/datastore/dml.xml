@@ -29,8 +29,8 @@
                 )
             </excluded>
             GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year, a.compilation
-            <albumorder>ORDER BY LOWER(a.name), a.name</albumorder>
-            <compilationalbumorder>ORDER BY a.compilation, LOWER(a.name), a.name</compilationalbumorder>
+            <albumorder>ORDER BY LOWER(a.name)</albumorder>
+            <compilationalbumorder>ORDER BY a.compilation, LOWER(a.name)</compilationalbumorder>
             <yearorder>ORDER BY year</yearorder>
             <compilationyearorder>ORDER BY a.compilation, year</compilationyearorder>
             ]]>
@@ -60,8 +60,8 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            GROUP BY LOWER(a.name), a.name, a.track_count, a.album_count
-            ORDER BY LOWER(a.name), a.name
+            GROUP BY LOWER(a.name), a.track_count, a.album_count
+            ORDER BY LOWER(a.name)
             ]]>
         </sql>
     </statement>
@@ -99,8 +99,8 @@
                 )
             </excluded>
             <nohidden>AND (g.hidden IS NULL OR g.hidden = FALSE)</nohidden>
-            GROUP BY LOWER(g.name), g.name, g.track_count, g.artist_count, g.album_count, g.hidden
-            ORDER BY LOWER(g.name), g.name
+            GROUP BY LOWER(g.name), g.track_count, g.artist_count, g.album_count, g.hidden
+            ORDER BY LOWER(g.name)
             ]]>
         </sql>
     </statement>
@@ -135,7 +135,7 @@
             <container>AND container_id = :containerId</container>
             <rootcontainer>AND container_id IS NULL</rootcontainer>
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
-            ORDER BY LOWER(name), name
+            ORDER BY LOWER(name)
             ]]>
         </sql>
     </statement>
@@ -175,8 +175,8 @@
             </excluded>
             GROUP BY ltp.idx, {trackColumnsForGrouping}
             <indexorder>ORDER BY idx</indexorder>
-            <albumorder>ORDER BY LOWER(album), album, pos_number, track_number, LOWER(name), name</albumorder>
-            <artistorder>ORDER BY LOWER(artist), artist, album, pos_number, track_number, LOWER(name), name</artistorder>
+            <albumorder>ORDER BY LOWER(album), pos_number, track_number, LOWER(name)</albumorder>
+            <artistorder>ORDER BY LOWER(artist), album, pos_number, track_number, LOWER(name)</artistorder>
             ]]>
         </sql>
     </statement>
@@ -198,8 +198,8 @@
                 )
             </excluded>
             GROUP BY {trackColumnsForGrouping}
-            <albumorder>ORDER BY LOWER(album), album, pos_number, track_number, LOWER(name), name</albumorder>
-            <artistorder>ORDER BY LOWER(artist), artist, album, pos_number, track_number, LOWER(name), name</artistorder>
+            <albumorder>ORDER BY LOWER(album), pos_number, track_number, LOWER(name)</albumorder>
+            <artistorder>ORDER BY LOWER(artist), album, pos_number, track_number, LOWER(name)</artistorder>
             ]]>
         </sql>
     </statement>
@@ -244,12 +244,12 @@
         <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY <lucenesort>tluc.pos, </lucenesort>{trackColumnsForGrouping}
         <lucenesort>ORDER BY tluc.pos</lucenesort>
-        <lucensortAlbum>ORDER BY tluc.pos, LOWER(t.album), t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</lucensortAlbum>
-        <lucensortArtist>ORDER BY tluc.pos, LOWER(t.artist), t.artist, t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</lucensortArtist>
-        <albumsort>ORDER BY LOWER(t.album), t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</albumsort>
-        <artistsort>ORDER BY LOWER(t.artist), t.artist, t.album, t.pos_number, t.track_number, LOWER(t.name), t.name</artistsort>
-        <moviesort>ORDER BY LOWER(t.name), t.name</moviesort>
-        <tvshowsort>ORDER BY LOWER(t.series), t.series, t.season, t.episode, LOWER(t.name), t.name</tvshowsort>
+        <lucensortAlbum>ORDER BY tluc.pos, LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</lucensortAlbum>
+        <lucensortArtist>ORDER BY tluc.pos, LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</lucensortArtist>
+        <albumsort>ORDER BY LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</albumsort>
+        <artistsort>ORDER BY LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</artistsort>
+        <moviesort>ORDER BY LOWER(t.name)</moviesort>
+        <tvshowsort>ORDER BY LOWER(t.series), t.season, t.episode, LOWER(t.name)</tvshowsort>
         ]]>
       </sql>
     </statement>
@@ -494,7 +494,7 @@
                 AND p.source_id NOT IN (:excludedDataSourceIds[])
             </excludedDatasources>
             GROUP BY id, name, file, date, image_hash, last_image_update
-            ORDER BY date, LOWER(name), name
+            ORDER BY date, LOWER(name)
             ]]>
         </sql>
     </statement>
@@ -716,7 +716,7 @@
                 <videotype>AND t.videotype = :videotype</videotype>
                 <protected>AND t.protected = :protected</protected>
                 <datasource>AND t.source_id = :source_id</datasource>
-                ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), t.artist, LOWER(t.album), t.album, t.pos_number, t.track_number, LOWER(t.name), t.name
+                ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)
             ]]>
         </sql>
         <sql>
@@ -922,7 +922,7 @@
                 )
             </excludedDatasources>
             GROUP BY id, name, first_date, last_date, photo_count
-            ORDER BY first_date, last_date, LOWER(name), name
+            ORDER BY first_date, last_date, LOWER(name)
             ]]>
         </sql>
     </statement>
