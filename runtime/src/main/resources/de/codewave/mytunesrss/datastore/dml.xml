@@ -60,7 +60,7 @@
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
-            GROUP BY LOWER(a.name), a.track_count, a.album_count
+            GROUP BY a.name, a.track_count, a.album_count
             ORDER BY LOWER(a.name)
             ]]>
         </sql>
@@ -99,7 +99,7 @@
                 )
             </excluded>
             <nohidden>AND (g.hidden IS NULL OR g.hidden = FALSE)</nohidden>
-            GROUP BY LOWER(g.name), g.track_count, g.artist_count, g.album_count, g.hidden
+            GROUP BY g.name, g.track_count, g.artist_count, g.album_count, g.hidden
             ORDER BY LOWER(g.name)
             ]]>
         </sql>
