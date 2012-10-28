@@ -13,6 +13,8 @@
 # -adminPort 12345
 #
 # Run without any GUI components (e.g. no admin server port notification at startup)
+# You can run headless on any system. If you have a headless system, i.e. you have to
+# run headless, please make sure your DISPLAY variable is not set.
 # -headless
 #
 # Preferences data path (otherwise the default is used)
