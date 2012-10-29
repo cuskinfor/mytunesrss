@@ -121,48 +121,24 @@ public class EditPlaylistResource extends RestResource {
     }
 
     /**
-     * Delete tracks from the currently edited playlist.
+     * Delete track from the currently edited playlist.
      *
      * @param track       IDs of tracks to delete.
-     * @param album       Album names to delete (all tracks of the album).
-     * @param albumArtist Album artist of albums to delete.
-     * @param artist      Artist names to delete (all tracks of the artists).
-     * @param genre       Genres to delete (all tracks of the genres).
-     * @param playlist    IDs of playlists to delete (all tracks of the playlists).
+     *
      * @return The playlist after deleting the tracks.
+     *
      * @throws SQLException
      */
     @DELETE
+    @Path("track/{track}")
     @Produces("application/json")
     @GZIP
     public PlaylistRepresentation removeTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
-            @FormParam("track") String[] track,
-            @FormParam("album") String[] album,
-            @FormParam("albumArtist") String[] albumArtist,
-            @FormParam("artist") String[] artist,
-            @FormParam("genre") String[] genre,
-            @FormParam("playlist") String[] playlist
+            @FormParam("track") String track
     ) throws SQLException {
-        if (track != null && track.length > 0) {
-            removeTracks(request, FindTrackQuery.getForIds(track));
-        }
-        User user = MyTunesRssWebUtils.getAuthUser(request);
-        if (album != null && album.length > 0) {
-            removeTracks(request, FindTrackQuery.getForAlbum(user, album, albumArtist, SortOrder.KeepOrder));
-        }
-        if (artist != null && artist.length > 0) {
-            removeTracks(request, FindTrackQuery.getForArtist(user, artist, SortOrder.KeepOrder));
-        }
-        if (genre != null && genre.length > 0) {
-            removeTracks(request, FindTrackQuery.getForGenre(user, genre, SortOrder.KeepOrder));
-        }
-        if (playlist != null && playlist.length > 0) {
-            for (String eachPlaylist : playlist) {
-                removeTracks(request, new FindPlaylistTracksQuery(user, eachPlaylist, SortOrder.KeepOrder));
-            }
-        }
+        removeTracks(request, FindTrackQuery.getForIds(new String[] {track}));
         return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
