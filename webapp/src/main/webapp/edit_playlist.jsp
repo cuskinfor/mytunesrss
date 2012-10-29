@@ -85,7 +85,7 @@
 
         function removeTrack(index, id) {
             EditPlaylistResource.removeTracks({
-                track : jQuery.makeArray([id])
+                track : id
             });
             if (index == 0 && firstItem == totalCount - 1) {
                 firstItem -= itemsPerPage;
