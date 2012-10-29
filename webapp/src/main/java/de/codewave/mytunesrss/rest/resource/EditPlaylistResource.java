@@ -136,7 +136,7 @@ public class EditPlaylistResource extends RestResource {
     public PlaylistRepresentation removeTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
-            @FormParam("track") String track
+            @PathParam("track") String track
     ) throws SQLException {
         removeTracks(request, FindTrackQuery.getForIds(new String[] {track}));
         return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
