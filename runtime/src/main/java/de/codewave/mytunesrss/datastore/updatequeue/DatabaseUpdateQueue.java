@@ -8,12 +8,15 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DatabaseUpdateQueue {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseUpdateQueue.class);
 
     private BlockingQueue<DatabaseUpdateEvent> myQueue = new SynchronousQueue<DatabaseUpdateEvent>();
+
+    private AtomicBoolean myTerminated = new AtomicBoolean(false);
 
     public DatabaseUpdateQueue(final long maxTxDurationMillis) {
         new Thread(new Runnable() {
@@ -63,6 +66,10 @@ public class DatabaseUpdateQueue {
                     if (tx != null) {
                         tx.commit();
                     }
+                    synchronized (myTerminated) {
+                        myTerminated.set(true);
+                        myTerminated.notifyAll();
+                    }
                 }
                 LOGGER.info("Terminating database update queue thread.");
             }
@@ -72,6 +79,18 @@ public class DatabaseUpdateQueue {
     public void offer(DatabaseUpdateEvent event) throws InterruptedException {
         if (!myQueue.offer(event, 600000, TimeUnit.MILLISECONDS)) {
             LOGGER.error("Lost database update event \"" + event + "\".");
+        }
+    }
+
+    public void waitForTermination() {
+        synchronized (myTerminated) {
+            while (!myTerminated.get()) {
+                try {
+                    myTerminated.wait(30000);
+                } catch (InterruptedException e) {
+                    LOGGER.warn("Interrupted while waiting for queue termination.", e);
+                }
+            }
         }
     }
 }

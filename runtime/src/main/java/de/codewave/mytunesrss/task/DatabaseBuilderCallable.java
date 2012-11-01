@@ -93,6 +93,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     public Boolean call() throws Exception {
         Boolean result = Boolean.FALSE;
+        MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
             myQueue.offer(new MyTunesRssEventEvent(event));
@@ -108,8 +109,9 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (Thread.interrupted()) { // clear interrupt status here to prevent interrupted exception in offer call
                 LOGGER.info("Database update cancelled.");
             }
-            myQueue.offer(new MyTunesRssEventEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED)));
             myQueue.offer(new TerminateEvent());
+            myQueue.waitForTermination();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
         }
         return result;
     }
@@ -135,9 +137,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     }
                 }, false));
             }
-            /*if (!MyTunesRss.CONFIG.isIgnoreArtwork() && !Thread.currentThread().isInterrupted()) {
-                runImageUpdate(timeUpdateStart);
-            }*/
             if (!Thread.currentThread().isInterrupted()) {
                 if (LOGGER.isInfoEnabled()) {
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");

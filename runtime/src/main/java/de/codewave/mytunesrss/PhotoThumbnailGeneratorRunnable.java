@@ -21,6 +21,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PhotoThumbnailGeneratorRunnable implements Runnable {
 
@@ -35,6 +36,8 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
             myFile = file;
         }
     }
+
+    private AtomicBoolean myTerminated = new AtomicBoolean(false);
 
     public void run() {
         try {
@@ -71,6 +74,23 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
             }
         } catch (RuntimeException e) {
             LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
+        } finally {
+            synchronized (myTerminated) {
+                myTerminated.set(true);
+                myTerminated.notifyAll();
+            }
+        }
+    }
+
+    public void waitForTermination() {
+        synchronized (myTerminated) {
+            while (!myTerminated.get()) {
+                try {
+                    myTerminated.wait(30000);
+                } catch (InterruptedException e) {
+                    LOGGER.warn("Interrupted while waiting for photo thumbnail generation termination.");
+                }
+            }
         }
     }
 }

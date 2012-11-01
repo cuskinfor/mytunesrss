@@ -24,6 +24,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TrackImageGeneratorRunnable implements Runnable {
 
@@ -42,6 +43,8 @@ public class TrackImageGeneratorRunnable implements Runnable {
             mySourceId = sourceId;
         }
     }
+
+    private AtomicBoolean myTerminated = new AtomicBoolean(false);
 
     public void run() {
         try {
@@ -93,6 +96,11 @@ public class TrackImageGeneratorRunnable implements Runnable {
             }
         } catch (RuntimeException e) {
             LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
+        } finally {
+            synchronized (myTerminated) {
+                myTerminated.set(true);
+                myTerminated.notifyAll();
+            }
         }
     }
 
@@ -102,5 +110,17 @@ public class TrackImageGeneratorRunnable implements Runnable {
                 MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
             }
         });
+    }
+
+    public void waitForTermination() {
+        synchronized (myTerminated) {
+            while (!myTerminated.get()) {
+                try {
+                    myTerminated.wait(30000);
+                } catch (InterruptedException e) {
+                    LOGGER.warn("Interrupted while waiting for photo thumbnail generation termination.");
+                }
+            }
+        }
     }
 }

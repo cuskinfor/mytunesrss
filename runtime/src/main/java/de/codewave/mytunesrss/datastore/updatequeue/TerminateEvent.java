@@ -1,6 +1,9 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
@@ -15,16 +18,22 @@ public class TerminateEvent extends CheckpointEvent {
 
     public boolean execute(DataStoreSession session) {
         try {
-            session.executeStatement(new DataStoreStatement() {
-                public void execute(Connection connection) throws SQLException {
-                    MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
-                }
-            });
-        } catch (SQLException e) {
-            LOGGER.warn("Could not execute data store statement.", e);
+            try {
+                session.executeStatement(new DataStoreStatement() {
+                    public void execute(Connection connection) throws SQLException {
+                        MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
+                    }
+                });
+            } catch (SQLException e) {
+                LOGGER.warn("Could not execute data store statement.", e);
+            }
+            super.execute(session);
+            session.commit();
+        } finally {
+            MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED);
+            MyTunesRss.LAST_DATABASE_EVENT = event;
+            MyTunesRssEventManager.getInstance().fireEvent(event);
         }
-        super.execute(session);
-        session.commit();
         return false;
     }
 
