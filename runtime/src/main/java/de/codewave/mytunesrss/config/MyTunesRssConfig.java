@@ -1314,23 +1314,31 @@ public class MyTunesRssConfig {
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
-        setDefaultDatabaseSettings();
+        setDatabaseType(DatabaseType.h2);
         setDatabaseType(DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType().name())));
-        // for default h2, always use calculated defaults
-        if (getDatabaseType() != DatabaseType.h2) {
+        // for default h2 or internal mysql, always use calculated defaults
+        if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.mysqlinternal) {
             setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
             setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
             setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
             setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
+        } else {
+            setDefaultDatabaseSettings();
         }
     }
 
     public void setDefaultDatabaseSettings() throws IOException {
-        setDatabaseType(DatabaseType.h2);
-        setDatabaseDriver("org.h2.Driver");
-        setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS");
-        setDatabaseUser("sa");
-        setDatabasePassword("");
+        if (getDatabaseType() == DatabaseType.h2) {
+            setDatabaseDriver("org.h2.Driver");
+            setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS");
+            setDatabaseUser("sa");
+            setDatabasePassword("");
+        } else if (getDatabaseType() == DatabaseType.mysqlinternal) {
+            setDatabaseDriver("xxx"); // TODO
+            setDatabaseConnection("jdbc:mysql://localhost/mytunesrss?......" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS"); // TODO
+            setDatabaseUser("sa");
+            setDatabasePassword("sa");
+        }
     }
 
     private static File getSettingsFile() throws IOException {
@@ -1415,15 +1423,18 @@ public class MyTunesRssConfig {
                     }
                 }
             }
-            // for default h2 database we shoud not save anything to the config
+            // for default h2 database we should not save anything to the config
             if (getDatabaseType() != DatabaseType.h2) {
                 Element database = settings.createElement("database");
                 root.appendChild(database);
                 database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType().name()));
-                database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
-                database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
-                database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
-                database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+                // for internal mysql database we should not save additional info in the config
+                if (getDatabaseType() != DatabaseType.mysqlinternal) {
+                    database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+                    database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+                    database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+                    database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+                }
             }
             Element tomcat = settings.createElement("tomcat");
             root.appendChild(tomcat);

@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import java.util.Locale;
 
 public enum DatabaseType {
-    h2(), h2custom(), postgres(), mysql();
+    h2(), mysqlinternal(), h2custom(), postgres(), mysql();
 
     @Override
     public String toString() {
@@ -20,6 +20,7 @@ public enum DatabaseType {
     public String getDialect() {
         switch (this) {
             case mysql:
+            case mysqlinternal:
                 return "mysql";
             case postgres:
                 return "postgres";

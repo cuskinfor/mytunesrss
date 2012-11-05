@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import de.codewave.camel.mp4.Mp4Parser;
 import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
@@ -594,6 +595,7 @@ public class MyTunesRss {
 
     private static void recreateDefaultDatabase() throws IOException {
         LOGGER.info("Recreating default database.");
+        CONFIG.setDatabaseType(DatabaseType.h2);
         CONFIG.setDefaultDatabaseSettings();
         try {
             STORE.destroy();

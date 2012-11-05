@@ -40,7 +40,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     public void attach() {
         super.attach();
         init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
-        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
+        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.mysqlinternal, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
@@ -148,11 +148,11 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     private void showHideDatabaseDetails(DatabaseType type) {
-        myDatabaseDriver.setEnabled(type != DatabaseType.h2);
-        myDatabaseConnection.setEnabled(type != DatabaseType.h2);
-        myDatabaseUser.setEnabled(type != DatabaseType.h2);
-        myDatabasePassword.setEnabled(type != DatabaseType.h2);
-        if (type == DatabaseType.h2) {
+        myDatabaseDriver.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        myDatabaseConnection.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        myDatabaseUser.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        myDatabasePassword.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        if (type == DatabaseType.h2 || type == DatabaseType.mysqlinternal) {
             setOptional(myDatabaseDriver);
             setOptional(myDatabaseConnection);
             setOptional(myDatabaseUser);
