@@ -174,6 +174,7 @@ public class MyTunesRss {
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
     public static JmDNS BONJOUR;
     public static String HEAPDUMP_FILENAME;
+    public static ClassLoader EXTRA_CLASSLOADER;
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
@@ -235,6 +236,7 @@ public class MyTunesRss {
         WEBSERVER = new WebServer();
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
+        EXTRA_CLASSLOADER = createExtraClassloader(new File(MyTunesRss.PREFERENCES_DATA_PATH + "/lib"));
         loadSystemProperties();
         readVersion();
         loadConfig();
@@ -527,7 +529,20 @@ public class MyTunesRss {
     private static void initializeDatabase() throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
         boolean backupAfterSuccessfulInit = true;
         while (true) {
-            registerDatabaseDriver();
+            try {
+                registerDatabaseDriver();
+            } catch (Exception e) {
+                if (!CONFIG.isDefaultDatabase()) {
+                    int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        recreateDefaultDatabase();
+                        continue;
+                    }
+                } else {
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
+                    MyTunesRssUtils.shutdownGracefully();
+                }
+            }
             InitializeDatabaseCallable callable = new InitializeDatabaseCallable();
             callable.call();
             if (callable.getException() != null) {
@@ -810,15 +825,12 @@ public class MyTunesRss {
         return null;
     }
 
-    private static void registerDatabaseDriver()
-            throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
-        File libDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/lib");
-        ClassLoader classLoader = createExtraClassloader(libDir);
+    private static void registerDatabaseDriver() throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         String driverClassName = CONFIG.getDatabaseDriver();
         LOGGER.info("Using database driver class \"" + driverClassName + "\".");
-        if (classLoader != null) {
+        if (EXTRA_CLASSLOADER != null) {
             try {
-                final Class<Driver> driverClass = (Class<Driver>) Class.forName(driverClassName, true, classLoader);
+                final Class<Driver> driverClass = (Class<Driver>) Class.forName(driverClassName, true, EXTRA_CLASSLOADER);
                 DriverManager.registerDriver(new Driver() {
                     private Driver myDriver = driverClass.newInstance();
 
@@ -846,32 +858,13 @@ public class MyTunesRss {
                         return myDriver.jdbcCompliant();
                     }
                 });
-            } catch (ClassNotFoundException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Database driver class not found.", e);
-                }
-                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
-                        driverClassName,
-                        libDir.getAbsolutePath()));
-                MyTunesRssUtils.shutdownGracefully();
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error(null, e);
                 }
-
             }
         } else {
-            try {
-                Class.forName(driverClassName);
-            } catch (ClassNotFoundException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Database driver class not found.", e);
-                }
-                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseDriverNotFound",
-                        driverClassName,
-                        libDir.getAbsolutePath()));
-                MyTunesRssUtils.shutdownGracefully();
-            }
+            Class.forName(driverClassName);
         }
     }
 

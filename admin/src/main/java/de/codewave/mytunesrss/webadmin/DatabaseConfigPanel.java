@@ -16,10 +16,7 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import org.apache.commons.lang.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EventObject;
-import java.util.List;
+import java.util.*;
 
 public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Property.ValueChangeListener {
 
@@ -226,14 +223,45 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
 
     protected boolean beforeSave() {
         if (VaadinUtils.isValid(myDatabaseTypeForm)) {
-            if (isDatabaseChanged()) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("databaseConfigPanel.warning.databaseChanged");
+            String errorKey = validateDatabaseConnection();
+            if (StringUtils.isNotBlank(errorKey)) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError(errorKey);
+            } else {
+                if (isDatabaseChanged()) {
+                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("databaseConfigPanel.warning.databaseChanged");
+                }
+                return true;
             }
-            return true;
         } else {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
         return false;
+    }
+
+    private String validateDatabaseConnection() {
+        if (myDatabaseType.getValue() != DatabaseType.h2 && myDatabaseType.getValue() != DatabaseType.h2custom) {
+            String driverClass = myDatabaseDriver.getStringValue(null);
+            try {
+                Class.forName(driverClass, false, MyTunesRss.EXTRA_CLASSLOADER);
+            } catch (ClassNotFoundException e) {
+                return "databaseConfigPanel.error.missingDriverClass";
+            }
+            if (myDatabaseType.getValue() == DatabaseType.mysqlinternal) {
+                try {
+                    Class.forName("com.mysql.management.MysqldResource", false, MyTunesRss.EXTRA_CLASSLOADER);
+                } catch (ClassNotFoundException e) {
+                    return "databaseConfigPanel.error.missingMxjConnector";
+                }
+                try {
+                    if (MyTunesRss.EXTRA_CLASSLOADER.getResource("connector-mxj.properties") == null) {
+                        return "databaseConfigPanel.error.missingMxjDbFiles";
+                    }
+                } catch (MissingResourceException e) {
+                    return "databaseConfigPanel.error.missingMxjDbFiles";
+                }
+            }
+        }
+        return null;
     }
 
     private Object getTriggerToDelete(Object source, Table table) {
