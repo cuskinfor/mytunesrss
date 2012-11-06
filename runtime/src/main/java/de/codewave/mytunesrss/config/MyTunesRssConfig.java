@@ -1334,10 +1334,10 @@ public class MyTunesRssConfig {
             setDatabaseUser("sa");
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.mysqlinternal) {
-            setDatabaseDriver("xxx"); // TODO
-            setDatabaseConnection("jdbc:mysql://localhost/mytunesrss?......" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS"); // TODO
-            setDatabaseUser("sa");
-            setDatabasePassword("sa");
+            setDatabaseDriver("com.mysql.jsbc.Driver");
+            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
+            setDatabaseUser("mytunesrss");
+            setDatabasePassword("mytunesrss");
         }
     }
 

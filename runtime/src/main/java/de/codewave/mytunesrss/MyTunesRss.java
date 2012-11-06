@@ -58,6 +58,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.security.MessageDigest;
@@ -175,11 +176,13 @@ public class MyTunesRss {
     public static JmDNS BONJOUR;
     public static String HEAPDUMP_FILENAME;
     public static ClassLoader EXTRA_CLASSLOADER;
+    public static File INTERNAL_MYSQL_SERVER_PATH;
 
     public static void main(final String[] args) throws Exception {
         processArguments(args);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();
+        INTERNAL_MYSQL_SERVER_PATH = new File(MyTunesRss.CACHE_DATA_PATH + "/mysqldb");
         // shutdown command
         if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
             try {
@@ -214,17 +217,28 @@ public class MyTunesRss {
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
+                LOGGER.info("Running shutdown hook.");
                 // try to kill all still running processes
                 LOGGER.info("Trying to kill " + SPAWNED_PROCESSES.size() + " previously spawned processes.");
                 for (Process process : SPAWNED_PROCESSES) {
                     process.destroy();
                 }
                 // try to do the best to shutdown the store in a clean way to keep H2 databases intact
-                LOGGER.info("Running shutdown hook.");
                 if (STORE != null && STORE.isInitialized()) {
                     LOGGER.info("Destroying still initialized store.");
                     STORE.destroy();
                 }
+                // try to kill internal mysql database
+                if (CONFIG.getDatabaseType() == DatabaseType.mysqlinternal) {
+                    LOGGER.info("Trying to shutdown internal mysql server.");
+                    try {
+                        Class clazz = Class.forName("com.mysql.management.driverlaunched.ServerLauncherSocketFactory");
+                        clazz.getMethod("shutdown", File.class, File.class).invoke(null, INTERNAL_MYSQL_SERVER_PATH, null);
+                    } catch (Exception e) {
+                        LOGGER.warn("Could not shutdown internal mysql server.");
+                    }
+                }
+
             }
         });
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
