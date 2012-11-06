@@ -145,12 +145,22 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     private void showHideDatabaseDetails(DatabaseType type) {
-        myDatabaseDriver.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        myDatabaseDriver.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2custom);
         myDatabaseConnection.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
         myDatabaseUser.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
         myDatabasePassword.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
-        if (type == DatabaseType.h2 || type == DatabaseType.mysqlinternal) {
+        if (type == DatabaseType.h2) {
             setOptional(myDatabaseDriver);
+            setOptional(myDatabaseConnection);
+            setOptional(myDatabaseUser);
+            setOptional(myDatabasePassword);
+        } else if (type == DatabaseType.h2custom) {
+            setOptional(myDatabaseDriver);
+            setRequired(myDatabaseConnection);
+            setRequired(myDatabaseUser);
+            setRequired(myDatabasePassword);
+        } else if (type == DatabaseType.mysqlinternal) {
+            setRequired(myDatabaseDriver);
             setOptional(myDatabaseConnection);
             setOptional(myDatabaseUser);
             setOptional(myDatabasePassword);
@@ -284,23 +294,35 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private void fillDefaultDatabaseProperties() {
         switch ((DatabaseType) myDatabaseType.getValue()) {
             case h2custom:
-                myDatabaseDriver.setValue("org.h2.Driver");
+                myDatabaseDriver.setValue("");
                 myDatabaseConnection.setValue("jdbc:h2:file:{path_to_folder}");
+                myDatabaseUser.setValue(null);
+                myDatabasePassword.setValue(null);
                 break;
             case mysql:
                 myDatabaseDriver.setValue("com.mysql.jdbc.Driver");
                 myDatabaseConnection.setValue("jdbc:mysql://{database server host}/{database_name}");
+                myDatabaseUser.setValue(null);
+                myDatabasePassword.setValue(null);
+                break;
+            case mysqlinternal:
+                myDatabaseDriver.setValue("com.mysql.jdbc.Driver");
+                myDatabaseConnection.setValue("");
+                myDatabaseUser.setValue("");
+                myDatabasePassword.setValue("");
                 break;
             case postgres:
                 myDatabaseDriver.setValue("org.postgresql.Driver");
                 myDatabaseConnection.setValue("jdbc:postgresql://{database server host}/{database name}");
+                myDatabaseUser.setValue(null);
+                myDatabasePassword.setValue(null);
                 break;
             default:
-                myDatabaseDriver.setValue(null);
-                myDatabaseConnection.setValue(null);
+                myDatabaseDriver.setValue("");
+                myDatabaseConnection.setValue("");
+                myDatabaseUser.setValue("");
+                myDatabasePassword.setValue("");
         }
-        myDatabaseUser.setValue(null);
-        myDatabasePassword.setValue(null);
     }
 
     private boolean isDatabaseChanged() {

@@ -1316,14 +1316,14 @@ public class MyTunesRssConfig {
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
         setDatabaseType(DatabaseType.h2);
         setDatabaseType(DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType().name())));
-        // for default h2 or internal mysql, always use calculated defaults
-        if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.mysqlinternal) {
+        setDefaultDatabaseSettings();
+        if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.h2custom) {
             setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
+        }
+        if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.mysqlinternal) {
             setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
             setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
             setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
-        } else {
-            setDefaultDatabaseSettings();
         }
     }
 
@@ -1334,8 +1334,8 @@ public class MyTunesRssConfig {
             setDatabaseUser("sa");
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.mysqlinternal) {
-            setDatabaseDriver("com.mysql.jsbc.Driver");
-            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
+            setDatabaseDriver("com.mysql.jdbc.Driver");
+            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
             setDatabaseUser("mytunesrss");
             setDatabasePassword("mytunesrss");
         }

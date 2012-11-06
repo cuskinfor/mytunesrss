@@ -232,10 +232,10 @@ public class MyTunesRss {
                 if (CONFIG.getDatabaseType() == DatabaseType.mysqlinternal) {
                     LOGGER.info("Trying to shutdown internal mysql server.");
                     try {
-                        Class clazz = Class.forName("com.mysql.management.driverlaunched.ServerLauncherSocketFactory");
+                        Class clazz = Class.forName("com.mysql.management.driverlaunched.ServerLauncherSocketFactory", true, EXTRA_CLASSLOADER);
                         clazz.getMethod("shutdown", File.class, File.class).invoke(null, INTERNAL_MYSQL_SERVER_PATH, null);
                     } catch (Exception e) {
-                        LOGGER.warn("Could not shutdown internal mysql server.");
+                        LOGGER.warn("Could not shutdown internal mysql server.", e);
                     }
                 }
 
@@ -829,6 +829,7 @@ public class MyTunesRss {
             if (files != null && !files.isEmpty()) {
                 Collection<URL> urls = new ArrayList<URL>();
                 for (File file : files) {
+                    LOGGER.info("Adding \"" + file.getAbsolutePath() + "\" to extra classpath.");
                     urls.add(file.toURL());
                 }
                 return new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
