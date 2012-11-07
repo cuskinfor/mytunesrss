@@ -115,11 +115,50 @@
             <SvnBranchConfiguration>
               <option name="branchUrls">
                 <list>
-                  <option value="svn://svn.codewave.biz/mytunesrss/branches" />
-                  <option value="svn://svn.codewave.biz/mytunesrss/tags" />
+                  <option value="svn://svn.codewave.de/mytunesrss/branches" />
+                  <option value="svn://svn.codewave.de/mytunesrss/tags" />
                 </list>
               </option>
-              <option name="trunkUrl" value="svn://svn.codewave.biz/mytunesrss/trunk" />
+              <option name="trunkUrl" value="svn://svn.codewave.de/mytunesrss/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/mytunesrss-pom">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="svn://svn.codewave.de/mytunesrss/branches" />
+                  <option value="svn://svn.codewave.de/mytunesrss/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="svn://svn.codewave.de/mytunesrss/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/runtime">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="svn://svn.codewave.de/mytunesrss/branches" />
+                  <option value="svn://svn.codewave.de/mytunesrss/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="svn://svn.codewave.de/mytunesrss/trunk" />
+            </SvnBranchConfiguration>
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/webapp">
+          <value>
+            <SvnBranchConfiguration>
+              <option name="branchUrls">
+                <list>
+                  <option value="svn://svn.codewave.de/mytunesrss/branches" />
+                  <option value="svn://svn.codewave.de/mytunesrss/tags" />
+                </list>
+              </option>
+              <option name="trunkUrl" value="svn://svn.codewave.de/mytunesrss/trunk" />
             </SvnBranchConfiguration>
           </value>
         </entry>

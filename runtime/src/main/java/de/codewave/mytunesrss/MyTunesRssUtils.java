@@ -819,8 +819,8 @@ public class MyTunesRssUtils {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             while (networkInterfaces != null && networkInterfaces.hasMoreElements()) {
                 NetworkInterface networkInterface = networkInterfaces.nextElement();
-                for (InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses()) {
-                    InetAddress inetAddress = interfaceAddress.getAddress();
+                for (Enumeration<InetAddress> addEnum = networkInterface.getInetAddresses(); addEnum.hasMoreElements(); ) {
+                    InetAddress inetAddress = addEnum.nextElement();
                     result.add(inetAddress.getHostAddress());
                 }
             }
@@ -869,5 +869,12 @@ public class MyTunesRssUtils {
             deepClone.add(DatasourceConfig.copy(datasourceConfig));
         }
         return deepClone;
+    }
+
+    public static boolean canExecute(File file) {
+        if (SystemUtils.JAVA_VERSION_FLOAT < 1.6) {
+            return file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
+        }
+        return file.canExecute();
     }
 }

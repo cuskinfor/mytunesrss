@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.vlc;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
@@ -127,7 +128,7 @@ public class VlcPlayer {
     }
 
     private void init(final HttpResponseStatus status, final int current) throws VlcPlayerException {
-        if ((myWatchdog == null || !myWatchdog.isAlive()) && MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+        if ((myWatchdog == null || !myWatchdog.isAlive()) && MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRssUtils.canExecute(MyTunesRss.CONFIG.getVlcExecutable())) {
             final Semaphore semaphore = new Semaphore(0);
             final AtomicBoolean startupFailed = new AtomicBoolean(false);
             myWatchdog = new Thread(new Runnable() {
