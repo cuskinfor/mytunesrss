@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.5.1" date="___D___">
+        <release version="4.5.1" date="2012-11-07">
             <action dev="mdescher" type="update">
                 Restored Java 5 compatibility.
             </action>
