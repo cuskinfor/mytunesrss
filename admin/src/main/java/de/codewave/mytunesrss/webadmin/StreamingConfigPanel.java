@@ -12,6 +12,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
@@ -319,7 +320,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         if (clickEvent.getButton() == myVlcHomepageButton) {
             getWindow().open(new ExternalResource("http://www.videolan.org"));
         } else if (clickEvent.getButton() == myRestartVlcPlayer) {
-            if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRss.CONFIG.getVlcExecutable().canExecute()) {
+            if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRss.CONFIG.getVlcExecutable() != null && MyTunesRssUtils.canExecute(MyTunesRss.CONFIG.getVlcExecutable())) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("streamingConfigPanel.error.restartingVlc");
                 MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
                     public void run() {

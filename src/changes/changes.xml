@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.5.1" date="___D___">
+            <action dev="mdescher" type="update">
+                Restored Java 5 compatibility.
+            </action>
+        </release>
+
         <release version="4.5" date="2012-11-02">
             <action dev="mdescher" type="add">
                 REST resource for deleting tracks from a playlists allows a single track ID only now.
