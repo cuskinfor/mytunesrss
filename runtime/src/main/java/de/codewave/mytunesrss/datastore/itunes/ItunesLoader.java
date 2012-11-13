@@ -70,7 +70,7 @@ public class ItunesLoader {
      * @return Number of missing files.
      * @throws SQLException
      */
-    public static long loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> trackIds) throws SQLException, MalformedURLException {
+    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> trackIds) throws SQLException, MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
         File iTunesXmlFile = new File(config.getDefinition());
@@ -103,8 +103,8 @@ public class ItunesLoader {
             }
             LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() +
                     " files were missing.");
-            return trackListener.getMissingFiles();
+            return new MissingItunesFiles(trackListener.getMissingFiles(), trackListener.getMissingFilePaths());
         }
-        return 0;
+        return new MissingItunesFiles();
     }
 }

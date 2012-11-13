@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.iphoto.ApertureLoader;
 import de.codewave.mytunesrss.datastore.iphoto.IphotoLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
+import de.codewave.mytunesrss.datastore.itunes.MissingItunesFiles;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.updatequeue.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
@@ -122,7 +123,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 LOGGER.info("Starting database update.");
             }
             final long timeUpdateStart = System.currentTimeMillis();
-            final Map<String, Long> missingItunesFiles = runUpdate();
+            final Map<String, MissingItunesFiles> missingItunesFiles = runUpdate();
             if (!Thread.currentThread().isInterrupted()) {
                 if (myDatasources != null) {
                     for (DatasourceConfig datasourceConfig : myDatasources) {
@@ -161,67 +162,13 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
     }
 
-    /*
-    protected void runImageUpdate(final long timeUpdateStart) throws InterruptedException {
-        myState = State.UpdatingTrackImages;
-        MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImages");
-        myQueue.offer(new MyTunesRssEventEvent(event));
-        if (LOGGER.isInfoEnabled()) {
-            LOGGER.info("Processing track images.");
-        }
-        List<ImageUpdateInfo> imageUpdateInfos = new ArrayList<ImageUpdateInfo>();
-        DataStoreSession tx = MyTunesRss.STORE.getTransaction();
-        try {
-            DataStoreQuery.QueryResult<Track> result = tx.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Track>>() {
-                public QueryResult<Track> execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection,
-                            "findAllTracksForImageUpdate");
-                    statement.setLong("timeUpdateStart", timeUpdateStart);
-                    statement.setItems("source_id", getDataSourceIds());
-                    return execute(statement, new ResultBuilder<Track>() {
-                        public Track create(ResultSet resultSet) throws SQLException {
-                            Track track = new Track();
-                            track.setId(resultSet.getString("ID"));
-                            track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));
-                            track.setFile(new File(resultSet.getString("FILE")));
-                            track.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
-                            return track;
-                        }
-                    });
-                }
-            });
-            for (Track track = result.nextResult(); track != null && !Thread.currentThread().isInterrupted(); track = result.nextResult()) {
-                long timeLastImageUpdate = myIgnoreTimestamps ? Long.MIN_VALUE : track.getLastImageUpdate();
-                imageUpdateInfos.add(new ImageUpdateInfo(track, timeLastImageUpdate));
-            }
-        } catch (SQLException e) {
-            LOGGER.error("Could not find tracks for image update.", e);
-        } finally {
-            tx.rollback();
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Finished processing track images.");
-            }
-        }
-        for (ImageUpdateInfo imageUpdateInfo : imageUpdateInfos) {
-            if (Thread.currentThread().isInterrupted()) {
-                break;
-            }
-            try {
-                myQueue.offer(new DataStoreStatementEvent(new HandleTrackImagesStatement(imageUpdateInfo.myTrackSource, imageUpdateInfo.myFile, imageUpdateInfo.myId, imageUpdateInfo.myTimeLastImageUpdate), false));
-            } catch (Exception e) {
-                LOGGER.warn("Could not extract image from file \"" + imageUpdateInfo.myFile.getAbsolutePath() + "\".", e);
-            }
-        }
-    }
-    */
-
     /**
      * @return Map with the number of missing files per iTunes XML.
      * @throws SQLException
      * @throws IOException
      */
-    private Map<String, Long> runUpdate() throws SQLException, IOException, InterruptedException {
-        Map<String, Long> missingItunesFiles = new HashMap<String, Long>();
+    private Map<String, MissingItunesFiles> runUpdate() throws SQLException, IOException, InterruptedException {
+        Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<String, MissingItunesFiles>();
         final Set<String> trackIds = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Set<String>>() {
             public Set<String> execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTrackIds");

@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.datastore.itunes.MissingItunesFiles;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.lang.StringUtils;
@@ -24,20 +25,24 @@ public class AdminNotifier {
         }
     };
 
-    public void notifyDatabaseUpdate(long time, Map<String, Long> missingItunesFiles, SystemInformation systemInformation) {
+    public void notifyDatabaseUpdate(long time, Map<String, MissingItunesFiles> missingItunesFiles, SystemInformation systemInformation) {
         if (MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAdminEmail())) {
             String subject = "Database has been updated";
-            String body =
-                    "The database has been updated. Update took " + (time / 1000L) + " seconds.\n\nTracks: " + systemInformation.getTrackCount() +
-                            "\nAlbums: " + systemInformation.getAlbumCount() + "\nArtists: " + systemInformation.getArtistCount() + "\nGenres: " +
-                            systemInformation.getGenreCount();
+            StringBuilder body = new StringBuilder();
+            body.append("The database has been updated. Update took ").append(time / 1000L).append(" seconds.\n\nTracks: ").append(systemInformation.getTrackCount());
+            body.append("\nAlbums: ").append(systemInformation.getAlbumCount()).append("\nArtists: ").append(systemInformation.getArtistCount()).append("\nGenres: ");
+            body.append(systemInformation.getGenreCount());
             if (!missingItunesFiles.isEmpty()) {
-                body += "\n\nMissing files from iTunes libraries:\n";
-                for (Map.Entry<String, Long> entry : missingItunesFiles.entrySet()) {
-                    body += entry.getKey() + ": " + entry.getValue() + "\n";
+                body.append("\n\nMissing files from iTunes libraries:\n====================================\n");
+                for (Map.Entry<String, MissingItunesFiles> entry : missingItunesFiles.entrySet()) {
+                    body.append("\n").append(entry.getKey()).append(": ").append(entry.getValue().getCount()).append("\n\n");
+                    body.append("The following files were missing (max. ").append(MissingItunesFiles.MAX_MISSING_FILE_PATHS).append(" are listed):\n");
+                    for (String path : entry.getValue().getPaths()) {
+                        body.append(path).append("\n");
+                    }
                 }
             }
-            sendAdminMail(subject, body);
+            sendAdminMail(subject, body.toString());
         }
     }
 

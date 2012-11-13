@@ -34,6 +34,7 @@ public class TrackListener implements PListHandlerListener {
     private Map<Long, String> myTrackIdToPersId;
     private Collection<String> myTrackIds;
     private long myMissingFiles;
+    private List<String> myMissingFilePaths = new ArrayList<String>();
     private String[] myDisabledMp4Codecs;
     private Thread myWatchdogThread;
     private Set<CompiledReplacementRule> myPathReplacements;
@@ -60,6 +61,16 @@ public class TrackListener implements PListHandlerListener {
 
     public long getMissingFiles() {
         return myMissingFiles;
+    }
+
+    /**
+     * Returns a readonly set of missing file paths.
+     *
+     * @return Set of missing file paths.
+     */
+    public List<String> getMissingFilePaths() {
+        Collections.sort(myMissingFilePaths);
+        return Collections.unmodifiableList(myMissingFilePaths);
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -101,6 +112,9 @@ public class TrackListener implements PListHandlerListener {
                     File file = MyTunesRssUtils.searchFile(filename);
                     if (!file.isFile()) {
                         myMissingFiles++;
+                        if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
+                            myMissingFilePaths.add(file.getAbsolutePath());
+                        }
                     }
                     if (!myDatasourceConfig.isDeleteMissingFiles() || file.isFile()) {
                         Date dateModified = ((Date) track.get("Date Modified"));

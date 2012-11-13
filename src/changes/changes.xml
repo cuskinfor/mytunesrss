@@ -9,6 +9,9 @@
 
         <release version="4.6" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-337] Include names of missing files in the admin notification email
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-364] LogCopyStreamThread should be daemon
             </action>
             <action dev="mdescher" type="add">
