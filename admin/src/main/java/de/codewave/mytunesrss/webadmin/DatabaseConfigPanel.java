@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.Property;
+import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.config.DatabaseType;
@@ -33,6 +34,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Button myAddBackupTrigger;
     private SmartTextField myNumberKeepBackups;
     private CheckBox myBackupAfterInit;
+    private Button myHelpButton;
 
     public void attach() {
         super.attach();
@@ -43,6 +45,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
         myDatabaseUser = getComponentFactory().createTextField("databaseConfigPanel.databaseUser");
         myDatabasePassword = getComponentFactory().createPasswordTextField("databaseConfigPanel.databasePassword");
+        myHelpButton = getComponentFactory().createButton("databaseConfigPanel.help", this);
         myUpdateTriggers = new Table();
         myUpdateTriggers.setCacheRate(50);
         myUpdateTriggers.addContainerProperty("day", Select.class, null, getBundleString("databaseConfigPanel.cronTriggers.day"), null, null);
@@ -68,6 +71,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseTypeForm.addField(myDatabaseConnection, myDatabaseConnection);
         myDatabaseTypeForm.addField(myDatabaseUser, myDatabaseUser);
         myDatabaseTypeForm.addField(myDatabasePassword, myDatabasePassword);
+        myDatabaseTypeForm.addField(myHelpButton, myHelpButton);
         addComponent(getComponentFactory().surroundWithPanel(myDatabaseTypeForm, FORM_PANEL_MARGIN_INFO, getBundleString("databaseConfigPanel.caption.database")));
 
         Panel schedulesPanel = new Panel(getBundleString("databaseConfigPanel.caption.updateTriggers"), getComponentFactory().createVerticalLayout(true, true));
@@ -91,13 +95,24 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     protected void initFromConfig() {
-        myDatabaseType.select(MyTunesRss.CONFIG.getDatabaseType());
-        myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
-        myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
-        myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
-        myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
-        showHideDatabaseDetails(MyTunesRss.CONFIG.getDatabaseType());
-        showHideDatabaseBackup(MyTunesRss.CONFIG.getDatabaseType());
+        DatabaseType databaseType = MyTunesRss.CONFIG.getDatabaseType();
+        myDatabaseType.select(databaseType);
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2custom) {
+            myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
+        } else {
+            myDatabaseDriver.setValue(null);
+        }
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.mysqlinternal) {
+            myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
+            myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
+            myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
+        } else {
+            myDatabaseConnection.setValue(null);
+            myDatabaseUser.setValue(null);
+            myDatabasePassword.setValue(null);
+        }
+        showHideDatabaseDetails(databaseType);
+        showHideDatabaseBackup(databaseType);
         refreshUpdateTriggers();
         refreshBackupTriggers();
         myNumberKeepBackups.setValue(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
@@ -202,7 +217,9 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        if (clickEvent.getSource() == myAddUpdateTrigger) {
+        if (clickEvent.getButton() == myHelpButton) {
+            getWindow().open(new ExternalResource("http://kb.mytunesrss.com/dbhelp"));
+        } else if (clickEvent.getSource() == myAddUpdateTrigger) {
             addTrigger("0 0 0 ? * SUN-SAT", myUpdateTriggers);
         } else if (clickEvent.getSource() == myAddBackupTrigger) {
             addTrigger("0 0 0 ? * SUN-SAT", myBackupTriggers);
