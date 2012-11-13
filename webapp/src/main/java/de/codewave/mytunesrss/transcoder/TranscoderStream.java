@@ -42,7 +42,9 @@ public class TranscoderStream extends InputStream {
         myProcess = new ProcessBuilder(transcodeCommand).start();
         MyTunesRss.SPAWNED_PROCESSES.add(myProcess);
         myInputStream = myProcess.getInputStream();
-        new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+        LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug);
+        stderrCopyThread.setDaemon(true);
+        stderrCopyThread.start();
     }
 
     public int read() throws IOException {

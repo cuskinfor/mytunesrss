@@ -145,8 +145,12 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                 }
                 process = new ProcessBuilder(transcodeCommand).start();
                 MyTunesRss.SPAWNED_PROCESSES.add(process);
-                new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
-                new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug);
+                stdoutCopyThread.setDaemon(true);
+                stdoutCopyThread.start();
+                LogStreamCopyThread stderrCopyThreads = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug);
+                stderrCopyThreads.setDaemon(true);
+                stderrCopyThreads.start();
                 process.waitFor();
             } catch (Exception e) {
                 LOG.error("Error in http live streaming thread.", e);

@@ -174,7 +174,9 @@ public class VlcPlayer {
                                 LOGGER.info("Starting VLC player: \"" + StringUtils.join(command.toArray(new String[command.size()]), " ") + "\".");
                                 process = processBuilder.start();
                                 MyTunesRss.SPAWNED_PROCESSES.add(process);
-                                new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug).start();
+                                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug);
+                                stdoutCopyThread.setDaemon(true);
+                                stdoutCopyThread.start();
                                 myHttpClient = new HttpClient();
                                 for (int i = 0; isRunning(process) && i < 10; i++) {
                                     try {
