@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss-pom</artifactId>
     <packaging>pom</packaging>
-    <version>4.6.1-SNAPSHOT</version>
+    <version>4.6.1</version>
     <name>Codewave MyTunesRSS Common POM</name>
     <distributionManagement>
         <site>
@@ -385,6 +385,6 @@
     </build>
 
   <scm>
-    <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/branches/mytunesrss-4.6.x/mytunesrss-pom</developerConnection>
+    <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/tags/mytunesrss-4.6.1/mytunesrss-pom</developerConnection>
   </scm>
 </project>
