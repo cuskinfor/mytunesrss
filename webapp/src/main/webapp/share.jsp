@@ -81,14 +81,14 @@
     <input type="hidden" name="related" value="mytunesrss:MyTunesRSS Media Server"/>
 </form>
 <c:if test="${!empty globalConfig.facebookApiKey}">
-    <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="post" target="MyTunesRssFacebook">
+    <form id="facebookForm" action="http://www.facebook.com/dialog/feed" method="get" target="MyTunesRssFacebook">
+        <input type="hidden" name="display" value="popup"/>
         <input type="hidden" name="app_id" value="${globalConfig.facebookApiKey}"/>
-        <input id="facebookLink" type="hidden" name="link" value="http://www.codewave.de/products/mytunesrss"/>
+        <input id="facebookLink" type="hidden" name="link" value="http://www.codewave.de/mytunesrss.php"/>
         <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
         <input type="hidden" name="name" value="<c:out value="${artistAndTitle}"/>"/>
         <input type="hidden" name="caption" value="MyTunesRSS - Your personal Media Server"/>
-        <input type="hidden" name="description"
-               value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
+        <input type="hidden" name="description" value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
         <input type="hidden" name="redirect_uri" value="http://mytunesrss.com/tools/close_window.php"/>
     </form>
 </c:if>
