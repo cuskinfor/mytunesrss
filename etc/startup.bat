@@ -25,6 +25,11 @@ REM
 REM Shutdown a local instance running on the specified port.
 REM -shutdown 12345
 REM
+REM Reset the database to the default database and create a new one. Should only be used explicitly in case MyTunesRSS
+REM does not start anymore due to a fatal database problem which cannot be fixed otherwise. Should not be used in
+REM startup scripts since the database would be reset each time MyTunesRSS starts.
+REM -resetDatabase
+REM
 REM You might have to add the full path to the java executable (java) if not in path
 REM Make sure your current directory is the MyTunesRSS installation dir
 REM
