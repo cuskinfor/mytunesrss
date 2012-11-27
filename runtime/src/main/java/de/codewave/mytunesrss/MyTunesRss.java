@@ -100,6 +100,9 @@ public class MyTunesRss {
     // Send a shutdown request to the specified port (e.g. -shutdown 12345)
     public static final String CMD_SHUTDOWN = "shutdown";
 
+    // Reset the database to the default H2 database
+    public static final String CMD_RESET_DB = "resetDatabase";
+
     // Cache directory names
     public static final String CACHEDIR_TEMP = "tmp";
     public static final String CACHEDIR_TRANSCODER = "transcoder";
@@ -276,6 +279,11 @@ public class MyTunesRss {
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
+            if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_RESET_DB)) {
+                LOGGER.info("Recreation of default database requested via command line option.");
+                CONFIG.setDatabaseType(DatabaseType.h2);
+                CONFIG.setDefaultDatabaseSettings();
+            }
             initializeDatabase();
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
@@ -597,6 +605,13 @@ public class MyTunesRss {
                         }
                     }
                 } else {
+                    if (!MyTunesRssUtils.isHeadless()) {
+                        int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
+                        if (result == JOptionPane.YES_OPTION) {
+                            recreateDefaultDatabase();
+                            continue;
+                        }
+                    }
                     MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
                 }
                 MyTunesRssUtils.shutdownGracefully();
