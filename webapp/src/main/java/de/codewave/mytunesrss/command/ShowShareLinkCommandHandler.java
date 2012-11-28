@@ -30,7 +30,7 @@ public class ShowShareLinkCommandHandler extends MyTunesRssCommandHandler {
             if (getRequest().getParameter("jukebox") != null) {
                 Map<String, String> jukeboxes = new LinkedHashMap<String, String>();
                 for (FlashPlayerConfig flashPlayerConfig : MyTunesFunctions.flashPlayerConfigs()) {
-                    jukeboxes.put(flashPlayerConfig.getName(), getRequest().getParameter("jukebox").replace("#ID#", flashPlayerConfig.getId()));
+                    jukeboxes.put(flashPlayerConfig.getName(), getRequest().getParameter("jukebox") + flashPlayerConfig.getId());
                 }
                 getRequest().setAttribute("jukeboxes", jukeboxes);
             }
