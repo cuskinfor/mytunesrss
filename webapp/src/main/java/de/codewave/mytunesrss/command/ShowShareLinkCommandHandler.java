@@ -30,12 +30,13 @@ public class ShowShareLinkCommandHandler extends MyTunesRssCommandHandler {
             if (getRequest().getParameter("jukebox") != null) {
                 Map<String, String> jukeboxes = new LinkedHashMap<String, String>();
                 for (FlashPlayerConfig flashPlayerConfig : MyTunesFunctions.flashPlayerConfigs()) {
-                    jukeboxes.put(flashPlayerConfig.getName(), getRequest().getParameter("jukebox").replace("#ID#", flashPlayerConfig.getId()));
+                    jukeboxes.put(flashPlayerConfig.getName(), getRequest().getParameter("jukebox") + flashPlayerConfig.getId());
                 }
                 getRequest().setAttribute("jukeboxes", jukeboxes);
             }
             getRequest().setAttribute("twitterText", MessageFormat.format(MyTunesRssWebUtils.getBundleString(getRequest(), "twitter.template"), getRequest().getParameter("text")));
             getRequest().setAttribute("artistAndTitle", getRequest().getParameter("text"));
+            getRequest().setAttribute("imageHash", getRequest().getParameter("imageHash"));
             forward(MyTunesRssResource.ShareLink);
         } else {
             forward(MyTunesRssResource.Login);

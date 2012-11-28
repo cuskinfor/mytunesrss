@@ -113,7 +113,8 @@
                                                editTagsResource="TrackResource"
                                                editTagsParams="{track:'${track.id}'}"
                                                defaultPlaylistName="${track.name}"
-                                               shareText="${track.name}" />
+                                               shareText="${track.name}"
+                                               shareImageHash="${track.imageHash}"/>
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">

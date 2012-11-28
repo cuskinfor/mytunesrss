@@ -16,6 +16,7 @@
 <%@ attribute name="editTagsParams" required="false" type="java.lang.String" %>
 <%@ attribute name="defaultPlaylistName" required="false" type="java.lang.String" %>
 <%@ attribute name="shareText" required="false" type="java.lang.String" %>
+<%@ attribute name="shareImageHash" required="false" type="java.lang.String" %>
 
 <%--@elvariable id="appUrl" type="java.lang.String"--%>
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
@@ -35,7 +36,7 @@
     <c:if test="${!config.showEditTags}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.share && !empty shareText}"> <%-- TODO: config.showShare, do we need it? if so => implement it --%>
-	<a id="fn_share${index}" class="share" <c:if test="${true}">style="display:none"</c:if> onclick="showShareLink(${index}, '${mtfn:escapeJs(shareText)}')" title="<fmt:message key="tooltip.share"/>"><span>Share</span></a>
+	<a id="fn_share${index}" class="share" <c:if test="${true}">style="display:none"</c:if> onclick="showShareLink(${index}, '${mtfn:escapeJs(shareText)}', '${shareImageHash}')" title="<fmt:message key="tooltip.share"/>"><span>Share</span></a>
     <c:if test="${true}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.createPlaylists && !empty defaultPlaylistName}">
