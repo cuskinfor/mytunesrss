@@ -88,7 +88,7 @@
         <c:choose>
             <c:when test="${!empty imageHash}">
                 <c:set var="imageUri">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${imageHash}/size=128</mt:encrypt></c:set>
-                <input type="hidden" name="picture" value="${imageUri}"/>
+                <input type="hidden" name="picture" value="${fn:replace(fn:replace(imageUri, '%7B', '{'), '%7D', '}')}"/>
             </c:when>
             <c:otherwise>
                 <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
