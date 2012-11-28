@@ -25,6 +25,11 @@
 # Shutdown a local instance running on the specified port.
 # -shutdown 12345
 #
+# Reset the database to the default database and create a new one. Should only be used explicitly in case MyTunesRSS
+# does not start anymore due to a fatal database problem which cannot be fixed otherwise. Should not be used in
+# startup scripts since the database would be reset each time MyTunesRSS starts.
+# -resetDatabase
+#
 # You might have to add the full path to the java executable (java) if not in path
 # Make sure your current directory is the MyTunesRSS installation dir
 #

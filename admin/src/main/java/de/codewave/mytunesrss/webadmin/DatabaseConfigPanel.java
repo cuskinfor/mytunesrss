@@ -11,6 +11,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -26,6 +27,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Select myDatabaseType;
     private SmartTextField myDatabaseDriver;
     private SmartTextField myDatabaseConnection;
+    private SmartTextField myConnectionOptions;
     private SmartTextField myDatabaseUser;
     private SmartTextField myDatabasePassword;
     private Table myUpdateTriggers;
@@ -43,6 +45,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
+        myConnectionOptions = getComponentFactory().createTextField("databaseConfigPanel.databaseConnectionOptions");
         myDatabaseUser = getComponentFactory().createTextField("databaseConfigPanel.databaseUser");
         myDatabasePassword = getComponentFactory().createPasswordTextField("databaseConfigPanel.databasePassword");
         myHelpButton = getComponentFactory().createButton("databaseConfigPanel.help", this);
@@ -69,6 +72,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         myDatabaseTypeForm.addField(myDatabaseType, myDatabaseType);
         myDatabaseTypeForm.addField(myDatabaseDriver, myDatabaseDriver);
         myDatabaseTypeForm.addField(myDatabaseConnection, myDatabaseConnection);
+        myDatabaseTypeForm.addField(myConnectionOptions, myConnectionOptions);
         myDatabaseTypeForm.addField(myDatabaseUser, myDatabaseUser);
         myDatabaseTypeForm.addField(myDatabasePassword, myDatabasePassword);
         myDatabaseTypeForm.addField(myHelpButton, myHelpButton);
@@ -101,6 +105,9 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
             myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
         } else {
             myDatabaseDriver.setValue(null);
+        }
+        if (databaseType != DatabaseType.h2) {
+            myConnectionOptions.setValue(MyTunesRss.CONFIG.getDatabaseConnectionOptions());
         }
         if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.mysqlinternal) {
             myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
@@ -162,8 +169,10 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private void showHideDatabaseDetails(DatabaseType type) {
         myDatabaseDriver.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2custom);
         myDatabaseConnection.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        myConnectionOptions.setEnabled(type != DatabaseType.h2);
         myDatabaseUser.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
         myDatabasePassword.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        setOptional(myConnectionOptions);
         if (type == DatabaseType.h2) {
             setOptional(myDatabaseDriver);
             setOptional(myDatabaseConnection);
@@ -192,6 +201,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         MyTunesRss.CONFIG.setDatabaseType((DatabaseType) myDatabaseType.getValue());
         MyTunesRss.CONFIG.setDatabaseDriver(myDatabaseDriver.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
+        MyTunesRss.CONFIG.setDatabaseConnectionOptions(myConnectionOptions.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
         MyTunesRss.CONFIG.setDatabasePassword(myDatabasePassword.getStringValue(null));
         List<String> updateTriggers = new ArrayList<String>();
@@ -313,30 +323,35 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
             case h2custom:
                 myDatabaseDriver.setValue("");
                 myDatabaseConnection.setValue("jdbc:h2:file:{path_to_folder}");
+                myConnectionOptions.setValue("");
                 myDatabaseUser.setValue(null);
                 myDatabasePassword.setValue(null);
                 break;
             case mysql:
                 myDatabaseDriver.setValue("com.mysql.jdbc.Driver");
                 myDatabaseConnection.setValue("jdbc:mysql://{database server host}/{database_name}");
+                myConnectionOptions.setValue("");
                 myDatabaseUser.setValue(null);
                 myDatabasePassword.setValue(null);
                 break;
             case mysqlinternal:
                 myDatabaseDriver.setValue("com.mysql.jdbc.Driver");
                 myDatabaseConnection.setValue("");
+                myConnectionOptions.setValue(MyTunesRssConfig.DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS);
                 myDatabaseUser.setValue("");
                 myDatabasePassword.setValue("");
                 break;
             case postgres:
                 myDatabaseDriver.setValue("org.postgresql.Driver");
                 myDatabaseConnection.setValue("jdbc:postgresql://{database server host}/{database name}");
+                myConnectionOptions.setValue("");
                 myDatabaseUser.setValue(null);
                 myDatabasePassword.setValue(null);
                 break;
             default:
                 myDatabaseDriver.setValue("");
                 myDatabaseConnection.setValue("");
+                myConnectionOptions.setValue("");
                 myDatabaseUser.setValue("");
                 myDatabasePassword.setValue("");
         }
@@ -346,6 +361,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         DatabaseType newType = (DatabaseType) myDatabaseType.getValue();
         String newDriver = StringUtils.trimToEmpty((String) myDatabaseDriver.getValue());
         String newConnect = StringUtils.trimToEmpty((String) myDatabaseConnection.getValue());
+        String newConnectOptions = StringUtils.trimToEmpty((String) myConnectionOptions.getValue());
         String newUser = StringUtils.trimToEmpty((String) myDatabaseUser.getValue());
         String newPass = StringUtils.trimToEmpty((String) myDatabasePassword.getValue());
         if (!newType.equals(MyTunesRss.CONFIG.getDatabaseType())) {
@@ -355,6 +371,9 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
             return true;
         }
         if (!newConnect.equals(MyTunesRss.CONFIG.getDatabaseConnection())) {
+            return true;
+        }
+        if (!newConnectOptions.equals(MyTunesRss.CONFIG.getDatabaseConnectionOptions())) {
             return true;
         }
         if (!newUser.equals(MyTunesRss.CONFIG.getDatabaseUser())) {

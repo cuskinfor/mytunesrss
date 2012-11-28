@@ -10,6 +10,7 @@ import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,13 @@ public class MyTunesRssDataStore extends DataStore {
     @Override
     public synchronized void init() throws IOException, SQLException {
         String databaseConnection = MyTunesRss.CONFIG.getDatabaseConnection();
+        if (StringUtils.isNotBlank(MyTunesRss.CONFIG.getDatabaseConnectionOptions())) {
+            if (databaseConnection.contains("?")) {
+                databaseConnection += "&" + StringUtils.trim(MyTunesRss.CONFIG.getDatabaseConnectionOptions());
+            } else {
+                databaseConnection += "?" + StringUtils.trim(MyTunesRss.CONFIG.getDatabaseConnectionOptions());
+            }
+        }
         String databaseUser = MyTunesRss.CONFIG.getDatabaseUser();
         String databasePassword = MyTunesRss.CONFIG.getDatabasePassword();
         initSmartStatementFactory(MyTunesRss.CONFIG.getDatabaseType());

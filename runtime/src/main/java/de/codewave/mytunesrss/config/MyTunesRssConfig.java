@@ -8,7 +8,6 @@ import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
-import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
@@ -31,7 +30,6 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +40,7 @@ public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
     private static final String CREATION_TIME_KEY = "playmode";
+    public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M";
 
     private String myHost;
     private int myPort;
@@ -75,6 +74,7 @@ public class MyTunesRssConfig {
     private String myDatabaseUser;
     private String myDatabasePassword;
     private String myDatabaseDriver;
+    private String myDatabaseConnectionOptions;
     private String myWebappContext;
     private String myTomcatMaxThreads;
     private String myAjpHost;
@@ -437,6 +437,14 @@ public class MyTunesRssConfig {
 
     public void setDatabaseDriver(String databaseDriver) {
         myDatabaseDriver = databaseDriver;
+    }
+
+    public String getDatabaseConnectionOptions() {
+        return myDatabaseConnectionOptions;
+    }
+
+    public void setDatabaseConnectionOptions(String databaseConnectionOptions) {
+        myDatabaseConnectionOptions = databaseConnectionOptions;
     }
 
     public String getWebappContext() {
@@ -1320,6 +1328,9 @@ public class MyTunesRssConfig {
         if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.h2custom) {
             setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
         }
+        if (getDatabaseType() != DatabaseType.h2) {
+            setDatabaseConnectionOptions(JXPathUtils.getStringValue(settings, "database/conn-options", getDatabaseConnectionOptions()));
+        }
         if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.mysqlinternal) {
             setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
             setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
@@ -1335,7 +1346,8 @@ public class MyTunesRssConfig {
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.mysqlinternal) {
             setDatabaseDriver("com.mysql.jdbc.Driver");
-            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
+            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
+            setDatabaseConnectionOptions(DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS);
             setDatabaseUser("mytunesrss");
             setDatabasePassword("mytunesrss");
         }
@@ -1428,6 +1440,7 @@ public class MyTunesRssConfig {
                 Element database = settings.createElement("database");
                 root.appendChild(database);
                 database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType().name()));
+                database.appendChild(DOMUtils.createTextElement(settings, "conn-options", getDatabaseConnectionOptions()));
                 // for internal mysql database we should not save additional info in the config
                 if (getDatabaseType() != DatabaseType.mysqlinternal) {
                     database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
