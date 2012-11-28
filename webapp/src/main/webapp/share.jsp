@@ -85,7 +85,15 @@
         <input type="hidden" name="display" value="popup"/>
         <input type="hidden" name="app_id" value="${globalConfig.facebookApiKey}"/>
         <input id="facebookLink" type="hidden" name="link" value="http://www.codewave.de/mytunesrss.php"/>
-        <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
+        <c:choose>
+            <c:when test="${!empty imageHash}">
+                <c:set var="imageUri">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${imageHash}/size=128</mt:encrypt></c:set>
+                <input type="hidden" name="picture" value="${imageUri}"/>
+            </c:when>
+            <c:otherwise>
+                <input type="hidden" name="picture" value="http://mytunesrss.com/mytunesrss_fb.png"/>
+            </c:otherwise>
+        </c:choose>
         <input type="hidden" name="name" value="<c:out value="${artistAndTitle}"/>"/>
         <input type="hidden" name="caption" value="MyTunesRSS - Your personal Media Server"/>
         <input type="hidden" name="description" value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>

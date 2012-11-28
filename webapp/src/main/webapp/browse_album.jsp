@@ -182,7 +182,8 @@
                                        editTagsResource="AlbumResource"
                                        editTagsParams="{album:'${album.name}',artist:'${album.artist}'}"
                                        defaultPlaylistName="${album.name}"
-                                       shareText="${album.name}" />
+                                       shareText="${album.name}"
+                                       shareImageHash="${album.imageHash}"/>
 
                     </c:when>
                     <c:otherwise>

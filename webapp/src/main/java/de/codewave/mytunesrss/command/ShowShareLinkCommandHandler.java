@@ -36,6 +36,7 @@ public class ShowShareLinkCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute("twitterText", MessageFormat.format(MyTunesRssWebUtils.getBundleString(getRequest(), "twitter.template"), getRequest().getParameter("text")));
             getRequest().setAttribute("artistAndTitle", getRequest().getParameter("text"));
+            getRequest().setAttribute("imageHash", getRequest().getParameter("imageHash"));
             forward(MyTunesRssResource.ShareLink);
         } else {
             forward(MyTunesRssResource.Login);

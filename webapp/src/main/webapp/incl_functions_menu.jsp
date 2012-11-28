@@ -65,7 +65,7 @@
 </script>
 
 <script type="text/javascript">
-    function showShareLink(index, text) {
+    function showShareLink(index, text, imageHash) {
         new $jQ.ajax({
             url : "${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>",
             type : "POST",
@@ -73,6 +73,7 @@
             processData : true,
             data : {
                 "text" : text,
+                "imageHash" : (imageHash !== undefined ? imageHash : ""),
                 "rss" : $jQ("#fn_rss" + index).attr('href'),
                 "playlist" : $jQ("#fn_playlist" + index).attr('href'),
                 "jukebox" : $jQ("#fn_player" + index).attr("href"),

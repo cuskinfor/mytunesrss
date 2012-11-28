@@ -169,7 +169,8 @@
                                            filename="${mtfn:webSafeFileName(sectionFileName)}"
                                            zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
                                            defaultPlaylistName="${sectionFileName}"
-                                           shareText="${sectionFileName}" />
+                                           shareText="${sectionFileName}"
+                                           shareImageHash="${track.imageHash}" />
 
                         </c:when>
                         <c:otherwise>
@@ -253,7 +254,8 @@
                                        editTagsResource="TrackResource"
                                        editTagsParams="{track:'${track.id}'}"
                                        defaultPlaylistName="${track.name}"
-                                       shareText="${shareText}" />
+                                       shareText="${shareText}"
+                                       shareImageHash="${cwfn:choose(showImage, track.imageHash, ''}"/>
                     </c:when>
                     <c:otherwise>
                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
