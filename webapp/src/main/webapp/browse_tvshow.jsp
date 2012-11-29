@@ -171,7 +171,7 @@
                                 <c:otherwise>
                                     <c:set var="linkFragment">track=${track.id}</c:set>
                                     <c:set var="filename">${mtfn:webSafeFileName(track.name)}</c:set>
-                                    <c:set var="playlistName">${track.name}</c:set>
+                                    <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season} - ${track.name}</c:set>
                                     <c:set var="editTagsResource">TrackResource</c:set>
                                     <c:set var="editTagsParams">{track:'${track.id}'}</c:set>
                                 </c:otherwise>
