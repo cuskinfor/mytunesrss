@@ -255,7 +255,7 @@
                                        editTagsParams="{track:'${track.id}'}"
                                        defaultPlaylistName="${track.name}"
                                        shareText="${shareText}"
-                                       shareImageHash="${cwfn:choose(showImage, track.imageHash, '')}"/>
+                                       shareImageHash="${track.imageHash}"/>
                     </c:when>
                     <c:otherwise>
                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">

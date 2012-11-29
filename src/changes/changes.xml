@@ -7,7 +7,18 @@
 
     <body>
 
-        <release version="4.6.2" date="___D___">
+        <release version="4.6.3" date="___D___">
+            <action dev="mdescher" type="fix">
+                Use cover artwork when sharing a single track even when the image is not displayed in
+                the track browser view.
+            </action>
+            <action dev="mdescher" type="update">
+                Added TV show name and season name to what is shared on Twitter and Facebook when sharing
+                a single episode.
+            </action>
+        </release>
+
+        <release version="4.6.2" date="2012-11-28">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-413] Check that the correct jukebox is shared on Twitter/Facebook
             </action>
