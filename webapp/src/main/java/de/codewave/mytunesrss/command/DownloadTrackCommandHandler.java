@@ -2,11 +2,13 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
@@ -38,6 +40,12 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
                     track = tracks.nextResult();
 
                     File file = track.getFile();
+                    if (!file.exists()) {
+                        if (LOG.isWarnEnabled()) {
+                            LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" not found, trying harder to find file.");
+                        }
+                        file = MyTunesRssUtils.searchFile(file);
+                    }
                     if (file.exists()) {
                         getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getRequest(), getWebConfig(), getAuthUser(), track) + "\"");
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
@@ -45,7 +53,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                     } else {
                         if (LOG.isWarnEnabled()) {
-                            LOG.warn("Requested file \"" + file.getAbsolutePath() + "\" does not exist.");
+                            LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" does not exist.");
                         }
                         MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);

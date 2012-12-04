@@ -164,7 +164,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setId(fileId);
         statement.setProtected(type.isProtected());
         statement.setMediaType(type.getMediaType());
-        statement.setFileName(canonicalFilePath);
+        statement.setFileName(MyTunesRssUtils.compose(canonicalFilePath));
         myQueue.offer(new DataStoreStatementEvent(statement, true));
         /*if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
             HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
