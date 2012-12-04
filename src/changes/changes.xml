@@ -9,6 +9,10 @@
 
         <release version="4.6.3" date="___D___">
             <action dev="mdescher" type="fix">
+                Always store composed form of UTF-8 filenames in the database since at least in MySQL on Linux
+                the decomposed form cannot be stored successfully.
+            </action>
+            <action dev="mdescher" type="fix">
                 Use cover artwork when sharing a single track even when the image is not displayed in
                 the track browser view.
             </action>
