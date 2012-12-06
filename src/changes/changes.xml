@@ -9,8 +9,9 @@
 
         <release version="4.6.3" date="___D___">
             <action dev="mdescher" type="fix">
-                Always store composed form of UTF-8 filenames in the database since at least in MySQL on Linux
-                the decomposed form cannot be stored successfully.
+                Update to codewave-utils 1.10 which always stores strings in composed UTF-8 form in the database.
+                This fixed problems with existing files not being found when the path contains decomposed form
+                byte sequences at least when using MySQL on Linux.
             </action>
             <action dev="mdescher" type="fix">
                 Use cover artwork when sharing a single track even when the image is not displayed in

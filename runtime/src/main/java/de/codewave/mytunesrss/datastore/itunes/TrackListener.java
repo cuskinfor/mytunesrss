@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -126,15 +127,15 @@ public class TrackListener implements PListHandlerListener {
                                     existing ? new UpdateTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId());
                             statement.clear();
                             statement.setId(trackId);
-                            statement.setName(MyTunesRssUtils.compose(name.trim()));
-                            String artist = MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Artist")));
+                            statement.setName(name.trim());
+                            String artist = StringUtils.trimToNull((String) track.get("Artist"));
                             statement.setArtist(artist);
-                            String albumArtist = MyTunesRssUtils.compose(StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist"))));
+                            String albumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist")));
                             statement.setAlbumArtist(albumArtist);
-                            statement.setAlbum(MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Album"))));
+                            statement.setAlbum(StringUtils.trimToNull((String) track.get("Album")));
                             statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
-                            statement.setFileName(MyTunesRssUtils.compose(file.getAbsolutePath()));
+                            statement.setFileName(file.getAbsolutePath());
                             statement.setProtected(myDatasourceConfig.isProtected(file.getName()));
                             boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
                             statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
@@ -144,7 +145,7 @@ public class TrackListener implements PListHandlerListener {
                                 boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
                                 statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
                                 if (tvshow) {
-                                    statement.setSeries(MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Series"))));
+                                    statement.setSeries(StringUtils.trimToNull((String) track.get("Series")));
                                     statement.setSeason((int) (track.get("Season") != null ? (Long) track.get("Season") : 0));
                                     statement.setEpisode((int) (track.get("Episode Order") != null ? (Long) track.get("Episode Order") : 0));
                                 }
@@ -153,7 +154,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setComposer(StringUtils.trimToNull((String) track.get("Composer")));
                             boolean compilation = track.get("Compilation") != null && ((Boolean) track.get("Compilation")).booleanValue();
                             statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, albumArtist));
-                            statement.setComment(MyTunesRssUtils.compose(StringUtils.trimToNull((String) track.get("Comments"))));
+                            statement.setComment(StringUtils.trimToNull((String) track.get("Comments")));
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);

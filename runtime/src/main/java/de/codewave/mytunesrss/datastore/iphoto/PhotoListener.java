@@ -99,7 +99,7 @@ public abstract class PhotoListener implements PListHandlerListener {
                     InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
                     statement.clear();
                     statement.setId(photoId);
-                    statement.setName(MyTunesRssUtils.compose(name.trim()));
+                    statement.setName(name.trim());
                     Double dateAsTimerInterval = (Double) photo.get("DateAsTimerInterval");
                     Double modDateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
                     Long createDate = null;
