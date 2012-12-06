@@ -306,14 +306,6 @@ public class MyTunesRssUtils {
         LOGGER.error("Setting codewave log to level \"" + level + "\".");
     }
 
-    public static String compose(String text) {
-        return StringUtils.isBlank(text) ? text : Normalizer.compose(text, false);
-    }
-
-    public static String decompose(String text) {
-        return StringUtils.isBlank(text) ? text : Normalizer.decompose(text, false);
-    }
-
     public static String getBaseType(String contentType) {
         try {
             ContentType type = new ContentType(StringUtils.trimToEmpty(contentType));
@@ -676,12 +668,12 @@ public class MyTunesRssUtils {
         if (file.exists()) {
             return file;
         }
-        File composedFile = new File(MyTunesRssUtils.compose(filename));
+        File composedFile = new File(MiscUtils.compose(filename));
         LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(composedFile.getAbsolutePath()) + ".");
         if (composedFile.exists()) {
             return composedFile;
         }
-        File decomposedFile = new File(MyTunesRssUtils.decompose(filename));
+        File decomposedFile = new File(MiscUtils.decompose(filename));
         LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(decomposedFile.getAbsolutePath()) + ".");
         if (decomposedFile.exists()) {
             return decomposedFile;
