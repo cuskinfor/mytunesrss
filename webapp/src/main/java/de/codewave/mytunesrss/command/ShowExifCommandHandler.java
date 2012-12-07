@@ -55,7 +55,6 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        List<ExifField> exifFieldList = new ArrayList<ExifField>();
         if (getAuthUser().isPhotos()) {
             final String id = getRequestParameter("photo", null);
             if (StringUtils.isNotBlank(id)) {
@@ -73,6 +72,7 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
                 }).getResult(0);
                 File photoFile = new File(filename);
                 if (photoFile.isFile()) {
+                    List<ExifField> exifFieldList = new ArrayList<ExifField>();
                     for (TiffField tiffField : MyTunesRssExifUtils.getExifData(photoFile)) {
                         try {
                             if (!"Undefined".equals(tiffField.getFieldTypeName())) {
@@ -82,6 +82,10 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
                             LOGGER.warn("Could not get EXIF field: " + e.getMessage());
                         }
                     }
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.getSerializationConfig().withAnnotationIntrospector(new JaxbAnnotationIntrospector());
+                    getResponse().setContentType("application/json");
+                    mapper.writeValue(getResponse().getWriter(), exifFieldList);
                 } else {
                     getResponse().sendError(HttpServletResponse.SC_NOT_FOUND, "photo file not found");
                 }
@@ -91,9 +95,5 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
         } else {
             getResponse().sendError(HttpServletResponse.SC_FORBIDDEN, "unauthorized");
         }
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.getSerializationConfig().withAnnotationIntrospector(new JaxbAnnotationIntrospector());
-        getResponse().setContentType("application/json");
-        mapper.writeValue(getResponse().getWriter(), exifFieldList);
     }
 }
