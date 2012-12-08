@@ -90,6 +90,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                         getResponse().setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
                         sendResponse(sender, photoFile.getName());
                     } else {
+                        LOGGER.warn("Photo file \"" + photoFile + "\" not found.");
                         getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
                     }
                 } else {
