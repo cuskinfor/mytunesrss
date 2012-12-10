@@ -99,6 +99,47 @@
                             </execution>
                         </executions>
                     </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>startIntegrationServer</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>pre-integration-test</phase>
+                                <configuration>
+                                    <workingDirectory>${project.build.directory}/mytunesrss-${project.version}-system-independent/mytunesrss-${project.version}</workingDirectory>
+                                    <executable>${project.basedir}/etc/start-selenium-integration.sh</executable>
+                                    <commandlineArgs>${project.build.directory}/integration-test</commandlineArgs>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>runSeleniumIntegrationTests</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>integration-test</phase>
+                                <configuration>
+                                    <executable>${java.home}/bin/java</executable>
+                                    <commandlineArgs>-cp selenium/target/selenium-${project.version}-jar-with-dependencies.jar de.codewave.mytunesrss.selenium.userinterface.CompleteTest 1 1 :1</commandlineArgs>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>stopIntegrationServer</id>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <phase>post-integration-test</phase>
+                                <configuration>
+                                    <workingDirectory>${project.build.directory}/mytunesrss-${project.version}-system-independent/mytunesrss-${project.version}</workingDirectory>
+                                    <executable>${project.basedir}/etc/stop-selenium-integration.sh</executable>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
                 </plugins>
             </build>
         </profile>

@@ -65,7 +65,7 @@
             <scope>runtime</scope>
         </dependency>
     </dependencies>
-    <build>
+    <!--build>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -91,5 +91,31 @@
                 </configuration>
             </plugin>
         </plugins>
-    </build>
+    </build-->
+    <profiles>
+        <profile>
+            <id>teamcity</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <configuration>
+                                    <descriptorRefs>
+                                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                                    </descriptorRefs>
+                                </configuration>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
