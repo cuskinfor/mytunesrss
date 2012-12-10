@@ -95,6 +95,11 @@
     <profiles>
         <profile>
             <id>teamcity</id>
+            <activation>
+                <property>
+                    <name>teamcity.version</name>
+                </property>
+            </activation>
             <build>
                 <plugins>
                     <plugin>
