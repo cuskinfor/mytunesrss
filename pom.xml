@@ -112,8 +112,8 @@
                                 <phase>pre-integration-test</phase>
                                 <configuration>
                                     <workingDirectory>${project.build.directory}/mytunesrss-${project.version}-system-independent/mytunesrss-${project.version}</workingDirectory>
-                                    <executable>${project.basedir}/etc/start-selenium-integration.sh</executable>
-                                    <commandlineArgs>${project.build.directory}/integration-test</commandlineArgs>
+                                    <executable>/bin/sh</executable>
+                                    <commandlineArgs>${project.basedir}/etc/start-selenium-integration.sh ${project.build.directory}/integration-test</commandlineArgs>
                                 </configuration>
                             </execution>
                             <execution>
@@ -135,7 +135,8 @@
                                 <phase>post-integration-test</phase>
                                 <configuration>
                                     <workingDirectory>${project.build.directory}/mytunesrss-${project.version}-system-independent/mytunesrss-${project.version}</workingDirectory>
-                                    <executable>${project.basedir}/etc/stop-selenium-integration.sh</executable>
+                                    <executable>/bin/sh</executable>
+                                    <commandlineArgs>${project.basedir}/etc/stop-selenium-integration.sh</commandlineArgs>
                                 </configuration>
                             </execution>
                         </executions>
