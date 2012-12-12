@@ -44,7 +44,7 @@ public class CompleteTest {
         FirefoxBinary firefoxBinary = new FirefoxBinary();
         firefoxBinary.setEnvironmentProperty("DISPLAY", display);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
-        //firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
+        firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
         WebDriver driver = new FirefoxDriver(firefoxBinary, firefoxProfile) {
             @Override
             public WebElement findElement(By by) {
@@ -89,7 +89,7 @@ public class CompleteTest {
     }
 
     public static void testComplete(WebDriver driver, String baseUrl, String username, String password) throws Exception {
-        driver.get(baseUrl + "/mytunesrss/");
+        driver.navigate().to(baseUrl + "/mytunesrss/");
         driver.findElement(By.id("username")).clear();
         driver.findElement(By.id("username")).sendKeys(username);
         driver.findElement(By.id("password")).clear();
