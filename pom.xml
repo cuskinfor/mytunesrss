@@ -124,8 +124,7 @@
                                 <phase>integration-test</phase>
                                 <configuration>
                                     <executable>${java.home}/bin/java</executable>
-                                    <commandlineArgs>-cp selenium/target/selenium-${project.version}-jar-with-dependencies.jar de.codewave.mytunesrss.selenium.userinterface.CompleteTest 1 1 :1</commandlineArgs>
-                                    <outputFile>target/integration-test.out</outputFile>
+                                    <commandlineArgs>-cp selenium/target/selenium-${project.version}-jar-with-dependencies.jar de.codewave.mytunesrss.selenium.userinterface.CompleteTest 1 1 :1 target/integration-test.out</commandlineArgs>
                                 </configuration>
                             </execution>
                             <execution>
