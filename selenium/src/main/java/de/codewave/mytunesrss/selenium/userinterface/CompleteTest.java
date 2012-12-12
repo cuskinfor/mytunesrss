@@ -39,6 +39,9 @@ public class CompleteTest {
                 }, threadName);
                 threads[i].start();
             }
+            for (int i = 0; i < maxThreads; i++) {
+                threads[i].join();
+            }
         } finally {
             System.out.println("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue());
         }
