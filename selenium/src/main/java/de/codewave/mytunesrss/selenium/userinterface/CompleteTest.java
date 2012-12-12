@@ -46,7 +46,7 @@ public class CompleteTest {
         FirefoxBinary firefoxBinary = new FirefoxBinary();
         firefoxBinary.setEnvironmentProperty("DISPLAY", display);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
-        firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
+        //firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
         WebDriver driver = new FirefoxDriver(firefoxBinary, firefoxProfile) {
             @Override
             public WebElement findElement(By by) {
@@ -60,11 +60,11 @@ public class CompleteTest {
             @Override
             protected Response execute(String driverCommand, Map<String, ?> parameters) {
                 System.out.println("executing driver command: " + driverCommand + " with parameters: " + parameters);
-                delayExecution();
+                //delayExecution();
                 try {
                     return super.execute(driverCommand, parameters);
                 } finally {
-                    delayExecution();
+                    // delayExecution();
                 }
             }
 
