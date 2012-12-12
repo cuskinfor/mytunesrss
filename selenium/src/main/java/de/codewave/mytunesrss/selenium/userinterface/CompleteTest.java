@@ -20,7 +20,7 @@ public class CompleteTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(CompleteTest.class);
     private static final int WAIT_INTERVAL = 100;
     private static final int TIMEOUT = 60000;
-    private static final String BASE_URL = "http://localhost:47110";
+    private static final String BASE_URL = "http://127.0.0.1:47110";
 
     public static void main(String[] args) throws Exception {
         int maxThrads = Integer.parseInt(args[0]);
