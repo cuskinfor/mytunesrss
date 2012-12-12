@@ -4,7 +4,7 @@
   <files>
     <file>
       <location>target/integration-test.out</location>
-      <contains>SUCCESS_COUNTER=2</contains>
+      <contains>SUCCESS_COUNTER=1</contains>
     </file>
   </files>
 </verifications>
