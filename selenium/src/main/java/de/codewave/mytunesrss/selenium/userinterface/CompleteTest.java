@@ -4,14 +4,10 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
-import org.openqa.selenium.remote.RemoteWebDriver;
-import org.openqa.selenium.remote.Response;
-import org.openqa.selenium.remote.SessionId;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -45,33 +41,16 @@ public class CompleteTest {
     private static void runLoop(String username, String password, String threadName, int times, String display) throws Exception {
         FirefoxBinary firefoxBinary = new FirefoxBinary();
         firefoxBinary.setEnvironmentProperty("DISPLAY", display);
-        FirefoxProfile firefoxProfile = new FirefoxProfile();
-        //firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
-        WebDriver driver = new FirefoxDriver(firefoxBinary, firefoxProfile) {
+        WebDriver driver = new FirefoxDriver(firefoxBinary, null) {
             @Override
             public WebElement findElement(By by) {
                 System.out.println("searching element: " + by);
-                delayExecution();
-                WebElement element = super.findElement(by);
-                System.out.println("found element: " + element);
-                return element;
-            }
-
-            @Override
-            protected Response execute(String driverCommand, Map<String, ?> parameters) {
-                System.out.println("executing driver command: " + driverCommand + " with parameters: " + parameters);
-                //delayExecution();
                 try {
-                    return super.execute(driverCommand, parameters);
-                } finally {
-                    // delayExecution();
+                    Thread.sleep(200);
+                } catch (InterruptedException e) {
+                    // ignore
                 }
-            }
-
-            @Override
-            protected void log(SessionId sessionId, String commandName, Object toLog, When when) {
-                super.log(sessionId, commandName, toLog, when);
-                System.out.println("session:\"" + sessionId + "\", command:\"" + commandName + "\", when:\"" + when + "\", msg:" + toLog);
+                return super.findElement(by);
             }
         };
         try {
@@ -94,14 +73,6 @@ public class CompleteTest {
             }
         } finally {
             driver.quit();
-        }
-    }
-
-    private static void delayExecution() {
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            // ignore
         }
     }
 
