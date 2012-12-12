@@ -36,10 +36,25 @@
       <profile default="true" name="Default" enabled="false">
         <processorPath useClasspath="true" />
       </profile>
+      <profile default="false" name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="admin" />
+        <module name="runtime" />
+        <module name="selenium" />
+        <module name="webapp" />
+      </profile>
     </annotationProcessing>
-  </component>
-  <component name="JavacSettings">
-    <option name="ADDITIONAL_OPTIONS_STRING" value="-target 1.5" />
+    <bytecodeTargetLevel>
+      <module name="admin" target="1.5" />
+      <module name="mytunesrss" target="1.5" />
+      <module name="mytunesrss-pom" target="1.5" />
+      <module name="runtime" target="1.5" />
+      <module name="selenium" target="1.5" />
+      <module name="webapp" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
 </project>
 
