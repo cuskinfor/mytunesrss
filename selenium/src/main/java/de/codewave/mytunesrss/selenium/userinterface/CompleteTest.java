@@ -75,8 +75,8 @@ public class CompleteTest {
             }
         };
         try {
-            driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-            driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
+            driver.manage().timeouts().implicitlyWait(60, TimeUnit.SECONDS);
+            driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS);
             driver.navigate().to(BASE_URL + "/mytunesrss/");
             driver.findElement(By.id("linkSelfReg")).click();
             driver.findElement(By.id("reg_username")).clear();
