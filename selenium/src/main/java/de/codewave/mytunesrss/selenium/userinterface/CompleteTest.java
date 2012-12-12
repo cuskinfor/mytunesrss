@@ -4,7 +4,9 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.Response;
+import org.openqa.selenium.remote.SessionId;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +66,12 @@ public class CompleteTest {
                 } finally {
                     delayExecution();
                 }
+            }
+
+            @Override
+            protected void log(SessionId sessionId, String commandName, Object toLog, When when) {
+                super.log(sessionId, commandName, toLog, when);
+                System.out.println("session:\"" + sessionId + "\", command:\"" + commandName + "\", when:\"" + when + "\", msg:" + toLog);
             }
         };
         try {
