@@ -49,11 +49,7 @@ public class CompleteTest {
             @Override
             public WebElement findElement(By by) {
                 System.out.println("searching element: " + by);
-                try {
-                    Thread.sleep(200);
-                } catch (InterruptedException e) {
-                    // ignore
-                }
+                delayExecution();
                 WebElement element = super.findElement(by);
                 System.out.println("found element: " + element);
                 return element;
@@ -62,13 +58,18 @@ public class CompleteTest {
             @Override
             protected Response execute(String driverCommand, Map<String, ?> parameters) {
                 System.out.println("executing driver command: " + driverCommand + " with parameters: " + parameters);
-                return super.execute(driverCommand, parameters);
+                delayExecution();
+                try {
+                    return super.execute(driverCommand, parameters);
+                } finally {
+                    delayExecution();
+                }
             }
         };
         try {
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
             driver.manage().timeouts().pageLoadTimeout(10, TimeUnit.SECONDS);
-            driver.get(BASE_URL + "/mytunesrss/");
+            driver.navigate().to(BASE_URL + "/mytunesrss/");
             driver.findElement(By.id("linkSelfReg")).click();
             driver.findElement(By.id("reg_username")).clear();
             driver.findElement(By.id("reg_username")).sendKeys(username);
@@ -85,6 +86,14 @@ public class CompleteTest {
             }
         } finally {
             driver.quit();
+        }
+    }
+
+    private static void delayExecution() {
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            // ignore
         }
     }
 
