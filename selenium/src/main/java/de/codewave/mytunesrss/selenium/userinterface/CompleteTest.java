@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.selenium.userinterface;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
@@ -42,7 +43,9 @@ public class CompleteTest {
     private static void runLoop(String username, String password, String threadName, int times, String display) throws Exception {
         FirefoxBinary firefoxBinary = new FirefoxBinary();
         firefoxBinary.setEnvironmentProperty("DISPLAY", display);
-        WebDriver driver = new FirefoxDriver(firefoxBinary, null) {
+        FirefoxProfile firefoxProfile = new FirefoxProfile();
+        firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
+        WebDriver driver = new FirefoxDriver(firefoxBinary, firefoxProfile) {
             @Override
             public WebElement findElement(By by) {
                 System.out.println("searching element: " + by);
@@ -64,6 +67,7 @@ public class CompleteTest {
         };
         try {
             driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+            driver.manage().timeouts().pageLoadTimeout(4, TimeUnit.SECONDS);
             driver.get(BASE_URL + "/mytunesrss/");
             driver.findElement(By.id("linkSelfReg")).click();
             driver.findElement(By.id("reg_username")).clear();
