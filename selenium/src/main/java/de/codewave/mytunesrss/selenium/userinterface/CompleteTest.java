@@ -44,7 +44,7 @@ public class CompleteTest {
         FirefoxBinary firefoxBinary = new FirefoxBinary();
         firefoxBinary.setEnvironmentProperty("DISPLAY", display);
         FirefoxProfile firefoxProfile = new FirefoxProfile();
-        firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
+        //firefoxProfile.setPreference("webdriver.load.strategy", "unstable");
         WebDriver driver = new FirefoxDriver(firefoxBinary, firefoxProfile) {
             @Override
             public WebElement findElement(By by) {
