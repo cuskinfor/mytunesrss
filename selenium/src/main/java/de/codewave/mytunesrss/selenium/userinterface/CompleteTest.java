@@ -3,10 +3,12 @@ package de.codewave.mytunesrss.selenium.userinterface;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.remote.Response;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -43,13 +45,21 @@ public class CompleteTest {
         WebDriver driver = new FirefoxDriver(firefoxBinary, null) {
             @Override
             public WebElement findElement(By by) {
-                System.out.println("Finding element " + by);
+                System.out.println("searching element: " + by);
                 try {
                     Thread.sleep(200);
                 } catch (InterruptedException e) {
                     // ignore
                 }
-                return super.findElement(by);
+                WebElement element = super.findElement(by);
+                System.out.println("found element: " + element);
+                return element;
+            }
+
+            @Override
+            protected Response execute(String driverCommand, Map<String, ?> parameters) {
+                System.out.println("executing driver command: " + driverCommand + " with parameters: " + parameters);
+                return super.execute(driverCommand, parameters);
             }
         };
         try {
