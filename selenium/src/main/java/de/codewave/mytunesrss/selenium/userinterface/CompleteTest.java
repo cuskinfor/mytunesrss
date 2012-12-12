@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class CompleteTest {
 
@@ -17,24 +18,29 @@ public class CompleteTest {
     private static final int WAIT_INTERVAL = 100;
     private static final int TIMEOUT = 60000;
     private static final String BASE_URL = "http://127.0.0.1:47110";
+    private static final AtomicLong SUCCESS_COUNTER = new AtomicLong();
 
     public static void main(String[] args) throws Exception {
-        int maxThrads = Integer.parseInt(args[0]);
-        final int maxLoops = Integer.parseInt(args[1]);
-        final String display = args[2];
-        Thread[] threads = new Thread[maxThrads];
-        for (int i = 0; i < maxThrads; i++) {
-            final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + (i + 1);
-            threads[i] = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        runLoop(UUID.randomUUID().toString(), "selenium", threadName, maxLoops, display);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+        try {
+            int maxThreads = Integer.parseInt(args[0]);
+            final int maxLoops = Integer.parseInt(args[1]);
+            final String display = args[2];
+            Thread[] threads = new Thread[maxThreads];
+            for (int i = 0; i < maxThreads; i++) {
+                final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + (i + 1);
+                threads[i] = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            runLoop(UUID.randomUUID().toString(), "selenium", threadName, maxLoops, display);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            }, threadName);
-            threads[i].start();
+                }, threadName);
+                threads[i].start();
+            }
+        } finally {
+            System.out.println("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue());
         }
     }
 
@@ -265,6 +271,7 @@ public class CompleteTest {
         driver.findElement(By.id("linkConfirmDelPlaylistYes")).click();
         driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.id("linkLogout")).click();
+        SUCCESS_COUNTER.incrementAndGet();
     }
 
     private static void waitForElement(WebDriver driver, By by) throws InterruptedException {
