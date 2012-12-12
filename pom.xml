@@ -124,7 +124,7 @@
                                 <phase>integration-test</phase>
                                 <configuration>
                                     <executable>${java.home}/bin/java</executable>
-                                    <commandlineArgs>-cp selenium/target/selenium-${project.version}-jar-with-dependencies.jar de.codewave.mytunesrss.selenium.userinterface.CompleteTest 1 1 :1</commandlineArgs>
+                                    <commandlineArgs>-cp selenium/target/selenium-${project.version}-jar-with-dependencies.jar de.codewave.mytunesrss.selenium.userinterface.CompleteTest 1 1 :1 target/integration-test.out</commandlineArgs>
                                 </configuration>
                             </execution>
                             <execution>
@@ -138,6 +138,19 @@
                                     <executable>/bin/sh</executable>
                                     <commandlineArgs>${project.basedir}/etc/stop-selenium-integration.sh</commandlineArgs>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-verifier-plugin</artifactId>
+                        <version>1.0</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>verify</goal>
+                                </goals>
+                                <phase>verify</phase>
                             </execution>
                         </executions>
                     </plugin>

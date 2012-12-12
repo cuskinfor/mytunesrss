@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.selenium.userinterface;
 
+import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -8,6 +9,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileOutputStream;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
@@ -39,8 +41,13 @@ public class CompleteTest {
                 }, threadName);
                 threads[i].start();
             }
+            for (int i = 0; i < maxThreads; i++) {
+                threads[i].join();
+            }
         } finally {
-            System.out.println("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue());
+            if (args.length == 4) {
+                IOUtils.write("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue(), new FileOutputStream(args[3]));
+            }
         }
     }
 
