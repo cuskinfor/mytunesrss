@@ -2,9 +2,7 @@ package de.codewave.mytunesrss.selenium.userinterface;
 
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxBinary;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.support.ui.Select;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,14 +24,13 @@ public class CompleteTest {
         try {
             int maxThreads = Integer.parseInt(args[0]);
             final int maxLoops = Integer.parseInt(args[1]);
-            final String display = args[2];
             Thread[] threads = new Thread[maxThreads];
             for (int i = 0; i < maxThreads; i++) {
                 final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + (i + 1);
                 threads[i] = new Thread(new Runnable() {
                     public void run() {
                         try {
-                            runLoop(UUID.randomUUID().toString(), "selenium", threadName, maxLoops, display);
+                            runLoop(UUID.randomUUID().toString(), "selenium", threadName, maxLoops);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -46,15 +43,13 @@ public class CompleteTest {
             }
         } finally {
             if (args.length == 4) {
-                IOUtils.write("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue(), new FileOutputStream(args[3]));
+                IOUtils.write("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue(), new FileOutputStream(args[2]));
             }
         }
     }
 
-    private static void runLoop(String username, String password, String threadName, int times, String display) throws Exception {
-        FirefoxBinary firefoxBinary = new FirefoxBinary();
-        firefoxBinary.setEnvironmentProperty("DISPLAY", display);
-        WebDriver driver = new FirefoxDriver(firefoxBinary, null) {
+    private static void runLoop(String username, String password, String threadName, int times) throws Exception {
+        WebDriver driver = new FirefoxDriver() {
             @Override
             public WebElement findElement(By by) {
                 System.out.println("searching element: " + by);
