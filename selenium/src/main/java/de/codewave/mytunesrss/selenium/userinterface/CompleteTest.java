@@ -53,7 +53,7 @@ public class CompleteTest {
 
     private static void runLoop(String username, String password, String threadName, int times, String display) throws Exception {
         FirefoxBinary firefoxBinary = new FirefoxBinary();
-        firefoxBinary.setEnvironmentProperty("DISPLAY", display);
+        //firefoxBinary.setEnvironmentProperty("DISPLAY", display);
         WebDriver driver = new FirefoxDriver(firefoxBinary, null) {
             @Override
             public WebElement findElement(By by) {
