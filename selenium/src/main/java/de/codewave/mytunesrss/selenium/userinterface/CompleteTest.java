@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.selenium.userinterface;
 
+import org.apache.commons.cli.*;
 import org.apache.commons.io.IOUtils;
 import org.openqa.selenium.*;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -21,9 +22,15 @@ public class CompleteTest {
     private static final AtomicLong SUCCESS_COUNTER = new AtomicLong();
 
     public static void main(String[] args) throws Exception {
+        Options options = new Options();
+        options.addOption(OptionBuilder.withLongOpt("threads").hasArg().withArgName("number").withDescription("number of concurrent threads").create("t"));
+        options.addOption(OptionBuilder.withLongOpt("loops").hasArg().withArgName("number").withDescription("number of loops per thread").create("l"));
+        options.addOption(OptionBuilder.withLongOpt("out").hasArg().withArgName("file").withDescription("name of the result output file").create("o"));
+        CommandLineParser parser = new PosixParser();
+        CommandLine commandLine = parser.parse(options, args);
         try {
-            int maxThreads = Integer.parseInt(args[0]);
-            final int maxLoops = Integer.parseInt(args[1]);
+            int maxThreads = Integer.parseInt(commandLine.getOptionValue("t", "1"));
+            final int maxLoops = Integer.parseInt(commandLine.getOptionValue("l", "1"));
             Thread[] threads = new Thread[maxThreads];
             for (int i = 0; i < maxThreads; i++) {
                 final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + (i + 1);
@@ -42,8 +49,10 @@ public class CompleteTest {
                 threads[i].join();
             }
         } finally {
-            if (args.length == 4) {
-                IOUtils.write("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue(), new FileOutputStream(args[2]));
+            if (commandLine.hasOption("o")) {
+                IOUtils.write("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue(), new FileOutputStream(commandLine.getOptionValue("o")));
+            } else {
+                System.out.println("SUCCESS_COUNTER=" + SUCCESS_COUNTER.intValue());
             }
         }
     }
