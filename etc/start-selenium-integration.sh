@@ -1,5 +1,3 @@
-#Xvfb :1 -screen 0 1024x768x24 > /dev/null 2>&1 &
-
 mkdir -p $1
 cp -R ../../../selenium/etc/prefs-cache-h2/* $1
 mkdir -p ../../selenium/etc/iPhoto/images
