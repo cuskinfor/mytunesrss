@@ -146,9 +146,9 @@ public class VlcPlayer {
                                 // process builder
                                 List<String> command = new ArrayList<String>();
                                 command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
-                                command.add("--xintf=http");
-                                command.add("--xhttp-host=" + myVlcHost);
-                                command.add("--xhttp-port=" + myVlcPort);
+                                command.add("--intf=http");
+                                command.add("--http-host=" + myVlcHost);
+                                command.add("--http-port=" + myVlcPort);
                                 if (myRaopTargets != null && myRaopTargets.length > 0) {
                                     command.add("--sout-keep");
                                     if (myRaopTargets.length == 1) {

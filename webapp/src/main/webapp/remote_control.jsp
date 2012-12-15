@@ -334,7 +334,7 @@
         }
 
         function openSpeakerSelection() {
-            var airtunesTargets = SessionResource.getSettings().airtunesTargets;
+            var airtunesTargets = SessionResource.getSession().airtunesTargets;
             $jQ("#devicelist").empty();
             $jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");
             for (var i = 0; i < airtunesTargets.length; i++) {
