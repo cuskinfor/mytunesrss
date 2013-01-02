@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -311,7 +312,20 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                     String composer = id3v2Tag.getComposer();
                     statement.setComposer(composer);
-                    statement.setTime(id3v2Tag.getTimeSeconds());
+                    int timeSeconds = id3v2Tag.getTimeSeconds();
+                    if (timeSeconds <= 0) {
+                        LOGGER.debug("No duration in ID3 tags, trying to calculate from MP3 audio frames.");
+                        FileInputStream fileInputStream = new FileInputStream(file);
+                        try {
+                            timeSeconds = Mp3Utils.calculateDurationFromAudioFrames(fileInputStream);
+                            LOGGER.debug("Calculated duration from MP3 audio frames: " + timeSeconds + " seconds.");
+                        } catch (Exception e) {
+                            LOGGER.warn("Could not calculate duration from MP3 audio frames.", e);
+                        } finally {
+                            fileInputStream.close();
+                        }
+                    }
+                    statement.setTime(timeSeconds);
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     statement.setCompilation(!StringUtils.equalsIgnoreCase(artist, albumArtist));
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
