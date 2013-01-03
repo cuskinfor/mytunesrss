@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.util.Collection;
 
 /**
@@ -27,7 +26,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         String trackId = getRequest().getParameter("track");
-        Collection<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId})).getResults();
+        Collection<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId})).getResults();
         if (!tracks.isEmpty()) {
             Track track = tracks.iterator().next();
             getRequest().setAttribute("track", track);
@@ -38,7 +37,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
                     getRequest().setAttribute("mp3info", Boolean.TRUE);
                     getRequest().setAttribute("avgBitRate", info.getAvgBitrate());
                     getRequest().setAttribute("avgSampleRate", info.getAvgSampleRate());
-                } catch (IOException e) {
+                } catch (Exception e) {
                     LOGGER.info("Could not get MP3 info from track.", e);
                 }
             }

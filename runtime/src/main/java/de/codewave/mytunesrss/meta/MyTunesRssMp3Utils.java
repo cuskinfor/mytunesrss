@@ -63,7 +63,7 @@ public class MyTunesRssMp3Utils {
         try {
             FileInputStream fileInputStream = new FileInputStream(file);
             try {
-                int seconds = Mp3Utils.calculateDurationFromAudioFrames(fileInputStream);
+                int seconds = Mp3Utils.getMp3Info(fileInputStream).getDurationSeconds();
                 LOGGER.debug("Calculated duration from MP3 audio frames: " + seconds + " seconds.");
                 return seconds;
             } catch (Exception e) {
