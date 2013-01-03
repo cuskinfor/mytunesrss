@@ -15,12 +15,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils
  */
 public class MyTunesRssMp3Utils {
-    private static final Logger LOG = LoggerFactory.getLogger(MyTunesRssMp3Utils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssMp3Utils.class);
 
     public static Image getImage(Track track) {
         File file = track.getFile();
@@ -33,8 +36,8 @@ public class MyTunesRssMp3Utils {
                 Id3v2Tag id3v2Tag = Mp3Utils.readId3v2Tag(file);
                 return getImage(id3v2Tag);
             } catch (Exception e) {
-                if (LOG.isWarnEnabled()) {
-                    LOG.warn("Could not extract artwork for \"" + file + "\".", e);
+                if (LOGGER.isWarnEnabled()) {
+                    LOGGER.warn("Could not extract artwork for \"" + file + "\".", e);
                 }
             }
         }
@@ -54,5 +57,23 @@ public class MyTunesRssMp3Utils {
             }
         }
         return null;
+    }
+
+    public static int calculateTimeFromMp3AudioFrames(File file) {
+        try {
+            FileInputStream fileInputStream = new FileInputStream(file);
+            try {
+                int seconds = Mp3Utils.calculateDurationFromAudioFrames(fileInputStream);
+                LOGGER.debug("Calculated duration from MP3 audio frames: " + seconds + " seconds.");
+                return seconds;
+            } catch (Exception e) {
+                LOGGER.warn("Could not calculate duration from MP3 audio frames.", e);
+            } finally {
+                fileInputStream.close();
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Could not calculate duration from MP3 audio frames.", e);
+        }
+        return 0;
     }
 }

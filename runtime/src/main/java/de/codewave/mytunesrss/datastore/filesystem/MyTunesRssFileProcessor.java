@@ -312,18 +312,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                     String composer = id3v2Tag.getComposer();
                     statement.setComposer(composer);
-                    int timeSeconds = id3v2Tag.getTimeSeconds();
+                    int timeSeconds = MyTunesRssMp3Utils.calculateTimeFromMp3AudioFrames(file);
                     if (timeSeconds <= 0) {
-                        LOGGER.debug("No duration in ID3 tags, trying to calculate from MP3 audio frames.");
-                        FileInputStream fileInputStream = new FileInputStream(file);
-                        try {
-                            timeSeconds = Mp3Utils.calculateDurationFromAudioFrames(fileInputStream);
-                            LOGGER.debug("Calculated duration from MP3 audio frames: " + timeSeconds + " seconds.");
-                        } catch (Exception e) {
-                            LOGGER.warn("Could not calculate duration from MP3 audio frames.", e);
-                        } finally {
-                            fileInputStream.close();
-                        }
+                        LOGGER.debug("Could not calculate MP3 duration from audio frames, trying length ID3 tag.");
+                        timeSeconds = id3v2Tag.getTimeSeconds();
                     }
                     statement.setTime(timeSeconds);
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());

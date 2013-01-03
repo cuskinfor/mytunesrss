@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
+import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang.ArrayUtils;
@@ -133,7 +134,21 @@ public class TrackListener implements PListHandlerListener {
                             String albumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist")));
                             statement.setAlbumArtist(albumArtist);
                             statement.setAlbum(StringUtils.trimToNull((String) track.get("Album")));
-                            statement.setTime((int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0));
+                            int timeSeconds = (int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0);
+                            /* keeping the code for testing/debugging purposes!
+                            if (timeSeconds > 0 && file.getName().toLowerCase().endsWith(".mp3")) {
+                                LOG.debug("Trying to calculate from MP3 audio frames.");
+                                try {
+                                    int timeSeconds2 = MyTunesRssMp3Utils.calculateTimeFromMp3AudioFrames(file);
+                                    if (timeSeconds != timeSeconds2) {
+                                        LOG.error("Different duration from iTunes XML (" + timeSeconds + ") and MP3 audio frames (" + timeSeconds2 + ") for \"" + file.getAbsolutePath() + "\".");
+                                    }
+                                } catch (IOException e) {
+                                    LOG.error("Could not calculate duration from MP3 audio frames.", e);
+                                }
+                            }
+                            */
+                            statement.setTime(timeSeconds);
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
                             statement.setFileName(file.getAbsolutePath());
                             statement.setProtected(myDatasourceConfig.isProtected(file.getName()));

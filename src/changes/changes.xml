@@ -12,7 +12,7 @@
                 [MYTUNESRSS-410] Calculate MP3 track length from audio data
             </action>
             <action dev="mdescher" type="update">
-                Updated to camel-1.11
+                Updated to camel-1.12
             </action>
         </release>
 
