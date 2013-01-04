@@ -141,20 +141,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, FileType type) throws IOException, InterruptedException {
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
-        /*if (!MyTunesRss.CONFIG.isIgnoreArtwork()) {
-            statement = existingTrack ? new UpdateTrackAndImageStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackAndImageStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
-        } else {*/
-            statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
-        //}
+        statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
         statement.clear();
         // never set any statement information here, since they are cleared once again later for MP4 file
         // if meta data from files should be ignored.
-        TrackMetaData meta = null;
         if (!myDatasourceConfig.isIgnoreFileMeta() && FileSupportUtils.isMp3(file)) {
-            meta = parseMp3MetaData(file, statement, fileId, type.getMediaType());
+            parseMp3MetaData(file, statement, fileId, type.getMediaType());
         } else if (!myDatasourceConfig.isIgnoreFileMeta() && FileSupportUtils.isMp4(file)) {
             // we have to fetch meta data even if they should be ignored to get the MP4 codec
-            meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
+            TrackMetaData meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
             if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
                 myExistingIds.remove(fileId);
                 return true;
@@ -167,13 +162,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setMediaType(type.getMediaType());
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
-        /*if (meta != null && meta.getImage() != null && !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-            HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(file, fileId, meta.getImage(), 0);
-            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, false, "Could not insert track \"" + canonicalFilePath + "\" into database"));
-        } else if (type.getMediaType() == MediaType.Image || !MyTunesRss.CONFIG.isIgnoreArtwork()) {
-            HandleTrackImagesStatement handleTrackImagesStatement = new HandleTrackImagesStatement(TrackSource.FileSystem, file, fileId, 0);
-            myQueue.offer(new DataStoreStatementEvent(handleTrackImagesStatement, false, "Could not insert track \"" + canonicalFilePath + "\" into database"));
-        }*/
         myUpdatedCount++;
         myExistingIds.add(fileId);
         return false;
@@ -206,8 +194,6 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
-        //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photoFile, photoFileId, 0);
-        //myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + canonicalFilePath + "\" into database"));
         String albumName = getPhotoAlbum(photoFile);
         try {
             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
@@ -277,6 +263,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
             }
         }
+        int timeSeconds = MyTunesRssMp3Utils.calculateTimeFromMp3AudioFrames(file);
         if (tag == null) {
             setSimpleInfo(statement, file, mediaType);
         } else {
@@ -312,12 +299,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                     String composer = id3v2Tag.getComposer();
                     statement.setComposer(composer);
-                    int timeSeconds = MyTunesRssMp3Utils.calculateTimeFromMp3AudioFrames(file);
                     if (timeSeconds <= 0) {
                         LOGGER.debug("Could not calculate MP3 duration from audio frames, trying length ID3 tag.");
                         timeSeconds = id3v2Tag.getTimeSeconds();
                     }
-                    statement.setTime(timeSeconds);
                     statement.setTrackNumber(id3v2Tag.getTrackNumber());
                     statement.setCompilation(!StringUtils.equalsIgnoreCase(artist, albumArtist));
                     meta.setImage(MyTunesRssMp3Utils.getImage(id3v2Tag));
@@ -349,6 +334,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.setId(fileId);
                 setSimpleInfo(statement, file, mediaType);
             }
+            statement.setTime(timeSeconds);
         }
         return meta;
     }
