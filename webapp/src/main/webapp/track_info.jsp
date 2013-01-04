@@ -18,9 +18,7 @@
 
 <%--@elvariable id="track" type="de.codewave.mytunesrss.datastore.statement.Track"--%>
 <%--@elvariable id="tags" type="java.util.Collection"--%>
-<%--@elvariable id="mp3info" type="java.lang.Boolean"--%>
-<%--@elvariable id="avgBitRate" type="java.lang.Integer"--%>
-<%--@elvariable id="avgSampleRate" type="java.lang.Integer"--%>
+<%--@elvariable id="mp3info" type="de.codewave.camel.mp3.Mp3Info"--%>
 <%--@elvariable id="userAgent" type="java.lang.String"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(param.track)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
@@ -155,14 +153,15 @@
                             <c:out value="${mtfn:duration(track)}" />
                         </td>
                     </tr>
-                    <c:if test="${mp3info}">
+                    <c:if test="${!empty mp3info}">
                         <fmt:message var="localizedUnknown" key="unknown" />
                         <tr <mt:flipFlop/>>
                             <td class="label">
                                 <fmt:message key="bitrate" />:
                             </td>
                             <td>
-                                <c:out value="${avgBitRate}" default="${localizedUnknown}"/>
+                                <c:out value="${mp3info.avgBitrate}" default="${localizedUnknown}"/>
+                                <c:if test="${mp3info.vbr}">(VBR)</c:if>
                             </td>
                         </tr>
                         <tr <mt:flipFlop/>>
@@ -170,7 +169,7 @@
                                 <fmt:message key="samplerate" />:
                             </td>
                             <td>
-                                <c:out value="${avgSampleRate}" default="${localizedUnknown}"/>
+                                <c:out value="${mp3info.avgSampleRate}" default="${localizedUnknown}"/>
                             </td>
                         </tr>
                     </c:if>
