@@ -4,7 +4,6 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.camel.mp3.Mp3Info;
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
@@ -33,10 +32,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("tags", getTransaction().executeQuery(new FindAllTagsForTrackQuery(track.getId())).getResults());
             if (FileSupportUtils.isMp3(track.getFile())) {
                 try {
-                    Mp3Info info = Mp3Utils.getMp3Info(new FileInputStream(track.getFile()));
-                    getRequest().setAttribute("mp3info", Boolean.TRUE);
-                    getRequest().setAttribute("avgBitRate", info.getAvgBitrate());
-                    getRequest().setAttribute("avgSampleRate", info.getAvgSampleRate());
+                    getRequest().setAttribute("mp3info", Mp3Utils.getMp3Info(new FileInputStream(track.getFile())));
                 } catch (Exception e) {
                     LOGGER.info("Could not get MP3 info from track.", e);
                 }
