@@ -35,21 +35,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle(), UpdatingTracksFromIphoto(), UpdatingTracksFromAperture();
     }
 
-    private static final class ImageUpdateInfo {
-
-        private TrackSource myTrackSource;
-        private File myFile;
-        private String myId;
-        private long myTimeLastImageUpdate;
-
-        public ImageUpdateInfo(Track track, long timeLastImageUpdate) {
-            myTrackSource = track.getSource();
-            myFile = track.getFile();
-            myId = track.getId();
-            myTimeLastImageUpdate = timeLastImageUpdate;
-        }
-    }
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBuilderCallable.class);
 
     private static State myState = State.Idle;

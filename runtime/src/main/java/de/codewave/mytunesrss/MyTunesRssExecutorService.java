@@ -65,6 +65,12 @@ public class MyTunesRssExecutorService {
         }
     }
 
+    public synchronized void cancelDatabaseUpdate() {
+        if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
+            DATABASE_UPDATE_FUTURE.cancel(true);
+        }
+    }
+
     public synchronized void scheduleDatabaseReset() throws DatabaseJobRunningException {
         if (isDatabaseJobRunning()) {
             throw new DatabaseJobRunningException();

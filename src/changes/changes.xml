@@ -9,6 +9,9 @@
 
         <release version="4.6.5" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-417] Cancel db-update does not work
+            </action>
+            <action dev="mdescher" type="update">
                 Use new MP3 info support for track info page.
             </action>
             <action dev="mdescher" type="add">
