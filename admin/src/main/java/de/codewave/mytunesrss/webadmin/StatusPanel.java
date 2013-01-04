@@ -319,7 +319,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myStopDatabaseUpdate.setEnabled(false);
             myResetDatabase.setEnabled(false);
             myBackupDatabase.setEnabled(false);
-            MyTunesRss.EXECUTOR_SERVICE.isDatabaseJobRunning();
+            MyTunesRss.EXECUTOR_SERVICE.cancelDatabaseUpdate();
         } else if (clickEvent.getSource() == myResetDatabase) {
             myUpdateDatabase.setEnabled(false);
             myRemoveImages.setEnabled(false);
