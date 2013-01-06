@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.6.5" date="___D___">
+        <release version="4.6.5" date="2013-01-06">
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-417] Cancel db-update does not work
             </action>
