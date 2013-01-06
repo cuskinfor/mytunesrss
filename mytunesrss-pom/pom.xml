@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss-pom</artifactId>
     <packaging>pom</packaging>
-    <version>4.6.5-SNAPSHOT</version>
+    <version>4.6.6-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Common POM</name>
     <distributionManagement>
         <site>
@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>camel</artifactId>
-                <version>1.12-SNAPSHOT</version>
+                <version>1.12</version>
             </dependency>
             <dependency>
                 <groupId>com.intellij</groupId>
