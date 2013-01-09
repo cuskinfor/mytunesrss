@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.CompiledReplacementRule;
 import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
-import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.UpdatePhotoStatement;
