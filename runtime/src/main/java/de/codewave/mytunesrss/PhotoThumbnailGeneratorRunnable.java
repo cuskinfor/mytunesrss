@@ -66,7 +66,7 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
                         if (Thread.interrupted()) {
                             break;
                         }
-                        MyTunesRss.STORE.executeStatement(new HandlePhotoImagesStatement(new File(photo.myFile), photo.myId));
+                        new OnDemandPhotoThumbnailGeneratorCallable(photo.myId, new File(photo.myFile)).call();
                     }
                 } catch (SQLException e) {
                     LOGGER.error("Could not fetch photos with missing thumbnails.", e);
