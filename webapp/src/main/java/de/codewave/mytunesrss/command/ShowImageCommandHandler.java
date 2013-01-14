@@ -1,12 +1,8 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
-import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
-import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
-import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
@@ -21,8 +17,6 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -78,13 +72,9 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         if (defaultImage != null) {
             getResponse().setContentType(defaultImage.getMimeType());
             getResponse().setContentLength(defaultImage.getData().length);
-            getResponse().setHeader("Cache-Control", "max-age=" + (MyTunesRss.CONFIG.getImageExpirationMillis() / 1000));
-            getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
             getResponse().getOutputStream().write(defaultImage.getData());
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
-            getResponse().setHeader("Cache-Control", "max-age=" + (MyTunesRss.CONFIG.getImageExpirationMillis() / 1000));
-            getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
         }
     }
 
@@ -114,12 +104,12 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 image = getTransaction().executeQuery(new FindImageQuery(hash, size));
             } else if (StringUtils.isNotBlank(photoId)) {
                 image = getImageForPhotoId(photoId, size);
+            } else {
+                LOG.warn("Neither photo id nor image hash found in request.");
             }
         }
         if (image == null) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("No tracks recognized in request or no images found in recognized tracks, sending default MyTunesRSS image.");
-            }
+            LOG.warn("No image available, sending default image.");
             sendDefaultImage(size);
         } else {
             sendImage(image);
@@ -142,11 +132,11 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 return queryResult.getResultSize() == 1 ? queryResult.getResult(0) : null;
             }
         });
-        if (photo != null && !"".equals(photo.myImageHash) && photo.myFile != null && photo.myFile.exists()) {
+        if (photo != null && photo.myFile != null && photo.myFile.exists()) {
             LOG.debug("Photo file is \"" + photo.myFile.getAbsolutePath() + "\".");
             Future<String> result = MyTunesRss.EXECUTOR_SERVICE.generatePhotoThumbnail(photoId, photo.myFile);
             try {
-                String imageHash = result.get(MyTunesRss.CONFIG.getOnDemainThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
+                String imageHash = result.get(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
                 LOG.debug("Photo image hash is \"" + imageHash + "\".");
                 if (StringUtils.isNotBlank(imageHash)) {
                     return session.executeQuery(new FindImageQuery(imageHash, size));
@@ -158,6 +148,8 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             } catch (TimeoutException e) {
                 LOG.warn("On-demand photo thumbnail generation timeout.", e);
             }
+        } else {
+            LOG.warn("No photo file found for photo id \"" + photoId + "\".");
         }
         return null;
     }

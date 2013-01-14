@@ -135,7 +135,7 @@ public class MyTunesRssConfig {
     private long myRestApiJsExpirationMillis;
     private int jpegQuality;
     private int onDemandThumbnailGenerationThreads;
-    private int onDemainThumbnailGenerationTimeoutSeconds;
+    private int onDemandThumbnailGenerationTimeoutSeconds;
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -958,12 +958,12 @@ public class MyTunesRssConfig {
         MyTunesRss.EXECUTOR_SERVICE.setOnDemandThumbnailGeneratorThreads(onDemandThumbnailGenerationThreads);
     }
 
-    public int getOnDemainThumbnailGenerationTimeoutSeconds() {
-        return onDemainThumbnailGenerationTimeoutSeconds;
+    public int getOnDemandThumbnailGenerationTimeoutSeconds() {
+        return onDemandThumbnailGenerationTimeoutSeconds;
     }
 
-    public void setOnDemainThumbnailGenerationTimeoutSeconds(int onDemainThumbnailGenerationTimeoutSeconds) {
-        this.onDemainThumbnailGenerationTimeoutSeconds = onDemainThumbnailGenerationTimeoutSeconds;
+    public void setOnDemandThumbnailGenerationTimeoutSeconds(int onDemandThumbnailGenerationTimeoutSeconds) {
+        this.onDemandThumbnailGenerationTimeoutSeconds = onDemandThumbnailGenerationTimeoutSeconds;
     }
 
     private String encryptCreationTime(long creationTime) {
@@ -1172,7 +1172,7 @@ public class MyTunesRssConfig {
         setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
         setJpegQuality(JXPathUtils.getIntValue(settings, "jpeg-quality", 80));
         setOnDemandThumbnailGenerationThreads(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-threads", 5));
-        setOnDemainThumbnailGenerationTimeoutSeconds(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-timoeut-seconds", 60));
+        setOnDemandThumbnailGenerationTimeoutSeconds(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-timoeut-seconds", 60));
     }
 
     /**
@@ -1568,7 +1568,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createLongElement(settings, "restapijs-expiration-millis", getRestApiJsExpirationMillis()));
             root.appendChild(DOMUtils.createIntElement(settings, "jpeg-quality", getJpegQuality()));
             root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-threads", getOnDemandThumbnailGenerationThreads()));
-            root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-timoeut-seconds", getOnDemainThumbnailGenerationTimeoutSeconds()));
+            root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-timoeut-seconds", getOnDemandThumbnailGenerationTimeoutSeconds()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
