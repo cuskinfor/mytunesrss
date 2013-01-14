@@ -25,6 +25,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler
@@ -140,11 +144,19 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         });
         if (photo != null && !"".equals(photo.myImageHash) && photo.myFile != null && photo.myFile.exists()) {
             LOG.debug("Photo file is \"" + photo.myFile.getAbsolutePath() + "\".");
-            HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(photo.myFile, photoId);
-            session.executeStatement(handlePhotoImagesStatement);
-            LOG.debug("Photo image hash is \"" + handlePhotoImagesStatement.getImageHash() + "\".");
-            if (StringUtils.isNotBlank(handlePhotoImagesStatement.getImageHash())) {
-                return session.executeQuery(new FindImageQuery(handlePhotoImagesStatement.getImageHash(), size));
+            Future<String> result = MyTunesRss.EXECUTOR_SERVICE.generatePhotoThumbnail(photoId, photo.myFile);
+            try {
+                String imageHash = result.get(MyTunesRss.CONFIG.getOnDemainThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
+                LOG.debug("Photo image hash is \"" + imageHash + "\".");
+                if (StringUtils.isNotBlank(imageHash)) {
+                    return session.executeQuery(new FindImageQuery(imageHash, size));
+                }
+            } catch (InterruptedException e) {
+                LOG.warn("On-demand photo thumbnail generation interrupted.", e);
+            } catch (ExecutionException e) {
+                LOG.warn("On-demand photo thumbnail generation failed.", e);
+            } catch (TimeoutException e) {
+                LOG.warn("On-demand photo thumbnail generation timeout.", e);
             }
         }
         return null;

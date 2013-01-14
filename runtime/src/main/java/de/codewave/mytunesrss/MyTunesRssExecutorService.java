@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.task.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.concurrent.*;
 
@@ -43,6 +44,8 @@ public class MyTunesRssExecutorService {
 
     private TrackImageGeneratorRunnable myTrackImageGeneratorRunnable;
 
+    private ExecutorService ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(5);
+
     public void shutdown() throws InterruptedException {
         DATABASE_JOB_EXECUTOR.shutdownNow();
         DATABASE_JOB_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
@@ -52,6 +55,8 @@ public class MyTunesRssExecutorService {
         GENERAL_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
         ROUTER_CONFIG_EXECUTOR.shutdownNow();
         ROUTER_CONFIG_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        ON_DEMAND_THUMBNAIL_GENERATOR.shutdownNow();
+        ON_DEMAND_THUMBNAIL_GENERATOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
     }
 
     public synchronized void scheduleDatabaseUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) throws DatabaseJobRunningException {
@@ -217,5 +222,13 @@ public class MyTunesRssExecutorService {
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule task.", e);
         }
+    }
+
+    public synchronized void setOnDemandThumbnailGeneratorThreads(int threadCount) {
+        ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationThreads());
+    }
+
+    public synchronized Future<String> generatePhotoThumbnail(String photoId, File photoFile) {
+        return ON_DEMAND_THUMBNAIL_GENERATOR.submit(new OnDemandPhotoThumbnailGeneratorCallable(photoId, photoFile));
     }
 }
