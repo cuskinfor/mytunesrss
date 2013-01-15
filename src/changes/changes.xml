@@ -9,6 +9,11 @@
 
         <release version="4.6.6" date="___D___">
             <action dev="mdescher" type="fix">
+                Do not show "download original" link on track info if there is a forced transcoder for that track
+                or if not transcoder for the track is selected, i.e. in case the link would be the same as the
+                normal download link.
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-418] Limit number of parallel photo thumbnail generation threads
             </action>
             <action dev="mdescher" type="fix">
