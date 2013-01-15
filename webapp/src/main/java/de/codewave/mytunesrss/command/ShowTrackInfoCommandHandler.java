@@ -6,6 +6,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.config.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -37,6 +39,9 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
                     LOGGER.info("Could not get MP3 info from track.", e);
                 }
             }
+            TranscoderConfig forcedTranscoder = getAuthUser().getForceTranscoder(track);
+            TranscoderConfig selectedTranscoder = MyTunesRssWebUtils.getTranscoder(getWebConfig().getActiveTranscoders(), track);
+            getRequest().setAttribute("originalDownloadLink", forcedTranscoder == null && selectedTranscoder == null);
         }
         forward(MyTunesRssResource.TrackInfo);
     }

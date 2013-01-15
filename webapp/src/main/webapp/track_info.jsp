@@ -15,11 +15,15 @@
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
-
+<%--@elvariable id="originalDownloadLink" type="java.lang.Boolean"--%>
 <%--@elvariable id="track" type="de.codewave.mytunesrss.datastore.statement.Track"--%>
 <%--@elvariable id="tags" type="java.util.Collection"--%>
 <%--@elvariable id="mp3info" type="de.codewave.camel.mp3.Mp3Info"--%>
 <%--@elvariable id="userAgent" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownSeries" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownAlbum" type="java.lang.String"--%>
+<%--@elvariable id="msgUnknownArtist" type="java.lang.String"--%>
+<%--@elvariable id="themeUrl" type="java.lang.String"--%>
 
 <c:set var="backUrl" scope="request">${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(param.track)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
@@ -227,7 +231,7 @@
                             </c:if>
                         </td>
                     </tr>
-                    <c:if test="${authUser.download && config.showDownload}">
+                    <c:if test="${originalDownloadLink && authUser.download && config.showDownload}">
                         <tr <mt:flipFlop/>>
                             <td>&nbsp;</td>
                             <td>
