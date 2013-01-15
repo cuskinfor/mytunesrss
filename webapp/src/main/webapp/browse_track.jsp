@@ -261,7 +261,7 @@
                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                             <a id="linkEditPlaylistFlash${fnCount}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>track=${track.id}/filename=${mtfn:virtualTrackName(track)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                         </c:if>
-                        <c:if test="${mtfn:lowerSuffix(pageContext, config, authUser, track) eq 'mp3' && authUser.yahooPlayer && config.yahooMediaPlayer}">
+                        <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && authUser.yahooPlayer && config.yahooMediaPlayer}">
                             <c:set var="yahoo" value="true"/>
                             <a id="linkEditPlaylistYahoo${fnCount}" class="htrack" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>">
                                 <img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=64</mt:encrypt>" style="display:none" alt=""/>

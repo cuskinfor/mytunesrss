@@ -41,7 +41,7 @@ public class ShowTrackInfoCommandHandler extends MyTunesRssCommandHandler {
             }
             TranscoderConfig forcedTranscoder = getAuthUser().getForceTranscoder(track);
             TranscoderConfig selectedTranscoder = MyTunesRssWebUtils.getTranscoder(getWebConfig().getActiveTranscoders(), track);
-            getRequest().setAttribute("originalDownloadLink", forcedTranscoder == null && selectedTranscoder == null);
+            getRequest().setAttribute("originalDownloadLink", forcedTranscoder == null && selectedTranscoder != null);
         }
         forward(MyTunesRssResource.TrackInfo);
     }

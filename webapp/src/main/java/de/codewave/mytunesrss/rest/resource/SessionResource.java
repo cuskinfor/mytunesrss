@@ -74,7 +74,7 @@ public class SessionResource extends RestResource {
 
     public List<String> getTranscoders(User user) {
         List<String> transcoderNames = new ArrayList<String>();
-        if (user.isTranscoder()) {
+        if (user.isTranscoder() && MyTunesRss.CONFIG.isValidVlcConfig()) {
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 transcoderNames.add(config.getName());
             }

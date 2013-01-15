@@ -39,7 +39,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
 
                     File file = track.getFile();
                     if (file.exists()) {
-                        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getRequest(), getWebConfig(), getAuthUser(), track) + "\"");
+                        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false)) + "\"");
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
