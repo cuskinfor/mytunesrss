@@ -295,7 +295,7 @@ public class MyTunesRssWebUtils {
     }
 
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
-        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssConfig.isVlc(MyTunesRss.CONFIG.getVlcExecutable(), false)) {
+        if (MyTunesRss.CONFIG.isValidVlcConfig()) {
             boolean notranscode = "true".equals(request.getParameter("notranscode"));
             boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
             User authUser = getAuthUser(request);
@@ -423,9 +423,11 @@ public class MyTunesRssWebUtils {
     }
 
     public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
-        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
-                return config;
+        if (MyTunesRss.CONFIG.isValidVlcConfig()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+                if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
+                    return config;
+                }
             }
         }
         return null;
