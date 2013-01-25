@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -39,7 +40,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
 
                     File file = track.getFile();
                     if (file.exists()) {
-                        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false)) + "\"");
+                        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false))) + "\"");
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));

@@ -217,14 +217,14 @@
                                 <a id="linkRemoteControl" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote Control</span></a>
                             </c:if>
                             <c:if test="${authUser.rss && config.showRss}">
-                                    <a id="linkRssFeed" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.xml" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+                                    <a id="linkRssFeed" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/_cdi=${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.xml</mt:encrypt>" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
-                                    <a id="linkPlaylist" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/${mtfn:virtualTrackName(track)}.${config.playlistFileSuffix}" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
+                                    <a id="linkPlaylist" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/type=${config.playlistType}/_cdi=${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.${config.playlistFileSuffix}</mt:encrypt>" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
                             </c:if>
                             <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                                 <c:set var="playlistParams"><mt:encode64>track=${track.id}</mt:encode64></c:set>
-                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}</mt:encrypt>/<mt:encrypt key="${encryptionKey}">filename=${mtfn:virtualTrackName(track)}.xspf</mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
                                     <a id="linkDownload" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
@@ -235,7 +235,7 @@
                         <tr <mt:flipFlop/>>
                             <td>&nbsp;</td>
                             <td>
-                                <a id="linkDownloadOriginal" href="<c:out value="${mtfn:noTranscodeDownloadLink(pageContext, track, 'notranscode=true')}"/>" class="original" title="<fmt:message key="tooltip.originalDownload"/>">
+                                <a id="linkDownloadOriginal" href="<c:out value="${mtfn:downloadLink(pageContext, track, 'notranscode=true')}"/>" class="original" title="<fmt:message key="tooltip.originalDownload"/>">
                                     <fmt:message key="originalDownload"/>
                                 </a>
                             </td>

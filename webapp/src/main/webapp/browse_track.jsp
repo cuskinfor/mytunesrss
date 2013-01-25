@@ -96,18 +96,18 @@
                         <mttag:actions index="${fnCount}"
                                        backUrl="${mtfn:encode64(backUrl)}"
                                        linkFragment="${linkFragment}"
-                                       filename="${mtfn:webSafeFileName(filename)}"
+                                       filename="${filename}"
                                        zipFileCount="${fn:length(tracks)}"
                                        editTagsResource="PlaylistResource"
                                        editTagsParams="{playlist:'${param.playlist}'}"
-                                       defaultPlaylistName="${mtfn:webSafeFileName(filename)}"
+                                       defaultPlaylistName="${filename}"
                                        shareText="${filename}"/>
 
                     </c:when>
                     <c:otherwise>
                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                             <a id="linkEditPlaylistFlashPlaylistHeader" class="flash"
-                               onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${linkFragment}/filename=${mtfn:webSafeFileName(filename)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;"
+                               onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${linkFragment}</mt:encode64></mt:encrypt>/playerId='); return false;"
                                title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                         </c:if>
                         <a id="linkAddToPlaylistPlaylistHeader" class="add"
@@ -166,7 +166,7 @@
                             <mttag:actions index="${fnCount}"
                                            backUrl="${mtfn:encode64(backUrl)}"
                                            linkFragment="${sectionArguments}"
-                                           filename="${mtfn:webSafeFileName(sectionFileName)}"
+                                           filename="${sectionFileName}"
                                            zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
                                            defaultPlaylistName="${sectionFileName}"
                                            shareText="${sectionFileName}"
@@ -175,7 +175,7 @@
                         </c:when>
                         <c:otherwise>
                             <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
-                                <a id="linkEditPlaylistFlashSection${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${sectionArguments}/filename=${mtfn:webSafeFileName(sectionFileName)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                <a id="linkEditPlaylistFlashSection${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${sectionArguments}</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <a id="linkAddToPlaylistSection${loopStatus.index}" class="add" onclick="addTracksToPlaylist(jQuery.makeArray([${mtfn:jsArray(fn:split(track.sectionIds, ","))}]))" alt="add"><span>Add</span></a>
                         </c:otherwise>
@@ -259,7 +259,7 @@
                     </c:when>
                     <c:otherwise>
                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
-                            <a id="linkEditPlaylistFlash${fnCount}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>track=${track.id}/filename=${mtfn:virtualTrackName(track)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                            <a id="linkEditPlaylistFlash${fnCount}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>track=${track.id}</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                         </c:if>
                         <c:if test="${mtfn:lowerSuffix(config, authUser, track) eq 'mp3' && authUser.yahooPlayer && config.yahooMediaPlayer}">
                             <c:set var="yahoo" value="true"/>

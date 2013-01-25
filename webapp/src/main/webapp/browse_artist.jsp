@@ -44,7 +44,7 @@
                     <c:set var="artistname" value="${artist.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/${mtfn:virtualArtistName(artist)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}/_cdi=${cwfn:encodeUrl(mtfn:virtualArtistName(artist))}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
         </c:forEach>
     </c:if>
 
@@ -154,7 +154,7 @@
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
-                                            <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>artist=${mtfn:encode64(artist.name)}/fullAlbums=false/filename=${mtfn:virtualArtistName(artist)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                            <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>artist=${mtfn:encode64(artist.name)}/fullAlbums=false</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                         </c:if>
                                         <a id="linkAddToPlaylist${loopStatus.index}" class="add" onclick="addArtistsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(artist.name)}']))" title="<fmt:message key="playlist.addArtist"/>"><span><fmt:message key="playlist.addArtist"/></span></a>
                                     </c:otherwise>
