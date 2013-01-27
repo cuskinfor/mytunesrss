@@ -26,7 +26,9 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
 
     @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
-        if (getAuthUser().isPlaylist() || "1".equals(getRequestParameter("fpr", "0"))) {
+        boolean fpr = "1".equals(getRequestParameter("fpr", "0"));
+        getRequest().setAttribute("filenames", fpr);
+        if (getAuthUser().isPlaylist() || fpr) {
             TimeUnit timeUnit = TimeUnit.valueOf(getRequestParameter("timeunit", TimeUnit.SECONDS.name()));
             getRequest().setAttribute("timefactor", timeUnit.convert(1, TimeUnit.SECONDS));
             DataStoreQuery.QueryResult<Track> tracks = getTracks();

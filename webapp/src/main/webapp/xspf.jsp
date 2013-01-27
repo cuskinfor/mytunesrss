@@ -5,7 +5,7 @@
     <trackList>
         <c:forEach items="${tracks}" var="item">
             <track>
-                <location><c:out value="${mtfn:playbackLink(pageContext, item, null)}"/></location>
+                <location><c:out value="${mtfn:playbackLink(pageContext, item, null)}"/>/${cwfn:encodeUrl(mtfn:virtualTrackName(item))}.${mtfn:suffix(config, authUser, item)}</location>
                 <creator><c:out value="${cwfn:choose(mtfn:unknown(item.originalArtist), msgUnknownArtist, item.originalArtist)}" /></creator>
                 <album><c:out value="${cwfn:choose(mtfn:unknown(item.album), msgUnknownAlbum, item.album)}" /></album>
                 <title><c:out value="${item.name}"/></title>

@@ -356,4 +356,14 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         }
         return index;
     }
+
+    /**
+     * Get the filename from the content disposition request parameter "_cdi" or "_cda" and default to "MyTunesRSS" if neither of the two parameters
+     * is available.
+     *
+     * @return The filename.
+     */
+    protected String getContentDispositionFilename() {
+        return StringUtils.trimToEmpty(StringUtils.substringBeforeLast(getRequestParameter("_cdi", getRequestParameter("_cda", "MyTunesRSS")), "."));
+    }
 }
