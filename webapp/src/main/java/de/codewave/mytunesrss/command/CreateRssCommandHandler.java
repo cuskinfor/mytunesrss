@@ -23,11 +23,7 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
     public void executeAuthorized() throws Exception {
         if (getAuthUser().isRss()) {
             String feedUrl = getRequest().getRequestURL().toString();
-            String channel = StringUtils.trimToNull(StringUtils.substringAfterLast(feedUrl, "/"));
-            if (channel != null) {
-                channel = StringUtils.trimToNull(StringUtils.substringBeforeLast(channel, "."));
-            }
-            getRequest().setAttribute("channel", channel != null ? MiscUtils.getUtf8UrlDecoded(channel.replace('_', ' ')) : "MyTunesRSS");
+            getRequest().setAttribute("channel", getContentDispositionFilename());
             getRequest().setAttribute("feedUrl", feedUrl);
             Collection<Track> tracks = getTracks().getResults();
             if (tracks != null && !tracks.isEmpty()) {

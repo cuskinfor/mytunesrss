@@ -155,7 +155,7 @@
                             <c:choose>
                                 <c:when test="${empty track.id && track.season == -1}">
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seriesSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seriesSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seriesSectionPlaylistId)}</c:otherwise></c:choose></c:set>
-                                    <c:set var="filename">${mtfn:webSafeFileName(track.series)}</c:set>
+                                    <c:set var="filename">${track.series}</c:set>
                                     <c:set var="playlistName">${track.series}</c:set>
                                     <c:set var="editTagsResource">PlaylistResource</c:set>
                                     <c:set var="editTagsParams">{track:'${track.seriesSectionPlaylistId}'}</c:set>
@@ -163,14 +163,14 @@
                                 <c:when test="${empty track.id}">
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seasonSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seasonSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seasonSectionPlaylistId)}</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
-                                    <c:set var="filename">${mtfn:webSafeFileName(filename)}</c:set>
+                                    <c:set var="filename">${filename}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
                                     <c:set var="editTagsResource">PlaylistResource</c:set>
                                     <c:set var="editTagsParams">{playlist:'${track.seasonSectionPlaylistId}'}</c:set>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="linkFragment">track=${track.id}</c:set>
-                                    <c:set var="filename">${mtfn:webSafeFileName(track.name)}</c:set>
+                                    <c:set var="filename">${track.name}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season} - ${track.name}</c:set>
                                     <c:set var="editTagsResource">TrackResource</c:set>
                                     <c:set var="editTagsParams">{track:'${track.id}'}</c:set>

@@ -52,11 +52,11 @@
     <c:if test="${!config.addRemoteControl}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.rss}">
-	<a id="fn_rss${index}" class="rss" onclick="self.location.href=$jQ('#fn_rss${index}').attr('href'); return false" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.xml" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+	<a id="fn_rss${index}" class="rss" onclick="self.location.href=$jQ('#fn_rss${index}').attr('href'); return false" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/_cdi=${cwfn:encodeUrl(filename)}.xml</mt:encrypt>" <c:if test="${!config.showRss}">style="display:none"</c:if> title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
     <c:if test="${!config.showRss}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${authUser.playlist}">
-	<a id="fn_playlist${index}" class="playlist" onclick="self.location.href=$jQ('#fn_playlist${index}').attr('href'); return false" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.${config.playlistFileSuffix}" <c:if test="${!config.showPlaylist}">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
+	<a id="fn_playlist${index}" class="playlist" onclick="self.location.href=$jQ('#fn_playlist${index}').attr('href'); return false" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/type=${config.playlistType}/_cdi=${cwfn:encodeUrl(filename)}.${config.playlistFileSuffix}</mt:encrypt>" <c:if test="${!config.showPlaylist}">style="display:none"</c:if> title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
     <c:if test="${!config.showPlaylist}"><c:set var="displayMenu" value="true"/></c:if>
 </c:if>
 <c:if test="${globalConfig.flashPlayer && authUser.player}">
@@ -77,7 +77,7 @@
         <a id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('#fn_download${index}').attr('href'); return false" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
     </c:when>
     <c:when test="${empty track && authUser.download && (authUser.maximumZipEntries <= 0 || zipFileCount <= authUser.maximumZipEntries)}">
-        <a id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('#fn_download${index}').attr('href'); return false" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}</mt:encrypt>/${filename}.zip" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
+        <a id="fn_download${index}" class="download" onclick="self.document.location.href=$jQ('#fn_download${index}').attr('href'); return false" href="${servletUrl}/getZipArchive/${auth}/<mt:encrypt key="${encryptionKey}">${linkFragment}/_cda=${cwfn:encodeUrl(filename)}.zip</mt:encrypt>" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>
     </c:when>
     <c:when test="${empty track && authUser.download && authUser.maximumZipEntries > 0 && zipFileCount > authUser.maximumZipEntries}">
         <a id="fn_download${index}" class="download" onclick="displayError('<fmt:message key="error.zipLimit"><fmt:param value="${authUser.maximumZipEntries}"/></fmt:message>');" <c:if test="${!config.showDownload}">style="display:none"</c:if> title="<fmt:message key="tooltip.downloadzip"/>"><span>Download</span></a>

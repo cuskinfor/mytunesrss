@@ -44,7 +44,7 @@
                     <c:set var="genrename" value="${genre.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${mtfn:encode64(genre.name)}</mt:encrypt>/${mtfn:virtualGenreName(genre)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${genrename}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">genre=${mtfn:encode64(genre.name)}/_cdi=${cwfn:encodeUrl(mtfn:virtualGenreName(genre))}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${genrename}" />" />
         </c:forEach>
     </c:if>
 
@@ -143,7 +143,7 @@
                                         </c:when>
                                         <c:otherwise>
                                             <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
-                                                <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>genre=${mtfn:encode64(genre.name)}/filename=${mtfn:virtualGenreName(genre)}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                                <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>genre=${mtfn:encode64(genre.name)}</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                             </c:if>
                                             <a id="linkAddToPlaylist${loopStatus.index}" class="add" onclick="addGenresToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(genre.name)}']))" title="<fmt:message key="playlist.addGenre"/>"><span><fmt:message key="playlist.addGenre"/></span></a>
                                         </c:otherwise>

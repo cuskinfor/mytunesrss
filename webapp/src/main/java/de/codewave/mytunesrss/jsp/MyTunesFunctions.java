@@ -41,56 +41,35 @@ public class MyTunesFunctions {
 
     private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
 
-    public static String webSafeFileName(String name) {
-        name = getLegalFileName(name);
-        return MiscUtils.getUtf8UrlEncoded(name);
-    }
-
-    public static String getLegalFileName(String name) {
-        name = name.replace('/', '_');
-        name = name.replace('\\', '_');
-        name = name.replace('?', '_');
-        name = name.replace('*', '_');
-        name = name.replace(':', '_');
-        name = name.replace('|', '_');
-        name = name.replace('\"', '_');
-        name = name.replace('<', '_');
-        name = name.replace('>', '_');
-        name = name.replace('`', '_');
-        //        name = name.replace('´', '_');
-        name = name.replace('\'', '_');
-        return name;
-    }
-
     public static boolean unknown(String trackAlbumOrArtist) {
         return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
     }
 
     public static String virtualTrackName(Track track) {
         if (unknown(track.getArtist())) {
-            return webSafeFileName(track.getName());
+            return track.getName();
         }
-        return webSafeFileName(track.getArtist() + " - " + track.getName());
+        return track.getArtist() + " - " + track.getName();
     }
 
     public static String virtualAlbumName(Album album) {
         if (unknown(album.getArtist()) && unknown(album.getName())) {
             return DEFAULT_NAME;
         } else if (unknown(album.getArtist()) || album.getArtistCount() > 1) {
-            return webSafeFileName(album.getName());
+            return album.getName();
         }
-        return webSafeFileName(album.getArtist() + " - " + album.getName());
+        return album.getArtist() + " - " + album.getName();
     }
 
     public static String virtualArtistName(Artist artist) {
         if (unknown(artist.getName())) {
             return DEFAULT_NAME;
         }
-        return webSafeFileName(artist.getName());
+        return artist.getName();
     }
 
     public static String virtualGenreName(Genre genre) {
-        return webSafeFileName(genre.getName());
+        return genre.getName();
     }
 
     public static String lowerSuffix(WebConfig config, User user, Track track) {
@@ -282,7 +261,7 @@ public class MyTunesFunctions {
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
-        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString())).append("/").append(webSafeFileName(track.getName())).append(".m3u8");
+        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
         return builder.toString();
     }
 
@@ -305,7 +284,6 @@ public class MyTunesFunctions {
             pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
-        builder.append("/").append(webSafeFileName(FilenameUtils.getName(StringUtils.trimToEmpty(photo.getFile()))));
         return builder.toString();
     }
 
@@ -317,26 +295,18 @@ public class MyTunesFunctions {
         if (MyTunesRssWebUtils.getUserAgent(request) == UserAgent.Iphone && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, false, false)) {
             return httpLiveStreamUrl(request, track, extraPathInfo);
         }
-        return playbackDownloadUrl(request, MyTunesRssCommand.PlayTrack, track, extraPathInfo, false);
+        return playbackDownloadUrl(request, MyTunesRssCommand.PlayTrack, track, extraPathInfo);
     }
 
     public static String downloadUrl(PageContext pageContext, Track track, String extraPathInfo) {
         return downloadUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
     }
 
-    public static String noTranscodeDownloadUrl(PageContext pageContext, Track track, String extraPathInfo) {
-        return noTranscodeDownloadUrl((HttpServletRequest) pageContext.getRequest(), track, extraPathInfo);
-    }
-
     public static String downloadUrl(HttpServletRequest request, Track track, String extraPathInfo) {
-        return playbackDownloadUrl(request, MyTunesRssCommand.DownloadTrack, track, extraPathInfo, false);
+        return playbackDownloadUrl(request, MyTunesRssCommand.DownloadTrack, track, extraPathInfo);
     }
 
-    public static String noTranscodeDownloadUrl(HttpServletRequest request, Track track, String extraPathInfo) {
-        return playbackDownloadUrl(request, MyTunesRssCommand.DownloadTrack, track, extraPathInfo, true);
-    }
-
-    private static String playbackDownloadUrl(HttpServletRequest request, MyTunesRssCommand command, Track track, String extraPathInfo, boolean noTranscode) {
+    private static String playbackDownloadUrl(HttpServletRequest request, MyTunesRssCommand command, Track track, String extraPathInfo) {
         HttpSession session = request.getSession();
         StringBuilder builder = new StringBuilder((String) request.getAttribute("downloadPlaybackServletUrl"));
         String auth = (String) request.getAttribute("auth");
@@ -355,7 +325,6 @@ public class MyTunesFunctions {
             pathInfo.append("/").append(extraPathInfo);
         }
         builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
-        builder.append("/").append(virtualTrackName(track)).append(".").append(suffix(MyTunesRssWebUtils.getWebConfig(request), user, track, noTranscode));
         return builder.toString();
     }
 

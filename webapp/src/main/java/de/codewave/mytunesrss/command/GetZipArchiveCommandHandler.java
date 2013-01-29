@@ -6,11 +6,11 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.io.FileCache;
 import de.codewave.utils.servlet.FileSender;
@@ -137,13 +137,13 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                     trackAlbum = "Unknown Album";
                 }
                 int number = 1;
-                String entryNameWithoutSuffix = StringUtils.strip(MyTunesFunctions.getLegalFileName(trackArtist), ".") + "/" + StringUtils.strip(
-                        MyTunesFunctions.getLegalFileName(trackAlbum),
+                String entryNameWithoutSuffix = StringUtils.strip(MyTunesRssUtils.getLegalFileName(trackArtist), ".") + "/" + StringUtils.strip(
+                        MyTunesRssUtils.getLegalFileName(trackAlbum),
                         ".") + "/";
                 if (track.getTrackNumber() > 0) {
                     entryNameWithoutSuffix += StringUtils.leftPad(Integer.toString(track.getTrackNumber()), 2, "0") + " ";
                 }
-                entryNameWithoutSuffix += StringUtils.strip(MyTunesFunctions.getLegalFileName(track.getName()), ".");
+                entryNameWithoutSuffix += StringUtils.strip(MyTunesRssUtils.getLegalFileName(track.getName()), ".");
                 String entryName = entryNameWithoutSuffix + "." + FilenameUtils.getExtension(track.getFile().getName());
                 while (entryNames.contains(entryName)) {
                     entryName = entryNameWithoutSuffix + " " + number + "." + FilenameUtils.getExtension(track.getFile().getName());

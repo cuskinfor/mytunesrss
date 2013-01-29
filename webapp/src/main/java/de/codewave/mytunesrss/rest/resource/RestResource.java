@@ -39,14 +39,14 @@ public class RestResource {
         representation.setTagsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
-            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=M3u"), fn(artist, "m3u")));
-            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=Xspf"), fn(artist, "xspf")));
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=M3u"), enc(request, "_cdi=" + ue(artist.getName()) + ".m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=Xspf"), enc(request, "_cdi=" + ue(artist.getName()) + ".xspf")));
         }
         if (user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "artist=" + b64(artist.getName())), fn(artist, "rss")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "artist=" + b64(artist.getName())), enc(request, "_cdi=" + ue(artist.getName()) + ".xml")));
         }
         if (user.isDownload()) {
-            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "artist=" + b64(artist.getName())), fn(artist, "zip")));
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "artist=" + b64(artist.getName())), enc(request, "_cda=" + ue(artist.getName()) + ".zip")));
         }
         return representation;
     }
@@ -69,14 +69,14 @@ public class RestResource {
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
-            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=M3u"), fn(album, "m3u")));
-            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=Xspf"), fn(album, "xspf")));
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=M3u"), enc(request, "_cdi=" + ue(album.getName()) + ".m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=Xspf"), enc(request, "_cdi=" + ue(album.getName()) + ".xspf")));
         }
         if (user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "album=" + b64(album.getName())), fn(album, "rss")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "album=" + b64(album.getName())), enc(request, "_cdi=" + ue(album.getName()) + ".xml")));
         }
         if (user.isDownload()) {
-            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "album=" + b64(album.getName())), enc(request, "albumartist=" + b64(album.getArtist())), fn(album, "zip")));
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "album=" + b64(album.getName())), enc(request, "albumartist=" + b64(album.getArtist())), enc(request, "_cda=" + ue(album.getName()) + ".zip")));
         }
         return representation;
     }
@@ -121,7 +121,7 @@ public class RestResource {
             }
             representation.setTagsUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTags").build(playlist.getId()));
             if (MyTunesRssWebUtils.getAuthUser(request).isDownload()) {
-                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "playlist=" + playlist.getId()), fn(playlist, "zip")));
+                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "playlist=" + playlist.getId()), enc(request, "_cda=" + ue(playlist.getName()) + ".zip")));
             }
         }
         return representation;
@@ -142,11 +142,11 @@ public class RestResource {
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
-            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=M3u"), fn(track, "m3u")));
-            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=Xspf"), fn(track, "xspf")));
+            representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=M3u"), enc(request, "_cdi=" + ue(track.getName()) + ".m3u")));
+            representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=Xspf"), enc(request, "_cdi=" + ue(track.getName()) + ".xspf")));
         }
         if (user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "track=" + track.getId()), fn(track, "rss")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "track=" + track.getId()), enc(request, "_cdi=" + ue(track.getName()) + ".xml")));
         }
         request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(request)); // prepare MyTunesFunctions
         if (user.isDownload()) {
@@ -184,23 +184,7 @@ public class RestResource {
         return MyTunesRssBase64Utils.encode(s);
     }
 
-    protected String fn(Album album, String suffix) {
-        return MyTunesFunctions.virtualAlbumName(album) + "." + suffix;
-    }
-
-    protected String fn(Artist artist, String suffix) {
-        return MyTunesFunctions.virtualArtistName(artist) + "." + suffix;
-    }
-
-    protected String fn(Genre genre, String suffix) {
-        return MyTunesFunctions.virtualGenreName(genre) + "." + suffix;
-    }
-
-    protected String fn(Track track, String suffix) {
-        return MyTunesFunctions.virtualTrackName(track) + "." + suffix;
-    }
-
-    protected String fn(Playlist playlist, String suffix) {
-        return MyTunesFunctions.webSafeFileName(playlist.getName()) + "." + suffix;
+    protected String ue(String s) {
+        return MiscUtils.getUtf8UrlEncoded(s);
     }
 }

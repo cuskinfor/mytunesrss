@@ -13,18 +13,6 @@
 
     <function>
         <description>
-            Create a web safe file name.
-        </description>
-        <name>webSafeFileName</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String webSafeFileName(java.lang.String)</function-signature>
-        <example>
-            &lt;c:out value="${mtfn:webSafeFileName(name)}"/&gt;
-        </example>
-    </function>
-
-    <function>
-        <description>
             Create a virtual name from a track.
         </description>
         <name>virtualTrackName</name>
@@ -340,17 +328,6 @@
         <name>downloadLink</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String downloadUrl(javax.servlet.jsp.PageContext,
-            de.codewave.mytunesrss.datastore.statement.Track, java.lang.String)
-        </function-signature>
-    </function>
-
-    <function>
-        <description>
-            Get the download link for a track without transcoding.
-        </description>
-        <name>noTranscodeDownloadLink</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String noTranscodeDownloadUrl(javax.servlet.jsp.PageContext,
             de.codewave.mytunesrss.datastore.statement.Track, java.lang.String)
         </function-signature>
     </function>

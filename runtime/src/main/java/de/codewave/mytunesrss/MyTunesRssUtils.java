@@ -869,4 +869,19 @@ public class MyTunesRssUtils {
         }
         return file.canExecute();
     }
+
+    public static String getLegalFileName(String name) {
+        name = name.replace('/', '_');
+        name = name.replace('\\', '_');
+        name = name.replace('?', '_');
+        name = name.replace('*', '_');
+        name = name.replace(':', '_');
+        name = name.replace('|', '_');
+        name = name.replace('\"', '_');
+        name = name.replace('<', '_');
+        name = name.replace('>', '_');
+        name = name.replace('`', '_');
+        name = name.replace('\'', '_');
+        return name;
+    }
 }

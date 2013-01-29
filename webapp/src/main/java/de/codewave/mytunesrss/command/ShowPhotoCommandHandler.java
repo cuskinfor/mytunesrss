@@ -88,7 +88,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                         sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
                         getResponse().setDateHeader("Last-Modified", photo.myLastImageUpdate);
                         getResponse().setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
-                        sendResponse(sender, photoFile.getName());
+                        sendResponse(sender, MyTunesRssUtils.getLegalFileName(photoFile.getName()));
                     } else {
                         LOGGER.warn("Photo file \"" + photoFile + "\" not found.");
                         getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -105,6 +105,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
     }
 
     protected void sendResponse(StreamSender sender, String filename) throws IOException {
+        getResponse().setHeader("Content-Disposition", "inline; filename=\"" + filename + "\"");
         sender.sendGetResponse(getRequest(), getResponse(), false);
     }
 }

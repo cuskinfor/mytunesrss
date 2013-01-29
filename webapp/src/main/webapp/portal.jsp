@@ -39,7 +39,7 @@
 
     <c:if test="${authUser.rss}">
         <c:forEach items="${playlists}" var="playlist">
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/${mtfn:webSafeFileName(playlist.name)}.xml" rel="alternate" type="application/rss+xml" title="<c:out value="${playlist.name}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/_cdi=${cwfn:encodeUrl(playlist.name)}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${playlist.name}" />" />
         </c:forEach>
     </c:if>
 
@@ -205,7 +205,7 @@
                     <mttag:actions index="${loopStatus.index}"
                                    backUrl="${mtfn:encode64(backUrl)}"
                                    linkFragment="playlist=${playlist.id}"
-                                   filename="${mtfn:webSafeFileName(playlist.name)}"
+                                   filename="${playlist.name}"
                                    zipFileCount="${playlist.trackCount}"
                                    editTagsResource="PlaylistResource"
                                    editTagsParams="{playlist:'${playlist.id}'}" />

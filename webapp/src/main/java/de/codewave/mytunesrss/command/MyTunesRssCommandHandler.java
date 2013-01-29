@@ -4,10 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.Pager;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.config.MediaType;
@@ -242,6 +239,11 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             }
         }
         setResourceBundle();
+        if (StringUtils.isNotBlank(getRequest().getParameter("_cda"))) {
+            getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(getRequest().getParameter("_cda")) + "\"");
+        } else if (StringUtils.isNotBlank(getRequest().getParameter("_cdi"))) {
+            getResponse().setHeader("Content-Disposition", "inline; filename=\"" + MyTunesRssUtils.getLegalFileName(getRequest().getParameter("_cdi")) + "\"");
+        }
         try {
             if (!isSessionAuthorized() && StringUtils.isNotBlank(MyTunesRss.CONFIG.getAutoLogin())) {
                 authorize(WebAppScope.Session, MyTunesRss.CONFIG.getAutoLogin());
@@ -353,5 +355,15 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             return (listSize - 1 / pageSize);
         }
         return index;
+    }
+
+    /**
+     * Get the filename from the content disposition request parameter "_cdi" or "_cda" and default to "MyTunesRSS" if neither of the two parameters
+     * is available.
+     *
+     * @return The filename.
+     */
+    protected String getContentDispositionFilename() {
+        return StringUtils.trimToEmpty(StringUtils.substringBeforeLast(getRequestParameter("_cdi", getRequestParameter("_cda", "MyTunesRSS")), "."));
     }
 }
