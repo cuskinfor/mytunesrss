@@ -49,7 +49,7 @@
         });
 
         function loadView() {
-            loadRows(0, itemsPerPage);
+            loadRows(firstItem, itemsPerPage);
             refreshPager();
         }
 
