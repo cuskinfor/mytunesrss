@@ -112,17 +112,15 @@
             } else {
                 $jQ("#privatePlaylist").removeAttr("checked");
             }
-            for (var i = from; i < from + count; i++) {
-                if (i >= 0 && i < itemsPerPage) {
-                    if (firstItem + i >= totalCount) {
-                        $jQ("#trackTableRow" + i).remove();
-                    } else  {
-                        var row = $jQ("#trackTableRow" + i);
-                        if (row.size() == 0) {
-                            $jQ("#trackTable > tbody").append(createTableRow(i, tracks[i - from]));
-                        } else {
-                            row.replaceWith(createTableRow(i, tracks[i - from]));
-                        }
+            for (var i = 0; i < itemsPerPage; i++) {
+                if (i >= tracks.length) {
+                    $jQ("#trackTableRow" + i).remove();
+                } else  {
+                    var row = $jQ("#trackTableRow" + i);
+                    if (row.size() == 0) {
+                        $jQ("#trackTable > tbody").append(createTableRow(i, tracks[i]));
+                    } else {
+                        row.replaceWith(createTableRow(i, tracks[i]));
                     }
                 }
             }
