@@ -49,7 +49,7 @@
         });
 
         function loadView() {
-            loadRows(0, itemsPerPage);
+            loadRows();
             refreshPager();
         }
 
@@ -80,26 +80,24 @@
                 count : 1,
                 offset : 1
             });
-            loadRows(index, 2);
+            loadRows();
         }
 
         function removeTrack(index, id) {
             EditPlaylistResource.removeTracks({
                 track : id
             });
-            if (index == 0 && firstItem == totalCount - 1) {
+            if (firstItem == totalCount - 1) {
                 firstItem -= itemsPerPage;
-                loadView();
-            } else {
-                loadRows(index, itemsPerPage - index);
             }
+            loadView();
         }
 
-        function loadRows(from, count) {
+        function loadRows() {
             var playlist = EditPlaylistResource.getPlaylist();
             var tracks = EditPlaylistResource.getPlaylistTracks({
-                from : from,
-                count : count
+                from : firstItem,
+                count : itemsPerPage
             });
             if (Math.floor((totalCount - 1) / itemsPerPage) != Math.floor((playlist.trackCount - 1) / itemsPerPage)) {
                 totalCount = playlist.trackCount;
@@ -112,17 +110,15 @@
             } else {
                 $jQ("#privatePlaylist").removeAttr("checked");
             }
-            for (var i = from; i < from + count; i++) {
-                if (i >= 0 && i < itemsPerPage) {
-                    if (firstItem + i >= totalCount) {
-                        $jQ("#trackTableRow" + i).remove();
-                    } else  {
-                        var row = $jQ("#trackTableRow" + i);
-                        if (row.size() == 0) {
-                            $jQ("#trackTable > tbody").append(createTableRow(i, tracks[i - from]));
-                        } else {
-                            row.replaceWith(createTableRow(i, tracks[i - from]));
-                        }
+            for (var i = 0; i < itemsPerPage; i++) {
+                if (i >= tracks.length) {
+                    $jQ("#trackTableRow" + i).remove();
+                } else  {
+                    var row = $jQ("#trackTableRow" + i);
+                    if (row.size() == 0) {
+                        $jQ("#trackTable > tbody").append(createTableRow(i, tracks[i]));
+                    } else {
+                        row.replaceWith(createTableRow(i, tracks[i]));
                     }
                 }
             }
@@ -130,7 +126,6 @@
 
         function createPager() {
             var templatePager = new Template($jQ("#templatePager").text());
-            var templatePagerCommand = new Template($jQ("#templatePagerCommand").text());
             var templatePagerPage = new Template($jQ("#templatePagerPage").text());
             var currentPage = Math.floor(firstItem / itemsPerPage);
             var firstPage = Math.floor(currentPage / pagesPerPager) * pagesPerPager;
