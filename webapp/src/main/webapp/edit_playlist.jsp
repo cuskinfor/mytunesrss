@@ -49,7 +49,7 @@
         });
 
         function loadView() {
-            loadRows(firstItem, itemsPerPage);
+            loadRows();
             refreshPager();
         }
 
@@ -80,26 +80,24 @@
                 count : 1,
                 offset : 1
             });
-            loadRows(index, 2);
+            loadRows();
         }
 
         function removeTrack(index, id) {
             EditPlaylistResource.removeTracks({
                 track : id
             });
-            if (index == 0 && firstItem == totalCount - 1) {
+            if (firstItem == totalCount - 1) {
                 firstItem -= itemsPerPage;
-                loadView();
-            } else {
-                loadRows(index, itemsPerPage - index);
             }
+            loadView();
         }
 
-        function loadRows(from, count) {
+        function loadRows() {
             var playlist = EditPlaylistResource.getPlaylist();
             var tracks = EditPlaylistResource.getPlaylistTracks({
-                from : from,
-                count : count
+                from : firstItem,
+                count : itemsPerPage
             });
             if (Math.floor((totalCount - 1) / itemsPerPage) != Math.floor((playlist.trackCount - 1) / itemsPerPage)) {
                 totalCount = playlist.trackCount;
