@@ -80,6 +80,7 @@
                 count : 1,
                 offset : 1
             });
+            unsavedChanges = true;
             loadRows();
         }
 
@@ -87,6 +88,7 @@
             EditPlaylistResource.removeTracks({
                 track : id
             });
+            unsavedChanges = true;
             if (firstItem == totalCount - 1) {
                 firstItem -= itemsPerPage;
             }
@@ -153,16 +155,28 @@
                     if (Math.floor(code / 100) != 2) {
                         displayError(serviceMessages[request.responseText]);
                     } else {
+                        unsavedChanges = false;
                         document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
                     }
                 }
             });
         }
 
-        function cancelEditPlaylist() {
-            EditPlaylistResource.cancelPlaylist();
-            document.location.href = "${servletUrl}/showPlaylistManager/${auth}";
+        var unsavedChanges = false;
+
+        function cancelEditPlaylist(forwardUri) {
+            if (forwardUri === undefined) {
+                forwardUri = "${servletUrl}/showPlaylistManager/${auth}";
+            }
+            if (unsavedChanges || $jQ("#playlistName").val() !== "<c:out value="${editPlaylistName}"/>") {
+                $jQ("#confirmCancel").data("serverCall", forwardUri);
+                openDialog("#confirmCancel");
+            } else {
+                EditPlaylistResource.cancelPlaylist();
+                document.location.href = forwardUri;
+            }
         }
+
     </script>
 
 </head>
@@ -173,7 +187,7 @@
 
 	<div class="head">
 	    <h1 class="manager">
-	        <a class="portal" href="${servletUrl}/showPortal/${auth}"><span id="linkPortal"><fmt:message key="portal" /></span></a>
+	        <a class="portal" onclick="cancelEditPlaylist('${servletUrl}/showPortal/${auth}')"><span id="linkPortal"><fmt:message key="portal" /></span></a>
 	        <span><fmt:message key="myTunesRss" /></span>
 	    </h1>
 	</div>
@@ -189,7 +203,7 @@
 					</a>
 		    	</li>
 		        <li class="back">
-		            <a id="linkBack" href="${mtfn:decode64(param.backUrl)}"><fmt:message key="back" /></a>
+		            <a id="linkBack" onclick="cancelEditPlaylist('${mtfn:decode64(param.backUrl)}')"><fmt:message key="back" /></a>
 		        </li>
 		    </ul>
 
@@ -267,6 +281,21 @@
 <textarea id="templatePagerPage" style="display:none">
     <a id="linkPage#{pageName}" style="cursor:pointer" onclick="firstItem=#{index};loadView()" #{classActive}>#{pageName}</a>
 </textarea>
+
+<div id="confirmCancel" class="dialog">
+    <h2>
+        <fmt:message key="confirmCancelEditPlaylistTitle"/>
+    </h2>
+    <div>
+        <p>
+            <fmt:message key="dialog.confirmCancelEditPlaylist" />
+        </p>
+        <p align="right">
+            <button id="linkConfirmDelPlaylistNo" onclick="$jQ.modal.close()"><fmt:message key="no"/></button>
+            <button id="linkConfirmDelPlaylistYes" onclick="EditPlaylistResource.cancelPlaylist();document.location.href=$jQ('#confirmCancel').data('serverCall')"><fmt:message key="yes"/></button>
+        </p>
+    </div>
+</div>
 
 </body>
 
