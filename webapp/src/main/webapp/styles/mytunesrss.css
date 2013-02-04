@@ -187,6 +187,7 @@ ul.menu a {
     text-decoration: none;
     text-shadow: #000 0 -1px 0px;
     outline: 0;
+    cursor: pointer;
 }
 
 ul.menu li.active {
