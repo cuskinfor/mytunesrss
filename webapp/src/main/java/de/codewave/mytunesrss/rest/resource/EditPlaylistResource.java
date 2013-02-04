@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -70,6 +71,58 @@ public class EditPlaylistResource extends RestResource {
         List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         if (from >= 0 && from < playlistTracks.size()) {
             return toTrackRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistTracks, from, count));
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get the list of albums of the currently edited playlist from the session. The track count of the albums reflects the number
+     * of tracks of the album in the playlist, not the total track count of the album in the library.
+     *
+     * @param from  Index of first album to return.
+     * @param count Maximum number of albums to return.
+     * @return A list of albums.
+     * @throws SQLException
+     */
+    @GET
+    @Path("albums")
+    @Produces("application/json")
+    @GZIP
+    public List<AlbumRepresentation> getPlaylistAlbums(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
+            @QueryParam("from") @DefaultValue("0") int from,
+            @QueryParam("count") @DefaultValue("0") int count
+    ) throws SQLException {
+        List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+        List<Album> playlistAlbums = new ArrayList<Album>();
+        for (Track track : playlistTracks) {
+            Album album = null;
+            for (Album existingAlbum : playlistAlbums) {
+                if (existingAlbum.getName().equals(track.getAlbum()) && existingAlbum.getArtist().equals(track.getAlbumArtist())) {
+                    album = existingAlbum;
+                    break;
+                }
+            }
+            if (album != null) {
+                // album already in list, edit it
+                album.setTrackCount(album.getTrackCount() + 1);
+                if (album.getImageHash() == null) {
+                    album.setImageHash(track.getImageHash());
+                }
+            } else {
+                // album not yet in list, add a new one
+                album = new Album();
+                album.setArtist(track.getArtist());
+                album.setArtistCount(1);
+                album.setImageHash(track.getImageHash());
+                album.setName(track.getAlbum());
+                album.setYear(track.getYear());
+                playlistAlbums.add(album);
+            }
+        }
+        if (from >= 0 && from < playlistTracks.size()) {
+            return toAlbumRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistAlbums, from, count));
         }
         return Collections.emptyList();
     }
