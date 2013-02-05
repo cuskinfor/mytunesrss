@@ -15,17 +15,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
-import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Provider
 @ServerInterceptor
@@ -41,21 +36,31 @@ public class IncludeExcludeInterceptor implements PostProcessInterceptor, Accept
         List<String> includes = myRequest.getParameterValues("attr.incl") != null ? Arrays.asList(myRequest.getParameterValues("attr.incl")) : null;
         List<String> excludes = myRequest.getParameterValues("attr.excl") != null ? Arrays.asList(myRequest.getParameterValues("attr.excl")) : null;
         if (CollectionUtils.isNotEmpty(includes) || CollectionUtils.isNotEmpty(excludes)) {
-            if (entity instanceof List) {
-                for (Object listItem : ((List) entity)) {
-                    if (listItem instanceof RestRepresentation) {
-                        handleItem(listItem, includes, excludes);
-                    }
-                }
-            } else if (entity instanceof RestRepresentation) {
-                handleItem(entity, includes, excludes);
+            if (entity instanceof RestRepresentation) {
+                handleRepresentation((RestRepresentation) entity, includes, excludes);
+            } else if (entity instanceof List) {
+                handleList((List) entity, includes, excludes);
             }
         }
     }
 
-    private void handleItem(Object item, List<String> includes, List<String> excludes) {
+    private void handleList(List items, List<String> includes, List<String> excludes) {
+        for (Iterator iter = items.iterator(); iter.hasNext(); ) {
+            Object item = iter.next();
+            if (item instanceof RestRepresentation) {
+                handleRepresentation((RestRepresentation) item, includes, excludes);
+            } else if (items instanceof Collection) {
+                handleList((List) item, includes, excludes);
+            }
+        }
+    }
+
+    private void handleRepresentation(RestRepresentation item, List<String> includes, List<String> excludes) {
         try {
             for (PropertyDescriptor pd : Introspector.getBeanInfo(item.getClass()).getPropertyDescriptors()) {
+                if (pd.getReadMethod() != null && item.getClass().equals(pd.getReadMethod().getDeclaringClass()) && List.class.isAssignableFrom(pd.getPropertyType())) {
+                    handleList((List) pd.getReadMethod().invoke(item, new Object[0]), includes, excludes);
+                }
                 if (CollectionUtils.isNotEmpty(excludes) && excludes.contains(pd.getName()) || (CollectionUtils.isNotEmpty(includes) && !includes.contains(pd.getName()))) {
                     if (pd.getWriteMethod() != null && item.getClass().equals(pd.getWriteMethod().getDeclaringClass())) {
                         try {

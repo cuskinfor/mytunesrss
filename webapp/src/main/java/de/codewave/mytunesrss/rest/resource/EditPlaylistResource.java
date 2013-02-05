@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
+import de.codewave.mytunesrss.rest.representation.PartialListRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -81,14 +82,14 @@ public class EditPlaylistResource extends RestResource {
      *
      * @param from  Index of first album to return.
      * @param count Maximum number of albums to return.
-     * @return A list of albums.
+     * @return List of albums and the total album count. Each item in the list is an albumRepresentation.
      * @throws SQLException
      */
     @GET
     @Path("albums")
     @Produces("application/json")
     @GZIP
-    public List<AlbumRepresentation> getPlaylistAlbums(
+    public PartialListRepresentation<AlbumRepresentation> getPlaylistAlbums(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("from") @DefaultValue("0") int from,
@@ -113,18 +114,19 @@ public class EditPlaylistResource extends RestResource {
             } else {
                 // album not yet in list, add a new one
                 album = new Album();
-                album.setArtist(track.getArtist());
-                album.setArtistCount(1);
+                album.setArtist(track.getAlbumArtist());
+                album.setTrackCount(1);
                 album.setImageHash(track.getImageHash());
                 album.setName(track.getAlbum());
                 album.setYear(track.getYear());
                 playlistAlbums.add(album);
             }
         }
+        List<AlbumRepresentation> representations = Collections.emptyList();
         if (from >= 0 && from < playlistTracks.size()) {
-            return toAlbumRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistAlbums, from, count));
+            representations = toAlbumRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistAlbums, from, count));
         }
-        return Collections.emptyList();
+        return new PartialListRepresentation<AlbumRepresentation>(representations, playlistAlbums.size());
     }
 
     /**
