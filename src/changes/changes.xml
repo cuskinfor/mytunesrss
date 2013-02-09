@@ -15,9 +15,6 @@
                 [REST-API] Function for getting albums of the currently edited playlist and function for removing all
                 tracks of an album from the currently edited playlist.
             </action>
-        </release>
-
-        <release version="4.6.6" date="___D___">
             <action dev="mdescher" type="add">
                 Added confirmation when cancelling in the playlist editor window with unsaved changes.
             </action>
