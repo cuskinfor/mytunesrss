@@ -26,6 +26,7 @@ public enum MyTunesRssResource {
     PlaylistManager("/playlist_manager.jsp"),
     Settings("/settings.jsp"),
     EditPlaylist("/edit_playlist.jsp"),
+    EditPlaylistAlbums("/edit_playlist_albums.jsp"),
     TemplateM3u("/m3u.jsp"),
     TemplateRss("/rss.jsp"),
     TemplateXspf("/xspf.jsp"),

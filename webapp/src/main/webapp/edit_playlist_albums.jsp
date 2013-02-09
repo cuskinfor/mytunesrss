@@ -21,6 +21,7 @@
 
     <script type="text/javascript">
         var unknownArtist = "<fmt:message key="unknownArtist"/>";
+        var unknownAlbum = "<fmt:message key="unknownAlbum"/>";
         var firstItem = 0;
         var itemsPerPage = ${config.effectivePageSize};
         var pagesPerPager = 10;
@@ -57,36 +58,24 @@
             $jQ("#pager").empty().append(createPager());
         }
 
-        function createTableRow(i, track) {
+        function createTableRow(i, album) {
             var template = new Template($jQ("#templatePlaylistRow").text());
             return template.evaluate({
-                trackId : track.id,
+                linkAlbum : escape(album.name),
+                linkArtist : escape(album.artist),
                 index : i,
                 indexBefore : i - 1,
                 rowClass : (i % 2 == 0 ? "even" : "odd"),
                 oddSuffix : (i % 2 == 0 ? "" : "_odd"),
-                displayProtected : (track.protected ? "inline" : "none"),
-                displayVideo : (track.mediaType == "Video" ? "inline" : "none"),
-                trackName : track.name,
-                trackArtist : track.artist != "!" ? track.artist : unknownArtist,
-                displayMoveUp : firstItem + i > 0 ? "inline" : "none",
-                displayMoveDown : firstItem + i + 1 < totalCount ? "inline" : "none"
+                albumName : album.name != "!" ? album.name : unknownAlbum,
+                albumArtist : album.artist != "!" ? album.artist : unknownArtist
             });
         }
 
-        function swapTracks(index) {
-            EditPlaylistResource.moveTracks({
-                from : firstItem + index,
-                count : 1,
-                offset : 1
-            });
-            unsavedChanges = true;
-            loadRows();
-        }
-
-        function removeTrack(index, id) {
-            EditPlaylistResource.removeTracks({
-                track : id
+        function removeAlbum(index, artist, album) {
+            EditPlaylistResource.removeAlbumTracks({
+                artist : unescape(artist),
+                album : unescape(album)
             });
             unsavedChanges = true;
             if (firstItem == totalCount - 1) {
@@ -97,15 +86,15 @@
 
         function loadRows() {
             var playlist = EditPlaylistResource.getPlaylist();
-            var tracks = EditPlaylistResource.getPlaylistTracks({
+            var albums = EditPlaylistResource.getPlaylistAlbums({
                 from : firstItem,
                 count : itemsPerPage
             });
             if (Math.floor((totalCount - 1) / itemsPerPage) != Math.floor((playlist.trackCount - 1) / itemsPerPage)) {
-                totalCount = playlist.trackCount;
+                totalCount = albums.totalCount;
                 refreshPager();
             } else {
-                totalCount = playlist.trackCount;
+                totalCount = albums.totalCount;
             }
             if (playlist.userPrivate) {
                 $jQ("#privatePlaylist").attr("checked", "checked");
@@ -113,14 +102,14 @@
                 $jQ("#privatePlaylist").removeAttr("checked");
             }
             for (var i = 0; i < itemsPerPage; i++) {
-                if (i >= tracks.length) {
+                if (i >= albums.items.length) {
                     $jQ("#trackTableRow" + i).remove();
                 } else  {
                     var row = $jQ("#trackTableRow" + i);
                     if (row.size() == 0) {
-                        $jQ("#trackTable > tbody").append(createTableRow(i, tracks[i]));
+                        $jQ("#trackTable > tbody").append(createTableRow(i, albums.items[i]));
                     } else {
-                        row.replaceWith(createTableRow(i, tracks[i]));
+                        row.replaceWith(createTableRow(i, albums.items[i]));
                     }
                 }
             }
@@ -176,8 +165,8 @@
             }
         }
 
-        function switchToAlbums() {
-            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylistAlbums/backUrl=${param.backUrl}</mt:encrypt>/unsavedChanges=" + unsavedChanges;
+        function switchToTracks() {
+            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${param.backUrl}</mt:encrypt>/unsavedChanges=" + unsavedChanges;
         }
 
     </script>
@@ -206,8 +195,8 @@
 					</a>
 		    	</li>
 		    	<li>
-					<a id="linkPLaylistAlbums" onclick="switchToAlbums()">
-						<fmt:message key="browseAlbums" />
+					<a id="linkPLaylistAlbums" onclick="switchToTracks()">
+						<fmt:message key="editPlaylistTracks" />
 					</a>
 		    	</li>
 		        <li class="back">
@@ -234,12 +223,7 @@
 
 		    <table id="trackTable" class="tracklist" cellspacing="0">
 		        <tr>
-		            <c:choose> <c:when test="${!empty tracks}">
-		                <th class="active">&nbsp;</th>
-		                <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
-		            </c:when> <c:otherwise>
-		                <th class="active" colspan="4"><fmt:message key="playlistContent" /></th>
-		            </c:otherwise> </c:choose>
+		            <th class="active" colspan="3"><fmt:message key="playlistContent" /></th>
 		        </tr>
 		    </table>
 
@@ -262,18 +246,12 @@
 
 <textarea id="templatePlaylistRow" style="display:none">
     <tr id="trackTableRow#{index}" class="#{rowClass}">
-        <td class="iconleft">
-            <a style="cursor:pointer;display:#{displayMoveUp}" onclick="swapTracks(#{indexBefore})"><img id="linkUp#{index}" src="${themeUrl}/images/move_up.png" alt="U"/></a>
-            <a style="cursor:pointer;display:#{displayMoveDown}" onclick="swapTracks(#{index})"><img id="linkDown#{index}" src="${themeUrl}/images/move_down.png" alt="D"/></a>
-        </td>
         <td>
-            <img src="${themeUrl}/images/protected#{oddSuffix}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle;display:#{displayProtected}" />
-            <img src="${themeUrl}/images/movie.png" alt="<fmt:message key="video"/>" style="vertical-align:middle;display:#{displayVideo}" />
-            #{trackName}
+            #{albumName}
         </td>
-        <td>#{trackArtist}</td>
+        <td>#{albumArtist}</td>
         <td class="actions">
-            <a id="linkDelete#{index}" class="delete" onclick="removeTrack(#{index}, '#{trackId}')"><span>Delete</span></a>
+            <a id="linkDelete#{index}" class="delete" onclick="removeAlbum(#{index}, '#{linkArtist}', '#{linkAlbum}')"><span>Delete</span></a>
         </td>
     </tr>
 </textarea>

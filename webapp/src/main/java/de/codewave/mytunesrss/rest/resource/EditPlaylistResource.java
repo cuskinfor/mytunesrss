@@ -22,6 +22,7 @@ import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -122,6 +123,11 @@ public class EditPlaylistResource extends RestResource {
                 playlistAlbums.add(album);
             }
         }
+        Collections.sort(playlistAlbums, new Comparator<Album>() {
+            public int compare(Album a1, Album a2) {
+                return StringUtils.trimToEmpty(a1.getName()).compareTo(StringUtils.trimToEmpty(a2.getName()));
+            }
+        });
         List<AlbumRepresentation> representations = Collections.emptyList();
         if (from >= 0 && from < playlistTracks.size()) {
             representations = toAlbumRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistAlbums, from, count));
@@ -194,6 +200,30 @@ public class EditPlaylistResource extends RestResource {
             @PathParam("track") String track
     ) throws SQLException {
         removeTracks(request, FindTrackQuery.getForIds(new String[] {track}));
+        return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
+    }
+
+    /**
+     * Delete all tracks of an album from the currently edited playlist.
+     *
+     * @param artist    Album artist.
+     * @param album     Album name.
+     *
+     * @return The playlist after deleting the tracks.
+     *
+     * @throws SQLException
+     */
+    @DELETE
+    @Path("artist/{artist}/album/{album}")
+    @Produces("application/json")
+    @GZIP
+    public PlaylistRepresentation removeAlbumTracks(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
+            @PathParam("artist") String artist,
+            @PathParam("album") String album
+    ) throws SQLException {
+        removeTracks(request, FindTrackQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), new String[]{album}, new String[]{artist}, SortOrder.KeepOrder));
         return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 

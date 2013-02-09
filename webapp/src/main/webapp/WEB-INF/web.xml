@@ -221,6 +221,7 @@
         </taglib>
         <jsp-property-group>
             <url-pattern>/edit_playlist.jsp</url-pattern>
+            <url-pattern>/edit_playlist_albums.jsp</url-pattern>
             <deferred-syntax-allowed-as-literal>true</deferred-syntax-allowed-as-literal>
         </jsp-property-group>
     </jsp-config>
