@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.rest;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.WebAppScope;
-import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.resource.LibraryResource;
 import de.codewave.mytunesrss.rest.resource.SessionResource;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
@@ -16,13 +15,10 @@ import org.jboss.resteasy.core.ServerResponse;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.AcceptedByMethod;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
 

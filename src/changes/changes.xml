@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.7.1" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-423] CORS support for REST API
+            </action>
+        </release>
+
         <release version="4.7" date="2013-02-09">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-421] Album and artist grouping/view for edit playlist mode
