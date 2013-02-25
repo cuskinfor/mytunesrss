@@ -19,6 +19,7 @@ public class CorsInterceptor implements MessageBodyWriterInterceptor {
 
     public void write(MessageBodyWriterContext messageBodyWriterContext) throws IOException, WebApplicationException {
         messageBodyWriterContext.getHeaders().add("Access-Control-Allow-Credentials", "true");
+        messageBodyWriterContext.getHeaders().add("Access-Control-Allow-Origin", "*");
     }
 
 }
