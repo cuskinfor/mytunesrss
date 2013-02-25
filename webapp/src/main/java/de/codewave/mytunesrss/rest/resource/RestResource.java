@@ -17,6 +17,10 @@ import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
@@ -186,5 +190,18 @@ public class RestResource {
 
     protected String ue(String s) {
         return MiscUtils.getUtf8UrlEncoded(s);
+    }
+
+    @OPTIONS
+    @Path("/{path:.*}")
+    public Response handleCorsOptions(@HeaderParam("Access-Control-Request-Method") String method, @HeaderParam("Access-Control-Request-Headers") String headers) {
+        Response.ResponseBuilder response = Response.ok();
+        if (StringUtils.isNotBlank(method)) {
+            response.header("Access-Control-Allow-Methods", method);
+        }
+        if (StringUtils.isNotBlank(headers)) {
+            response.header("Access-Control-Allow-Headers", headers);
+        }
+        return response.build();
     }
 }
