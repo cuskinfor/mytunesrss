@@ -47,6 +47,9 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
         if (declaring.equals(SessionResource.class) && "loginOrPing".equals(method.getName())) {
             return false;
         }
+        if ("handleCorsOptions".equals(method.getName())) {
+            return false;
+        }
         return true;
     }
 }

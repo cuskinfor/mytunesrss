@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;

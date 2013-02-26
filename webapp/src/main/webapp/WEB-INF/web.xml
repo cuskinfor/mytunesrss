@@ -104,11 +104,6 @@
         <filter-name>TransactionFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.TransactionFilter</filter-class>
     </filter>
-    <!-- Filter for compressing the response -->
-    <filter>
-        <filter-name>CompressingFilter</filter-name>
-        <filter-class>de.codewave.utils.servlet.GzipFilter</filter-class>
-    </filter>
     <!-- Filter mappings -->
     <filter-mapping>
         <filter-name>BandwidthLimitFilter</filter-name>
@@ -139,24 +134,8 @@
         <url-pattern>/rest/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>CompressingFilter</filter-name>
-        <url-pattern>/jsonrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>CompressingFilter</filter-name>
-        <url-pattern>/xmlrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/jsonrpc/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>TransactionFilter</filter-name>
-        <url-pattern>/xmlrpc/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
