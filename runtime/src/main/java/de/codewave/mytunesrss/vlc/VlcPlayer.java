@@ -106,7 +106,7 @@ public class VlcPlayer {
 
     private int myVlcPort;
 
-    private HttpClient myHttpClient;
+    private HttpClient myHttpClient = new HttpClient();
 
     private String[] myRaopTargets;
 
@@ -177,7 +177,6 @@ public class VlcPlayer {
                                 LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug);
                                 stdoutCopyThread.setDaemon(true);
                                 stdoutCopyThread.start();
-                                myHttpClient = new HttpClient();
                                 for (int i = 0; isRunning(process) && i < 10; i++) {
                                     try {
                                         setVolume(status.getPercentageVolume());
