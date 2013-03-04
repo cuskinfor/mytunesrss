@@ -7,7 +7,11 @@
 
     <body>
 
-        <release version="4.7.1" date="___D___">
+        <release version="4.8" date="___D___">
+
+        </release>
+
+        <release version="4.7.1" date="2013-03-04">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-423] CORS support for REST API
             </action>
