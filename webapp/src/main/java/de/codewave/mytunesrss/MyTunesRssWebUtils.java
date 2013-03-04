@@ -5,7 +5,7 @@ import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
-import de.codewave.mytunesrss.config.TranscoderConfig;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.Error;
@@ -425,7 +425,7 @@ public class MyTunesRssWebUtils {
     public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
         if (MyTunesRss.CONFIG.isValidVlcConfig()) {
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-                if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
+                if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track)) {
                     return config;
                 }
             }

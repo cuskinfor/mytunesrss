@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.config;
 import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;

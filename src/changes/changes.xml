@@ -8,7 +8,9 @@
     <body>
 
         <release version="4.8" date="___D___">
-
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-427] Transcoder Selection Refactoring
+            </action>
         </release>
 
         <release version="4.7.1" date="2013-03-04">

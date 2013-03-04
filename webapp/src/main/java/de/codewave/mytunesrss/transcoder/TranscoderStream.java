@@ -2,23 +2,15 @@ package de.codewave.mytunesrss.transcoder;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.config.TranscoderConfig;
-import de.codewave.mytunesrss.datastore.statement.FindTrackImageQuery;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.meta.Image;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.utils.io.LogStreamCopyThread;
-import de.codewave.utils.io.StreamCopyThread;
-import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.SQLException;
 import java.util.List;
 
 /**

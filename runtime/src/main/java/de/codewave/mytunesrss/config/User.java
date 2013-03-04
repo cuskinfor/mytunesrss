@@ -3,6 +3,7 @@ package de.codewave.mytunesrss.config;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.UserAgent;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventListener;
@@ -923,7 +924,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     public TranscoderConfig getForceTranscoder(Track track) {
         if (isForceTranscoders()) {
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-                if (getForceTranscoders().contains(config.getName()) && config.isValidFor(track.getFilename(), track.getMp4Codec())) {
+                if (getForceTranscoders().contains(config.getName()) && config.isValidFor(track)) {
                     return config;
                 }
             }

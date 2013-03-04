@@ -5,18 +5,15 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.data.Validator;
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.terminal.UserError;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.config.TranscoderConfig;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
-import de.codewave.mytunesrss.vlc.VlcPlayer;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -149,8 +146,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             Panel panel = (Panel) componentIterator.next();
             Form form = getTranscoderForm(panel);
             form.getField("name").setValue(config.getName());
-            form.getField("pattern").setValue(config.getPattern());
-            form.getField("codecs").setValue(config.getMp4Codecs());
+            // TODO: initialize activations
             form.getField("suffix").setValue(config.getTargetSuffix());
             form.getField("contentType").setValue(config.getTargetContentType());
             form.getField("mux").setValue(config.getTargetMux());
@@ -179,8 +175,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 String name = ((SmartTextField) form.getField("name")).getStringValue(null);
                 conf.setName(name);
                 obsoleteTranscoderNames.remove(name);
-                conf.setPattern(((SmartTextField) form.getField("pattern")).getStringValue(null));
-                conf.setMp4Codecs(((SmartTextField) form.getField("codecs")).getStringValue(null));
+                // TODO: set activations
                 conf.setTargetSuffix(((SmartTextField) form.getField("suffix")).getStringValue(null));
                 conf.setTargetContentType(((SmartTextField) form.getField("contentType")).getStringValue(null));
                 conf.setTargetMux(((SmartTextField) form.getField("mux")).getStringValue(null));
