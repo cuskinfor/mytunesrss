@@ -10,13 +10,13 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <connection>scm:svn:svn://svn.codewave.de/mytunesrss/trunk</connection>
-        <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/trunk</developerConnection>
+        <connection>scm:svn:svn://svn.codewave.de/mytunesrss/tags/mytunesrss-4.7.1</connection>
+        <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/tags/mytunesrss-4.7.1</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
         <artifactId>mytunesrss-pom</artifactId>
-        <version>4.8-SNAPSHOT</version>
+        <version>4.7.1</version>
         <relativePath>mytunesrss-pom/pom.xml</relativePath>
     </parent>
     <repositories>
