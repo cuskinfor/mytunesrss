@@ -7,10 +7,16 @@ import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.util.Arrays;
+
 public class Mp4CodecTranscoderActivation extends TranscoderActivation {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Mp4CodecTranscoderActivation.class);
 
     private String[] myCodecs;
 
@@ -25,7 +31,15 @@ public class Mp4CodecTranscoderActivation extends TranscoderActivation {
 
     @Override
     public boolean matches(Track track) {
-        return applyNegation(FileSupportUtils.isMp4(track.getFile()) && ArrayUtils.contains(myCodecs, StringUtils.lowerCase(track.getMp4Codec())));
+        boolean b = true;
+        if (FileSupportUtils.isMp4(track.getFile())) {
+            String trackMp4Codec = StringUtils.trimToEmpty(StringUtils.lowerCase(track.getMp4Codec()));
+            if (StringUtils.isNotBlank(trackMp4Codec)) {
+                b = applyNegation(ArrayUtils.contains(myCodecs, trackMp4Codec));
+            }
+        }
+        LOGGER.debug("MP4 codec activation (codecs \"" + Arrays.toString(myCodecs) + "\", negation \"" + isNegation() + "\") for \"" + track.getFilename() + "\": " + b);
+        return b;
     }
 
     @Override

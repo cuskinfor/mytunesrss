@@ -28,7 +28,7 @@ public class TranscoderConfig {
         mp3Audio.setName("MP3 Audio");
         mp3Audio.setTranscoderActivations(Arrays.asList(
                 new FilenameTranscoderActivation("^.+\\.(mp3|mp4|m4a|m4b|wav)$", false),
-                new Mp3SampleRateTranscoderActivation(0, 128000, true),
+                new Mp3BitRateTranscoderActivation(0, 128000, true),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
         mp3Audio.setTargetSuffix("mp3");
         mp3Audio.setTargetContentType("audio/mp3");

@@ -2,7 +2,7 @@ package de.codewave.mytunesrss.config.transcoder;
 
 public enum Activation {
     FILENAME(FilenameTranscoderActivation.class),
-    MP3_SAMPLE_RATE(Mp3SampleRateTranscoderActivation.class),
+    MP3_SAMPLE_RATE(Mp3BitRateTranscoderActivation.class),
     MP4_CODEC(Mp4CodecTranscoderActivation.class);
 
     static Activation forActivation(TranscoderActivation transcoderActivation) {

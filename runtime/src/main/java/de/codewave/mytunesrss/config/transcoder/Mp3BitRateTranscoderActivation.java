@@ -16,31 +16,32 @@ import org.w3c.dom.Element;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class Mp3SampleRateTranscoderActivation extends TranscoderActivation {
+public class Mp3BitRateTranscoderActivation extends TranscoderActivation {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Mp3SampleRateTranscoderActivation.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Mp3BitRateTranscoderActivation.class);
 
-    private int myMinSampleRate;
-    private int myMaxSampleRate;
+    private int myMinBitRate;
+    private int myMaxBitRate;
 
-    public Mp3SampleRateTranscoderActivation() {
+    public Mp3BitRateTranscoderActivation() {
         super(false);
     }
 
-    public Mp3SampleRateTranscoderActivation(int minSampleRate, int maxSampleRate, boolean negation) {
+    public Mp3BitRateTranscoderActivation(int minBitRate, int maxBitRate, boolean negation) {
         super(negation);
-        myMinSampleRate = minSampleRate;
-        myMaxSampleRate = maxSampleRate;
+        myMinBitRate = minBitRate;
+        myMaxBitRate = maxBitRate;
     }
 
     @Override
     public boolean matches(Track track) {
+        boolean b = true;
         if (FileSupportUtils.isMp3(track.getFile())) {
             try {
                 FileInputStream inputStream = new FileInputStream(track.getFile());
                 try {
                     Mp3Info mp3Info = Mp3Utils.getMp3Info(inputStream);
-                    return applyNegation(myMinSampleRate <= mp3Info.getMinSampleRate() && myMaxSampleRate >= mp3Info.getMaxSampleRate());
+                    b = mp3Info.getAvgBitrate() == 0 || applyNegation(myMinBitRate <= mp3Info.getMinBitrate() && myMaxBitRate >= mp3Info.getMaxBitrate());
                 } finally {
                     inputStream.close();
                 }
@@ -50,20 +51,21 @@ public class Mp3SampleRateTranscoderActivation extends TranscoderActivation {
                 LOGGER.warn("Could not get mp3 info for track \"" + track.getFilename() + "\".", e);
             }
         }
-        return true;
+        LOGGER.debug("MP3 bitrate activation (min \"" + myMinBitRate + "\", max \"" + myMaxBitRate + "\", negation \"" + isNegation() + "\") for \"" + track.getFilename() + "\": " + b);
+        return b;
     }
 
     @Override
     public void writeTo(Document settings, Element config) {
         super.writeTo(settings, config);
-        config.appendChild(DOMUtils.createIntElement(settings, "min", myMinSampleRate));
-        config.appendChild(DOMUtils.createIntElement(settings, "max", myMaxSampleRate));
+        config.appendChild(DOMUtils.createIntElement(settings, "min", myMinBitRate));
+        config.appendChild(DOMUtils.createIntElement(settings, "max", myMaxBitRate));
     }
 
     @Override
     public void readFrom(JXPathContext config) {
         super.readFrom(config);
-        myMinSampleRate = JXPathUtils.getIntValue(config, "min", 0);
-        myMaxSampleRate = JXPathUtils.getIntValue(config, "max", Integer.MAX_VALUE);
+        myMinBitRate = JXPathUtils.getIntValue(config, "min", 0);
+        myMaxBitRate = JXPathUtils.getIntValue(config, "max", Integer.MAX_VALUE);
     }
 }

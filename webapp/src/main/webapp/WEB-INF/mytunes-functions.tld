@@ -339,7 +339,7 @@
         <name>isTranscoder</name>
         <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>boolean
-            isTranscoder(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.TranscoderConfig)
+            isTranscoder(de.codewave.mytunesrss.servlet.WebConfig,de.codewave.mytunesrss.config.transcoder.TranscoderConfig)
         </function-signature>
     </function>
 

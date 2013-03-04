@@ -29,4 +29,8 @@ public abstract class TranscoderActivation {
     public void readFrom(JXPathContext config) {
         myNegation = JXPathUtils.getBooleanValue(config, "negation", false);
     }
+
+    protected boolean isNegation() {
+        return myNegation;
+    }
 }

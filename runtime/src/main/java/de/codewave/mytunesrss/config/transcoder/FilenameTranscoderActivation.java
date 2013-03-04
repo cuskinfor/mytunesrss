@@ -4,12 +4,16 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.regex.Pattern;
 
 public class FilenameTranscoderActivation extends TranscoderActivation {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilenameTranscoderActivation.class);
 
     private String myPattern;
     private Pattern myCompiledPattern;
@@ -21,12 +25,18 @@ public class FilenameTranscoderActivation extends TranscoderActivation {
     public FilenameTranscoderActivation(String pattern, boolean negation) {
         super(negation);
         myPattern = pattern;
-        myCompiledPattern = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+        compilePattern();
+    }
+
+    private void compilePattern() {
+        myCompiledPattern = Pattern.compile(myPattern, Pattern.CASE_INSENSITIVE);
     }
 
     @Override
     public boolean matches(Track track) {
-        return applyNegation(myCompiledPattern.matcher(track.getFilename()).matches());
+        boolean b = applyNegation(myCompiledPattern.matcher(track.getFilename()).matches());
+        LOGGER.debug("Filename activation (pattern \"" + myPattern + "\", negation \"" + isNegation() + "\") for \"" + track.getFilename() + "\": " + b);
+        return b;
     }
 
     @Override
@@ -39,6 +49,7 @@ public class FilenameTranscoderActivation extends TranscoderActivation {
     public void readFrom(JXPathContext config) {
         super.readFrom(config);
         myPattern = JXPathUtils.getStringValue(config, "pattern", "");
+        compilePattern();
     }
 
 }
