@@ -13,8 +13,7 @@ public class FilenameActivationPanel extends Panel implements Button.ClickListen
     private CheckBox myNegationCheckBox;
 
     public FilenameActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory, FilenameTranscoderActivation activation) {
-        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
-        verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
+        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
         Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.filename.caption"), true);

@@ -15,8 +15,7 @@ public class Mp3BitRateActivationPanel extends Panel implements Button.ClickList
     private CheckBox myNegationCheckBox;
 
     public Mp3BitRateActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory, Mp3BitRateTranscoderActivation activation) {
-        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
-        verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
+        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
         Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp3bitrate.caption"), true);

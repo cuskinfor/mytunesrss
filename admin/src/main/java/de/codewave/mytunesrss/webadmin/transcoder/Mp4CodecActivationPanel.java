@@ -15,8 +15,7 @@ public class Mp4CodecActivationPanel extends Panel implements Button.ClickListen
     private CheckBox myNegationCheckBox;
 
     public Mp4CodecActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory, Mp4CodecTranscoderActivation activation) {
-        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
-        verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
+        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
         Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp4codec.caption"), true);

@@ -39,14 +39,10 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
     public TranscoderPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
         myApplication = application;
         myComponentFactory = componentFactory;
-        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, true);
+
+        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, true);
+        verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
         setContent(verticalLayout);
-
-        myActivationsPanel = new Panel(application.getBundleString("transcoderPanel.activations"));
-        VerticalLayout activationsPanelLayout = componentFactory.createVerticalLayout(true, false);
-        myActivationsPanel.setContent(activationsPanelLayout);
-
-        addComponent(myActivationsPanel);
 
         Form form = componentFactory.createForm(null, true);
         myNameTextField = componentFactory.createTextField("transcoderPanel.name", new RegexpValidator(TRANSCODER_NAME_REGEXP, true, application.getBundleString("transcoderPanel.error.invalidName", 40)));
@@ -64,8 +60,15 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         myOptionsTextField.setRequired(true);
         form.addField("options", myOptionsTextField);
         addComponent(form);
+
+        myActivationsPanel = new Panel(application.getBundleString("transcoderPanel.activations"));
+        VerticalLayout activationsPanelLayout = componentFactory.createVerticalLayout(true, true);
+        myActivationsPanel.setContent(activationsPanelLayout);
+        addComponent(myActivationsPanel);
+
         myDeleteButton = componentFactory.createButton("transcoderPanel.delete", this);
         addComponent(myDeleteButton);
+
         myAddFilenameActivationButton = componentFactory.createButton("transcoderPanel.activation.addFilename", this);
         myAddMp4CodecActivationButton = componentFactory.createButton("transcoderPanel.activation.addMp4Codecs", this);
         myAddMp3BitRateActivationButton = componentFactory.createButton("transcoderPanel.activation.addMp3BitRate", this);
@@ -82,13 +85,16 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         List<TranscoderActivation> activations = new ArrayList<TranscoderActivation>();
         Iterator<Component> componentIterator = myActivationsPanel.getComponentIterator();
         while (componentIterator.hasNext()) {
-            ActivationPanel activationPanel = (ActivationPanel) componentIterator.next();
-            activations.add(activationPanel.getConfig());
+            Component component = componentIterator.next();
+            if (component instanceof ActivationPanel) {
+                ActivationPanel activationPanel = (ActivationPanel) component;
+                activations.add(activationPanel.getConfig());
+            }
         }
         config.setTranscoderActivations(activations);
         return config;
     }
-    
+
     public void initFromConfig(TranscoderConfig config) {
         myNameTextField.setValue(config.getName(), "");
         mySuffixTextField.setValue(config.getTargetSuffix(), "");
