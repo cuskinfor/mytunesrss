@@ -68,4 +68,12 @@ public class Mp3BitRateTranscoderActivation extends TranscoderActivation {
         myMinBitRate = JXPathUtils.getIntValue(config, "min", 0);
         myMaxBitRate = JXPathUtils.getIntValue(config, "max", Integer.MAX_VALUE);
     }
+
+    public int getMinBitRate() {
+        return myMinBitRate;
+    }
+
+    public int getMaxBitRate() {
+        return myMaxBitRate;
+    }
 }

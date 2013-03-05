@@ -52,4 +52,7 @@ public class FilenameTranscoderActivation extends TranscoderActivation {
         compilePattern();
     }
 
+    public String getPattern() {
+        return myPattern;
+    }
 }

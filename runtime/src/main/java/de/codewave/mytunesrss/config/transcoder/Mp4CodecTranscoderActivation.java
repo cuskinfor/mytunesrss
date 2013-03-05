@@ -52,6 +52,9 @@ public class Mp4CodecTranscoderActivation extends TranscoderActivation {
     public void readFrom(JXPathContext config) {
         super.readFrom(config);
         myCodecs = StringUtils.split(JXPathUtils.getStringValue(config, "codecs", ""), ',');
+    }
 
+    public String[] getCodecs() {
+        return myCodecs.clone();
     }
 }

@@ -30,7 +30,7 @@ public abstract class TranscoderActivation {
         myNegation = JXPathUtils.getBooleanValue(config, "negation", false);
     }
 
-    protected boolean isNegation() {
+    public boolean isNegation() {
         return myNegation;
     }
 }
