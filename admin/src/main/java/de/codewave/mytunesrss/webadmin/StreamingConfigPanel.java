@@ -10,7 +10,6 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.config.transcoder.TranscoderActivation;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
@@ -18,7 +17,6 @@ import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.mytunesrss.webadmin.transcoder.TranscoderPanel;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
@@ -37,15 +35,13 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
 
     private static final Logger LOG = LoggerFactory.getLogger(StreamingConfigPanel.class);
 
-    private static final String TRANSCODER_NAME_REGEXP = "[a-zA-Z0-9 ]{1,40}";
-
     private Panel myTranscoderPanel;
     private Form myCacheForm;
     private Button myAddTranscoder;
     private SmartTextField myStreamingCacheTimeout;
     private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
-    Panel myAddTranscoderButtons;
+    private Panel myAddTranscoderButtons;
     private CheckBox myVlcEnabled;
     private SmartTextField myVlcBinary;
     private Button myVlcBinarySelect;
@@ -173,12 +169,12 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                     try {
                         MyTunesRss.VLC_PLAYER.destroy();
                     } catch (VlcPlayerException e) {
-                        LOG.warn("Could not destroy VLC player.");
+                        LOG.warn("Could not destroy VLC player.", e);
                     }
                     try {
                         MyTunesRss.VLC_PLAYER.init();
                     } catch (VlcPlayerException e) {
-                        LOG.warn("Could not initialize VLC player.");
+                        LOG.warn("Could not initialize VLC player.", e);
                     }
                 }
             });
@@ -309,19 +305,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }.show(getWindow());
         } else if (clickEvent.getButton() == myAddTranscoder) {
             TranscoderPanel panel = createTranscoderPanel();
-            String name = getBundleString("streamingConfigPanel.transcoder.defaultName", myTranscoderNumberGenerator.getAndIncrement());
+            String name = getBundleString("transcoderPanel.defaultName", myTranscoderNumberGenerator.getAndIncrement());
             panel.setTranscoderName(name);
-        } else if (VaadinUtils.isChild(myTranscoderPanel, clickEvent.getButton())) {
-            final Form buttonForm = (Form) clickEvent.getButton().getData();
-            final Button yes = new Button(getBundleString("button.yes"));
-            Button no = new Button(getBundleString("button.no"));
-            new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("streamingConfigDialog.deleteConfirmation.caption"), getBundleString("streamingConfigDialog.deleteConfirmation.message", buttonForm.getField("name").getValue()), yes, no) {
-                public void clicked(Button button) {
-                    if (button == yes) {
-                        myTranscoderPanel.removeComponent(VaadinUtils.getAncestor(buttonForm, Panel.class));
-                    }
-                }
-            }.show(getWindow());
         } else {
             super.buttonClick(clickEvent);
         }

@@ -1,13 +1,14 @@
 package de.codewave.mytunesrss.webadmin.transcoder;
 
 import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.config.transcoder.Activation;
-import de.codewave.mytunesrss.config.transcoder.TranscoderActivation;
-import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
+import de.codewave.mytunesrss.config.transcoder.*;
 import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.component.OptionWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,33 +40,37 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         myApplication = application;
         myComponentFactory = componentFactory;
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
-        verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
+        verticalLayout.setMargin(new Layout.MarginInfo(true, true, true, true));
         setContent(verticalLayout);
 
-        myActivationsPanel = new Panel("TODO: Activations");
+        myActivationsPanel = new Panel(application.getBundleString("transcoderPanel.activations"));
+        VerticalLayout activationsPanelLayout = componentFactory.createVerticalLayout(false, false);
+        activationsPanelLayout.setMargin(new Layout.MarginInfo(true, true, true, true));
+        myActivationsPanel.setContent(activationsPanelLayout);
+
         addComponent(myActivationsPanel);
 
         Form form = componentFactory.createForm(null, true);
-        myNameTextField = componentFactory.createTextField("streamingConfigPanel.transcoder.name", new RegexpValidator(TRANSCODER_NAME_REGEXP, true, application.getBundleString("streamingConfigPanel.error.invalidName", 40)));
+        myNameTextField = componentFactory.createTextField("transcoderPanel.name", new RegexpValidator(TRANSCODER_NAME_REGEXP, true, application.getBundleString("transcoderPanel.error.invalidName", 40)));
         myNameTextField.setRequired(true);
         form.addField("name", myNameTextField);
-        mySuffixTextField = componentFactory.createTextField("streamingConfigPanel.transcoder.suffix");
+        mySuffixTextField = componentFactory.createTextField("transcoderPanel.suffix");
         mySuffixTextField.setRequired(true);
         form.addField("suffix", mySuffixTextField);
-        myContentTypeTextField = componentFactory.createTextField("streamingConfigPanel.transcoder.contentType");
+        myContentTypeTextField = componentFactory.createTextField("transcoderPanel.contentType");
         myContentTypeTextField.setRequired(true);
         form.addField("contentType", myContentTypeTextField);
-        myMuxTextField = componentFactory.createTextField("streamingConfigPanel.transcoder.mux");
+        myMuxTextField = componentFactory.createTextField("transcoderPanel.mux");
         form.addField("mux", myMuxTextField);
-        myOptionsTextField = componentFactory.createTextField("streamingConfigPanel.transcoder.options");
+        myOptionsTextField = componentFactory.createTextField("transcoderPanel.options");
         myOptionsTextField.setRequired(true);
         form.addField("options", myOptionsTextField);
         addComponent(form);
-        myDeleteButton = componentFactory.createButton("streamingConfigPanel.transcoder.delete", this);
+        myDeleteButton = componentFactory.createButton("transcoderPanel.delete", this);
         addComponent(myDeleteButton);
-        myAddFilenameActivationButton = componentFactory.createButton("streamingConfigPanel.transcoder.add", this);
-        myAddMp4CodecActivationButton = componentFactory.createButton("streamingConfigPanel.transcoder.add", this);
-        myAddMp3BitRateActivationButton = componentFactory.createButton("streamingConfigPanel.transcoder.add", this);
+        myAddFilenameActivationButton = componentFactory.createButton("transcoderPanel.activation.addFilename", this);
+        myAddMp4CodecActivationButton = componentFactory.createButton("transcoderPanel.activation.addMp4Codecs", this);
+        myAddMp3BitRateActivationButton = componentFactory.createButton("transcoderPanel.activation.addMp3BitRate", this);
         myAddActivationButtons = new ButtonBar(componentFactory, myAddFilenameActivationButton, myAddMp4CodecActivationButton, myAddMp3BitRateActivationButton);
     }
 
@@ -97,13 +102,13 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
             Activation type = Activation.forActivation(activation);
             switch (type) {
                 case FILENAME:
-                    myActivationsPanel.addComponent(new FilenameActivationPanel(myApplication, myComponentFactory));
+                    myActivationsPanel.addComponent(new FilenameActivationPanel(myApplication, myComponentFactory, (FilenameTranscoderActivation) activation));
                     break;
                 case MP3_BIT_RATE:
-                    myActivationsPanel.addComponent(new Mp3BitRateActivationPanel(myApplication, myComponentFactory));
+                    myActivationsPanel.addComponent(new Mp3BitRateActivationPanel(myApplication, myComponentFactory, (Mp3BitRateTranscoderActivation) activation));
                     break;
                 case MP4_CODEC:
-                    myActivationsPanel.addComponent(new Mp4CodecActivationPanel(myApplication, myComponentFactory));
+                    myActivationsPanel.addComponent(new Mp4CodecActivationPanel(myApplication, myComponentFactory, (Mp4CodecTranscoderActivation) activation));
                     break;
                 default:
                     LOGGER.warn("Ignoring unknown transcoder activation of type \"" + type + "\".");
@@ -118,18 +123,27 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent event) {
         if (event.getButton() == myDeleteButton) {
-            ((ComponentContainer)getParent()).removeComponent(this);
+            final ComponentContainer parent = (ComponentContainer)getParent();
+            final Button yes = new Button(myApplication.getBundleString("button.yes"));
+            Button no = new Button(myApplication.getBundleString("button.no"));
+            new OptionWindow(30, Sizeable.UNITS_EM, null, myApplication.getBundleString("transcoderPanel.deleteConfirmation.caption"), myApplication.getBundleString("transcoderPanel.deleteConfirmation.message", myNameTextField.getStringValue("")), yes, no) {
+                public void clicked(Button button) {
+                    if (button == yes) {
+                        parent.removeComponent(TranscoderPanel.this);
+                    }
+                }
+            }.show(getWindow());
         } else if (event.getButton() == myAddFilenameActivationButton) {
             myActivationsPanel.removeComponent(myAddActivationButtons);
-            myActivationsPanel.addComponent(new FilenameActivationPanel(myApplication, myComponentFactory));
+            myActivationsPanel.addComponent(new FilenameActivationPanel(myApplication, myComponentFactory, new FilenameTranscoderActivation()));
             myActivationsPanel.addComponent(myAddActivationButtons);
         } else if (event.getButton() == myAddMp4CodecActivationButton) {
             myActivationsPanel.removeComponent(myAddActivationButtons);
-            myActivationsPanel.addComponent(new Mp4CodecActivationPanel(myApplication, myComponentFactory));
+            myActivationsPanel.addComponent(new Mp4CodecActivationPanel(myApplication, myComponentFactory, new Mp4CodecTranscoderActivation()));
             myActivationsPanel.addComponent(myAddActivationButtons);
         } else if (event.getButton() == myAddMp3BitRateActivationButton) {
             myActivationsPanel.removeComponent(myAddActivationButtons);
-            myActivationsPanel.addComponent(new Mp3BitRateActivationPanel(myApplication, myComponentFactory));
+            myActivationsPanel.addComponent(new Mp3BitRateActivationPanel(myApplication, myComponentFactory, new Mp3BitRateTranscoderActivation()));
             myActivationsPanel.addComponent(myAddActivationButtons);
         }
     }

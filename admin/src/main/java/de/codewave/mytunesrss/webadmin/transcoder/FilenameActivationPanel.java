@@ -12,21 +12,23 @@ public class FilenameActivationPanel extends Panel implements Button.ClickListen
     private SmartTextField myPatternTextField;
     private CheckBox myNegationCheckBox;
 
-    public FilenameActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
+    public FilenameActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory, FilenameTranscoderActivation activation) {
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
         verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
         setContent(verticalLayout);
 
-        Form form = componentFactory.createForm("TODO: Filename matching", true);
-        myPatternTextField = componentFactory.createTextField("streamingConfigPanel.transcoder.pattern", new ValidRegExpValidator("streamingConfigPanel.error.invalidPattern"));
+        Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.filename.caption"), true);
+        myPatternTextField = componentFactory.createTextField("transcoderPanel.activation.filename.pattern", new ValidRegExpValidator(application.getBundleString("transcoderPanel.activation.filename.error.invalidPattern")));
         myPatternTextField.setRequired(true);
         form.addField("pattern", myPatternTextField);
-        myNegationCheckBox = componentFactory.createCheckBox("TODO: Negation");
+        myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
         form.addField("negation", myNegationCheckBox);
         addComponent(form);
 
-        Button deleteButton = componentFactory.createButton("TODO: Delete", this);
+        Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
+
+        initFromConfig(activation);
     }
 
     public void buttonClick(Button.ClickEvent event) {

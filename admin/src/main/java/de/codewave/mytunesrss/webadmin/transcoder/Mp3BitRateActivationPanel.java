@@ -14,24 +14,26 @@ public class Mp3BitRateActivationPanel extends Panel implements Button.ClickList
     private SmartTextField myMaxBitRateTextField;
     private CheckBox myNegationCheckBox;
 
-    public Mp3BitRateActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
+    public Mp3BitRateActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory, Mp3BitRateTranscoderActivation activation) {
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
         verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
         setContent(verticalLayout);
 
-        Form form = componentFactory.createForm("TODO: Filename matching", true);
-        myMinBitRateTextField = componentFactory.createTextField("TOOD: MinBitRate", new MinMaxIntegerValidator("TODO: ErrMinBitRate", 0, Integer.MAX_VALUE));
+        Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp3bitrate.caption"), true);
+        myMinBitRateTextField = componentFactory.createTextField("transcoderPanel.activation.mp3bitrate.min", new MinMaxIntegerValidator(application.getBundleString("transcoderPanel.activation.mp3bitrate.minError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
         myMinBitRateTextField.setRequired(true);
         form.addField("minBitRate", myMinBitRateTextField);
-        myMaxBitRateTextField = componentFactory.createTextField("TOOD: MaxBitRate", new MinMaxIntegerValidator("TODO: ErrMaxBitRate", 0, Integer.MAX_VALUE));
+        myMaxBitRateTextField = componentFactory.createTextField("transcoderPanel.activation.mp3bitrate.max", new MinMaxIntegerValidator(application.getBundleString("transcoderPanel.activation.mp3bitrate.maxError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
         myMaxBitRateTextField.setRequired(true);
-        form.addField("minBitRate", myMinBitRateTextField);
-        myNegationCheckBox = componentFactory.createCheckBox("TODO: Negation");
+        form.addField("maxBitRate", myMaxBitRateTextField);
+        myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
         form.addField("negation", myNegationCheckBox);
         addComponent(form);
 
-        Button deleteButton = componentFactory.createButton("TODO: Delete", this);
+        Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
+
+        initFromConfig(activation);
     }
 
     public void buttonClick(Button.ClickEvent event) {

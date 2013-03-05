@@ -14,21 +14,23 @@ public class Mp4CodecActivationPanel extends Panel implements Button.ClickListen
     private SmartTextField myCodecsTextField;
     private CheckBox myNegationCheckBox;
 
-    public Mp4CodecActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
+    public Mp4CodecActivationPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory, Mp4CodecTranscoderActivation activation) {
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
         verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
         setContent(verticalLayout);
 
-        Form form = componentFactory.createForm("TODO: MP4 Codec Matching", true);
-        myCodecsTextField = componentFactory.createTextField("TODO: MP4 Codecs", new ValidRegExpValidator("streamingConfigPanel.error.invalidPattern"));
+        Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp4codec.caption"), true);
+        myCodecsTextField = componentFactory.createTextField("transcoderPanel.activation.mp4codec.codecs", new ValidRegExpValidator(application.getBundleString("transcoderPanel.activation.mp4codec.error.codecs")));
         myCodecsTextField.setRequired(true);
         form.addField("codecs", myCodecsTextField);
-        myNegationCheckBox = componentFactory.createCheckBox("TODO: Negation");
+        myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
         form.addField("negation", myNegationCheckBox);
         addComponent(form);
 
-        Button deleteButton = componentFactory.createButton("TODO: Delete", this);
+        Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
+
+        initFromConfig(activation);
     }
 
     public void buttonClick(Button.ClickEvent event) {
