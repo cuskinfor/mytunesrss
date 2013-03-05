@@ -39,13 +39,11 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
     public TranscoderPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
         myApplication = application;
         myComponentFactory = componentFactory;
-        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, false);
-        verticalLayout.setMargin(new Layout.MarginInfo(true, true, true, true));
+        VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, true);
         setContent(verticalLayout);
 
         myActivationsPanel = new Panel(application.getBundleString("transcoderPanel.activations"));
-        VerticalLayout activationsPanelLayout = componentFactory.createVerticalLayout(false, false);
-        activationsPanelLayout.setMargin(new Layout.MarginInfo(true, true, true, true));
+        VerticalLayout activationsPanelLayout = componentFactory.createVerticalLayout(true, false);
         myActivationsPanel.setContent(activationsPanelLayout);
 
         addComponent(myActivationsPanel);
