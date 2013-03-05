@@ -25,16 +25,26 @@ public class TranscoderConfig {
 
     static {
         TranscoderConfig mp3Audio = new TranscoderConfig();
-        mp3Audio.setName("MP3 Audio");
+        mp3Audio.setName("MP3 Audio (128 kbit)");
         mp3Audio.setTranscoderActivations(Arrays.asList(
-                new FilenameTranscoderActivation("^.+\\.(mp3|mp4|m4a|m4b|wav)$", false),
-                new Mp3BitRateTranscoderActivation(0, 128000, true),
+                new FilenameTranscoderActivation("^.+\\.(mp4|m4a|m4b|wav)$", false),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
         mp3Audio.setTargetSuffix("mp3");
         mp3Audio.setTargetContentType("audio/mp3");
         mp3Audio.setTargetMux(null);
         mp3Audio.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
         DEFAULT_TRANSCODERS.add(mp3Audio);
+        TranscoderConfig mp3Audio128 = new TranscoderConfig();
+        mp3Audio128.setName("MP3 Audio (max 128 kbit)");
+        mp3Audio128.setTranscoderActivations(Arrays.asList(
+                new FilenameTranscoderActivation("^.+\\.(mp3|mp4|m4a|m4b|wav)$", false),
+                new Mp3BitRateTranscoderActivation(0, 128000, true),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+        mp3Audio128.setTargetSuffix("mp3");
+        mp3Audio128.setTargetContentType("audio/mp3");
+        mp3Audio128.setTargetMux(null);
+        mp3Audio128.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
+        DEFAULT_TRANSCODERS.add(mp3Audio128);
     }
 
     private String myName;
