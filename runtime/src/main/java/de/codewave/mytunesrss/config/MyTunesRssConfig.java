@@ -667,7 +667,11 @@ public class MyTunesRssConfig {
     }
 
     public Collection<TranscoderConfig> getTranscoderConfigs() {
-        return myTranscoderConfigs;
+        return myTranscoderConfigs != null ? new ArrayList<TranscoderConfig>(myTranscoderConfigs) : new ArrayList<TranscoderConfig>();
+    }
+
+    public void setTranscoderConfigs(Collection<TranscoderConfig> configs) {
+        myTranscoderConfigs = configs != null ? new ArrayList<TranscoderConfig>(configs) : new ArrayList<TranscoderConfig>();
     }
 
     public List<ExternalSiteDefinition> getExternalSites() {
