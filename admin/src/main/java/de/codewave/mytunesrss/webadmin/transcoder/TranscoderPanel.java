@@ -1,10 +1,12 @@
 package de.codewave.mytunesrss.webadmin.transcoder;
 
 import com.vaadin.data.validator.RegexpValidator;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.config.transcoder.*;
 import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
+import de.codewave.mytunesrss.webadmin.StreamingConfigPanel;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -22,6 +24,7 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
 
     private static final String TRANSCODER_NAME_REGEXP = "[a-zA-Z0-9 ]{1,40}";
 
+    private StreamingConfigPanel myStreamingConfigPanel;
     private MyTunesRssWebAdmin myApplication;
     private ComponentFactory myComponentFactory;
     private Form myForm;
@@ -37,10 +40,11 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
     private ButtonBar myAddActivationButtons;
     private Button myDeleteButton;
 
-    public TranscoderPanel(MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
+    public TranscoderPanel(StreamingConfigPanel streamingConfigPanel, MyTunesRssWebAdmin application, ComponentFactory componentFactory) {
+        myStreamingConfigPanel = streamingConfigPanel;
         myApplication = application;
         myComponentFactory = componentFactory;
-
+        addStyleName("light");
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(false, true);
         verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
         setContent(verticalLayout);
@@ -48,6 +52,11 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         myForm = componentFactory.createForm(null, true);
         myNameTextField = componentFactory.createTextField("transcoderPanel.name", new RegexpValidator(TRANSCODER_NAME_REGEXP, true, application.getBundleString("transcoderPanel.error.invalidName", 40)));
         myNameTextField.setRequired(true);
+        myNameTextField.addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(FieldEvents.TextChangeEvent event) {
+                ((TabSheet) getParent()).getTab(TranscoderPanel.this).setCaption(event.getText());
+            }
+        });
         myForm.addField("name", myNameTextField);
         mySuffixTextField = componentFactory.createTextField("transcoderPanel.suffix");
         mySuffixTextField.setRequired(true);
@@ -120,6 +129,7 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
             }
         }
         myActivationsPanel.addComponent(myAddActivationButtons);
+        ((TabSheet) getParent()).getTab(this).setCaption(myNameTextField.getStringValue(""));
     }
 
     public void buttonClick(Button.ClickEvent event) {
@@ -130,7 +140,7 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
             new OptionWindow(30, Sizeable.UNITS_EM, null, myApplication.getBundleString("transcoderPanel.deleteConfirmation.caption"), myApplication.getBundleString("transcoderPanel.deleteConfirmation.message", myNameTextField.getStringValue("")), yes, no) {
                 public void clicked(Button button) {
                     if (button == yes) {
-                        parent.removeComponent(TranscoderPanel.this);
+                        myStreamingConfigPanel.removeTranscoder(TranscoderPanel.this);
                     }
                 }
             }.show(getWindow());

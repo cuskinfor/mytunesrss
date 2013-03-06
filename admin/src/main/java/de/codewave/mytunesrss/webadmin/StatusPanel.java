@@ -103,6 +103,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         serverAccordionPanel.setContent(accordion);
         server.addComponent(serverAccordionPanel);
         Panel serverGeneral = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+        serverGeneral.addStyleName("light");
         accordion.addTab(serverGeneral, getApplication().getBundleString("statusPanel.serverGeneral.caption"), null);
         myServerStatus = new Label();
         myServerStatus.setWidth("100%");
@@ -116,6 +117,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         serverButtons.addComponent(myStartServer);
         serverButtons.addComponent(myStopServer);
         Panel serverAddresses = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+        serverAddresses.addStyleName("light");
         myInternalAddresses = new Table();
         myInternalAddresses.setCacheRate(50);
         myInternalAddresses.addContainerProperty("address", String.class, null, getApplication().getBundleString("statusPanel.internalServerAddresses"), null, null);
@@ -128,6 +130,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         serverAddresses.addComponent(myExternalAddresses);
         accordion.addTab(serverAddresses, getApplication().getBundleString("statusPanel.serverAddresses.caption"), null);
         Panel serverConnections = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
+        serverConnections.addStyleName("light");
         myConnections = new Table();
         myConnections.setCacheRate(50);
         myConnections.addContainerProperty("remoteAddress", String.class, null, getApplication().getBundleString("statusPanel.connectionRemoteAddress"), null, null);

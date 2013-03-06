@@ -36,6 +36,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private static final Logger LOG = LoggerFactory.getLogger(StreamingConfigPanel.class);
 
     private Panel myTranscoderPanel;
+    private Accordion myTranscoderAccordion;
     private Form myCacheForm;
     private Button myAddTranscoder;
     private Button myRestoreDefaultTranscoders;
@@ -74,8 +75,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         Panel vlcPanel = getComponentFactory().surroundWithPanel(myVlcForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.vlc"));
         addComponent(vlcPanel);
         myTranscoderPanel = new Panel(getBundleString("streamingConfigPanel.caption.transcoder"));
-        ((Layout) myTranscoderPanel.getContent()).setMargin(true);
-        ((Layout.SpacingHandler) myTranscoderPanel.getContent()).setSpacing(true);
+        myTranscoderPanel.setContent(getComponentFactory().createVerticalLayout(true, true));
         myAddTranscoderButtons = new Panel();
         myAddTranscoderButtons.addStyleName("light");
         myAddTranscoderButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
@@ -83,6 +83,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myAddTranscoderButtons.addComponent(myAddTranscoder);
         myRestoreDefaultTranscoders = getComponentFactory().createButton("streamingConfigPanel.transcoder.restoreDefault", this);
         myAddTranscoderButtons.addComponent(myRestoreDefaultTranscoders);
+        myTranscoderAccordion = new Accordion();
+        myTranscoderPanel.addComponent(myTranscoderAccordion);
         myTranscoderPanel.addComponent(myAddTranscoderButtons);
         addComponent(myTranscoderPanel);
         myCacheForm = getComponentFactory().createForm(null, true);
@@ -98,10 +100,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private TranscoderPanel createTranscoderPanel() {
-        myTranscoderPanel.removeComponent(myAddTranscoderButtons);
-        TranscoderPanel transcoderPanel = new TranscoderPanel(getApplication(), getComponentFactory());
-        myTranscoderPanel.addComponent(transcoderPanel);
-        myTranscoderPanel.addComponent(myAddTranscoderButtons);
+        TranscoderPanel transcoderPanel = new TranscoderPanel(this, getApplication(), getComponentFactory());
+        myTranscoderAccordion.addTab(transcoderPanel, "new one", null);
         return transcoderPanel;
     }
 
@@ -115,10 +115,14 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                     return myCollator.compare(o1.getName(), o2.getName());
                 }
             });
-            myTranscoderPanel.removeAllComponents();
             for (TranscoderConfig config : transcoderConfigs) {
-                createTranscoderPanel().initFromConfig(config);
+                TranscoderPanel transcoderPanel = createTranscoderPanel();
+                myTranscoderAccordion.addTab(transcoderPanel);
+                transcoderPanel.initFromConfig(config);
             }
+            myTranscoderAccordion.setVisible(true);
+        } else {
+            myTranscoderAccordion.setVisible(false);
         }
         myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
         myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
@@ -134,9 +138,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
             obsoleteTranscoderNames.add(config.getName());
         }
-        Iterator<Component> componentIterator = myTranscoderPanel.getComponentIterator();
-        while (componentIterator.hasNext()) {
-            Component component = componentIterator.next();
+        Iterator<Component> iterator = myTranscoderAccordion.getComponentIterator();
+        while (iterator.hasNext()) {
+            Component component = iterator.next();
             if (component instanceof TranscoderPanel) {
                 TranscoderConfig conf = ((TranscoderPanel)component).getConfig();
                 obsoleteTranscoderNames.remove(conf.getName());
@@ -228,11 +232,11 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     @Override
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myCacheForm, myVlcForm);
-        Iterator<Component> formIterator = myTranscoderPanel.getComponentIterator();
+        Iterator<Component> iterator = myTranscoderAccordion.getComponentIterator();
         Set<String> transcoderNames = new HashSet<String>();
         boolean duplicateName = false;
-        while (formIterator.hasNext()) {
-            Component component = formIterator.next();
+        while (iterator.hasNext()) {
+            Component component = iterator.next();
             if (component instanceof TranscoderPanel) {
                 TranscoderPanel transcoderPanel = (TranscoderPanel) component;
                 valid &= transcoderPanel.isValid();
@@ -292,11 +296,13 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             TranscoderConfig config = new TranscoderConfig();
             config.setName(getBundleString("transcoderPanel.defaultName", myTranscoderNumberGenerator.getAndIncrement()));
             panel.initFromConfig(config);
+            myTranscoderAccordion.setVisible(true);
+            myTranscoderAccordion.setSelectedTab(panel);
         } else if (clickEvent.getButton() == myRestoreDefaultTranscoders) {
             Collection<TranscoderConfig> defaultTranscoders = TranscoderConfig.getDefaultTranscoders();
             for (Iterator<TranscoderConfig> tcIter = defaultTranscoders.iterator(); tcIter.hasNext(); ) {
                 TranscoderConfig config = tcIter.next();
-                Iterator<Component> formIterator = myTranscoderPanel.getComponentIterator();
+                Iterator<Component> formIterator = myTranscoderAccordion.getComponentIterator();
                 while (formIterator.hasNext()) {
                     Component component = formIterator.next();
                     if (component instanceof TranscoderPanel) {
@@ -313,8 +319,14 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 TranscoderPanel panel = createTranscoderPanel();
                 panel.initFromConfig(config);
             }
+            myTranscoderAccordion.setVisible(true);
         } else {
             super.buttonClick(clickEvent);
         }
+    }
+
+    public void removeTranscoder(TranscoderPanel transcoderPanel) {
+        myTranscoderAccordion.removeTab(myTranscoderAccordion.getTab(transcoderPanel));
+        myTranscoderAccordion.setVisible(myTranscoderAccordion.getComponentCount() > 0);
     }
 }
