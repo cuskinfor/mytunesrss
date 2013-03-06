@@ -55,4 +55,11 @@ public class FilenameTranscoderActivation extends TranscoderActivation {
     public String getPattern() {
         return myPattern;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        FilenameTranscoderActivation clone = (FilenameTranscoderActivation) super.clone();
+        clone.compilePattern();
+        return clone;
+    }
 }

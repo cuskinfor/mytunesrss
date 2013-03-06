@@ -9,6 +9,8 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.EqualsBuilder;
+import org.apache.commons.lang.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -18,10 +20,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.*;
 
 @XmlRootElement
-public class TranscoderConfig {
+public class TranscoderConfig implements Cloneable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderConfig.class);
-    public static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<TranscoderConfig>();
+    private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<TranscoderConfig>();
 
     static {
         TranscoderConfig mp3Audio = new TranscoderConfig();
@@ -45,6 +47,18 @@ public class TranscoderConfig {
         mp3Audio128.setTargetMux(null);
         mp3Audio128.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
         DEFAULT_TRANSCODERS.add(mp3Audio128);
+    }
+
+    public static Collection<TranscoderConfig> getDefaultTranscoders() {
+        Set<TranscoderConfig> deepClone = new HashSet<TranscoderConfig>(DEFAULT_TRANSCODERS.size());
+        for (TranscoderConfig config : DEFAULT_TRANSCODERS) {
+            try {
+                deepClone.add((TranscoderConfig) config.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not clone transcoder configuration.", e);
+            }
+        }
+        return deepClone;
     }
 
     private String myName;
@@ -171,5 +185,15 @@ public class TranscoderConfig {
     @Override
     public String toString() {
         return StringUtils.isNotBlank(myName) ? myName : super.toString();
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        TranscoderConfig clone = (TranscoderConfig) super.clone();
+        clone.myTranscoderActivations = new ArrayList<TranscoderActivation>();
+        for (TranscoderActivation activation : myTranscoderActivations) {
+            clone.myTranscoderActivations.add((TranscoderActivation) activation.clone());
+        }
+        return clone;
     }
 }

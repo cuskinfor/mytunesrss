@@ -5,11 +5,16 @@ import de.codewave.mytunesrss.config.transcoder.Mp3BitRateTranscoderActivation;
 import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
-import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Mp3BitRateActivationPanel extends Panel implements Button.ClickListener, ActivationPanel<Mp3BitRateTranscoderActivation> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Mp3BitRateActivationPanel.class);
+
+    private Form myForm;
     private SmartTextField myMinBitRateTextField;
     private SmartTextField myMaxBitRateTextField;
     private CheckBox myNegationCheckBox;
@@ -18,16 +23,16 @@ public class Mp3BitRateActivationPanel extends Panel implements Button.ClickList
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
-        Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp3bitrate.caption"), true);
+        myForm = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp3bitrate.caption"), true);
         myMinBitRateTextField = componentFactory.createTextField("transcoderPanel.activation.mp3bitrate.min", new MinMaxIntegerValidator(application.getBundleString("transcoderPanel.activation.mp3bitrate.minError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
         myMinBitRateTextField.setRequired(true);
-        form.addField("minBitRate", myMinBitRateTextField);
+        myForm.addField("minBitRate", myMinBitRateTextField);
         myMaxBitRateTextField = componentFactory.createTextField("transcoderPanel.activation.mp3bitrate.max", new MinMaxIntegerValidator(application.getBundleString("transcoderPanel.activation.mp3bitrate.maxError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
         myMaxBitRateTextField.setRequired(true);
-        form.addField("maxBitRate", myMaxBitRateTextField);
+        myForm.addField("maxBitRate", myMaxBitRateTextField);
         myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
-        form.addField("negation", myNegationCheckBox);
-        addComponent(form);
+        myForm.addField("negation", myNegationCheckBox);
+        addComponent(myForm);
 
         Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
@@ -47,5 +52,10 @@ public class Mp3BitRateActivationPanel extends Panel implements Button.ClickList
         myMinBitRateTextField.setValue(config.getMinBitRate());
         myMaxBitRateTextField.setValue(config.getMaxBitRate());
         myNegationCheckBox.setValue(config.isNegation());
+    }
+
+    public boolean isValid() {
+        LOGGER.debug("Validating MP3 bitrate activation panel.");
+        return VaadinUtils.isValid(myForm);
     }
 }

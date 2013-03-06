@@ -55,6 +55,6 @@ public class Mp4CodecTranscoderActivation extends TranscoderActivation {
     }
 
     public String[] getCodecs() {
-        return myCodecs.clone();
+        return myCodecs != null ? myCodecs.clone() : null;
     }
 }

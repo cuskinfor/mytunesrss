@@ -6,5 +6,6 @@ public interface ActivationPanel<T extends TranscoderActivation> {
 
     T getConfig();
     void initFromConfig(T config);
+    boolean isValid();
 
 }

@@ -7,7 +7,7 @@ import org.apache.commons.jxpath.JXPathContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public abstract class TranscoderActivation {
+public abstract class TranscoderActivation implements Cloneable {
 
     private boolean myNegation;
 
@@ -32,5 +32,10 @@ public abstract class TranscoderActivation {
 
     public boolean isNegation() {
         return myNegation;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
     }
 }

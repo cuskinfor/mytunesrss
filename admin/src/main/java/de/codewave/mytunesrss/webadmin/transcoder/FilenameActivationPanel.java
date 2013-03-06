@@ -5,10 +5,16 @@ import de.codewave.mytunesrss.config.transcoder.FilenameTranscoderActivation;
 import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
 import de.codewave.vaadin.ComponentFactory;
 import de.codewave.vaadin.SmartTextField;
+import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FilenameActivationPanel extends Panel implements Button.ClickListener, ActivationPanel<FilenameTranscoderActivation> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(FilenameActivationPanel.class);
+
+    private Form myForm;
     private SmartTextField myPatternTextField;
     private CheckBox myNegationCheckBox;
 
@@ -16,13 +22,13 @@ public class FilenameActivationPanel extends Panel implements Button.ClickListen
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
-        Form form = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.filename.caption"), true);
+        myForm = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.filename.caption"), true);
         myPatternTextField = componentFactory.createTextField("transcoderPanel.activation.filename.pattern", new ValidRegExpValidator(application.getBundleString("transcoderPanel.activation.filename.error.invalidPattern")));
         myPatternTextField.setRequired(true);
-        form.addField("pattern", myPatternTextField);
+        myForm.addField("pattern", myPatternTextField);
         myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
-        form.addField("negation", myNegationCheckBox);
-        addComponent(form);
+        myForm.addField("negation", myNegationCheckBox);
+        addComponent(myForm);
 
         Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
@@ -41,5 +47,10 @@ public class FilenameActivationPanel extends Panel implements Button.ClickListen
     public void initFromConfig(FilenameTranscoderActivation config) {
         myPatternTextField.setValue(config.getPattern(), "");
         myNegationCheckBox.setValue(config.isNegation());
+    }
+
+    public boolean isValid() {
+        LOGGER.debug("Validating filename activation panel.");
+        return VaadinUtils.isValid(myForm);
     }
 }

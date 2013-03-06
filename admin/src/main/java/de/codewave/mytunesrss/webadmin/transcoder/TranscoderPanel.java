@@ -24,6 +24,7 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
 
     private MyTunesRssWebAdmin myApplication;
     private ComponentFactory myComponentFactory;
+    private Form myForm;
     private SmartTextField myNameTextField;
     private SmartTextField mySuffixTextField;
     private SmartTextField myContentTypeTextField;
@@ -44,22 +45,22 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         verticalLayout.setMargin(new Layout.MarginInfo(false, true, true, true));
         setContent(verticalLayout);
 
-        Form form = componentFactory.createForm(null, true);
+        myForm = componentFactory.createForm(null, true);
         myNameTextField = componentFactory.createTextField("transcoderPanel.name", new RegexpValidator(TRANSCODER_NAME_REGEXP, true, application.getBundleString("transcoderPanel.error.invalidName", 40)));
         myNameTextField.setRequired(true);
-        form.addField("name", myNameTextField);
+        myForm.addField("name", myNameTextField);
         mySuffixTextField = componentFactory.createTextField("transcoderPanel.suffix");
         mySuffixTextField.setRequired(true);
-        form.addField("suffix", mySuffixTextField);
+        myForm.addField("suffix", mySuffixTextField);
         myContentTypeTextField = componentFactory.createTextField("transcoderPanel.contentType");
         myContentTypeTextField.setRequired(true);
-        form.addField("contentType", myContentTypeTextField);
+        myForm.addField("contentType", myContentTypeTextField);
         myMuxTextField = componentFactory.createTextField("transcoderPanel.mux");
-        form.addField("mux", myMuxTextField);
+        myForm.addField("mux", myMuxTextField);
         myOptionsTextField = componentFactory.createTextField("transcoderPanel.options");
         myOptionsTextField.setRequired(true);
-        form.addField("options", myOptionsTextField);
-        addComponent(form);
+        myForm.addField("options", myOptionsTextField);
+        addComponent(myForm);
 
         myActivationsPanel = new Panel(application.getBundleString("transcoderPanel.activations"));
         VerticalLayout activationsPanelLayout = componentFactory.createVerticalLayout(true, true);
@@ -121,10 +122,6 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         myActivationsPanel.addComponent(myAddActivationButtons);
     }
 
-    public void setTranscoderName(String name) {
-        myNameTextField.setValue(name, "");
-    }
-
     public void buttonClick(Button.ClickEvent event) {
         if (event.getButton() == myDeleteButton) {
             final ComponentContainer parent = (ComponentContainer)getParent();
@@ -150,5 +147,18 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
             myActivationsPanel.addComponent(new Mp3BitRateActivationPanel(myApplication, myComponentFactory, new Mp3BitRateTranscoderActivation()));
             myActivationsPanel.addComponent(myAddActivationButtons);
         }
+    }
+
+    public boolean isValid() {
+        LOGGER.debug("Validating transcoder panel.");
+        boolean valid = VaadinUtils.isValid(myForm);
+        Iterator<Component> componentIterator = myActivationsPanel.getComponentIterator();
+        while (componentIterator.hasNext()) {
+            Component component = componentIterator.next();
+            if (component instanceof ActivationPanel) {
+                valid &= ((ActivationPanel)component).isValid();
+            }
+        }
+        return valid;
     }
 }

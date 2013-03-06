@@ -38,6 +38,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Panel myTranscoderPanel;
     private Form myCacheForm;
     private Button myAddTranscoder;
+    private Button myRestoreDefaultTranscoders;
     private SmartTextField myStreamingCacheTimeout;
     private SmartTextField myStreamingCacheMaxFiles;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
@@ -80,6 +81,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myAddTranscoderButtons.setContent(getApplication().getComponentFactory().createHorizontalLayout(false, true));
         myAddTranscoder = getComponentFactory().createButton("streamingConfigPanel.transcoder.add", this);
         myAddTranscoderButtons.addComponent(myAddTranscoder);
+        myRestoreDefaultTranscoders = getComponentFactory().createButton("streamingConfigPanel.transcoder.restoreDefault", this);
+        myAddTranscoderButtons.addComponent(myRestoreDefaultTranscoders);
         for (int i = 0; i < MyTunesRss.CONFIG.getTranscoderConfigs().size(); i++) {
             createTranscoderPanel();
         }
@@ -234,11 +237,11 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         Set<String> transcoderNames = new HashSet<String>();
         boolean duplicateName = false;
         while (formIterator.hasNext()) {
-            Panel panel = (Panel) formIterator.next();
-            Form form = getTranscoderForm(panel);
-            if (form != null) {
-                valid &= VaadinUtils.isValid(form);
-                String name = ((SmartTextField) form.getField("name")).getStringValue(null);
+            Component component = formIterator.next();
+            if (component instanceof TranscoderPanel) {
+                TranscoderPanel transcoderPanel = (TranscoderPanel) component;
+                valid &= transcoderPanel.isValid();
+                String name = transcoderPanel.getConfig().getName();
                 if (transcoderNames.contains(name)) {
                     duplicateName = true;
                 }
@@ -305,8 +308,30 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }.show(getWindow());
         } else if (clickEvent.getButton() == myAddTranscoder) {
             TranscoderPanel panel = createTranscoderPanel();
-            String name = getBundleString("transcoderPanel.defaultName", myTranscoderNumberGenerator.getAndIncrement());
-            panel.setTranscoderName(name);
+            TranscoderConfig config = new TranscoderConfig();
+            config.setName(getBundleString("transcoderPanel.defaultName", myTranscoderNumberGenerator.getAndIncrement()));
+            panel.initFromConfig(config);
+        } else if (clickEvent.getButton() == myRestoreDefaultTranscoders) {
+            Collection<TranscoderConfig> defaultTranscoders = TranscoderConfig.getDefaultTranscoders();
+            for (Iterator<TranscoderConfig> tcIter = defaultTranscoders.iterator(); tcIter.hasNext(); ) {
+                TranscoderConfig config = tcIter.next();
+                Iterator<Component> formIterator = myTranscoderPanel.getComponentIterator();
+                while (formIterator.hasNext()) {
+                    Component component = formIterator.next();
+                    if (component instanceof TranscoderPanel) {
+                        TranscoderPanel transcoderPanel = (TranscoderPanel) component;
+                        if (config.getName().equals(transcoderPanel.getConfig().getName())) {
+                            transcoderPanel.initFromConfig(config); // replace existing transcoder in GUI
+                            tcIter.remove();
+                        }
+                    }
+                }
+            }
+            // now add remaining default transcoders as new ones to the GUI
+            for (TranscoderConfig config : defaultTranscoders) {
+                TranscoderPanel panel = createTranscoderPanel();
+                panel.initFromConfig(config);
+            }
         } else {
             super.buttonClick(clickEvent);
         }

@@ -104,7 +104,7 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnSkippedDatabaseUpdate;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
-    private List<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
+    private Collection<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
     private String myAutoLogin;
     private boolean myDisableBrowser;
@@ -666,7 +666,7 @@ public class MyTunesRssConfig {
         myStatisticKeepTime = statisticKeepTime;
     }
 
-    public List<TranscoderConfig> getTranscoderConfigs() {
+    public Collection<TranscoderConfig> getTranscoderConfigs() {
         return myTranscoderConfigs;
     }
 
@@ -1111,9 +1111,6 @@ public class MyTunesRssConfig {
         while (transcoderConfigIterator.hasNext()) {
             JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
             myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
-        }
-        if (myTranscoderConfigs.isEmpty()) {
-            myTranscoderConfigs.addAll(TranscoderConfig.DEFAULT_TRANSCODERS);
         }
         Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
         myExternalSites = new ArrayList<ExternalSiteDefinition>();
@@ -1721,8 +1718,11 @@ public class MyTunesRssConfig {
         }
         if (current.compareTo(new Version("4.3.0")) < 0) {
             setVersion("4.3.0");
-            myTranscoderConfigs = new ArrayList<TranscoderConfig>(TranscoderConfig.DEFAULT_TRANSCODERS);
-            myFlashPlayers.addAll(FlashPlayerConfig.getDefaults());
+            myFlashPlayers = FlashPlayerConfig.getDefaults();
+        }
+        if (current.compareTo(new Version("4.8.0")) < 0) {
+            setVersion("4.8.0");
+            myTranscoderConfigs = TranscoderConfig.getDefaultTranscoders();
         }
     }
 
