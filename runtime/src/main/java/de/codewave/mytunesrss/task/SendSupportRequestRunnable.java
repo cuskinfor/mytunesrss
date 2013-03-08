@@ -9,17 +9,21 @@ import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.utils.io.FileProcessor;
+import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.io.ZipUtils;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.methods.multipart.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 
 public class SendSupportRequestRunnable implements Runnable {
@@ -49,8 +53,24 @@ public class SendSupportRequestRunnable implements Runnable {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             zipOutput = new ZipArchiveOutputStream(baos);
-            String archiveName = "MyTunesRSS_" + MyTunesRss.VERSION + "_Support" + (StringUtils.isNotBlank(myName) ? "_" + StringUtils.trim(myName) : "");
-            ZipUtils.addToZip(archiveName + "/MyTunesRSS.log", new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.log"), zipOutput);
+            final String archiveName = "MyTunesRSS_" + MyTunesRss.VERSION + "_Support" + (StringUtils.isNotBlank(myName) ? "_" + StringUtils.trim(myName) : "");
+            final ZipArchiveOutputStream finalZipOutput = zipOutput;
+            IOUtils.processFiles(new File(MyTunesRss.CACHE_DATA_PATH), new FileProcessor() {
+                        public void process(File file) {
+                            try {
+                                ZipUtils.addToZip(archiveName + "/" + file.getName(), file, finalZipOutput);
+                            } catch (IOException e) {
+                                if (LOG.isErrorEnabled()) {
+                                    LOG.error("Could not add file \"" + file.getAbsolutePath() + "\".", e);
+                                }
+                            }
+                        }
+                    }, new FileFilter() {
+                        public boolean accept(File file) {
+                            return file.getName().startsWith("MyTunesRSS.log");
+                        }
+                    }
+            );
             if (myIncludeItunesXml) {
                 int index = 0;
                 for (DatasourceConfig dataSource : MyTunesRss.CONFIG.getDatasources()) {

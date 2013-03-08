@@ -7,6 +7,7 @@ package de.codewave.mytunesrss;
 import com.sun.management.HotSpotDiagnosticMXBean;
 import de.codewave.camel.mp4.Mp4Parser;
 import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
+import de.codewave.mytunesrss.cache.FileSystemCache;
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
@@ -149,7 +150,7 @@ public class MyTunesRss {
     };
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
-    public static FileCache STREAMING_CACHE;
+    public static FileSystemCache STREAMING_CACHE;
     public static FileCache TEMP_CACHE;
     public static ExpiringCache<HttpLiveStreamingCacheItem> HTTP_LIVE_STREAMING_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
@@ -445,18 +446,13 @@ public class MyTunesRss {
 
     private static void prepareCacheDirs() throws IOException {
         File tempDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_TEMP);
-        File transcoderDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_TRANSCODER);
         File httpLiveStreamingDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_HTTP_LIVE_STREAMING);
 
         FileUtils.deleteQuietly(tempDir);
-        FileUtils.deleteQuietly(transcoderDir);
         FileUtils.deleteQuietly(httpLiveStreamingDir);
 
         if (!tempDir.exists()) {
             tempDir.mkdirs();
-        }
-        if (!transcoderDir.exists()) {
-            transcoderDir.mkdirs();
         }
         if (!httpLiveStreamingDir.exists()) {
             httpLiveStreamingDir.mkdirs();
@@ -652,7 +648,8 @@ public class MyTunesRss {
     }
 
     private static void initializeCaches() throws IOException {
-        STREAMING_CACHE = new FileCache(APPLICATION_IDENTIFIER + "_Streaming", 10000, CONFIG.getStreamingCacheMaxFiles());
+        STREAMING_CACHE = new FileSystemCache("Transcoder", new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER), CONFIG.getStreamingCacheMaxMegas() * 1024 * 1024, 60000);
+        STREAMING_CACHE.init();
         TEMP_CACHE = new FileCache(APPLICATION_IDENTIFIER + "_Temp", 10000, 10000); // TODO max size config?
         HTTP_LIVE_STREAMING_CACHE = new ExpiringCache(APPLICATION_IDENTIFIER + "_HttpLiveStreaming", 10000, 10000); // TODO max size config?
     }

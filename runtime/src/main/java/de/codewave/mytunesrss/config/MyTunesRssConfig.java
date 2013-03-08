@@ -62,8 +62,7 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myWebLoginMessage = "";
-    private int myStreamingCacheTimeout = 20;
-    private int myStreamingCacheMaxFiles = 300;
+    private int myStreamingCacheMaxMegas = 100;
     private Level myCodewaveLogLevel;
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
@@ -236,20 +235,12 @@ public class MyTunesRssConfig {
         myPathInfoKey = pathInfoKey;
     }
 
-    public int getStreamingCacheTimeout() {
-        return myStreamingCacheTimeout;
+    public int getStreamingCacheMaxMegas() {
+        return myStreamingCacheMaxMegas;
     }
 
-    public void setStreamingCacheTimeout(int streamingCacheTimeout) {
-        myStreamingCacheTimeout = streamingCacheTimeout;
-    }
-
-    public int getStreamingCacheMaxFiles() {
-        return myStreamingCacheMaxFiles;
-    }
-
-    public void setStreamingCacheMaxFiles(int streamingCacheMaxFiles) {
-        myStreamingCacheMaxFiles = streamingCacheMaxFiles;
+    public void setStreamingCacheMaxMegas(int streamingCacheMaxMegas) {
+        myStreamingCacheMaxMegas = streamingCacheMaxMegas;
     }
 
     public Level getCodewaveLogLevel() {
@@ -1061,8 +1052,7 @@ public class MyTunesRssConfig {
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
-        setStreamingCacheTimeout(JXPathUtils.getIntValue(settings, "streamingCacheTimeout", getStreamingCacheTimeout()));
-        setStreamingCacheMaxFiles(JXPathUtils.getIntValue(settings, "streamingCacheMaxFiles", getStreamingCacheMaxFiles()));
+        setStreamingCacheMaxMegas(JXPathUtils.getIntValue(settings, "streamingCacheMaxMegas", getStreamingCacheMaxMegas()));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
@@ -1439,8 +1429,7 @@ public class MyTunesRssConfig {
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
-            root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheTimeout", myStreamingCacheTimeout));
-            root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxFiles", myStreamingCacheMaxFiles));
+            root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxMegas", myStreamingCacheMaxMegas));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));

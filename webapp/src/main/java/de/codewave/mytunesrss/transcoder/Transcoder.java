@@ -9,6 +9,8 @@ import de.codewave.utils.io.FileCache;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.output.NullOutputStream;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -39,43 +41,19 @@ public class Transcoder {
         myTempFile = tempFile;
     }
 
-    public File getTranscodedFile(File originalFile) throws IOException {
-        File file = File.createTempFile("mytunesrss_", null, new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER));
-        try {
-            FileOutputStream fileOutputStream = new FileOutputStream(file);
-            InputStream inputStream = getStream(originalFile);
-            IOUtils.copy(inputStream, fileOutputStream);
-            inputStream.close();
-            fileOutputStream.close();
-            return file;
-        } catch (IOException e) {
-            file.delete();
-            throw e;
-        }
-    }
-
     public StreamSender getStreamSender(File originalFile) throws IOException {
-        final String identifier = myTrack.getId() + "_" + getTranscoderId();
         if (myTempFile) {
-            FileCache.FileInfo fileInfo = MyTunesRss.STREAMING_CACHE.lock(identifier);
-            File transcodedFile = fileInfo != null ? fileInfo.getFile() : null;
-            if (transcodedFile == null) {
-                transcodedFile = getTranscodedFile(originalFile);
-                MyTunesRss.STREAMING_CACHE.add(identifier, transcodedFile, MyTunesRss.CONFIG.getStreamingCacheTimeout() * 60000);
-                MyTunesRss.STREAMING_CACHE.lock(identifier);
-            }
-            return new FileSender(transcodedFile, getTargetContentType(), (int) transcodedFile.length()) {
-                protected void afterSend() {
-                    MyTunesRss.STREAMING_CACHE.unlock(identifier);
-                }
-            };
-        } else {
-            return new StreamSender(getStream(originalFile), getTargetContentType(), 0);
+            IOUtils.copyLarge(getStream(originalFile), new NullOutputStream());
         }
+        return new StreamSender(getStream(originalFile), getTargetContentType(), 0);
     }
 
     public InputStream getStream(File originalFile) throws IOException {
-        return new TranscoderStream(myTranscoderConfig, originalFile);
+        return new TranscoderStream(myTranscoderConfig, originalFile, getCacheFile());
+    }
+
+    private File getCacheFile() {
+        return MyTunesRss.STREAMING_CACHE.getFileForName(StringUtils.replaceChars(myTranscoderConfig.getName(), ' ', '_') + "_" + myTrack.getId());
     }
 
     public String getTranscoderId() {

@@ -154,6 +154,7 @@ public class MyTunesRssUtils {
     public static void shutdownGracefully() {
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
         LOGGER.debug("Shutting down gracefully.");
+        MyTunesRss.CONFIG.save();
         try {
             if (MyTunesRss.VLC_PLAYER != null) {
                 MyTunesRss.VLC_PLAYER.destroy();
@@ -161,7 +162,8 @@ public class MyTunesRssUtils {
         } catch (VlcPlayerException e) {
             LOGGER.error("Could not destroy VLC player.", e);
         }
-        MyTunesRss.CONFIG.save();
+        LOGGER.debug("Destroying streaming cache.");
+        MyTunesRss.STREAMING_CACHE.destroy();
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();
         }

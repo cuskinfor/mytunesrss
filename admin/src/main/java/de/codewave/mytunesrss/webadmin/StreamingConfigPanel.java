@@ -40,8 +40,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Form myCacheForm;
     private Button myAddTranscoder;
     private Button myRestoreDefaultTranscoders;
-    private SmartTextField myStreamingCacheTimeout;
-    private SmartTextField myStreamingCacheMaxFiles;
+    private SmartTextField myStreamingCacheMaxMegas;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
     private Panel myAddTranscoderButtons;
     private CheckBox myVlcEnabled;
@@ -88,10 +87,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myTranscoderPanel.addComponent(myAddTranscoderButtons);
         addComponent(myTranscoderPanel);
         myCacheForm = getComponentFactory().createForm(null, true);
-        myStreamingCacheTimeout = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheTimeout", getApplication().getValidatorFactory().createMinMaxValidator(0, 1440));
-        myStreamingCacheMaxFiles = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheMaxFiles", getApplication().getValidatorFactory().createMinMaxValidator(0, 10000));
-        myCacheForm.addField("timeout", myStreamingCacheTimeout);
-        myCacheForm.addField("limit", myStreamingCacheMaxFiles);
+        myStreamingCacheMaxMegas = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheMaxMegas", getApplication().getValidatorFactory().createMinMaxValidator(100, 1024 * 1024));
+        myCacheForm.addField("limit", myStreamingCacheMaxMegas);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
 
         addDefaultComponents(0, 4, 0, 4, false);
@@ -124,8 +121,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         } else {
             myTranscoderAccordion.setVisible(false);
         }
-        myStreamingCacheTimeout.setValue(MyTunesRss.CONFIG.getStreamingCacheTimeout(), 0, 1440, "0");
-        myStreamingCacheMaxFiles.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxFiles(), 0, 10000, "0");
+        myStreamingCacheMaxMegas.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxMegas(), 100, 1024 * 1024, "100");
         myVlcEnabled.setValue(MyTunesRss.CONFIG.isVlcEnabled());
         myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
         myVlcSocketTimeout.setValue(MyTunesRss.CONFIG.getVlcSocketTimeout());
@@ -150,8 +146,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         truncateHttpLiveStreamingCache(obsoleteTranscoderNames);
         truncateTranscodingCache(obsoleteTranscoderNames);
         MyTunesRss.CONFIG.setTranscoderConfigs(configs);
-        MyTunesRss.CONFIG.setStreamingCacheTimeout(myStreamingCacheTimeout.getIntegerValue(0));
-        MyTunesRss.CONFIG.setStreamingCacheMaxFiles(myStreamingCacheMaxFiles.getIntegerValue(0));
+        int maxMegas = myStreamingCacheMaxMegas.getIntegerValue(100);
+        MyTunesRss.CONFIG.setStreamingCacheMaxMegas(maxMegas);
+        MyTunesRss.STREAMING_CACHE.setMaxSizeBytes(maxMegas * 1024 * 1024);
         String vlcBinary = myVlcBinary.getStringValue(null);
         File vlcExecutable = vlcBinary != null ? new File(vlcBinary) : null;
         if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {
@@ -217,15 +214,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Truncating streaming cache.");
         }
-        for (String transcoderName : obsoleteTranscoderNames) {
-            for (String key : MyTunesRss.STREAMING_CACHE.keySet()) {
-                if (key.endsWith("_" + transcoderName)) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Removing cache item with key \"" + key + "\".");
-                    }
-                    MyTunesRss.STREAMING_CACHE.remove(key);
-                }
-            }
+        for (String name : obsoleteTranscoderNames) {
+            MyTunesRss.STREAMING_CACHE.deleteFilesByPrefix(StringUtils.replaceChars(name, ' ', '_'));
         }
     }
 
