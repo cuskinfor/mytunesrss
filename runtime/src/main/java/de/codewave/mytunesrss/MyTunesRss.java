@@ -482,16 +482,6 @@ public class MyTunesRss {
 
     private static void prepareLogging() {
         System.setProperty("MyTunesRSS.logDir", MyTunesRss.CACHE_DATA_PATH);
-        try {
-            for (Iterator<File> iter =
-                         (Iterator<File>) FileUtils.iterateFiles(new File(MyTunesRss.CACHE_DATA_PATH),
-                                 new String[]{"log"},
-                                 false); iter.hasNext(); ) {
-                iter.next().delete();
-            }
-        } catch (Exception e) {
-            // ignore exceptions when deleting log files
-        }
         if (COMMAND_LINE_ARGS.get(CMD_LOGCONFIG) != null && COMMAND_LINE_ARGS.get(CMD_LOGCONFIG).length == 1 && COMMAND_LINE_ARGS.get(CMD_LOGCONFIG)[0] != null) {
             DOMConfigurator.configure(COMMAND_LINE_ARGS.get(CMD_LOGCONFIG)[0]);
         } else {

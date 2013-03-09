@@ -18,7 +18,7 @@
         <param name="MaxFileSize" value="100MB"/>
         <param name="MaxBackupIndex" value="1"/>
         <layout class="org.apache.log4j.PatternLayout">
-            <param name="ConversionPattern" value="%d %m%n"/>
+            <param name="ConversionPattern" value="%d %X{id} %m%n"/>
         </layout>
     </appender>
     <logger name="VLC" additivity="false">
@@ -31,6 +31,14 @@
     </logger>
     <logger name="org.apache.catalina.startup" additivity="false">
         <level value="debug"/>
+        <appender-ref ref="file"/>
+    </logger>
+    <logger name="org.apache.commons.httpclient.HttpMethodDirector" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="file"/>
+    </logger>
+    <logger name="de.codewave.mytunesrss.servlet.resteasyfix" additivity="false">
+        <level value="error"/>
         <appender-ref ref="file"/>
     </logger>
     <root>
