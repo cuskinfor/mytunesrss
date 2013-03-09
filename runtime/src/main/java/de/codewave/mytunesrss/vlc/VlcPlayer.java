@@ -171,12 +171,16 @@ public class VlcPlayer {
                                 }
                                 ProcessBuilder processBuilder = new ProcessBuilder(command);
                                 processBuilder.redirectErrorStream(true);
-                                LOGGER.info("Starting VLC player: \"" + StringUtils.join(command.toArray(new String[command.size()]), " ") + "\".");
+                                String msg = "Starting VLC player: \"" + StringUtils.join(command.toArray(new String[command.size()]), " ") + "\".";
+                                LOGGER.info(msg);
                                 process = processBuilder.start();
                                 MyTunesRss.SPAWNED_PROCESSES.add(process);
-                                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Debug);
+                                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Info, msg, null);
                                 stdoutCopyThread.setDaemon(true);
                                 stdoutCopyThread.start();
+                                LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Error, msg, null);
+                                stderrCopyThread.setDaemon(true);
+                                stderrCopyThread.start();
                                 for (int i = 0; isRunning(process) && i < 10; i++) {
                                     try {
                                         setVolume(status.getPercentageVolume());

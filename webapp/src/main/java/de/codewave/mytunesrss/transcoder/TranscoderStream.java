@@ -45,14 +45,12 @@ public class TranscoderStream extends InputStream {
             List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(inputFile);
             transcodeCommand.add("--no-sout-smem-time-sync");
             transcodeCommand.add("--sout=#transcode{" + transcoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(transcoderConfig.getTargetMux(), "dummy") + ",dst=-}");
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Executing " + getName() + " command \"" + StringUtils.join(transcodeCommand, " ") + "\".");
-            }
+            String msg = "Executing " + getName() + " command \"" + StringUtils.join(transcodeCommand, " ") + "\".";
+            LOG.debug(msg);
             myProcess = new ProcessBuilder(transcodeCommand).start();
             MyTunesRss.SPAWNED_PROCESSES.add(myProcess);
             myInputStream = myProcess.getInputStream();
-            //StreamCopyThread stderrCopyThread = new StreamCopyThread(myProcess.getErrorStream(), false, new NullOutputStream(), true);
-            LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger("VLC"), LogStreamCopyThread.LogLevel.Error);
+            LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(myProcess.getErrorStream(), false, LoggerFactory.getLogger("VLC"), LogStreamCopyThread.LogLevel.Error, msg, null);
             stderrCopyThread.setDaemon(true);
             stderrCopyThread.start();
         }
