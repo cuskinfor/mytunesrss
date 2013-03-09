@@ -21,6 +21,8 @@ public abstract class TranscoderActivation implements Cloneable {
 
     public abstract boolean matches(Track track);
 
+    public abstract boolean isActive(Track track);
+
     public void writeTo(Document settings, Element config) {
         config.appendChild(DOMUtils.createBooleanElement(settings, "negation", myNegation));
         config.appendChild(DOMUtils.createTextElement(settings, "type", Activation.forActivation(this).name()));

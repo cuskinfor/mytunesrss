@@ -174,9 +174,18 @@ public class TranscoderConfig implements Cloneable {
     }
 
     public boolean isValidFor(Track track) {
+        List<TranscoderActivation> effectiveActivations = new ArrayList<TranscoderActivation>();
         for (TranscoderActivation activation : myTranscoderActivations) {
+            if (activation.isActive(track)) {
+                effectiveActivations.add(activation);
+            }
+        }
+        if (effectiveActivations.isEmpty()) {
+            return false; // no effective activations
+        }
+        for (TranscoderActivation activation : effectiveActivations) {
             if (!activation.matches(track)) {
-                return false;
+                return false; // all activations have to match
             }
         }
         return true;

@@ -31,15 +31,20 @@ public class Mp4CodecTranscoderActivation extends TranscoderActivation {
 
     @Override
     public boolean matches(Track track) {
-        boolean b = true;
-        if (FileSupportUtils.isMp4(track.getFile())) {
-            String trackMp4Codec = StringUtils.trimToEmpty(StringUtils.lowerCase(track.getMp4Codec()));
-            if (StringUtils.isNotBlank(trackMp4Codec)) {
-                b = applyNegation(ArrayUtils.contains(myCodecs, trackMp4Codec));
-            }
+        boolean b;
+        String trackMp4Codec = StringUtils.trimToEmpty(StringUtils.lowerCase(track.getMp4Codec()));
+        if (StringUtils.isNotBlank(trackMp4Codec)) {
+            b = applyNegation(ArrayUtils.contains(myCodecs, trackMp4Codec));
+        } else {
+            b = applyNegation(false);
         }
         LOGGER.debug("MP4 codec activation (codecs \"" + Arrays.toString(myCodecs) + "\", negation \"" + isNegation() + "\") for \"" + track.getFilename() + "\": " + b);
         return b;
+    }
+
+    @Override
+    public boolean isActive(Track track) {
+        return FileSupportUtils.isMp4(track.getFile());
     }
 
     @Override

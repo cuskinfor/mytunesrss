@@ -35,24 +35,27 @@ public class Mp3BitRateTranscoderActivation extends TranscoderActivation {
 
     @Override
     public boolean matches(Track track) {
-        boolean b = true;
-        if (FileSupportUtils.isMp3(track.getFile())) {
+        boolean b = false;
+        try {
+            FileInputStream inputStream = new FileInputStream(track.getFile());
             try {
-                FileInputStream inputStream = new FileInputStream(track.getFile());
-                try {
-                    Mp3Info mp3Info = Mp3Utils.getMp3Info(inputStream);
-                    b = mp3Info.getAvgBitrate() == 0 || applyNegation(myMinBitRate <= mp3Info.getMinBitrate() && myMaxBitRate >= mp3Info.getMaxBitrate());
-                } finally {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                LOGGER.warn("Could not get mp3 info for track \"" + track.getFilename() + "\".", e);
-            } catch (Mp3Exception e) {
-                LOGGER.warn("Could not get mp3 info for track \"" + track.getFilename() + "\".", e);
+                Mp3Info mp3Info = Mp3Utils.getMp3Info(inputStream);
+                b = mp3Info.getAvgBitrate() == 0 || applyNegation(myMinBitRate <= mp3Info.getMinBitrate() && myMaxBitRate >= mp3Info.getMaxBitrate());
+            } finally {
+                inputStream.close();
             }
+        } catch (IOException e) {
+            LOGGER.warn("Could not get mp3 info for track \"" + track.getFilename() + "\".", e);
+        } catch (Mp3Exception e) {
+            LOGGER.warn("Could not get mp3 info for track \"" + track.getFilename() + "\".", e);
         }
         LOGGER.debug("MP3 bitrate activation (min \"" + myMinBitRate + "\", max \"" + myMaxBitRate + "\", negation \"" + isNegation() + "\") for \"" + track.getFilename() + "\": " + b);
         return b;
+    }
+
+    @Override
+    public boolean isActive(Track track) {
+        return FileSupportUtils.isMp3(track.getFile());
     }
 
     @Override

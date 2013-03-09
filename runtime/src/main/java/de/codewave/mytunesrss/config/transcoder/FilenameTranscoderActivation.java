@@ -40,6 +40,11 @@ public class FilenameTranscoderActivation extends TranscoderActivation {
     }
 
     @Override
+    public boolean isActive(Track track) {
+        return true;
+    }
+
+    @Override
     public void writeTo(Document settings, Element config) {
         super.writeTo(settings, config);
         config.appendChild(DOMUtils.createTextElement(settings, "pattern", myPattern));
