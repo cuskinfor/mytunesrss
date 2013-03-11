@@ -5,7 +5,7 @@
 
 package de.codewave.mytunesrss.cache;
 
-import com.sun.mail.util.FolderClosedIOException;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,21 +23,37 @@ public class FileSystemCache implements Runnable {
     private long myIntervalMillis;
     private Thread myThread;
 
-    public FileSystemCache(String name, File baseDir, long maxSizeBytes, long intervalMillis) throws IOException {
+    public FileSystemCache(String name, File baseDir, long maxSizeBytes, long intervalMillis) {
         myName = name;
         myBaseDir = baseDir;
+        myMaxSizeBytes = maxSizeBytes;
+        myIntervalMillis = intervalMillis;
+    }
+
+    public void init() throws IOException {
         if (!myBaseDir.isDirectory()) {
             if (!myBaseDir.mkdirs()) {
                 throw new IOException("Could not create cache dir \"" + myBaseDir + "\".");
             }
         }
-        myMaxSizeBytes = maxSizeBytes;
-        myIntervalMillis = intervalMillis;
+        myThread = new Thread(this, "CacheWorker-" + myName);
+        myThread.start();
     }
 
-    public void init() {
-        myThread = new Thread(this, "FileSystemCacheWorker-" + myName);
-        myThread.start();
+    public boolean clear() {
+        boolean result = true;
+        for (File file : myBaseDir.listFiles()) {
+            if (file.isDirectory()) {
+                try {
+                    FileUtils.deleteDirectory(file);
+                } catch (IOException e) {
+                    result = false;
+                }
+            } else {
+                result &= file.delete();
+            }
+        }
+        return result;
     }
 
     public void destroy() {
@@ -45,7 +61,7 @@ public class FileSystemCache implements Runnable {
         try {
             myThread.join();
         } catch (InterruptedException e) {
-            LOGGER.warn("Interrupted while waiting for file system cache thread to die.", e);
+            LOGGER.warn("Interrupted while waiting for cache thread to die.", e);
         }
     }
 
@@ -53,24 +69,24 @@ public class FileSystemCache implements Runnable {
         myMaxSizeBytes = maxSizeBytes;
     }
 
-    public File getFileForName(String name) {
-        return new File(myBaseDir, name);
-    }
-
-    public synchronized void deleteFilesByPrefix(String prefix) {
-        for (File file : myBaseDir.listFiles()) {
-            if (file.getName().startsWith(prefix)) {
-                file.delete();
+    public synchronized long deleteByPrefix(String prefix) {
+        long count = 0;
+        for (CacheItem item : listItems()) {
+            if (item.getId().startsWith(prefix)) {
+                if (deleteByName(item.getId())) {
+                    count++;
+                }
             }
         }
+        return count;
     }
 
     public synchronized void truncateCache() {
-        LOGGER.debug("Truncating file system cache \"" + myName + "\".");
-        List<File> files = Arrays.asList(myBaseDir.listFiles());
-        Collections.sort(files, new Comparator<File>() {
-            public int compare(File f1, File f2) {
-                long diff = f1.lastModified() - f2.lastModified();
+        LOGGER.debug("Truncating cache \"" + myName + "\".");
+        List<CacheItem> items = listItems();
+        Collections.sort(items, new Comparator<CacheItem>() {
+            public int compare(CacheItem item1, CacheItem item2) {
+                long diff = item1.getLastAccessTime() - item2.getLastAccessTime();
                 if (diff < 0) {
                     return -1;
                 } else if (diff > 0) {
@@ -80,23 +96,75 @@ public class FileSystemCache implements Runnable {
             }
         });
         long size = 0;
-        for (File file : files) {
-            size += file.length();
+        for (CacheItem item : items) {
+            size += item.getSize();
         }
-        LOGGER.debug("Found " + files.size() + " files with a total size of " + size + " bytes (" + myMaxSizeBytes + " bytes allowed).");
+        LOGGER.debug("Found " + items.size() + " items with a total size of " + size + " bytes (" + myMaxSizeBytes + " bytes allowed).");
         if (size > myMaxSizeBytes) {
-            for (File file : files) {
-                long fileSize = file.length();
-                if (file.delete()) {
-                    LOGGER.debug("Cache file \"" + file.getName() + " deleted.");
-                    size -= fileSize;
+            for (CacheItem item : items) {
+                long itemSize = item.getSize();
+                if (deleteByName(item.getId())) {
+                    LOGGER.debug("Cache item \"" + item.getId() + " deleted.");
+                    size -= itemSize;
                     if (size < myMaxSizeBytes) {
                         break; // done deleting old files
                     }
                 }
             }
         }
-        LOGGER.debug("Done truncating file system cache \"" + myName + "\".");
+        LOGGER.debug("Done truncating cache \"" + myName + "\".");
+    }
+
+    public synchronized boolean deleteByName(String name) {
+        File file = new File(myBaseDir, name);
+        if (file.isDirectory()) {
+            try {
+                FileUtils.deleteDirectory(new File(myBaseDir, name));
+            } catch (IOException e) {
+                return false;
+            }
+            return true;
+        } else if (file.isFile()) {
+            return new File(myBaseDir, name).delete();
+        } else {
+            throw new IllegalArgumentException("No cache item with name \"" + name + "\" found in cache \"" + myName + "\".");
+        }
+    }
+
+    private List<CacheItem> listItems() {
+        List<CacheItem> items = new ArrayList<CacheItem>();
+        for (File file : myBaseDir.listFiles()) {
+            if (file.isDirectory()) {
+                items.add(new CacheItem(file.getName(), getDirSize(file), getDirLastModified(file)));
+            } else {
+                items.add(new CacheItem(file.getName(), file.length(), file.lastModified()));
+            }
+        }
+        return items;
+    }
+
+    private long getDirSize(File dir) {
+        long size = 0;
+        for (File file : dir.listFiles()) {
+            size += file.length();
+        }
+        return size;
+    }
+
+    private long getDirLastModified(File dir) {
+        long lastModified = dir.lastModified();
+        for (File file : dir.listFiles()) {
+            lastModified = Math.max(lastModified, file.lastModified());
+        }
+        return lastModified;
+    }
+
+    public File getBaseDir() {
+        return myBaseDir;
+    }
+
+    public void touch(String name) {
+        new File(myBaseDir, name).setLastModified(System.currentTimeMillis());
     }
 
     public void run() {

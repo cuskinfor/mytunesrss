@@ -641,8 +641,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         }
     }
 
-    private String getUploadDir() {
-        return MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TEMP;
+    private File getUploadDir() {
+        return MyTunesRss.TEMP_CACHE.getBaseDir();
     }
 
     /**

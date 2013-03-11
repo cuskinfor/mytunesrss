@@ -62,7 +62,9 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myWebLoginMessage = "";
-    private int myStreamingCacheMaxMegas = 100;
+    private int myTranscodingCacheMaxGiB = 1;
+    private int myTempMaxGiB = 1;
+    private int myHttpLiveStreamCacheMaxGiB = 5;
     private Level myCodewaveLogLevel;
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
@@ -235,12 +237,28 @@ public class MyTunesRssConfig {
         myPathInfoKey = pathInfoKey;
     }
 
-    public int getStreamingCacheMaxMegas() {
-        return myStreamingCacheMaxMegas;
+    public int getTranscodingCacheMaxGiB() {
+        return myTranscodingCacheMaxGiB;
     }
 
-    public void setStreamingCacheMaxMegas(int streamingCacheMaxMegas) {
-        myStreamingCacheMaxMegas = streamingCacheMaxMegas;
+    public void setTranscodingCacheMaxGiB(int transcodingCacheMaxGiB) {
+        myTranscodingCacheMaxGiB = transcodingCacheMaxGiB;
+    }
+
+    public int getTempMaxGiB() {
+        return myTempMaxGiB;
+    }
+
+    public void setTempMaxGiB(int tempMaxGiB) {
+        myTempMaxGiB = tempMaxGiB;
+    }
+
+    public int getHttpLiveStreamCacheMaxGiB() {
+        return myHttpLiveStreamCacheMaxGiB;
+    }
+
+    public void setHttpLiveStreamCacheMaxGiB(int httpLiveStreamCacheMaxGiB) {
+        myHttpLiveStreamCacheMaxGiB = httpLiveStreamCacheMaxGiB;
     }
 
     public Level getCodewaveLogLevel() {
@@ -1052,7 +1070,9 @@ public class MyTunesRssConfig {
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
-        setStreamingCacheMaxMegas(JXPathUtils.getIntValue(settings, "streamingCacheMaxMegas", getStreamingCacheMaxMegas()));
+        setTranscodingCacheMaxGiB(JXPathUtils.getIntValue(settings, "transcodingCacheMaxGiB", getTranscodingCacheMaxGiB()));
+        setTempMaxGiB(JXPathUtils.getIntValue(settings, "tempMaxGiB", getTempMaxGiB()));
+        setHttpLiveStreamCacheMaxGiB(JXPathUtils.getIntValue(settings, "httpLiveStreamCacheMaxGiB", getHttpLiveStreamCacheMaxGiB()));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
@@ -1429,7 +1449,9 @@ public class MyTunesRssConfig {
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
-            root.appendChild(DOMUtils.createIntElement(settings, "streamingCacheMaxMegas", myStreamingCacheMaxMegas));
+            root.appendChild(DOMUtils.createIntElement(settings, "transcodingCacheMaxGiB", myTranscodingCacheMaxGiB));
+            root.appendChild(DOMUtils.createIntElement(settings, "tempMaxGiB", myTempMaxGiB));
+            root.appendChild(DOMUtils.createIntElement(settings, "httpLiveStreamCacheMaxGiB", myHttpLiveStreamCacheMaxGiB));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));

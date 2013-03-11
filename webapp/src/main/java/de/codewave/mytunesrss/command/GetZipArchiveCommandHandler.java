@@ -60,8 +60,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                 if (tracks.getResultSize() < 10000) {
                     fileIdentifier = calculateIdentifier(tracks);
                     LOGGER.debug("Archive file ID is \"" + fileIdentifier + "\".");
-                    FileCache.FileInfo fileInfo = MyTunesRss.TEMP_CACHE.get(fileIdentifier);
-                    cachedFile = fileInfo != null ? fileInfo.getFile() : null;
+                    cachedFile = new File(MyTunesRss.TEMP_CACHE.getBaseDir(), fileIdentifier);
                 } else {
                     LOGGER.debug("Result set has \"" + tracks.getResultSize() + "\" results which is too much for archive file ID generation.");
                 }
@@ -69,14 +68,13 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                 try {
                     if (cachedFile == null || !cachedFile.isFile()) {
                         LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
-                        tempFile = File.createTempFile("mytunesrss_", ".zip", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP));
+                        tempFile = File.createTempFile("mytunesrss_", ".zip", MyTunesRss.TEMP_CACHE.getBaseDir());
                         try {
                             createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
                         } catch (Exception e) {
                             tempFile.delete();
                             throw e;
                         }
-                        MyTunesRss.TEMP_CACHE.add(fileIdentifier, tempFile, ARCHIVE_CACHE_TIMEOUT); // TODO timeout from config?
                     } else {
                         LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
                     }

@@ -169,8 +169,8 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
     }
 
-    private String getUploadDir() {
-        return MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TEMP;
+    private File getUploadDir() {
+        return MyTunesRss.TEMP_CACHE.getBaseDir();
     }
 
     public OutputStream receiveUpload(String filename, String MIMEType) {

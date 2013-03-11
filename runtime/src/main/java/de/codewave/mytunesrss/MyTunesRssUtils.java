@@ -52,7 +52,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.InetAddress;
-import java.net.InterfaceAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.sql.Connection;
@@ -62,7 +61,6 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -163,7 +161,7 @@ public class MyTunesRssUtils {
             LOGGER.error("Could not destroy VLC player.", e);
         }
         LOGGER.debug("Destroying streaming cache.");
-        MyTunesRss.STREAMING_CACHE.destroy();
+        MyTunesRss.TRANSCODER_CACHE.destroy();
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();
         }
@@ -473,18 +471,7 @@ public class MyTunesRssUtils {
     }
 
     public static File createTempFile(String suffix) throws IOException {
-        return createTempFile(suffix, 300000); // default timeout is 5 minutes
-    }
-
-    private static AtomicLong TEMP_FILE_COUNTER = new AtomicLong();
-
-    public static File createTempFile(String suffix, long timeout) throws IOException {
-        File tmpDir = new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP);
-        if (!tmpDir.exists()) {
-            tmpDir.mkdirs();
-        }
-        File tmpFile = File.createTempFile("mytunesrss_", suffix, tmpDir);
-        MyTunesRss.TEMP_CACHE.add("tmp_" + TEMP_FILE_COUNTER.incrementAndGet(), tmpFile, timeout);
+        File tmpFile = File.createTempFile("mytunesrss_", suffix, MyTunesRss.TEMP_CACHE.getBaseDir());
         return tmpFile;
     }
 

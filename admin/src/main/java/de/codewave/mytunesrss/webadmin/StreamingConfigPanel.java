@@ -11,8 +11,6 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
-import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.mytunesrss.webadmin.transcoder.TranscoderPanel;
 import de.codewave.vaadin.SmartTextField;
@@ -40,7 +38,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Form myCacheForm;
     private Button myAddTranscoder;
     private Button myRestoreDefaultTranscoders;
-    private SmartTextField myStreamingCacheMaxMegas;
+    private SmartTextField myTranscodingCacheMaxGiB;
+    private SmartTextField myHttpLiveStreamCacheMaxGiB;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
     private Panel myAddTranscoderButtons;
     private CheckBox myVlcEnabled;
@@ -87,8 +86,10 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myTranscoderPanel.addComponent(myAddTranscoderButtons);
         addComponent(myTranscoderPanel);
         myCacheForm = getComponentFactory().createForm(null, true);
-        myStreamingCacheMaxMegas = getComponentFactory().createTextField("streamingConfigPanel.cache.streamingCacheMaxMegas", getApplication().getValidatorFactory().createMinMaxValidator(100, 1024 * 1024));
-        myCacheForm.addField("limit", myStreamingCacheMaxMegas);
+        myTranscodingCacheMaxGiB = getComponentFactory().createTextField("streamingConfigPanel.cache.transcodingCacheMaxGiB", getApplication().getValidatorFactory().createMinMaxValidator(1, 1024));
+        myCacheForm.addField("limitTranscoding", myTranscodingCacheMaxGiB);
+        myHttpLiveStreamCacheMaxGiB = getComponentFactory().createTextField("streamingConfigPanel.cache.httpLiveStreamCacheMaxGiB", getApplication().getValidatorFactory().createMinMaxValidator(1, 1024));
+        myCacheForm.addField("limitHttpLiveStream", myHttpLiveStreamCacheMaxGiB);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
 
         addDefaultComponents(0, 4, 0, 4, false);
@@ -121,7 +122,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         } else {
             myTranscoderAccordion.setVisible(false);
         }
-        myStreamingCacheMaxMegas.setValue(MyTunesRss.CONFIG.getStreamingCacheMaxMegas(), 100, 1024 * 1024, "100");
+        myTranscodingCacheMaxGiB.setValue(MyTunesRss.CONFIG.getTranscodingCacheMaxGiB(), 1, 1024, "1");
+        myHttpLiveStreamCacheMaxGiB.setValue(MyTunesRss.CONFIG.getHttpLiveStreamCacheMaxGiB(), 1, 1024, "5");
         myVlcEnabled.setValue(MyTunesRss.CONFIG.isVlcEnabled());
         myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
         myVlcSocketTimeout.setValue(MyTunesRss.CONFIG.getVlcSocketTimeout());
@@ -143,12 +145,14 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 configs.add(conf);
             }
         }
-        truncateHttpLiveStreamingCache(obsoleteTranscoderNames);
         truncateTranscodingCache(obsoleteTranscoderNames);
         MyTunesRss.CONFIG.setTranscoderConfigs(configs);
-        int maxMegas = myStreamingCacheMaxMegas.getIntegerValue(100);
-        MyTunesRss.CONFIG.setStreamingCacheMaxMegas(maxMegas);
-        MyTunesRss.STREAMING_CACHE.setMaxSizeBytes(maxMegas * 1024 * 1024);
+        int maxGiB = myTranscodingCacheMaxGiB.getIntegerValue(1);
+        MyTunesRss.CONFIG.setTranscodingCacheMaxGiB(maxGiB);
+        MyTunesRss.TRANSCODER_CACHE.setMaxSizeBytes(maxGiB * 1024 * 1024 * 1024);
+        maxGiB = myHttpLiveStreamCacheMaxGiB.getIntegerValue(5);
+        MyTunesRss.CONFIG.setHttpLiveStreamCacheMaxGiB(maxGiB);
+        MyTunesRss.HTTP_LIVE_STREAMING_CACHE.setMaxSizeBytes(maxGiB * 1024 * 1024 * 1024);
         String vlcBinary = myVlcBinary.getStringValue(null);
         File vlcExecutable = vlcBinary != null ? new File(vlcBinary) : null;
         if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {
@@ -182,30 +186,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     /**
-     * Remove cached http live stream files for obsolete transcoder names.
-     *
-     * @param obsoleteTranscoderNames Set with the obsolete transcoder names.
-     */
-    private void truncateHttpLiveStreamingCache(Set<String> obsoleteTranscoderNames) {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Truncating http live streaming cache.");
-        }
-        for (String key : MyTunesRss.HTTP_LIVE_STREAMING_CACHE.keySet()) {
-            HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(key);
-            for (String transcoderName : obsoleteTranscoderNames) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Removing playlist with key \"" + transcoderName + "\" from cache item with key \"" + key + "\".");
-                }
-                HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(transcoderName);
-                if (playlist != null) {
-                    playlist.destroy();
-                }
-                cacheItem.removePlaylist(transcoderName);
-            }
-        }
-    }
-
-    /**
      * Remove cached transcoded files for obsolete transcoder names.
      *
      * @param obsoleteTranscoderNames Set with the obsolete transcoder names.
@@ -215,7 +195,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             LOG.debug("Truncating streaming cache.");
         }
         for (String name : obsoleteTranscoderNames) {
-            MyTunesRss.STREAMING_CACHE.deleteFilesByPrefix(StringUtils.replaceChars(name, ' ', '_'));
+            MyTunesRss.TRANSCODER_CACHE.deleteByPrefix(StringUtils.replaceChars(name, ' ', '_'));
         }
     }
 

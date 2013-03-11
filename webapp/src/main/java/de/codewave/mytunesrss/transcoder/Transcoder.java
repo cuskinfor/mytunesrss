@@ -5,15 +5,12 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.utils.io.FileCache;
-import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -53,7 +50,7 @@ public class Transcoder {
     }
 
     private File getCacheFile() {
-        return MyTunesRss.STREAMING_CACHE.getFileForName(StringUtils.replaceChars(myTranscoderConfig.getName(), ' ', '_') + "_" + myTrack.getId());
+        return new File(MyTunesRss.TRANSCODER_CACHE.getBaseDir(), StringUtils.replaceChars(myTranscoderConfig.getName(), ' ', '_') + "_" + myTrack.getId());
     }
 
     public String getTranscoderId() {

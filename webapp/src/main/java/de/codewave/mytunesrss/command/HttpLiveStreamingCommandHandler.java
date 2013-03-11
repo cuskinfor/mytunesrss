@@ -57,8 +57,9 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
     private void sendMediaFile(String trackId, String dirname, String filename) throws IOException {
         StreamSender sender;
         MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
-        File mediaFile = new File(getBaseDir(), dirname + "/" + filename);
+        File mediaFile = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), dirname + "/" + filename);
         if (mediaFile.isFile()) {
+            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(dirname);
             if (getAuthUser().isQuotaExceeded()) {
                 LOG.debug("Sending 409 QUOTA_EXCEEDED response.");
                 sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
@@ -74,36 +75,25 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
         sender.sendGetResponse(getRequest(), getResponse(), false);
     }
 
-    private File getBaseDir() {
-        return new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING);
-    }
-
     private void sendPlaylist(String trackId) throws SQLException, IOException {
         StreamSender sender;
         DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
         if (tracks.getResultSize() > 0) {
             Track track = tracks.nextResult();
             if (track.getMediaType() == MediaType.Video) {
-                Transcoder transcoder = MyTunesRssWebUtils.getTranscoder(getRequest(), track);
-                String playlistIdentifier = transcoder != null ? transcoder.getTranscoderId() : "";
-                HttpLiveStreamingCacheItem cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
-                if (cacheItem == null) {
-                    MyTunesRss.HTTP_LIVE_STREAMING_CACHE.putIfAbsent(new HttpLiveStreamingCacheItem(trackId, 3600000)); // TODO: timeout configuration?
-                    cacheItem = MyTunesRss.HTTP_LIVE_STREAMING_CACHE.get(trackId);
-                }
-                HttpLiveStreamingPlaylist playlist = cacheItem.getPlaylist(playlistIdentifier);
-                if (playlist == null && cacheItem.putIfAbsent(playlistIdentifier, new HttpLiveStreamingPlaylist(new File(getBaseDir(), UUID.randomUUID().toString())))) {
-                    MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(cacheItem.getPlaylist(playlistIdentifier), track.getFile()));
-                    MyTunesRss.HTTP_LIVE_STREAMING_CACHE.add(cacheItem);
+                File dir = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), trackId);
+                if (!dir.isDirectory()) {
+                    MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
                     try {
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
                     } finally {
                         getTransaction().commit();
                     }
                     getAuthUser().playLastFmTrack(track);
+                } else {
+                    MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
                 }
-                playlist = cacheItem.getPlaylist(playlistIdentifier);
-                File playlistFile = new File(playlist.getBaseDir(), "playlist.m3u8");
+                File playlistFile = new File(dir, "playlist.m3u8");
                 while (!playlistFile.exists()) {
                     try {
                         Thread.sleep(1000);
@@ -125,12 +115,12 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
 
     public class HttpLiveStreamingSegmenterRunnable implements Runnable {
 
-        private HttpLiveStreamingPlaylist myPlaylist;
+        private File myTargetDir;
 
         private File myVideoFile;
 
-        public HttpLiveStreamingSegmenterRunnable(HttpLiveStreamingPlaylist playlist, File videoFile) {
-            myPlaylist = playlist;
+        public HttpLiveStreamingSegmenterRunnable(File targetDir, File videoFile) {
+            myTargetDir = targetDir;
             myVideoFile = videoFile;
         }
 
@@ -139,7 +129,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
             try {
                 List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(myVideoFile);
                 transcodeCommand.add("--no-sout-smem-time-sync");
-                transcodeCommand.add("--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myPlaylist.getBaseDir().getAbsolutePath() + "/playlist.m3u8" + ",index-url=./" + myPlaylist.getBaseDir().getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myPlaylist.getBaseDir().getAbsolutePath() + "/stream-########.ts}");
+                transcodeCommand.add("--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myTargetDir.getAbsolutePath() + "/playlist.m3u8" + ",index-url=./" + myTargetDir.getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myTargetDir.getAbsolutePath() + "/stream-########.ts}");
                 String msg = "Executing HTTP Live Streaming command \"" + StringUtils.join(transcodeCommand, " ") + "\".";
                 LOG.debug(msg);
                 process = new ProcessBuilder(transcodeCommand).start();

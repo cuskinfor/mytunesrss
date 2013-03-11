@@ -15,7 +15,6 @@ import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
-import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
@@ -29,8 +28,6 @@ import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
-import de.codewave.utils.cache.ExpiringCache;
-import de.codewave.utils.io.FileCache;
 import de.codewave.utils.maven.MavenUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -59,7 +56,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.*;
 import java.security.MessageDigest;
@@ -150,9 +146,9 @@ public class MyTunesRss {
     };
     public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
-    public static FileSystemCache STREAMING_CACHE;
-    public static FileCache TEMP_CACHE;
-    public static ExpiringCache<HttpLiveStreamingCacheItem> HTTP_LIVE_STREAMING_CACHE;
+    public static FileSystemCache TRANSCODER_CACHE;
+    public static FileSystemCache TEMP_CACHE;
+    public static FileSystemCache HTTP_LIVE_STREAMING_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
@@ -267,7 +263,6 @@ public class MyTunesRss {
             executeAppleHeadlessOnNonHeadlessSystem();
         }
         logSystemInfo();
-        prepareCacheDirs();
         validateWrapperStartSystemProperty();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             startQuartzScheduler();
@@ -442,22 +437,6 @@ public class MyTunesRss {
                 file.mkdirs();
             }
         }
-    }
-
-    private static void prepareCacheDirs() throws IOException {
-        File tempDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_TEMP);
-        File httpLiveStreamingDir = new File(MyTunesRss.CACHE_DATA_PATH, CACHEDIR_HTTP_LIVE_STREAMING);
-
-        FileUtils.deleteQuietly(tempDir);
-        FileUtils.deleteQuietly(httpLiveStreamingDir);
-
-        if (!tempDir.exists()) {
-            tempDir.mkdirs();
-        }
-        if (!httpLiveStreamingDir.exists()) {
-            httpLiveStreamingDir.mkdirs();
-        }
-
     }
 
     private static void loadSystemProperties() {
@@ -638,10 +617,15 @@ public class MyTunesRss {
     }
 
     private static void initializeCaches() throws IOException {
-        STREAMING_CACHE = new FileSystemCache("Transcoder", new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER), CONFIG.getStreamingCacheMaxMegas() * 1024 * 1024, 60000);
-        STREAMING_CACHE.init();
-        TEMP_CACHE = new FileCache(APPLICATION_IDENTIFIER + "_Temp", 10000, 10000); // TODO max size config?
-        HTTP_LIVE_STREAMING_CACHE = new ExpiringCache(APPLICATION_IDENTIFIER + "_HttpLiveStreaming", 10000, 10000); // TODO max size config?
+        TRANSCODER_CACHE = new FileSystemCache("Transcoder", new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER), CONFIG.getTranscodingCacheMaxGiB() * 1024L * 1024L, 60000L);
+        TRANSCODER_CACHE.init();
+        TEMP_CACHE = new FileSystemCache("Temp", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP), 1024L * 1024L * 10000L, 60000L); // TODO max size config?
+        TEMP_CACHE.init();
+        if (!TEMP_CACHE.clear()) {
+            LOGGER.warn("Could not clean temporary cache dir.");
+        }
+        HTTP_LIVE_STREAMING_CACHE = new FileSystemCache("HttpLiveStreaming", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING), 1024L * 1024L * 10000L, 60000L); // TODO max size config?
+        HTTP_LIVE_STREAMING_CACHE.init();
     }
 
     private static void startQuartzScheduler() throws SchedulerException {
