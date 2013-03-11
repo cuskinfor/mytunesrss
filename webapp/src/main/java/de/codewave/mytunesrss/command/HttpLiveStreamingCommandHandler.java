@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.UUID;
 
 public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandHandler {
 
@@ -106,30 +107,37 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
     }
 
     private File waitForPlaylistFile(File dir, long timeoutMillis) throws IOException {
+        LOG.debug("Waiting up to " + timeoutMillis + " milliseconds for playlist file.");
         File playlistFile = new File(dir, "playlist.m3u8");
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime < timeoutMillis) {
             try {
+                LOG.debug("Reading playlist file \"" + playlistFile.getAbsolutePath() + "\".");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(playlistFile), "UTF-8"));
                 try {
                     int segments = 0;
                     for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
-                        if (StringUtils.trimToEmpty(StringUtils.lowerCase(line)).startsWith("#EXTINF")) {
+                        LOG.debug("Read line \"" + line + "\" from playlistFile file.");
+                        if (StringUtils.trimToEmpty(StringUtils.lowerCase(line)).startsWith("#extinf")) {
+                            LOG.debug("Found segment " + (segments + 1) + ".");
                             segments++;
                             if (segments == 3) {
+                                LOG.debug("Enough segments found, returning playlist file after " + (System.currentTimeMillis() - startTime) + " milliseconds.");
                                 return playlistFile;
                             }
                         }
                     }
                 } catch (IOException e) {
-                    // ignore IOException here and keep waiting
+                    LOG.debug("Caught IOException while waiting for playlist file.", e);
                 } finally {
+                    LOG.debug("Closing playlist file reader.");
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                // ignore IOException here and keep waiting
+                LOG.debug("Caught IOException while waiting for playlist file.", e);
             }
             try {
+                LOG.debug("Sleeping a while before trying again to read playlist file.");
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 LOG.debug("Interrupted while waiting for file.");
@@ -168,6 +176,15 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                 process.waitFor();
             } catch (Exception e) {
                 LOG.error("Error in http live streaming thread.", e);
+                try {
+                    LOG.info("Trying to remove directory with incomplete segments from cache.");
+                    FileUtils.deleteDirectory(myTargetDir);
+                } catch (IOException e1) {
+                    LOG.error("Could not delete directory with incomplete segments. Trying to rename directory.");
+                    if (!myTargetDir.renameTo(new File(myTargetDir.getParentFile(), UUID.randomUUID().toString()))) {
+                        LOG.error("Could not rename directory with incomplete segments either. Please consider deleting caches manually as soon as possible.");
+                    }
+                }
             } finally {
                 if (process != null) {
                     process.destroy();

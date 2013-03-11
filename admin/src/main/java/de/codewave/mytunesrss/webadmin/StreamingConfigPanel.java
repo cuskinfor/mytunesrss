@@ -50,6 +50,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Form myVlcForm;
     private Button myVlcHomepageButton;
     private Button myRestartVlcPlayer;
+    private Button myClearAllCachesButton;
 
     public void attach() {
         super.attach();
@@ -90,6 +91,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myCacheForm.addField("limitTranscoding", myTranscodingCacheMaxGiB);
         myHttpLiveStreamCacheMaxGiB = getComponentFactory().createTextField("streamingConfigPanel.cache.httpLiveStreamCacheMaxGiB", getApplication().getValidatorFactory().createMinMaxValidator(1, 1024));
         myCacheForm.addField("limitHttpLiveStream", myHttpLiveStreamCacheMaxGiB);
+        myClearAllCachesButton = getComponentFactory().createButton("streamingConfigPanel.clearAllCaches", this);
+        myCacheForm.addField(myClearAllCachesButton, myClearAllCachesButton);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
 
         addDefaultComponents(0, 4, 0, 4, false);
@@ -290,6 +293,13 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 panel.initFromConfig(config);
             }
             myTranscoderAccordion.setVisible(true);
+        } else if (clickEvent.getButton() == myClearAllCachesButton) {
+            boolean success = MyTunesRss.TRANSCODER_CACHE.clear() & MyTunesRss.HTTP_LIVE_STREAMING_CACHE.clear() & MyTunesRss.TEMP_CACHE.clear();
+            if (success) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("streamingConfigPanel.clearAllCaches.done");
+            } else {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("streamingConfigPanel.clearAllCaches.warn");
+            }
         } else {
             super.buttonClick(clickEvent);
         }
