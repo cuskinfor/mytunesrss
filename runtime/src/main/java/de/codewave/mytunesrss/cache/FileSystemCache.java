@@ -33,7 +33,7 @@ public class FileSystemCache implements Runnable {
     public void init() throws IOException {
         if (!myBaseDir.isDirectory()) {
             if (!myBaseDir.mkdirs()) {
-                throw new IOException("Could not create cache dir \"" + myBaseDir + "\".");
+                throw new IOException("[Cache: " + myName + "] Could not create cache dir \"" + myBaseDir + "\".");
             }
         }
         myThread = new Thread(this, "CacheWorker-" + myName);
@@ -61,7 +61,7 @@ public class FileSystemCache implements Runnable {
         try {
             myThread.join();
         } catch (InterruptedException e) {
-            LOGGER.warn("Interrupted while waiting for cache thread to die.", e);
+            LOGGER.warn("[Cache: \" + myName + \"] Interrupted while waiting for cache thread to die.", e);
         }
     }
 
@@ -82,7 +82,8 @@ public class FileSystemCache implements Runnable {
     }
 
     public synchronized void truncateCache() {
-        LOGGER.debug("Truncating cache \"" + myName + "\".");
+        LOGGER.debug("[Cache: \" + myName + \"] Truncating cache.");
+        long startTime = System.currentTimeMillis();
         List<CacheItem> items = listItems();
         Collections.sort(items, new Comparator<CacheItem>() {
             public int compare(CacheItem item1, CacheItem item2) {
@@ -99,12 +100,12 @@ public class FileSystemCache implements Runnable {
         for (CacheItem item : items) {
             size += item.getSize();
         }
-        LOGGER.debug("Found " + items.size() + " items with a total size of " + size + " bytes (" + myMaxSizeBytes + " bytes allowed).");
+        LOGGER.debug("[Cache: \" + myName + \"] Found " + items.size() + " items with a total size of " + size + " bytes (" + myMaxSizeBytes + " bytes allowed).");
         if (size > myMaxSizeBytes) {
             for (CacheItem item : items) {
                 long itemSize = item.getSize();
                 if (deleteByName(item.getId())) {
-                    LOGGER.debug("Cache item \"" + item.getId() + " deleted.");
+                    LOGGER.debug("[Cache: \" + myName + \"] Cache item \"" + item.getId() + " deleted.");
                     size -= itemSize;
                     if (size < myMaxSizeBytes) {
                         break; // done deleting old files
@@ -112,7 +113,7 @@ public class FileSystemCache implements Runnable {
                 }
             }
         }
-        LOGGER.debug("Done truncating cache \"" + myName + "\".");
+        LOGGER.debug("[Cache: \" + myName + \"] Done truncating cache in " + (System.currentTimeMillis() - startTime) + "millis.");
     }
 
     public synchronized boolean deleteByName(String name) {
@@ -127,7 +128,7 @@ public class FileSystemCache implements Runnable {
         } else if (file.isFile()) {
             return new File(myBaseDir, name).delete();
         } else {
-            throw new IllegalArgumentException("No cache item with name \"" + name + "\" found in cache \"" + myName + "\".");
+            throw new IllegalArgumentException("[Cache: \" + myName + \"] No item with name \"" + name + "\" found in cache.");
         }
     }
 
