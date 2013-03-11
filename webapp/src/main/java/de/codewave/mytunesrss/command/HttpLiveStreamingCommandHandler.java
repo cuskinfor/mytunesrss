@@ -8,14 +8,10 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
-import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingCacheItem;
-import de.codewave.mytunesrss.httplivestreaming.HttpLiveStreamingPlaylist;
-import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
@@ -30,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.UUID;
 
 public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandHandler {
 
@@ -83,24 +78,21 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
             if (track.getMediaType() == MediaType.Video) {
                 File dir = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), trackId);
                 if (!dir.isDirectory()) {
-                    MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
-                    try {
-                        getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
-                    } finally {
-                        getTransaction().commit();
-                    }
-                    getAuthUser().playLastFmTrack(track);
-                } else {
-                    MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
-                }
-                File playlistFile = new File(dir, "playlist.m3u8");
-                while (!playlistFile.exists()) {
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        LOG.debug("Interrupted while waiting for file.");
+                    synchronized (this) {
+                        if (!dir.isDirectory()) {
+                            dir.mkdir();
+                            MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
+                            try {
+                                getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
+                            } finally {
+                                getTransaction().commit();
+                            }
+                            getAuthUser().playLastFmTrack(track);
+                        }
                     }
                 }
+                File playlistFile = waitForPlaylistFile(dir, 30000);
+                MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
                 byte[] playlistBytes = FileUtils.readFileToByteArray(playlistFile);
                 LOG.debug("Sending playlist: " + new String(playlistBytes));
                 sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
@@ -111,6 +103,39 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
             sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
         sender.sendGetResponse(getRequest(), getResponse(), false);
+    }
+
+    private File waitForPlaylistFile(File dir, long timeoutMillis) throws IOException {
+        File playlistFile = new File(dir, "playlist.m3u8");
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < timeoutMillis) {
+            try {
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(playlistFile), "UTF-8"));
+                try {
+                    int segments = 0;
+                    for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                        if (StringUtils.trimToEmpty(StringUtils.lowerCase(line)).startsWith("#EXTINF")) {
+                            segments++;
+                            if (segments == 3) {
+                                return playlistFile;
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    // ignore IOException here and keep waiting
+                } finally {
+                    bufferedReader.close();
+                }
+            } catch (IOException e) {
+                // ignore IOException here and keep waiting
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                LOG.debug("Interrupted while waiting for file.");
+            }
+        }
+        throw new IOException("Timeout waiting for playlist file.");
     }
 
     public class HttpLiveStreamingSegmenterRunnable implements Runnable {

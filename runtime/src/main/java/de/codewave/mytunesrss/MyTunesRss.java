@@ -111,6 +111,7 @@ public class MyTunesRss {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
+    public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
     public static String VERSION;
     public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -617,14 +618,14 @@ public class MyTunesRss {
     }
 
     private static void initializeCaches() throws IOException {
-        TRANSCODER_CACHE = new FileSystemCache("Transcoder", new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER), CONFIG.getTranscodingCacheMaxGiB() * 1024L * 1024L, 60000L);
+        TRANSCODER_CACHE = new FileSystemCache("Transcoder", new File(MyTunesRss.CACHE_DATA_PATH + "/" + MyTunesRss.CACHEDIR_TRANSCODER), CONFIG.getTranscodingCacheMaxGiB() * FACTOR_GIB_TO_BYTE, 60000L);
         TRANSCODER_CACHE.init();
-        TEMP_CACHE = new FileSystemCache("Temp", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP), 1024L * 1024L * 10000L, 60000L); // TODO max size config?
+        TEMP_CACHE = new FileSystemCache("Temp", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_TEMP), MyTunesRss.CONFIG.getTempMaxGiB() * FACTOR_GIB_TO_BYTE, 60000L);
         TEMP_CACHE.init();
         if (!TEMP_CACHE.clear()) {
             LOGGER.warn("Could not clean temporary cache dir.");
         }
-        HTTP_LIVE_STREAMING_CACHE = new FileSystemCache("HttpLiveStreaming", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING), 1024L * 1024L * 10000L, 60000L); // TODO max size config?
+        HTTP_LIVE_STREAMING_CACHE = new FileSystemCache("HttpLiveStreaming", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING), MyTunesRss.CONFIG.getHttpLiveStreamCacheMaxGiB() * FACTOR_GIB_TO_BYTE, 60000L);
         HTTP_LIVE_STREAMING_CACHE.init();
     }
 

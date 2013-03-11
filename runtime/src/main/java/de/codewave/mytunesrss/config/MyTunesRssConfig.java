@@ -62,9 +62,9 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myWebLoginMessage = "";
-    private int myTranscodingCacheMaxGiB = 1;
-    private int myTempMaxGiB = 1;
-    private int myHttpLiveStreamCacheMaxGiB = 5;
+    private long myTranscodingCacheMaxGiB = 1;
+    private long myTempMaxGiB = 1;
+    private long myHttpLiveStreamCacheMaxGiB = 5;
     private Level myCodewaveLogLevel;
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
@@ -237,27 +237,27 @@ public class MyTunesRssConfig {
         myPathInfoKey = pathInfoKey;
     }
 
-    public int getTranscodingCacheMaxGiB() {
+    public long getTranscodingCacheMaxGiB() {
         return myTranscodingCacheMaxGiB;
     }
 
-    public void setTranscodingCacheMaxGiB(int transcodingCacheMaxGiB) {
+    public void setTranscodingCacheMaxGiB(long transcodingCacheMaxGiB) {
         myTranscodingCacheMaxGiB = transcodingCacheMaxGiB;
     }
 
-    public int getTempMaxGiB() {
+    public long getTempMaxGiB() {
         return myTempMaxGiB;
     }
 
-    public void setTempMaxGiB(int tempMaxGiB) {
+    public void setTempMaxGiB(long tempMaxGiB) {
         myTempMaxGiB = tempMaxGiB;
     }
 
-    public int getHttpLiveStreamCacheMaxGiB() {
+    public long getHttpLiveStreamCacheMaxGiB() {
         return myHttpLiveStreamCacheMaxGiB;
     }
 
-    public void setHttpLiveStreamCacheMaxGiB(int httpLiveStreamCacheMaxGiB) {
+    public void setHttpLiveStreamCacheMaxGiB(long httpLiveStreamCacheMaxGiB) {
         myHttpLiveStreamCacheMaxGiB = httpLiveStreamCacheMaxGiB;
     }
 
@@ -1070,9 +1070,9 @@ public class MyTunesRssConfig {
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
-        setTranscodingCacheMaxGiB(JXPathUtils.getIntValue(settings, "transcodingCacheMaxGiB", getTranscodingCacheMaxGiB()));
-        setTempMaxGiB(JXPathUtils.getIntValue(settings, "tempMaxGiB", getTempMaxGiB()));
-        setHttpLiveStreamCacheMaxGiB(JXPathUtils.getIntValue(settings, "httpLiveStreamCacheMaxGiB", getHttpLiveStreamCacheMaxGiB()));
+        setTranscodingCacheMaxGiB(JXPathUtils.getLongValue(settings, "transcodingCacheMaxGiB", getTranscodingCacheMaxGiB()));
+        setTempMaxGiB(JXPathUtils.getLongValue(settings, "tempMaxGiB", getTempMaxGiB()));
+        setHttpLiveStreamCacheMaxGiB(JXPathUtils.getLongValue(settings, "httpLiveStreamCacheMaxGiB", getHttpLiveStreamCacheMaxGiB()));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
@@ -1449,9 +1449,9 @@ public class MyTunesRssConfig {
             if (myPathInfoKey != null) {
                 root.appendChild(DOMUtils.createByteArrayElement(settings, "pathInfoKey", myPathInfoKey.getEncoded()));
             }
-            root.appendChild(DOMUtils.createIntElement(settings, "transcodingCacheMaxGiB", myTranscodingCacheMaxGiB));
-            root.appendChild(DOMUtils.createIntElement(settings, "tempMaxGiB", myTempMaxGiB));
-            root.appendChild(DOMUtils.createIntElement(settings, "httpLiveStreamCacheMaxGiB", myHttpLiveStreamCacheMaxGiB));
+            root.appendChild(DOMUtils.createLongElement(settings, "transcodingCacheMaxGiB", myTranscodingCacheMaxGiB));
+            root.appendChild(DOMUtils.createLongElement(settings, "tempMaxGiB", myTempMaxGiB));
+            root.appendChild(DOMUtils.createLongElement(settings, "httpLiveStreamCacheMaxGiB", myHttpLiveStreamCacheMaxGiB));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));

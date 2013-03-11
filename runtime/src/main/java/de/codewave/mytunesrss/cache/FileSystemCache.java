@@ -164,7 +164,14 @@ public class FileSystemCache implements Runnable {
     }
 
     public void touch(String name) {
-        new File(myBaseDir, name).setLastModified(System.currentTimeMillis());
+        File file = new File(myBaseDir, name);
+        if (file.exists()) {
+            file.setLastModified(System.currentTimeMillis());
+        }
+    }
+
+    public File createTempFile() throws IOException {
+        return File.createTempFile("mytunesrss_", ".tmp", getBaseDir());
     }
 
     public void run() {

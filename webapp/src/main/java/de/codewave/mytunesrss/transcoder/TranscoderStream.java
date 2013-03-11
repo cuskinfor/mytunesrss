@@ -4,11 +4,8 @@ import de.codewave.camel.mp4.LimitedInputStream;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.utils.io.FileCache;
 import de.codewave.utils.io.LogStreamCopyThread;
-import de.codewave.utils.io.StreamCopyThread;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +23,7 @@ public class TranscoderStream extends InputStream {
     private TranscoderConfig myTranscoderConfig;
     private InputStream myInputStream;
     private File myCacheFile;
+    private File myTempCacheFile;
     private OutputStream myCacheOutputStream;
 
     TranscoderStream(TranscoderConfig transcoderConfig, File inputFile, File cacheFile) throws IOException {
@@ -38,8 +36,9 @@ public class TranscoderStream extends InputStream {
         } else {
             LOG.debug("No transcoded file in cache found.");
             if (cacheFile != null) {
-                LOG.debug("Creating output stream for cache file \"" + cacheFile.getAbsolutePath() + "\".");
-                myCacheOutputStream = new BufferedOutputStream(new FileOutputStream(cacheFile));
+                myTempCacheFile = MyTunesRss.TEMP_CACHE.createTempFile();
+                LOG.debug("Creating output stream for temporary cache file \"" + myTempCacheFile.getAbsolutePath() + "\".");
+                myCacheOutputStream = new BufferedOutputStream(new FileOutputStream(myTempCacheFile));
             }
             myTranscoderConfig = transcoderConfig;
             List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(inputFile);
@@ -152,6 +151,11 @@ public class TranscoderStream extends InputStream {
                             try {
                                 LOG.debug("Closing cache output stream.");
                                 myCacheOutputStream.close();
+                                if (!myCacheFile.exists() || myCacheFile.delete()) {
+                                    if (!myTempCacheFile.renameTo(myCacheFile)) {
+                                        LOG.warn("Could not rename temp file \"" + myTempCacheFile.getAbsolutePath() + "\" to transcoder cache file \"" + myCacheFile.getAbsolutePath() + "\".");
+                                    }
+                                }
                             } catch (IOException e) {
                                 LOG.warn("Could not close cache output stream.", e);
                             }
