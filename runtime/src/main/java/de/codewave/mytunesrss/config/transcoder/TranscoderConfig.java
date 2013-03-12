@@ -200,4 +200,8 @@ public class TranscoderConfig implements Cloneable {
         }
         return clone;
     }
+
+    public String getCacheFilePrefix() {
+        return StringUtils.replaceChars(myName, ' ', '_');
+    }
 }

@@ -149,6 +149,14 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             }
         }
         truncateTranscodingCache(obsoleteTranscoderNames);
+        for (TranscoderConfig config : configs) {
+            LOG.debug("Checking for existing transcoder config \"" + config.getName() + "\".");
+            TranscoderConfig existingConfig = findExistingTranscoderConfig(config.getName());
+            if (!isSameConfig(config, existingConfig)) {
+                LOG.debug("Transcoder config \"" + config.getName() + "\" has changed, truncating cache.");
+                MyTunesRss.TRANSCODER_CACHE.deleteByPrefix(config.getCacheFilePrefix()); // transcoder config has changed
+            }
+        }
         MyTunesRss.CONFIG.setTranscoderConfigs(configs);
         int maxGiB = myTranscodingCacheMaxGiB.getIntegerValue(1);
         MyTunesRss.CONFIG.setTranscodingCacheMaxGiB(maxGiB);
@@ -188,6 +196,19 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.save();
     }
 
+    private boolean isSameConfig(TranscoderConfig c1, TranscoderConfig c2) {
+        return c1 != null && c2 != null && StringUtils.equalsIgnoreCase(c1.getOptions(), c2.getOptions()) && StringUtils.equalsIgnoreCase(c1.getTargetMux(), c2.getTargetMux());
+    }
+
+    private TranscoderConfig findExistingTranscoderConfig(String name) {
+        for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            if (config.getName().equals(name)) {
+                return config;
+            }
+        }
+        return null;
+    }
+
     /**
      * Remove cached transcoded files for obsolete transcoder names.
      *
@@ -198,7 +219,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             LOG.debug("Truncating streaming cache.");
         }
         for (String name : obsoleteTranscoderNames) {
-            MyTunesRss.TRANSCODER_CACHE.deleteByPrefix(StringUtils.replaceChars(name, ' ', '_'));
+            TranscoderConfig dummy = new TranscoderConfig();
+            dummy.setName(name);
+            MyTunesRss.TRANSCODER_CACHE.deleteByPrefix(dummy.getCacheFilePrefix());
         }
     }
 

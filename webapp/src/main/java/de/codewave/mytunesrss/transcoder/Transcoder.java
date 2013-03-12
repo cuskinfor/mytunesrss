@@ -50,7 +50,7 @@ public class Transcoder {
     }
 
     private File getCacheFile() {
-        return new File(MyTunesRss.TRANSCODER_CACHE.getBaseDir(), StringUtils.replaceChars(myTranscoderConfig.getName(), ' ', '_') + "_" + myTrack.getId());
+        return new File(MyTunesRss.TRANSCODER_CACHE.getBaseDir(), myTranscoderConfig.getCacheFilePrefix() + "_" + myTrack.getId());
     }
 
     public String getTranscoderId() {

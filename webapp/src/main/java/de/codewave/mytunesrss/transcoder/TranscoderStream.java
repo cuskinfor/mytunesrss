@@ -151,7 +151,8 @@ public class TranscoderStream extends InputStream {
                             try {
                                 LOG.debug("Closing cache output stream.");
                                 myCacheOutputStream.close();
-                                if (!myCacheFile.exists() || myCacheFile.delete()) {
+                                LOG.debug("VLC process exited with code " + myProcess.exitValue() + ".");
+                                if (myProcess.exitValue() == 0 && (!myCacheFile.exists() || myCacheFile.delete())) {
                                     if (!myTempCacheFile.renameTo(myCacheFile)) {
                                         LOG.warn("Could not rename temp file \"" + myTempCacheFile.getAbsolutePath() + "\" to transcoder cache file \"" + myCacheFile.getAbsolutePath() + "\".");
                                     }
