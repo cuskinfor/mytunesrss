@@ -151,11 +151,16 @@ public class TranscoderStream extends InputStream {
                             try {
                                 LOG.debug("Closing cache output stream.");
                                 myCacheOutputStream.close();
-                                LOG.debug("VLC process exited with code " + myProcess.exitValue() + ".");
-                                if (myProcess.exitValue() == 0 && (!myCacheFile.exists() || myCacheFile.delete())) {
-                                    if (!myTempCacheFile.renameTo(myCacheFile)) {
-                                        LOG.warn("Could not rename temp file \"" + myTempCacheFile.getAbsolutePath() + "\" to transcoder cache file \"" + myCacheFile.getAbsolutePath() + "\".");
+                                try {
+                                    myProcess.waitFor();
+                                    LOG.debug("VLC process exited with code " + myProcess.exitValue() + ".");
+                                    if (myProcess.exitValue() == 0 && (!myCacheFile.exists() || myCacheFile.delete())) {
+                                        if (!myTempCacheFile.renameTo(myCacheFile)) {
+                                            LOG.warn("Could not rename temp file \"" + myTempCacheFile.getAbsolutePath() + "\" to transcoder cache file \"" + myCacheFile.getAbsolutePath() + "\".");
+                                        }
                                     }
+                                } catch (InterruptedException e) {
+                                    LOG.warn("Interrupted while waiting for transcoder process to finish.");
                                 }
                             } catch (IOException e) {
                                 LOG.warn("Could not close cache output stream.", e);
