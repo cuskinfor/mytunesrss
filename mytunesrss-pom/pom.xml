@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>camel</artifactId>
-                <version>1.13-SNAPSHOT</version>
+                <version>1.13</version>
             </dependency>
             <dependency>
                 <groupId>com.intellij</groupId>
