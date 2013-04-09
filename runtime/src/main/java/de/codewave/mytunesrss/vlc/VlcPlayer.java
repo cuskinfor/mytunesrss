@@ -175,10 +175,10 @@ public class VlcPlayer {
                                 LOGGER.info(msg);
                                 process = processBuilder.start();
                                 MyTunesRss.SPAWNED_PROCESSES.add(process);
-                                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Info, msg, null);
+                                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Info, msg + " (STDOUT CAPTURE)", null);
                                 stdoutCopyThread.setDaemon(true);
                                 stdoutCopyThread.start();
-                                LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Error, msg, null);
+                                LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger(getClass()), LogStreamCopyThread.LogLevel.Error, msg + " (STDERR CAPTURE)", null);
                                 stderrCopyThread.setDaemon(true);
                                 stderrCopyThread.start();
                                 for (int i = 0; isRunning(process) && i < 10; i++) {
