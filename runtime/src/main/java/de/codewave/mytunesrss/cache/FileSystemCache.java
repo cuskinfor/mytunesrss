@@ -113,7 +113,7 @@ public class FileSystemCache implements Runnable {
                 }
             }
         }
-        LOGGER.debug("[Cache: \"" + myName + "\"] Done truncating cache in " + (System.currentTimeMillis() - startTime) + "millis.");
+        LOGGER.debug("[Cache: \"" + myName + "\"] Done truncating cache in " + (System.currentTimeMillis() - startTime) + " millis.");
     }
 
     public synchronized boolean deleteByName(String name) {
