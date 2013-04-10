@@ -1,7 +1,9 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
 import de.codewave.camel.mp4.CodecAtom;
+import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.camel.mp4.Mp4Atom;
+import de.codewave.camel.mp4.SampleDescriptionsAtom;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
@@ -231,12 +233,11 @@ public class TrackListener implements PListHandlerListener {
      * @return The MP4 codec used in the file.
      */
     private String getMp4Codec(File file) {
-        Map<String, Mp4Atom> atoms = null;
         try {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
-            CodecAtom atom = (CodecAtom)MyTunesRss.MP4_PARSER.parseAndGet(file, "moov.trak.mdia.minf.stbl.stsd");
+            MoovAtom atom = (MoovAtom)MyTunesRss.MP4_PARSER.parseAndGet(file, "moov");
             if (atom != null) {
                 return atom.getCodec();
             }

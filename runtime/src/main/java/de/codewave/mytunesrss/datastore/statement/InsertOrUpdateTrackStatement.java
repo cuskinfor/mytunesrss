@@ -100,6 +100,10 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myProtected = aProtected;
     }
 
+    public boolean isProtected() {
+        return myProtected;
+    }
+
     public void setMediaType(MediaType mediaType) {
         myMediaType = mediaType;
     }

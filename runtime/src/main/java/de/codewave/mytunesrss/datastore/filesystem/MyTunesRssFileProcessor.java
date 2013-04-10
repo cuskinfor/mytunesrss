@@ -160,7 +160,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             setSimpleInfo(statement, file, type.getMediaType());
         }
         statement.setId(fileId);
-        statement.setProtected(type.isProtected());
+        statement.setProtected(statement.isProtected() || type.isProtected());
         statement.setMediaType(type.getMediaType());
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
@@ -406,8 +406,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     name = StringUtils.defaultIfBlank(getFallbackTitleName(file), FilenameUtils.getBaseName(file.getName()));
                 }
                 statement.setName(name);
-                meta.setMp4Codec(moov.getMp4Codec());
-                statement.setMp4Codec(moov.getMp4Codec());
+                meta.setMp4Codec(moov.getCodec());
+                statement.setMp4Codec(moov.getCodec());
                 String genre = moov.getGenre();
                 if (StringUtils.isNotBlank(genre)) {
                     statement.setGenre(genre);
@@ -480,6 +480,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         }
                     }
                 }
+                statement.setProtected(moov.isDrmProtected());
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
