@@ -73,6 +73,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myDownload = true;
     private boolean myRss = true;
     private boolean myPlaylist = true;
+    private boolean myUpload = true;
     private boolean myPlayer = true;
     private boolean myChangePassword = true;
     private boolean myEditLastFmAccount = true;
@@ -180,6 +181,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setRss(boolean rss) {
         myRss = rss;
+    }
+
+    public boolean isUpload() {
+        return getParent() != null ? getParent().isUpload() : myUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        myUpload = upload;
     }
 
     public boolean isPlayer() {
@@ -670,6 +679,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setRss(JXPathUtils.getBooleanValue(settings, "featureRss", myRss));
         setPlaylist(JXPathUtils.getBooleanValue(settings, "featurePlaylist", myPlaylist));
         setDownload(JXPathUtils.getBooleanValue(settings, "featureDownload", myDownload));
+        setUpload(JXPathUtils.getBooleanValue(settings, "featureUpload", myUpload));
         setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", myPlayer));
         setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", myChangePassword));
         setEditLastFmAccount(JXPathUtils.getBooleanValue(settings, "featureLastFmAccount", myEditLastFmAccount));
@@ -763,6 +773,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureRss", isRss()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlaylist", isPlaylist()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownload", isDownload()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureUpload", isUpload()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlayer", isPlayer()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureChangePassword", isChangePassword()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureLastFmAccount", isEditLastFmAccount()));

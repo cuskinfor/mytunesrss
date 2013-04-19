@@ -51,6 +51,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermRemote;
     private CheckBox myPermExternalLinks;
     private CheckBox myPermEditTags;
+    private CheckBox myPermUpload;
     private CheckBox myPermTranscoder;
     private CheckBox myPermChangePassword;
     private CheckBox myPermChangeEmail;
@@ -123,6 +124,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermRemote = new CheckBox();
         myPermExternalLinks = new CheckBox();
         myPermEditTags = new CheckBox();
+        myPermUpload = new CheckBox();
         myPermTranscoder = new CheckBox();
         myPermChangePassword = new CheckBox();
         myPermChangeEmail = new CheckBox();
@@ -156,6 +158,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.addItem(new Object[]{myPermRemote, getBundleString("editUserConfigPanel.permRemote")}, myPermRemote);
         myPermissions.addItem(new Object[]{myPermExternalLinks, getBundleString("editUserConfigPanel.permExternalLinks")}, myPermExternalLinks);
         myPermissions.addItem(new Object[]{myPermEditTags, getBundleString("editUserConfigPanel.permEditTags")}, myPermEditTags);
+        myPermissions.addItem(new Object[]{myPermUpload, getBundleString("editUserConfigPanel.permUpload")}, myPermUpload);
         myPermissions.addItem(new Object[]{myPermTranscoder, getBundleString("editUserConfigPanel.permTranscoder")}, myPermTranscoder);
         myPermissions.addItem(new Object[]{myPermChangePassword, getBundleString("editUserConfigPanel.permChangePassword")}, myPermChangePassword);
         myPermissions.addItem(new Object[]{myPermChangeEmail, getBundleString("editUserConfigPanel.permChangeEmail")}, myPermChangeEmail);
@@ -303,6 +306,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             mySessionTimeout.setValue(myUser.getSessionTimeout(), 1, Integer.MAX_VALUE, 10);
             myPermStandardPlaylist.setValue(myUser.isSpecialPlaylists());
             myPermTranscoder.setValue(myUser.isTranscoder());
+            myPermUpload.setValue(myUser.isUpload());
             myPlaylistsRestrictions.removeAllItems();
             List<Playlist> playlists = Collections.emptyList();
             DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -441,6 +445,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setSessionTimeout(mySessionTimeout.getIntegerValue(10));
         myUser.setSpecialPlaylists(myPermStandardPlaylist.booleanValue());
         myUser.setTranscoder(myPermTranscoder.booleanValue());
+        myUser.setUpload(myPermUpload.booleanValue());
         Set<String> restricted = new HashSet<String>();
         Set<String> excluded = new HashSet<String>();
         Set<String> hidden = new HashSet<String>();

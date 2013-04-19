@@ -97,6 +97,7 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnEmailChange;
     private boolean myNotifyOnQuotaExceeded;
     private boolean myNotifyOnLoginFailure;
+    private boolean myNotifyOnWebUpload;
     private boolean myNotifyOnTranscodingFailure;
     private boolean myNotifyOnInternalError;
     private boolean myNotifyOnDatabaseUpdate;
@@ -619,6 +620,14 @@ public class MyTunesRssConfig {
         myNotifyOnLoginFailure = notifyOnLoginFailure;
     }
 
+    public boolean isNotifyOnWebUpload() {
+        return myNotifyOnWebUpload;
+    }
+
+    public void setNotifyOnWebUpload(boolean notifyOnWebUpload) {
+        myNotifyOnWebUpload = notifyOnWebUpload;
+    }
+
     public boolean isNotifyOnTranscodingFailure() {
         return myNotifyOnTranscodingFailure;
     }
@@ -1111,6 +1120,7 @@ public class MyTunesRssConfig {
         setNotifyOnPasswordChange(JXPathUtils.getBooleanValue(settings, "admin-notify/password-change", false));
         setNotifyOnQuotaExceeded(JXPathUtils.getBooleanValue(settings, "admin-notify/quota-exceeded", false));
         setNotifyOnTranscodingFailure(JXPathUtils.getBooleanValue(settings, "admin-notify/transcoding-failure", false));
+        setNotifyOnWebUpload(JXPathUtils.getBooleanValue(settings, "admin-notify/web-upload", false));
         setNotifyOnMissingFile(JXPathUtils.getBooleanValue(settings, "admin-notify/missing-file", false));
         setNotifyOnOutdatedItunesXml(JXPathUtils.getBooleanValue(settings, "admin-notify/outdated-itunesxml", false));
         setNotifyOnSkippedDatabaseUpdate(JXPathUtils.getBooleanValue(settings, "admin-notify/skipped-db-update", false));
@@ -1523,6 +1533,7 @@ public class MyTunesRssConfig {
             notify.appendChild(DOMUtils.createBooleanElement(settings, "password-change", isNotifyOnPasswordChange()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "quota-exceeded", isNotifyOnQuotaExceeded()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "transcoding-failure", isNotifyOnTranscodingFailure()));
+            notify.appendChild(DOMUtils.createBooleanElement(settings, "web-upload", isNotifyOnWebUpload()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "missing-file", isNotifyOnMissingFile()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "outdated-itunesxml", isNotifyOnOutdatedItunesXml()));
             notify.appendChild(DOMUtils.createBooleanElement(settings, "skipped-db-update", isNotifyOnSkippedDatabaseUpdate()));
@@ -1826,5 +1837,24 @@ public class MyTunesRssConfig {
                 break;
             }
         }
+    }
+
+    public List<DatasourceConfig> getUploadableDatasources() {
+        List<DatasourceConfig> uploadableDatasources = new ArrayList<DatasourceConfig>();
+        for (DatasourceConfig datasource : getDatasources()) {
+            if (datasource.isUploadable()) {
+                uploadableDatasources.add(DatasourceConfig.copy(datasource));
+            }
+        }
+        return uploadableDatasources;
+    }
+
+    public boolean isUploadableDatasource() {
+        for (DatasourceConfig datasource : getDatasources()) {
+            if (datasource.isUploadable()) {
+                return true;
+            }
+        }
+        return false;
     }
 }

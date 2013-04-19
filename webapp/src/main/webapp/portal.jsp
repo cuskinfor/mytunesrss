@@ -20,6 +20,7 @@
 <%--@elvariable id="photoAlbums" type="java.lang.Boolean"--%>
 <%--@elvariable id="pager" type="de.codewave.mytunesrss.Pager"--%>
 <%--@elvariable id="lastSearchTerm" type="java.lang.String"--%>
+<%--@elvariable id="uploadLink" type="java.lang.Boolean"--%>
 <%--@elvariable id="stateEditPlaylist" type="java.lang.Boolean"--%>
 <%--@elvariable id="container" type="de.codewave.mytunesrss.datastore.statement.Playlist"--%>
 
@@ -145,6 +146,11 @@
                                 </a>
                             </c:otherwise>
                         </c:choose>
+                    </mttag:portalLink>
+                    <mttag:portalLink test="${uploadLink}">
+                        <a id="linkUpload" class="upload" href="${servletUrl}/showUpload/${auth}">
+                            <fmt:message key="showUpload" />
+                        </a>
                     </mttag:portalLink>
                 </tr>
             </table>

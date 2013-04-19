@@ -78,6 +78,7 @@ a:HOVER {
 .browse div.head,
 .plmanager div.head,
 .trackinfo div.head,
+.upload div.head,
 .playlistEditor div.head,
 .smartPlaylist div.head,
 .remote div.head,
@@ -92,6 +93,7 @@ a:HOVER {
 .browse h1,
 .plmanager h1,
 .trackinfo h1,
+.upload h1,
 .playlistEditor h1,
 .smartPlaylist h1,
 .remote h1,
@@ -110,6 +112,7 @@ a:HOVER {
 .browse h1 span,
 .plmanager h1 span,
 .trackinfo h1 span,
+.upload h1 span,
 .playlistEditor h1 span,
 .smartPlaylist h1 span,
 .remote h1 span,
@@ -125,6 +128,7 @@ a:HOVER {
 .browse h1 a,
 .plmanager h1 a,
 .trackinfo h1 a,
+.upload h1 a,
 .playlistEditor h1 a,
 .smartPlaylist h1 a,
 .remote h1 a,
@@ -142,6 +146,7 @@ a:HOVER {
 .browse h1 a span,
 .plmanager h1 a span,
 .trackinfo h1 a span,
+.upload h1 a span,
 .playlistEditor h1 a span,
 .smartPlaylist h1 a span,
 .remote h1 a span,
@@ -313,6 +318,11 @@ table.navigation {
 .navigation .playlists {
     background: url("../images/playlists.png") left center no-repeat;
 }
+
+.navigation .upload {
+    background: url("../images/upload.png") left center no-repeat;
+}
+
 
 /* Content */
 
@@ -972,6 +982,40 @@ a.original {
     padding-left: 24px;
     line-height: 18px !important;
 }
+
+
+/* Upload Page and Progress Bar */
+
+body.upload td.label {
+	text-align: left;
+	font-weight: normal;
+	padding: 20px 50px;
+}
+
+body.upload form {
+	text-align: center;
+	padding: 0 0 20px 0;
+}
+
+#progressDiv {
+	display: none;
+	padding: 0 50px 20px 50px;
+}
+
+#progressBackground {
+	background: url("../images/progress_background.gif") center center no-repeat;
+	border: 1px solid #666;
+}
+
+#progressBar {
+	background: url("../images/progress_bar.gif") center center no-repeat;
+	text-align: center;
+	font-weight: bold;
+	font-size: 10px;
+	color: #fff;
+	text-shadow: #666 0 -1px 0;
+}
+
 
 /* Pager */
 
