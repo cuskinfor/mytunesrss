@@ -12,6 +12,8 @@ import de.codewave.mytunesrss.datastore.itunes.LibraryListener;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.PListHandlerListener;
 import de.codewave.utils.xml.XmlUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -22,6 +24,13 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ItunesDatasourceConfig.class);
+
+    private static final String[] AUTO_ADD_NAMES = new String[] {
+            "Automatically Add to iTunes",
+            "Automatically Add to iTunes.localized"
+    };
 
     private static class MusicFolderListener implements PListHandlerListener {
         private String myMusicFolder;
@@ -157,11 +166,30 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         return types;
     }
 
-    public File getAutoAddToItunesFolder() throws IOException, SAXException, ParserConfigurationException {
+    /**
+     * Get the "Automatically add to iTunes" folder.
+     *
+     * @return The file representing the auto-add folder or NULL if no such folder could be found.
+     */
+    public File getAutoAddToItunesFolder() {
         PListHandler handler = new PListHandler();
         MusicFolderListener listener = new MusicFolderListener();
         handler.addListener("/plist/dict", listener);
-        XmlUtils.parseApplePList(new File(getDefinition()).toURI().toURL(), handler);
+        try {
+            XmlUtils.parseApplePList(new File(getDefinition()).toURI().toURL(), handler);
+        } catch (ParserConfigurationException e) {
+            LOGGER.warn("Could not find iTunes auto-add folder.", e);
+            return null;
+        } catch (SAXException e) {
+            LOGGER.warn("Could not find iTunes auto-add folder.", e);
+            return null;
+        } catch (MalformedURLException e) {
+            LOGGER.warn("Could not find iTunes auto-add folder.", e);
+            return null;
+        } catch (IOException e) {
+            LOGGER.warn("Could not find iTunes auto-add folder.", e);
+            return null;
+        }
         List<CompiledReplacementRule> pathReplacements = new ArrayList<CompiledReplacementRule>();
         for (ReplacementRule pathReplacement : getPathReplacements()) {
             pathReplacements.add(new CompiledReplacementRule(pathReplacement));
@@ -169,10 +197,19 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         String musicFolderFilename = ItunesLoader.getFileNameForLocation(listener.getMusicFolder());
         for (CompiledReplacementRule pathReplacement : pathReplacements) {
             if (pathReplacement.matches(musicFolderFilename)) {
-                return new File(pathReplacement.replace(musicFolderFilename));
+                musicFolderFilename = pathReplacement.replace(musicFolderFilename);
+                break;
             }
         }
-        return new File(musicFolderFilename);
+        for (String name : AUTO_ADD_NAMES) {
+            File file = new File(musicFolderFilename, name);
+            if (file.isDirectory()) {
+                LOGGER.debug("Found iTunes auto-add folder \"" + file.getAbsolutePath() + "\".");
+                return file;
+            }
+        }
+        LOGGER.debug("Could not find iTunes auto-add folder.");
+        return null;
     }
 
 }
