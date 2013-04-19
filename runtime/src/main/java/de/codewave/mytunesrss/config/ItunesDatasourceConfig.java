@@ -6,11 +6,41 @@
 package de.codewave.mytunesrss.config;
 
 import de.codewave.mytunesrss.ImageImportType;
+import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
+import de.codewave.mytunesrss.datastore.itunes.LibraryListener;
+import de.codewave.utils.xml.PListHandler;
+import de.codewave.utils.xml.PListHandlerListener;
+import de.codewave.utils.xml.XmlUtils;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
+
+    private static class MusicFolderListener implements PListHandlerListener {
+        private String myMusicFolder;
+
+        public boolean beforeDictPut(Map dict, String key, Object value) {
+            if ("Music Folder".equals(key)) {
+                myMusicFolder = value.toString();
+            }
+            return true;
+        }
+
+        public boolean beforeArrayAdd(List array, Object value) {
+            return false;
+        }
+
+        public String getMusicFolder() {
+            return myMusicFolder;
+        }
+    }
 
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private boolean myDeleteMissingFiles = true;
@@ -126,4 +156,23 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         });
         return types;
     }
+
+    public File getAutoAddToItunesFolder() throws IOException, SAXException, ParserConfigurationException {
+        PListHandler handler = new PListHandler();
+        MusicFolderListener listener = new MusicFolderListener();
+        handler.addListener("/plist/dict", listener);
+        XmlUtils.parseApplePList(new File(getDefinition()).toURI().toURL(), handler);
+        List<CompiledReplacementRule> pathReplacements = new ArrayList<CompiledReplacementRule>();
+        for (ReplacementRule pathReplacement : getPathReplacements()) {
+            pathReplacements.add(new CompiledReplacementRule(pathReplacement));
+        }
+        String musicFolderFilename = ItunesLoader.getFileNameForLocation(listener.getMusicFolder());
+        for (CompiledReplacementRule pathReplacement : pathReplacements) {
+            if (pathReplacement.matches(musicFolderFilename)) {
+                return new File(pathReplacement.replace(musicFolderFilename));
+            }
+        }
+        return new File(musicFolderFilename);
+    }
+
 }

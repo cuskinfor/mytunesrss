@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+    <dict>
+        <key>Major Version</key><integer>1</integer>
+        <key>Minor Version</key><integer>1</integer>
+        <key>Date</key><date>2012-08-18T22:59:30Z</date>
+        <key>Application Version</key><string>10.6.3</string>
+        <key>Features</key><integer>5</integer>
+        <key>Show Content Ratings</key><true/>
+        <key>Music Folder</key><string>file://localhost/Users/mdescher/Music/iTunes/iTunes%20Media/</string>
+        <key>Library Persistent ID</key><string>9AF904FA9C1156B3</string>
+        <key>Tracks</key>
+        <dict>
+            <key>1463</key>
+            <dict>
+                <key>Track ID</key><integer>1463</integer>
+                <key>Name</key><string>Garfield 2 - Faulheit verpflichtet!</string>
+                <key>Artist</key><string>Tim Hill</string>
+                <key>Genre</key><string>Animation</string>
+                <key>Kind</key><string>MPEG-4 Videodatei</string>
+                <key>Size</key><integer>1051804410</integer>
+                <key>Total Time</key><integer>4921280</integer>
+                <key>Year</key><integer>2006</integer>
+                <key>Date Modified</key><date>2011-07-29T19:59:04Z</date>
+                <key>Date Added</key><date>2011-10-16T21:36:14Z</date>
+                <key>Bit Rate</key><integer>153</integer>
+                <key>Release Date</key><date>2006-06-15T12:00:00Z</date>
+                <key>Artwork Count</key><integer>1</integer>
+                <key>Sort Artist</key><string>Tim Hill</string>
+                <key>Persistent ID</key><string>ADEBFD552AD2D7F2</string>
+                <key>Content Rating</key><string>mpaa|NR|000|</string>
+                <key>Track Type</key><string>File</string>
+                <key>Has Video</key><true/>
+                <key>HD</key><false/>
+                <key>Video Width</key><integer>960</integer>
+                <key>Video Height</key><integer>540</integer>
+                <key>Movie</key><true/>
+                <key>Location</key><string>file://localhost/Network/Servers/readynas.local/iTunes/iTunes%20Media/Movies/Garfield%202%20-%20Faulheit%20verpflichtet!/Garfield%202%20-%20Faulheit%20verpflichtet!.mp4</string>
+                <key>File Folder Count</key><integer>-1</integer>
+                <key>Library Folder Count</key><integer>-1</integer>
+            </dict>
+        </dict>
+     </dict>
+</plist>
