@@ -1842,7 +1842,7 @@ public class MyTunesRssConfig {
     public List<DatasourceConfig> getUploadableDatasources() {
         List<DatasourceConfig> uploadableDatasources = new ArrayList<DatasourceConfig>();
         for (DatasourceConfig datasource : getDatasources()) {
-            if (datasource.isUploadable()) {
+            if (datasource.isUploadable() && datasource.isUpload()) {
                 uploadableDatasources.add(DatasourceConfig.copy(datasource));
             }
         }
@@ -1851,7 +1851,7 @@ public class MyTunesRssConfig {
 
     public boolean isUploadableDatasource() {
         for (DatasourceConfig datasource : getDatasources()) {
-            if (datasource.isUploadable()) {
+            if (datasource.isUploadable() && datasource.isUpload()) {
                 return true;
             }
         }

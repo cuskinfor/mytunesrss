@@ -14,6 +14,7 @@
 
     <script type="text/javascript">
         function initProgress() {
+            $jQ("#linkDoUpload").attr("disabled", "true");
             frames["progressFrame"].location.href = "${servletUrl}/showUploadProgress/${auth}";
             document.getElementById("progressDiv").style.display = "block";
         }
@@ -46,13 +47,16 @@
                 <form name="upload" enctype="multipart/form-data" method="post" action="${servletUrl}/upload/${auth}" target="resultFrame">
                     <table cellspacing="0" class="settings">
                         <tr>
-                            <th class="active"><fmt:message key="fileUpload"/></th>
+                            <th colspan="2" class="active"><fmt:message key="fileUpload"/></th>
                         </tr>
                         <tr>
-                            <td class="label"><fmt:message key="fileUploadDatasourceInfo"/></td>
+                            <td colspan="2" class="info"><fmt:message key="fileUploadDatasourceInfo"/></td>
                         </tr>
                         <tr>
-                            <td>
+                            <td class="formlabel">
+                                <fmt:message key="fileUploadDatasourceLabel"/>
+                            </td>
+                            <td class="formelement">
                                 <select id="selectUploadDatasource" name="datasource">
                                     <c:forEach var="ds" items="${datasources}">
                                         <option id="dsOpt${ds.id}" value="${ds.id}"><c:out value="${ds.name}" /></option>
@@ -61,11 +65,16 @@
                             </td>
                         </tr>
                         <tr>
-                            <td class="label"><fmt:message key="fileUploadInfo"/></td>
+                            <td class="formlabel">
+                                <fmt:message key="fileUploadFileLabel"/>
+                            </td>
+                            <td class="formelement">
+                                <input id="fileUploadSelector" type="file" name="file" />
+                            </td>
                         </tr>
                         <tr>
-                            <td>
-                                <input type="file" name="file" />
+                            <td>&nbsp;</td>
+                            <td class="formbutton">
                                 <input id="linkDoUpload" type="submit" value="<fmt:message key="doUpload"/>" onclick="initProgress()"/>
                             </td>
                         </tr>

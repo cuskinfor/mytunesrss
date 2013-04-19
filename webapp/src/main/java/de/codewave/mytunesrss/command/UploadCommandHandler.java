@@ -51,7 +51,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized()) {
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
-            Map<String, List<FileItem>> items = upload.parseParameterMap(getRequest());
+            Map<String, List<FileItem>> items = upload.parseParameterMap(new ProgressRequestWrapper(getRequest()));
             DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(items.get("datasource").get(0).getString("UTF-8"));
             List<File> uploadedItunesFiles = new ArrayList<File>();
             StringBuilder info = new StringBuilder();

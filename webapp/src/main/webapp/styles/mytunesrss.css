@@ -986,15 +986,31 @@ a.original {
 
 /* Upload Page and Progress Bar */
 
-body.upload td.label {
-	text-align: left;
-	font-weight: normal;
-	padding: 20px 50px;
+body.upload td {
+    text-shadow: #efefef 0 1px 0;
+    color: #666;
+    font-weight: bold;
 }
 
-body.upload form {
-	text-align: center;
-	padding: 0 0 20px 0;
+body.upload td.info {
+	text-align: left;
+	padding: 20px 50px 10px 50px;
+}
+
+body.upload td.formlabel {
+	text-align: right;
+	padding: 10px 5px 0 50px;
+}
+
+body.upload td.formelement {
+    width: 100%;
+	text-align: left;
+	padding: 10px 50px 0 5px;
+}
+
+body.upload td.formbutton {
+	text-align: left;
+	padding: 10px 50px 20px 5px;
 }
 
 #progressDiv {
