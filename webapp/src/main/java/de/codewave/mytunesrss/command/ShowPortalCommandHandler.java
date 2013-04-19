@@ -89,7 +89,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 playlists = MyTunesRssUtils.getSubList(playlists, current * pageSize, pageSize);
             }
             getRequest().setAttribute("playlists", playlists);
-            getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && !MyTunesRss.CONFIG.isUploadableDatasource());
+            getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && MyTunesRss.CONFIG.isUploadableDatasource());
             getRequest().setAttribute("statistics", getTransaction().executeQuery(new GetSystemInformationQuery()));
             getRequest().setAttribute("showRemoteControl", !MyTunesRss.VLC_PLAYER.getPlaylist().isEmpty());
             forward(MyTunesRssResource.Portal);

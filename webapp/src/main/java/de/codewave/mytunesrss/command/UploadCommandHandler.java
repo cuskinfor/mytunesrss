@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2006, Codewave Software. All Rights Reserved.
+ * Copyright (c) 2013. Codewave Software Michael Descher.
+ * All rights reserved.
  */
 
 package de.codewave.mytunesrss.command;
@@ -15,8 +16,11 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.statistics.UploadEvent;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
+import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileItemIterator;
+import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
@@ -30,10 +34,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,15 +49,15 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
-            final DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(getRequestParameter("datasource", null));
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
-            List<FileItem> items = upload.parseRequest(new ProgressRequestWrapper(getRequest()));
+            Map<String, List<FileItem>> items = upload.parseParameterMap(getRequest());
+            DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(items.get("datasource").get(0).getString("UTF-8"));
+            List<File> uploadedItunesFiles = new ArrayList<File>();
             StringBuilder info = new StringBuilder();
-            final List<File> uploadedItunesFiles = new ArrayList<File>();
-            for (FileItem item : items) {
+            for (FileItem item : items.get("file")) {
                 uploadedItunesFiles.addAll(processItem(datasource, item));
-                StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), item.getSize()));
+                StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), items.size()));
                 info.append(item.getName()).append("\n");
             }
             triggerDatabaseUpdate(datasource, uploadedItunesFiles);
@@ -98,41 +99,39 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
 
     private List<File> processItem(DatasourceConfig datasource, FileItem item) throws IOException {
         List<File> uploadedItunesFiles = new ArrayList<File>();
-        if ("file".equals(item.getFieldName())) {
-            if (StringUtils.isNotEmpty(item.getName())) {
-                if (item.getName().toLowerCase().endsWith(".zip")) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Extracting zip file \"" + item.getName() + "\".");
-                    }
-                    ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(item.getInputStream());
-                    String lineSeparator = System.getProperty("line.separator");
-                    StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
-                    for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
-                        File file = saveFile(datasource, entry.getName(), zipInputStream);
-                        if (file != null) {
-                            m3uPlaylist.append(entry.getName().replace('\\', '/')).append(lineSeparator);
-                            if (datasource.getType() == DatasourceType.Itunes) {
-                                uploadedItunesFiles.add(file);
-                            }
+        if (StringUtils.isNotEmpty(item.getName())) {
+            if (item.getName().toLowerCase().endsWith(".zip")) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Extracting zip file \"" + item.getName() + "\".");
+                }
+                ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(item.getInputStream());
+                String lineSeparator = System.getProperty("line.separator");
+                StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
+                for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
+                    File file = saveFile(datasource, entry.getName(), zipInputStream);
+                    if (file != null) {
+                        m3uPlaylist.append(entry.getName().replace('\\', '/')).append(lineSeparator);
+                        if (datasource.getType() == DatasourceType.Itunes) {
+                            uploadedItunesFiles.add(file);
                         }
                     }
-                    if (datasource.getType() == DatasourceType.Watchfolder) {
-                        File file = new File(datasource.getDefinition(), FilenameUtils.getBaseName(item.getName()) + ".m3u");
-                        if (!file.exists()) {
-                            if (LOG.isDebugEnabled()) {
-                                LOG.debug("Creating M3U playlist for all files of ZIP archive: \"" + file.getAbsolutePath() + "\".");
-                            }
-                            FileUtils.writeByteArrayToFile(file, m3uPlaylist.toString().getBytes());
+                }
+                if (datasource.getType() == DatasourceType.Watchfolder) {
+                    File file = new File(datasource.getDefinition(), FilenameUtils.getBaseName(item.getName()) + ".m3u");
+                    if (!file.exists()) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Creating M3U playlist for all files of ZIP archive: \"" + file.getAbsolutePath() + "\".");
                         }
+                        FileUtils.writeByteArrayToFile(file, m3uPlaylist.toString().getBytes());
                     }
-                } else {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Uploading file \"" + item.getName() + "\".");
-                    }
-                    File file = saveFile(datasource, item.getName(), item.getInputStream());
-                    if (datasource.getType() == DatasourceType.Itunes) {
-                        uploadedItunesFiles.add(file);
-                    }
+                }
+            } else {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Uploading file \"" + item.getName() + "\".");
+                }
+                File file = saveFile(datasource, item.getName(), item.getInputStream());
+                if (datasource.getType() == DatasourceType.Itunes) {
+                    uploadedItunesFiles.add(file);
                 }
             }
         }
@@ -154,6 +153,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             }
             FileOutputStream targetStream = new FileOutputStream(targetFile);
             try {
+                LOG.debug("Saving uploaded file \"" + targetFile.getAbsolutePath() + "\".");
                 IOUtils.copy(inputStream, targetStream);
             } finally {
                 targetStream.close();
