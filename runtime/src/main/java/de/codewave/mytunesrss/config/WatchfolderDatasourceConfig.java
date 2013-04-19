@@ -68,8 +68,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
     }
 
-    public WatchfolderDatasourceConfig(String id, String definition) {
-        super(id, definition);
+    public WatchfolderDatasourceConfig(String id, String name, String definition) {
+        super(id, name, definition);
     }
 
     @Override

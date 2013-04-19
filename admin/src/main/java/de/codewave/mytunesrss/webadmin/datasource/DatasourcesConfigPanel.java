@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.Application;
 import com.vaadin.data.Item;
+import com.vaadin.data.Property;
+import com.vaadin.event.FieldEvents;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
@@ -50,11 +52,13 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources = new Table();
         myDatasources.setCacheRate(50);
         myDatasources.addContainerProperty("icon", Embedded.class, null, "", null, null);
+        myDatasources.addContainerProperty("name", SmartTextField.class, null, getBundleString("datasourcesConfigPanel.name"), null, null);
         myDatasources.addContainerProperty("path", String.class, null, getBundleString("datasourcesConfigPanel.sourcePath"), null, null);
         myDatasources.addContainerProperty("edit", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("delete", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("options", Button.class, null, "", null, null);
-        myDatasources.setSortContainerPropertyId("path");
+        myDatasources.setSortContainerPropertyId("name");
+        myDatasources.setEditable(false);
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
@@ -81,8 +85,20 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         Button deleteButton = getComponentFactory().createButton("button.delete", this);
         Button optionsButton = getComponentFactory().createButton("button.options", this);
         long id = myItemIdGenerator.getAndIncrement();
-        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(datasource.getType())), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
+        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(datasource.getType())), createNameTextField(datasource), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
         return id;
+    }
+
+    private SmartTextField createNameTextField(final DatasourceConfig datasource) {
+        SmartTextField smartTextField = new SmartTextField();
+        smartTextField.setImmediate(true);
+        smartTextField.setValue(datasource.getName());
+        smartTextField.addListener(new FieldEvents.TextChangeListener() {
+            public void textChange(FieldEvents.TextChangeEvent event) {
+                datasource.setName(event.getText());
+            }
+        });
+        return smartTextField;
     }
 
     private Resource getDatasourceImage(DatasourceType type) {
@@ -187,6 +203,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 DatasourceConfig newConfig = DatasourceConfig.create(UUID.randomUUID().toString(), file.getAbsolutePath());
                 if (newConfig != null) {
                     if (itemId != null) {
+                        ((SmartTextField) myDatasources.getItem(itemId).getItemProperty("name").getValue()).setValue(newConfig.getName());
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
                         myDatasources.getItem(itemId).getItemProperty("icon").setValue(new Embedded("", getDatasourceImage(newConfig.getType())));
                         DatasourceConfig oldConfig = myConfigs.get(itemId);

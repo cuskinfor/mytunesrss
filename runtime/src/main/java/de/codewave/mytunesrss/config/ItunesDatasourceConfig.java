@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.datastore.itunes.LibraryListener;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.PListHandlerListener;
 import de.codewave.utils.xml.XmlUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -59,8 +60,8 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
 
-    public ItunesDatasourceConfig(String id, String definition) {
-        super(id, definition);
+    public ItunesDatasourceConfig(String id, String name, String definition) {
+        super(id, StringUtils.defaultIfBlank(name, "iTunes"), definition);
     }
 
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {

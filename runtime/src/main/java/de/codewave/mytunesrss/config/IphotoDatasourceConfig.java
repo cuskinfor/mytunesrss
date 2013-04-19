@@ -15,8 +15,8 @@ public class IphotoDatasourceConfig extends PhotoDatasourceConfig {
 
     public static final String IPHOTO_XML_FILE_NAME = "AlbumData.xml";
 
-    public IphotoDatasourceConfig(String id, String definition) {
-        super(id, definition);
+    public IphotoDatasourceConfig(String id, String name, String definition) {
+        super(id, name, definition);
     }
 
     public IphotoDatasourceConfig(IphotoDatasourceConfig source) {

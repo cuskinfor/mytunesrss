@@ -1217,16 +1217,17 @@ public class MyTunesRssConfig {
                 // read pre-4.0.0-EAP-6 data source definitions
                 String definition = JXPathUtils.getStringValue(datasourceContext, ".", null);
                 if (definition != null) {
-                    dataSources.add(DatasourceConfig.create(UUID.randomUUID().toString(), definition));
+                    dataSources.add(DatasourceConfig.create(UUID.randomUUID().toString(), null, definition));
                 }
             } else {
                 try {
                     DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
                     String id = JXPathUtils.getStringValue(datasourceContext, "id", UUID.randomUUID().toString());
                     String definition = JXPathUtils.getStringValue(datasourceContext, "definition", "");
+                    String name = JXPathUtils.getStringValue(datasourceContext, "name", null);
                     switch (type) {
                         case Watchfolder:
-                            WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(id, definition);
+                            WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(id, name, definition);
                             watchfolderDatasourceConfig.setMinFileSize(JXPathUtils.getLongValue(datasourceContext, "minFileSize", 0));
                             watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
                             watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
@@ -1251,7 +1252,7 @@ public class MyTunesRssConfig {
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
-                            ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(id, definition);
+                            ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(id, name, definition);
                             Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
                             itunesDatasourceConfig.clearPathReplacements();
                             while (pathReplacementsIterator.hasNext()) {
@@ -1280,7 +1281,7 @@ public class MyTunesRssConfig {
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
-                            IphotoDatasourceConfig iphotoDatasourceConfig = new IphotoDatasourceConfig(id, definition);
+                            IphotoDatasourceConfig iphotoDatasourceConfig = new IphotoDatasourceConfig(id, name, definition);
                             pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
                             iphotoDatasourceConfig.clearPathReplacements();
                             while (pathReplacementsIterator.hasNext()) {
@@ -1297,7 +1298,7 @@ public class MyTunesRssConfig {
                             dataSources.add(iphotoDatasourceConfig);
                             break;
                         case Aperture:
-                            ApertureDatasourceConfig apertureDatasourceConfig = new ApertureDatasourceConfig(id, definition);
+                            ApertureDatasourceConfig apertureDatasourceConfig = new ApertureDatasourceConfig(id, name, definition);
                             pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
                             apertureDatasourceConfig.clearPathReplacements();
                             while (pathReplacementsIterator.hasNext()) {
@@ -1603,6 +1604,7 @@ public class MyTunesRssConfig {
             Element dataSource = settings.createElement("datasource");
             dataSources.appendChild(dataSource);
             dataSource.appendChild(DOMUtils.createTextElement(settings, "type", myDatasources.get(i).getType().name()));
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "name", myDatasources.get(i).getName()));
             dataSource.appendChild(DOMUtils.createTextElement(settings, "definition", myDatasources.get(i).getDefinition()));
             dataSource.appendChild(DOMUtils.createTextElement(settings, "id", myDatasources.get(i).getId()));
             switch (myDatasources.get(i).getType()) {

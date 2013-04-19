@@ -14,8 +14,8 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig implements 
     private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
 
-    public PhotoDatasourceConfig(String id, String definition) {
-        super(id, definition);
+    public PhotoDatasourceConfig(String id, String name, String definition) {
+        super(id, name, definition);
     }
 
     public PhotoDatasourceConfig(PhotoDatasourceConfig source) {

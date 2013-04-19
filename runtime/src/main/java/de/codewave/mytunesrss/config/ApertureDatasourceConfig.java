@@ -12,8 +12,8 @@ public class ApertureDatasourceConfig extends PhotoDatasourceConfig {
 
     public static final String APERTURE_XML_FILE_NAME = "ApertureData.xml";
 
-    public ApertureDatasourceConfig(String id, String definition) {
-        super(id, definition);
+    public ApertureDatasourceConfig(String id, String name, String definition) {
+        super(id, name, definition);
     }
 
     public ApertureDatasourceConfig(ApertureDatasourceConfig source) {

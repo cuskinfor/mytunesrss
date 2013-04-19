@@ -17,21 +17,22 @@ import java.util.UUID;
 
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
-    public static DatasourceConfig create(String id, String definition) {
+    public static DatasourceConfig create(String id, String name, String definition) {
         File file = new File(definition);
         if (file.isFile() && StringUtils.equalsIgnoreCase(FilenameUtils.getExtension(definition), "xml")) {
-            return new ItunesDatasourceConfig(id, definition);
+            return new ItunesDatasourceConfig(id, name, definition);
         } else if (file.isDirectory() && new File(file, IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).isFile()) {
-            return new IphotoDatasourceConfig(id, definition);
+            return new IphotoDatasourceConfig(id, name, definition);
         } else if (file.isDirectory() && new File(file, ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).isFile()) {
-            return new ApertureDatasourceConfig(id, definition);
+            return new ApertureDatasourceConfig(id, name, definition);
         } else if (file.isDirectory()) {
-            return new WatchfolderDatasourceConfig(id, definition);
+            return new WatchfolderDatasourceConfig(id, name, definition);
         } else {
             return null;
         }
     }
 
+    private String myName;
     private String myDefinition;
     private String myId;
     private List<FileType> myFileTypes = new ArrayList<FileType>();
@@ -39,12 +40,14 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public DatasourceConfig(DatasourceConfig source) {
         myId = source.getId();
+        myName = source.myName;
         myDefinition = source.getDefinition();
         myFileTypes = source.getFileTypes();
     }
 
-    public DatasourceConfig(String id, String definition) {
+    public DatasourceConfig(String id, String name, String definition) {
         setId(id);
+        setName(name);
         setDefinition(definition);
         setFileTypes(getDefaultFileTypes());
     }
@@ -55,6 +58,14 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public void setId(String id) {
         myId = id;
+    }
+
+    public String getName() {
+        return StringUtils.defaultIfBlank(myName, getId());
+    }
+
+    public void setName(String name) {
+        myName = name;
     }
 
     public String getDefinition() {
