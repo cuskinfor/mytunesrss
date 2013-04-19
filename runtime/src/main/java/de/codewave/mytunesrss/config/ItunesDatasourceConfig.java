@@ -213,4 +213,8 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         return null;
     }
 
+    @Override
+    public boolean isUploadable() {
+        return getAutoAddToItunesFolder() != null;
+    }
 }

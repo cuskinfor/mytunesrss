@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.webadmin.datasource;
 import com.vaadin.Application;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
+import com.vaadin.data.util.DefaultItemSorter;
+import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
@@ -54,11 +56,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         myDatasources.addContainerProperty("icon", Embedded.class, null, "", null, null);
         myDatasources.addContainerProperty("name", SmartTextField.class, null, getBundleString("datasourcesConfigPanel.name"), null, null);
         myDatasources.addContainerProperty("path", String.class, null, getBundleString("datasourcesConfigPanel.sourcePath"), null, null);
+        myDatasources.addContainerProperty("upload", CheckBox.class, null, getBundleString("datasourcesConfigPanel.upload"), null, null);
         myDatasources.addContainerProperty("edit", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("delete", Button.class, null, "", null, null);
         myDatasources.addContainerProperty("options", Button.class, null, "", null, null);
         myDatasources.setSortContainerPropertyId("name");
-        myDatasources.setEditable(false);
         myDatasources.setEditable(false);
         sourcesPanel.addComponent(myDatasources);
         myAddLocalDatasource = getComponentFactory().createButton("datasourcesConfigPanel.addLocalDatasource", this);
@@ -85,7 +87,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         Button deleteButton = getComponentFactory().createButton("button.delete", this);
         Button optionsButton = getComponentFactory().createButton("button.options", this);
         long id = myItemIdGenerator.getAndIncrement();
-        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(datasource.getType())), createNameTextField(datasource), datasource.getDefinition(), editButton, deleteButton, optionsButton}, id);
+        myDatasources.addItem(new Object[]{new Embedded("", getDatasourceImage(datasource.getType())), createNameTextField(datasource), datasource.getDefinition(), createUploadCheckbox(datasource), editButton, deleteButton, optionsButton}, id);
         return id;
     }
 
@@ -99,6 +101,19 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
             }
         });
         return smartTextField;
+    }
+
+    private CheckBox createUploadCheckbox(final DatasourceConfig datasource)  {
+        CheckBox checkBox = new CheckBox();
+        checkBox.setImmediate(true);
+        checkBox.setEnabled(datasource.isUploadable());
+        checkBox.setValue(datasource.isUploadable() && datasource.isUpload());
+        checkBox.addListener(new Property.ValueChangeListener() {
+            public void valueChange(Property.ValueChangeEvent event) {
+                datasource.setUpload(((CheckBox) event.getProperty()).booleanValue());
+            }
+        });
+        return checkBox;
     }
 
     private Resource getDatasourceImage(DatasourceType type) {
@@ -200,10 +215,11 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
 
             @Override
             protected void onFileSelected(File file) {
-                DatasourceConfig newConfig = DatasourceConfig.create(UUID.randomUUID().toString(), file.getAbsolutePath());
+                DatasourceConfig newConfig = DatasourceConfig.create(UUID.randomUUID().toString(), null, file.getAbsolutePath());
                 if (newConfig != null) {
                     if (itemId != null) {
                         ((SmartTextField) myDatasources.getItem(itemId).getItemProperty("name").getValue()).setValue(newConfig.getName());
+                        ((CheckBox) myDatasources.getItem(itemId).getItemProperty("upload").getValue()).setEnabled(newConfig.isUploadable());
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
                         myDatasources.getItem(itemId).getItemProperty("icon").setValue(new Embedded("", getDatasourceImage(newConfig.getType())));
                         DatasourceConfig oldConfig = myConfigs.get(itemId);

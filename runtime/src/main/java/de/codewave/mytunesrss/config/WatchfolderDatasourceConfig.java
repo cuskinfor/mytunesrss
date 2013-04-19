@@ -275,4 +275,9 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         });
         return types;
     }
+
+    @Override
+    public boolean isUploadable() {
+        return true;
+    }
 }

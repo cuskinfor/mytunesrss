@@ -1249,6 +1249,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             readFileTypes(datasourceContext, watchfolderDatasourceConfig);
+                            watchfolderDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1278,6 +1279,7 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
                             readFileTypes(datasourceContext, itunesDatasourceConfig);
                             itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
+                            itunesDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1630,6 +1632,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", watchfolderDatasourceConfig.getPhotoThumbnailImportType().name()));
                     writeTrackImageMappings(settings, dataSource, watchfolderDatasourceConfig);
                     writeFileTypes(settings, dataSource, watchfolderDatasourceConfig);
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
                     break;
                 case Itunes:
                     ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
@@ -1656,6 +1659,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));
                     writeTrackImageMappings(settings, dataSource, itunesDatasourceConfig);
                     writeFileTypes(settings, dataSource, itunesDatasourceConfig);
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
                     break;
                 case Iphoto:
                     IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);

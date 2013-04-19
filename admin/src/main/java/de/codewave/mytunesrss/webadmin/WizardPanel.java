@@ -83,7 +83,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
             if (isAnyEmpty(myDatasourcePath, myUsername, myPassword, myRetypePassword)) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("wizardPanel.error.allFieldsMandatory");
             } else {
-                DatasourceConfig datasourceConfig = DatasourceConfig.create(UUID.randomUUID().toString(), myDatasourcePath.getStringValue(null));
+                DatasourceConfig datasourceConfig = DatasourceConfig.create(UUID.randomUUID().toString(), "Default", myDatasourcePath.getStringValue(null));
                 if (datasourceConfig == null) {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.invalidDatasourcePath");
                 } else if (!myPassword.getStringValue("1").equals(myRetypePassword.getStringValue("2"))) {

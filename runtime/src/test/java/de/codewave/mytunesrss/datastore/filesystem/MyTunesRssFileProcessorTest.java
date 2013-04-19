@@ -28,7 +28,7 @@ public class MyTunesRssFileProcessorTest {
     @Before
     public void before() throws URISyntaxException, SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
         MyTunesRssTestUtils.before();
-        myProcessor = new MyTunesRssFileProcessor(new WatchfolderDatasourceConfig("id1", "dummy1"), new DatabaseUpdateQueue(2500), 0, null, null);
+        myProcessor = new MyTunesRssFileProcessor(new WatchfolderDatasourceConfig("id1", "wfname", "dummy1"), new DatabaseUpdateQueue(2500), 0, null, null);
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());
     }
 

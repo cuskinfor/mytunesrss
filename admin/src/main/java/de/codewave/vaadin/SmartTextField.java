@@ -13,7 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import java.security.MessageDigest;
 import java.util.Map;
 
-public class SmartTextField extends TextField {
+public class SmartTextField extends TextField implements Comparable<SmartTextField> {
 
     public SmartTextField() {
     }
@@ -103,5 +103,12 @@ public class SmartTextField extends TextField {
     @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);    //To change body of overridden methods use File | Settings | File Templates.
+    }
+
+    public int compareTo(SmartTextField o) {
+        if (o == null) {
+            return -1;
+        }
+        return getStringValue("").compareTo(o.getStringValue(""));
     }
 }

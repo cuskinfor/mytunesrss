@@ -6,14 +6,12 @@
 package de.codewave.mytunesrss.config;
 
 import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
@@ -37,12 +35,14 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     private String myId;
     private List<FileType> myFileTypes = new ArrayList<FileType>();
     private long myLastUpdate;
+    private boolean myUpload;
 
     public DatasourceConfig(DatasourceConfig source) {
         myId = source.getId();
         myName = source.myName;
         myDefinition = source.getDefinition();
         myFileTypes = source.getFileTypes();
+        myUpload = source.isUpload();
     }
 
     public DatasourceConfig(String id, String name, String definition) {
@@ -149,5 +149,17 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public void setLastUpdate(long lastUpdate) {
         myLastUpdate = lastUpdate;
+    }
+
+    public boolean isUpload() {
+        return myUpload;
+    }
+
+    public void setUpload(boolean upload) {
+        myUpload = upload;
+    }
+
+    public boolean isUploadable() {
+        return false;
     }
 }

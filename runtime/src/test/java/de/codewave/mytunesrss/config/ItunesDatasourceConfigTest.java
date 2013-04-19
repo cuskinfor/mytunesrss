@@ -19,7 +19,7 @@ public class ItunesDatasourceConfigTest {
     public void testAutoAddFolder() throws URISyntaxException, ParserConfigurationException, SAXException, IOException {
         File tempFolder = new File(FileUtils.getTempDirectory(), UUID.randomUUID().toString());
         try {
-            ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig("test", new File(getClass().getResource("/itunes.xml").toURI()).getAbsolutePath());
+            ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig("test", "itname", new File(getClass().getResource("/itunes.xml").toURI()).getAbsolutePath());
             tempFolder.mkdir();
             File testAutoAddFolder = new File(tempFolder, "Automatically Add to iTunes.localized");
             itunesDatasourceConfig.addPathReplacement(new ReplacementRule("/Users/mdescher/Music/iTunes/iTunes Media", tempFolder.getAbsolutePath()));
