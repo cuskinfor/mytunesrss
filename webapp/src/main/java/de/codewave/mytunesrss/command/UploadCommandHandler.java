@@ -10,17 +10,15 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceType;
 import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.ProgressRequestWrapper;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.statistics.UploadEvent;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
-import org.apache.commons.compress.utils.CountingInputStream;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileItemStream;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
@@ -49,22 +47,39 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
+            if (!getAuthUser().isUpload()) {
+                throw new UnauthorizedException();
+            }
             FileItemFactory factory = new DiskFileItemFactory();
             ServletFileUpload upload = new ServletFileUpload(factory);
             Map<String, List<FileItem>> items = upload.parseParameterMap(new ProgressRequestWrapper(getRequest()));
             DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(items.get("datasource").get(0).getString("UTF-8"));
+            if (datasource == null || !datasource.isUpload() || !datasource.isUploadable()) {
+                throw new BadRequestException("Datasource missing or not uploadable.");
+            }
             List<File> uploadedItunesFiles = new ArrayList<File>();
             StringBuilder info = new StringBuilder();
-            for (FileItem item : items.get("file")) {
-                uploadedItunesFiles.addAll(processItem(datasource, item));
-                StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), items.size()));
-                info.append(item.getName()).append("\n");
+            int uploadCount = 0;
+            if (items.get("file") != null) {
+                for (FileItem item : items.get("file")) {
+                    if (item.getSize() > 0) {
+                        uploadCount++;
+                        uploadedItunesFiles.addAll(processItem(datasource, item));
+                        StatisticsEventManager.getInstance().fireEvent(new UploadEvent(getAuthUser().getName(), items.size()));
+                        info.append(item.getName()).append("\n");
+                    }
+                }
             }
-            triggerDatabaseUpdate(datasource, uploadedItunesFiles);
-            MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
-            forward(MyTunesRssResource.UploadFinished);
+            if (uploadCount == 0) {
+                addError(new BundleError("upload.error.noFiles"));
+                forward(MyTunesRssResource.RestartTopWindow);
+            } else {
+                triggerDatabaseUpdate(datasource, uploadedItunesFiles);
+                MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
+            }
+            forward(MyTunesRssResource.RestartTopWindow);
         } else {
-            forward(MyTunesRssResource.Login);
+            throw new UnauthorizedException();
         }
     }
 

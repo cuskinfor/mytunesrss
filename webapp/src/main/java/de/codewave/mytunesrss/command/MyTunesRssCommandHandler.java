@@ -257,6 +257,20 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 throttleBandwidth();
                 executeAuthorized();
             }
+        } catch (UnauthorizedException e) {
+            addError(new BundleError("error.illegalAccess"));
+            if (e.getResource() == null) {
+                forward(MyTunesRssResource.RestartTopWindow);
+            } else {
+                forward(e.getResource());
+            }
+        } catch (BadRequestException e) {
+            addError(new BundleError("error.badRequest", e.getMessage()));
+            if (e.getResource() == null) {
+                forward(MyTunesRssResource.RestartTopWindow);
+            } else {
+                forward(e.getResource());
+            }
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Unhandled exception: ", e);

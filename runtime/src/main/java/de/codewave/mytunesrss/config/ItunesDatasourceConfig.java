@@ -8,7 +8,6 @@ package de.codewave.mytunesrss.config;
 import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
-import de.codewave.mytunesrss.datastore.itunes.LibraryListener;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.PListHandlerListener;
 import de.codewave.utils.xml.XmlUtils;
@@ -22,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
 
@@ -33,12 +31,17 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
             "Automatically Add to iTunes.localized"
     };
 
+    private static class StopParsingException extends RuntimeException {
+        // Exception thrown when the parser requests to stop parsing
+    }
+
     private static class MusicFolderListener implements PListHandlerListener {
         private String myMusicFolder;
 
         public boolean beforeDictPut(Map dict, String key, Object value) {
             if ("Music Folder".equals(key)) {
                 myMusicFolder = value.toString();
+                throw new StopParsingException();
             }
             return true;
         }
@@ -59,9 +62,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private String myDisabledMp4Codecs = "";
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
+    private File myAutoAddToItunesFolder;
 
     public ItunesDatasourceConfig(String id, String name, String definition) {
         super(id, StringUtils.defaultIfBlank(name, "iTunes"), definition);
+        myAutoAddToItunesFolder = parseAutoAddToItunesFolder();
     }
 
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {
@@ -73,6 +78,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
         myTrackImageMappings = new ArrayList<ReplacementRule>(source.getTrackImageMappings());
         myTrackImageImportType = source.getTrackImageImportType();
+        myAutoAddToItunesFolder = source.getAutoAddToItunesFolder();
     }
 
     @Override
@@ -148,6 +154,10 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myTrackImageImportType = trackImageImportType;
     }
 
+    public File getAutoAddToItunesFolder() {
+        return myAutoAddToItunesFolder;
+    }
+
     public List<FileType> getDefaultFileTypes() {
         List<FileType> types = new ArrayList<FileType>();
         types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
@@ -172,12 +182,14 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
      *
      * @return The file representing the auto-add folder or NULL if no such folder could be found.
      */
-    public File getAutoAddToItunesFolder() {
+    private File parseAutoAddToItunesFolder() {
         PListHandler handler = new PListHandler();
         MusicFolderListener listener = new MusicFolderListener();
         handler.addListener("/plist/dict", listener);
         try {
+            LOGGER.debug("Parsing iTunes XML to find music folder.");
             XmlUtils.parseApplePList(new File(getDefinition()).toURI().toURL(), handler);
+            LOGGER.debug("Finished parsing iTunes XML without stop-exception!");
         } catch (ParserConfigurationException e) {
             LOGGER.warn("Could not find iTunes auto-add folder.", e);
             return null;
@@ -190,6 +202,8 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         } catch (IOException e) {
             LOGGER.warn("Could not find iTunes auto-add folder.", e);
             return null;
+        } catch (StopParsingException e) {
+            LOGGER.debug("Finished parsing iTunes XML with stop-exception!");
         }
         List<CompiledReplacementRule> pathReplacements = new ArrayList<CompiledReplacementRule>();
         for (ReplacementRule pathReplacement : getPathReplacements()) {
