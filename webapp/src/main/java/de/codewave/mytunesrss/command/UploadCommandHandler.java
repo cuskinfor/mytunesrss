@@ -60,6 +60,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             List<File> uploadedItunesFiles = new ArrayList<File>();
             StringBuilder info = new StringBuilder();
             int uploadCount = 0;
+            long lastModified = datasource.getDefinitionLastModified();
             if (items.get("file") != null) {
                 for (FileItem item : items.get("file")) {
                     if (item.getSize() > 0) {
@@ -74,7 +75,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 addError(new BundleError("upload.error.noFiles"));
                 forward(MyTunesRssResource.RestartTopWindow);
             } else {
-                triggerDatabaseUpdate(datasource, uploadedItunesFiles);
+                triggerDatabaseUpdate(datasource, uploadedItunesFiles, lastModified);
                 MyTunesRss.ADMIN_NOTIFY.notifyWebUpload(getAuthUser(), info.toString());
             }
             forward(MyTunesRssResource.RestartTopWindow);
@@ -83,7 +84,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private void triggerDatabaseUpdate(final DatasourceConfig datasource, final List<File> uploadedFiles) throws DatabaseJobRunningException {
+    private void triggerDatabaseUpdate(final DatasourceConfig datasource, final List<File> uploadedFiles, final long lastModifiedBeforeUpload) throws DatabaseJobRunningException {
         final long startTime = System.currentTimeMillis();
         MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
             public void run() {
@@ -93,12 +94,12 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                         iterFiles.remove();
                     }
                 }
-                if (!uploadedFiles.isEmpty()) {
-                    // iTunes has not consumed all files yet, so run the check again in 10 seconds
+                if (!uploadedFiles.isEmpty() || datasource.getDefinitionLastModified() == lastModifiedBeforeUpload) {
+                    // iTunes has not consumed all files yet or the XML has not been updated yet, so run the check again in 10 seconds
                     MyTunesRss.EXECUTOR_SERVICE.schedule(this, FILE_CHECK_DELAY_MILLIS, TimeUnit.MILLISECONDS);
                 } else {
                     try {
-                        // iTunes has consumed all files, so schedule a database update now
+                        // iTunes has consumed all files and the XML has been updated, so schedule a database update now
                         MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.<DatasourceConfig>singleton(datasource), false);
                     } catch (DatabaseJobRunningException e) {
                         // There is another database update running, so try to schedule the update again in 5 minutes

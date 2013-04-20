@@ -162,4 +162,9 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     public boolean isUploadable() {
         return false;
     }
+
+    public long getDefinitionLastModified() {
+        File file = new File(myDefinition);
+        return file.exists() ? file.lastModified() : 0;
+    }
 }
