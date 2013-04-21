@@ -23,6 +23,7 @@ public class ItunesDatasourceConfigTest {
             tempFolder.mkdir();
             File testAutoAddFolder = new File(tempFolder, "Automatically Add to iTunes.localized");
             itunesDatasourceConfig.addPathReplacement(new ReplacementRule("/Users/mdescher/Music/iTunes/iTunes Media", tempFolder.getAbsolutePath()));
+            itunesDatasourceConfig.addPathReplacement(new ReplacementRule("/Network/Servers/readynas.local/iTunes/iTunes Media", tempFolder.getAbsolutePath()));
             assertNull(itunesDatasourceConfig.getAutoAddToItunesFolder());
             testAutoAddFolder.mkdir();
             assertEquals(testAutoAddFolder.getAbsolutePath(), itunesDatasourceConfig.getAutoAddToItunesFolder().getAbsolutePath());

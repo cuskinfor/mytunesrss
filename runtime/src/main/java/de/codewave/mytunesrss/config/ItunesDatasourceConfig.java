@@ -62,11 +62,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private String myDisabledMp4Codecs = "";
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
-    private File myAutoAddToItunesFolder;
+    private String myMusicFolderFilename;
 
     public ItunesDatasourceConfig(String id, String name, String definition) {
         super(id, StringUtils.defaultIfBlank(name, "iTunes"), definition);
-        myAutoAddToItunesFolder = parseAutoAddToItunesFolder();
+        myMusicFolderFilename = extractMusicFolderFilename();
     }
 
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {
@@ -78,7 +78,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
         myTrackImageMappings = new ArrayList<ReplacementRule>(source.getTrackImageMappings());
         myTrackImageImportType = source.getTrackImageImportType();
-        myAutoAddToItunesFolder = source.getAutoAddToItunesFolder();
+        myMusicFolderFilename = extractMusicFolderFilename();
     }
 
     @Override
@@ -155,7 +155,26 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     public File getAutoAddToItunesFolder() {
-        return myAutoAddToItunesFolder;
+        List<CompiledReplacementRule> pathReplacements = new ArrayList<CompiledReplacementRule>();
+        for (ReplacementRule pathReplacement : getPathReplacements()) {
+            pathReplacements.add(new CompiledReplacementRule(pathReplacement));
+        }
+        String musicFolderFilename = myMusicFolderFilename;
+        for (CompiledReplacementRule pathReplacement : pathReplacements) {
+            if (pathReplacement.matches(musicFolderFilename)) {
+                musicFolderFilename = pathReplacement.replace(musicFolderFilename);
+                break;
+            }
+        }
+        for (String name : AUTO_ADD_NAMES) {
+            File file = new File(musicFolderFilename, name);
+            if (file.isDirectory()) {
+                LOGGER.debug("Found iTunes auto-add folder \"" + file.getAbsolutePath() + "\".");
+                return file;
+            }
+        }
+        LOGGER.debug("Could not find iTunes auto-add folder.");
+        return null;
     }
 
     public List<FileType> getDefaultFileTypes() {
@@ -182,7 +201,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
      *
      * @return The file representing the auto-add folder or NULL if no such folder could be found.
      */
-    private File parseAutoAddToItunesFolder() {
+    private String extractMusicFolderFilename() {
         PListHandler handler = new PListHandler();
         MusicFolderListener listener = new MusicFolderListener();
         handler.addListener("/plist/dict", listener);
@@ -205,26 +224,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         } catch (StopParsingException e) {
             LOGGER.debug("Finished parsing iTunes XML with stop-exception!");
         }
-        List<CompiledReplacementRule> pathReplacements = new ArrayList<CompiledReplacementRule>();
-        for (ReplacementRule pathReplacement : getPathReplacements()) {
-            pathReplacements.add(new CompiledReplacementRule(pathReplacement));
-        }
-        String musicFolderFilename = ItunesLoader.getFileNameForLocation(listener.getMusicFolder());
-        for (CompiledReplacementRule pathReplacement : pathReplacements) {
-            if (pathReplacement.matches(musicFolderFilename)) {
-                musicFolderFilename = pathReplacement.replace(musicFolderFilename);
-                break;
-            }
-        }
-        for (String name : AUTO_ADD_NAMES) {
-            File file = new File(musicFolderFilename, name);
-            if (file.isDirectory()) {
-                LOGGER.debug("Found iTunes auto-add folder \"" + file.getAbsolutePath() + "\".");
-                return file;
-            }
-        }
-        LOGGER.debug("Could not find iTunes auto-add folder.");
-        return null;
+        return ItunesLoader.getFileNameForLocation(listener.getMusicFolder());
     }
 
     @Override
