@@ -8,9 +8,9 @@ package de.codewave.mytunesrss.config;
 import de.codewave.mytunesrss.MyTunesRss;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.wetorrent.upnp.GatewayDevice;
-import org.wetorrent.upnp.GatewayDiscover;
-import org.wetorrent.upnp.PortMappingEntry;
+import org.bitlet.weupnp.GatewayDevice;
+import org.bitlet.weupnp.GatewayDiscover;
+import org.bitlet.weupnp.PortMappingEntry;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
