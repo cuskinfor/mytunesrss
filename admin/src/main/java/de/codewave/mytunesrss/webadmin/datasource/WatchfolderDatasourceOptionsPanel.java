@@ -67,13 +67,13 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         addComponent(panel);
 
         myFallbackForm = getComponentFactory().createForm(null, true);
-        myTitleFallback = getComponentFactory().createTextField("datasourceOptionsPanel.titleFallback");
-        myAlbumFallback = getComponentFactory().createTextField("datasourceOptionsPanel.albumFallback");
-        myArtistFallback = getComponentFactory().createTextField("datasourceOptionsPanel.artistFallback");
-        mySeriesFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seriesFallback");
-        mySeasonFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seasonFallback");
-        myEpisodeFallback = getComponentFactory().createTextField("datasourceOptionsPanel.episodeFallback");
-        myPhotoAlbumPattern = getComponentFactory().createTextField("datasourceOptionsPanel.photoAlbumPattern");
+        myTitleFallback = getComponentFactory().createTextField("datasourceOptionsPanel.titleFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        myAlbumFallback = getComponentFactory().createTextField("datasourceOptionsPanel.albumFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        myArtistFallback = getComponentFactory().createTextField("datasourceOptionsPanel.artistFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        mySeriesFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seriesFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        mySeasonFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seasonFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        myEpisodeFallback = getComponentFactory().createTextField("datasourceOptionsPanel.episodeFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        myPhotoAlbumPattern = getComponentFactory().createTextField("datasourceOptionsPanel.photoAlbumPattern", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
         myFallbackForm.addField(myTitleFallback, myTitleFallback);
         myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
         myFallbackForm.addField(myArtistFallback, myArtistFallback);

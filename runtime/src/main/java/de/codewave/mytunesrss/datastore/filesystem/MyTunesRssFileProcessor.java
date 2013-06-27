@@ -526,7 +526,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private String getFallbackArtistName(File file) {
-        return getFallbackName(file, new String(myDatasourceConfig.getArtistFallback()));
+        return myDatasourceConfig.getArtistFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getArtistFallback())) : null;
     }
 
 
@@ -557,64 +557,69 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     String getFallbackName(File file, String pattern) {
-        String name = new String(pattern);
-        String[] dirTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[dir:", "]]]");
-        if (dirTokens != null) {
-            for (String token : dirTokens) {
-                String[] numberAndRegExp = StringUtils.split(StringUtils.trimToEmpty(token), ":", 2);
-                for (int i = 0; i < numberAndRegExp.length; i++) {
-                    numberAndRegExp[i] = StringUtils.trimToNull(numberAndRegExp[i]);
-                }
-                if (numberAndRegExp.length > 0 && StringUtils.isNumeric(numberAndRegExp[0])) {
-                    int number = Integer.parseInt(numberAndRegExp[0]);
-                    File dir = file.getParentFile();
-                    while (dir != null && number > 0) {
-                        dir = dir.getParentFile();
-                        number--;
+        try {
+            String name = new String(pattern);
+            String[] dirTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[dir:", "]]]");
+            if (dirTokens != null) {
+                for (String token : dirTokens) {
+                    String[] numberAndRegExp = StringUtils.split(StringUtils.trimToEmpty(token), ":", 2);
+                    for (int i = 0; i < numberAndRegExp.length; i++) {
+                        numberAndRegExp[i] = StringUtils.trimToNull(numberAndRegExp[i]);
                     }
-                    if (dir != null && dir.isDirectory()) {
-                        if (numberAndRegExp.length == 1) {
-                            name = name.replace("[[[dir:" + token + "]]]", dir.getName());
-                        } else {
-                            Pattern regExpPattern = myPatterns.get(numberAndRegExp[1]);
-                            if (regExpPattern == null) {
-                                regExpPattern = Pattern.compile(numberAndRegExp[1]);
-                                myPatterns.put(numberAndRegExp[1], regExpPattern);
-                            }
-                            Matcher matcher = regExpPattern.matcher(dir.getName());
-                            if (matcher.find()) {
-                                name = name.replace("[[[dir:" + token + "]]]", matcher.group(matcher.groupCount()));
+                    if (numberAndRegExp.length > 0 && StringUtils.isNumeric(numberAndRegExp[0])) {
+                        int number = Integer.parseInt(numberAndRegExp[0]);
+                        File dir = file.getParentFile();
+                        while (dir != null && number > 0) {
+                            dir = dir.getParentFile();
+                            number--;
+                        }
+                        if (dir != null && dir.isDirectory()) {
+                            if (numberAndRegExp.length == 1) {
+                                name = name.replace("[[[dir:" + token + "]]]", dir.getName());
                             } else {
-                                name = name.replace("[[[dir:" + token + "]]]", "");
+                                Pattern regExpPattern = myPatterns.get(numberAndRegExp[1]);
+                                if (regExpPattern == null) {
+                                    regExpPattern = Pattern.compile(numberAndRegExp[1]);
+                                    myPatterns.put(numberAndRegExp[1], regExpPattern);
+                                }
+                                Matcher matcher = regExpPattern.matcher(dir.getName());
+                                if (matcher.find()) {
+                                    name = name.replace("[[[dir:" + token + "]]]", matcher.group(matcher.groupCount()));
+                                } else {
+                                    name = name.replace("[[[dir:" + token + "]]]", "");
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        String[] fileTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[file", "]]]");
-        if (fileTokens != null) {
-            for (String token : fileTokens) {
-                String trimmedToken = StringUtils.trimToNull(token);
-                if (trimmedToken != null && trimmedToken.length() > 1 && trimmedToken.startsWith(":")) {
-                    Pattern regExpPattern = myPatterns.get(trimmedToken.substring(1));
-                    if (regExpPattern == null) {
-                        regExpPattern = Pattern.compile(trimmedToken.substring(1));
-                        myPatterns.put(trimmedToken.substring(1), regExpPattern);
-                    }
-                    Matcher matcher = regExpPattern.matcher(file.getName());
-                    if (matcher.find()) {
-                        name = name.replace("[[[file" + token + "]]]", matcher.group(matcher.groupCount()));
+            String[] fileTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[file", "]]]");
+            if (fileTokens != null) {
+                for (String token : fileTokens) {
+                    String trimmedToken = StringUtils.trimToNull(token);
+                    if (trimmedToken != null && trimmedToken.length() > 1 && trimmedToken.startsWith(":")) {
+                        Pattern regExpPattern = myPatterns.get(trimmedToken.substring(1));
+                        if (regExpPattern == null) {
+                            regExpPattern = Pattern.compile(trimmedToken.substring(1));
+                            myPatterns.put(trimmedToken.substring(1), regExpPattern);
+                        }
+                        Matcher matcher = regExpPattern.matcher(file.getName());
+                        if (matcher.find()) {
+                            name = name.replace("[[[file" + token + "]]]", matcher.group(matcher.groupCount()));
+                        } else {
+                            name = name.replace("[[[file" + token + "]]]", "");
+                        }
                     } else {
-                        name = name.replace("[[[file" + token + "]]]", "");
+                        name = name.replace("[[[file" + token + "]]]", file.getName());
                     }
-                } else {
-                    name = name.replace("[[[file" + token + "]]]", file.getName());
                 }
             }
+            name = StringUtils.trimToNull(name);
+            LOGGER.debug("Fallback name for \"" + file + "\" and pattern \"" + pattern + "\" is \"" + name + "\".");
+            return name;
+        } catch (Exception e) {
+            LOGGER.warn("Could not create fallback name for \"" + file + "\" with pattern \"" + pattern + "\".");
         }
-        name = StringUtils.trimToNull(name);
-        LOGGER.debug("Fallback name for \"" + file + "\" and pattern \"" + pattern + "\" is \"" + name + "\".");
-        return name;
+        return null;
     }
 }
