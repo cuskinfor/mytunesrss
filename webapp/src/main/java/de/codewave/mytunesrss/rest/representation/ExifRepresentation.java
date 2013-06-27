@@ -15,7 +15,7 @@ import java.util.List;
  */
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ExifRepresentation {
+public class ExifRepresentation implements RestRepresentation {
     private List<ExifFieldRepresentation> myFields;
 
     public ExifRepresentation() {

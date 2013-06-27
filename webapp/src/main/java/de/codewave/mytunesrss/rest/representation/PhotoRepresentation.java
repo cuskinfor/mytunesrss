@@ -12,7 +12,7 @@ import java.net.URI;
 /**
  * Representation of a photo.
  */
-public class PhotoRepresentation {
+public class PhotoRepresentation implements RestRepresentation {
     private String myName;
     private String myFile;
     private long myDate;

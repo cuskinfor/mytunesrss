@@ -14,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class ExifFieldRepresentation {
+public class ExifFieldRepresentation implements RestRepresentation {
     private String myName;
     private String myValue;
 

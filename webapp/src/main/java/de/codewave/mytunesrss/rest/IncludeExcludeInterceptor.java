@@ -49,7 +49,7 @@ public class IncludeExcludeInterceptor implements PostProcessInterceptor, Accept
             Object item = iter.next();
             if (item instanceof RestRepresentation) {
                 handleRepresentation((RestRepresentation) item, includes, excludes);
-            } else if (items instanceof Collection) {
+            } else if (item instanceof Collection) {
                 handleList((List) item, includes, excludes);
             }
         }

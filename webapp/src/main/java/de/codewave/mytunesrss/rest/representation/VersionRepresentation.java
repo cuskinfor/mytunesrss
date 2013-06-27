@@ -10,7 +10,7 @@ import de.codewave.utils.Version;
 /**
  * Representation of the MyTunesRSS server version.
  */
-public class VersionRepresentation {
+public class VersionRepresentation implements RestRepresentation {
     private int myMajor;
     private int myMinor;
     private int myBugfix;

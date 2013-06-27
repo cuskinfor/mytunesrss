@@ -16,7 +16,7 @@ import java.net.URI;
  */
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
-public class PhotoAlbumRepresentation {
+public class PhotoAlbumRepresentation implements RestRepresentation {
 
     private long myFirstDate;
     private long myLastDate;
