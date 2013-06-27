@@ -558,7 +558,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     String getFallbackName(File file, String pattern) {
         String name = new String(pattern);
-        String[] dirTokens = StringUtils.substringsBetween(pattern, "[[[dir:", "]]]");
+        String[] dirTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[dir:", "]]]");
         if (dirTokens != null) {
             for (String token : dirTokens) {
                 String[] numberAndRegExp = StringUtils.split(StringUtils.trimToEmpty(token), ":", 2);
@@ -592,7 +592,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 }
             }
         }
-        String[] fileTokens = StringUtils.substringsBetween(pattern, "[[[file", "]]]");
+        String[] fileTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[file", "]]]");
         if (fileTokens != null) {
             for (String token : fileTokens) {
                 String trimmedToken = StringUtils.trimToNull(token);

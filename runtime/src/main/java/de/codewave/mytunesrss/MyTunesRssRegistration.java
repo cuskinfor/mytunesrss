@@ -142,7 +142,7 @@ public class MyTunesRssRegistration {
             String expirationDate = JXPathUtils.getStringValue(registrationContext, "/registration/expiration", null);
             String settingsText = JXPathUtils.getStringValue(registrationContext, "/registration/settings", null);
             if (settingsText != null) {
-                for (String token : StringUtils.substringsBetween(settingsText, "<!--", "-->")) {
+                for (String token : MyTunesRssUtils.substringsBetween(settingsText, "<!--", "-->")) {
                     String[] values = MyTunesRss.COMMAND_LINE_ARGS.get(StringUtils.trimToEmpty(token));
                     settingsText = settingsText.replace("<!--" + token + "-->", values != null && values.length > 0 ? values[0] : "");
                 }

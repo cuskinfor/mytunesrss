@@ -1760,7 +1760,7 @@ public class MyTunesRssConfig {
 
     private String migrateFallback(String fallback) {
         for (String type : new String[] {"dir", "file"}) {
-            for (String token : StringUtils.substringsBetween(fallback, "[" + type + ":", "]")) {
+            for (String token : MyTunesRssUtils.substringsBetween(fallback, "[" + type + ":", "]")) {
                 fallback = fallback.replace("[" + type + ":" + token + "]","[[[dir:" + token + "]]]");
             }
         }

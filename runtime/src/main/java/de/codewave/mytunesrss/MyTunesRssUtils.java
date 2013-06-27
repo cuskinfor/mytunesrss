@@ -873,4 +873,26 @@ public class MyTunesRssUtils {
         name = name.replace('\'', '_');
         return name;
     }
+    
+    public static String[] substringsBetween(String s, String left, String right) {
+        List<String> tokens = new ArrayList<String>();
+        if (StringUtils.isNotEmpty(s) && StringUtils.isNotEmpty(left) && StringUtils.isNotEmpty(right) && s.length() >= left.length() + right.length()) {
+            int k;
+            for (int i = s.indexOf(left); i > -1; i = s.indexOf(left, k + right.length())) {
+                k = s.indexOf(right, i + 1);
+                if (k == -1) {
+                    break; // no more end tokens, we are done
+                }
+                // go right as far as possible while keeping the end boundary  
+                while (k + 1 + right.length() <= s.length() && right.equals(s.substring(k + 1, k + 1 + right.length()))) {
+                    k++;
+                }
+                tokens.add(s.substring(i + left.length(), k));
+                if (k + right.length() >= s.length()) {
+                    break; // end of input string reached, we are done
+                }
+            }
+        }
+        return tokens.toArray(new String[tokens.size()]);
+    }
 }
