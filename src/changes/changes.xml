@@ -9,6 +9,9 @@
 
         <release version="4.8.1" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-437] Lucene tracks table does not exist
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-439] Fallback regexp exception breaks update completely
             </action>
             <action dev="mdescher" type="fix">

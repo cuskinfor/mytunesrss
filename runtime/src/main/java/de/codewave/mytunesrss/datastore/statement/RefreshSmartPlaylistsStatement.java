@@ -37,7 +37,6 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         if (mySmartInfos == null || mySmartInfos.isEmpty() || StringUtils.isBlank(myPlaylistId)) {
             Collection<SmartPlaylist> smartPlaylists = new DataStoreQuery<Collection<SmartPlaylist>>() {
                 @Override
@@ -63,6 +62,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         try {
             if (SmartInfo.isLuceneCriteria(smartInfos)) {
                 Collection<String> trackIds = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(smartInfos, 0, 10000);
+                MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
                 MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
                 if (!CollectionUtils.isEmpty(trackIds)) {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
