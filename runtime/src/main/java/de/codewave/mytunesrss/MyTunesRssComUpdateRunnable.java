@@ -9,6 +9,7 @@ import de.codewave.utils.MiscUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,7 @@ public class MyTunesRssComUpdateRunnable implements Runnable {
                                 "\".");
                     }
                 }
-                postMethod.addParameter("context", MyTunesRss.CONFIG.getWebappContext());
+                postMethod.addParameter("context", StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext()));
                 HttpClient client = MyTunesRssUtils.createHttpClient();
                 try {
                     MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.MYTUNESRSS_COM_UPDATED);

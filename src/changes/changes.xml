@@ -9,6 +9,9 @@
 
         <release version="4.8.1" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-438] MyTunesRSS COM Update fails
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-436] Fallback patterns with trailing bracket do not work
             </action>
             <action dev="mdescher" type="fix">
