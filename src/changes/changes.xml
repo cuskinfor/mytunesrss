@@ -9,6 +9,9 @@
 
         <release version="4.8.1" date="___D___">
             <action dev="mdescher" type="fix">
+                Photo thumbnail and original image URIs not correctly encoded for REST representations.
+            </action>
+            <action dev="mdescher" type="fix">
                 Some REST representation objects did not implement the RestRepresentation interface.
             </action>
             <action dev="mdescher" type="fix">

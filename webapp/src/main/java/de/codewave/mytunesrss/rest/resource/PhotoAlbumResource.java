@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.PhotoRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.validator.constraints.Range;
@@ -34,9 +35,8 @@ public class PhotoAlbumResource extends RestResource {
     /**
      * Get the photos of an album.
      *
-     * @param albumId A photo album ID.
+     * @param albumId   A photo album ID.
      * @param photoSize Photo size used for the image URIs.
-
      * @return List of photos.
      */
     @GET
@@ -61,12 +61,12 @@ public class PhotoAlbumResource extends RestResource {
             if (StringUtils.isNotBlank(photo.getImageHash())) {
                 photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + photo.getImageHash())));
             } else {
-                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "photoId=" + photo.getId())));
+                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
             }
             if (photoSize != null) {
-                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + photo.getId()), enc(request, "size=" + photoSize)));
+                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc(request, "size=" + photoSize)));
             } else {
-                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + photo.getId())));
+                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
             }
             photoRepresentation.setExifDataUri(uriInfo.getBaseUriBuilder().path(PhotoResource.class).path(PhotoResource.class, "getExifData").build(photo.getId()));
             results.add(photoRepresentation);
