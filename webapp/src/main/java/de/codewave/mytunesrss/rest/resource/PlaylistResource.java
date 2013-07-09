@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -16,16 +17,14 @@ import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @ValidateRequest
 @Path("playlist")
@@ -73,6 +72,41 @@ public class PlaylistResource extends RestResource {
         request.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, queryResult.nextResult());
         request.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS, tracks);
         return Response.created(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).build()).build();
+    }
+
+    /**
+     * Refresh a smart playlist owned by the current user. The request fails if the playlist
+     * is not a smart playlist or if it is not owned by the current user.
+     *
+     * @param uriInfo
+     * @param playlist The ID of the playlist to refresh.
+     *
+     * @return The playlist after the refresh has finished.
+     *
+     * @throws SQLException
+     */
+    @POST
+    @Path("{playlist}/refresh")
+    @Produces({"application/json"})
+    @GZIP
+    public PlaylistRepresentation refreshSmartPlaylist(
+            @Context UriInfo uriInfo,
+            @Context HttpServletRequest request,
+            @PathParam("playlist") String playlist
+    ) throws SQLException {
+        SmartPlaylist smartPlaylist = TransactionFilter.getTransaction().executeQuery(new FindSmartPlaylistQuery(playlist));
+        if (smartPlaylist == null) {
+            throw new NotFoundException("No smart playlist \"" + playlist + "\" found.");
+        }
+        if (!MyTunesRssWebUtils.getAuthUser(request).getName().equals(smartPlaylist.getPlaylist().getUserOwner())) {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "PLAYLIST_NOT_OWNER");
+        }
+        Collection<SmartInfo> smartInfos = smartPlaylist.getSmartInfos();
+        if (smartInfos != null) {
+            TransactionFilter.getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, playlist));
+        }
+        smartPlaylist = TransactionFilter.getTransaction().executeQuery(new FindSmartPlaylistQuery(playlist));
+        return toPlaylistRepresentation(uriInfo, request, smartPlaylist.getPlaylist());
     }
 
     /**

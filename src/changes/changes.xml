@@ -9,10 +9,13 @@
 
         <release version="4.9" date="2013-xx-xx">
             <action dev="mdescher" type="add">
+                Added refresh REST resource for smart playlist owned by the current user.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-441] New smart playlist criteria
             </action>
         </release>
-        
+
         <release version="4.8.1" date="2013-07-02">
             <action dev="mdescher" type="fix">
                 Photo thumbnail and original image URIs not correctly encoded for REST representations.
