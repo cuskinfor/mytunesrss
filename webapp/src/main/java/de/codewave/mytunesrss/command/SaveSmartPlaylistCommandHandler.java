@@ -60,11 +60,11 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
     }
     
     private void handleError() throws IOException, ServletException {
-        getRequest().setAttribute("smartPlaylist", createRedisplayModel(null));
+        getRequest().setAttribute("smartPlaylist", createRedisplayModel(null, null));
         forward(MyTunesRssResource.EditSmartPlaylist);
     }
 
-    protected Map<String, Object> createRedisplayModel(String remove) throws IOException, ServletException {
+    protected Map<String, Object> createRedisplayModel(String remove, Map<String, String> add) throws IOException, ServletException {
         Map<String, Object> playlistModel = new HashMap<String, Object>();
         playlistModel.put("name", getRequestParameter("smartPlaylist.playlist.name", null));
         playlistModel.put("id", getRequestParameter("smartPlaylist.playlist.id", null));
@@ -84,9 +84,28 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
         }
+        if (add != null) { 
+            smartInfos.add(add);
+        }
         Map<String, Object> smartPlaylistModel = new HashMap<String, Object>();
         smartPlaylistModel.put("smartInfos", smartInfos);
         smartPlaylistModel.put("playlist", playlistModel);
+        sortModelSmartInfos(smartPlaylistModel);
         return smartPlaylistModel;
+    }
+
+    private void sortModelSmartInfos(Map<String, Object> model) {
+        List<Map<String, String>> smartInfos = (List<Map<String, String>>) model.get("smartInfos"); 
+        Collections.sort(smartInfos, new Comparator<Map<String, String>>() {
+            public int compare(Map<String, String> o1, Map<String, String> o2) {
+                try {
+                    int v1 = EditSmartPlaylistCommandHandler.getSmartTypeSortValue(SmartFieldType.valueOf(o1.get("fieldType")), Boolean.valueOf(o1.get("invert")));
+                    int v2 = EditSmartPlaylistCommandHandler.getSmartTypeSortValue(SmartFieldType.valueOf(o2.get("fieldType")), Boolean.valueOf(o2.get("invert")));
+                    return v1 - v2;
+                } catch (IllegalArgumentException e) {
+                    return 0;
+                }
+            }
+        });
     }
 }

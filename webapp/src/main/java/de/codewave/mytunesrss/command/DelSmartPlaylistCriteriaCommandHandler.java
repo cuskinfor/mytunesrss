@@ -17,8 +17,7 @@ public class DelSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCom
 
     @Override
     public void executeAuthorized() throws IOException, ServletException {
-        Map<String,Object> redisplayModel = createRedisplayModel(getRequestParameter("remove", null));
-        getRequest().setAttribute("smartPlaylist", redisplayModel);
+        getRequest().setAttribute("smartPlaylist", createRedisplayModel(getRequestParameter("remove", null), null));
         forward(MyTunesRssResource.EditSmartPlaylist);
     }
 }

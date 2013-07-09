@@ -5,19 +5,17 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.datastore.statement.SmartFieldType;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AddSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCommandHandler {
 
     @Override
     public void executeAuthorized() throws IOException, ServletException {
-        Map<String,Object> redisplayModel = createRedisplayModel(null);
         Map<String, String> newModel = new HashMap<String, String>();
         String fieldType = getRequestParameter("newFieldType", "");
         if (fieldType.endsWith(".not")) {
@@ -28,8 +26,8 @@ public class AddSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCom
             newModel.put("invert", "false");
         }
         newModel.put("pattern", "");
-        ((List <Map<String, String>>)redisplayModel.get("smartInfos")).add(newModel);
-        getRequest().setAttribute("smartPlaylist", redisplayModel);
+        getRequest().setAttribute("smartPlaylist", createRedisplayModel(null, newModel));
         forward(MyTunesRssResource.EditSmartPlaylist);
     }
+
 }

@@ -95,7 +95,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         conditionals.put("videotype", true);
                         break;
                     case randomOrder:
-                        conditionals.remove("order");
+                        conditionals.put("order", false);
                         conditionals.put("random", true);
                         break;
                     case sizeLimit:
