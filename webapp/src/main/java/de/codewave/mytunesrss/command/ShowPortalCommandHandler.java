@@ -12,12 +12,15 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,9 +28,22 @@ import java.util.UUID;
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowPortalCommandHandler.class);
 
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         if (isSessionAuthorized()) {
+            String refreshSmartPlaylistId = getRequestParameter("refreshSmartPlaylistId", null);
+            if (StringUtils.isNotBlank(refreshSmartPlaylistId)) {
+                SmartPlaylist smartPlaylist = getTransaction().executeQuery(new FindSmartPlaylistQuery(refreshSmartPlaylistId));
+                if (smartPlaylist != null) {
+                    Collection<SmartInfo> smartInfos = smartPlaylist.getSmartInfos();
+                    if (smartInfos != null) {
+                        LOGGER.debug("Refreshing smart playlist \"" + smartPlaylist.getPlaylist().getName() + "\" with ID \"" + smartPlaylist.getPlaylist().getId() + "\".");
+                        getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, refreshSmartPlaylistId));
+                    }
+                }
+            }
             String containerId = getRequestParameter("cid", null);
             List<Playlist> playlists = new ArrayList<Playlist>();
             if (StringUtils.isEmpty(containerId) && getAuthUser().isSpecialPlaylists()) {

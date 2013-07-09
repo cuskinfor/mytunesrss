@@ -196,6 +196,7 @@
                         </c:otherwise>
                     </c:choose>
                     <c:if test="${playlist.type == 'Random'}"><img id="linkRefreshRandomPlaylist" style="vertical-align:middle;cursor:pointer" src="${themeUrl}/images/refresh.png" onclick="showLoading('<fmt:message key="loading.createRandomPlaylist"><fmt:param><c:out value="${playlist.name}" /></fmt:param></fmt:message>');self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">forceNewRandomPlaylist=true</mt:encrypt>'"/></c:if>
+                    <c:if test="${playlist.type == 'MyTunesSmart'}"><img id="linkRefreshSmartPlaylist${loopStatus.index}" style="vertical-align:middle;cursor:pointer" src="${themeUrl}/images/refresh.png" onclick="showLoading('<fmt:message key="loading.refreshSmartPlaylist"><fmt:param><c:out value="${playlist.name}" /></fmt:param></fmt:message>');self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">refreshSmartPlaylistId=${playlist.id}</mt:encrypt>'"/></c:if>
                 </td>
                 <td class="tracks">
                     <c:choose>

@@ -6,7 +6,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 public enum SmartFieldType {
-    album(), artist(), genre(), tvshow(), title(), file(), tag(), comment(), mintime(), maxtime(), mediatype(), videotype(), protection(), composer(), datasource();
+    album(), artist(), genre(), tvshow(), title(), file(), tag(), comment(), mintime(), maxtime(), mediatype(), videotype(), protection(), composer(), datasource(), randomOrder(), sizeLimit();
 
     public boolean isLucene() {
         switch (this) {

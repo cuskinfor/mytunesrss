@@ -716,7 +716,8 @@
                 <videotype>AND t.videotype = :videotype</videotype>
                 <protected>AND t.protected = :protected</protected>
                 <datasource>AND t.source_id = :source_id</datasource>
-                ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)
+                <order>ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order>
+                {smartPlaylistOrderAndLimit}
             ]]>
         </sql>
         <sql>

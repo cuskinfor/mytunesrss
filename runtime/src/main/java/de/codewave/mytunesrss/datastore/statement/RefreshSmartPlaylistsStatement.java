@@ -71,6 +71,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 }
             }
             Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+            conditionals.put("order", true);
             conditionals.put("lucene", SmartInfo.isLuceneCriteria(smartInfos));
             conditionals.put("nolucene", !SmartInfo.isLuceneCriteria(smartInfos));
             for (SmartInfo smartInfo : smartInfos) {
@@ -92,6 +93,13 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         break;
                     case videotype:
                         conditionals.put("videotype", true);
+                        break;
+                    case randomOrder:
+                        conditionals.remove("order");
+                        conditionals.put("random", true);
+                        break;
+                    case sizeLimit:
+                        conditionals.put("limit", true);
                         break;
                 }
             }
@@ -116,6 +124,9 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         break;
                     case videotype:
                         statement.setString("videotype", smartInfo.getPattern());
+                        break;
+                    case sizeLimit:
+                        statement.setInt("maxCount", Integer.parseInt(smartInfo.getPattern()));
                         break;
                 }
             }

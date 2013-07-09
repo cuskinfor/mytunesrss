@@ -18,7 +18,7 @@ public class EditSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         smartPlaylist.setPlaylist(new Playlist());
         smartPlaylist.setSmartInfos(new ArrayList<SmartInfo>());
         if (StringUtils.isNotBlank(playlistId)) {
-            smartPlaylist = getTransaction().executeQuery(new FindSmartPlaylistQuery(playlistId)).iterator().next();
+            smartPlaylist = getTransaction().executeQuery(new FindSmartPlaylistQuery(playlistId));
         }
         getRequest().setAttribute("smartPlaylist", smartPlaylist);
         forward(MyTunesRssResource.EditSmartPlaylist);

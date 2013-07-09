@@ -15,18 +15,19 @@ import java.util.Collection;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindSmartPlaylistQuery
  */
-public class FindSmartPlaylistQuery extends DataStoreQuery<Collection<SmartPlaylist>> {
+public class FindSmartPlaylistQuery extends DataStoreQuery<SmartPlaylist> {
     private String myId;
 
     public FindSmartPlaylistQuery(String id) {
         myId = id;
     }
 
-    public Collection<SmartPlaylist> execute(Connection connection) throws SQLException {
+    public SmartPlaylist execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findSmartPlaylistById");
         statement.setString("id", myId);
         SmartPlaylistResultBuilder builder = new SmartPlaylistResultBuilder();
         execute(statement, builder).getResults();
-        return builder.getSmartPlaylists();
+        Collection<SmartPlaylist> smartPlaylists = builder.getSmartPlaylists();
+        return smartPlaylists.size() == 1 ? smartPlaylists.iterator().next() : null;
     }
 }

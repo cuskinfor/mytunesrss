@@ -7,6 +7,8 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
+<%--@elvariable id="smartPlaylist" type="de.codewave.mytunesrss.datastore.statement.SmartPlaylist"--%>  
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -106,7 +108,19 @@
                                             <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
+                                    <c:when test="${smartInfo.fieldType == 'randomOrder'}">
+                                        <c:set var="hasRandomOrder" value="true" />
+                                        <td>
+                                            <input type="hidden" id="smartCriteriaValue${loopStatus.index}" name="pattern_${loopStatus.index}" value="dummy" />
+                                        </td>
+                                        <td class="smartPlaylistDelCriteria">
+                                            <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
+                                        </td>
+                                    </c:when>
                                     <c:otherwise>
+                                        <c:if test="${smartInfo.fieldType == 'sizeLimit'}">
+                                            <c:set var="hasSizeLimit" value="true" />
+                                        </c:if>
                                         <td><input id="smartCriteriaValue${loopStatus.index}" type="text" name="pattern_${loopStatus.index}" value="<c:out value="${smartInfo.pattern}"/>" /></td>
                                         <td class="smartPlaylistDelCriteria">
                                             <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
@@ -147,6 +161,12 @@
                                     <option value="mediatype"><fmt:message key="smartPlaylist.smartInfo.mediatype"/></option>
                                     <option value="videotype"><fmt:message key="smartPlaylist.smartInfo.videotype"/></option>
                                     <option value="protection"><fmt:message key="smartPlaylist.smartInfo.protection"/></option>
+                                    <c:if test="${!hasRandomOrder}">
+                                        <option value="randomOrder"><fmt:message key="smartPlaylist.smartInfo.randomOrder"/></option>
+                                    </c:if>
+                                    <c:if test="${!hasSizeLimit}">
+                                        <option value="sizeLimit"><fmt:message key="smartPlaylist.smartInfo.sizeLimit"/></option>
+                                    </c:if>
                                 </select>
                                 <input id="linkAddCriteria" type="submit" value="<fmt:message key="smartPlaylist.smartInfo.add"/>" onclick="$jQ('#playlist').attr('action', '${servletUrl}/addSmartPlaylistCriteria/${auth}');return true;"/>
                             </td>
