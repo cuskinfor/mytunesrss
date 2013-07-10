@@ -312,4 +312,10 @@
         </sql>
     </statement>
 
+    <statement name="migrate_4.9">
+        <sql>
+            DELETE from playlist WHERE type = 'Random'
+        </sql>
+    </statement>
+
 </statements>

@@ -44,7 +44,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         webConfig.setPlaylistType(getRequestParameter("playlistType", "m3u"));
         webConfig.setShowPlayer(getBooleanRequestParameter("showPlayer", false));
         webConfig.setTheme(getRequest().getParameter("theme"));
-        webConfig.setRandomSource(getRequestParameter("randomSource", ""));
         webConfig.setFlashplayer(StringUtils.trimToNull(getRequestParameter("flashplayer", null)));
         webConfig.setYahooMediaPlayer(getBooleanRequestParameter("showYahooMediaPlayer", false));
         webConfig.setBrowserStartIndex(getRequest().getParameter("browserStartIndex"));
@@ -68,7 +67,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidateMaxSearchResults(webConfig);
         error |= transferAndValidatePhotoPageSize(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
-        error |= transferAndValidateRandomValues(webConfig);
         error |= transferAndValidateLastUpdatedTrackCount(webConfig);
         error |= transferAndValidateMostPlayedTrackCount(webConfig);
         error |= transferAndValidateRecentlyPlayedTrackCount(webConfig);
@@ -122,22 +120,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
         }
-        return false;
-    }
-
-    private boolean transferAndValidateRandomValues(WebConfig webConfig) {
-        try {
-            webConfig.setRandomPlaylistSize(getIntegerRequestParameter("randomPlaylistSize", 0));
-            if (webConfig.getRandomPlaylistSize() < 0 || webConfig.getRandomPlaylistSize() > 999) {
-                addError(new BundleError("error.settingsRandomPlaylistSizeRange"));
-                return true;
-            }
-        } catch (NumberFormatException e) {
-            addError(new BundleError("error.settingsRandomPlaylistSizeRange"));
-            return true;
-        }
-        webConfig.setRandomMediaType(getRequestParameter("randomMediaType", ""));
-        webConfig.setRandomProtected(getBooleanRequestParameter("randomProtected", false));
         return false;
     }
 

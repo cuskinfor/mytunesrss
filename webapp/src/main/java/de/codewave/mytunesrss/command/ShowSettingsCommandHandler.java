@@ -30,12 +30,6 @@ public class ShowSettingsCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
             getRequest().setAttribute("themes", themes);
-            getRequest().setAttribute("playlists", getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                       null,
-                                                                                                       null,
-                                                                                                       null,
-                                                                                                       false,
-                                                                                                       false)).getResults());
             forward(MyTunesRssResource.Settings);
         } else {
             forward(MyTunesRssResource.Login);

@@ -201,49 +201,6 @@
                         </c:if>
                         <c:if test="${authUser.specialPlaylists}">
                             <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.randomPlaylistSize" /></td>
-                                <td>
-                                    <input class="number"
-                                           type="text"
-                                           name="randomPlaylistSize"
-                                           maxlength="3"
-                                           value="<c:out value="${cwfn:choose(config.randomPlaylistSize > 0, config.randomPlaylistSize, '')}"/>" />
-                                </td>
-                            </tr>
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.randomSource" /></td>
-                                <td>
-                                    <select name="randomSource">
-                                        <option value=""><fmt:message key="settings.randomSourceAll"/></option>
-                                        <c:forEach items="${playlists}" var="playlist">
-                                            <option value="${playlist.id}" <c:if test="${config.randomSource eq playlist.id}">selected="selected"</c:if>><c:out value="${playlist.name}"/></option>
-                                        </c:forEach>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.randomType" /></td>
-                                <td>
-                                    <select name="randomMediaType">
-                                        <option value="" <c:if test="${empty config.randomMediaType}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAll"/></option>
-                                        <option value="Audio" <c:if test="${config.randomMediaType == 'Audio'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeAudio"/></option>
-                                        <option value="Video" <c:if test="${config.randomMediaType == 'Video'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeVideo"/></option>
-                                        <option value="Image" <c:if test="${config.randomMediaType == 'Image'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeImage"/></option>
-                                        <option value="Other" <c:if test="${config.randomMediaType == 'Other'}">selected="selected"</c:if>><fmt:message key="settings.randomMediaTypeOther"/></option>
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.randomProtected" /></td>
-                                <td>
-                                    <input type="checkbox"
-                                           name="randomProtected"
-                                           value="true" <c:if test="${config.randomProtected}">checked="checked"</c:if>/>
-                                </td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${authUser.specialPlaylists}">
-                            <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.lastUpdatedPlaylistSize" /></td>
                                 <td>
                                     <input class="number"

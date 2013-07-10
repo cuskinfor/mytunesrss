@@ -254,6 +254,13 @@ public class MigrationStatement implements DataStoreStatement {
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                         MyTunesRss.RUN_DATABASE_REFRESH_ON_STARTUP = true; // force a database refresh to insert the source ids!
                     }
+                    // migration for 4.9
+                    if (databaseVersion.compareTo(new Version("4.9")) < 0) {
+                        LOG.info("Migrating database to 4.9.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_4.9").execute();
+                        databaseVersion = new Version("4.9");
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
                 } finally {
                     connection.setAutoCommit(autoCommit);
                 }

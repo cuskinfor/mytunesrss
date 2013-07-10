@@ -162,7 +162,7 @@ public class LibraryResource extends RestResource {
      *
      * @param includeHidden "true" to include playlists which should be hidden from user interfaces (admin setting).
      * @param matchingOwner "true" to return only playlists owned by the currently logged in user.
-     * @param types List of playlist types to return (Possible values: "ITunes", "MyTunes", "M3uFile", "ITunesFolder", "MyTunesSmart", "Random", "System").
+     * @param types List of playlist types to return (Possible values: "ITunes", "MyTunes", "M3uFile", "ITunesFolder", "MyTunesSmart", "System").
      * @param root "true" to return only root playlists, i.e. playlists which do not have a parent playlist (iTunes folder).
      *
      * @return A list of playlists.

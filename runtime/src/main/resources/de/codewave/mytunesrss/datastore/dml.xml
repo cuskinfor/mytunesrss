@@ -110,7 +110,7 @@
             <![CDATA[
             SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
             FROM playlist p<restricted>, link_track_playlist rltp</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded>
-            WHERE type != 'TEMP' AND type != 'Random'
+            WHERE type != 'TEMP'
             <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
             <matching>AND user_owner = :username</matching>
             <user>AND (user_private IS NULL OR user_private = FALSE OR user_owner = :username)</user>
@@ -136,17 +136,6 @@
             <rootcontainer>AND container_id IS NULL</rootcontainer>
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
             ORDER BY LOWER(name)
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findRandomPlaylist">
-        <sql>
-            <![CDATA[
-            SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
-            FROM playlist p
-            WHERE type = 'Random'
-            AND user_owner = :username
             ]]>
         </sql>
     </statement>
@@ -803,34 +792,6 @@
     <statement name="getTrackTagMap">
         <sql>
             SELECT t.id, tg.tag FROM track t, tag tg WHERE t.id = tg.track_id
-        </sql>
-    </statement>
-
-    <statement name="findRandomTracks">
-        <sql>
-            <![CDATA[
-            {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp</restricted><sourceplaylist>, link_track_playlist spltp</sourceplaylist>
-            WHERE {alwaysTrueCondition}
-            <unprotectedonly>AND NOT t.protected</unprotectedonly>
-            <mediatype>AND t.mediatype = :mediatype</mediatype>
-            <videotype>AND t.videotype = :videotype</videotype>
-            <sourceplaylist>
-                AND spltp.playlist_id = :sourcePlaylistId
-                AND t.id = spltp.track_id
-            </sourceplaylist>
-            <restricted>
-                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
-            <excluded>
-                AND t.id NOT IN (
-                    SELECT eltp.track_id FROM link_track_playlist eltp
-                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
-                )
-            </excluded>
-            {findRandomTracksOrderClause}
-            ]]>
         </sql>
     </statement>
 

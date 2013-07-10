@@ -30,8 +30,6 @@
 
     <fragment name="selectLimitedTracks">SELECT LIMIT 0 :maxCount {trackColumns}</fragment>
 
-    <fragment name="findRandomTracksOrderClause">ORDER BY RAND()</fragment>
-
     <fragment name="findLastUpdatedTracksOrderClause">ORDER BY ts_updated DESC</fragment>
 
     <fragment name="findMostPlayedTracksOrderClause">ORDER BY playcount DESC</fragment>

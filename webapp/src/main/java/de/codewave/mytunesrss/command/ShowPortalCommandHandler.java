@@ -6,7 +6,6 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -22,7 +21,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
@@ -71,14 +69,6 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                                                PlaylistType.MyTunesSmart,
                                                MessageFormat.format(getBundleString("playlist.specialLastUpdated"), lastUpdatedPlaylistSize),
                                                lastUpdatedPlaylistSize));
-                }
-                Playlist randomPlaylist = getBooleanRequestParameter("forceNewRandomPlaylist", false) ? null : MyTunesRssWebUtils.findRandomPlaylist(getTransaction(), getAuthUser());
-                if (randomPlaylist == null) {
-                    randomPlaylist = MyTunesRssWebUtils.createRandomPlaylist(getTransaction(), getAuthUser(), getWebConfig(), UUID.randomUUID().toString());
-                }
-                if (randomPlaylist.getTrackCount() > 0) {
-                    randomPlaylist.setName(MessageFormat.format(getBundleString("playlist.specialRandomWholeLibrary"), randomPlaylist.getTrackCount()));
-                    playlists.add(randomPlaylist);
                 }
             }
             if (StringUtils.isNotEmpty(containerId)) {

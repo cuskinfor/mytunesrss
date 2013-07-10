@@ -161,7 +161,7 @@ public class PlaylistResource extends RestResource {
      * @param playlist A playlist ID (should be an iTunes folder).
      * @param includeHidden "true" to include hidden playlists which should not be shown in user interfaces.
      * @param matchingOwner "true" to return playlists owned by the currently logged in user only.
-     * @param types List of playlist types to return (Possible values: "ITunes", "MyTunes", "M3uFile", "ITunesFolder", "MyTunesSmart", "Random", "System").
+     * @param types List of playlist types to return (Possible values: "ITunes", "MyTunes", "M3uFile", "ITunesFolder", "MyTunesSmart", "System").
      *
      * @return List of playlists.
      *

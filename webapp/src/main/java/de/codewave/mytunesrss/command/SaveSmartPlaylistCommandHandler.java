@@ -51,6 +51,9 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
             return;
         }
         SaveMyTunesSmartPlaylistStatement statement = new SaveMyTunesSmartPlaylistStatement(getAuthUser().getName(), getBooleanRequestParameter("smartPlaylist.playlist.userPrivate", false), smartInfos);
+        if (!getAuthUser().isCreatePublicPlaylists()) {
+            statement.setUserPrivate(true);
+        }
         statement.setId(getRequestParameter("smartPlaylist.playlist.id", null));
         statement.setName(getRequestParameter("smartPlaylist.playlist.name", null));
         statement.setTrackIds(Collections.<String>emptyList());

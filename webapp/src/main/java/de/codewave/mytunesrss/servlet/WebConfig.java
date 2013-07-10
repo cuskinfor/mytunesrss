@@ -34,19 +34,15 @@ public class WebConfig {
     private static final String CFG_PHOTO_PAGE_SIZE = "photoPageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static final String CFG_SHOW_PLAYER = "showPlayer";
-    private static final String CFG_RANDOM_PLAYLIST_SIZE = "randomPlaylistSize";
     private static final String CFG_LAST_UPDATED_PLAYLIST_SIZE = "lastUpdatedPlaylistSize";
     private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
     private static final String CFG_RECENTLY_PLAYED_PLAYLIST_SIZE = "recentlyPlayedPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static final String CFG_THEME = "theme";
-    private static final String CFG_RANDOM_SOURCE = "rndSrc";
     private static final String CFG_FLASH_PLAYER = "flashplayer";
     private static final String CFG_YAHOO_MEDIAPLAYER = "yahooMediaPlayer";
     private static final String CFG_BROWSER_START_INDEX = "browserStartIndex";
     private static final String CFG_MYTUNESRSSCOM_ADDRESS = "myTunesRssComAddress";
-    private static final String CFG_RANDOM_MEDIATYPE = "rndMedia";
-    private static final String CFG_RANDOM_PROTECTED = "rndProt";
     private static final String CFG_ALBUM_IMAGE_SIZE = "albImgSize";
     private static final String CFG_SHOW_REMOTE_CONTROL = "rmCtrl";
     private static final String CFG_SHOW_ADD_REMOTE_CONTROL = "addRmCtrl";
@@ -61,9 +57,9 @@ public class WebConfig {
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
-            CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_RANDOM_PLAYLIST_SIZE, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
-            CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME, CFG_RANDOM_SOURCE,
-            CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS, CFG_RANDOM_MEDIATYPE, CFG_RANDOM_PROTECTED,
+            CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
+            CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME,
+            CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_SHOW_ADD_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS,
             CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
             CFG_MAX_SEARCH_RESULTS};
@@ -124,17 +120,13 @@ public class WebConfig {
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "20");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
-        myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
-        myConfigValues.put(CFG_RANDOM_SOURCE, "");
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
         myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
         myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, "true");
-        myConfigValues.put(CFG_RANDOM_MEDIATYPE, "");
-        myConfigValues.put(CFG_RANDOM_PROTECTED, "true");
         myConfigValues.put(CFG_ALBUM_IMAGE_SIZE, "128");
         myConfigValues.put(CFG_SHOW_REMOTE_CONTROL, "true");
         myConfigValues.put(CFG_KEEP_ALIVE, "false");
@@ -382,14 +374,6 @@ public class WebConfig {
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, Integer.toString(photoPageSize));
     }
 
-    public int getRandomPlaylistSize() {
-        return Integer.parseInt(myConfigValues.get(CFG_RANDOM_PLAYLIST_SIZE));
-    }
-
-    public void setRandomPlaylistSize(int count) {
-        myConfigValues.put(CFG_RANDOM_PLAYLIST_SIZE, Integer.toString(count));
-    }
-
     public int getLastUpdatedPlaylistSize() {
         return Integer.parseInt(myConfigValues.get(CFG_LAST_UPDATED_PLAYLIST_SIZE));
     }
@@ -422,14 +406,6 @@ public class WebConfig {
         return PlaylistType.valueOf(getPlaylistType()).getTemplateResource();
     }
 
-    public String getRandomSource() {
-        return myConfigValues.get(CFG_RANDOM_SOURCE);
-    }
-
-    public void setRandomSource(String source) {
-        myConfigValues.put(CFG_RANDOM_SOURCE, source);
-    }
-
     public String getFlashplayer() {
         return myConfigValues.get(CFG_FLASH_PLAYER);
     }
@@ -460,22 +436,6 @@ public class WebConfig {
 
     public void setMyTunesRssComAddress(boolean myTunesRssComAddress) {
         myConfigValues.put(CFG_MYTUNESRSSCOM_ADDRESS, Boolean.toString(myTunesRssComAddress));
-    }
-
-    public String getRandomMediaType() {
-        return myConfigValues.get(CFG_RANDOM_MEDIATYPE);
-    }
-
-    public void setRandomMediaType(String rndMedia) {
-        myConfigValues.put(CFG_RANDOM_MEDIATYPE, rndMedia);
-    }
-
-    public boolean isRandomProtected() {
-        return Boolean.parseBoolean(myConfigValues.get(CFG_RANDOM_PROTECTED));
-    }
-
-    public void setRandomProtected(boolean rndProtected) {
-        myConfigValues.put(CFG_RANDOM_PROTECTED, Boolean.toString(rndProtected));
     }
 
     public int getAlbumImageSize() {
