@@ -7,7 +7,7 @@
 <%@ taglib uri="http://www.codewave.de/jsp/functions" prefix="cwfn" %>
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 
-<%--@elvariable id="smartPlaylist" type="de.codewave.mytunesrss.datastore.statement.SmartPlaylist"--%>  
+<%--@elvariable id="smartPlaylist" type="de.codewave.mytunesrss.datastore.statement.SmartPlaylist"--%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -33,6 +33,12 @@
 		<div class="content">
 
 			<div class="content-inner">
+
+                <ul class="menu">
+                    <li class="back">
+                        <a id="linkBack" href="${servletUrl}/showPlaylistManager/${auth}"><fmt:message key="back" /></a>
+                    </li>
+                </ul>
 
 			    <jsp:include page="/incl_error.jsp" />
 
