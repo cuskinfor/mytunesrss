@@ -100,25 +100,39 @@ public class CompleteTest {
         driver.findElement(By.id("password")).clear();
         driver.findElement(By.id("password")).sendKeys(password);
         driver.findElement(By.id("linkSubmitLogin")).click();
-        driver.findElement(By.id("functionsDialogName10")).click();
+        driver.findElement(By.id("functionsDialogName9")).click(); // Michael
         driver.findElement(By.id("linkParentFolder")).click();
-        driver.findElement(By.id("functionsDialogName14")).click();
+        driver.findElement(By.id("functionsDialogName13")).click(); // Tanja
         driver.findElement(By.id("linkHomeFolder")).click();
-        driver.findElement(By.id("functionsDialogName10")).click();
+        driver.findElement(By.id("functionsDialogName9")).click(); // Michael
         driver.findElement(By.id("linkButtonBrowseTrack1")).click();
         driver.findElement(By.id("linkPage3")).click();
         driver.findElement(By.id("linkPage2")).click();
         driver.findElement(By.id("linkBack")).click();
-        driver.findElement(By.id("linkNameBrowseTrack8")).click();
+        driver.findElement(By.id("linkNameBrowseTrack7")).click(); // iTunes DJ
         driver.findElement(By.id("linkPage1")).click();
         driver.findElement(By.id("linkPage2")).click();
         driver.findElement(By.id("functionsDialogName10")).click();
         driver.findElement(By.id("linkPortal")).click();
+        driver.findElement(By.id("linkManagePlaylists")).click();
+        driver.findElement(By.id("linkEditSmartPlayist")).click();
+        driver.findElement(By.id("smartPlaylistName")).sendKeys("25 RANDOM TRACKS");
+        new Select(driver.findElement(By.id("newFieldType"))).selectByValue("randomOrder");
+        driver.findElement(By.id("linkAddCriteria")).click();
+        new Select(driver.findElement(By.id("newFieldType"))).selectByValue("sizeLimit");
+        driver.findElement(By.id("linkAddCriteria")).click();
+        driver.findElement(By.id("smartCriteriaValue1")).sendKeys("25");
+        driver.findElement(By.id("linkSubmit")).click();
+        driver.findElement(By.id("linkPortal")).click();
+        driver.findElement(By.id("linkNameBrowseTrack5")).click(); // 25 random
+        driver.findElement(By.id("linkBack")).click();
+        driver.findElement(By.id("linkRefreshSmartPlaylist5")).click();
         driver.findElement(By.id("linkNameBrowseTrack5")).click();
         driver.findElement(By.id("linkBack")).click();
-        driver.findElement(By.id("linkRefreshRandomPlaylist")).click();
-        driver.findElement(By.id("linkNameBrowseTrack5")).click();
-        driver.findElement(By.id("linkBack")).click();
+        driver.findElement(By.id("linkManagePlaylists")).click();
+        driver.findElement(By.id("deleteWithConfirmation0")).click();
+        driver.findElement(By.id("linkConfirmDelPlaylistYes")).click();
+        driver.findElement(By.id("linkPortal")).click();
         driver.findElement(By.name("searchTerm")).clear();
         driver.findElement(By.name("searchTerm")).sendKeys("ofspring");
         new Select(driver.findElement(By.name("searchFuzziness"))).selectByIndex(0);

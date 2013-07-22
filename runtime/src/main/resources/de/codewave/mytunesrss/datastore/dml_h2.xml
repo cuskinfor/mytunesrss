@@ -36,10 +36,15 @@
 
     <fragment name="findRecentlyPlayedTracksOrderClause">ORDER BY ts_played DESC</fragment>
 
-    <fragment name="smartPlaylistOrderAndLimit">
+    <fragment name="smartPlaylistOrderAndLimitHead">
+        <![CDATA[
+            SELECT <limit>LIMIT 0 :maxCount </limit>
+        ]]>
+    </fragment>
+
+    <fragment name="smartPlaylistOrderAndLimitTail">
         <![CDATA[
             <random>ORDER BY RAND()</random>
-            <limit>LIMIT 0 :maxCount</limit>
         ]]>
     </fragment>
 

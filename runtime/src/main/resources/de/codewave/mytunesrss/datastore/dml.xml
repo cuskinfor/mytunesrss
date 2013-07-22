@@ -695,7 +695,7 @@
             <![CDATA[
             INSERT INTO
                 link_track_playlist (playlist_id, track_id)
-                SELECT :id, t.id
+                {smartPlaylistOrderAndLimitHead} :id, t.id
                 FROM track t
                 <lucene>, temp_lucene_tracks tluc WHERE t.id = tluc.track_id</lucene>
                 <nolucene>WHERE t.id IS NOT NULL</nolucene>
@@ -706,7 +706,7 @@
                 <protected>AND t.protected = :protected</protected>
                 <datasource>AND t.source_id = :source_id</datasource>
                 <order>ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order>
-                {smartPlaylistOrderAndLimit}
+                {smartPlaylistOrderAndLimitTail}
             ]]>
         </sql>
         <sql>
