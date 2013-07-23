@@ -8,6 +8,7 @@
     </inspection_tool>
     <inspection_tool class="BooleanConstructor" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="CStyleArrayDeclaration" enabled="true" level="WARNING" enabled_by_default="true" />
+    <inspection_tool class="CheckStyle-IDEA" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ClassComplexity" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="m_limit" value="80" />
     </inspection_tool>
