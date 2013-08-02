@@ -104,6 +104,11 @@
         <filter-name>TransactionFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.TransactionFilter</filter-class>
     </filter>
+    <!-- GZIP compression filter -->
+    <filter>
+        <filter-name>GzipCompressionFilter</filter-name>
+        <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
+    </filter>
     <!-- Filter mappings -->
     <filter-mapping>
         <filter-name>BandwidthLimitFilter</filter-name>
@@ -140,6 +145,18 @@
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>GzipCompressionFilter</filter-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>GzipCompressionFilter</filter-name>
+        <url-pattern>/theme/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>GzipCompressionFilter</filter-name>
+        <url-pattern>/flashplayer/*</url-pattern>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>
