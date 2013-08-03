@@ -48,10 +48,10 @@
     </servlet-mapping>
     <filter>
         <filter-name>GzipCompressionFilter</filter-name>
-        <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
+        <filter-class>org.eclipse.jetty.servlets.IncludableGzipFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>GzipCompressionFilter</filter-name>
-        <url-pattern>/*</url-pattern>
+        <servlet-name>VaadinServlet</servlet-name>
     </filter-mapping>
 </web-app>

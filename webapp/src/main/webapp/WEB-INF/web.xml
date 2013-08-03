@@ -107,9 +107,13 @@
     <!-- GZIP compression filter -->
     <filter>
         <filter-name>GzipCompressionFilter</filter-name>
-        <filter-class>org.eclipse.jetty.servlets.GzipFilter</filter-class>
+        <filter-class>org.eclipse.jetty.servlets.IncludableGzipFilter</filter-class>
     </filter>
     <!-- Filter mappings -->
+    <filter-mapping>
+        <filter-name>GzipCompressionFilter</filter-name>
+        <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
     <filter-mapping>
         <filter-name>BandwidthLimitFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>
@@ -145,18 +149,6 @@
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/rest/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>GzipCompressionFilter</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>GzipCompressionFilter</filter-name>
-        <url-pattern>/theme/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>GzipCompressionFilter</filter-name>
-        <url-pattern>/flashplayer/*</url-pattern>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>
