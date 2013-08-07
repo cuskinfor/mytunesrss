@@ -15,9 +15,9 @@ import java.net.URI;
 public class PhotoRepresentation implements RestRepresentation {
     private String myName;
     private String myFile;
-    private long myDate;
+    private Long myDate;
     private String myThumbnailImageHash;
-    private long myLastThumnailImageUpdate;
+    private Long myLastThumbnailImageUpdate;
     private URI myOriginalImageUri;
     private URI myThumbnailImageUri;
     private URI myExifDataUri;
@@ -30,7 +30,7 @@ public class PhotoRepresentation implements RestRepresentation {
         setFile(photo.getFile());
         setDate(photo.getDate());
         setThumbnailImageHash(photo.getImageHash());
-        setLastThumnailImageUpdate(photo.getLastImageUpdate());
+        setLastThumbnailImageUpdate(photo.getLastImageUpdate());
     }
 
     /**
@@ -58,11 +58,11 @@ public class PhotoRepresentation implements RestRepresentation {
     /**
      * Date of the photo.
      */
-    public long getDate() {
+    public Long getDate() {
         return myDate;
     }
 
-    public void setDate(long date) {
+    public void setDate(Long date) {
         myDate = date;
     }
 
@@ -80,12 +80,12 @@ public class PhotoRepresentation implements RestRepresentation {
     /**
      * Time of the last thumbnail image update.
      */
-    public long getLastThumnailImageUpdate() {
-        return myLastThumnailImageUpdate;
+    public Long getLastThumbnailImageUpdate() {
+        return myLastThumbnailImageUpdate;
     }
 
-    public void setLastThumnailImageUpdate(long lastThumnailImageUpdate) {
-        myLastThumnailImageUpdate = lastThumnailImageUpdate;
+    public void setLastThumbnailImageUpdate(Long lastThumbnailImageUpdate) {
+        myLastThumbnailImageUpdate = lastThumbnailImageUpdate;
     }
 
     /**
