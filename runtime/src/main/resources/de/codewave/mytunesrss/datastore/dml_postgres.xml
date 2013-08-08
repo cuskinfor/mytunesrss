@@ -36,7 +36,7 @@
         SELECT
     </fragment>
 
-    <fragment name="smartPlaylistOrderAndLimit">
+    <fragment name="smartPlaylistOrderAndLimitTail">
         <![CDATA[
             <random>ORDER BY random()</random>
             <limit>LIMIT :maxCount OFFSET 0</limit>

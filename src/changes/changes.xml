@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.2" date="2013-08-08">
+            <action dev="mdescher" type="fix">
+                Fixed a problem when refreshing smart playlists with a Postgres database.
+            </action>
+        </release>
+
         <release version="4.9.1" date="2013-08-06">
             <action dev="mdescher" type="update">
                 Updated codewave-utils to 1.13 which has a fix for not closing the servlet output stream
