@@ -64,7 +64,8 @@ public class ThemeServlet extends HttpServlet {
 
     protected void doGetStyle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         File stylesheet = getFile(httpServletRequest);
-        if (stylesheet.lastModified() / 1000 <= httpServletRequest.getDateHeader("If-Modified-Since") / 1000) {
+        long ifModifiedSince = httpServletRequest.getDateHeader("If-Modified-Since");
+        if (ifModifiedSince > -1 && stylesheet.lastModified() / 1000 <= ifModifiedSince / 1000) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         } else {
             httpServletResponse.setDateHeader("Last-Modified", stylesheet.lastModified());
@@ -80,7 +81,8 @@ public class ThemeServlet extends HttpServlet {
 
     protected void doGetImage(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
         File image = getFile(httpServletRequest);
-        if (image.lastModified() / 1000 <= httpServletRequest.getDateHeader("If-Modified-Since") / 1000) {
+        long ifModifiedSince = httpServletRequest.getDateHeader("If-Modified-Since");
+        if (ifModifiedSince > -1 && image.lastModified() / 1000 <= ifModifiedSince / 1000) {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         } else {
             httpServletResponse.setDateHeader("Last-Modified", image.lastModified());

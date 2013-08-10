@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="___V___" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-443] Parameter for JPG quality when downloading photos
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed image timestamp comparison for photo download (If-Modified-Since header).
+            </action>
+        </release>
+
         <release version="4.9.3" date="2013-08-10">
             <action dev="mdescher" type="fix">
                 Smart playlists with certain characters in the name caused problems

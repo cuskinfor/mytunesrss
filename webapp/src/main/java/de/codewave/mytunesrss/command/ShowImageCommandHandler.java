@@ -53,7 +53,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                     try {
                         inputStream = MyTunesRssCommandHandler.class.getClassLoader().getResourceAsStream("de/codewave/mytunesrss/default_rss_image.png");
                         Image image = new Image("image/png", inputStream);
-                        myDefaultImages.put(size, MyTunesRssUtils.resizeImageWithMaxSize(image, size));
+                        myDefaultImages.put(size, MyTunesRssUtils.resizeImageWithMaxSize(image, size, (float)MyTunesRss.CONFIG.getJpegQuality()));
                     } catch (IOException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not copy default image data into byte array.", e);

@@ -69,17 +69,17 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                 }
             }).getResult(0);
             long ifModifiedSince = getRequest().getDateHeader("If-Modified-Since");
-            if ((photo.myLastImageUpdate / 1000) <= (ifModifiedSince / 1000)) {
+            File photoFile = new File(photo.myFile);
+            if (ifModifiedSince > -1 && (photoFile.lastModified() / 1000) <= (ifModifiedSince / 1000)) {
                 getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 if (!getAuthUser().isQuotaExceeded()) {
-                    File photoFile = new File(photo.myFile);
                     if (StringUtils.isNotBlank(photo.myFile) && photoFile.isFile()) {
                         String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
                         StreamSender sender = null;
                         if (mimeType != null) {
                             Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
-                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, getIntegerRequestParameter("size", Integer.MAX_VALUE));
+                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()));
                             sender = new StreamSender(new ByteArrayInputStream(scaledImage.getData()), scaledImage.getMimeType(), scaledImage.getData().length);
                             // no need to close the byte array input stream later
                         } else {

@@ -597,7 +597,7 @@ public class MyTunesRssUtils {
         return true;
     }
 
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize) throws IOException {
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality) throws IOException {
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {
             BufferedImage original = ImageIO.read(imageInputStream);
@@ -623,7 +623,7 @@ public class MyTunesRssUtils {
                     writer.setOutput(new MemoryCacheImageOutputStream(byteArrayOutputStream));
                     ImageWriteParam param = writer.getDefaultWriteParam();
                     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                    param.setCompressionQuality((float)MyTunesRss.CONFIG.getJpegQuality() / 100f);
+                    param.setCompressionQuality(jpegQuality / 100f);
                     param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
                     writer.write(null, new IIOImage(targetImage, null, null), param);
                 } finally {
@@ -873,7 +873,7 @@ public class MyTunesRssUtils {
         name = name.replace('\'', '_');
         return name;
     }
-    
+
     public static String[] substringsBetween(String s, String left, String right) {
         List<String> tokens = new ArrayList<String>();
         if (StringUtils.isNotEmpty(s) && StringUtils.isNotEmpty(left) && StringUtils.isNotEmpty(right) && s.length() >= left.length() + right.length()) {
@@ -883,7 +883,7 @@ public class MyTunesRssUtils {
                 if (k == -1) {
                     break; // no more end tokens, we are done
                 }
-                // go right as far as possible while keeping the end boundary  
+                // go right as far as possible while keeping the end boundary
                 while (k + 1 + right.length() <= s.length() && right.equals(s.substring(k + 1, k + 1 + right.length()))) {
                     k++;
                 }
