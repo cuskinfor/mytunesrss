@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="4.9.3" date="2013-08-10">
+            <action dev="mdescher" type="fix">
+                Smart playlists with certain characters in the name caused problems
+                with the refresh button on the portal page.
+            </action>
+        </release>
+
         <release version="4.9.2" date="2013-08-08">
             <action dev="mdescher" type="fix">
                 Fixed a problem when refreshing smart playlists with a Postgres database.
