@@ -8,7 +8,10 @@
     <body>
 
         <release version="___V___" date="___D___">
-            <action dev="mdescher" type="add">
+            <action dev="mdescher" type="remove">
+                Removed unused "track.lower_comment" column.
+            </action>
+            <action dev="mdescher" type="remove">
                 Removed stupid index on "track.comment".
             </action>
             <action dev="mdescher" type="add">

@@ -32,7 +32,6 @@
                 playcount NUMERIC(19),
                 last_image_update NUMERIC(19),
                 comment VARCHAR(2048),
-                lower_comment VARCHAR(2048),
                 pos_number INTEGER,
                 pos_size INTEGER,
                 image_hash CHAR(24),

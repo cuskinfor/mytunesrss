@@ -318,4 +318,8 @@
         </sql>
     </statement>
 
+    <statement name="migrate_4.9.4">
+        <sql>ALTER TABLE track DROP COLUMN lower_comment</sql>
+    </statement>
+
 </statements>
