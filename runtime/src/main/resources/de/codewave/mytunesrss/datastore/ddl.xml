@@ -194,8 +194,6 @@
         <sql>CREATE INDEX idx_track_lower_album ON track (lower_album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
         <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
-        <sql>CREATE INDEX idx_track_comment ON track (comment)</sql>
-        <sql>CREATE INDEX idx_track_lower_comment ON track (lower_comment)</sql>
         <sql>CREATE INDEX idx_track_id ON track (id)</sql>
         <sql>CREATE INDEX idx_track_videotype ON track (videotype)</sql>
         <sql>CREATE INDEX idx_track_series ON track (series)</sql>

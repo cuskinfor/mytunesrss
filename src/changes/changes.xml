@@ -9,6 +9,9 @@
 
         <release version="___V___" date="___D___">
             <action dev="mdescher" type="add">
+                Removed stupid index on "track.comment".
+            </action>
+            <action dev="mdescher" type="add">
                 Added "server.character-set-server=utf8" to default internal MySQL-DB options.
             </action>
             <action dev="mdescher" type="add">
