@@ -9,6 +9,9 @@
 
         <release version="___V___" date="___D___">
             <action dev="mdescher" type="add">
+                Added "server.character-set-server=utf8" to default internal MySQL-DB options.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-443] Parameter for JPG quality when downloading photos
             </action>
             <action dev="mdescher" type="fix">
