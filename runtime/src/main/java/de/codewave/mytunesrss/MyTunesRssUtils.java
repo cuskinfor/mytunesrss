@@ -597,7 +597,8 @@ public class MyTunesRssUtils {
         return true;
     }
 
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality) throws IOException {
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+        long start = System.currentTimeMillis();
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {
             BufferedImage original = ImageIO.read(imageInputStream);
@@ -635,6 +636,7 @@ public class MyTunesRssUtils {
             }
         } finally {
             imageInputStream.close();
+            LOGGER.debug("Resizing [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
         }
     }
 

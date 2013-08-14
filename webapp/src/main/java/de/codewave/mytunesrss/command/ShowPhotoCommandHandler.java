@@ -79,7 +79,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                         StreamSender sender = null;
                         if (mimeType != null) {
                             Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
-                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()));
+                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
                             sender = new StreamSender(new ByteArrayInputStream(scaledImage.getData()), scaledImage.getMimeType(), scaledImage.getData().length);
                             // no need to close the byte array input stream later
                         } else {

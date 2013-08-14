@@ -65,7 +65,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
                 }
-                Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 32, (float)MyTunesRss.CONFIG.getJpegQuality());
+                Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 32, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                 if (!imageSizes.contains(Integer.valueOf(32))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 32.");
@@ -77,7 +77,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     }
                     new UpdateImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
                 }
-                Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 64, (float)MyTunesRss.CONFIG.getJpegQuality());
+                Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 64, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                 if (!imageSizes.contains(Integer.valueOf(64))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 64.");
@@ -89,7 +89,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     }
                     new UpdateImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
                 }
-                Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 256, (float)MyTunesRss.CONFIG.getJpegQuality());
+                Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 256, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                 if (!imageSizes.contains(Integer.valueOf(256))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 256.");
@@ -115,7 +115,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         new UpdateImageStatement(imageHash, originalSize, myImage.getMimeType(), myImage.getData()).execute(connection);
                     }
                 }
-                Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 128, (float)MyTunesRss.CONFIG.getJpegQuality());
+                Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myImage, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                 if (!imageSizes.contains(Integer.valueOf(128))) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
