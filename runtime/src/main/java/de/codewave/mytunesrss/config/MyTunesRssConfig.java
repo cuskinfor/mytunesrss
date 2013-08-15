@@ -134,6 +134,7 @@ public class MyTunesRssConfig {
     private int myVlcSocketTimeout;
     private String myRssDescription;
     private int myVlcRaopVolume = 75;
+    private File myGmExecutable;
     private long myImageExpirationMillis;
     private long myRestApiJsExpirationMillis;
     private int jpegQuality;
@@ -916,6 +917,14 @@ public class MyTunesRssConfig {
         myVlcExecutable = vlcExecutable;
     }
 
+    public File getGmExecutable() {
+        return myGmExecutable;
+    }
+
+    public void setGmExecutable(File gmExecutable) {
+        myGmExecutable = gmExecutable;
+    }
+
     public boolean isVlcEnabled() {
         return myVlcEnabled;
     }
@@ -1189,6 +1198,8 @@ public class MyTunesRssConfig {
         setVlcEnabled(JXPathUtils.getBooleanValue(settings, "vlc-enabled", true));
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
         setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
+        String gm = JXPathUtils.getStringValue(settings, "gm", MyTunesRssUtils.findGraphicsMagickExecutable());
+        setGmExecutable(gm != null ? new File(gm) : null);
         setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
         setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
         setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
@@ -1829,6 +1840,40 @@ public class MyTunesRssConfig {
         return false;
     }
 
+    public static boolean isGraphicsMagick(final File executable) {
+        if (executable != null && executable.isFile() && executable.canExecute()) {
+            try {
+                ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "version");
+                processBuilder.redirectErrorStream(true);
+                final Process process = processBuilder.start();
+                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try {
+                    Thread checkThread = new Thread(new Runnable() {
+                        public void run() {
+                            try {
+                                org.apache.commons.io.IOUtils.copy(process.getInputStream(), baos);
+                            } catch (IOException e) {
+                                LOGGER.info("Could not copy process stream.", e);
+                            }
+                        }
+                    });
+                    checkThread.start();
+                    try {
+                        checkThread.join(3000);
+                    } catch (InterruptedException e) {
+                        // ignore
+                    }
+                    return StringUtils.containsIgnoreCase(org.apache.commons.io.IOUtils.toString(new ByteArrayInputStream(baos.toByteArray())), "GraphicsMagick");
+                } finally {
+                    process.destroy();
+                }
+            } catch (IOException e) {
+                LOGGER.info("Could not start process.", e);
+            }
+        }
+        return false;
+    }
+
     public void replaceDatasourceConfig(DatasourceConfig config) {
         for (Iterator<DatasourceConfig> iterConfigs = myDatasources.iterator(); iterConfigs.hasNext(); ) {
             if (iterConfigs.next().getId().equals(config.getId())) {
@@ -1857,4 +1902,5 @@ public class MyTunesRssConfig {
         }
         return false;
     }
+
 }

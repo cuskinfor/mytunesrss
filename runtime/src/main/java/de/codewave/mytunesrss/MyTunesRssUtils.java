@@ -614,7 +614,7 @@ public class MyTunesRssUtils {
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        if (true) {
+        if (MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute()) {
             return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
         } else {
             String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
@@ -837,6 +837,40 @@ public class MyTunesRssUtils {
                     return file.getCanonicalPath();
                 } catch (IOException e) {
                     LOGGER.warn("Could not get canonical path for VLC file. Using absolute path instead.");
+                }
+                return file.getAbsolutePath();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Try to find a GraphicsMagick executable. Depending on the operating system some standard paths are searched.
+     *
+     * @return The path of a GraphicsMagick executable or NULL if none was found.
+     */
+    public static String findGraphicsMagickExecutable() {
+        File[] files;
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            files = new File[] {
+                    new File("/usr/bin/gm")
+            };
+        } else if (SystemUtils.IS_OS_WINDOWS) {
+            files = new File[] {
+                    new File(System.getenv("ProgramFiles") + "/gm.exe"),
+                    new File(System.getenv("ProgramFiles") + " (x86)/gm.exe")
+            };
+        } else {
+            files = new File[] {
+                    new File("/usr/bin/gm")
+            };
+        }
+        for (File file : files) {
+            if (MyTunesRssConfig.isGraphicsMagick(file)) {
+                try {
+                    return file.getCanonicalPath();
+                } catch (IOException e) {
+                    LOGGER.warn("Could not get canonical path for GM file. Using absolute path instead.");
                 }
                 return file.getAbsolutePath();
             }
