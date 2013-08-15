@@ -9,6 +9,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.task.*;
+import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -622,11 +622,11 @@ public class MyTunesRssUtils {
             return resizeImageWithMaxSizeJava(image, maxSize, jpegQuality, debugInfo);
         }
     }
-    
+
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         try {
-            List<String> resizeCommand = Arrays.asList("gm", "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), "-");
+            List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), "-");
             String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
             LOGGER.debug(msg);
             Process process = new ProcessBuilder(resizeCommand).start();
@@ -644,7 +644,7 @@ public class MyTunesRssUtils {
             LOGGER.debug("Resizing (external process) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
         }
     }
-    
+
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
@@ -833,6 +833,7 @@ public class MyTunesRssUtils {
         }
         for (File file : files) {
             if (MyTunesRssConfig.isVlc(file, true)) {
+                LOGGER.info("Found VLC executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
                 } catch (IOException e) {
@@ -851,22 +852,20 @@ public class MyTunesRssUtils {
      */
     public static String findGraphicsMagickExecutable() {
         File[] files;
-        if (SystemUtils.IS_OS_MAC_OSX) {
+        if (SystemUtils.IS_OS_WINDOWS) {
             files = new File[] {
-                    new File("/usr/bin/gm")
-            };
-        } else if (SystemUtils.IS_OS_WINDOWS) {
-            files = new File[] {
-                    new File(System.getenv("ProgramFiles") + "/gm.exe"),
-                    new File(System.getenv("ProgramFiles") + " (x86)/gm.exe")
+                    /*new File(System.getenv("ProgramFiles") + "/gm.exe"),
+                    new File(System.getenv("ProgramFiles") + " (x86)/gm.exe")*/
             };
         } else {
             files = new File[] {
-                    new File("/usr/bin/gm")
+                    new File("/usr/bin/gm"),
+                    new File("/opt/local/bin/gm")
             };
         }
         for (File file : files) {
             if (MyTunesRssConfig.isGraphicsMagick(file)) {
+                LOGGER.info("Found GraphicsMagick executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
                 } catch (IOException e) {

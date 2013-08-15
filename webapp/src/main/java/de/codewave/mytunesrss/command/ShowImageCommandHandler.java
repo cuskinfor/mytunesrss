@@ -139,7 +139,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 String imageHash = result.get(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
                 LOG.debug("Photo image hash is \"" + imageHash + "\".");
                 if (StringUtils.isNotBlank(imageHash)) {
-                    return session.executeQuery(new FindImageQuery(imageHash, size));
+                    return MyTunesRss.STORE.executeQuery(new FindImageQuery(imageHash, size));
                 }
             } catch (InterruptedException e) {
                 LOG.warn("On-demand photo thumbnail generation interrupted.", e);
