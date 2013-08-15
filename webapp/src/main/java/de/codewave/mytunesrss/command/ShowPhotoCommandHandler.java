@@ -34,13 +34,6 @@ import java.util.Map;
 public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowPhotoCommandHandler.class);
-    private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
-
-    static {
-        IMAGE_TO_MIME.put("jpg", "image/jpeg");
-        IMAGE_TO_MIME.put("gif", "image/gif");
-        IMAGE_TO_MIME.put("png", "image/png");
-    }
 
     private static final class SimplePhoto {
         private String myFile;
@@ -75,11 +68,10 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
             } else {
                 if (!getAuthUser().isQuotaExceeded()) {
                     if (StringUtils.isNotBlank(photo.myFile) && photoFile.isFile()) {
-                        String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
+                        String mimeType = MyTunesRssUtils.IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
                         StreamSender sender = null;
                         if (mimeType != null) {
-                            Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
-                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(image, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
+                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(photoFile, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
                             sender = new StreamSender(new ByteArrayInputStream(scaledImage.getData()), scaledImage.getMimeType(), scaledImage.getData().length);
                             // no need to close the byte array input stream later
                         } else {

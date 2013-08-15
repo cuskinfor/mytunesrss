@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.MiscUtils;
+import de.codewave.utils.io.LogStreamCopyThread;
+import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
@@ -21,6 +23,8 @@ import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
@@ -71,6 +75,14 @@ public class MyTunesRssUtils {
     public static final String SYSTEM_PLAYLIST_ID_MOVIES = "system_movies";
     public static final String SYSTEM_PLAYLIST_ID_TVSHOWS = "system_tvshows";
     public static final String SYSTEM_PLAYLIST_ID_DATASOURCE = "system_ds_";
+
+    public static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
+
+    static {
+        IMAGE_TO_MIME.put("jpg", "image/jpeg");
+        IMAGE_TO_MIME.put("gif", "image/gif");
+        IMAGE_TO_MIME.put("png", "image/png");
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
     private static RandomAccessFile LOCK_FILE;
@@ -598,6 +610,42 @@ public class MyTunesRssUtils {
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+        return resizeImageWithMaxSizeJava(source, maxSize, jpegQuality, debugInfo);
+    }
+
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+        if (true) {
+            return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
+        } else {
+            String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
+            de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(mimeType, FileUtils.readFileToByteArray(source));
+            return resizeImageWithMaxSizeJava(image, maxSize, jpegQuality, debugInfo);
+        }
+    }
+    
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+        long start = System.currentTimeMillis();
+        try {
+            List<String> resizeCommand = Arrays.asList("gm", "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), "-");
+            String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
+            LOGGER.debug(msg);
+            Process process = new ProcessBuilder(resizeCommand).start();
+            MyTunesRss.SPAWNED_PROCESSES.add(process);
+            InputStream is = process.getInputStream();
+            try {
+                LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
+                stderrCopyThread.setDaemon(true);
+                stderrCopyThread.start();
+                return new de.codewave.mytunesrss.meta.Image("image/jpg", is);
+            } finally {
+                is.close();
+            }
+        } finally {
+            LOGGER.debug("Resizing (external process) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
+        }
+    }
+    
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {
@@ -636,7 +684,7 @@ public class MyTunesRssUtils {
             }
         } finally {
             imageInputStream.close();
-            LOGGER.debug("Resizing [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
+            LOGGER.debug("Resizing (java) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
         }
     }
 

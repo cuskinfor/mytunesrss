@@ -80,7 +80,7 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
                         } else {
                             String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
                             Image image = new Image(mimeType, FileUtils.readFileToByteArray(photoFile));
-                            byte[] imageData = MyTunesRssUtils.resizeImageWithMaxSize(image, (photoSize * MyTunesRssUtils.getMaxImageSize(image)) / 100, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + photoFile.getAbsolutePath()).getData();
+                            byte[] imageData = MyTunesRssUtils.resizeImageWithMaxSize(photoFile, (photoSize * MyTunesRssUtils.getMaxImageSize(image)) / 100, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + photoFile.getAbsolutePath()).getData();
                             zipStream.write(imageData);
                             archiveEntry.setSize(imageData.length);
                         }

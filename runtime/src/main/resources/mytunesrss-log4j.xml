@@ -21,9 +21,22 @@
             <param name="ConversionPattern" value="%d %X{id} %c %m%n"/>
         </layout>
     </appender>
+    <appender name="gm-file" class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="${MyTunesRSS.logDir}/GM.log"/>
+        <param name="Append" value="true"/>
+        <param name="MaxFileSize" value="100MB"/>
+        <param name="MaxBackupIndex" value="1"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="%d %X{id} %c %m%n"/>
+        </layout>
+    </appender>
     <logger name="VLC" additivity="false">
         <level value="info"/>
         <appender-ref ref="vlc-file"/>
+    </logger>
+    <logger name="GM" additivity="false">
+        <level value="info"/>
+        <appender-ref ref="gm-file"/>
     </logger>
     <logger name="de.codewave" additivity="false">
         <level value="debug"/>
