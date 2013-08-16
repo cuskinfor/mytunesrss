@@ -135,6 +135,7 @@ public class MyTunesRssConfig {
     private String myRssDescription;
     private int myVlcRaopVolume = 75;
     private File myGmExecutable;
+    private boolean myGmEnabled;
     private long myImageExpirationMillis;
     private long myRestApiJsExpirationMillis;
     private int jpegQuality;
@@ -925,6 +926,14 @@ public class MyTunesRssConfig {
         myGmExecutable = gmExecutable;
     }
 
+    public boolean isGmEnabled() {
+        return myGmEnabled;
+    }
+
+    public void setGmEnabled(boolean gmEnabled) {
+        myGmEnabled = gmEnabled;
+    }
+
     public boolean isVlcEnabled() {
         return myVlcEnabled;
     }
@@ -1200,6 +1209,7 @@ public class MyTunesRssConfig {
         setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
         String gm = JXPathUtils.getStringValue(settings, "gm", MyTunesRssUtils.findGraphicsMagickExecutable());
         setGmExecutable(gm != null ? new File(gm) : null);
+        setGmEnabled(JXPathUtils.getBooleanValue(settings, "gm-enabled", true));
         setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
         setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
         setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
@@ -1598,9 +1608,13 @@ public class MyTunesRssConfig {
             if (getVlcExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
             }
+            if (getGmExecutable() != null) {
+                root.appendChild(DOMUtils.createTextElement(settings, "gm", getGmExecutable().getAbsolutePath()));
+            }
             root.appendChild(DOMUtils.createIntElement(settings, "vlc-timeout", getVlcSocketTimeout()));
             root.appendChild(DOMUtils.createIntElement(settings, "vlc-raop-volume", getVlcRaopVolume()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "vlc-enabled", isVlcEnabled()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "gm-enabled", isGmEnabled()));
             root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
             root.appendChild(DOMUtils.createLongElement(settings, "image-expiration-millis", getImageExpirationMillis()));
             root.appendChild(DOMUtils.createLongElement(settings, "restapijs-expiration-millis", getRestApiJsExpirationMillis()));

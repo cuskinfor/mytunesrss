@@ -614,7 +614,7 @@ public class MyTunesRssUtils {
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        if (MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute()) {
+        if (MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute()) {
             return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
         } else {
             String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());

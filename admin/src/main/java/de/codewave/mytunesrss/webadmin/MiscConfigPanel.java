@@ -5,12 +5,22 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.terminal.ExternalResource;
+import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.SmtpProtocol;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.component.ServerSideFileChooser;
+import de.codewave.vaadin.component.ServerSideFileChooserWindow;
+import de.codewave.vaadin.validation.GraphicsMagickExecutableFileValidator;
+import de.codewave.vaadin.validation.MinMaxIntegerValidator;
+import de.codewave.vaadin.validation.VlcExecutableFileValidator;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.SystemUtils;
 
+import java.io.File;
 import java.util.Arrays;
 
 public class MiscConfigPanel extends MyTunesRssConfigPanel {
@@ -37,10 +47,15 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myMailLogin;
     private SmartTextField myMailPassword;
     private SmartTextField myMailSender;
+    private CheckBox myGraphicsMagickEnabled;
+    private SmartTextField myGraphicsMagickBinary;
+    private Button myGraphicsMagickBinarySelect;
+    private Form myGraphicsMagickForm;
+    private Button myGraphicsMagickHomepageButton;
 
     public void attach() {
         super.attach();
-        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
+        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 7, true, true));
         myMainWindowForm = getComponentFactory().createForm(null, true);
         myMyTunesRssComForm = getComponentFactory().createForm(null, true);
         myWebInterfaceForm = getComponentFactory().createForm(null, true);
@@ -90,8 +105,20 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myWebInterfaceForm.addField(myOpenIdActive, myOpenIdActive);
         Panel webInterfacePanel = getComponentFactory().surroundWithPanel(myWebInterfaceForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.webInterface"));
         addComponent(webInterfacePanel);
+        myGraphicsMagickEnabled = getComponentFactory().createCheckBox("miscConfigPanel.graphicsMagickEnabled");
+        myGraphicsMagickBinary = getComponentFactory().createTextField("miscConfigPanel.graphicsMagickBinary", new GraphicsMagickExecutableFileValidator(getBundleString("miscConfigPanel.graphicsMagickBinary.invalidBinary")));
+        myGraphicsMagickBinary.setImmediate(false);
+        myGraphicsMagickBinarySelect = getComponentFactory().createButton("miscConfigPanel.graphicsMagickBinary.select", this);
+        myGraphicsMagickHomepageButton = getComponentFactory().createButton("miscConfigPanel.graphicsMagickHomepage", this);
+        myGraphicsMagickForm = getComponentFactory().createForm(null, true);
+        myGraphicsMagickForm.addField(myGraphicsMagickEnabled, myGraphicsMagickEnabled);
+        myGraphicsMagickForm.addField(myGraphicsMagickBinary, myGraphicsMagickBinary);
+        myGraphicsMagickForm.addField(myGraphicsMagickBinarySelect, myGraphicsMagickBinarySelect);
+        myGraphicsMagickForm.addField(myGraphicsMagickHomepageButton, myGraphicsMagickHomepageButton);
+        Panel graphicsMagickPanel = getComponentFactory().surroundWithPanel(myGraphicsMagickForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.GraphicsMagick"));
+        addComponent(graphicsMagickPanel);
 
-        addDefaultComponents(0, 5, 0, 5, false);
+        addDefaultComponents(0, 6, 0, 6, false);
 
         initFromConfig();
     }
@@ -115,6 +142,8 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMailPassword.setValue(MyTunesRss.CONFIG.getMailPassword());
         myMailSender.setValue(MyTunesRss.CONFIG.getMailSender());
         myHeadless.setValue(MyTunesRss.CONFIG.isHeadless());
+        myGraphicsMagickEnabled.setValue(MyTunesRss.CONFIG.isGmEnabled());
+        myGraphicsMagickBinary.setValue(MyTunesRss.CONFIG.getGmExecutable() != null ? MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath() : "");
     }
 
     protected void writeToConfig() {
@@ -137,12 +166,15 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setMailPassword(myMailPassword.getStringValue(null));
         MyTunesRss.CONFIG.setMailSender(myMailSender.getStringValue(null));
         MyTunesRss.CONFIG.setHeadless(myHeadless.booleanValue());
+        String gmBinary = myGraphicsMagickBinary.getStringValue(null);
+        MyTunesRss.CONFIG.setGmExecutable(gmBinary != null ? new File(gmBinary) : null);
+        MyTunesRss.CONFIG.setGmEnabled(myGraphicsMagickEnabled.booleanValue());
         MyTunesRss.CONFIG.save();
     }
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myMainWindowForm, myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
+        boolean valid = VaadinUtils.isValid(myGraphicsMagickForm, myMainWindowForm, myMyTunesRssComForm, myWebInterfaceForm, myProxyForm, mySmtpForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else {
@@ -154,6 +186,19 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        super.buttonClick(clickEvent);
+        if (clickEvent.getButton() == myGraphicsMagickHomepageButton) {
+            getWindow().open(new ExternalResource("http://www.graphicsmagick.org"));
+        } else if (clickEvent.getButton() == myGraphicsMagickBinarySelect) {
+            File dir = StringUtils.isNotBlank((String) myGraphicsMagickBinary.getValue()) ? new File((String) myGraphicsMagickBinary.getValue()) : null;
+            new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("miscConfigPanel.caption.selectGraphicsMagickBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
+                @Override
+                protected void onFileSelected(File file) {
+                    myGraphicsMagickBinary.setValue(file.getAbsolutePath());
+                    getWindow().getParent().removeWindow(this);
+                }
+            }.show(getWindow());
+        } else {
+            super.buttonClick(clickEvent);
+        }
     }
 }
