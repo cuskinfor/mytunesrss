@@ -9,10 +9,13 @@
 
         <release version="4.9.5" date="___D___">
             <action dev="mdescher" type="remove">
+                Web interface setting for JPEG quality. Used for displaying photos, not thumbnails.
+            </action>
+            <action dev="mdescher" type="remove">
                 [MYTUNESRSS-444] Optionally use graphicsmagick to resize images
             </action>
         </release>
-            
+
         <release version="4.9.4" date="2013-08-13">
             <action dev="mdescher" type="remove">
                 Removed unused "track.lower_comment" column.

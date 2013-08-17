@@ -180,6 +180,14 @@
                                        value="<c:out value="${cwfn:choose(config.photoPageSize > 0, config.photoPageSize, '')}"/>" /></td>
                         </tr>
                         <tr <mt:flipFlop/>>
+                            <td class="label"><fmt:message key="settings.photoJpegQuality" /></td>
+                            <td><input class="number"
+                                       type="text"
+                                       name="photoJpegQuality"
+                                       maxlength="3"
+                                       value="<c:out value="${config.photoJpegQuality}"/>" /></td>
+                        </tr>
+                        <tr <mt:flipFlop/>>
                             <td class="label"><fmt:message key="settings.maxSearchResults" /></td>
                             <td><input class="number"
                                        type="text"

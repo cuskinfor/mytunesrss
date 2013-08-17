@@ -54,6 +54,7 @@ public class WebConfig {
     private static final String CFG_SHOW_ADD_TO_PLAYLIST = "showAddToPlaylist";
     private static final String CFG_PHOTO_SIZE = "photoSize";
     private static final String CFG_MAX_SEARCH_RESULTS = "maxSearchResults";
+    private static final String CFG_PHOTO_JPEG_QUALITY = "pjq";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
@@ -62,7 +63,7 @@ public class WebConfig {
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_SHOW_ADD_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS,
             CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
-            CFG_MAX_SEARCH_RESULTS};
+            CFG_MAX_SEARCH_RESULTS, CFG_PHOTO_JPEG_QUALITY};
 
     public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
@@ -136,6 +137,7 @@ public class WebConfig {
         myConfigValues.put(CFG_SHOW_ADD_TO_PLAYLIST, "false");
         myConfigValues.put(CFG_PHOTO_SIZE, "50");
         myConfigValues.put(CFG_MAX_SEARCH_RESULTS, "250");
+        myConfigValues.put(CFG_PHOTO_JPEG_QUALITY, "80");
     }
 
     private void initWithIphoneDefaults() {
@@ -532,5 +534,13 @@ public class WebConfig {
 
     public void setMaxSearchResults(int maxSearchResults) {
         myConfigValues.put(CFG_MAX_SEARCH_RESULTS, Integer.toString(maxSearchResults));
+    }
+
+    public int getPhotoJpegQuality() {
+        return Integer.parseInt(myConfigValues.get(CFG_PHOTO_JPEG_QUALITY));
+    }
+
+    public void setPhotoJpegQuality(int photoJpegQuality) {
+        myConfigValues.put(CFG_PHOTO_JPEG_QUALITY, Integer.toString(photoJpegQuality));
     }
 }

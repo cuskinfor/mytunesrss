@@ -21,7 +21,7 @@
     <script type="text/javascript">
         function loadPhoto() {
             var width = $jQ("div.photoback").width() - $jQ("#photoimage").css("padding-left").replace("px", "") - $jQ("#photoimage").css("padding-right").replace("px", "");
-            $jQ("#photoimage").attr("src", "${mtfn:photoLink(pageContext, photos[param.photoIndex], null)}" + "/size=" + width);
+            $jQ("#photoimage").attr("src", "${mtfn:photoLink(pageContext, photos[param.photoIndex], null)}" + "/size=" + width + "/jpegQuality=${config.photoJpegQuality}");
         }
 
         function showExif(exifUrl) {
