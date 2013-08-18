@@ -15,7 +15,7 @@
                 Web interface setting for JPEG quality. Used for displaying photos, not thumbnails.
             </action>
             <action dev="mdescher" type="remove">
-                [MYTUNESRSS-444] Optionally use graphicsmagick to resize images
+                [MYTUNESRSS-444] Optionally use graphicsmagick to resize images.
             </action>
         </release>
 
