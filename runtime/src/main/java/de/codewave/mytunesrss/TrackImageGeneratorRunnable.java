@@ -81,7 +81,9 @@ public class TrackImageGeneratorRunnable implements Runnable {
                                 recreateAlbums();
                             }
                         } catch (IOException e) {
-                            LOGGER.error("Could not insert track image.", e);
+                            LOGGER.warn("Could not insert track image.", e);
+                        } catch (RuntimeException e) {
+                            LOGGER.info("Could not insert track image.", e);
                         }
                     }
                 } catch (SQLException e) {
