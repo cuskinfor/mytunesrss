@@ -9,7 +9,9 @@
 
         <release version="4.9.5" date="___D___">
             <action dev="mdescher" type="fix">
-                Catch runtime exceptions during image update process to prevent breaking the loop.
+                Corrected exception handling while updating track cover images. When a single cover image cannot be read/resized/updated,
+                the track gets marked with an empty image hash to indicate that there is no image available. Also the loop does
+                not break anymore due to a single image problem.
             </action>
             <action dev="mdescher" type="remove">
                 Web interface setting for JPEG quality. Used for displaying photos, not thumbnails.

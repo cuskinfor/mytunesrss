@@ -78,12 +78,14 @@ public class TrackImageGeneratorRunnable implements Runnable {
                             MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId));
                             count++;
                             if (count % 250 == 0) {
-                                recreateAlbums();
+                                try {
+                                    recreateAlbums();
+                                } catch (SQLException e) {
+                                    LOGGER.error("Could not recreate albums after inserting/updating images for 250 tracks.", e);
+                                }
                             }
-                        } catch (IOException e) {
-                            LOGGER.warn("Could not insert track image.", e);
-                        } catch (RuntimeException e) {
-                            LOGGER.info("Could not insert track image.", e);
+                        } catch (SQLException e) {
+                            LOGGER.error("Could not insert/update images for \"" + track.myFile + "\".", e);
                         }
                     }
                 } catch (SQLException e) {
