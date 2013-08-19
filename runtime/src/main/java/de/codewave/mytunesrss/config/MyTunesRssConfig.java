@@ -1817,14 +1817,18 @@ public class MyTunesRssConfig {
     }
 
     public static boolean isVlc(final File executable, boolean checkOutput) {
+        LOGGER.debug("Checking VLC executable \"" + executable.getAbsolutePath() + "\".");
         if (executable != null && executable.isFile() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName()))) {
+            LOGGER.debug("Executable is a file.");
             if (checkOutput) {
+                LOGGER.debug("Checking output of executable.");
                 try {
                     ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "--version");
                     processBuilder.redirectErrorStream(true);
+                    LOGGER.debug("Starting process.");
                     final Process process = processBuilder.start();
-                    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                     try {
+                        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
                         Thread checkThread = new Thread(new Runnable() {
                             public void run() {
                                 try {
@@ -1840,7 +1844,9 @@ public class MyTunesRssConfig {
                         } catch (InterruptedException e) {
                             // ignore
                         }
-                        return StringUtils.containsIgnoreCase(org.apache.commons.io.IOUtils.toString(new ByteArrayInputStream(baos.toByteArray())), "vlc");
+                        String vlcOutput = org.apache.commons.io.IOUtils.toString(new ByteArrayInputStream(baos.toByteArray()));
+                        LOGGER.debug("VLC output is \"" + vlcOutput + "\".");
+                        return StringUtils.containsIgnoreCase(vlcOutput, "vlc");
                     } finally {
                         process.destroy();
                     }
