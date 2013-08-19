@@ -22,7 +22,7 @@ public class GraphicsMagickExecutableFileValidator extends AbstractStringValidat
         if (value != null) {
             File file = null;
             file = new File(value);
-            return MyTunesRssConfig.isGraphicsMagick(file);
+            return MyTunesRssConfig.isExecutable(file);
         }
         return true;
     }
