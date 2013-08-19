@@ -8,7 +8,7 @@
           <element id="module-output" name="admin" />
         </element>
         <element id="directory" name="lib">
-          <element id="library" level="project" name="Maven: com.vaadin:vaadin:6.6.0" />
+          <element id="library" level="project" name="Maven: com.vaadin:vaadin:6.8.12" />
           <element id="library" level="project" name="Maven: org.vaadin.addons:refresher:1.1.1" />
           <element id="library" level="project" name="Maven: org.vaadin.addons:vaadin-treetable:1.2.2" />
           <element id="library" level="project" name="Maven: org.vaadin.addon:jfreechartwrapper:2.5.0" />

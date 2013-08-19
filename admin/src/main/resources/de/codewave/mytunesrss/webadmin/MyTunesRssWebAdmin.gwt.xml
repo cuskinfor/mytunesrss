@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) 2011. Codewave Software Michael Descher.
-  ~ All rights reserved.
-  -->
-
-<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN"
-        "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 1.7.0//EN" "http://google-web-toolkit.googlecode.com/svn/tags/1.7.0/distro-source/core/src/gwt-module.dtd">
 <module>
     <!--
      Uncomment the following to compile the widgetset for one browser only.
@@ -23,9 +17,9 @@
     <!-- <set-property name="user.agent" value="gecko1_8"/> -->
 
 
-    <inherits name="com.github.wolfie.refresher.RefresherApplicationWidgetset"/>
+    <inherits name="com.github.wolfie.refresher.RefresherApplicationWidgetset" />
 
-    <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet"/>
+    <inherits name="com.vaadin.terminal.gwt.DefaultWidgetSet" />
 
-    <inherits name="com.vaadin.addon.treetable.TreetableWidgetset"/>
+    <inherits name="com.vaadin.addon.treetable.TreetableWidgetset" />
 </module>

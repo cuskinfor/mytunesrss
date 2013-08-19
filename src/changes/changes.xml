@@ -9,6 +9,10 @@
 
         <release version="4.9.5" date="___D___">
             <action dev="mdescher" type="fix">
+                Do not check for correct output when checking for VLC or ImageMagick executables since at least for
+                VLC this does not work on Windows.
+            </action>
+            <action dev="mdescher" type="fix">
                 Corrected exception handling while updating track cover images. When a single cover image cannot be read/resized/updated,
                 the track gets marked with an empty image hash to indicate that there is no image available. Also the loop does
                 not break anymore due to a single image problem.

@@ -1797,7 +1797,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isRemoteControl() {
-        return MyTunesRss.CONFIG.isVlcEnabled() && isVlc(getVlcExecutable(), false);
+        return MyTunesRss.CONFIG.isVlcEnabled() && isExecutable(getVlcExecutable());
     }
 
     public boolean isMyTunesRssComActive() {
@@ -1813,10 +1813,14 @@ public class MyTunesRssConfig {
     }
 
     public boolean isValidVlcConfig() {
-        return isVlcEnabled() && MyTunesRssConfig.isVlc(getVlcExecutable(), false);
+        return isVlcEnabled() && MyTunesRssConfig.isExecutable(getVlcExecutable());
     }
 
-    public static boolean isVlc(final File executable, boolean checkOutput) {
+    public static boolean isExecutable(File executable) {
+        return executable != null && executable.isFile() && executable.canExecute();
+    }
+
+    /*public static boolean isVlc(final File executable, boolean checkOutput) {
         LOGGER.debug("Checking VLC executable \"" + executable.getAbsolutePath() + "\".");
         if (executable != null && executable.isFile() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName()))) {
             LOGGER.debug("Executable is a file.");
@@ -1892,7 +1896,7 @@ public class MyTunesRssConfig {
             }
         }
         return false;
-    }
+    }*/
 
     public void replaceDatasourceConfig(DatasourceConfig config) {
         for (Iterator<DatasourceConfig> iterConfigs = myDatasources.iterator(); iterConfigs.hasNext(); ) {

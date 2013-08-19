@@ -294,12 +294,12 @@ function de_codewave_mytunesrss_webadmin_MyTunesRssWebAdmin(){
   $stats && $stats({moduleName:'de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'bootstrap', millis:(new Date).getTime(), type:'selectingPermutation'});
   if (!isHostedMode()) {
     try {
-      unflattenKeylistIntoAnswers(['gecko1_8'], '3D4670ED2C980D930A1AF8468FB444F8');
-      unflattenKeylistIntoAnswers(['opera'], '40B8B539A7B45A05E13A42AABAADC760');
-      unflattenKeylistIntoAnswers(['safari'], '74CBC727141B9F2825C39E1CCEC08C13');
-      unflattenKeylistIntoAnswers(['ie9'], '77FF5E5886FFF36A14E744E4767953DE');
-      unflattenKeylistIntoAnswers(['ie8'], 'A4A4305C21B9CA2EA5A47D084119A8F7');
-      unflattenKeylistIntoAnswers(['ie6'], 'BB10B6BAF39414F7135149DC5F86FDE0');
+      unflattenKeylistIntoAnswers(['gecko1_8'], '02B5A2DFDB77716A58A8042B1D7ABF3C');
+      unflattenKeylistIntoAnswers(['ie6'], '044C8F4BD22597833B1285BA4471BF2F');
+      unflattenKeylistIntoAnswers(['ie8'], '4B24B186E82D054A191CF25CFC9C29CE');
+      unflattenKeylistIntoAnswers(['opera'], 'AF6D27EB2484B54EE46AB910ADF593A7');
+      unflattenKeylistIntoAnswers(['safari'], 'D16303F54F8C34C28FF2CB9B683ADEB3');
+      unflattenKeylistIntoAnswers(['ie9'], 'ECC49A49B0CE481E37FC0F16EEEAA78D');
       strongName = answers[computePropValue('user.agent')];
       var idx = strongName.indexOf(':');
       if (idx != -1) {

@@ -832,7 +832,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isVlc(file, true)) {
+            if (MyTunesRssConfig.isExecutable(file)) {
                 LOGGER.info("Found VLC executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -864,7 +864,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isGraphicsMagick(file)) {
+            if (MyTunesRssConfig.isExecutable(file)) {
                 LOGGER.info("Found GraphicsMagick executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
