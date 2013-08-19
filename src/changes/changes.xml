@@ -9,6 +9,9 @@
 
         <release version="4.9.5" date="___D___">
             <action dev="mdescher" type="fix">
+                Updated Vaadin to v6.8.12 to make the admin work in IE 10.
+            </action>
+            <action dev="mdescher" type="fix">
                 Do not check for correct output when checking for VLC or ImageMagick executables since at least for
                 VLC this does not work on Windows.
             </action>
