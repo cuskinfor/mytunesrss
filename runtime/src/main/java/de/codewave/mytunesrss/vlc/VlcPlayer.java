@@ -23,6 +23,7 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.*;
@@ -66,7 +67,7 @@ public class VlcPlayer {
         public void run() {
             while (!myCancel) {
                 try {
-                    HttpResponseStatus status = send("/status.json", HttpResponseStatus.class);
+                    HttpResponseStatus status = sendXml("/status.xml", HttpResponseStatus.class);
                     VlcPlayer.this.myCurrentStatus.set(status);
                     if (myAdvanceListener && status.isStopped()) {
                         advance();
@@ -397,6 +398,26 @@ public class VlcPlayer {
         }
         return null;
     }
+    
+    private synchronized void sendXml(String command) throws VlcPlayerException {
+        sendXml(command, null);
+    }
+
+    private synchronized <T> T sendXml(String command, Class<T> responseType) throws VlcPlayerException {
+        LOGGER.trace("Sending command: " + command);
+        GetMethod getMethod = new GetMethod("http://" + myVlcHost + ":" + myVlcPort + "/requests" + command);
+        try {
+            getMethod.getParams().setSoTimeout(MyTunesRss.CONFIG.getVlcSocketTimeout());
+            if (myHttpClient.executeMethod(getMethod) == 200 && responseType != null) {
+                return JAXB.unmarshal(getMethod.getResponseBodyAsStream(), responseType);
+            }
+        } catch (IOException e) {
+            throw new VlcPlayerException("Could not send command \"" + command + "\" to player.", e);
+        } finally {
+            getMethod.releaseConnection();
+        }
+        return null;
+    }
 
     public synchronized void stop() throws VlcPlayerException {
         LOGGER.debug("Stopping playback.");
@@ -435,7 +456,7 @@ public class VlcPlayer {
     }
 
     public synchronized boolean setFullScreen(boolean fullScreen) throws VlcPlayerException {
-        HttpResponseStatus status = send("/status.json", HttpResponseStatus.class);
+        HttpResponseStatus status = sendXml("/status.xml", HttpResponseStatus.class);
         if (status != null && !status.isFullscreen() && fullScreen) {
             LOGGER.debug("Switching to fullscreen mode.");
             send("/status.json?command=fullscreen");
