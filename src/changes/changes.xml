@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.9.5" date="___D___">
+        <release version="4.9.5" date="2013-08-22">
             <action dev="mdescher" type="fix">
                 Use XML requests to VLC player when getting the status since the JSON responses are
                 locale dependent and so might be broken.
