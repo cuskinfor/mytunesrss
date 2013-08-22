@@ -112,6 +112,7 @@ public class MyTunesRss {
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
+    public static final long STARTUP_TIME = System.currentTimeMillis();
     public static String VERSION;
     public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();

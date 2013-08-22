@@ -69,7 +69,7 @@ public class ThemeServlet extends HttpServlet {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         } else {
             httpServletResponse.setDateHeader("Last-Modified", stylesheet.lastModified());
-            httpServletResponse.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
+            httpServletResponse.setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(0));
             httpServletResponse.setContentType("text/css");
             httpServletResponse.setContentLength((int) stylesheet.length());
             if (LOG.isDebugEnabled()) {
@@ -86,7 +86,7 @@ public class ThemeServlet extends HttpServlet {
             httpServletResponse.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         } else {
             httpServletResponse.setDateHeader("Last-Modified", image.lastModified());
-            httpServletResponse.setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
+            httpServletResponse.setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(0));
             httpServletResponse.setContentType(URLConnection.guessContentTypeFromName(image.getName()));
             httpServletResponse.setContentLength((int) image.length());
             if (LOG.isDebugEnabled()) {

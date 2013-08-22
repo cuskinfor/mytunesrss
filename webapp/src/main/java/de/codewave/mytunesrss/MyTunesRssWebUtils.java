@@ -475,5 +475,9 @@ public class MyTunesRssWebUtils {
                 "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
     }
+    
+    public static String createCacheControlValue(long maxAgeSeconds) {
+        return "max-age=" + maxAgeSeconds + ", must-revalidate, private";
+    }
 
 }

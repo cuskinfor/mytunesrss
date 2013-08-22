@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
@@ -84,7 +85,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         }
         getResponse().setContentType(image.getMimeType());
         getResponse().setContentLength(image.getData().length);
-        getResponse().setHeader("Cache-Control", "max-age=" + (MyTunesRss.CONFIG.getImageExpirationMillis() / 1000));
+        getResponse().setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(MyTunesRss.CONFIG.getImageExpirationMillis() / 1000));
         getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
         getResponse().getOutputStream().write(image.getData());
     }

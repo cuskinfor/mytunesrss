@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
@@ -79,7 +80,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                         }
                         sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
                         getResponse().setDateHeader("Last-Modified", photo.myLastImageUpdate);
-                        getResponse().setHeader("Cache-Control", "max-age=0, no-cache, must-revalidate");
+                        getResponse().setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(0));
                         sendResponse(sender, MyTunesRssUtils.getLegalFileName(photoFile.getName()));
                     } else {
                         LOGGER.warn("Photo file \"" + photoFile + "\" not found.");

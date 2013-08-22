@@ -9,6 +9,9 @@
 
         <release version="4.9.5" date="___D___">
             <action dev="mdescher" type="fix">
+                Added cache control response headers to the REST responses.
+            </action>
+            <action dev="mdescher" type="fix">
                 Updated Vaadin to v6.8.12 to make the admin work in IE 10.
             </action>
             <action dev="mdescher" type="fix">

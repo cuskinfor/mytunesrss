@@ -11,11 +11,15 @@ import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
+import de.codewave.mytunesrss.rest.CacheControlInterceptor;
+import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.*;
+import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.Path;
@@ -23,6 +27,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.net.URI;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,5 +207,17 @@ public class RestResource {
             response.header("Access-Control-Allow-Headers", headers);
         }
         return response.build();
+    }
+    
+    protected void handleDatabaseLastModified() throws SQLException {
+        long lastDatabaseUpdate = TransactionFilter.getTransaction().executeQuery(new GetSystemInformationQuery()).getLastUpdate();
+        handleLastModified(lastDatabaseUpdate);
+    }
+
+    protected void handleLastModified(long lastModified) {
+        if (CacheControlInterceptor.getIfModifiedSince() != null && (lastModified / 1000) <= (CacheControlInterceptor.getIfModifiedSince() / 1000)) {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_NOT_MODIFIED, null);
+        }
+        CacheControlInterceptor.setLastModified(lastModified);
     }
 }
