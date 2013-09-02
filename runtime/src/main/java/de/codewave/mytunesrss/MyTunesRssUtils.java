@@ -613,7 +613,6 @@ public class MyTunesRssUtils {
         } finally {
             imageInputStream.close();
         }
-        
     }
 
     private static int getMaxImageSizeExternalProcess(File source) throws IOException {
@@ -627,7 +626,7 @@ public class MyTunesRssUtils {
             LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
             stderrCopyThread.setDaemon(true);
             stderrCopyThread.start();
-            String[] dimensions = StringUtils.split(IOUtils.toString(is, "UTF-8"));
+            String[] dimensions = StringUtils.split(StringUtils.trim(IOUtils.toString(is, "UTF-8")));
             if (dimensions.length == 2) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image dimensions for \"" + source.getAbsolutePath() + "\" are \"" + dimensions[0] + "x" + dimensions[1] + "\".");
@@ -637,7 +636,8 @@ public class MyTunesRssUtils {
                 throw new IOException("Could not get dimension from images using external process.");
             }
         } finally {
-            is.close();
+            waitForProcess(process, 100);
+            MyTunesRss.SPAWNED_PROCESSES.remove(process);
         }
     }
 
@@ -649,6 +649,8 @@ public class MyTunesRssUtils {
             } catch (IOException e) {
                 LOGGER.debug("Could not create buffered image.", e);
                 return false;
+            } finally {
+                IOUtils.closeQuietly(imageInputStream);
             }
         }
         return true;
@@ -676,6 +678,26 @@ public class MyTunesRssUtils {
         return MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute();
     }
 
+    private static void waitForProcess(final Process process, long maxWaitMillis) {
+        try {
+            Thread waitForProcessThread = new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        process.waitFor();
+                    } catch (InterruptedException e) {
+                        process.destroy();
+                    }
+                }
+            });
+            waitForProcessThread.start();
+            waitForProcessThread.join(maxWaitMillis);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } finally {
+            process.destroy();
+        }
+    }
+
     private static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         try {
@@ -684,18 +706,22 @@ public class MyTunesRssUtils {
                 List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), tempOutFile.getAbsolutePath());
                 String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
                 LOGGER.debug(msg);
-                Process process = new ProcessBuilder(resizeCommand).start();
+                final Process process = new ProcessBuilder(resizeCommand).redirectErrorStream(true).start();
                 MyTunesRss.SPAWNED_PROCESSES.add(process);
-                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
-                stdoutCopyThread.setDaemon(true);
-                stdoutCopyThread.start();
-                LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
-                stderrCopyThread.setDaemon(true);
-                stderrCopyThread.start();
-                process.waitFor();
-                return new de.codewave.mytunesrss.meta.Image("image/jpg", FileUtils.openInputStream(tempOutFile));
-            } catch (InterruptedException e) {
-                throw new IOException("Could not resize image using external process.", e);
+                try {
+                    LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Info, msg, null);
+                    stdoutCopyThread.setDaemon(true);
+                    stdoutCopyThread.start();
+                    waitForProcess(process, 10000);
+                } finally {
+                    MyTunesRss.SPAWNED_PROCESSES.remove(process);
+                }
+                FileInputStream is = FileUtils.openInputStream(tempOutFile);
+                try {
+                    return new de.codewave.mytunesrss.meta.Image("image/jpg", is);
+                } finally {
+                    is.close();
+                }
             } finally {
                 tempOutFile.delete();
             }
