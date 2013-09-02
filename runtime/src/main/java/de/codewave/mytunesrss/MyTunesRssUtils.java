@@ -586,6 +586,24 @@ public class MyTunesRssUtils {
     }
 
     public static int getMaxImageSize(de.codewave.mytunesrss.meta.Image source) throws IOException {
+        if (isExecutableGraphicsMagick() && source.getImageFile() != null) {
+            return getMaxImageSizeExternalProcess(source.getImageFile());
+        } else {
+            return getMaxImageSizeJava(source);
+        }
+    }
+
+    public static int getMaxImageSize(File source) throws IOException {
+        if (isExecutableGraphicsMagick()) {
+            return getMaxImageSizeExternalProcess(source);
+        } else {
+            String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
+            de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(mimeType, FileUtils.readFileToByteArray(source));
+            return getMaxImageSizeJava(image);
+        }
+    }
+
+    private static int getMaxImageSizeJava(de.codewave.mytunesrss.meta.Image source) throws IOException {
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {
             BufferedImage original = ImageIO.read(imageInputStream);
@@ -594,6 +612,32 @@ public class MyTunesRssUtils {
             return Math.max(width, height);
         } finally {
             imageInputStream.close();
+        }
+        
+    }
+
+    private static int getMaxImageSizeExternalProcess(File source) throws IOException {
+        List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "identify", "-format",  "%w %h", source.getAbsolutePath());
+        String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
+        LOGGER.debug(msg);
+        Process process = new ProcessBuilder(resizeCommand).start();
+        MyTunesRss.SPAWNED_PROCESSES.add(process);
+        InputStream is = process.getInputStream();
+        try {
+            LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
+            stderrCopyThread.setDaemon(true);
+            stderrCopyThread.start();
+            String[] dimensions = StringUtils.split(IOUtils.toString(is, "UTF-8"));
+            if (dimensions.length == 2) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Image dimensions for \"" + source.getAbsolutePath() + "\" are \"" + dimensions[0] + "x" + dimensions[1] + "\".");
+                }
+                return Math.max(Integer.parseInt(dimensions[0]), Integer.parseInt(dimensions[1]));
+            } else {
+                throw new IOException("Could not get dimension from images using external process.");
+            }
+        } finally {
+            is.close();
         }
     }
 
@@ -611,8 +655,8 @@ public class MyTunesRssUtils {
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        if (isExecutableGraphicsMagick()) {
-            return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
+        if (isExecutableGraphicsMagick() && source.getImageFile() != null) {
+            return resizeImageWithMaxSizeExternalProcess(source.getImageFile(), maxSize, jpegQuality, debugInfo);
         } else {
             return resizeImageWithMaxSizeJava(source, maxSize, jpegQuality, debugInfo);
         }
@@ -632,39 +676,35 @@ public class MyTunesRssUtils {
         return MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute();
     }
 
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+    private static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         try {
-            List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), "-");
-            String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
-            LOGGER.debug(msg);
-            Process process = new ProcessBuilder(resizeCommand).start();
-            MyTunesRss.SPAWNED_PROCESSES.add(process);
-            InputStream is = process.getInputStream();
+            File tempOutFile = createTempFile(".jpg");
             try {
+                List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), tempOutFile.getAbsolutePath());
+                String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
+                LOGGER.debug(msg);
+                Process process = new ProcessBuilder(resizeCommand).start();
+                MyTunesRss.SPAWNED_PROCESSES.add(process);
+                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
+                stdoutCopyThread.setDaemon(true);
+                stdoutCopyThread.start();
                 LogStreamCopyThread stderrCopyThread = new LogStreamCopyThread(process.getErrorStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Error, msg, null);
                 stderrCopyThread.setDaemon(true);
                 stderrCopyThread.start();
-                return new de.codewave.mytunesrss.meta.Image("image/jpg", is);
+                process.waitFor();
+                return new de.codewave.mytunesrss.meta.Image("image/jpg", FileUtils.openInputStream(tempOutFile));
+            } catch (InterruptedException e) {
+                throw new IOException("Could not resize image using external process.", e);
             } finally {
-                is.close();
+                tempOutFile.delete();
             }
         } finally {
             LOGGER.debug("Resizing (external process) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
         }
     }
 
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        File tempFile = createTempFile(".tmp");
-        FileUtils.writeByteArrayToFile(tempFile, source.getData());
-        try {
-            return resizeImageWithMaxSizeExternalProcess(tempFile, maxSize, jpegQuality, debugInfo);
-        } finally {
-            tempFile.delete();
-        }
-    }
-
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+    private static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {

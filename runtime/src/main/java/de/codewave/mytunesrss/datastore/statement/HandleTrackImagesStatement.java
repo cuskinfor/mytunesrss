@@ -56,8 +56,9 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     public void execute(Connection connection) {
         String imageHash = "";
+        Image image = null;
         try {
-            Image image = getLocalFileImage();
+            image = getLocalFileImage();
             if (image != null && image.getData() != null && image.getData().length > 0) {
                 imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
@@ -134,6 +135,9 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         } catch (RuntimeException e) {
             LOGGER.warn("Unknown problem handling images for \"" + myFile.getAbsolutePath() + "\".", e);
         } finally {
+            if (image != null) {
+                image.deleteImageFile();
+            }
             try {
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             } catch (SQLException e) {
@@ -149,7 +153,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (imageFile != null) {
             // okay, use special image file
             image = readImageFromImageFile(imageFile);
-            if (image != null && !MyTunesRssUtils.isImageUsable(image)) {
+            if (!MyTunesRssUtils.isImageUsable(image)) {
                 LOGGER.debug("Image from special file not readable.");
                 // image not readable, try next
                 image = null;
@@ -192,13 +196,10 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     }
 
     private Image readImageFromImageFile(File imageFile) throws IOException {
-        Image image;
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
         }
-        image = new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(
-                imageFile));
-        return image;
+        return new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(imageFile));
     }
 
     private File findImageFile(File file) {
