@@ -141,7 +141,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             }
         }
     }
-
+    
     private Image getLocalFileImage() throws IOException {
         Image image = null;
         // look for special image file

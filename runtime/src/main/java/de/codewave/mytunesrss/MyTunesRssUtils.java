@@ -483,8 +483,7 @@ public class MyTunesRssUtils {
     }
 
     public static File createTempFile(String suffix) throws IOException {
-        File tmpFile = File.createTempFile("mytunesrss_", suffix, MyTunesRss.TEMP_CACHE.getBaseDir());
-        return tmpFile;
+        return File.createTempFile("mytunesrss_", suffix, MyTunesRss.TEMP_CACHE.getBaseDir());
     }
 
     /**
@@ -610,7 +609,11 @@ public class MyTunesRssUtils {
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        return resizeImageWithMaxSizeJava(source, maxSize, jpegQuality, debugInfo);
+        if (MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute()) {
+            return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
+        } else {
+            return resizeImageWithMaxSizeJava(source, maxSize, jpegQuality, debugInfo);
+        }
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
@@ -642,6 +645,16 @@ public class MyTunesRssUtils {
             }
         } finally {
             LOGGER.debug("Resizing (external process) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
+        }
+    }
+
+    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+        File tempFile = createTempFile(".tmp");
+        FileUtils.writeByteArrayToFile(tempFile, source.getData());
+        try {
+            return resizeImageWithMaxSizeExternalProcess(tempFile, maxSize, jpegQuality, debugInfo);
+        } finally {
+            tempFile.delete();
         }
     }
 
