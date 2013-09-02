@@ -598,18 +598,20 @@ public class MyTunesRssUtils {
     }
 
     public static boolean isImageUsable(de.codewave.mytunesrss.meta.Image image) {
-        ByteArrayInputStream imageInputStream = new ByteArrayInputStream(image.getData());
-        try {
-            ImageIO.read(imageInputStream);
-        } catch (IOException e) {
-            LOGGER.debug("Could not create buffered image.", e);
-            return false;
+        if (!isExecutableGraphicsMagick()) {
+            ByteArrayInputStream imageInputStream = new ByteArrayInputStream(image.getData());
+            try {
+                ImageIO.read(imageInputStream);
+            } catch (IOException e) {
+                LOGGER.debug("Could not create buffered image.", e);
+                return false;
+            }
         }
         return true;
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        if (MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute()) {
+        if (isExecutableGraphicsMagick()) {
             return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
         } else {
             return resizeImageWithMaxSizeJava(source, maxSize, jpegQuality, debugInfo);
@@ -617,13 +619,17 @@ public class MyTunesRssUtils {
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
-        if (MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute()) {
+        if (isExecutableGraphicsMagick()) {
             return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
         } else {
             String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
             de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(mimeType, FileUtils.readFileToByteArray(source));
             return resizeImageWithMaxSizeJava(image, maxSize, jpegQuality, debugInfo);
         }
+    }
+
+    private static boolean isExecutableGraphicsMagick() {
+        return MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute();
     }
 
     public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
