@@ -89,6 +89,18 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     }
                     new UpdateImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
                 }
+                Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                if (!imageSizes.contains(Integer.valueOf(128))) {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Inserting image with size 128.");
+                    }
+                    new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
+                } else {
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("Updating image with size 128.");
+                    }
+                    new UpdateImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
+                }
                 Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(image, 256, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                 if (!imageSizes.contains(Integer.valueOf(256))) {
                     if (LOGGER.isDebugEnabled()) {
@@ -103,29 +115,24 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 }
                 int originalSize = MyTunesRssUtils.getMaxImageSize(image);
                 if (originalSize > 256) {
-                    if (!imageSizes.contains(Integer.valueOf(originalSize))) {
+                    Image imageMax = image;
+                    int maxSize = originalSize;
+                    if (originalSize > 2048) {
+                        // upper limit for image size is 2048
+                        imageMax = MyTunesRssUtils.resizeImageWithMaxSize(image, 2048, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                        maxSize = 2048;
+                    }
+                    if (!imageSizes.contains(Integer.valueOf(maxSize))) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Inserting image with size " + originalSize + ".");
+                            LOGGER.debug("Inserting image with size " + maxSize + ".");
                         }
-                        new InsertImageStatement(imageHash, originalSize, image.getMimeType(), image.getData()).execute(connection);
+                        new InsertImageStatement(imageHash, maxSize, imageMax.getMimeType(), imageMax.getData()).execute(connection);
                     } else {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Updating image with size " + originalSize + ".");
+                            LOGGER.debug("Updating image with size " + maxSize + ".");
                         }
-                        new UpdateImageStatement(imageHash, originalSize, image.getMimeType(), image.getData()).execute(connection);
+                        new UpdateImageStatement(imageHash, maxSize, imageMax.getMimeType(), imageMax.getData()).execute(connection);
                     }
-                }
-                Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                if (!imageSizes.contains(Integer.valueOf(128))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 128.");
-                    }
-                    new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Updating image with size 128.");
-                    }
-                    new UpdateImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
             }
         } catch (IOException e) {
