@@ -72,7 +72,8 @@ public class VlcPlayer {
                     if (myAdvanceListener && status.isStopped()) {
                         advance();
                     }
-                } catch (VlcPlayerException e) {
+                } catch (Exception e) {
+                    // catch any exception to prevent thread from dying
                     LOGGER.info("Exception in status updater.", e);
                 }
                 try {
