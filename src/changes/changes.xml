@@ -7,7 +7,11 @@
 
     <body>
 
-        <release version="4.9.6" date="2013-09-01">
+        <release version="4.9.6" date="2013-09-xx">
+            <action dev="mdescher" type="update">
+                Updated simplemodal to 1.4.4 (and reverted my own change to position the popup window since it caused problems).
+                [MYTUNESRSS-450] Jukebox does not wotk for long pages
+            </action>
             <action dev="mdescher" type="update">
                 Limit imported images to a maximum size of 2048.
             </action>
@@ -15,7 +19,7 @@
                 [MYTUNESRSS-447] Use GraphicsMagick for cover artwork as well
             </action>
         </release>
-        
+
         <release version="4.9.5" date="2013-08-22">
             <action dev="mdescher" type="fix">
                 Use XML requests to VLC player when getting the status since the JSON responses are

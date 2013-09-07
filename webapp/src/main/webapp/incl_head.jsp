@@ -20,7 +20,7 @@
 <script src="${appUrl}/fullsize/jquery.fullsize.minified.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/loadmask/jquery.loadmask.min.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/ctnotify/jquery.ctNotify.js?ts=${sessionCreationTime}" type="text/javascript"></script>
-<script src="${appUrl}/js/jquery.simplemodal.js?ts=${sessionCreationTime}" type="text/javascript"></script>
+<script src="${appUrl}/js/jquery.simplemodal-1.4.4.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/js/jquery.cookie.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script src="${appUrl}/rest.js?ts=${sessionCreationTime}" type="text/javascript"></script>
 <script type="text/javascript">
