@@ -46,6 +46,10 @@
         <level value="error"/>
         <appender-ref ref="file"/>
     </logger>
+    <logger name="org.apache.commons.httpclient.auth.AuthChallengeProcessor" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="file"/>
+    </logger>
     <logger name="de.codewave.mytunesrss.servlet.resteasyfix" additivity="false">
         <level value="error"/>
         <appender-ref ref="file"/>
