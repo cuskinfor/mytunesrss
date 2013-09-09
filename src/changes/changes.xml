@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="4.9.7" date="???">
+            <action dev="mdescher" type="update">
+                Set http-password when starting VLC player for remote control since it will not work without
+                in VLC 2.1.0 and above.
+            </action>
+        </release>
+
         <release version="4.9.6" date="2013-09-08">
             <action dev="mdescher" type="update">
                 Updated simplemodal to 1.4.4 (and reverted my own change to position the popup window since it caused problems).

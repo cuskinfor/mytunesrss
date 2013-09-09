@@ -14,6 +14,8 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.UsernamePasswordCredentials;
+import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.AnnotationIntrospector;
@@ -110,6 +112,8 @@ public class VlcPlayer {
 
     private HttpClient myHttpClient = new HttpClient();
 
+    private String myPassword = UUID.randomUUID().toString();
+
     private String[] myRaopTargets;
 
     private BonjourServiceListener myRaopListener;
@@ -121,6 +125,7 @@ public class VlcPlayer {
     private StatusUpdater myStatusUpdater = new StatusUpdater();
 
     public VlcPlayer(BonjourServiceListener raopListener, BonjourServiceListener airplayListener) {
+        myHttpClient.getState().setCredentials(new AuthScope(null, -1), new UsernamePasswordCredentials("", myPassword));
         myRaopListener = raopListener;
         myAirplayListener = airplayListener;
     }
@@ -151,6 +156,7 @@ public class VlcPlayer {
                                 command.add("--intf=http");
                                 command.add("--http-host=" + myVlcHost);
                                 command.add("--http-port=" + myVlcPort);
+                                command.add("--http-password=" + myPassword);
                                 if (myRaopTargets != null && myRaopTargets.length > 0) {
                                     command.add("--sout-keep");
                                     if (myRaopTargets.length == 1) {
@@ -389,6 +395,7 @@ public class VlcPlayer {
         GetMethod getMethod = new GetMethod("http://" + myVlcHost + ":" + myVlcPort + "/requests" + command);
         try {
             getMethod.getParams().setSoTimeout(MyTunesRss.CONFIG.getVlcSocketTimeout());
+            getMethod.setDoAuthentication(true);
             if (myHttpClient.executeMethod(getMethod) == 200 && responseType != null) {
                 return MAPPER.readValue(getMethod.getResponseBodyAsStream(), responseType);
             }
@@ -399,7 +406,7 @@ public class VlcPlayer {
         }
         return null;
     }
-    
+
     private synchronized void sendXml(String command) throws VlcPlayerException {
         sendXml(command, null);
     }
