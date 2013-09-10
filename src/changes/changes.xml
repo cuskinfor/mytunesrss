@@ -10,6 +10,7 @@
         <release version="4.9.7" date="???">
             <action dev="mdescher" type="update">
                 Option for VLC player version. Used to set http-password when starting VLC player 2.1 for remote control.
+                Display error message in admin when VLC player could not be started.
             </action>
         </release>
 

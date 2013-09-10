@@ -64,9 +64,7 @@ import java.sql.*;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -113,6 +111,7 @@ public class MyTunesRss {
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
     public static final long STARTUP_TIME = System.currentTimeMillis();
+    private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<MessageWithParameters>(10);
     public static String VERSION;
     public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -923,6 +922,29 @@ public class MyTunesRss {
             return MyTunesRss.COMMAND_LINE_ARGS.get(MyTunesRss.CMD_PREFS_PATH)[0];
         } else {
             return PrefsUtils.getPreferencesDataPath(MyTunesRss.APPLICATION_IDENTIFIER);
+        }
+    }
+
+    public static MessageWithParameters getImportantAdminMessage() {
+        try {
+            return IMPORTANT_ADMIN_MESSAGE.remove();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
+
+    public static void addImportAdminMessage(String msg, Object... parameters) {
+        MessageWithParameters messageWithParameters = new MessageWithParameters(msg, parameters);
+        try {
+            IMPORTANT_ADMIN_MESSAGE.offer(messageWithParameters, 100, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            // remove oldest message to add a new one
+            IMPORTANT_ADMIN_MESSAGE.remove();
+            try {
+                IMPORTANT_ADMIN_MESSAGE.offer(messageWithParameters, 100, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e1) {
+                // ignore
+            }
         }
     }
 

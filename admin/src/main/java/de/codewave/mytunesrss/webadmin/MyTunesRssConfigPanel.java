@@ -160,6 +160,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
 
     public void refresh(Refresher source) {
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkImportantMessage();
     }
 
     protected Object findTableItemWithObject(Table table, Object component) {

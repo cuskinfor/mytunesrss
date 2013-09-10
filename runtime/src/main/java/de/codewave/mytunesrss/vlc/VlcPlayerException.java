@@ -17,4 +17,8 @@ public class VlcPlayerException extends Exception {
     public VlcPlayerException(Throwable cause) {
         super(cause);
     }
+
+    public boolean isPermanent() {
+        return false;  //To change body of created methods use File | Settings | File Templates.
+    }
 }

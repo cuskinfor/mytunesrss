@@ -465,6 +465,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         }
         myConnections.setPageLength(Math.min(myConnections.getItemIds().size(), 15));
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
+        ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkImportantMessage();
     }
 
     private void refreshMyTunesRssComUpdateState() {

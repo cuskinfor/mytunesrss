@@ -11,8 +11,11 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Window;
+import de.codewave.mytunesrss.MessageWithParameters;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.component.MessageWindow;
+
+import java.util.NoSuchElementException;
 
 public class MainWindow extends Window {
 
@@ -75,6 +78,18 @@ public class MainWindow extends Window {
     public void checkUnhandledException() {
         if (MyTunesRss.UNHANDLED_EXCEPTION.getAndSet(false)) {
             new MessageWindow(50, Sizeable.UNITS_EM, null, getBundleString("unhandledException.header"), getBundleString("unhandledException.detail"), new Button(getBundleString("button.ok"))) {
+                @Override
+                protected void onClick(Button button) {
+                    // intentionally left blank
+                }
+            }.show(this);
+        }
+    }
+
+    public void checkImportantMessage() {
+        MessageWithParameters messageWithParameters = MyTunesRss.getImportantAdminMessage();
+        if (messageWithParameters != null) {
+            new MessageWindow(50, Sizeable.UNITS_EM, null, getBundleString("importantAdminMessage.header"), getBundleString(messageWithParameters.getMessage(), messageWithParameters.getParameters()), new Button(getBundleString("button.ok"))) {
                 @Override
                 protected void onClick(Button button) {
                     // intentionally left blank
