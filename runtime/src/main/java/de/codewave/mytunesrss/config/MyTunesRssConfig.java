@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
+import de.codewave.mytunesrss.vlc.VlcVersion;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
@@ -131,6 +132,7 @@ public class MyTunesRssConfig {
     private boolean myHeadless = false;
     private boolean myVlcEnabled;
     private File myVlcExecutable;
+    private VlcVersion myVlcVersion;
     private int myVlcSocketTimeout;
     private String myRssDescription;
     private int myVlcRaopVolume = 75;
@@ -918,6 +920,14 @@ public class MyTunesRssConfig {
         myVlcExecutable = vlcExecutable;
     }
 
+    public VlcVersion getVlcVersion() {
+        return myVlcVersion;
+    }
+
+    public void setVlcVersion(VlcVersion vlcVersion) {
+        myVlcVersion = vlcVersion;
+    }
+
     public File getGmExecutable() {
         return myGmExecutable;
     }
@@ -1204,6 +1214,7 @@ public class MyTunesRssConfig {
         setHeadless(JXPathUtils.getBooleanValue(settings, "headless", false));
         String vlc = JXPathUtils.getStringValue(settings, "vlc", MyTunesRssUtils.findVlcExecutable());
         setVlcExecutable(vlc != null ? new File(vlc) : null);
+        setVlcVersion(VlcVersion.valueOf(JXPathUtils.getStringValue(settings, "vlc-version", VlcVersion.V20.name())));
         setVlcEnabled(JXPathUtils.getBooleanValue(settings, "vlc-enabled", true));
         setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
         setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
@@ -1607,6 +1618,7 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "headless", isHeadless()));
             if (getVlcExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
+                root.appendChild(DOMUtils.createTextElement(settings, "vlc-version", getVlcVersion().name()));
             }
             if (getGmExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "gm", getGmExecutable().getAbsolutePath()));

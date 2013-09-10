@@ -156,7 +156,9 @@ public class VlcPlayer {
                                 command.add("--intf=http");
                                 command.add("--http-host=" + myVlcHost);
                                 command.add("--http-port=" + myVlcPort);
-                                command.add("--http-password=" + myPassword);
+                                if (MyTunesRss.CONFIG.getVlcVersion() != null && MyTunesRss.CONFIG.getVlcVersion().isHttpPassword()) {
+                                    command.add("--http-password=" + myPassword);
+                                }
                                 if (myRaopTargets != null && myRaopTargets.length > 0) {
                                     command.add("--sout-keep");
                                     if (myRaopTargets.length == 1) {

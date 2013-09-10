@@ -9,8 +9,7 @@
 
         <release version="4.9.7" date="???">
             <action dev="mdescher" type="update">
-                Set http-password when starting VLC player for remote control since it will not work without
-                in VLC 2.1.0 and above.
+                Option for VLC player version. Used to set http-password when starting VLC player 2.1 for remote control.
             </action>
         </release>
 
