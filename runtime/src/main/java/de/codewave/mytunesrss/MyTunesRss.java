@@ -859,6 +859,10 @@ public class MyTunesRss {
                     public boolean jdbcCompliant() {
                         return myDriver.jdbcCompliant();
                     }
+                    
+                    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
+                        throw new SQLFeatureNotSupportedException("Getting a parent logger is not supported here!");
+                    }
                 });
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {

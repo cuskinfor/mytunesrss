@@ -9,6 +9,9 @@
 
         <release version="4.9.7" date="???">
             <action dev="mdescher" type="update">
+                Updated enunciate plugin to 1.27 and made project compilable with Java 7.
+            </action>
+            <action dev="mdescher" type="update">
                 Option for VLC player version. Used to set http-password when starting VLC player 2.1 for remote control.
                 Display error message in admin when VLC player could not be started.
             </action>

@@ -185,7 +185,7 @@
             <plugin>
                 <groupId>org.codehaus.enunciate</groupId>
                 <artifactId>maven-enunciate-plugin</artifactId>
-                <version>1.25</version>
+                <version>1.27</version>
                 <configuration>
                     <configFile>src/conf/enunciate.xml</configFile>
                 </configuration>

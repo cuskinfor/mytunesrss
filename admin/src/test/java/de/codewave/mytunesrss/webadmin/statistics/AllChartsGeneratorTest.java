@@ -5,11 +5,8 @@
 
 package de.codewave.mytunesrss.webadmin.statistics;
 
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
-import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.statistics.GetStatisticsEventsQuery;
@@ -25,12 +22,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -108,17 +104,10 @@ public class AllChartsGeneratorTest {
                                   File file,
                                   int width,
                                   int height,
-                                  double quality) throws FileNotFoundException, IOException {
+                                  double quality) throws IOException {
         BufferedImage img = draw(chart, width, height);
 
-        FileOutputStream fos = new FileOutputStream(file);
-        JPEGImageEncoder encoder2 =
-                JPEGCodec.createJPEGEncoder(fos);
-        JPEGEncodeParam param2 =
-                encoder2.getDefaultJPEGEncodeParam(img);
-        param2.setQuality((float) quality, true);
-        encoder2.encode(img, param2);
-        fos.close();
+        ImageIO.write(img, "jpeg", file);
     }
 
     protected static BufferedImage draw(JFreeChart chart, int width, int height) {
