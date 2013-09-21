@@ -69,7 +69,7 @@ public class WebConfig {
     public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
 
     public static enum PlaylistType {
-        M3u(), Xspf(), Json();
+        M3u(), Xspf(), Json(), JwMediaRss();
 
         public String getFileSuffix() {
             switch (this) {
@@ -92,6 +92,8 @@ public class WebConfig {
                     return MyTunesRssResource.TemplateXspf;
                 case Json:
                     return MyTunesRssResource.TemplateJson;
+                case JwMediaRss:
+                    return MyTunesRssResource.TemplateJwMediaRss;
                 default:
                     throw new IllegalArgumentException("illegal playlist type: " + this.name());
             }

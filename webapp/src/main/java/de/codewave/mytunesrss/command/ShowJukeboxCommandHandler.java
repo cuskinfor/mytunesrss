@@ -40,6 +40,8 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
                 return WebConfig.PlaylistType.M3u;
             case Json:
                 return WebConfig.PlaylistType.Json;
+            case JwMediaRss:
+                return WebConfig.PlaylistType.JwMediaRss;
             default:
                 throw new IllegalArgumentException("Illegal playlist file type \"" + playlistFileType.name() + "\".");
         }
