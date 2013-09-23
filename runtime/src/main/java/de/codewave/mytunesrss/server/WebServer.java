@@ -180,7 +180,9 @@ public class WebServer {
                     ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                     outputStream.write(result);
                     IOUtils.copyLarge(inputStream, outputStream);
-                    LOGGER.debug(("Health servlet response is \"" + IOUtils.toString(new ByteArrayInputStream(outputStream.toByteArray()), "UTF-8")));
+                    if (outputStream.size() > 1) {
+                        LOGGER.debug(("Health servlet response is \"" + IOUtils.toString(new ByteArrayInputStream(outputStream.toByteArray()), "UTF-8")));
+                    }
                 }
                 LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
                 return result != -1 ? (byte) result : CheckHealthResult.EOF;
