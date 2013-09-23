@@ -181,7 +181,7 @@ public class WebServer {
                     outputStream.write(result);
                     IOUtils.copyLarge(inputStream, outputStream);
                     if (outputStream.size() > 1) {
-                        LOGGER.debug("Health servlet response is \"" + IOUtils.toString(new ByteArrayInputStream(outputStream.toByteArray()), "UTF-8"));
+                        LOGGER.info("Health servlet response is \"" + IOUtils.toString(new ByteArrayInputStream(outputStream.toByteArray()), "UTF-8"));
                     }
                 }
                 LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
