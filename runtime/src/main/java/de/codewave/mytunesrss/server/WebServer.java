@@ -22,10 +22,7 @@ import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.BindException;
 import java.net.HttpURLConnection;
 import java.net.ServerSocket;
@@ -178,6 +175,12 @@ public class WebServer {
                             // intentionally left blank
                         }
                     }
+                }
+                if (result != -1) {
+                    ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                    outputStream.write(result);
+                    IOUtils.copyLarge(inputStream, outputStream);
+                    LOGGER.debug(("Health servlet response is \"" + IOUtils.toString(new ByteArrayInputStream(outputStream.toByteArray()), "UTF-8")));
                 }
                 LOGGER.info("Health servlet response code is " + result + " after " + trial + " trials.");
                 return result != -1 ? (byte) result : CheckHealthResult.EOF;

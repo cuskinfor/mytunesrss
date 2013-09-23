@@ -9,6 +9,9 @@
 
         <release version="4.9.7" date="???">
             <action dev="mdescher" type="add">
+                Write complete health servlet response to log file on debug level.
+            </action>
+            <action dev="mdescher" type="add">
                 Added jukebox playlist type "JW Media RSS" to support the JW Media Player 6.
             </action>
             <action dev="mdescher" type="update">
