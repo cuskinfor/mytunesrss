@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.9.7" date="???">
+        <release version="4.9.7" date="2013-09-27">
             <action dev="mdescher" type="add">
                 Write complete health servlet response to log file.
             </action>
