@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.8" date="___D___">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-453] Do not use a transcoder cache file if it is outdated in respect of the original file
+            </action>
+        </release>
+
         <release version="4.9.7" date="2013-09-27">
             <action dev="mdescher" type="add">
                 Write complete health servlet response to log file.

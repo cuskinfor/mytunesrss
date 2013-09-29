@@ -81,6 +81,18 @@ public class FileSystemCache implements Runnable {
         return count;
     }
 
+    public synchronized long deleteBySuffix(String suffix) {
+        long count = 0;
+        for (CacheItem item : listItems()) {
+            if (item.getId().endsWith(suffix)) {
+                if (deleteByName(item.getId())) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
     public synchronized void truncateCache() {
         LOGGER.debug("[Cache: \"" + myName + "\"] Truncating cache.");
         long startTime = System.currentTimeMillis();

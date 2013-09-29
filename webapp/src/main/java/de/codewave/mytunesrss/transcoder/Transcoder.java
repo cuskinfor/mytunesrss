@@ -46,7 +46,13 @@ public class Transcoder {
     }
 
     public InputStream getStream(File originalFile) throws IOException {
-        return new TranscoderStream(myTranscoderConfig, originalFile, getCacheFile());
+        File cacheFile = getCacheFile();
+        if (originalFile.lastModified() > cacheFile.lastModified()) {
+            // cached file is outdated
+            MyTunesRss.TRANSCODER_CACHE.deleteByName(cacheFile.getName());
+            cacheFile = null;
+        }
+        return new TranscoderStream(myTranscoderConfig, originalFile, cacheFile);
     }
 
     private File getCacheFile() {
