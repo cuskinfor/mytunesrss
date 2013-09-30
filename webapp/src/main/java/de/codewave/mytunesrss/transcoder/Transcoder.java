@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.transcoder;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.command.StatusCodeSender;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -10,6 +11,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.NullOutputStream;
 import org.apache.commons.lang.StringUtils;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -38,19 +40,28 @@ public class Transcoder {
         myTempFile = tempFile;
     }
 
-    public StreamSender getStreamSender(File originalFile) throws IOException {
-        if (myTempFile) {
-            IOUtils.copyLarge(getStream(originalFile), new NullOutputStream());
+    public StreamSender getStreamSender(File originalFile, long ifModifiedSince) throws IOException {
+        InputStream stream = getStream(originalFile, ifModifiedSince);
+        if (ifModifiedSince != -1 && stream == null) {
+            // not modified
+            return new StatusCodeSender(HttpServletResponse.SC_NOT_MODIFIED);
+        } else {
+            if (myTempFile) {
+                IOUtils.copyLarge(stream, new NullOutputStream());
+                stream = getStream(originalFile, ifModifiedSince);
+            }
+            return new StreamSender(stream, getTargetContentType(), 0);
         }
-        return new StreamSender(getStream(originalFile), getTargetContentType(), 0);
     }
 
-    public InputStream getStream(File originalFile) throws IOException {
+    public InputStream getStream(File originalFile, long ifModifiedSince) throws IOException {
         File cacheFile = getCacheFile();
-        if (originalFile.lastModified() > cacheFile.lastModified()) {
+        if (originalFile.isFile() && cacheFile.isFile() && originalFile.lastModified() > cacheFile.lastModified()) {
             // cached file is outdated
             MyTunesRss.TRANSCODER_CACHE.deleteByName(cacheFile.getName());
-            cacheFile = null;
+        }
+        if (cacheFile.isFile() && ifModifiedSince != -1 && (cacheFile.lastModified() / 1000) <= (ifModifiedSince / 1000))  {
+            return null; // cache file has not been modified since specified timestamp
         }
         return new TranscoderStream(myTranscoderConfig, originalFile, cacheFile);
     }

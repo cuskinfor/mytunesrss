@@ -2,6 +2,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.camel.mp4.Mp4Utils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
+import de.codewave.mytunesrss.command.StatusCodeSender;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
@@ -301,27 +302,28 @@ public class MyTunesRssWebUtils {
         }
     }
 
-    public static InputStream getMediaStream(HttpServletRequest request, Track track, File file) throws IOException {
-        Transcoder transcoder = getTranscoder(request, track);
-        if (transcoder == null && Mp4Utils.isMp4File(file)) {
-            LOGGER.info("Using QT-FASTSTART utility.");
-            return Mp4Utils.getFastStartInputStream(file);
-        } else if (transcoder != null) {
-            return transcoder.getStream(file);
-        } else {
-            return new FileInputStream(file);
-        }
-    }
-
     public static StreamSender getMediaStreamSender(HttpServletRequest request, Track track, File file) throws IOException {
+        long ifModifiedSince = request.getDateHeader("If-Modified-Since");
         Transcoder transcoder = getTranscoder(request, track);
-        if (transcoder == null && Mp4Utils.isMp4File(file)) {
-            LOGGER.info("Using QT-FASTSTART utility.");
-            return new StreamSender(Mp4Utils.getFastStartInputStream(file), track.getContentType(), track.getContentLength());
-        } else if (transcoder != null) {
-            return transcoder.getStreamSender(file);
+        if (transcoder == null) {
+            // no transcoding
+            if (ifModifiedSince != -1 && (file.lastModified() / 1000) <= (ifModifiedSince / 1000)) {
+                // file has not been modified after if-modified-since timestamp
+                return new StatusCodeSender(HttpServletResponse.SC_NOT_MODIFIED);
+            } else {
+                // no if-modified-since request or file has been modified
+                if (Mp4Utils.isMp4File(file)) {
+                    // use qt-faststart for MP4 files
+                    LOGGER.info("Using QT-FASTSTART utility.");
+                    return new StreamSender(Mp4Utils.getFastStartInputStream(file), track.getContentType(), track.getContentLength());
+                } else {
+                    // standard file
+                    return new StreamSender(new FileInputStream(file), track.getContentType(), track.getContentLength());
+                }
+            }
         } else {
-            return new StreamSender(new FileInputStream(file), track.getContentType(), track.getContentLength());
+            // transcoder requested
+            return transcoder.getStreamSender(file, ifModifiedSince);
         }
     }
 
