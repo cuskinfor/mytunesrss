@@ -139,6 +139,9 @@ public class MyTunesRssUtils {
         if (key == null) {
             return "";
         }
+        if (locale == null) {
+            locale = Locale.ENGLISH; // default in case of NULL locale
+        }
         ResourceBundle bundle = MyTunesRss.RESOURCE_BUNDLE_MANAGER.getBundle("de.codewave.mytunesrss.MyTunesRss", locale);
         if (parameters == null || parameters.length == 0) {
             return bundle.getString(key);
