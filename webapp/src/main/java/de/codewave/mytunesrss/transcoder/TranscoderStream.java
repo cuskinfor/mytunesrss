@@ -160,7 +160,7 @@ public class TranscoderStream extends InputStream {
                                         }
                                     }
                                 } catch (InterruptedException e) {
-                                    LOG.warn("Interrupted while waiting for transcoder process to finish.");
+                                    LOG.warn("Interrupted while waiting for transcoder process to finish.", e);
                                 }
                             } catch (IOException e) {
                                 LOG.warn("Could not close cache output stream.", e);
@@ -174,6 +174,10 @@ public class TranscoderStream extends InputStream {
                             LOG.debug("Destroying process.");
                             myProcess.destroy();
                             MyTunesRss.SPAWNED_PROCESSES.remove(myProcess);
+                            if (myCacheFile.isFile() && myCacheFile.length() == 0) {
+                                // delete empty files from cache (most likely VLC could not start at all)
+                                myCacheFile.delete();
+                            }
                         }
                     }
                 }).start();
