@@ -322,4 +322,12 @@
         <sql>ALTER TABLE track DROP COLUMN lower_comment</sql>
     </statement>
 
+    <statement name="migrate_4.9.8_part_1">
+        <sql>ALTER TABLE image ADD COLUMN ts_updated NUMERIC(19) NOT NULL DEFAULT 0</sql>
+    </statement>
+
+    <statement name="migrate_4.9.8_part_2">
+        <sql>UPDATE image SET ts_updated = (SELECT lastupdate FROM system_information)</sql>
+    </statement>
+
 </statements>

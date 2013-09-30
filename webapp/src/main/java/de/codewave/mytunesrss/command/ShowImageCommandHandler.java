@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
+import de.codewave.mytunesrss.datastore.statement.DatabaseImage;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
@@ -71,28 +72,38 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     protected void sendDefaultImage(int size) throws IOException {
         Image defaultImage = getDefaultImage(size);
         if (defaultImage != null) {
-            getResponse().setContentType(defaultImage.getMimeType());
-            getResponse().setContentLength(defaultImage.getData().length);
-            getResponse().getOutputStream().write(defaultImage.getData());
+            long ifModifiedSince = getRequest().getDateHeader("If-Modified-Since");
+            if (ifModifiedSince != -1 && (MyTunesRss.STARTUP_TIME / 1000) <= (ifModifiedSince / 1000)) {
+                getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            } else {
+                getResponse().setContentType(defaultImage.getMimeType());
+                getResponse().setContentLength(defaultImage.getData().length);
+                getResponse().getOutputStream().write(defaultImage.getData());
+            }
         } else {
             getResponse().setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 
-    protected void sendImage(Image image) throws IOException {
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Sending image with mime type \"" + image.getMimeType() + "\".");
+    protected void sendImage(DatabaseImage image) throws IOException {
+        long ifModifiedSince = getRequest().getDateHeader("If-Modified-Since");
+        if (ifModifiedSince != -1 && (image.getLastUpdate() / 1000) <= (ifModifiedSince / 1000)) {
+            getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+        } else {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Sending image with mime type \"" + image.getMimeType() + "\".");
+            }
+            getResponse().setContentType(image.getMimeType());
+            getResponse().setContentLength(image.getData().length);
+            getResponse().setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(MyTunesRss.CONFIG.getImageExpirationMillis() / 1000));
+            getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
+            getResponse().getOutputStream().write(image.getData());
         }
-        getResponse().setContentType(image.getMimeType());
-        getResponse().setContentLength(image.getData().length);
-        getResponse().setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(MyTunesRss.CONFIG.getImageExpirationMillis() / 1000));
-        getResponse().setDateHeader("Expires", System.currentTimeMillis() + MyTunesRss.CONFIG.getImageExpirationMillis());
-        getResponse().getOutputStream().write(image.getData());
     }
 
     @Override
     public void executeAuthorized() throws Exception {
-        Image image = null;
+        DatabaseImage image = null;
         String photoId = getRequest().getParameter("photoId");
         String hash = getRequest().getParameter("hash");
         int size = getIntegerRequestParameter("size", -1);
@@ -117,7 +128,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private Image getImageForPhotoId(final String photoId, int size) throws SQLException {
+    private DatabaseImage getImageForPhotoId(final String photoId, int size) throws SQLException {
         LOG.debug("Trying to generate thumbnail for photo \"" + photoId + "\".");
         DataStoreSession session = getTransaction();
         SimplePhoto photo = session.executeQuery(new DataStoreQuery<SimplePhoto>() {

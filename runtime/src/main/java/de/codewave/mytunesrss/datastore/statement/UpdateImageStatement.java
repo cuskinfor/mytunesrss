@@ -50,6 +50,7 @@ public class UpdateImageStatement {
                 myStatement.setInt("size", mySize);
                 myStatement.setString("mimetype", myMimeType);
                 myStatement.setObject("data", myData);
+                myStatement.setLong("now", System.currentTimeMillis());
                 myStatement.execute();
             } catch (SQLException e) {
                 LOG.error("Could not update image for hash \"" + myHash + "\".", e);

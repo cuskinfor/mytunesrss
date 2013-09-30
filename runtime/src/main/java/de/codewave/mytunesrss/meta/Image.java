@@ -22,7 +22,7 @@ public class Image {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(Image.class);
     private static final File NO_FILE = new File("/");
-    
+
     private String myMimeType;
     private byte[] myData;
     private File myImageFile;

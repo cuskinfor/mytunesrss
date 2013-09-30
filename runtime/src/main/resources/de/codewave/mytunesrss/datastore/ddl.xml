@@ -157,6 +157,7 @@
                 size INTEGER NOT NULL,
                 mimetype VARCHAR(50) NOT NULL,
                 data {image_datatype} NOT NULL,
+                ts_updated NUMERIC(19) NOT NULL,
                 UNIQUE (hash, size)
             )
         </sql>

@@ -45,6 +45,7 @@ public class InsertImageStatement {
                 myStatement.setInt("size", mySize);
                 myStatement.setString("mimetype", myMimeType);
                 myStatement.setObject("data", myData);
+                myStatement.setLong("now", System.currentTimeMillis());
                 myStatement.execute();
             } catch (SQLException e) {
                 LOG.error("Could not insert image for hash \"" + myHash + "\".", e);
