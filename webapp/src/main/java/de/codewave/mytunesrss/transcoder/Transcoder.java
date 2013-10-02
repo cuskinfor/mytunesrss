@@ -3,13 +3,10 @@ package de.codewave.mytunesrss.transcoder;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.StatusCodeSender;
-import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.servlet.StreamSender;
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.io.output.NullOutputStream;
-import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
@@ -20,38 +17,36 @@ import java.io.InputStream;
  * de.codewave.mytunesrss.transcoder.Transcoder
  */
 public class Transcoder {
-    private boolean myTempFile;
     private Track myTrack;
     private TranscoderConfig myTranscoderConfig;
 
-    public static Transcoder createTranscoder(Track track, User user, String activeTranscoders, boolean tempFile) {
+    public static Transcoder createTranscoder(Track track, User user, String activeTranscoders) {
         TranscoderConfig transcoderConfig = user != null ? user.getForceTranscoder(track) : null;
-        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track, tempFile) : null;
+        Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track) : null;
         if (transcoder == null) {
             transcoderConfig = MyTunesRssWebUtils.getTranscoder(activeTranscoders, track);
-            transcoder = transcoderConfig != null && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track, tempFile) : null;
+            transcoder = transcoderConfig != null && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track) : null;
         }
         return transcoder;
     }
 
-    protected Transcoder(TranscoderConfig transcoderConfig, Track track, boolean tempFile) {
+    protected Transcoder(TranscoderConfig transcoderConfig, Track track) {
         myTranscoderConfig = transcoderConfig;
         myTrack = track;
-        myTempFile = tempFile;
     }
 
     public StreamSender getStreamSender(File originalFile, long ifModifiedSince) throws IOException {
-        InputStream stream = getStream(originalFile, ifModifiedSince);
-        if (ifModifiedSince != -1 && stream == null) {
+        if (ifModifiedSince != -1 && !isModifiedSince(originalFile, ifModifiedSince)) {
             // not modified
             return new StatusCodeSender(HttpServletResponse.SC_NOT_MODIFIED);
         } else {
-            if (myTempFile) {
-                IOUtils.copyLarge(stream, new NullOutputStream());
-                stream = getStream(originalFile, ifModifiedSince);
-            }
-            return new StreamSender(stream, getTargetContentType(), 0);
+            return new StreamSender(getStream(originalFile, ifModifiedSince), getTargetContentType(), 0);
         }
+    }
+
+    private boolean isModifiedSince(File originalFile, long ts) {
+        File cacheFile = getCacheFile();
+        return !cacheFile.isFile() || (originalFile.isFile() && originalFile.lastModified() > cacheFile.lastModified()) || (cacheFile.lastModified() / 1000 > ts / 1000);
     }
 
     public InputStream getStream(File originalFile, long ifModifiedSince) throws IOException {
@@ -68,10 +63,6 @@ public class Transcoder {
 
     private File getCacheFile() {
         return new File(MyTunesRss.TRANSCODER_CACHE.getBaseDir(), myTranscoderConfig.getCacheFilePrefix() + "_" + myTrack.getId());
-    }
-
-    public String getTranscoderId() {
-        return myTranscoderConfig.getName();
     }
 
     public String getTargetContentType() {

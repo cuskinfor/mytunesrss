@@ -31,7 +31,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 /**
@@ -294,9 +297,8 @@ public class MyTunesRssWebUtils {
     public static Transcoder getTranscoder(HttpServletRequest request, Track track) {
         if (MyTunesRss.CONFIG.isValidVlcConfig()) {
             boolean notranscode = "true".equals(request.getParameter("notranscode"));
-            boolean tempFile = ServletUtils.isRangeRequest(request) || ServletUtils.isHeadRequest(request);
             User authUser = getAuthUser(request);
-            return (authUser != null && authUser.getForceTranscoder(track) != null) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request), tempFile) : null;
+            return (authUser != null && authUser.getForceTranscoder(track) != null) || !notranscode ? Transcoder.createTranscoder(track, authUser, MyTunesRssWebUtils.getActiveTranscodingFromRequest(request)) : null;
         } else {
             return null;
         }
@@ -477,7 +479,7 @@ public class MyTunesRssWebUtils {
                 "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
     }
-    
+
     public static String createCacheControlValue(long maxAgeSeconds) {
         return "max-age=" + maxAgeSeconds + ", must-revalidate, private";
     }
