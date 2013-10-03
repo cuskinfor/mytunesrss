@@ -119,7 +119,7 @@ public class VlcPlayer {
 
     private int myVlcPort;
 
-    private HttpClient myHttpClient = new HttpClient();
+    private HttpClient myHttpClient;
 
     private String myPassword = UUID.randomUUID().toString();
 
@@ -134,6 +134,7 @@ public class VlcPlayer {
     private StatusUpdater myStatusUpdater = new StatusUpdater();
 
     public VlcPlayer(BonjourServiceListener raopListener, BonjourServiceListener airplayListener) {
+        myHttpClient = new HttpClient();
         myHttpClient.getState().setCredentials(new AuthScope(null, -1), new UsernamePasswordCredentials("", myPassword));
         myRaopListener = raopListener;
         myAirplayListener = airplayListener;
