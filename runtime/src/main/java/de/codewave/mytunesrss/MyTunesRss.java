@@ -833,37 +833,7 @@ public class MyTunesRss {
         if (EXTRA_CLASSLOADER != null) {
             try {
                 final Class<Driver> driverClass = (Class<Driver>) Class.forName(driverClassName, true, EXTRA_CLASSLOADER);
-                DriverManager.registerDriver(new Driver() {
-                    private Driver myDriver = driverClass.newInstance();
-
-                    public Connection connect(String string, Properties properties) throws SQLException {
-                        return myDriver.connect(string, properties);
-                    }
-
-                    public boolean acceptsURL(String string) throws SQLException {
-                        return myDriver.acceptsURL(string);
-                    }
-
-                    public DriverPropertyInfo[] getPropertyInfo(String string, Properties properties) throws SQLException {
-                        return myDriver.getPropertyInfo(string, properties);
-                    }
-
-                    public int getMajorVersion() {
-                        return myDriver.getMajorVersion();
-                    }
-
-                    public int getMinorVersion() {
-                        return myDriver.getMinorVersion();
-                    }
-
-                    public boolean jdbcCompliant() {
-                        return myDriver.jdbcCompliant();
-                    }
-                    
-                    public java.util.logging.Logger getParentLogger() throws SQLFeatureNotSupportedException {
-                        throw new SQLFeatureNotSupportedException("Getting a parent logger is not supported here!");
-                    }
-                });
+                DriverManager.registerDriver(SystemUtils.isJavaVersionAtLeast(160) ? new Java6SqlDriver(driverClass) : new Java5SqlDriver(driverClass));
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error(null, e);
@@ -962,4 +932,6 @@ public class MyTunesRss {
             LOGGER.debug("Apple extension: handleReOpenApplication. Ignored in headless mode.");
         }
     }
+
+
 }

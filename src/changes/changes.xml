@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.9" date="2013-10-03">
+            <action dev="mdescher" type="fix">
+                Restored Java 5 compatibility which was lost in versions 4.9.7 and 4.9.8.
+            </action>
+        </release>
+
         <release version="4.9.8" date="2013-10-02">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-451] Support for If-Modified-Since header for download/play track
