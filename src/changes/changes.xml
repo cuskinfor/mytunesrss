@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="4.10.0" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-454] REST-API: Support for "fetchOffset" and "fetchSize" in list calls.
+                In case any of the two parameters is specified,
+                an additional response header X-MyTunesRSS-TotalNumberOfElements with the
+                total size of the original result list is returned.
+            </action>
+        </release>
+
         <release version="4.9.9" date="2013-10-03">
             <action dev="mdescher" type="fix">
                 Restored Java 5 compatibility which was lost in versions 4.9.7 and 4.9.8.
