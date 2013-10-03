@@ -9,6 +9,9 @@
 
         <release version="4.10.0" date="___D___">
             <action dev="mdescher" type="add">
+                Do not use keep-alive for VLC player http-client since it causes problems with VLC 2.1 on Windows.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-454] REST-API: Support for "fetchOffset" and "fetchSize" in list calls.
                 In case any of the two parameters is specified,
                 an additional response header X-MyTunesRSS-TotalNumberOfElements with the
