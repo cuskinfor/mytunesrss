@@ -14,6 +14,7 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.SimpleHttpConnectionManager;
 import org.apache.commons.httpclient.UsernamePasswordCredentials;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
@@ -119,7 +120,7 @@ public class VlcPlayer {
 
     private int myVlcPort;
 
-    private HttpClient myHttpClient = new HttpClient();
+    private HttpClient myHttpClient;
 
     private String myPassword = UUID.randomUUID().toString();
 
@@ -134,6 +135,8 @@ public class VlcPlayer {
     private StatusUpdater myStatusUpdater = new StatusUpdater();
 
     public VlcPlayer(BonjourServiceListener raopListener, BonjourServiceListener airplayListener) {
+        myHttpClient = new HttpClient();
+        myHttpClient.setHttpConnectionManager(new SimpleHttpConnectionManager(true));
         myHttpClient.getState().setCredentials(new AuthScope(null, -1), new UsernamePasswordCredentials("", myPassword));
         myRaopListener = raopListener;
         myAirplayListener = airplayListener;
@@ -409,11 +412,11 @@ public class VlcPlayer {
             if (statusCode == 200 && responseType != null) {
                 String responseBodyAsString = getMethod.getResponseBodyAsString();
                 if (responseBodyAsString.contains("VLC_PASSWORD_NOT_SET")) {
-                    throw new VlcPlayerAuthorizationException("VLC player HTTP autorization failed.");
+                    throw new VlcPlayerAuthorizationException("VLC player HTTP authorization failed.");
                 }
                 return JAXB.unmarshal(new StringReader(responseBodyAsString), responseType);
             } else if (statusCode == HttpServletResponse.SC_UNAUTHORIZED) {
-                throw new VlcPlayerAuthorizationException("VLC player HTTP autorization failed.");
+                throw new VlcPlayerAuthorizationException("VLC player HTTP authorization failed.");
             } else if (statusCode >= 400) {
                 throw new VlcPlayerException("Could not send command \"" + command + "\" to player (status code " + statusCode + ").");
             }

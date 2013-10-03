@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.10" date="2013-10-04">
+            <action dev="mdescher" type="fix">
+                Do not use keep-alive for VLC player http-client since it causes problems with VLC 2.1 on Windows.
+            </action>
+        </release>
+
         <release version="4.9.9" date="2013-10-03">
             <action dev="mdescher" type="fix">
                 Restored Java 5 compatibility which was lost in versions 4.9.7 and 4.9.8.
