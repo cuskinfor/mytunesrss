@@ -680,22 +680,17 @@
         </sql>
     </statement>
 
-    <statement name="refreshSmartPlaylist">
-        <!-- lock playlist table first -->
-        <sql>
-            SELECT id FROM playlist FOR UPDATE
-        </sql>
-        <sql>
-            DELETE FROM
-                link_track_playlist
-            WHERE
-                playlist_id = :id
-        </sql>
+    <statement name="updateSmartPlaylist">
+        <sql>SELECT id FROM playlist FOR UPDATE</sql>
+        <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
+        <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
+        <sql>{updatePlaylistCount}</sql>
+    </statement>
+
+    <statement name="getTracksForSmartPlaylist">
         <sql>
             <![CDATA[
-            INSERT INTO
-                link_track_playlist (playlist_id, track_id)
-                {smartPlaylistOrderAndLimitHead} :id, t.id
+                {smartPlaylistOrderAndLimitHead} t.id
                 FROM track t
                 <lucene>, temp_lucene_tracks tluc WHERE t.id = tluc.track_id</lucene>
                 <nolucene>WHERE t.id IS NOT NULL</nolucene>
@@ -705,17 +700,12 @@
                 <videotype>AND t.videotype = :videotype</videotype>
                 <protected>AND t.protected = :protected</protected>
                 <datasource>AND t.source_id = :source_id</datasource>
-                <order>ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order>
+                <order_playcount>ORDER BY t.playcount<order_desc> DESC</order_desc>, <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_playcount>
+                <order_lastplayed>ORDER BY t.ts_played<order_desc> DESC</order_desc>, <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_lastplayed>
+                <order_lastupdate>ORDER BY t.ts_updated<order_desc> DESC</order_desc>, <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_lastupdate>
+                <order_default>ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_default>
                 {smartPlaylistOrderAndLimitTail}
             ]]>
-        </sql>
-        <sql>
-            UPDATE
-                playlist p
-            SET
-                track_count = (SELECT COUNT(playlist_id) FROM link_track_playlist WHERE playlist_id = :id)
-            WHERE
-                p.id = :id
         </sql>
     </statement>
 
@@ -792,67 +782,6 @@
     <statement name="getTrackTagMap">
         <sql>
             SELECT t.id, tg.tag FROM track t, tag tg WHERE t.id = tg.track_id
-        </sql>
-    </statement>
-
-    <statement name="findLastUpdatedTracks">
-        <sql>
-            <![CDATA[
-            {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE {alwaysTrueCondition}
-            <restricted>
-                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
-            <excluded>
-                AND t.id NOT IN (
-                    SELECT eltp.track_id FROM link_track_playlist eltp
-                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
-                )
-            </excluded>
-            {findLastUpdatedTracksOrderClause}
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findMostPlayedTracks">
-        <sql>
-            <![CDATA[
-            {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE {alwaysTrueCondition}
-            <restricted>
-                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-                AND t.id = rltp.track_id
-            </restricted>
-            <excluded>
-                AND t.id NOT IN (
-                    SELECT eltp.track_id FROM link_track_playlist eltp
-                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
-                )
-            </excluded>
-            {findMostPlayedTracksOrderClause}
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findRecentlyPlayedTracks">
-        <sql>
-            <![CDATA[
-            {selectLimitedTracks}
-            FROM track t<restricted>, link_track_playlist rltp</restricted>
-            WHERE t.ts_played IS NOT NULL
-            <restricted>AND rltp.playlist_id IN (:restrictedPlaylistIds[])
-            AND t.id = rltp.track_id</restricted>
-            <excluded>
-                AND t.id NOT IN (
-                    SELECT eltp.track_id FROM link_track_playlist eltp
-                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
-                )
-            </excluded>
-            {findRecentlyPlayedTracksOrderClause}
-            ]]>
         </sql>
     </statement>
 
@@ -937,7 +866,7 @@
 
     <fragment name="updatePlaylistCount">
         UPDATE playlist
-        SET track_count = (SELECT COUNT(*) FROM link_track_playlist WHERE playlist_id = :id)
+        SET track_count = (SELECT COUNT(playlist_id) FROM link_track_playlist WHERE playlist_id = :id)
         WHERE id = :id
     </fragment>
 

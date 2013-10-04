@@ -68,9 +68,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidatePhotoPageSize(webConfig);
         error |= transferAndValidatePhotoJpegQuality(webConfig);
         error |= transferAndValidateRssFeedLimit(webConfig);
-        error |= transferAndValidateLastUpdatedTrackCount(webConfig);
-        error |= transferAndValidateMostPlayedTrackCount(webConfig);
-        error |= transferAndValidateRecentlyPlayedTrackCount(webConfig);
         error |= transferAndValidatePassword();
         error |= transferAndValidateLastFmAccount();
         return !error;
@@ -120,48 +117,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                     return true;
                 }
             }
-        }
-        return false;
-    }
-
-    private boolean transferAndValidateLastUpdatedTrackCount(WebConfig webConfig) {
-        try {
-            webConfig.setLastUpdatedPlaylistSize(getIntegerRequestParameter("lastUpdatedPlaylistSize", 0));
-            if (webConfig.getLastUpdatedPlaylistSize() < 0 || webConfig.getLastUpdatedPlaylistSize() > 999) {
-                addError(new BundleError("error.settingsLastUpdatedPlaylistSizeRange"));
-                return true;
-            }
-        } catch (NumberFormatException e) {
-            addError(new BundleError("error.settingsLastUpdatedPlaylistSizeRange"));
-            return true;
-        }
-        return false;
-    }
-
-    private boolean transferAndValidateMostPlayedTrackCount(WebConfig webConfig) {
-        try {
-            webConfig.setMostPlayedPlaylistSize(getIntegerRequestParameter("mostPlayedPlaylistSize", 0));
-            if (webConfig.getMostPlayedPlaylistSize() < 0 || webConfig.getMostPlayedPlaylistSize() > 999) {
-                addError(new BundleError("error.settingsMostPlayedPlaylistSizeRange"));
-                return true;
-            }
-        } catch (NumberFormatException e) {
-            addError(new BundleError("error.settingsMostPlayedPlaylistSizeRange"));
-            return true;
-        }
-        return false;
-    }
-
-    private boolean transferAndValidateRecentlyPlayedTrackCount(WebConfig webConfig) {
-        try {
-            webConfig.setRecentlyPlayedPlaylistSize(getIntegerRequestParameter("recentlyPlayedPlaylistSize", 0));
-            if (webConfig.getRecentlyPlayedPlaylistSize()  < 0 || webConfig.getRecentlyPlayedPlaylistSize() > 999) {
-                addError(new BundleError("error.settingsRecentlyPlayedPlaylistSizeRange"));
-                return true;
-            }
-        } catch (NumberFormatException e) {
-            addError(new BundleError("error.settingsRecentlyPlayedPlaylistSizeRange"));
-            return true;
         }
         return false;
     }

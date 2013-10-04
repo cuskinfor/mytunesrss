@@ -34,7 +34,6 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
                     }
                 }
                 getRequest().setAttribute("tracks", tracks);
-                setDateFieldIntoRequest();
                 forward(MyTunesRssResource.TemplateRss);
             } else {
                 addError(new BundleError("error.emptyFeed"));
@@ -42,18 +41,6 @@ public class CreateRssCommandHandler extends CreatePlaylistBaseCommandHandler {
             }
         } else {
             getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-        }
-    }
-
-    /**
-     * Set the correct date field name into the request. Usually this is tsUpdated but for the playlist with the
-     * most recently played tracks it is tsPlayed.
-     */
-    private void setDateFieldIntoRequest() {
-        if (StringUtils.startsWith(getRequestParameter("playlist", null), FindPlaylistTracksQuery.PSEUDO_ID_RECENTLY_PLAYED)) {
-            getRequest().setAttribute("dateField", "tsPlayed");
-        } else {
-            getRequest().setAttribute("dateField", "tsUpdated");
         }
     }
 }

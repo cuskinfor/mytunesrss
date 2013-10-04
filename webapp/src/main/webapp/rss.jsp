@@ -18,7 +18,7 @@
                 <dc:creator><c:out value="${track.originalArtist}"/></dc:creator>
                 <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
                 <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
-                <pubDate>${mtfn:rssDate(track[dateField])}</pubDate>
+                <pubDate>${mtfn:rssDate(track['tsUpdated'])}</pubDate>
                 <enclosure url="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>/${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.${mtfn:suffix(config, authUser, track)}"
                            type="${mtfn:contentType(config, authUser, track)}"
                            <c:if test="${!mtfn:transcoding(pageContext, authUser, track)}">length="${track.contentLength}"</c:if>

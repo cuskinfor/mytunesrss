@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -26,7 +25,7 @@ import java.util.List;
  * de.codewave.mytunesrss.command.ShowPortalCommandHandler
  */
 public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowPortalCommandHandler.class);
 
     public void executeAuthorized() throws SQLException, IOException, ServletException {
@@ -49,27 +48,6 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                         "playlist.specialAllByAlbum"), -1));
                 playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunesSmart, getBundleString(
                         "playlist.specialAllByArtist"), -1));
-                int mostPlayedPlaylistSize = getWebConfig().getMostPlayedPlaylistSize();
-                if (mostPlayedPlaylistSize > 0) {
-                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_MOST_PLAYED + "_" + mostPlayedPlaylistSize,
-                                               PlaylistType.MyTunesSmart,
-                                               MessageFormat.format(getBundleString("playlist.specialMostPlayed"), mostPlayedPlaylistSize),
-                                               mostPlayedPlaylistSize));
-                }
-                int recentlyPlayedPlaylistSize = getWebConfig().getRecentlyPlayedPlaylistSize();
-                if (recentlyPlayedPlaylistSize > 0) {
-                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_RECENTLY_PLAYED + "_" + recentlyPlayedPlaylistSize,
-                                               PlaylistType.MyTunesSmart,
-                                               MessageFormat.format(getBundleString("playlist.specialRecentlyPlayed"), recentlyPlayedPlaylistSize),
-                                               recentlyPlayedPlaylistSize));
-                }
-                int lastUpdatedPlaylistSize = getWebConfig().getLastUpdatedPlaylistSize();
-                if (lastUpdatedPlaylistSize > 0) {
-                    playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_LAST_UPDATED + "_" + lastUpdatedPlaylistSize,
-                                               PlaylistType.MyTunesSmart,
-                                               MessageFormat.format(getBundleString("playlist.specialLastUpdated"), lastUpdatedPlaylistSize),
-                                               lastUpdatedPlaylistSize));
-                }
             }
             if (StringUtils.isNotEmpty(containerId)) {
                 Playlist container = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, containerId, null, false, false))

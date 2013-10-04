@@ -34,9 +34,6 @@ public class WebConfig {
     private static final String CFG_PHOTO_PAGE_SIZE = "photoPageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
     private static final String CFG_SHOW_PLAYER = "showPlayer";
-    private static final String CFG_LAST_UPDATED_PLAYLIST_SIZE = "lastUpdatedPlaylistSize";
-    private static final String CFG_MOST_PLAYED_PLAYLIST_SIZE = "mostPlayedPlaylistSize";
-    private static final String CFG_RECENTLY_PLAYED_PLAYLIST_SIZE = "recentlyPlayedPlaylistSize";
     private static final String CFG_PLAYLIST_TYPE = "playlistType";
     private static final String CFG_THEME = "theme";
     private static final String CFG_FLASH_PLAYER = "flashplayer";
@@ -58,8 +55,7 @@ public class WebConfig {
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
     private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
-            CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_LAST_UPDATED_PLAYLIST_SIZE, CFG_MOST_PLAYED_PLAYLIST_SIZE,
-            CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, CFG_PLAYLIST_TYPE, CFG_THEME,
+            CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_PLAYLIST_TYPE, CFG_THEME,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_SHOW_ADD_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS,
             CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_EDIT_TAGS, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
@@ -123,9 +119,6 @@ public class WebConfig {
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "20");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
         myConfigValues.put(CFG_SHOW_PLAYER, "true");
-        myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, "25");
-        myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, "25");
-        myConfigValues.put(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, "25");
         myConfigValues.put(CFG_PLAYLIST_TYPE, PlaylistType.M3u.name());
         myConfigValues.put(CFG_YAHOO_MEDIAPLAYER, "false");
         myConfigValues.put(CFG_BROWSER_START_INDEX, "1");
@@ -376,30 +369,6 @@ public class WebConfig {
 
     public void setPhotoPageSize(int photoPageSize) {
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, Integer.toString(photoPageSize));
-    }
-
-    public int getLastUpdatedPlaylistSize() {
-        return Integer.parseInt(myConfigValues.get(CFG_LAST_UPDATED_PLAYLIST_SIZE));
-    }
-
-    public void setLastUpdatedPlaylistSize(int count) {
-        myConfigValues.put(CFG_LAST_UPDATED_PLAYLIST_SIZE, Integer.toString(count));
-    }
-
-    public int getMostPlayedPlaylistSize() {
-        return Integer.parseInt(myConfigValues.get(CFG_MOST_PLAYED_PLAYLIST_SIZE));
-    }
-
-    public void setMostPlayedPlaylistSize(int count) {
-        myConfigValues.put(CFG_MOST_PLAYED_PLAYLIST_SIZE, Integer.toString(count));
-    }
-
-    public int getRecentlyPlayedPlaylistSize() {
-        return Integer.parseInt(myConfigValues.get(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE));
-    }
-
-    public void setRecentlyPlayedPlaylistSize(int count) {
-        myConfigValues.put(CFG_RECENTLY_PLAYED_PLAYLIST_SIZE, Integer.toString(count));
     }
 
     public String getPlaylistFileSuffix() {

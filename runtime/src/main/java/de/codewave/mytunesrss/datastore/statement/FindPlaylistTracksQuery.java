@@ -24,10 +24,6 @@ import java.util.Map;
 public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
     public static final String PSEUDO_ID_ALL_BY_ARTIST = "PlaylistAllByArtist";
     public static final String PSEUDO_ID_ALL_BY_ALBUM = "PlaylistAllByAlbum";
-    //public static final String PSEUDO_ID_RANDOM = "PlaylistRandom";
-    public static final String PSEUDO_ID_MOST_PLAYED = "PlaylistMostPlayed";
-    public static final String PSEUDO_ID_RECENTLY_PLAYED = "PlaylistRecentlyPlayed";
-    public static final String PSEUDO_ID_LAST_UPDATED = "PlaylistLastUpdated";
 
     private String myId;
     private SortOrder mySortOrder;
@@ -59,18 +55,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals, myResultSetType);
             conditionals.put("albumorder", PSEUDO_ID_ALL_BY_ALBUM.equals(myId));
             conditionals.put("artistorder", PSEUDO_ID_ALL_BY_ARTIST.equals(myId));
-        } else if (myId.startsWith(PSEUDO_ID_LAST_UPDATED)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findLastUpdatedTracks", conditionals, myResultSetType);
-            String[] splitted = myId.split("_");
-            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
-        } else if (myId.startsWith(PSEUDO_ID_MOST_PLAYED)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findMostPlayedTracks", conditionals, myResultSetType);
-            String[] splitted = myId.split("_");
-            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
-        } else if (myId.startsWith(PSEUDO_ID_RECENTLY_PLAYED)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findRecentlyPlayedTracks", conditionals, myResultSetType);
-            String[] splitted = myId.split("_");
-            statement.setInt("maxCount", Integer.parseInt(splitted[1]));
         } else {
             conditionals.put("indexorder", mySortOrder != SortOrder.Album && mySortOrder != SortOrder.Artist);
             conditionals.put("albumorder", mySortOrder == SortOrder.Album);

@@ -4,6 +4,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
@@ -13,6 +14,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,9 +28,14 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
     private Collection<SmartInfo> mySmartInfos;
     private String myPlaylistId;
+    private boolean myPlayCountLastPlayedOnly;
 
     public RefreshSmartPlaylistsStatement() {
         // nothing to do here
+    }
+
+    public RefreshSmartPlaylistsStatement(boolean playCountLastPlayedOnly) {
+        myPlayCountLastPlayedOnly = playCountLastPlayedOnly;
     }
 
     public RefreshSmartPlaylistsStatement(Collection<SmartInfo> smartInfos, String playlistId) {
@@ -48,13 +55,25 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             }.execute(connection);
             for (SmartPlaylist smartPlaylist : smartPlaylists) {
                 Collection<SmartInfo> smartInfos = smartPlaylist.getSmartInfos();
-                refreshSmartPlaylist(connection, smartInfos, smartPlaylist.getPlaylist().getId());
-                connection.commit();
+                if (!myPlayCountLastPlayedOnly || hasPlayCountLastPlayed(smartInfos)) {
+                    refreshSmartPlaylist(connection, smartInfos, smartPlaylist.getPlaylist().getId());
+                    connection.commit();
+                }
             }
         } else {
             refreshSmartPlaylist(connection, mySmartInfos, myPlaylistId);
         }
         LOGGER.info("Smart playlists have been refreshed.");
+    }
+
+    private boolean hasPlayCountLastPlayed(Collection<SmartInfo> smartInfos) {
+        for (SmartInfo smartInfo : smartInfos) {
+            if (smartInfo.getFieldType() == SmartFieldType.order) {
+                SmartOrder smartOrder = SmartOrder.valueOf(smartInfo.getPattern());
+                return smartOrder == SmartOrder.lastplayed_asc || smartOrder == SmartOrder.lastplayed_desc || smartOrder == SmartOrder.playcount_asc || smartOrder == SmartOrder.playcount_desc;
+            }
+        }
+        return false;
     }
 
     private void refreshSmartPlaylist(Connection connection, Collection<SmartInfo> smartInfos, String playlistId) throws SQLException {
@@ -71,7 +90,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 }
             }
             Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
-            conditionals.put("order", true);
+            conditionals.put("order_default", true);
             conditionals.put("lucene", SmartInfo.isLuceneCriteria(smartInfos));
             conditionals.put("nolucene", !SmartInfo.isLuceneCriteria(smartInfos));
             for (SmartInfo smartInfo : smartInfos) {
@@ -94,42 +113,79 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     case videotype:
                         conditionals.put("videotype", true);
                         break;
-                    case randomOrder:
-                        conditionals.put("order", false);
-                        conditionals.put("random", true);
+                    case order:
+                        conditionals.put("order_default", false);
+                        switch (SmartOrder.valueOf(smartInfo.getPattern())) {
+                            case random:
+                                conditionals.put("order_random", true);
+                                break;
+                            case lastplayed_asc:
+                                conditionals.put("order_lastplayed", true);
+                                break;
+                            case lastplayed_desc:
+                                conditionals.put("order_lastplayed", true);
+                                conditionals.put("order_desc", true);
+                                break;
+                            case lastupdate_asc:
+                                conditionals.put("order_lastupdate", true);
+                                break;
+                            case lastupdate_desc:
+                                conditionals.put("order_lastupdate", true);
+                                conditionals.put("order_desc", true);
+                                break;
+                            case playcount_asc:
+                                conditionals.put("order_playcount", true);
+                                break;
+                            case playcount_desc:
+                                conditionals.put("order_playcount", true);
+                                conditionals.put("order_desc", true);
+                                break;
+                        }
                         break;
                     case sizeLimit:
                         conditionals.put("limit", true);
                         break;
                 }
             }
-            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "refreshSmartPlaylist", conditionals);
-            statement.setString("id", playlistId);
+            final SmartStatement queryStatement = MyTunesRssUtils.createStatement(connection, "getTracksForSmartPlaylist", conditionals);
             for (SmartInfo smartInfo : smartInfos) {
                 switch (smartInfo.getFieldType()) {
                     case mintime:
-                        statement.setInt("time_min", Integer.parseInt(smartInfo.getPattern()));
+                        queryStatement.setInt("time_min", Integer.parseInt(smartInfo.getPattern()));
                         break;
                     case datasource:
-                        statement.setString("source_id", smartInfo.getPattern());
+                        queryStatement.setString("source_id", smartInfo.getPattern());
                         break;
                     case maxtime:
-                        statement.setInt("time_max", Integer.parseInt(smartInfo.getPattern()));
+                        queryStatement.setInt("time_max", Integer.parseInt(smartInfo.getPattern()));
                         break;
                     case mediatype:
-                        statement.setString("mediatype", smartInfo.getPattern());
+                        queryStatement.setString("mediatype", smartInfo.getPattern());
                         break;
                     case protection:
-                        statement.setBoolean("protected", Boolean.parseBoolean(smartInfo.getPattern()));
+                        queryStatement.setBoolean("protected", Boolean.parseBoolean(smartInfo.getPattern()));
                         break;
                     case videotype:
-                        statement.setString("videotype", smartInfo.getPattern());
+                        queryStatement.setString("videotype", smartInfo.getPattern());
                         break;
                     case sizeLimit:
-                        statement.setInt("maxCount", Integer.parseInt(smartInfo.getPattern()));
+                        queryStatement.setInt("maxCount", Integer.parseInt(smartInfo.getPattern()));
                         break;
                 }
             }
+            List<String> tracks = new DataStoreQuery<List<String>>() {
+                @Override
+                public List<String> execute(Connection connection) throws SQLException {
+                    return execute(queryStatement, new ResultBuilder<String>() {
+                        public String create(ResultSet resultSet) throws SQLException {
+                            return resultSet.getString(1);
+                        }
+                    }).getResults();
+                }
+            }.execute(connection);
+            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
+            statement.setString("id", playlistId);
+            statement.setObject("track_id", tracks);
             statement.execute();
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {

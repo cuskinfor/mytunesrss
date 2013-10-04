@@ -19,15 +19,6 @@ public class SmartInfo {
         }
         return false;
     }
-    
-    public static boolean isRandomOrder(Collection<SmartInfo> smartInfos) {
-        for (SmartInfo smartInfo : smartInfos) {
-            if (smartInfo.getFieldType() == SmartFieldType.randomOrder) {
-                return true;
-            }
-        }
-        return false;
-    }
 
     private SmartFieldType myFieldType;
     private String myPattern;

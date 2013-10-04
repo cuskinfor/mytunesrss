@@ -28,14 +28,6 @@
 
     <!-- reusable sql fragments -->
 
-    <fragment name="selectLimitedTracks">SELECT LIMIT 0 :maxCount {trackColumns}</fragment>
-
-    <fragment name="findLastUpdatedTracksOrderClause">ORDER BY ts_updated DESC</fragment>
-
-    <fragment name="findMostPlayedTracksOrderClause">ORDER BY playcount DESC</fragment>
-
-    <fragment name="findRecentlyPlayedTracksOrderClause">ORDER BY ts_played DESC</fragment>
-
     <fragment name="smartPlaylistOrderAndLimitHead">
         <![CDATA[
             SELECT <limit>LIMIT 0 :maxCount </limit>
@@ -44,7 +36,7 @@
 
     <fragment name="smartPlaylistOrderAndLimitTail">
         <![CDATA[
-            <random>ORDER BY RAND()</random>
+            <order_random>ORDER BY RAND()</order_random>
         ]]>
     </fragment>
 

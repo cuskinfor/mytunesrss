@@ -330,4 +330,8 @@
         <sql>UPDATE image SET ts_updated = (SELECT lastupdate FROM system_information)</sql>
     </statement>
 
+    <statement name="migrate_4.10.0">
+        <sql>UPDATE smart_info SET field_type = 'order', pattern = 'random' WHERE field_type = 'randomOrder'</sql>
+    </statement>
+
 </statements>

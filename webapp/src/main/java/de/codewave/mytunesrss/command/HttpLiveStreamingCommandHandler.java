@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.utils.io.LogStreamCopyThread;
@@ -85,6 +86,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                             MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
                             try {
                                 getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
+                                getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(true));
                             } finally {
                                 getTransaction().commit();
                             }

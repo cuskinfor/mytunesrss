@@ -114,10 +114,18 @@
                                             <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
                                         </td>
                                     </c:when>
-                                    <c:when test="${smartInfo.fieldType == 'randomOrder'}">
-                                        <c:set var="hasRandomOrder" value="true" />
+                                    <c:when test="${smartInfo.fieldType == 'order'}">
+                                        <c:set var="hasOrder" value="true" />
                                         <td>
-                                            <input type="hidden" id="smartCriteriaValue${loopStatus.index}" name="pattern_${loopStatus.index}" value="dummy" />
+                                            <select id="smartCriteriaValue${loopStatus.index}" name="pattern_${loopStatus.index}">
+                                                <option value="random" <c:if test="${smartInfo.pattern == 'random'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.random"/></option>
+                                                <option value="playcount_asc" <c:if test="${smartInfo.pattern == 'playcount_asc'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.playcount.asc"/></option>
+                                                <option value="playcount_desc" <c:if test="${smartInfo.pattern == 'playcount_desc'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.playcount.desc"/></option>
+                                                <option value="lastplayed_asc" <c:if test="${smartInfo.pattern == 'lastplayed_asc'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.lastplayed.asc"/></option>
+                                                <option value="lastplayed_desc" <c:if test="${smartInfo.pattern == 'lastplayed_desc'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.lastplayed.desc"/></option>
+                                                <option value="lastupdate_asc" <c:if test="${smartInfo.pattern == 'lastupdate_asc'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.lastupdate.asc"/></option>
+                                                <option value="lastupdate_desc" <c:if test="${smartInfo.pattern == 'lastupdate_desc'}">selected="selected"</c:if>><fmt:message key="smartPlaylist.smartInfo.order.lastupdate.desc"/></option>
+                                            </select>
                                         </td>
                                         <td class="smartPlaylistDelCriteria">
                                             <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
@@ -167,8 +175,8 @@
                                     <option value="mediatype"><fmt:message key="smartPlaylist.smartInfo.mediatype"/></option>
                                     <option value="videotype"><fmt:message key="smartPlaylist.smartInfo.videotype"/></option>
                                     <option value="protection"><fmt:message key="smartPlaylist.smartInfo.protection"/></option>
-                                    <c:if test="${!hasRandomOrder}">
-                                        <option value="randomOrder"><fmt:message key="smartPlaylist.smartInfo.randomOrder"/></option>
+                                    <c:if test="${!hasOrder}">
+                                        <option value="order"><fmt:message key="smartPlaylist.smartInfo.order"/></option>
                                     </c:if>
                                     <c:if test="${!hasSizeLimit}">
                                         <option value="sizeLimit"><fmt:message key="smartPlaylist.smartInfo.sizeLimit"/></option>

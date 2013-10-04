@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.utils.MiscUtils;
@@ -58,6 +59,7 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                     } else {
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
                         getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
+                        getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(true));
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                         getAuthUser().playLastFmTrack(track);
                     }
