@@ -405,8 +405,4 @@
         </plugins>
     </build>
 
-    <scm>
-      <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/branches/mytunesrss-4.9.x/mytunesrss-pom</developerConnection>
-    </scm>
-
 </project>
