@@ -15,6 +15,15 @@
         </sourceRoots>
       </configuration>
     </facet>
+    <facet type="gwt" name="GWT">
+      <configuration>
+        <setting name="additionalCompilerParameters" value="-Xmx512M -Xss1024k" />
+        <setting name="gwtScriptOutputStyle" value="PRETTY" />
+        <setting name="gwtSdkUrl" value="file://$MAVEN_REPOSITORY$/com/google/gwt/gwt-dev/2.3.0/" />
+        <setting name="gwtSdkType" value="maven" />
+        <setting name="webFacet" value="Web" />
+      </configuration>
+    </facet>
   </component>
   <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_5" inherit-compiler-output="false">
     <output url="file://$MODULE_DIR$/target/classes" />
