@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="webapp:war exploded">
-    <output-path>$PROJECT_DIR$/webapp/target/webapp-4.10.0-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/webapp/target/webapp-4.9.11-SNAPSHOT</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="webapp/web/Web" />
       <element id="directory" name="WEB-INF">

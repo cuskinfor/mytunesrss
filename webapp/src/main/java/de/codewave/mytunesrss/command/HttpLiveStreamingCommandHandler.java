@@ -34,28 +34,29 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {
-        String trackId = getRequestParameter("track", null);
-        if (StringUtils.isBlank(trackId)) {
-            getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "missing track id");
-        }
         String[] pathInfo = StringUtils.split(getRequest().getPathInfo(), '/');
         if (pathInfo.length > 1) {
             if (StringUtils.endsWithIgnoreCase(pathInfo[pathInfo.length - 1], ".ts")) {
-                sendMediaFile(trackId, pathInfo[pathInfo.length - 2], pathInfo[pathInfo.length - 1]);
+                sendMediaFile(pathInfo[pathInfo.length - 2], pathInfo[pathInfo.length - 1]);
             } else {
-                sendPlaylist(trackId);
+                String trackId = getRequestParameter("track", null);
+                if (StringUtils.isBlank(trackId)) {
+                    getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, "missing track id");
+                } else {
+                    sendPlaylist(trackId);
+                }
             }
         } else {
             getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
-    private void sendMediaFile(String trackId, String dirname, String filename) throws IOException {
+    private void sendMediaFile(String trackId, String filename) throws IOException {
         StreamSender sender;
         MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
-        File mediaFile = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), dirname + "/" + filename);
+        File mediaFile = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), trackId + "/" + filename);
         if (mediaFile.isFile()) {
-            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(dirname);
+            MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
             if (getAuthUser().isQuotaExceeded()) {
                 LOG.debug("Sending 409 QUOTA_EXCEEDED response.");
                 sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");

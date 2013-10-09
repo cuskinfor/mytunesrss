@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.11" date="2013-10-10">
+            <action dev="mdescher" type="fix">
+                Fixed HTTP Live Streaming NPE.
+            </action>
+        </release>
+
         <release version="4.9.10" date="2013-10-04">
             <action dev="mdescher" type="fix">
                 Do not use keep-alive for VLC player http-client since it causes problems with VLC 2.1 on Windows.
