@@ -13,6 +13,7 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ArtistRepresentation implements RestRepresentation {
     private URI myAlbumsUri;
+    private URI myTracksUri;
     private URI myM3uUri;
     private URI myXspfUri;
     private URI myRssUri;
@@ -40,6 +41,17 @@ public class ArtistRepresentation implements RestRepresentation {
 
     public void setAlbumsUri(URI albumsUri) {
         myAlbumsUri = albumsUri;
+    }
+
+    /**
+     * The URI to the list of tracks of this artist.
+     */
+    public URI getTracksUri() {
+        return myTracksUri;
+    }
+
+    public void setTracksUri(URI tracksUri) {
+        myTracksUri = tracksUri;
     }
 
     /**
