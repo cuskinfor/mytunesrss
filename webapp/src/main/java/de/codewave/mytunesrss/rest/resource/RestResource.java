@@ -44,6 +44,7 @@ public class RestResource {
     protected ArtistRepresentation toArtistRepresentation(UriInfo uriInfo, HttpServletRequest request, Artist artist) {
         ArtistRepresentation representation = new ArtistRepresentation(artist);
         representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
+        representation.setTracksUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
         representation.setTagsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTags").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
@@ -208,7 +209,7 @@ public class RestResource {
         }
         return response.build();
     }
-    
+
     protected void handleDatabaseLastModified() throws SQLException {
         long lastDatabaseUpdate = TransactionFilter.getTransaction().executeQuery(new GetSystemInformationQuery()).getLastUpdate();
         handleLastModified(lastDatabaseUpdate);

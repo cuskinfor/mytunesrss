@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.12" date="2013-10-11">
+            <action dev="mdescher" type="add">
+                Added tracksUri to the REST representation on an artist.
+            </action>
+        </release>
+
         <release version="4.9.11" date="2013-10-10">
             <action dev="mdescher" type="fix">
                 Fixed HTTP Live Streaming NPE.
