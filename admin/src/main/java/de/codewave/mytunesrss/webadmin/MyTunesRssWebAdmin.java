@@ -6,10 +6,10 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.Application;
-import com.vaadin.addon.treetable.TreeTable;
 import com.vaadin.terminal.Terminal;
 import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.Panel;
+import com.vaadin.ui.TreeTable;
 import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
