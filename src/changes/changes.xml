@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.9.12" date="___D___">
+        <release version="4.9.12" date="2013-10-12">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-455] Expand playlists in content config broken
             </action>
