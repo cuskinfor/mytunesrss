@@ -15,7 +15,13 @@
             </action>
         </release>
 
-        <release version="4.9.12" date="2013-10-11">
+        <release version="4.9.12" date="2013-10-12">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-455] Expand playlists in content config broken
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed i18n for data sources config (allow upload).
+            </action>
             <action dev="mdescher" type="add">
                 Added tracksUri to the REST representation on an artist.
             </action>
