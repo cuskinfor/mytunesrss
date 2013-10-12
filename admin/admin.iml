@@ -39,7 +39,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.vaadin:vaadin:6.8.12" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:refresher:1.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.vaadin.addons:vaadin-treetable:1.2.2" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addon:jfreechartwrapper:2.5.0" level="project" />
     <orderEntry type="library" name="Maven: jfree:jfreechart:1.0.13" level="project" />
     <orderEntry type="library" name="Maven: jfree:jcommon:1.0.15" level="project" />

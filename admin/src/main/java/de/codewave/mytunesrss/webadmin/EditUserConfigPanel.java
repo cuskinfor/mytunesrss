@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.addon.treetable.TreeTable;
 import com.vaadin.data.Property;
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.terminal.Sizeable;

@@ -5,11 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.addon.treetable.TreeTable;
-import com.vaadin.ui.Button;
-import com.vaadin.ui.CheckBox;
-import com.vaadin.ui.Panel;
-import com.vaadin.ui.Table;
+import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.*;

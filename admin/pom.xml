@@ -52,10 +52,6 @@
             <artifactId>refresher</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.vaadin.addons</groupId>
-            <artifactId>vaadin-treetable</artifactId>
-        </dependency>
-        <dependency>
            <groupId>org.vaadin.addon</groupId>
            <artifactId>jfreechartwrapper</artifactId>
         </dependency>
