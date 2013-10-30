@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="4.9.13" date="2013-10-30">
+            <action dev="mdescher" type="fix">
+                Fixed Mac OS X bundle code signature.
+            </action>
+        </release>
+
         <release version="4.9.12" date="2013-10-12">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-455] Expand playlists in content config broken
