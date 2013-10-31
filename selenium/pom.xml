@@ -98,7 +98,7 @@
     </build-->
     <profiles>
         <profile>
-            <id>teamcity</id>
+            <id>seleniumtest</id>
             <activation>
                 <property>
                     <name>teamcity.version</name>
