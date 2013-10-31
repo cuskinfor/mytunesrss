@@ -73,7 +73,7 @@
     </dependencies>
     <profiles>
         <profile>
-            <id>teamcity-create-bundles</id>
+            <id>seleniumtest</id>
             <activation>
                 <property>
                     <name>teamcity.version</name>
@@ -100,18 +100,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>seleniumtest</id>
-            <activation>
-                <property>
-                    <name>teamcity.version</name>
-                </property>
-            </activation>
-            <build>
-                <plugins>
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
