@@ -17,6 +17,9 @@
 
         <release version="4.9.15" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-456] Access log configuration
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-457] Login failed event not sent for REST login
             </action>
             <action dev="mdescher" type="add">

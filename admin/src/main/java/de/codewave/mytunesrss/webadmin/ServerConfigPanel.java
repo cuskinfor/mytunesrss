@@ -15,6 +15,7 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.FileValidator;
+import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.SameValidator;
 import org.apache.commons.lang.StringUtils;
 
@@ -60,6 +61,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private Form myExtendedForm;
     private Form myHttpForm;
     private Form myHttpsForm;
+    private Form myAccessLogForm;
     private Select myAdminListenAddress;
     private SmartTextField myAdminPort;
     private SmartTextField myAdminPassword;
@@ -82,10 +84,15 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myUpnpAdmin;
     private CheckBox myUpnpUserHttp;
     private CheckBox myUpnpUserHttps;
+    private SmartTextField myUserAccessLogRetainDays;
+    private SmartTextField myAdminAccessLogRetainDays;
+    private CheckBox myUserAccessLogExtended; 
+    private CheckBox myAdminAccessLogExtended;
+    private Select myAccessLogTz;
 
     public void attach() {
         super.attach();
-        init(getBundleString("serverConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
+        init(getBundleString("serverConfigPanel.caption"), getComponentFactory().createGridLayout(1, 7, true, true));
         myAdminListenAddress = getComponentFactory().createSelect("serverConfigPanel.adminListenAddress", getListenAddresses());
         myAdminPort = getComponentFactory().createTextField("serverConfigPanel.adminPort", getApplication().getValidatorFactory().createPortValidator());
         myAdminPassword = getComponentFactory().createPasswordTextField("serverConfigPanel.adminPassword");
@@ -115,6 +122,19 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myUpnpAdmin = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
         myUpnpUserHttp = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
         myUpnpUserHttps = getComponentFactory().createCheckBox("serverConfigPanel.upnp");
+        myUserAccessLogRetainDays = getComponentFactory().createTextField("serverConfigPanel.accesslog.user.retain", getApplication().getValidatorFactory().createMinMaxValidator(1, 90));
+        myAdminAccessLogRetainDays = getComponentFactory().createTextField("serverConfigPanel.accesslog.admin.retain", getApplication().getValidatorFactory().createMinMaxValidator(1, 90));
+        myUserAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.user.ext");
+        myAdminAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.admin.retain");
+        List<String> timezones = new ArrayList<String>();
+        for (int i = 12; i > 0; i--) {
+            timezones.add("GMT-" + StringUtils.leftPad("" + i, 2, '0'));
+        }
+        timezones.add("GMT");
+        for (int i = 1; i < 13; i++) {
+            timezones.add("GMT+" + StringUtils.leftPad("" + i, 2, '0'));
+        }
+        myAccessLogTz = getComponentFactory().createSelect("serverConfigPanel.accesslog.tz", timezones);
 
         myAdminForm = getComponentFactory().createForm(null, true);
         myAdminForm.addField(myAdminListenAddress, myAdminListenAddress);
@@ -158,7 +178,16 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         Panel extendedPanel = getComponentFactory().surroundWithPanel(myExtendedForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.extended"));
         addComponent(extendedPanel);
 
-        addDefaultComponents(0, 5, 0, 5, false);
+        myAccessLogForm = getComponentFactory().createForm(null, true);
+        myAccessLogForm.addField(myUserAccessLogRetainDays, myUserAccessLogRetainDays);
+        myAccessLogForm.addField(myUserAccessLogExtended, myUserAccessLogExtended);
+        myAccessLogForm.addField(myAdminAccessLogRetainDays, myAdminAccessLogRetainDays);
+        myAccessLogForm.addField(myAdminAccessLogExtended, myAdminAccessLogExtended);
+        myAccessLogForm.addField(myAccessLogTz, myAccessLogTz);
+        Panel accessLogPanel = getComponentFactory().surroundWithPanel(myAccessLogForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.accesslog"));
+        addComponent(accessLogPanel);
+
+        addDefaultComponents(0, 6, 0, 6, false);
 
         initFromConfig();
     }
@@ -195,6 +224,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myUpnpAdmin.setValue(MyTunesRss.CONFIG.isUpnpAdmin());
         myUpnpUserHttp.setValue(MyTunesRss.CONFIG.isUpnpUserHttp());
         myUpnpUserHttps.setValue(MyTunesRss.CONFIG.isUpnpUserHttps());
+        myUserAccessLogRetainDays.setValue(MyTunesRss.CONFIG.getUserAccessLogRetainDays());
+        myAdminAccessLogRetainDays.setValue(MyTunesRss.CONFIG.getAdminAccessLogRetainDays());
+        myUserAccessLogExtended.setValue(MyTunesRss.CONFIG.isUserAccessLogExtended());
+        myAdminAccessLogExtended.setValue(MyTunesRss.CONFIG.isAdminAccessLogExtended());
+        myAccessLogTz.setValue(MyTunesRss.CONFIG.getAccessLogTz());
     }
 
     protected void writeToConfig() {
@@ -210,13 +244,18 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setTomcatMaxThreads(myTomcatMaxThreads.getStringValue(null));
         MyTunesRss.CONFIG.setAjpHost(((ListenAddress) myTomcatAjpListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setTomcatAjpPort(myTomcatAjpPort.getIntegerValue(0));
-        MyTunesRss.CONFIG.setHost(((ListenAddress)myListenAddress.getValue()).getValue());
+        MyTunesRss.CONFIG.setHost(((ListenAddress) myListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setPort(myPort.getIntegerValue(0));
-        MyTunesRss.CONFIG.setSslHost(((ListenAddress)mySslListenAddress.getValue()).getValue());
+        MyTunesRss.CONFIG.setSslHost(((ListenAddress) mySslListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setSslPort(mySslPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setSslKeystoreFile(mySslKeystoreFile.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystorePass(mySslKeystorePass.getStringValue(null));
         MyTunesRss.CONFIG.setSslKeystoreKeyAlias(mySslKeystoreKeyAlias.getStringValue(null));
+        MyTunesRss.CONFIG.setUserAccessLogRetainDays(myUserAccessLogRetainDays.getIntegerValue(1));
+        MyTunesRss.CONFIG.setAdminAccessLogRetainDays(myAdminAccessLogRetainDays.getIntegerValue(1));
+        MyTunesRss.CONFIG.setUserAccessLogExtended(myUserAccessLogExtended.booleanValue());
+        MyTunesRss.CONFIG.setAdminAccessLogExtended(myAdminAccessLogExtended.booleanValue());
+        MyTunesRss.CONFIG.setAccessLogTz(myAccessLogTz.getValue().toString());
         if (adminServerConfigChanged) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("serverConfigPanel.info.adminServerRestart");
             MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
@@ -256,6 +295,9 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         boolean changed = !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPort(), myAdminPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminHost(), ((ListenAddress)myAdminListenAddress.getValue()).getValue());
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), myAdminAccessLogRetainDays.getIntegerValue(1));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.isAdminAccessLogExtended(), myAdminAccessLogExtended.booleanValue());
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAccessLogTz(), myAccessLogTz.getValue());
         return changed;
     }
 
@@ -273,12 +315,15 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreFile()), mySslKeystoreFile.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystorePass()), mySslKeystorePass.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getSslKeystoreKeyAlias()), mySslKeystoreKeyAlias.getStringValue(null));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getUserAccessLogRetainDays(), myUserAccessLogRetainDays.getIntegerValue(1));
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.isUserAccessLogExtended(), myUserAccessLogExtended.booleanValue());
+        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAccessLogTz(), myAccessLogTz.getValue());
         return changed;
     }
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myAdminForm, myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm);
+        boolean valid = VaadinUtils.isValid(myAdminForm, myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm, myAccessLogForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }

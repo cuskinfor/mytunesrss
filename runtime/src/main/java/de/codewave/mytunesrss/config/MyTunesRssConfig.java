@@ -17,7 +17,6 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -140,9 +139,14 @@ public class MyTunesRssConfig {
     private boolean myGmEnabled;
     private long myImageExpirationMillis;
     private long myRestApiJsExpirationMillis;
-    private int jpegQuality;
-    private int onDemandThumbnailGenerationThreads;
-    private int onDemandThumbnailGenerationTimeoutSeconds;
+    private int myJpegQuality;
+    private int myOnDemandThumbnailGenerationThreads;
+    private int myOnDemandThumbnailGenerationTimeoutSeconds;
+    private int myUserAccessLogRetainDays;
+    private int myAdminAccessLogRetainDays;
+    private boolean myUserAccessLogExtended;
+    private boolean myAdminAccessLogExtended;
+    private String myAccessLogTz;
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -993,28 +997,68 @@ public class MyTunesRssConfig {
     }
 
     public int getJpegQuality() {
-        return jpegQuality;
+        return myJpegQuality;
     }
 
     public void setJpegQuality(int jpegQuality) {
-        this.jpegQuality = jpegQuality;
+        myJpegQuality = jpegQuality;
     }
 
     public int getOnDemandThumbnailGenerationThreads() {
-        return onDemandThumbnailGenerationThreads;
+        return myOnDemandThumbnailGenerationThreads;
     }
 
     public void setOnDemandThumbnailGenerationThreads(int onDemandThumbnailGenerationThreads) {
-        this.onDemandThumbnailGenerationThreads = onDemandThumbnailGenerationThreads;
+        myOnDemandThumbnailGenerationThreads = onDemandThumbnailGenerationThreads;
         MyTunesRss.EXECUTOR_SERVICE.setOnDemandThumbnailGeneratorThreads(onDemandThumbnailGenerationThreads);
     }
 
     public int getOnDemandThumbnailGenerationTimeoutSeconds() {
-        return onDemandThumbnailGenerationTimeoutSeconds;
+        return myOnDemandThumbnailGenerationTimeoutSeconds;
     }
 
     public void setOnDemandThumbnailGenerationTimeoutSeconds(int onDemandThumbnailGenerationTimeoutSeconds) {
-        this.onDemandThumbnailGenerationTimeoutSeconds = onDemandThumbnailGenerationTimeoutSeconds;
+        myOnDemandThumbnailGenerationTimeoutSeconds = onDemandThumbnailGenerationTimeoutSeconds;
+    }
+
+    public String getAccessLogTz() {
+        return myAccessLogTz;
+    }
+
+    public void setAccessLogTz(String accessLogTz) {
+        myAccessLogTz = accessLogTz;
+    }
+
+    public boolean isAdminAccessLogExtended() {
+        return myAdminAccessLogExtended;
+    }
+
+    public void setAdminAccessLogExtended(boolean adminAccessLogExtended) {
+        myAdminAccessLogExtended = adminAccessLogExtended;
+    }
+
+    public boolean isUserAccessLogExtended() {
+        return myUserAccessLogExtended;
+    }
+
+    public void setUserAccessLogExtended(boolean userAccessLogExtended) {
+        myUserAccessLogExtended = userAccessLogExtended;
+    }
+
+    public int getAdminAccessLogRetainDays() {
+        return myAdminAccessLogRetainDays;
+    }
+
+    public void setAdminAccessLogRetainDays(int adminAccessLogRetainDays) {
+        myAdminAccessLogRetainDays = adminAccessLogRetainDays;
+    }
+
+    public int getUserAccessLogRetainDays() {
+        return myUserAccessLogRetainDays;
+    }
+
+    public void setUserAccessLogRetainDays(int userAccessLogRetainDays) {
+        myUserAccessLogRetainDays = userAccessLogRetainDays;
     }
 
     private String encryptCreationTime(long creationTime) {
@@ -1227,6 +1271,11 @@ public class MyTunesRssConfig {
         setJpegQuality(JXPathUtils.getIntValue(settings, "jpeg-quality", 80));
         setOnDemandThumbnailGenerationThreads(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-threads", 5));
         setOnDemandThumbnailGenerationTimeoutSeconds(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-timoeut-seconds", 60));
+        setAccessLogTz(JXPathUtils.getStringValue(settings, "accesslog-tz", "GMT"));
+        setUserAccessLogRetainDays(JXPathUtils.getIntValue(settings, "accesslog-user-retain", 5));
+        setAdminAccessLogRetainDays(JXPathUtils.getIntValue(settings, "accesslog-admin-retain", 5));
+        setUserAccessLogExtended(JXPathUtils.getBooleanValue(settings, "accesslog-user-ext", true));
+        setAdminAccessLogExtended(JXPathUtils.getBooleanValue(settings, "accesslog-admin-ext", true));
     }
 
     /**
@@ -1633,6 +1682,11 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "jpeg-quality", getJpegQuality()));
             root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-threads", getOnDemandThumbnailGenerationThreads()));
             root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-timoeut-seconds", getOnDemandThumbnailGenerationTimeoutSeconds()));
+            root.appendChild(DOMUtils.createTextElement(settings, "accesslog-tz", getAccessLogTz()));
+            root.appendChild(DOMUtils.createIntElement(settings, "accesslog-user-retain", getUserAccessLogRetainDays()));
+            root.appendChild(DOMUtils.createIntElement(settings, "accesslog-admin-retain", getAdminAccessLogRetainDays()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "accesslog-user-ext", isUserAccessLogExtended()));
+            root.appendChild(DOMUtils.createBooleanElement(settings, "accesslog-admin-ext", isAdminAccessLogExtended()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
