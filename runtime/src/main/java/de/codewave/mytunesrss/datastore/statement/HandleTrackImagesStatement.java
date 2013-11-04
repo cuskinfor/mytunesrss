@@ -258,6 +258,11 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                     if (itcFile.isFile()) {
                                         break;
                                     }
+                                    itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc2");
+                                    LOGGER.debug("Looking for ITC2 file \"" +itcFile.getAbsolutePath() + "\".");
+                                    if (itcFile.isFile()) {
+                                        break;
+                                    }
                                 }
                             }
                             if (itcFile.isFile()) {

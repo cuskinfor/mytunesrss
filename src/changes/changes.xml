@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="4.9.15" date="___D___">
+            <action dev="mdescher" type="add">
+                Try iTunes cover artwork files with suffix "itc2" in addition to files with the
+                suffix "itc".
+            </action>
+        </release>
+
         <release version="4.9.14" date="2013-11-01">
             <action dev="mdescher" type="fix">
                 Windows installer of v4.9.13 did not work in some situations.
