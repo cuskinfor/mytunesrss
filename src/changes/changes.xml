@@ -9,8 +9,7 @@
 
         <release version="4.9.15" date="___D___">
             <action dev="mdescher" type="add">
-                Try iTunes cover artwork files with suffix "itc2" in addition to files with the
-                suffix "itc".
+                [MYTUNESRSS-458] ITunes uses ITC2 suffix in addition to ITC suffix
             </action>
         </release>
 
