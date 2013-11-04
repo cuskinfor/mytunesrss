@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.9.15" date="___D___">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-457] Login failed event not sent for REST login
+            </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-458] ITunes uses ITC2 suffix in addition to ITC suffix
             </action>

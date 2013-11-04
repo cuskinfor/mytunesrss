@@ -11,9 +11,11 @@ import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
+import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -137,6 +139,11 @@ public class SessionResource extends RestResource {
             return getSession(uriInfo, request);
         } else {
             // invalid login
+            if (MyTunesRss.CONFIG.getUser(username) != null && !MyTunesRss.CONFIG.getUser(username).isActive()) {
+                MyTunesRss.ADMIN_NOTIFY.notifyLoginExpired(username, ServletUtils.getBestRemoteAddress(request));
+            } else {
+                MyTunesRss.ADMIN_NOTIFY.notifyLoginFailure(username, ServletUtils.getBestRemoteAddress(request));
+            }
             throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "INVALID_LOGIN");
         }
     }
