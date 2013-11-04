@@ -15,6 +15,25 @@
             </action>
         </release>
 
+        <release version="4.9.15" date="___D___">
+            <action dev="mdescher" type="add">
+                Try iTunes cover artwork files with suffix "itc2" in addition to files with the
+                suffix "itc".
+            </action>
+        </release>
+
+        <release version="4.9.14" date="2013-11-01">
+            <action dev="mdescher" type="fix">
+                Windows installer of v4.9.13 did not work in some situations.
+            </action>
+        </release>
+
+        <release version="4.9.13" date="2013-10-30">
+            <action dev="mdescher" type="fix">
+                Fixed Mac OS X bundle code signature.
+            </action>
+        </release>
+
         <release version="4.9.12" date="2013-10-12">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-455] Expand playlists in content config broken
