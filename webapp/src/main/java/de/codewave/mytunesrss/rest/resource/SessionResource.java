@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
