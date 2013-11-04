@@ -239,7 +239,6 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 File file = new File(datasource.getDefinition());
                 if (file.isFile()) {
                     // assume itunes xml
-                    LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");
                     String[] idPair = StringUtils.split(myTrackId, "_");
                     if (idPair.length == 2) {
                         String dirLevel1 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 1), 16), 2, '0');
@@ -247,11 +246,15 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         String dirLevel3 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 3), 16), 2, '0');
                         File itcFile = null;
                         File albumArtworkDir = new File(file.getParentFile(), "Album Artwork");
+                        LOGGER.debug("Trying album artwork base directory \"" + albumArtworkDir.getAbsolutePath() + "\".");
                         if (albumArtworkDir.isDirectory()) {
+                            LOGGER.debug("Listing subdirectories for album artwork base directory \"" + albumArtworkDir.getAbsolutePath() + "\"..");
                             File[] files = albumArtworkDir.listFiles();
                             if (files != null) {
                                 for (File subdir : files) {
+                                    LOGGER.debug("Trying directory \"" + subdir.getAbsolutePath() + "\".");
                                     itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
+                                    LOGGER.debug("Looking for ITC file \"" +itcFile.getAbsolutePath() + "\".");
                                     if (itcFile.isFile()) {
                                         break;
                                     }
