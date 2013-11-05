@@ -9,6 +9,10 @@
 
         <release version="4.9.15" date="___D___">
             <action dev="mdescher" type="fix">
+                Prevent completely broken support request mails when no iTunes XML was
+                found.
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-456] Access log configuration
             </action>
             <action dev="mdescher" type="fix">
