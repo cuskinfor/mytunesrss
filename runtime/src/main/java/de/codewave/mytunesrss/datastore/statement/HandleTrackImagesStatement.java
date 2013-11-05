@@ -152,7 +152,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             }
         }
     }
-    
+
     private Image getLocalFileImage() throws IOException {
         Image image = null;
         // look for special image file
@@ -272,11 +272,16 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                     LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
                                     int offset = CamelUtils.getIntValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
                                     Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8))));
-                                    if (iter.hasNext()) {
+                                    while (iter.hasNext()) {
                                         ImageReader reader = iter.next();
-                                        String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
-                                        LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                        return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8)));
+                                        LOGGER.debug("Trying to read image using image reader of type \"" + reader.getClass().getName() + "\".");
+                                        try {
+                                            String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
+                                            LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                                            return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8)));
+                                        } catch (Exception e) {
+                                            LOGGER.info("Could not read image using image reader of type \"" + reader.getClass().getName() + "\".", e);
+                                        }
                                     }
                                 }
                             }

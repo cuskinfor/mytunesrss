@@ -76,12 +76,14 @@ public class SendSupportRequestRunnable implements Runnable {
                 for (DatasourceConfig dataSource : MyTunesRss.CONFIG.getDatasources()) {
                     if (dataSource.getType() == DatasourceType.Itunes) {
                         File file = new File(dataSource.getDefinition());
-                        if (index == 0) {
-                            ZipUtils.addToZip(archiveName + "/iTunes Music Library.xml", file, zipOutput);
-                        } else {
-                            ZipUtils.addToZip(archiveName + "/iTunes Music Library (" + index + ").xml", file, zipOutput);
+                        if (file.isFile() && file.canRead()) {
+                            if (index == 0) {
+                                ZipUtils.addToZip(archiveName + "/iTunes Music Library.xml", file, zipOutput);
+                            } else {
+                                ZipUtils.addToZip(archiveName + "/iTunes Music Library (" + index + ").xml", file, zipOutput);
+                            }
+                            index++;
                         }
-                        index++;
                     }
                 }
             }
