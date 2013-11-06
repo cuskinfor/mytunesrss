@@ -13,6 +13,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -214,20 +215,28 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             return file;
         } else {
             String filepath = file.getAbsolutePath();
-            // try all replacement rules until we find a match
             for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
                 LOGGER.debug("Trying to find image with replacement search pattern \"" + rule.getSearchPattern() + "\".");
                 CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
                 if (compiledReplacementRule.matches(filepath)) {
-                    File imageFile = new File(compiledReplacementRule.replace(filepath));
-                    LOGGER.debug("Match! Trying file \"" + imageFile.getAbsolutePath() + "\".");
-                    if (imageFile.isFile()) {
-                        return imageFile;
+                    String imagePattern = compiledReplacementRule.replace(filepath);
+                    LOGGER.debug("Trying image pattern \"" + imagePattern + "\".");
+                    DirectoryScanner directoryScanner = new DirectoryScanner();
+                    directoryScanner.setBasedir(file.getParentFile());
+                    directoryScanner.setIncludes(new String[]{imagePattern});
+                    directoryScanner.setCaseSensitive(false);
+                    directoryScanner.scan();
+                    for (String includedFile : directoryScanner.getIncludedFiles()) {
+                        File imageFile = new File(file.getParentFile(), includedFile);
+                        LOGGER.debug("Checking image file \"" + imageFile.getAbsolutePath() + "\".");
+                        if (imageFile.isFile()) {
+                            return imageFile;
+                        }
                     }
                 }
             }
-            File[] imagesInFolder = myUseSingleImageInFolder ? getImagesInFolder(file.getParentFile()) : null;
             // last resort: if there is only one image file in the folder, return it.
+            File[] imagesInFolder = myUseSingleImageInFolder ? getImagesInFolder(file.getParentFile()) : null;
             return imagesInFolder != null && imagesInFolder.length == 1 ? imagesInFolder[0] : null;
         }
     }
