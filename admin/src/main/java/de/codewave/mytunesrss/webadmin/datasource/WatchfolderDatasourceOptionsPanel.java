@@ -125,6 +125,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
             mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
         }
+        myConfig.setUseSingleImageInFolder(myUseSingleImageInput.booleanValue());
         myConfig.setTrackImageMappings(mappings);
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
@@ -165,6 +166,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
             addTrackImageMapping(mapping);
         }
+        myUseSingleImageInput.setValue(myConfig.isUseSingleImageInFolder());
         setFileTypes(myConfig.getFileTypes());
         setTablePageLengths();
     }

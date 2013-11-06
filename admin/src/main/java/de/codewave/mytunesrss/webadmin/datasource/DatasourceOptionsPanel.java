@@ -96,6 +96,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     protected Panel myImageMappingsPanel;
     protected Table myTrackImageMappingsTable;
+    protected CheckBox myUseSingleImageInput;
     protected Button myAddTrackImageMapping;
     protected Select myTrackImageImportType;
     protected Select myPhotoThumbnailImportType;
@@ -131,6 +132,8 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myTrackImageMappingsTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myTrackImageMappingsTable.setEditable(false);
         myImageMappingsPanel.addComponent(myTrackImageMappingsTable);
+        myUseSingleImageInput = getComponentFactory().createCheckBox("datasourceOptionsPanel.imageMappingUseSingle");
+        myImageMappingsPanel.addComponent(myUseSingleImageInput);
         myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
         myImageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
         myTrackImageImportType = getComponentFactory().createSelect("datasourceOptionsPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));

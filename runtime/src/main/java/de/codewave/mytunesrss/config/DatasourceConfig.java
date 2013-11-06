@@ -167,4 +167,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
         File file = new File(myDefinition);
         return file.exists() ? file.lastModified() : 0;
     }
+
+    public abstract boolean isUseSingleImageInFolder();
 }
