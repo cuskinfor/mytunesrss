@@ -216,9 +216,11 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             String filepath = file.getAbsolutePath();
             // try all replacement rules until we find a match
             for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
+                LOGGER.debug("Trying to find image with replacement search pattern \"" + rule.getSearchPattern() + "\".");
                 CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
                 if (compiledReplacementRule.matches(filepath)) {
                     File imageFile = new File(compiledReplacementRule.replace(filepath));
+                    LOGGER.debug("Match! Trying file \"" + imageFile.getAbsolutePath() + "\".");
                     if (imageFile.isFile()) {
                         return imageFile;
                     }
@@ -231,11 +233,14 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     }
 
     private File[] getImagesInFolder(File folder) {
-        return folder.listFiles(new FileFilter() {
+        LOGGER.debug("Fetching images for folder \"" + folder.getAbsolutePath() + "\".");
+        File[] files = folder.listFiles(new FileFilter() {
             public boolean accept(File file) {
                 return file.isFile() && IMAGE_TO_MIME.keySet().contains(StringUtils.lowerCase(FilenameUtils.getExtension(file.getName())));
             }
         });
+        LOGGER.debug("Found \"" + (files != null ? files.length : "0") + "\" images.");
+        return files;
     }
 
     private Image findItunesArtwork() throws IOException {
