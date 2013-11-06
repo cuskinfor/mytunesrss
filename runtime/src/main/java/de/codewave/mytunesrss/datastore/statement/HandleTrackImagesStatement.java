@@ -214,12 +214,11 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (IMAGE_TO_MIME.keySet().contains(StringUtils.lowerCase(FilenameUtils.getExtension(file.getName())))) {
             return file;
         } else {
-            String filepath = file.getAbsolutePath();
             for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
                 LOGGER.debug("Trying to find image with replacement search pattern \"" + rule.getSearchPattern() + "\".");
                 CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
-                if (compiledReplacementRule.matches(filepath)) {
-                    String imagePattern = compiledReplacementRule.replace(filepath);
+                if (compiledReplacementRule.matches(file.getName())) {
+                    String imagePattern = compiledReplacementRule.replace(file.getName());
                     LOGGER.debug("Trying image pattern \"" + imagePattern + "\".");
                     DirectoryScanner directoryScanner = new DirectoryScanner();
                     directoryScanner.setBasedir(file.getParentFile());
