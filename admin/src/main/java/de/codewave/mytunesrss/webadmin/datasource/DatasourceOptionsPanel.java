@@ -96,6 +96,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
     protected Panel myImageMappingsPanel;
     protected Table myTrackImageMappingsTable;
+    protected CheckBox myUseSingleImageInput;
     protected Button myAddTrackImageMapping;
     protected Select myTrackImageImportType;
     protected Select myPhotoThumbnailImportType;
@@ -133,6 +134,8 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myImageMappingsPanel.addComponent(myTrackImageMappingsTable);
         myAddTrackImageMapping = getComponentFactory().createButton("datasourceOptionsPanel.addImageMapping", this);
         myImageMappingsPanel.addComponent(getComponentFactory().createHorizontalButtons(false, true, myAddTrackImageMapping));
+        myUseSingleImageInput = getComponentFactory().createCheckBox("datasourceOptionsPanel.imageMappingUseSingle");
+        myImageMappingsPanel.addComponent(myUseSingleImageInput);
         myTrackImageImportType = getComponentFactory().createSelect("datasourceOptionsPanel.trackImageImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.Never)));
         myPhotoThumbnailImportType = getComponentFactory().createSelect("datasourceOptionsPanel.photoThumbnailImportType", Arrays.asList(IMPORT_TYPE_MAPPINGS.get(ImageImportType.Auto), IMPORT_TYPE_MAPPINGS.get(ImageImportType.OnDemand)));
         myArtistDropWords = getComponentFactory().createTextField("datasourceOptionsPanel.artistDropWords");
@@ -237,7 +240,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
                 }
             }.show(getWindow());
         } else if (clickEvent.getSource() == myAddPathReplacement) {
-            addPathReplacement(new ReplacementRule("^.*$", "\\0"));
+            addPathReplacement(new ReplacementRule("^.*$", "$0"));
             setTablePageLengths();
         } else if (findTableItemWithObject(myPathReplacements, clickEvent.getSource()) != null) {
             final Button yes = new Button(getBundleString("button.yes"));
@@ -251,7 +254,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
                 }
             }.show(VaadinUtils.getApplicationWindow(this));
         } else if (clickEvent.getSource() == myAddTrackImageMapping) {
-            addTrackImageMapping(new ReplacementRule("^.*$", "\\0"));
+            addTrackImageMapping(new ReplacementRule("^(.*)\\.[^.]*$", "$1.jpg"));
             setTablePageLengths();
         } else if (findTableItemWithObject(myTrackImageMappingsTable, clickEvent.getSource()) != null) {
             final Button yes = new Button(getBundleString("button.yes"));

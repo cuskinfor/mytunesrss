@@ -67,4 +67,9 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig implements 
         });
         return types;
     }
+
+    @Override
+    public boolean isUseSingleImageInFolder() {
+        return false;
+    }
 }

@@ -44,6 +44,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
+    private boolean myUseSingleImageInFolder = false;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -66,6 +67,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myTrackImageMappings = source.getTrackImageMappings();
         myTrackImageImportType = source.getTrackImageImportType();
         myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
+        myUseSingleImageInFolder = source.isUseSingleImageInFolder();
     }
 
     public WatchfolderDatasourceConfig(String id, String name, String definition) {
@@ -279,5 +281,13 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     @Override
     public boolean isUploadable() {
         return true;
+    }
+
+    public boolean isUseSingleImageInFolder() {
+        return myUseSingleImageInFolder;
+    }
+
+    public void setUseSingleImageInFolder(boolean useSingleImageInFolder) {
+        myUseSingleImageInFolder = useSingleImageInFolder;
     }
 }
