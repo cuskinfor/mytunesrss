@@ -41,7 +41,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private String myArtistDropWords = "";
     private String myId3v2TrackComment = "";
     private String myDisabledMp4Codecs = "";
-    private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
+    private List<String> myTrackImagePatterns = new ArrayList<String>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
     private boolean myUseSingleImageInFolder = false;
@@ -64,7 +64,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myArtistDropWords = source.getArtistDropWords();
         myId3v2TrackComment = source.getId3v2TrackComment();
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
-        myTrackImageMappings = source.getTrackImageMappings();
+        myTrackImagePatterns = new ArrayList<String>(source.getTrackImagePatterns());
         myTrackImageImportType = source.getTrackImageImportType();
         myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
         myUseSingleImageInFolder = source.isUseSingleImageInFolder();
@@ -223,12 +223,12 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
-    public List<ReplacementRule> getTrackImageMappings() {
-        return new ArrayList<ReplacementRule>(myTrackImageMappings);
+    public List<String> getTrackImagePatterns() {
+        return new ArrayList<String>(myTrackImagePatterns);
     }
 
-    public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
-        this.myTrackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+    public void setTrackImagePatterns(List<String> trackImagePatterns) {
+        this.myTrackImagePatterns = new ArrayList<String>(trackImagePatterns);
     }
 
     public ImageImportType getTrackImageImportType() {

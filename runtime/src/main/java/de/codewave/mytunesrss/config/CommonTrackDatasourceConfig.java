@@ -18,9 +18,9 @@ public interface CommonTrackDatasourceConfig {
 
     void setDisabledMp4Codecs(String disabledMp4Codecs);
 
-    List<ReplacementRule> getTrackImageMappings();
+    List<String> getTrackImagePatterns();
 
-    void setTrackImageMappings(List<ReplacementRule> trackImageMappings);
+    void setTrackImagePatterns(List<String> trackImageMappings);
 
     ImageImportType getTrackImageImportType();
 

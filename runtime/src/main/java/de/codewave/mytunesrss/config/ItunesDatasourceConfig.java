@@ -60,7 +60,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
     private String myArtistDropWords;
     private String myDisabledMp4Codecs = "";
-    private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
+    private List<String> myTrackImagePatterns = new ArrayList<String>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private String myMusicFolderFilename;
     private boolean myUseSingleImageInFolder = false;
@@ -77,7 +77,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myDeleteMissingFiles = source.isDeleteMissingFiles();
         myArtistDropWords = source.getArtistDropWords();
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
-        myTrackImageMappings = new ArrayList<ReplacementRule>(source.getTrackImageMappings());
+        myTrackImagePatterns = new ArrayList<String>(source.getTrackImagePatterns());
         myTrackImageImportType = source.getTrackImageImportType();
         myMusicFolderFilename = extractMusicFolderFilename();
         myUseSingleImageInFolder = source.isUseSingleImageInFolder();
@@ -140,12 +140,12 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
-    public List<ReplacementRule> getTrackImageMappings() {
-        return new ArrayList<ReplacementRule>(myTrackImageMappings);
+    public List<String> getTrackImagePatterns() {
+        return new ArrayList<String>(myTrackImagePatterns);
     }
 
-    public void setTrackImageMappings(List<ReplacementRule> trackImageMappings) {
-        this.myTrackImageMappings = new ArrayList<ReplacementRule>(trackImageMappings);
+    public void setTrackImagePatterns(List<String> trackImageMappings) {
+        this.myTrackImagePatterns = new ArrayList<String>(trackImageMappings);
     }
 
     public ImageImportType getTrackImageImportType() {

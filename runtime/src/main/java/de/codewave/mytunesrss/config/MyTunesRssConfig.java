@@ -1335,7 +1335,7 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(datasourceContext, "id3v2-track-comment", ""));
                             watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
-                            watchfolderDatasourceConfig.setTrackImageMappings(readTrackImageMappings(datasourceContext));
+                            watchfolderDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
                             watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
                             watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
@@ -1367,7 +1367,7 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
                             itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
-                            itunesDatasourceConfig.setTrackImageMappings(readTrackImageMappings(datasourceContext));
+                            itunesDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
                             itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
                             readFileTypes(datasourceContext, itunesDatasourceConfig);
                             itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
@@ -1440,14 +1440,14 @@ public class MyTunesRssConfig {
         datasourceConfig.setFileTypes(fileTypesList);
     }
 
-    private List<ReplacementRule> readTrackImageMappings(JXPathContext settings) {
-        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
-        Iterator<JXPathContext> trackImageMappingIterator = JXPathUtils.getContextIterator(settings, "track-image-mappings/mapping");
+    private List<String> readTrackImagePatterns(JXPathContext settings) {
+        List<String> patterns = new ArrayList<String>();
+        Iterator<JXPathContext> trackImageMappingIterator = JXPathUtils.getContextIterator(settings, "track-image-patterns/pattern");
         while (trackImageMappingIterator.hasNext()) {
             JXPathContext mappingContext = trackImageMappingIterator.next();
-            mappings.add(new ReplacementRule(JXPathUtils.getStringValue(mappingContext, "search-pattern", null), JXPathUtils.getStringValue(mappingContext, "replacement", null)));
+            patterns.add(JXPathUtils.getStringValue(mappingContext, ".", null));
         }
-        return mappings;
+        return patterns;
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
@@ -1735,7 +1735,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", watchfolderDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", watchfolderDatasourceConfig.getPhotoThumbnailImportType().name()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", watchfolderDatasourceConfig.isUseSingleImageInFolder()));
-                    writeTrackImageMappings(settings, dataSource, watchfolderDatasourceConfig);
+                    writeTrackImagePatterns(settings, dataSource, watchfolderDatasourceConfig);
                     writeFileTypes(settings, dataSource, watchfolderDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
                     break;
@@ -1763,7 +1763,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", itunesDatasourceConfig.getDisabledMp4Codecs()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", itunesDatasourceConfig.isUseSingleImageInFolder()));
-                    writeTrackImageMappings(settings, dataSource, itunesDatasourceConfig);
+                    writeTrackImagePatterns(settings, dataSource, itunesDatasourceConfig);
                     writeFileTypes(settings, dataSource, itunesDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
                     break;
@@ -1819,15 +1819,12 @@ public class MyTunesRssConfig {
         }
     }
 
-    private void writeTrackImageMappings(Document settings, Element dataSource, CommonTrackDatasourceConfig datasourceConfig) {
-        if (!datasourceConfig.getTrackImageMappings().isEmpty()) {
-            Element trackImageMappingsElement = settings.createElement("track-image-mappings");
+    private void writeTrackImagePatterns(Document settings, Element dataSource, CommonTrackDatasourceConfig datasourceConfig) {
+        if (!datasourceConfig.getTrackImagePatterns().isEmpty()) {
+            Element trackImageMappingsElement = settings.createElement("track-image-patterns");
             dataSource.appendChild(trackImageMappingsElement);
-            for (ReplacementRule rule : datasourceConfig.getTrackImageMappings()) {
-                Element mappingElement = settings.createElement("mapping");
-                trackImageMappingsElement.appendChild(mappingElement);
-                mappingElement.appendChild(DOMUtils.createTextElement(settings, "search-pattern", rule.getSearchPattern()));
-                mappingElement.appendChild(DOMUtils.createTextElement(settings, "replacement", rule.getReplacement()));
+            for (String pattern : datasourceConfig.getTrackImagePatterns()) {
+                trackImageMappingsElement.appendChild(DOMUtils.createTextElement(settings, "pattern", pattern));
             }
         }
     }

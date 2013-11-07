@@ -5,18 +5,14 @@
 
 package de.codewave.mytunesrss.webadmin.datasource;
 
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.webadmin.MainWindow;
-import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 import java.util.*;
@@ -121,12 +117,12 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setArtistDropWords(myArtistDropWords.getStringValue(""));
         myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(""));
         myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(""));
-        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
-        for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
-            mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
+        List<String> patterns = new ArrayList<String>();
+        for (Object itemId : myTrackImagePatternsTable.getItemIds()) {
+            patterns.add((String) getTableCellPropertyValue(myTrackImagePatternsTable, itemId, "pattern"));
         }
         myConfig.setUseSingleImageInFolder(myUseSingleImageInput.booleanValue());
-        myConfig.setTrackImageMappings(mappings);
+        myConfig.setTrackImagePatterns(patterns);
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         myConfig.setFileTypes(getFileTypesAsList());
@@ -162,9 +158,9 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getTrackImageImportType()));
         myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getPhotoThumbnailImportType()));
-        myTrackImageMappingsTable.removeAllItems();
-        for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
-            addTrackImageMapping(mapping);
+        myTrackImagePatternsTable.removeAllItems();
+        for (String pattern : myConfig.getTrackImagePatterns()) {
+            addTrackImagePattern(pattern);
         }
         myUseSingleImageInput.setValue(myConfig.isUseSingleImageInFolder());
         setFileTypes(myConfig.getFileTypes());
@@ -172,7 +168,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImageMappingsTable, myFileTypes)) {
+        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImagePatternsTable, myFileTypes)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

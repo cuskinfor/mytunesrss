@@ -13,16 +13,12 @@
                 Smart playlists using "play count" or "last played" sort are updated whenever a track is played.
                 Virtual special playlists "last updated", "last played" and "most played" have been removed.
             </action>
-        </release>
-
-        <release version="4.9.15" date="___D___">
             <action dev="mdescher" type="update">
-                Updated image mapping syntax. Search pattern is matched against the file name only and
-                The image name is the name of the image only without any file path.
-            </action>
-            <action dev="mdescher" type="add">
-                For watchfolder and itunes data sources try all mappings until one is found.
-                Optional: if exactly one image is in the file's folder, use it as last resort.
+                Refactoring for external cover images. No regular expression search pattern but only an ant-style pattern
+                for the image. An image must always be in the same folder as the track file. All patterns are applied and
+                the first match is used. If no pattern matches and only exactly one image file is in the folder it is used
+                if the corresponding option in set in the data source options. Performance optimizations for cover image
+                parsing.
             </action>
             <action dev="mdescher" type="fix">
                 Prevent completely broken support request mails when no iTunes XML was found.

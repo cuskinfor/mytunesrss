@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
 import de.codewave.mytunesrss.meta.MyTunesRssMp4Utils;
+import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -20,10 +21,7 @@ import org.slf4j.LoggerFactory;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.MemoryCacheImageInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.io.*;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.*;
@@ -40,14 +38,35 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         IMAGE_TO_MIME.put("gif", "image/gif");
         IMAGE_TO_MIME.put("png", "image/png");
     }
+    
+    private static class ExtendedImage extends Image {
 
+        private boolean myFolderImage;
+        
+        public ExtendedImage(String mimeType, InputStream is, boolean folderImage) throws IOException {
+            super(mimeType, is);
+            myFolderImage = folderImage;
+        }
+
+        public ExtendedImage(String mimeType, byte[] data, boolean folderImage) {
+            super(mimeType, data);
+            myFolderImage = folderImage;
+        }
+
+        private boolean isFolderImage() {
+            return myFolderImage;
+        }
+    }
+
+    private final Map<String, String> myFolderImageCache;
     private File myFile;
     private String myTrackId;
     private TrackSource mySource;
     private String mySourceId;
     private boolean myUseSingleImageInFolder;
 
-    public HandleTrackImagesStatement(TrackSource source, String sourceId, File file, String trackId, boolean useSingleImageInFolder) {
+    public HandleTrackImagesStatement(Map<String, String> folderImageCache, TrackSource source, String sourceId, File file, String trackId, boolean useSingleImageInFolder) {
+        myFolderImageCache = folderImageCache;
         myFile = file;
         myTrackId = trackId;
         mySource = source;
@@ -57,83 +76,74 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
     public void execute(Connection connection) {
         String imageHash = "";
-        Image image = null;
+        String cacheKey = null;
         try {
-            image = getLocalFileImage();
-            if (image != null && image.getData() != null && image.getData().length > 0) {
-                imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
-                List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
-                }
-                Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(image, 32, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                if (!imageSizes.contains(Integer.valueOf(32))) {
+            cacheKey = IOUtils.getFilenameHash(myFile.getParentFile());
+            imageHash = StringUtils.trimToEmpty(myFolderImageCache.get(cacheKey));
+            if (StringUtils.isNotBlank(imageHash)) {
+                LOGGER.debug("Found image hash \"" + imageHash + "\" for folder with hash \"" + cacheKey + "\" in cache.");
+            }
+        } catch (IOException e) {
+            LOGGER.warn("Could not create filename hash for \"" + myFile.getParentFile() + "\".", e);
+        }
+        ExtendedImage image = null;
+        try {
+            if (StringUtils.isBlank(imageHash)) {
+                image = getLocalFileImage();
+                if (image != null && image.getData() != null && image.getData().length > 0) {
+                    imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
+                    List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 32.");
+                        LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
                     }
-                    new InsertImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Updating image with size 32.");
+                    if (!imageSizes.contains(Integer.valueOf(32))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 32.");
+                        }
+                        Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(image, 32, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                        new InsertImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
                     }
-                    new UpdateImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
-                }
-                Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(image, 64, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                if (!imageSizes.contains(Integer.valueOf(64))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 64.");
+                    if (!imageSizes.contains(Integer.valueOf(64))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 64.");
+                        }
+                        Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(image, 64, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                        new InsertImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
                     }
-                    new InsertImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Updating image with size 64.");
+                    if (!imageSizes.contains(Integer.valueOf(128))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 128.");
+                        }
+                        Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                        new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                     }
-                    new UpdateImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
-                }
-                Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                if (!imageSizes.contains(Integer.valueOf(128))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 128.");
+                    if (!imageSizes.contains(Integer.valueOf(256))) {
+                        if (LOGGER.isDebugEnabled()) {
+                            LOGGER.debug("Inserting image with size 256.");
+                        }
+                        Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(image, 256, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                        new InsertImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
                     }
-                    new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Updating image with size 128.");
-                    }
-                    new UpdateImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
-                }
-                Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(image, 256, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                if (!imageSizes.contains(Integer.valueOf(256))) {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Inserting image with size 256.");
-                    }
-                    new InsertImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
-                } else {
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Updating image with size 256.");
-                    }
-                    new UpdateImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
-                }
-                int originalSize = MyTunesRssUtils.getMaxImageSize(image);
-                if (originalSize > 256) {
-                    Image imageMax = image;
-                    int maxSize = originalSize;
-                    if (originalSize > 2048) {
+                    int originalSize = MyTunesRssUtils.getMaxImageSize(image);
+                    if (originalSize > 256) {
+                        Image bigImage = image;
                         // upper limit for image size is 2048
-                        imageMax = MyTunesRssUtils.resizeImageWithMaxSize(image, 2048, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                        maxSize = 2048;
-                    }
-                    if (!imageSizes.contains(Integer.valueOf(maxSize))) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Inserting image with size " + maxSize + ".");
+                        int bigImageSize = originalSize <= 2048 ? originalSize : 2048;
+                        if (!imageSizes.contains(Integer.valueOf(bigImageSize))) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Inserting image with size " + bigImageSize + ".");
+                            }
+                            if (bigImageSize < originalSize) {
+                                // image must be resized
+                                bigImage = MyTunesRssUtils.resizeImageWithMaxSize(image, 2048, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                            }
+                            new InsertImageStatement(imageHash, bigImageSize, bigImage.getMimeType(), bigImage.getData()).execute(connection);
                         }
-                        new InsertImageStatement(imageHash, maxSize, imageMax.getMimeType(), imageMax.getData()).execute(connection);
-                    } else {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Updating image with size " + maxSize + ".");
-                        }
-                        new UpdateImageStatement(imageHash, maxSize, imageMax.getMimeType(), imageMax.getData()).execute(connection);
                     }
+                }
+                if (image.isFolderImage() && StringUtils.isNotBlank(cacheKey)) {
+                    LOGGER.debug("Inserting image hash \"" + imageHash + "\" for folder with hash \"" + cacheKey + "\" into cache.");
+                    myFolderImageCache.put(cacheKey, imageHash);
                 }
             }
         } catch (IOException e) {
@@ -154,8 +164,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         }
     }
 
-    private Image getLocalFileImage() throws IOException {
-        Image image = null;
+    private ExtendedImage getLocalFileImage() throws IOException {
+        ExtendedImage image = null;
         // look for special image file
         File imageFile = findImageFile(myFile);
         if (imageFile != null) {
@@ -178,7 +188,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         }
         if (image == null) {
             // no itunes artwork or no itunes data source
-            image = readImageFromTrackFile(image);
+            image = readImageFromTrackFile();
             if (image != null && !MyTunesRssUtils.isImageUsable(image)) {
                 LOGGER.debug("Image from track file not readable.");
                 // image not readable, we don't have one
@@ -188,7 +198,8 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         return image;
     }
 
-    private Image readImageFromTrackFile(Image image) {
+    private ExtendedImage readImageFromTrackFile() {
+        Image image = null;
         if (myFile.isFile() && FileSupportUtils.isMp3(myFile)) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
@@ -200,37 +211,32 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             }
             image = MyTunesRssMp4Utils.getImage(myFile);
         }
-        return image;
+        return image != null ? new ExtendedImage(image.getMimeType(), image.getData(), false) : null;
     }
 
-    private Image readImageFromImageFile(File imageFile) throws IOException {
+    private ExtendedImage readImageFromImageFile(File imageFile) throws IOException {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
         }
-        return new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(imageFile));
+        return new ExtendedImage(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(imageFile), true);
     }
 
     private File findImageFile(File file) {
         if (IMAGE_TO_MIME.keySet().contains(StringUtils.lowerCase(FilenameUtils.getExtension(file.getName())))) {
             return file;
         } else {
-            for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
-                LOGGER.debug("Trying to find image with replacement search pattern \"" + rule.getSearchPattern() + "\".");
-                CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
-                if (compiledReplacementRule.matches(file.getName())) {
-                    String imagePattern = compiledReplacementRule.replace(file.getName());
-                    LOGGER.debug("Trying image pattern \"" + imagePattern + "\".");
-                    DirectoryScanner directoryScanner = new DirectoryScanner();
-                    directoryScanner.setBasedir(file.getParentFile());
-                    directoryScanner.setIncludes(new String[]{imagePattern});
-                    directoryScanner.setCaseSensitive(false);
-                    directoryScanner.scan();
-                    for (String includedFile : directoryScanner.getIncludedFiles()) {
-                        File imageFile = new File(file.getParentFile(), includedFile);
-                        LOGGER.debug("Checking image file \"" + imageFile.getAbsolutePath() + "\".");
-                        if (imageFile.isFile()) {
-                            return imageFile;
-                        }
+            for (String imagePattern : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImagePatterns()) {
+                LOGGER.debug("Trying image pattern \"" + imagePattern + "\".");
+                DirectoryScanner directoryScanner = new DirectoryScanner();
+                directoryScanner.setBasedir(file.getParentFile());
+                directoryScanner.setIncludes(new String[]{imagePattern});
+                directoryScanner.setCaseSensitive(false);
+                directoryScanner.scan();
+                for (String includedFile : directoryScanner.getIncludedFiles()) {
+                    File imageFile = new File(file.getParentFile(), includedFile);
+                    LOGGER.debug("Checking image file \"" + imageFile.getAbsolutePath() + "\".");
+                    if (imageFile.isFile()) {
+                        return imageFile;
                     }
                 }
             }
@@ -251,7 +257,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         return files;
     }
 
-    private Image findItunesArtwork() throws IOException {
+    private ExtendedImage findItunesArtwork() throws IOException {
         LOGGER.debug("Looking for iTunes cover for track \"" + myTrackId + "\".");
         for (DatasourceConfig datasource : MyTunesRss.CONFIG.getDatasources()) {
             if (datasource.getType() == DatasourceType.Itunes) {
@@ -297,7 +303,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                         try {
                                             String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
                                             LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                            return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8)));
+                                            return new ExtendedImage(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8)), false);
                                         } catch (Exception e) {
                                             LOGGER.info("Could not read image using image reader of type \"" + reader.getClass().getName() + "\".", e);
                                         }

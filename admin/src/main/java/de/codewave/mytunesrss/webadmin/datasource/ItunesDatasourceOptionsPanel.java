@@ -6,19 +6,13 @@
 package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.data.Property;
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.mytunesrss.webadmin.MainWindow;
-import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
-import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.OptionWindow;
-import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 import java.util.*;
 
@@ -93,11 +87,11 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
                 myConfig.addIgnorePlaylist(type);
             }
         }
-        List<ReplacementRule> mappings = new ArrayList<ReplacementRule>();
-        for (Object itemId : myTrackImageMappingsTable.getItemIds()) {
-            mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
+        List<String> patterns = new ArrayList<String>();
+        for (Object itemId : myTrackImagePatternsTable.getItemIds()) {
+            patterns.add((String) getTableCellPropertyValue(myTrackImagePatternsTable, itemId, "pattern"));
         }
-        myConfig.setTrackImageMappings(mappings);
+        myConfig.setTrackImagePatterns(patterns);
         myConfig.setUseSingleImageInFolder(myUseSingleImageInput.booleanValue());
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setFileTypes(getFileTypesAsList());
@@ -122,9 +116,9 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
                 ((Property) getTableCellItemValue(myIgnoreItunesPlaylists, itemId, "check")).setValue(true);
             }
         }
-        myTrackImageMappingsTable.removeAllItems();
-        for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
-            addTrackImageMapping(mapping);
+        myTrackImagePatternsTable.removeAllItems();
+        for (String pattern : myConfig.getTrackImagePatterns()) {
+            addTrackImagePattern(pattern);
         }
         myUseSingleImageInput.setValue(myConfig.isUseSingleImageInFolder());
         setFileTypes(myConfig.getFileTypes());
@@ -137,7 +131,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm, myTrackImageMappingsTable, myFileTypes)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm, myTrackImagePatternsTable, myFileTypes)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

@@ -21,9 +21,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TrackImageGeneratorRunnable implements Runnable {
@@ -70,12 +68,18 @@ public class TrackImageGeneratorRunnable implements Runnable {
                         }
                     });
                     int count = 0;
+                    Map<String, String> folderImageCache = new LinkedHashMap<String, String>(64, 0.75f, true) {
+                        @Override
+                        protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
+                            return size() > 1000;
+                        }
+                    };
                     for (SimpleTrack track : tracks) {
                         if (Thread.interrupted()) {
                             break;
                         }
                         try {
-                            MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId, MyTunesRss.CONFIG.getDatasource(track.mySourceId).isUseSingleImageInFolder()));
+                            MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(folderImageCache, track.mySource, track.mySourceId, new File(track.myFile), track.myId, MyTunesRss.CONFIG.getDatasource(track.mySourceId).isUseSingleImageInFolder()));
                             count++;
                             if (count % 250 == 0) {
                                 try {
@@ -88,6 +92,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                             LOGGER.error("Could not insert/update images for \"" + track.myFile + "\".", e);
                         }
                     }
+                    folderImageCache.clear();
                 } catch (SQLException e) {
                     LOGGER.error("Could not fetch tracks with missing thumbnails.", e);
                 } finally {
