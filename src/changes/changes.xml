@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.10.0" date="___D___">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-459] Missing permission handling in REST resources
+            </action>
             <action dev="mdescher" type="add">
                 New sort criteria for smart playlists: "play count", "last played" and "last updated" (all ascending and descending).
                 Smart playlists using "play count" or "last played" sort are updated whenever a track is played.
