@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.WebAppScope;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.resource.LibraryResource;
 import de.codewave.mytunesrss.rest.resource.SessionResource;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
@@ -21,6 +22,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Provider
 @ServerInterceptor
@@ -33,11 +37,30 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
         if (MyTunesRssWebUtils.getAuthUser(myRequest) == null) {
             if (MyTunesRssWebUtils.isAuthorized(MyTunesRssWebUtils.getRememberedUsername(myRequest), MyTunesRssWebUtils.getRememberedPasswordHash(myRequest))) {
                 MyTunesRssWebUtils.authorize(WebAppScope.Session, myRequest, MyTunesRssWebUtils.getRememberedUsername(myRequest));
+                checkPermissions(method, MyTunesRssWebUtils.getAuthUser(myRequest));
                 return null;
             }
             throw new MyTunesRssRestException(HttpServletResponse.SC_UNAUTHORIZED, "NO_VALID_USER_SESSION");
         }
+        checkPermissions(method, MyTunesRssWebUtils.getAuthUser(myRequest));
         return null;
+    }
+
+    private void checkPermissions(ResourceMethod method, User user) {
+        RequiredUserPermissions classPermissions = method.getResourceClass().getAnnotation(RequiredUserPermissions.class);
+        RequiredUserPermissions methodPermissions = method.getMethod().getAnnotation(RequiredUserPermissions.class);
+        List<UserPermission> requiredPermission = new ArrayList<UserPermission>();
+        if (classPermissions != null && classPermissions.value() != null && classPermissions.value().length > 0) {
+            requiredPermission.addAll(Arrays.asList(classPermissions.value()));
+        }
+        if (methodPermissions != null && methodPermissions.value() != null && methodPermissions.value().length > 0) {
+            requiredPermission.addAll(Arrays.asList(methodPermissions.value()));
+        }
+        for (UserPermission userPermission : requiredPermission) {
+            if (!userPermission.isGranted(user)) {
+                throw new MyTunesRssRestException(HttpServletResponse.SC_FORBIDDEN, "MISSING_USER_PERMISSION_" + userPermission.name().toUpperCase());
+            }
+        }
     }
 
     public boolean accept(Class declaring, Method method) {

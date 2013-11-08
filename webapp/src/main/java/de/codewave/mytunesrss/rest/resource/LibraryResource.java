@@ -11,6 +11,8 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.Version;
@@ -84,6 +86,7 @@ public class LibraryResource extends RestResource {
     @Path("albums")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Audio})
     public List<AlbumRepresentation> getAlbums(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
@@ -119,6 +122,7 @@ public class LibraryResource extends RestResource {
     @Path("artists")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Audio})
     public List<ArtistRepresentation> getArtists(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
@@ -147,6 +151,7 @@ public class LibraryResource extends RestResource {
     @Path("genres")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Audio})
     public List<GenreRepresentation> getGenres(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
@@ -173,6 +178,7 @@ public class LibraryResource extends RestResource {
     @Path("playlists")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Audio, UserPermission.Playlist})
     public List<PlaylistRepresentation> getPlaylists(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
@@ -196,6 +202,7 @@ public class LibraryResource extends RestResource {
     @Path("movies")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Movies})
     public List<TrackRepresentation> getMovies(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
@@ -215,6 +222,7 @@ public class LibraryResource extends RestResource {
     @Path("tvshows")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.TvShows})
     public List<TvShowRepresentation> getTvShows(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
@@ -261,6 +269,7 @@ public class LibraryResource extends RestResource {
     @Path("photoalbums")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Photos})
     public List<PhotoAlbumRepresentation> getPhotoAlbums(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
@@ -296,6 +305,7 @@ public class LibraryResource extends RestResource {
     @Path("tracks")
     @Produces({"application/json"})
     @GZIP
+    @RequiredUserPermissions({UserPermission.Audio})
     public List<TrackRepresentation> findTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,

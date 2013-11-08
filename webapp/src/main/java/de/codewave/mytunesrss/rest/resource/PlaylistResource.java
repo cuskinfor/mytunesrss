@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.rest.resource;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -28,6 +30,7 @@ import java.util.*;
 
 @ValidateRequest
 @Path("playlist")
+@RequiredUserPermissions({UserPermission.Playlist})
 public class PlaylistResource extends RestResource {
 
     /**

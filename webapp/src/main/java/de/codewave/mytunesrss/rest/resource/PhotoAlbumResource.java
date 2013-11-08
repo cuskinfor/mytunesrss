@@ -10,6 +10,8 @@ import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.PhotoRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
@@ -30,6 +32,7 @@ import java.util.List;
 
 @ValidateRequest
 @Path("photoalbum/{album}")
+@RequiredUserPermissions({UserPermission.Photos})
 public class PhotoAlbumResource extends RestResource {
 
     /**

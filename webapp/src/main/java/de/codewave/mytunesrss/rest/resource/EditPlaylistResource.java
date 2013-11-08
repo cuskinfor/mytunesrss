@@ -10,6 +10,8 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.PartialListRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
@@ -31,6 +33,7 @@ import java.util.*;
 
 @ValidateRequest
 @Path("editplaylist")
+@RequiredUserPermissions({UserPermission.CreatePlaylists})
 public class EditPlaylistResource extends RestResource {
 
     public static final String KEY_EDIT_PLAYLIST = "playlist";

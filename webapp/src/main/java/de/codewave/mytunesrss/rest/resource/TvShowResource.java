@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.rest.representation.TvShowRepresentation;
 import de.codewave.mytunesrss.rest.representation.TvShowSeasonRepresentation;
@@ -31,6 +33,7 @@ import java.util.*;
 
 @ValidateRequest
 @Path("tvshow/{show}")
+@RequiredUserPermissions({UserPermission.TvShows})
 public class TvShowResource extends RestResource {
 
     /**

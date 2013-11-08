@@ -12,6 +12,8 @@ import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.ExifFieldRepresentation;
 import de.codewave.mytunesrss.rest.representation.ExifRepresentation;
 import de.codewave.mytunesrss.rest.representation.PhotoRepresentation;
@@ -44,6 +46,7 @@ import java.util.List;
 
 @ValidateRequest
 @Path("photo/{photo}")
+@RequiredUserPermissions({UserPermission.Photos})
 public class PhotoResource extends RestResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoResource.class);

@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
@@ -25,6 +27,7 @@ import java.util.Set;
 
 @ValidateRequest
 @Path("artist/{artist}/album/{album}")
+@RequiredUserPermissions({UserPermission.Audio})
 public class AlbumResource extends RestResource {
 
     /**
@@ -117,6 +120,7 @@ public class AlbumResource extends RestResource {
     @PUT
     @Path("tag/{tag}")
     @Produces({"application/json"})
+    @RequiredUserPermissions({UserPermission.EditTags})
     public List<String> setTag(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
@@ -151,6 +155,7 @@ public class AlbumResource extends RestResource {
     @DELETE
     @Path("tag/{tag}")
     @Produces({"application/json"})
+    @RequiredUserPermissions({UserPermission.EditTags})
     public List<String> deleteTag(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,

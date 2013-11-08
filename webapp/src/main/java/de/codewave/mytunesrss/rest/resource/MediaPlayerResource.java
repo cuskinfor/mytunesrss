@@ -11,6 +11,8 @@ import de.codewave.mytunesrss.remotecontrol.NoopRemoteController;
 import de.codewave.mytunesrss.remotecontrol.RemoteController;
 import de.codewave.mytunesrss.remotecontrol.VlcPlayerRemoteController;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
@@ -28,6 +30,7 @@ import java.util.List;
 
 @ValidateRequest
 @Path("mediaplayer")
+@RequiredUserPermissions({UserPermission.RemoteControl})
 public class MediaPlayerResource extends RestResource {
 
     public static enum Action {

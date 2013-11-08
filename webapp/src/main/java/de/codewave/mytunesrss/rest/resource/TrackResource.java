@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.rest.resource;
 import de.codewave.mytunesrss.datastore.statement.FindAllTagsForTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.RemoveTagFromTracksStatement;
 import de.codewave.mytunesrss.datastore.statement.SetTagToTracksStatement;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -52,6 +54,7 @@ public class TrackResource extends RestResource {
     @PUT
     @Path("tag/{tag}")
     @Produces({"application/json"})
+    @RequiredUserPermissions({UserPermission.EditTags})
     public List<String> setTag(
             @PathParam("track") String track,
             @PathParam("tag") String tag
@@ -73,6 +76,7 @@ public class TrackResource extends RestResource {
     @DELETE
     @Path("tag/{tag}")
     @Produces({"application/json"})
+    @RequiredUserPermissions({UserPermission.EditTags})
     public List<String> deleteTag(
             @PathParam("track") String track,
             @PathParam("tag") String tag

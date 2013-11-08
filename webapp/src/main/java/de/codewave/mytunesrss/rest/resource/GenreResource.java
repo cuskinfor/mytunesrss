@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.RequiredUserPermissions;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.ArtistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
@@ -25,6 +27,7 @@ import java.util.List;
 
 @ValidateRequest
 @Path("genre/{genre}")
+@RequiredUserPermissions({UserPermission.Audio})
 public class GenreResource extends RestResource {
 
     /**
