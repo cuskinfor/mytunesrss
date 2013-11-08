@@ -141,7 +141,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         }
                     }
                 }
-                if (image.isFolderImage() && StringUtils.isNotBlank(cacheKey)) {
+                if (image != null && image.isFolderImage() && StringUtils.isNotBlank(cacheKey)) {
                     LOGGER.debug("Inserting image hash \"" + imageHash + "\" for folder with hash \"" + cacheKey + "\" into cache.");
                     myFolderImageCache.put(cacheKey, imageHash);
                 }
