@@ -35,6 +35,8 @@ public class MyTunesRssExecutorService {
 
     private Future DATABASE_BACKUP_FUTURE;
 
+    private Future DATABASE_MAINTENANCE_FUTURE;
+
     private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
 
     private ScheduledFuture PHOTO_THUMBNAIL_GENERATOR_FUTURE;
@@ -97,6 +99,14 @@ public class MyTunesRssExecutorService {
         }
     }
 
+    public synchronized void scheduleDatabaseMaintenance() {
+        try {
+            DATABASE_MAINTENANCE_FUTURE = DATABASE_JOB_EXECUTOR.submit(new DatabaseMaintenanceRunnable());
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule database maintenance task.", e);
+        }
+    }
+
     public synchronized boolean isDatabaseJobRunning() {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
             return true;
@@ -113,6 +123,12 @@ public class MyTunesRssExecutorService {
         }
     }
 
+    public synchronized void cancelDatabaseMaintenanceJob() {
+        if (DATABASE_MAINTENANCE_FUTURE != null && !DATABASE_MAINTENANCE_FUTURE.isDone()) {
+            DATABASE_MAINTENANCE_FUTURE.cancel(true);
+        }
+    }
+
     public synchronized boolean isDatabaseUpdateRunning() {
         return DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone();
     }
@@ -123,6 +139,10 @@ public class MyTunesRssExecutorService {
 
     public synchronized boolean isDatabaseBackupRunning() {
         return DATABASE_BACKUP_FUTURE != null && !DATABASE_BACKUP_FUTURE.isDone();
+    }
+
+    public synchronized boolean isDatabaseMaintenanceRunning() {
+        return DATABASE_MAINTENANCE_FUTURE != null && !DATABASE_MAINTENANCE_FUTURE.isDone();
     }
 
     public synchronized void scheduleImageGenerators() {

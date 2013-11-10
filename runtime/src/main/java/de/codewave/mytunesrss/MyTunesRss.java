@@ -66,6 +66,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * de.codewave.mytunesrss.MyTunesRss
@@ -165,7 +166,7 @@ public class MyTunesRss {
     public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
-    public static MyTunesRssEvent LAST_DATABASE_EVENT;
+    public static AtomicReference<MyTunesRssEvent> LAST_DATABASE_EVENT = new AtomicReference<MyTunesRssEvent>();
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
     public static RouterConfig ROUTER_CONFIG = new RouterConfig();
     public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();

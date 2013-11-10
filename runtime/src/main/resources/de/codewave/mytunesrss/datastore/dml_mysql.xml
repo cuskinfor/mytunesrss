@@ -25,6 +25,11 @@
         </sql>
     </statement>
 
+    <statement name="maintenance">
+        <sql>OPTIMIZE NO_WRITE_TO_BINLOG TABLE track, photo, photoalbum, link_photo_album, playlist, link_track_playlist, system_information, album, artist, genre, image, statistics, smart_info, tag</sql>
+        <sql>ANALYZE NO_WRITE_TO_BINLOG TABLE track, photo, photoalbum, link_photo_album, playlist, link_track_playlist, system_information, album, artist, genre, image, statistics, smart_info, tag</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
 
     <fragment name="smartPlaylistOrderAndLimitHead">

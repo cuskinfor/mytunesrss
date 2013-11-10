@@ -14,7 +14,7 @@ public class MyTunesRssEventEvent implements DatabaseUpdateEvent {
     }
 
     public boolean execute(DataStoreSession transaction) {
-        MyTunesRss.LAST_DATABASE_EVENT = myEvent;
+        MyTunesRss.LAST_DATABASE_EVENT.set(myEvent);
         MyTunesRssEventManager.getInstance().fireEvent(myEvent);
         return true;
     }

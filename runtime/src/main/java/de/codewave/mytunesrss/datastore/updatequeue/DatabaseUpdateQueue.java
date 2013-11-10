@@ -23,14 +23,19 @@ public class DatabaseUpdateQueue {
             public void run() {
                 long txBegin = System.currentTimeMillis();
                 long checkpointStartTime = 0;
+                long maintenanceStartTime = System.currentTimeMillis();
                 DataStoreSession tx = null;
                 try {
                     DatabaseUpdateEvent event;
                     do {
-                        if (checkpointStartTime > 0 && System.currentTimeMillis() - checkpointStartTime > 60000) {
+                        if (checkpointStartTime > 0 && System.currentTimeMillis() - checkpointStartTime > 60000) { // 1 minute
                             LOGGER.debug("Checkpoint reached.");
                             event = new CheckpointEvent();
                             checkpointStartTime = 0;
+                        } else if (maintenanceStartTime > 0 && System.currentTimeMillis() - maintenanceStartTime > 360000) { // 1 hour
+                            LOGGER.debug("Maintenance schedule reached.");
+                            event = new MaintenanceEvent();
+                            maintenanceStartTime = 0;
                         } else {
                             long pollTimeoutMillis = Math.max(0, tx != null ? maxTxDurationMillis - (System.currentTimeMillis() - txBegin) : Long.MAX_VALUE);
                             LOGGER.debug("Polling queue with a timeout of " + pollTimeoutMillis + " ms.");

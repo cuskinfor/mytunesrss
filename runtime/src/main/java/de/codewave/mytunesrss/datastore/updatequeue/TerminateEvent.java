@@ -31,7 +31,7 @@ public class TerminateEvent extends CheckpointEvent {
             session.commit();
         } finally {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED);
-            MyTunesRss.LAST_DATABASE_EVENT = event;
+            MyTunesRss.LAST_DATABASE_EVENT.set(event);
             MyTunesRssEventManager.getInstance().fireEvent(event);
         }
         return false;

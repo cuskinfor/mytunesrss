@@ -26,6 +26,10 @@
         </sql>
     </statement>
 
+    <statement name="maintenance">
+        <sql>ANALYZE</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
 
     <fragment name="smartPlaylistOrderAndLimitHead">

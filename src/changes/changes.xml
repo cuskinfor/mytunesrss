@@ -8,6 +8,10 @@
     <body>
 
         <release version="4.10.0" date="___D___">
+            <action dev="mdescher" type="add">
+                Added button for database maintenance which runs some analyze/optimize calls. This maintenance also
+                runs every hour during a database update.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-459] Missing permission handling in REST resources
             </action>
