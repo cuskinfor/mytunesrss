@@ -394,7 +394,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                 if (event.getType() == MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED) {
                     myUpdateDatabase.setEnabled(false);
                     myRemoveImages.setEnabled(false);
-                    myStopDatabaseUpdate.setEnabled(true);
+                    myStopDatabaseUpdate.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseMaintenanceRunning());
                     myResetDatabase.setEnabled(false);
                     myBackupDatabase.setEnabled(false);
                     myDatabaseMaintenance.setEnabled(false);
