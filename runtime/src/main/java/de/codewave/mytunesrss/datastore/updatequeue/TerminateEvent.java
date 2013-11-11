@@ -27,6 +27,7 @@ public class TerminateEvent extends CheckpointEvent {
             } catch (SQLException e) {
                 LOGGER.warn("Could not execute data store statement.", e);
             }
+            refreshAccessories(session);
             super.execute(session);
             session.commit();
         } finally {

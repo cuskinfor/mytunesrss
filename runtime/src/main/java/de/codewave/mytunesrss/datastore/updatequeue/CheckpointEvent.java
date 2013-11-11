@@ -23,6 +23,21 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
     public boolean execute(DataStoreSession session) {
         session.commit();
         try {
+            session.executeStatement(new UpdateStatisticsStatement());
+            SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
+            LOGGER.info("System information: " + systemInformation + ".");
+            session.commit();
+        } catch (SQLException e) {
+            LOGGER.warn("Could not execute data store statement.", e);
+        } finally {
+            session.commit();
+        }
+        return false;
+    }
+
+    protected void refreshAccessories(DataStoreSession session) {
+        session.commit();
+        try {
             long start = System.currentTimeMillis();
             session.executeStatement(new RecreateHelpTablesStatement());
             LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
@@ -74,7 +89,6 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         } finally {
             session.commit();
         }
-        return false;
     }
 
     public boolean isCheckpointRelevant() {
