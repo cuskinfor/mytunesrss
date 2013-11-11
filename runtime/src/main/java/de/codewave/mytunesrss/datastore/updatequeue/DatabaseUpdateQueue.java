@@ -23,7 +23,7 @@ public class DatabaseUpdateQueue {
             public void run() {
                 long txBegin = System.currentTimeMillis();
                 long checkpointStartTime = 0;
-                long maintenanceStartTime = System.currentTimeMillis();
+                long maintenanceStartTime = 0;
                 DataStoreSession tx = null;
                 try {
                     DatabaseUpdateEvent event;
@@ -59,6 +59,10 @@ public class DatabaseUpdateQueue {
                                 tx.commit();
                                 tx = null;
                             }
+                        }
+                        if (maintenanceStartTime == 0) {
+                            // either the first loop or a maintenance event loop
+                            maintenanceStartTime = System.currentTimeMillis();
                         }
                         if (event != null && event.isCheckpointRelevant() && checkpointStartTime == 0) {
                             LOGGER.debug("Setting checkpoint start time after checkpoint relevant event.");
