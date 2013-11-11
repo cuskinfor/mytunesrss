@@ -32,7 +32,7 @@ public class DatabaseUpdateQueue {
                             LOGGER.debug("Checkpoint reached.");
                             event = new CheckpointEvent();
                             checkpointStartTime = 0;
-                        } else if (maintenanceStartTime > 0 && System.currentTimeMillis() - maintenanceStartTime > 360000) { // 1 hour
+                        } else if (maintenanceStartTime > 0 && System.currentTimeMillis() - maintenanceStartTime > 3600000) { // 1 hour
                             LOGGER.debug("Maintenance schedule reached.");
                             event = new MaintenanceEvent();
                             maintenanceStartTime = 0;

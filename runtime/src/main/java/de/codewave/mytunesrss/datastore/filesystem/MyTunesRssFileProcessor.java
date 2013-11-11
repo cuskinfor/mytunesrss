@@ -506,6 +506,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         if (mediaType == MediaType.Audio) {
             statement.setAlbum(getFallbackAlbumName(file));
             statement.setArtist(getFallbackArtistName(file));
+            statement.setAlbumArtist(getFallbackArtistName(file)); // TODO fallback album artist
         }
         if (mediaType == MediaType.Video) {
             statement.setVideoType(myDatasourceConfig.getVideoType());
@@ -583,6 +584,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     myPatterns.put(numberAndRegExp[1], regExpPattern);
                                 }
                                 Matcher matcher = regExpPattern.matcher(dir.getName());
+                                matcher.reset();
                                 if (matcher.find()) {
                                     name = name.replace("[[[dir:" + token + "]]]", matcher.group(matcher.groupCount()));
                                 } else {
@@ -604,6 +606,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             myPatterns.put(trimmedToken.substring(1), regExpPattern);
                         }
                         Matcher matcher = regExpPattern.matcher(file.getName());
+                        matcher.reset();
                         if (matcher.find()) {
                             name = name.replace("[[[file" + token + "]]]", matcher.group(matcher.groupCount()));
                         } else {
