@@ -25,11 +25,11 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
             try {
                 session.commit();
                 long start = System.currentTimeMillis();
-//                session.executeStatement(new RecreateHelpTablesStatement());
-//                LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
+                session.executeStatement(new RecreateHelpTablesStatement());
+                LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
                 start = System.currentTimeMillis();
-//                session.executeStatement(new RefreshSmartPlaylistsStatement());
-//                LOGGER.info("Refreshing smart playlists took " + (System.currentTimeMillis() - start) + " milliseconds.");
+                session.executeStatement(new RefreshSmartPlaylistsStatement());
+                LOGGER.info("Refreshing smart playlists took " + (System.currentTimeMillis() - start) + " milliseconds.");
                 start = System.currentTimeMillis();
                 session.executeStatement(new UpdateStatisticsStatement());
                 LOGGER.info("Updating statistics took " + (System.currentTimeMillis() - start) + " milliseconds.");
