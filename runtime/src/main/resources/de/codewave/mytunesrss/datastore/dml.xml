@@ -559,7 +559,7 @@
         <sql>DELETE FROM album</sql>
         <sql>
             INSERT INTO album (name, lower_name, first_char, artist, track_count, artist_count, image_hash, year, compilation)
-            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year), MAX(compilation) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album, lower_album_artist {killOrder}
+            SELECT MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year), MAX(compilation) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album, lower_album_artist
         </sql>
     </statement>
 
@@ -567,7 +567,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(album_artist), lower_album_artist, SUBSTRING(lower_album_artist FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist {killOrder}
+            SELECT MAX(album_artist), lower_album_artist, SUBSTRING(lower_album_artist FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
         </sql>
         <sql>
             UPDATE artist SET track_count = (
@@ -587,7 +587,7 @@
         <sql>DELETE FROM genre</sql>
         <sql>
             INSERT INTO genre (name, lower_name, first_char, track_count, album_count, artist_count, hidden)
-            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_album_artist)), FALSE FROM track WHERE genre IS NOT NULL AND mediatype = 'Audio' GROUP BY lower_genre {killOrder}
+            SELECT MAX(genre), lower_genre, SUBSTRING(MAX(lower_genre) FROM 1 FOR 1), COUNT(id), COUNT(DISTINCT(lower_album)), COUNT(DISTINCT(lower_album_artist)), FALSE FROM track WHERE genre IS NOT NULL AND mediatype = 'Audio' GROUP BY lower_genre
         </sql>
         <sql loop="hidden_genres" loopbatch="1000" loopcommit="1000">UPDATE genre SET hidden = TRUE WHERE name = :loopitem_hidden_genres</sql>
     </statement>

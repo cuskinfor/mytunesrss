@@ -43,8 +43,4 @@
         ]]>
     </fragment>
 
-    <fragment name="killOrder">
-        ORDER BY NULL
-    </fragment>
-
 </statements>

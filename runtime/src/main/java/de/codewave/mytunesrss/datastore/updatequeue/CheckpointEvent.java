@@ -21,38 +21,58 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckpointEvent.class);
 
     public boolean execute(DataStoreSession session) {
+        session.commit();
         try {
-            try {
-                session.commit();
-                long start = System.currentTimeMillis();
-                session.executeStatement(new RecreateHelpTablesStatement());
-                LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
-                start = System.currentTimeMillis();
-                session.executeStatement(new RefreshSmartPlaylistsStatement());
-                LOGGER.info("Refreshing smart playlists took " + (System.currentTimeMillis() - start) + " milliseconds.");
-                start = System.currentTimeMillis();
-                session.executeStatement(new UpdateStatisticsStatement());
-                LOGGER.info("Updating statistics took " + (System.currentTimeMillis() - start) + " milliseconds.");
-                SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
-                LOGGER.info("System information: " + systemInformation + ".");
-                session.commit();
-            } catch (SQLException e) {
-                LOGGER.warn("Could not execute data store statement.", e);
-            }
-            try {
-                MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
-            } catch (IOException e) {
-                LOGGER.warn("Could not rebuild track index.", e);
-            } catch (SQLException e) {
-                LOGGER.warn("Could not rebuild track index.", e);
-            }
-            try {
-                MyTunesRssUtils.updateUserDatabaseReferences(session);
-            } catch (SQLException e) {
-                LOGGER.warn("Could not update user database references.", e);
-            }
+            long start = System.currentTimeMillis();
+            session.executeStatement(new RecreateHelpTablesStatement());
+            LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
+        } catch (SQLException e) {
+            LOGGER.warn("Could not execute data store statement.", e);
         } finally {
-            session.commit(); // make sure we have a proper state
+            session.commit();
+        }
+        try {
+            long start = System.currentTimeMillis();
+            session.executeStatement(new RefreshSmartPlaylistsStatement());
+            LOGGER.info("Refreshing smart playlists took " + (System.currentTimeMillis() - start) + " milliseconds.");
+        } catch (SQLException e) {
+            LOGGER.warn("Could not execute data store statement.", e);
+        } finally {
+            session.commit();
+        }
+        try {
+            long start = System.currentTimeMillis();
+            session.executeStatement(new UpdateStatisticsStatement());
+            LOGGER.info("Updating statistics took " + (System.currentTimeMillis() - start) + " milliseconds.");
+        } catch (SQLException e) {
+            LOGGER.warn("Could not execute data store statement.", e);
+        } finally {
+            session.commit();
+        }
+        try {
+            long start = System.currentTimeMillis();
+            MyTunesRssUtils.updateUserDatabaseReferences(session);
+            LOGGER.info("Updating user database references took " + (System.currentTimeMillis() - start) + " milliseconds.");
+        } catch (SQLException e) {
+            LOGGER.warn("Could not update user database references.", e);
+        } finally {
+            session.commit();
+        }
+        try {
+            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
+        } catch (IOException e) {
+            LOGGER.warn("Could not rebuild track index.", e);
+        } catch (SQLException e) {
+            LOGGER.warn("Could not rebuild track index.", e);
+        }
+        try {
+            SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
+            LOGGER.info("System information: " + systemInformation + ".");
+            session.commit();
+        } catch (SQLException e) {
+            LOGGER.warn("Could not execute data store statement.", e);
+        } finally {
+            session.commit();
         }
         return false;
     }
