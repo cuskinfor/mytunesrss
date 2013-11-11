@@ -7,9 +7,8 @@ package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
-import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
-import de.codewave.mytunesrss.datastore.statement.UpdateStatisticsStatement;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.statistics.GetStatisticsEventsQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,9 +24,17 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         try {
             try {
                 session.commit();
-                session.executeStatement(new RecreateHelpTablesStatement());
-                session.executeStatement(new RefreshSmartPlaylistsStatement());
+                long start = System.currentTimeMillis();
+//                session.executeStatement(new RecreateHelpTablesStatement());
+//                LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
+                start = System.currentTimeMillis();
+//                session.executeStatement(new RefreshSmartPlaylistsStatement());
+//                LOGGER.info("Refreshing smart playlists took " + (System.currentTimeMillis() - start) + " milliseconds.");
+                start = System.currentTimeMillis();
                 session.executeStatement(new UpdateStatisticsStatement());
+                LOGGER.info("Updating statistics took " + (System.currentTimeMillis() - start) + " milliseconds.");
+                SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
+                LOGGER.info("System information: " + systemInformation + ".");
                 session.commit();
             } catch (SQLException e) {
                 LOGGER.warn("Could not execute data store statement.", e);

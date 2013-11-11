@@ -9,10 +9,7 @@ import de.codewave.mytunesrss.config.CommonTrackDatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,18 +52,20 @@ public class TrackImageGeneratorRunnable implements Runnable {
             }
             if (!sourceIds.isEmpty()) {
                 try {
-                    Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Collection<SimpleTrack>>() {
+                    DataStoreQuery<Collection<SimpleTrack>> query = new DataStoreQuery<Collection<SimpleTrack>>() {
                         @Override
                         public Collection<SimpleTrack> execute(Connection connection) throws SQLException {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages");
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages", ResultSetType.TYPE_FORWARD_ONLY);
                             statement.setItems("sourceIds", sourceIds);
                             return execute(statement, new ResultBuilder<SimpleTrack>() {
                                 public SimpleTrack create(ResultSet resultSet) throws SQLException {
                                     return new SimpleTrack(resultSet.getString("id"), resultSet.getString("file"), TrackSource.valueOf(resultSet.getString("source")), resultSet.getString("source_id"));
                                 }
-                            }).getResults();
+                            }).getNextResults(10000);
                         }
-                    });
+                    };
+                    query.setFetchSize(1000);
+                    Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(query);
                     int count = 0;
                     Map<String, String> folderImageCache = new LinkedHashMap<String, String>(64, 0.75f, true) {
                         @Override

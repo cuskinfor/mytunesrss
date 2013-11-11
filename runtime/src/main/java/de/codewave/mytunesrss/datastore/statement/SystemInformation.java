@@ -102,4 +102,20 @@ public class SystemInformation {
     public boolean isAnyContent() {
         return myTrackCount + myAlbumCount + myArtistCount + myGenreCount + myMovieCount + myTvShowCount + myPhotoCount > 0;
     }
+
+    @Override
+    public String toString() {
+        return "SystemInformation{" +
+                "myLastUpdate=" + myLastUpdate +
+                ", myVersion='" + myVersion + '\'' +
+                ", myMusicCount=" + myMusicCount +
+                ", myMovieCount=" + myMovieCount +
+                ", myTvShowCount=" + myTvShowCount +
+                ", myTrackCount=" + myTrackCount +
+                ", myAlbumCount=" + myAlbumCount +
+                ", myArtistCount=" + myArtistCount +
+                ", myGenreCount=" + myGenreCount +
+                ", myPhotoCount=" + myPhotoCount +
+                '}';
+    }
 }

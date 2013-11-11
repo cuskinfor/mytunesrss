@@ -293,7 +293,7 @@ public class MyTunesRssUtils {
     }
 
     public static SmartStatement createStatement(Connection connection, String name, ResultSetType resultSetType) throws SQLException {
-        return createStatement(connection, name, Collections.<String, Boolean>emptyMap(), ResultSetType.TYPE_SCROLL_INSENSITIVE);
+        return createStatement(connection, name, Collections.<String, Boolean>emptyMap(), resultSetType);
     }
 
     public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals, ResultSetType resultSetType) throws SQLException {

@@ -97,8 +97,12 @@ public class MyTunesRssDataStore extends DataStore {
     public synchronized void destroy() {
         myInitialized.set(false);
         LOG.info("Pool has been marked uninitialized.");
+        long lastLog = System.currentTimeMillis();
         while (myConnectionPool != null && myConnectionPool.getNumActive() > 0) {
-            LOG.info("Waiting for pool to become inactive (" + myConnectionPool.getNumActive() + ").");
+            if (System.currentTimeMillis() - lastLog > 5000) {
+                lastLog = System.currentTimeMillis();
+                LOG.info("Waiting for pool to become inactive (" + myConnectionPool.getNumActive() + ").");
+            }
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {

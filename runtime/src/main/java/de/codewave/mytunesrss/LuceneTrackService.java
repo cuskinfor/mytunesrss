@@ -45,7 +45,7 @@ public class LuceneTrackService {
         Directory directory = null;
         DataStoreSession session = null;
         try {
-            LOGGER.debug("Indexing all tracks.");
+            LOGGER.info("Indexing all tracks.");
             long start = System.currentTimeMillis();
             directory = getDirectory();
             Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
@@ -79,7 +79,7 @@ public class LuceneTrackService {
                     iwriter.addDocument(document);
                 }
             }
-            LOGGER.debug("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+            LOGGER.info("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
         } finally {
             if (iwriter != null) {
                 iwriter.close();

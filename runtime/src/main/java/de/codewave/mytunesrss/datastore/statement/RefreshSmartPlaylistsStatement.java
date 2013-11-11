@@ -2,10 +2,7 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
 import org.slf4j.Logger;
@@ -147,7 +144,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         break;
                 }
             }
-            final SmartStatement queryStatement = MyTunesRssUtils.createStatement(connection, "getTracksForSmartPlaylist", conditionals);
+            final SmartStatement queryStatement = MyTunesRssUtils.createStatement(connection, "getTracksForSmartPlaylist", conditionals, ResultSetType.TYPE_FORWARD_ONLY);
             for (SmartInfo smartInfo : smartInfos) {
                 switch (smartInfo.getFieldType()) {
                     case mintime:
@@ -173,16 +170,18 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         break;
                 }
             }
-            List<String> tracks = new DataStoreQuery<List<String>>() {
+            DataStoreQuery<List<String>> dataStoreQuery = new DataStoreQuery<List<String>>() {
                 @Override
                 public List<String> execute(Connection connection) throws SQLException {
                     return execute(queryStatement, new ResultBuilder<String>() {
                         public String create(ResultSet resultSet) throws SQLException {
                             return resultSet.getString(1);
                         }
-                    }).getResults();
+                    }).getRemainingResults();
                 }
-            }.execute(connection);
+            };
+            dataStoreQuery.setFetchSize(10000);
+            List<String> tracks = dataStoreQuery.execute(connection);
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
             statement.setString("id", playlistId);
             statement.setObject("track_id", tracks);

@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * de.codewave.mytunesrss.datastore.statement.FindTrackQueryry
+ * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
  */
 public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
     public static final String PSEUDO_ID_ALL_BY_ARTIST = "PlaylistAllByArtist";
