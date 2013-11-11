@@ -184,25 +184,26 @@
                 CONSTRAINT fk_tag_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
             )
         </sql>
-        <!--<sql>CREATE INDEX idx_track_name ON track (name)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_lower_name ON track (lower_name)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_artist ON track (artist)</sql>-->
+        <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
-        <!--<sql>CREATE INDEX idx_track_album_artist ON track (album_artist)</sql>-->
+        <sql>CREATE INDEX idx_track_album_artist ON track (album_artist)</sql>
         <sql>CREATE INDEX idx_track_lower_album_artist ON track (lower_album_artist)</sql>
-        <!--<sql>CREATE INDEX idx_track_album ON track (album)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_lower_album ON track (lower_album)</sql>-->
+        <sql>CREATE INDEX idx_track_album ON track (album)</sql>
+        <sql>CREATE INDEX idx_track_lower_album ON track (lower_album)</sql>
         <sql>CREATE INDEX idx_track_genre ON track (genre)</sql>
-        <!--<sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_id ON track (id)</sql>-->
+        <sql>CREATE INDEX idx_track_lower_genre ON track (lower_genre)</sql>
         <sql>CREATE INDEX idx_track_mediatype ON track (mediatype)</sql>
         <sql>CREATE INDEX idx_track_videotype ON track (videotype)</sql>
-        <!--<sql>CREATE INDEX idx_track_time ON track (time)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_protected ON track (protected)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_series ON track (series)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_lower_series ON track (lower_series)</sql>-->
-        <!--<sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>-->
+        <sql>CREATE INDEX idx_track_time ON track (time)</sql>
+        <sql>CREATE INDEX idx_track_last_image_update ON track (last_image_update)</sql>
+        <sql>CREATE INDEX idx_track_protected ON track (protected)</sql>
+        <sql>CREATE INDEX idx_track_series ON track (series)</sql>
+        <sql>CREATE INDEX idx_track_season ON track (season)</sql>
+        <sql>CREATE INDEX idx_track_source ON track (source)</sql>
+        <sql>CREATE INDEX idx_track_imagehash ON track (image_hash)</sql>
+        <sql>CREATE INDEX idx_track_suffix ON track (suffix)</sql>
         <sql>CREATE INDEX idx_track_source_id ON track (source_id)</sql>
+
         <sql>CREATE INDEX idx_link_track_playlist_playlist_id ON link_track_playlist (playlist_id)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_index ON link_track_playlist (idx)</sql>
         <sql>CREATE INDEX idx_link_track_playlist_track_id ON link_track_playlist (track_id)</sql>

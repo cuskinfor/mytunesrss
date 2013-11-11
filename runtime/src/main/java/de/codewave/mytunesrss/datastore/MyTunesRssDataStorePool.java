@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class MyTunesRssDataStorePool extends GenericObjectPool {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssDataStorePool.class);
-    private static final int LEAK_TIME = 300000; // 5 minutes
+    private static final int LEAK_TIME = 900000; // 15 minutes
     private static final int CHECK_TIME = 60000; // 60 seconds
 
     private Map<Object, BorrowInformation> myActiveObjects = new ConcurrentHashMap<Object, BorrowInformation>();

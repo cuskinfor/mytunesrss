@@ -41,7 +41,7 @@ public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
     private static final String CREATION_TIME_KEY = "playmode";
-    public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864&useCursorFetch=true";
+    public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864";
 
     private String myHost;
     private int myPort;
@@ -1475,7 +1475,7 @@ public class MyTunesRssConfig {
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.mysqlinternal) {
             setDatabaseDriver("com.mysql.jdbc.Driver");
-            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
+            setDatabaseConnection("jdbc:mysql:mxj://localhost/mytunesrss?createDatabaseIfNotExist=true&server.initialize-user=true&useCursorFetch=true&server.basedir=" + MyTunesRss.INTERNAL_MYSQL_SERVER_PATH);
             setDatabaseConnectionOptions(DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS);
             setDatabaseUser("mytunesrss");
             setDatabasePassword("mytunesrss");

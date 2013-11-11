@@ -22,13 +22,9 @@ public class MaintenanceStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "maintenance");
         long startTime = System.currentTimeMillis();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Starting database maintenance.");
-        }
+        LOG.info("Database maintenance.");
         statement.execute();
         long endTime = System.currentTimeMillis();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Time for database maintenance: " + (endTime - startTime));
-        }
+        LOG.info("Done with database maintenance (duration = " + (endTime - startTime) + " milliseconds).");
     }
 }

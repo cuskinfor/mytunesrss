@@ -35,6 +35,7 @@ import java.util.*;
  */
 public class LuceneTrackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneTrackService.class);
+    private static final int LUCENE_COMMIT_COUNT = 5000;
 
     private Directory getDirectory() throws IOException {
         return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
@@ -73,10 +74,14 @@ public class LuceneTrackService {
             query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
             query.setFetchSize(10000);
             DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
+            long counter = 0;
             for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
                 if (track.getMediaType() != MediaType.Image) {
                     Document document = createTrackDocument(track, trackTagMap);
                     iwriter.addDocument(document);
+                    if (counter++ % LUCENE_COMMIT_COUNT == 0) {
+                        iwriter.commit();
+                    }
                 }
             }
             LOGGER.info("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
@@ -162,10 +167,14 @@ public class LuceneTrackService {
             query.setFetchSize(10000);
             DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
             Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
+            long counter = 0;
             for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
                 if (track.getMediaType() != MediaType.Image) {
                     Document document = createTrackDocument(track, trackTagMap);
                     iwriter.updateDocument(new Term("id", track.getId()), document);
+                    if (counter++ % LUCENE_COMMIT_COUNT == 0) {
+                        iwriter.commit();
+                    }
                 }
                 deletedTracks.remove(track.getId());
             }

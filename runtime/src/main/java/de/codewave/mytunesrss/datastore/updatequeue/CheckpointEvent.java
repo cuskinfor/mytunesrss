@@ -39,8 +39,9 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         session.commit();
         try {
             long start = System.currentTimeMillis();
+            LOGGER.info("Recreating help tables.");
             session.executeStatement(new RecreateHelpTablesStatement());
-            LOGGER.info("Recreating help tables took " + (System.currentTimeMillis() - start) + " milliseconds.");
+            LOGGER.info("Done recreating help tables (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
@@ -48,8 +49,9 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         }
         try {
             long start = System.currentTimeMillis();
+            LOGGER.info("Refreshing smart playlists.");
             session.executeStatement(new RefreshSmartPlaylistsStatement());
-            LOGGER.info("Refreshing smart playlists took " + (System.currentTimeMillis() - start) + " milliseconds.");
+            LOGGER.info("Done refreshing smart playlists (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
@@ -57,8 +59,9 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         }
         try {
             long start = System.currentTimeMillis();
+            LOGGER.info("Updating statistics.");
             session.executeStatement(new UpdateStatisticsStatement());
-            LOGGER.info("Updating statistics took " + (System.currentTimeMillis() - start) + " milliseconds.");
+            LOGGER.info("Done updating statistics (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
@@ -66,8 +69,9 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         }
         try {
             long start = System.currentTimeMillis();
+            LOGGER.info("Updating user database references.");
             MyTunesRssUtils.updateUserDatabaseReferences(session);
-            LOGGER.info("Updating user database references took " + (System.currentTimeMillis() - start) + " milliseconds.");
+            LOGGER.info("Done updating user database references (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
         } catch (SQLException e) {
             LOGGER.warn("Could not update user database references.", e);
         } finally {
