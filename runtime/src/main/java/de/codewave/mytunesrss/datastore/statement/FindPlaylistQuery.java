@@ -5,7 +5,9 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -29,6 +31,9 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     private String myUserName;
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
+    private MediaType[] myMediaTypes;
+    private VideoType myVideoType;
+    private String[] myPermittedDataSources;
 
     public FindPlaylistQuery(List<PlaylistType> types, String id, String containerId, boolean includeHidden) {
         myTypes = types;
@@ -40,10 +45,13 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
         this(types, id, containerId, includeHidden);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-        myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         myHiddenPlaylistIds = user.getHiddenPlaylistIds();
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
+        myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
+        myVideoType = FindTrackQuery.getQueryVideoType(user);
+        myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
@@ -59,6 +67,9 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         conditionals.put("restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
+        conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
+        conditionals.put("videotype", myVideoType != null);
+        conditionals.put("datasource", myPermittedDataSources != null);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists", conditionals);
         if (myTypes != null && !myTypes.isEmpty()) {
             List<String> typeNames = new ArrayList<String>(myTypes.size());
@@ -74,6 +85,8 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         statement.setItems("hiddenPlaylistIds", myHiddenPlaylistIds);
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
+        statement.setItems("datasources", myPermittedDataSources);
+        FindTrackQuery.setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
         return execute(statement, new PlaylistResultBuilder());
     }
 

@@ -15,11 +15,11 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -319,21 +319,24 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         return getParent() != null ? getParent().getExcludedPlaylistIds() : new ArrayList<String>(myExcludedPlaylistIds);
     }
 
-    public List<String> getEffectiveExcludedPlaylistIds() {
-        List<String> ids = getExcludedPlaylistIds();
-        if (!isAudio()) {
-            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_AUDIO);
+    /**
+     * Get a set of permitted data source IDs.
+     * 
+     * @return A set of permitted data source IDs. This can be empty if all available data sources are
+     * excluded. This is NULL if no data sources are excluded.
+     */
+    public Set<String> getPermittedDataSourceIds() {
+        Collection<String> exclusions = getExcludedDataSourceIds();
+        if (exclusions == null || exclusions.isEmpty()) {
+            return null; // no exclusions
         }
-        if (!isMovies()) {
-            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_MOVIES);
+        Set<String> result = new HashSet<String>();
+        for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
+            if (!exclusions.contains(datasourceConfig.getId())) {
+                result.add(datasourceConfig.getId());
+            }
         }
-        if (!isTvShows()) {
-            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_TVSHOWS);
-        }
-        for (String id : getExcludedDataSourceIds()) {
-            ids.add(MyTunesRssUtils.SYSTEM_PLAYLIST_ID_DATASOURCE + id);
-        }
-        return ids;
+        return result;
     }
 
     public void addExcludedPlaylistId(String playlistId) {

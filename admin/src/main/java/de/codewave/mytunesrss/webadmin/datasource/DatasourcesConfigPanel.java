@@ -134,22 +134,21 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
         MyTunesRss.CONFIG.save();
         // cleanup database in backgoround
-        MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
-            public void run() {
-                DataStoreSession session = MyTunesRss.STORE.getTransaction();
-                try {
-                    MyTunesRssUtils.refreshDatasourcePlaylists(session);
-                    if (!removedDatasourceIds.isEmpty()) {
+        if (!removedDatasourceIds.isEmpty()) {
+            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                public void run() {
+                    DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                    try {
                         MyTunesRssUtils.removeDataForSources(session, removedDatasourceIds);
+                        session.commit();
+                    } catch (SQLException e) {
+                        LOGGER.warn("Could not remove obsolete data.", e);
+                    } finally {
+                        session.rollback();
                     }
-                    session.commit();
-                } catch (SQLException e) {
-                    LOGGER.warn("Could not remove obsolete data.", e);
-                } finally {
-                    session.rollback();
                 }
-            }
-        });
+            });
+        }
     }
 
     private void setTablePageLengths() {

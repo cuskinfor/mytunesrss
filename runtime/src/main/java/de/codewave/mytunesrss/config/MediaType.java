@@ -4,7 +4,7 @@ package de.codewave.mytunesrss.config;
  * Media type enumeration.
  */
 public enum MediaType {
-    Audio("audio"), Video("video"), Image("image"), Other("");
+    Audio("audio"), Video("video"), Image("image"), Other(""), None("");
 
     private String myMimeTypePrefix;
 

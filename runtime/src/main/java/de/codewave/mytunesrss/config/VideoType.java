@@ -6,7 +6,7 @@
 package de.codewave.mytunesrss.config;
 
 public enum VideoType {
-    Movie(), TvShow();
+    Movie(), TvShow(), None();
 
     public String toString() {
         return name();

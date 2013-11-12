@@ -5,7 +5,9 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -26,13 +28,19 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
     private boolean myIncludeHidden;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
-
+    private MediaType[] myMediaTypes;
+    private VideoType myVideoType;
+    private String[] myPermittedDataSources;
+    
     public FindGenreQuery(User user, boolean includeHidden, int index) {
         myIndex = index;
         myIncludeHidden = includeHidden;
         if (user != null) {
             myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
-            myExcludedPlaylistIds = user.getEffectiveExcludedPlaylistIds();
+            myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+            myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
+            myVideoType = FindTrackQuery.getQueryVideoType(user);
+            myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
         }
     }
 
@@ -43,10 +51,15 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("nohidden", !myIncludeHidden);
+        conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
+        conditionals.put("videotype", myVideoType != null);
+        conditionals.put("datasource", myPermittedDataSources != null);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
+        statement.setItems("datasources", myPermittedDataSources);
+        FindTrackQuery.setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
         return execute(statement, new GenreResultBuilder());
     }
 
