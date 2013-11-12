@@ -120,6 +120,13 @@ public class LuceneTrackService {
         return document;
     }
 
+    public synchronized void updateTrack(LuceneTrack track) throws IOException {
+        myTrackBuffer.add(track);
+        if (myTrackBuffer.size() >= MAX_TRACK_BUFFER) {
+            flushTrackBuffer();
+        }
+    }
+
     public synchronized void updateTracks(Collection<LuceneTrack> tracks) throws IOException {
         myTrackBuffer.addAll(tracks);
         if (myTrackBuffer.size() >= MAX_TRACK_BUFFER) {

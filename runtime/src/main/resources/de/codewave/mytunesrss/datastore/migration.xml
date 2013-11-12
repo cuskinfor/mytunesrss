@@ -332,6 +332,8 @@
 
     <statement name="migrate_4.10.0">
         <sql>UPDATE smart_info SET field_type = 'order', pattern = 'random' WHERE field_type = 'randomOrder'</sql>
+        <sql>DELETE FROM playlist WHERE id IN ('system_movies', 'system_tvshows', 'system_audio')</sql>
+        <sql>DELETE FROM playlist WHERE id LIKE 'system_ds_%'</sql>
     </statement>
 
 </statements>

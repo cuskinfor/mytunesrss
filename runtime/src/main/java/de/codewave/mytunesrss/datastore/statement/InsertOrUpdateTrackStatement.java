@@ -225,7 +225,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         luceneTrack.setGenre(myGenre);
         luceneTrack.setName(myName);
         luceneTrack.setSeries(mySeries);
-        MyTunesRss.LUCENE_TRACK_SERVICE.updateTracks(Collections.singleton(luceneTrack));
+        MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
     }
 
     protected abstract LuceneTrack newLuceneTrack();

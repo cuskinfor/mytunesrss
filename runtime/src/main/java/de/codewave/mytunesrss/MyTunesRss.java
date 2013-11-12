@@ -13,9 +13,13 @@ import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
+import de.codewave.mytunesrss.lucene.AddLuceneTrack;
+import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
@@ -30,6 +34,7 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
+import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -175,6 +180,7 @@ public class MyTunesRss {
     public static String PREFERENCES_DATA_PATH;
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
+    public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
     public static JmDNS BONJOUR;
     public static String HEAPDUMP_FILENAME;
@@ -335,6 +341,43 @@ public class MyTunesRss {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
                 RUN_DATABASE_REFRESH_ON_STARTUP = false;
                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
+            }
+            if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
+                REBUILD_LUCENE_INDEX_ON_STARTUP = false;
+                MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
+                    public void run() {
+                        LOGGER.info("Recreating lucene index from scratch.");
+                        long start = System.currentTimeMillis();
+                        try {
+                            MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
+                            DataStoreQuery.QueryResult<Track> trackQueryResult = MyTunesRss.STORE.executeQuery(new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder));
+                            for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
+                                LuceneTrack luceneTrack = new AddLuceneTrack();
+                                luceneTrack.setId(track.getId());
+                                luceneTrack.setSourceId(track.getSourceId());
+                                luceneTrack.setAlbum(track.getAlbum());
+                                luceneTrack.setAlbumArtist(track.getAlbumArtist());
+                                luceneTrack.setArtist(track.getArtist());
+                                luceneTrack.setComment(track.getComment());
+                                luceneTrack.setComposer(track.getComposer());
+                                luceneTrack.setFilename(track.getFilename());
+                                luceneTrack.setGenre(track.getGenre());
+                                luceneTrack.setName(track.getName());
+                                luceneTrack.setSeries(track.getSeries());
+                                try {
+                                    MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
+                                } catch (IOException e) {
+                                    LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
+                                }
+                            }
+                            LOGGER.info("Finished recreating lucene index from scratch (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+                        } catch (IOException e) {
+                            LOGGER.error("Could not recreate lucene index.", e);
+                        } catch (SQLException e) {
+                            LOGGER.error("Could not recreate lucene index.", e);
+                        }
+                    }
+                }, 0, TimeUnit.MILLISECONDS);
             }
             while (true) {
                 try {
