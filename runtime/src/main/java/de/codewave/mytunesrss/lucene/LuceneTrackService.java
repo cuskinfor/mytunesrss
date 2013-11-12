@@ -38,11 +38,11 @@ public class LuceneTrackService {
     private FSDirectory myDirectory;
     private Analyzer myAnalyzer;
     private IndexWriter myIndexWriter;
-    
+
     private Directory getDirectory() throws IOException {
         return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
     }
-    
+
     private synchronized IndexWriter getIndexWriter() throws IOException {
         if (myDirectory == null) {
             myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
@@ -60,7 +60,7 @@ public class LuceneTrackService {
         }
         return myIndexWriter;
     }
-    
+
     public synchronized void shutdown() {
         try {
             if (myIndexWriter != null) {
@@ -78,13 +78,13 @@ public class LuceneTrackService {
             myDirectory = null;
         }
     }
-    
+
     public synchronized void deleteLuceneIndex() throws IOException {
         myTrackBuffer.clear();
         getIndexWriter().deleteAll();
         getIndexWriter().commit();
     }
-    
+
     /**
      * Create a document for a track.
      *
@@ -98,13 +98,19 @@ public class LuceneTrackService {
         Document document = new Document();
         document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
         document.add(new Field("source_id", track.getSourceId(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("name", StringUtils.lowerCase(track.getName()), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO, Field.Index.ANALYZED));
-        document.add(new Field("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO, Field.Index.ANALYZED));
+        document.add(new Field("filename", StringUtils.lowerCase(track.getFilename()), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        if (StringUtils.isNotBlank(track.getName())) {
+            document.add(new Field("name", StringUtils.lowerCase(track.getName()), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        if (StringUtils.isNotBlank(track.getAlbum())) {
+            document.add(new Field("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        if (StringUtils.isNotBlank(track.getArtist())) {
+            document.add(new Field("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO, Field.Index.ANALYZED));
+        }
         if (StringUtils.isNotBlank(track.getSeries())) {
             document.add(new Field("series", StringUtils.lowerCase(track.getSeries()), Field.Store.NO, Field.Index.ANALYZED));
         }
-        document.add(new Field("filename", StringUtils.lowerCase(track.getFilename()), Field.Store.NO, Field.Index.NOT_ANALYZED));
         if (StringUtils.isNotBlank(track.getComment())) {
             document.add(new Field("comment", StringUtils.lowerCase(track.getComment()), Field.Store.NO, Field.Index.ANALYZED));
         }
@@ -142,7 +148,7 @@ public class LuceneTrackService {
             for (LuceneTrack track = myTrackBuffer.peek(); track != null; track = myTrackBuffer.peek()) {
                 Document document = createTrackDocument(track);
                 if (track.isAdd()) {
-                    getIndexWriter().addDocument(document);                    
+                    getIndexWriter().addDocument(document);
                 } else if (track.isUpdate()) {
                     getIndexWriter().updateDocument(new Term("id", track.getId()), document);
                 } else {
@@ -174,7 +180,7 @@ public class LuceneTrackService {
             shutdown();
         }
     }
-    
+
     public synchronized void deleteTracksForIds(Collection<String> trackIds) throws IOException {
         flushTrackBuffer();
         try {
