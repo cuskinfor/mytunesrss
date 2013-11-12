@@ -1,16 +1,15 @@
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.lucene;
 
-import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.ResultSetType;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.SmartInfo;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.index.IndexNotFoundException;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.Term;
@@ -25,89 +24,80 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
- * de.codewave.mytunesrss.LuceneTrackService
+ * de.codewave.mytunesrss.lucene.LuceneTrackService
  */
 public class LuceneTrackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneTrackService.class);
-    private static final int LUCENE_COMMIT_COUNT = 5000;
+    private static final int MAX_TRACK_BUFFER = 5000;
 
+    private Deque<LuceneTrack> myTrackBuffer = new ArrayDeque<LuceneTrack>();
+    private FSDirectory myDirectory;
+    private Analyzer myAnalyzer;
+    private IndexWriter myIndexWriter;
+    
     private Directory getDirectory() throws IOException {
         return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
     }
-
-    public void indexAllTracks() throws IOException, SQLException {
-        IndexWriter iwriter = null;
-        Directory directory = null;
-        DataStoreSession session = null;
+    
+    private synchronized IndexWriter getIndexWriter() throws IOException {
+        if (myDirectory == null) {
+            myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
+        }
+        if (myAnalyzer == null) {
+            myAnalyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
+        }
         try {
-            LOGGER.info("Indexing all tracks.");
-            long start = System.currentTimeMillis();
-            directory = getDirectory();
-            Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
-            iwriter = new IndexWriter(directory, analyzer, true, new IndexWriter.MaxFieldLength(300));
-            session = MyTunesRss.STORE.getTransaction();
-            final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
-            session.executeQuery(new DataStoreQuery<Object>() {
-                @Override
-                public Object execute(Connection connection) throws SQLException {
-                    execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
-                        public Object create(ResultSet resultSet) throws SQLException {
-                            List<String> tags = trackTagMap.get(resultSet.getString(1));
-                            if (tags == null) {
-                                tags = new ArrayList<String>();
-                                trackTagMap.put(resultSet.getString(1), tags);
-                            }
-                            tags.add(resultSet.getString(2));
-                            return null;
-                        }
-                    }).getResults(); // call #getResults() just to make result builder run
-                    return null;
-                }
-            });
-            FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
-            query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
-            query.setFetchSize(10000);
-            DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
-            long counter = 0;
-            for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-                if (track.getMediaType() != MediaType.Image) {
-                    Document document = createTrackDocument(track, trackTagMap);
-                    iwriter.addDocument(document);
-                    if (counter++ % LUCENE_COMMIT_COUNT == 0) {
-                        iwriter.commit();
-                    }
+            if (myIndexWriter == null) {
+                myIndexWriter = new IndexWriter(myDirectory, myAnalyzer, false, new IndexWriter.MaxFieldLength(300));
+            }
+        } catch (IndexNotFoundException e) {
+            LOGGER.warn("No lucene index found, creating a new one.", e);
+            myIndexWriter = new IndexWriter(myDirectory, myAnalyzer, true, new IndexWriter.MaxFieldLength(300));
+        }
+        return myIndexWriter;
+    }
+    
+    public synchronized void shutdown() {
+        try {
+            if (myIndexWriter != null) {
+                try {
+                    myIndexWriter.close();
+                } catch (IOException e) {
+                    LOGGER.error("Could not close index writer.");
                 }
             }
-            LOGGER.info("Finished indexing all tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+            if (myDirectory != null) {
+                myDirectory.close();
+            }
         } finally {
-            if (iwriter != null) {
-                iwriter.close();
-            }
-            if (directory != null) {
-                directory.close();
-            }
-            if (session != null) {
-                session.rollback();
-            }
+            myIndexWriter = null;
+            myDirectory = null;
         }
     }
-
+    
+    public synchronized void deleteLuceneIndex() throws IOException {
+        myTrackBuffer.clear();
+        getIndexWriter().deleteAll();
+        getIndexWriter().commit();
+    }
+    
     /**
      * Create a document for a track.
      *
-     * @param track       A track to create a document from.
-     * @param trackTagMap Track to tag mapping.
+     * @param track A track to create a document from.
      * @return Document for the track.
      */
-    private Document createTrackDocument(Track track, Map<String, List<String>> trackTagMap) {
+    private Document createTrackDocument(LuceneTrack track) {
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Creating lucene document for track \"" + track + "\".");
+        }
         Document document = new Document();
         document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
+        document.add(new Field("source_id", track.getSourceId(), Field.Store.YES, Field.Index.NO));
         document.add(new Field("name", StringUtils.lowerCase(track.getName()), Field.Store.NO, Field.Index.ANALYZED));
         document.add(new Field("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO, Field.Index.ANALYZED));
         document.add(new Field("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO, Field.Index.ANALYZED));
@@ -127,71 +117,70 @@ public class LuceneTrackService {
         if (StringUtils.isNotBlank(track.getComposer())) {
             document.add(new Field("composer", StringUtils.lowerCase(track.getComposer()), Field.Store.NO, Field.Index.ANALYZED));
         }
-        if (trackTagMap.get(track.getId()) != null) {
-            document.add(new Field("tags", StringUtils.lowerCase(StringUtils.join(trackTagMap.get(track.getId()), " ")), Field.Store.NO, Field.Index.ANALYZED));
-        }
         return document;
     }
 
-    public void updateTracks(String[] trackIds) throws IOException, SQLException {
-        DataStoreSession session = null;
-        Directory directory = null;
-        IndexWriter iwriter = null;
+    public synchronized void updateTracks(Collection<LuceneTrack> tracks) throws IOException {
+        myTrackBuffer.addAll(tracks);
+        if (myTrackBuffer.size() >= MAX_TRACK_BUFFER) {
+            flushTrackBuffer();
+        }
+    }
+
+    public synchronized void flushTrackBuffer() throws IOException {
         try {
-            LOGGER.debug("Indexing " + trackIds.length + " tracks.");
+            LOGGER.info("Indexing " + myTrackBuffer.size() + " tracks.");
             long start = System.currentTimeMillis();
-            directory = getDirectory();
-            Analyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
-            iwriter = new IndexWriter(directory, analyzer, false, new IndexWriter.MaxFieldLength(300));
-            final Map<String, List<String>> trackTagMap = new HashMap<String, List<String>>();
-            session = MyTunesRss.STORE.getTransaction();
-            session.executeQuery(new DataStoreQuery<Object>() {
-                @Override
-                public Object execute(Connection connection) throws SQLException {
-                    execute(MyTunesRssUtils.createStatement(connection, "getTrackTagMap"), new ResultBuilder<Object>() {
-                        public Object create(ResultSet resultSet) throws SQLException {
-                            List<String> tags = trackTagMap.get(resultSet.getString(1));
-                            if (tags == null) {
-                                tags = new ArrayList<String>();
-                                trackTagMap.put(resultSet.getString(1), tags);
-                            }
-                            tags.add(resultSet.getString(2));
-                            return null;
-                        }
-                    }).getResults(); // call #getResults() just to make result builder run
-                    return null;
+            long doneCount = 0;
+            for (LuceneTrack track = myTrackBuffer.peek(); track != null; track = myTrackBuffer.peek()) {
+                Document document = createTrackDocument(track);
+                if (track.isAdd()) {
+                    getIndexWriter().addDocument(document);                    
+                } else if (track.isUpdate()) {
+                    getIndexWriter().updateDocument(new Term("id", track.getId()), document);
+                } else {
+                    LOGGER.warn("Lucence track type \"" + track.getClass().getName() + "\" is neither add nor update.");
                 }
-            });
-            FindTrackQuery query = FindTrackQuery.getForIds(trackIds);
-            query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
-            query.setFetchSize(10000);
-            DataStoreQuery.QueryResult<Track> queryResult = session.executeQuery(query);
-            Set<String> deletedTracks = new HashSet<String>(Arrays.asList(trackIds));
-            long counter = 0;
-            for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
-                if (track.getMediaType() != MediaType.Image) {
-                    Document document = createTrackDocument(track, trackTagMap);
-                    iwriter.updateDocument(new Term("id", track.getId()), document);
-                    if (counter++ % LUCENE_COMMIT_COUNT == 0) {
-                        iwriter.commit();
-                    }
-                }
-                deletedTracks.remove(track.getId());
+                myTrackBuffer.pop(); // element done
+                doneCount++;
             }
-            for (String deletedTrack : deletedTracks) {
-                iwriter.deleteDocuments(new Term("id", deletedTrack));
+            getIndexWriter().commit();
+            LOGGER.info("Finished indexing " + doneCount + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+        } catch (Exception e) {
+            LOGGER.error("Could not flush track buffer to lucene index.", e);
+            shutdown();
+        }
+    }
+
+    public synchronized void deleteTracksForSourceIds(Collection<String> sourceIds) throws IOException {
+        flushTrackBuffer();
+        try {
+            LOGGER.info("Removing tracks for " + sourceIds.size() + " data sources from index.");
+            long start = System.currentTimeMillis();
+            for (String sourceId : sourceIds) {
+                getIndexWriter().deleteDocuments(new Term("source_id", sourceId));
+                getIndexWriter().commit();
             }
-            LOGGER.debug("Finished indexing " + trackIds.length + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
-        } finally {
-            if (iwriter != null) {
-                iwriter.close();
+            LOGGER.info("Finished removing tracks for " + sourceIds.size() + " data sources (duration: " + (System.currentTimeMillis() - start) + " ms).");
+        } catch (Exception e) {
+            LOGGER.error("Could not flush track buffer to lucene index.", e);
+            shutdown();
+        }
+    }
+    
+    public synchronized void deleteTracksForIds(Collection<String> trackIds) throws IOException {
+        flushTrackBuffer();
+        try {
+            LOGGER.info("Removing " + trackIds.size() + " tracks from index.");
+            long start = System.currentTimeMillis();
+            for (String trackId : trackIds) {
+                getIndexWriter().deleteDocuments(new Term("id", trackId));
+                getIndexWriter().commit();
             }
-            if (directory != null) {
-                directory.close();
-            }
-            if (session != null) {
-                session.rollback();
-            }
+            LOGGER.info("Finished removing " + trackIds.size() + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+        } catch (Exception e) {
+            LOGGER.error("Could not flush track buffer to lucene index.", e);
+            shutdown();
         }
     }
 

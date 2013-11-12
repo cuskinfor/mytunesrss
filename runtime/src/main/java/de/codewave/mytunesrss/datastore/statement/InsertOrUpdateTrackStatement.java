@@ -6,12 +6,17 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.StringTokenizer;
 
 /**
@@ -19,6 +24,8 @@ import java.util.StringTokenizer;
  */
 public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(InsertOrUpdateTrackStatement.class);
+    
     static String dropWordsFromArtist(String artist, String dropWords) {
         if (StringUtils.isNotBlank(dropWords) && StringUtils.isNotBlank(artist)) {
             for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens();) {
@@ -195,10 +202,33 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setInt("compilation", myCompilation ? 1 : 0);
             myStatement.setString("source_id", mySourceId);
             myStatement.execute();
+            try {
+                updateLuceneIndex();
+            } catch (IOException e) {
+                LOGGER.warn("Could not update lucene index for track \"" + myId + "\".", e);
+            }
         } catch (SQLException e) {
             logError(myId, e);
         }
     }
+
+    private void updateLuceneIndex() throws IOException, SQLException {
+        LuceneTrack luceneTrack = newLuceneTrack();
+        luceneTrack.setId(myId);
+        luceneTrack.setSourceId(mySourceId);
+        luceneTrack.setAlbum(myAlbum);
+        luceneTrack.setAlbumArtist(myAlbumArtist);
+        luceneTrack.setArtist(myArtist);
+        luceneTrack.setComment(myComment);
+        luceneTrack.setComposer(myComposer);
+        luceneTrack.setFilename(myFileName);
+        luceneTrack.setGenre(myGenre);
+        luceneTrack.setName(myName);
+        luceneTrack.setSeries(mySeries);
+        MyTunesRss.LUCENE_TRACK_SERVICE.updateTracks(Collections.singleton(luceneTrack));
+    }
+
+    protected abstract LuceneTrack newLuceneTrack();
 
     protected abstract void logError(String id, SQLException e);
 

@@ -3,7 +3,7 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss;
+package de.codewave.mytunesrss.lucene;
 
 public class LuceneQueryParserException extends Exception {
     public LuceneQueryParserException() {

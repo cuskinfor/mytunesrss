@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.LuceneQueryParserException;
+import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.TrackUtils;

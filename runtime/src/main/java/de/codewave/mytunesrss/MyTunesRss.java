@@ -16,6 +16,7 @@ import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
+import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;

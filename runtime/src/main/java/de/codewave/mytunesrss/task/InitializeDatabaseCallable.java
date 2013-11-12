@@ -61,7 +61,6 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                         session.executeStatement(new MigrationStatement());
                         session.commit();
                     }
-                    MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
                 }
                 session.commit();
                 LOGGER.debug("Database successfully migrated.");

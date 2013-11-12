@@ -78,13 +78,6 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
             session.commit();
         }
         try {
-            MyTunesRss.LUCENE_TRACK_SERVICE.indexAllTracks();
-        } catch (IOException e) {
-            LOGGER.warn("Could not rebuild track index.", e);
-        } catch (SQLException e) {
-            LOGGER.warn("Could not rebuild track index.", e);
-        }
-        try {
             SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
             LOGGER.info("System information: " + systemInformation + ".");
             session.commit();

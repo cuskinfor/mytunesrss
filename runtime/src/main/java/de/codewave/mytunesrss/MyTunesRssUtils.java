@@ -226,6 +226,7 @@ public class MyTunesRssUtils {
                 LOGGER.debug("Destroying store.");
                 MyTunesRss.STORE.destroy();
             }
+            MyTunesRss.LUCENE_TRACK_SERVICE.shutdown();
             if (MyTunesRss.CONFIG.isDefaultDatabase() && MyTunesRss.CONFIG.isDeleteDatabaseOnExit()) {
                 try {
                     new DeleteDatabaseFilesCallable().call();
@@ -1006,6 +1007,11 @@ public class MyTunesRssUtils {
                 statement.execute();
             }
         });
+        try {
+            MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForSourceIds(sourceIds);
+        } catch (IOException e) {
+            LOGGER.warn("Could not delete tracks from lucene index.", e);
+        }
         LOGGER.debug("Recreating help tables.");
         session.executeStatement(new RecreateHelpTablesStatement());
         LOGGER.debug("Removing orphaned images.");

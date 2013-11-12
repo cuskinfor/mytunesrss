@@ -4,6 +4,8 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.lucene.AddLuceneTrack;
+import de.codewave.mytunesrss.lucene.LuceneTrack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,6 +19,11 @@ public class InsertTrackStatement extends InsertOrUpdateTrackStatement {
 
     public InsertTrackStatement(TrackSource source, String sourceId) {
         super(source, sourceId);
+    }
+
+    @Override
+    protected LuceneTrack newLuceneTrack() {
+        return new AddLuceneTrack(); 
     }
 
     @Override

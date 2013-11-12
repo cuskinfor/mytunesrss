@@ -9,6 +9,7 @@ import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -31,6 +32,11 @@ public class TerminateEvent extends CheckpointEvent {
             super.execute(session);
             session.commit();
         } finally {
+            try {
+                MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
+            } catch (IOException e) {
+                LOGGER.warn("Could not flush lucene track buffer.", e);
+            }
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED);
             MyTunesRss.LAST_DATABASE_EVENT.set(event);
             MyTunesRssEventManager.getInstance().fireEvent(event);

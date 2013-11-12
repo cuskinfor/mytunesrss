@@ -13,6 +13,7 @@ import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
@@ -39,5 +40,10 @@ public class RemoveTrackStatement implements DataStoreStatement {
         statement.setObject("track_id", myTrackIds);
         statement.setItems("source_id", myDataSourceIds);
         statement.execute();
+        try {
+            MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForIds(myTrackIds);
+        } catch (IOException e) {
+            LOGGER.warn("Could not remove tracks from lucene index.", e);
+        }
     }
 }
