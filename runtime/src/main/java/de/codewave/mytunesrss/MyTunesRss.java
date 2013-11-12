@@ -342,6 +342,8 @@ public class MyTunesRss {
                 RUN_DATABASE_REFRESH_ON_STARTUP = false;
                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
             }
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
                 LOGGER.info("Recreating lucene index from scratch.");
