@@ -344,40 +344,36 @@ public class MyTunesRss {
             }
             if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
-                MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
-                    public void run() {
-                        LOGGER.info("Recreating lucene index from scratch.");
-                        long start = System.currentTimeMillis();
+                LOGGER.info("Recreating lucene index from scratch.");
+                long start = System.currentTimeMillis();
+                try {
+                    MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
+                    DataStoreQuery.QueryResult<Track> trackQueryResult = MyTunesRss.STORE.executeQuery(new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder));
+                    for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
+                        LuceneTrack luceneTrack = new AddLuceneTrack();
+                        luceneTrack.setId(track.getId());
+                        luceneTrack.setSourceId(track.getSourceId());
+                        luceneTrack.setAlbum(track.getAlbum());
+                        luceneTrack.setAlbumArtist(track.getAlbumArtist());
+                        luceneTrack.setArtist(track.getArtist());
+                        luceneTrack.setComment(track.getComment());
+                        luceneTrack.setComposer(track.getComposer());
+                        luceneTrack.setFilename(track.getFilename());
+                        luceneTrack.setGenre(track.getGenre());
+                        luceneTrack.setName(track.getName());
+                        luceneTrack.setSeries(track.getSeries());
                         try {
-                            MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
-                            DataStoreQuery.QueryResult<Track> trackQueryResult = MyTunesRss.STORE.executeQuery(new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder));
-                            for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
-                                LuceneTrack luceneTrack = new AddLuceneTrack();
-                                luceneTrack.setId(track.getId());
-                                luceneTrack.setSourceId(track.getSourceId());
-                                luceneTrack.setAlbum(track.getAlbum());
-                                luceneTrack.setAlbumArtist(track.getAlbumArtist());
-                                luceneTrack.setArtist(track.getArtist());
-                                luceneTrack.setComment(track.getComment());
-                                luceneTrack.setComposer(track.getComposer());
-                                luceneTrack.setFilename(track.getFilename());
-                                luceneTrack.setGenre(track.getGenre());
-                                luceneTrack.setName(track.getName());
-                                luceneTrack.setSeries(track.getSeries());
-                                try {
-                                    MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
-                                } catch (IOException e) {
-                                    LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
-                                }
-                            }
-                            LOGGER.info("Finished recreating lucene index from scratch (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+                            MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
                         } catch (IOException e) {
-                            LOGGER.error("Could not recreate lucene index.", e);
-                        } catch (SQLException e) {
-                            LOGGER.error("Could not recreate lucene index.", e);
+                            LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
                         }
                     }
-                }, 0, TimeUnit.MILLISECONDS);
+                    LOGGER.info("Finished recreating lucene index from scratch (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+                } catch (IOException e) {
+                    LOGGER.error("Could not recreate lucene index.", e);
+                } catch (SQLException e) {
+                    LOGGER.error("Could not recreate lucene index.", e);
+                }
             }
             while (true) {
                 try {
