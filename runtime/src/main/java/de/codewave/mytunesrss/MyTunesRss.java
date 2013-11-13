@@ -35,6 +35,7 @@ import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -358,25 +359,30 @@ public class MyTunesRss {
                     FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
                     query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
                     query.setFetchSize(1000);
-                    DataStoreQuery.QueryResult<Track> trackQueryResult = MyTunesRss.STORE.executeQuery(query);
-                    for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
-                        LuceneTrack luceneTrack = new AddLuceneTrack();
-                        luceneTrack.setId(track.getId());
-                        luceneTrack.setSourceId(track.getSourceId());
-                        luceneTrack.setAlbum(track.getAlbum());
-                        luceneTrack.setAlbumArtist(track.getAlbumArtist());
-                        luceneTrack.setArtist(track.getArtist());
-                        luceneTrack.setComment(track.getComment());
-                        luceneTrack.setComposer(track.getComposer());
-                        luceneTrack.setFilename(track.getFilename());
-                        luceneTrack.setGenre(track.getGenre());
-                        luceneTrack.setName(track.getName());
-                        luceneTrack.setSeries(track.getSeries());
-                        try {
-                            MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
-                        } catch (IOException e) {
-                            LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
+                    DataStoreSession dataStoreSession = MyTunesRss.STORE.getTransaction();
+                    try {
+                        DataStoreQuery.QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
+                        for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
+                            LuceneTrack luceneTrack = new AddLuceneTrack();
+                            luceneTrack.setId(track.getId());
+                            luceneTrack.setSourceId(track.getSourceId());
+                            luceneTrack.setAlbum(track.getAlbum());
+                            luceneTrack.setAlbumArtist(track.getAlbumArtist());
+                            luceneTrack.setArtist(track.getArtist());
+                            luceneTrack.setComment(track.getComment());
+                            luceneTrack.setComposer(track.getComposer());
+                            luceneTrack.setFilename(track.getFilename());
+                            luceneTrack.setGenre(track.getGenre());
+                            luceneTrack.setName(track.getName());
+                            luceneTrack.setSeries(track.getSeries());
+                            try {
+                                MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
+                            } catch (IOException e) {
+                                LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
+                            }
                         }
+                    } finally {
+                        dataStoreSession.rollback();
                     }
                     LOGGER.info("Finished recreating lucene index from scratch (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
                 } catch (IOException e) {
