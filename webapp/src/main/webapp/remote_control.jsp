@@ -34,7 +34,7 @@
 
         var imageUrls = new Array(
                 <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
-                    "<c:if test="${!empty(track.imageHash)}">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=32</mt:encrypt></c:if>"<c:if test="${!trackLoopStatus.last}">,</c:if>
+                    "<c:if test="${!empty(track.imageHash)}">${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=32</mt:encrypt></c:if>"<c:if test="${!trackLoopStatus.last}">,</c:if>
                 </c:forEach>
         );
 

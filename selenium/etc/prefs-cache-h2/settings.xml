@@ -64,7 +64,6 @@
       <externalSites>true</externalSites>
       <changeEmail>true</changeEmail>
       <searchFuzziness>-1</searchFuzziness>
-      <editTags>true</editTags>
       <yahooPlayer>true</yahooPlayer>
       <group>false</group>
       <createPublicPlaylists>true</createPublicPlaylists>
@@ -72,8 +71,7 @@
       <featureShare>true</featureShare>
       <featureDownloadPhotoAlbum>true</featureDownloadPhotoAlbum>
       <featureAudio>true</featureAudio>
-      <featureMovies>true</featureMovies>
-      <featureTvShows>true</featureTvShows>
+      <featureVideo>true</featureVideo>
     </user>
   </users>
   <supportName/>

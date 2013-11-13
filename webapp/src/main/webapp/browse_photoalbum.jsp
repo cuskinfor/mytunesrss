@@ -17,13 +17,12 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="photoAlbums" type="java.util.List<de.codewave.mytunesrss.datastore.statement.PhotoAlbum>"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt>index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -76,7 +75,7 @@
                     <td class="artist">
                         <div class="trackName">
                             <a id="functionsDialogName${fnCount}"
-                               href="${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                               href="${servletUrl}/browsePhoto/${auth}/<mt:encrypt>photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                onmouseover="showTooltip(this)"
                                onmouseout="hideTooltip(this)"
 							   class="photo">
@@ -87,7 +86,7 @@
                     </td>
                     <c:if test="${authUser.downloadPhotoAlbum}">
                         <td class="actions">
-                            <a class="download" onclick="openSizeSelectionDialog('<mt:encrypt key="${encryptionKey}">photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>')"></a>
+                            <a class="download" onclick="openSizeSelectionDialog('<mt:encrypt>photoalbum=${mtfn:encode64(photoAlbum.name)}/photoalbumid=${mtfn:encode64(photoAlbum.id)}</mt:encrypt>')"></a>
                         </td>
                     </c:if>
                 </tr>

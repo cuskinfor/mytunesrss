@@ -12,7 +12,6 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
@@ -21,7 +20,7 @@
 <%--@elvariable id="msgUnknownSeries" type="java.lang.String"--%>
 <%--@elvariable id="msgUnknownTrack" type="java.lang.String"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">series=${cwfn:encodeUrl(param.series)}/season=${cwfn:encodeUrl(param.season)}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseTvShow/${auth}/<mt:encrypt>series=${cwfn:encodeUrl(param.series)}/season=${cwfn:encodeUrl(param.season)}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -34,8 +33,6 @@
 </head>
 
 <body class="browse">
-
-<jsp:include page="incl_edit_tags.jsp"/>
 
 <div class="body">
 
@@ -99,11 +96,11 @@
                                 <c:if test="${!empty(track.imageHash)}">
                                     <div class="albumCover">
                                         <img id="trackthumb_${loopStatus.index}"
-                                             src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>"
+                                             src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>"
                                              onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
 
                                         <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img
-                                                src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>"
+                                                src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>"
                                                 alt=""/></div>
                                     </div>
                                 </c:if>
@@ -113,16 +110,13 @@
                                 <a id="functionsDialogName${fnCount}"
                                    <c:choose>
                                        <c:when test="${empty track.id && track.season == -1}">
-                                           href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt
-                                               key="${encryptionKey}">series=${mtfn:encode64(track.series)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                                           href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt>series=${mtfn:encode64(track.series)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                        </c:when>
                                        <c:when test="${empty track.id}">
-                                           href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt
-                                               key="${encryptionKey}">series=${mtfn:encode64(track.series)}/season=${track.season}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                                           href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt>series=${mtfn:encode64(track.series)}/season=${track.season}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                        </c:when>
                                        <c:otherwise>
-                                           href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt
-                                               key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                                           href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                        </c:otherwise>
                                    </c:choose>
                                    onmouseover="showTooltip(this)"
@@ -157,23 +151,17 @@
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seriesSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seriesSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seriesSectionPlaylistId)}</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${track.series}</c:set>
                                     <c:set var="playlistName">${track.series}</c:set>
-                                    <c:set var="editTagsResource">PlaylistResource</c:set>
-                                    <c:set var="editTagsParams">{track:'${track.seriesSectionPlaylistId}'}</c:set>
                                 </c:when>
                                 <c:when test="${empty track.id}">
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seasonSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seasonSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seasonSectionPlaylistId)}</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
                                     <c:set var="filename">${filename}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
-                                    <c:set var="editTagsResource">PlaylistResource</c:set>
-                                    <c:set var="editTagsParams">{playlist:'${track.seasonSectionPlaylistId}'}</c:set>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="linkFragment">track=${track.id}</c:set>
                                     <c:set var="filename">${track.name}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season} - ${track.name}</c:set>
-                                    <c:set var="editTagsResource">TrackResource</c:set>
-                                    <c:set var="editTagsParams">{track:'${track.id}'}</c:set>
                                 </c:otherwise>
                             </c:choose>
                             <c:choose>
@@ -184,8 +172,6 @@
                                                    filename="${filename}"
                                                    track="${cwfn:choose(!empty track.id , track, null)}"
                                                    externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
-                                                   editTagsResource="${editTagsResource}"
-                                                   editTagsParams="${editTagsParams}"
                                                    defaultPlaylistName="${playlistName}"
                                                    shareText="${playlistName}"
                                                    shareImageHash="${track.imageHash}" />
@@ -193,7 +179,7 @@
                                 <c:otherwise>
                                     <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                                         <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash"
-                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>${linkFragment}/filename=${filename}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;"
+                                           onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt>playlistParams=<mt:encode64>${linkFragment}/filename=${filename}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;"
                                            title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                     </c:if>
                                     <a id="linkAddToPlaylist${loopStatus.index}" class="add"
@@ -210,8 +196,7 @@
 
             <c:if test="${!empty pager}">
                 <c:set var="pagerCommand"
-                       scope="request">${servletUrl}/browseTvShow/${auth}/<mt:encrypt
-                        key="${encryptionKey}">series=${cwfn:encodeUrl(param.series)}/season=${cwfn:encodeUrl(param.season)}/backUrl=${param.backUrl}</mt:encrypt>/index={index}</c:set>
+                       scope="request">${servletUrl}/browseTvShow/${auth}/<mt:encrypt>series=${cwfn:encodeUrl(param.series)}/season=${cwfn:encodeUrl(param.season)}/backUrl=${param.backUrl}</mt:encrypt>/index={index}</c:set>
                 <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}"/>
                 <jsp:include page="incl_bottomPager.jsp"/>
             </c:if>

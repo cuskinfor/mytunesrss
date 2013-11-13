@@ -12,8 +12,8 @@
             <compilation>AND a.compilation = :compilation</compilation>
             <index>AND ({letterRegionByIndex})</index>
             <filter>AND a.lower_name LIKE :filter ESCAPE '!'</filter>
-            <albumartist>AND t.lower_album_artist = :artist AND t.album = a.name</albumartist>
-            <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album = a.name AND t.album_artist = a.artist</artist>
+            <albumartist>AND t.lower_album_artist = :artist</albumartist>
+            <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album_artist = a.artist</artist>
             <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             <restricted>
@@ -22,7 +22,7 @@
                 AND t.album = a.name
             </restricted>
             <track>
-                AND t.album = a.name                
+                AND t.album = a.name
             </track>
             <excluded>
                 AND t.id NOT IN (
@@ -739,72 +739,6 @@
     <statement name="fillLuceneSearchTempTable">
         <sql loop="track_id" loopbatch="10000">
             INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
-        </sql>
-    </statement>
-
-    <statement name="findAllTags">
-        <sql>
-            <![CDATA[
-            SELECT DISTINCT(tag) AS tag, LOWER(tag) AS lower_tag
-            FROM tag
-            <query>WHERE tag LIKE :query ESCAPE '!'</query>
-            ORDER BY lower_tag, tag
-            ]]>
-        </sql>
-    </statement>
-
-    <statement name="findAllTagsForTrack">
-        <sql>
-            SELECT DISTINCT(tag) AS tag, LOWER(tag) AS lower_tag
-            FROM tag
-            WHERE track_id = :track_id
-            ORDER BY lower_tag, tag;
-        </sql>
-    </statement>
-
-    <statement name="findAllTagsForPlaylist">
-        <sql>
-            SELECT DISTINCT(t.tag) FROM tag t, link_track_playlist ltp
-            WHERE ltp.playlist_id = :playlist_id
-            AND ltp.track_id = t.track_id
-        </sql>
-    </statement>
-
-    <statement name="findAllTagsForAlbum">
-        <sql>
-            SELECT DISTINCT(t.tag) FROM tag t, track tr
-            WHERE tr.album = :album
-            AND tr.album_artist = :artist
-            AND tr.id = t.track_id
-        </sql>
-    </statement>
-
-    <statement name="findAllTagsForArtist">
-        <sql>
-            SELECT DISTINCT(t.tag) FROM tag t, track tr
-            WHERE tr.artist = :artist
-            AND tr.id = t.track_id
-        </sql>
-    </statement>
-
-    <statement name="setTagToTracks">
-        <sql loop="track_id" loopbatch="1000">
-            DELETE FROM tag WHERE track_id = :loopitem_track_id AND tag = LOWER(:tag)
-        </sql>
-        <sql loop="track_id" loopbatch="1000">
-            INSERT INTO tag (track_id, tag) VALUES (:loopitem_track_id, LOWER(:tag))
-        </sql>
-    </statement>
-
-    <statement name="removeTagFromTracks">
-        <sql loop="track_id" loopbatch="1000">
-            DELETE FROM tag WHERE track_id = :loopitem_track_id AND tag = LOWER(:tag)
-        </sql>
-    </statement>
-
-    <statement name="getTrackTagMap">
-        <sql>
-            SELECT t.id, tg.tag FROM track t, tag tg WHERE t.id = tg.track_id
         </sql>
     </statement>
 

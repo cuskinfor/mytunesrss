@@ -35,6 +35,7 @@ import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -110,8 +111,8 @@ public class MyTunesRss {
     public static final String CACHEDIR_TRANSCODER = "transcoder";
     public static final String CACHEDIR_HTTP_LIVE_STREAMING = "http_live_streaming";
 
-    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS4";
-    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS3"};
+    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS5";
+    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS4", "MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
@@ -354,7 +355,10 @@ public class MyTunesRss {
                 long start = System.currentTimeMillis();
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
-                    DataStoreQuery.QueryResult<Track> trackQueryResult = MyTunesRss.STORE.executeQuery(new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder));
+                    FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
+                    query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+                    query.setFetchSize(1000);
+                    DataStoreQuery.QueryResult<Track> trackQueryResult = MyTunesRss.STORE.executeQuery(query);
                     for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
                         LuceneTrack luceneTrack = new AddLuceneTrack();
                         luceneTrack.setId(track.getId());
@@ -556,6 +560,7 @@ public class MyTunesRss {
                         if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
                             FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
                         }
+                        break;
                     }
                 }
             }

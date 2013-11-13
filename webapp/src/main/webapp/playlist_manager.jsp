@@ -7,7 +7,7 @@
 <%@ taglib uri="http://www.codewave.de/mytunesrss/jsp/functions" prefix="mtfn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt></c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPlaylistManager/${auth}/<mt:encrypt>index=${param.index}</mt:encrypt></c:set>
 <c:set var="browseArtistUrl" scope="request">${servletUrl}/browseArtist/${auth}/page=1</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -24,7 +24,7 @@
             PlaylistResource.startEditPaylist({
                 playlist : id
             });
-            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
+            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt>resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}";
         }
 
     </script>
@@ -65,11 +65,11 @@
                     <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
                         <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
                             <td class="${fn:toLowerCase(playlist.type)}"><c:out value="${playlist.name}" /></td>
-                            <td class="tracks"><a id="linkTracks${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
+                            <td class="tracks"><a id="linkTracks${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt>playlist=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}">${playlist.trackCount}</a></td>
                             <td class="actions">
                                 <c:choose>
                                     <c:when test="${playlist.type == 'MyTunesSmart'}">
-                                        <a id="linkEditSmart${loopStatus.index}" class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Edit</span></a>
+                                        <a id="linkEditSmart${loopStatus.index}" class="edit" href="${servletUrl}/editSmartPlaylist/${auth}/<mt:encrypt>playlistId=${playlist.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><span>Edit</span></a>
                                         </c:when>
                                     <c:otherwise>
                                         <a id="linkEdit${loopStatus.index}" class="edit" onclick="loadAndEditPlaylist('${playlist.id}')"><span>Edit</span></a>
@@ -77,10 +77,10 @@
                                 </c:choose>
                                 <c:choose>
                                     <c:when test="${deleteConfirmation}">
-                                        <a id="deleteWithConfirmation${loopStatus.index}" class="delete" onclick="$jQ('#confirmDeletePlaylist').data('serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('#confirmDeletePlaylist')"><span>Delete</span></a>
+                                        <a id="deleteWithConfirmation${loopStatus.index}" class="delete" onclick="$jQ('#confirmDeletePlaylist').data('serverCall', '${servletUrl}/deletePlaylist/${auth}/<mt:encrypt>playlist=${playlist.id}</mt:encrypt>');$jQ('#playlistName').text('${mtfn:escapeJs(playlist.name)}');openDialog('#confirmDeletePlaylist')"><span>Delete</span></a>
                                     </c:when>
                                     <c:otherwise>
-                                        <a id="deleteWithoutConfirmation${loopStatus.index}" class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}</mt:encrypt>"><span>Delete</span></a>
+                                        <a id="deleteWithoutConfirmation${loopStatus.index}" class="delete" href="${servletUrl}/deletePlaylist/${auth}/<mt:encrypt>playlist=${playlist.id}</mt:encrypt>"><span>Delete</span></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>

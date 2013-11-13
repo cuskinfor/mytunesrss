@@ -98,6 +98,7 @@ Section "Uninstall"
   RMDir /r "$INSTDIR"
   RMDir /r "$APPDATA\MyTunesRSS3"
   RMDir /r "$APPDATA\MyTunesRSS4"
+  RMDir /r "$APPDATA\MyTunesRSS5"
   RMDir /r "$SMPROGRAMS\MyTunesRSS"
 
 SectionEnd

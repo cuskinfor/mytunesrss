@@ -411,11 +411,6 @@ table.navigation {
     background: url("../images/action-addremote.png") left top no-repeat;
 }
 
-.actions .tags,
-.actionsMenu .tags {
-    background: url("../images/action-tags.png") left top no-repeat;
-}
-
 .actions .share,
 .actionsMenu .share {
     background: url("../images/action-share.png") left top no-repeat;

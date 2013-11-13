@@ -55,7 +55,6 @@ public enum MyTunesRssCommand implements Command {
     ShowResource("showResource", ShowResourceCommandHandler.class),
     KeepSessionAlive("keepSessionAlive", KeepSessionAliveCommandHandler.class),
     Upload("upload", UploadCommandHandler.class),
-    GetTagsForAutocomplete("getTagsForAutocomplete", GetTagsForAutocompleteCommandHandler.class),
     HttpLiveStream("httpLiveStream", HttpLiveStreamingCommandHandler.class),
     AddToOneClickPlaylist("addToOneClickPlaylist", AddToOneClickPlaylistCommandHandler.class),
     OpenSearch("openSearch", OpenSearchCommandHandler.class),

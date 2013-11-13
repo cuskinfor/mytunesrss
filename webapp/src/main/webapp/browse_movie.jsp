@@ -12,14 +12,13 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="editablePlaylists" type="java.util.List"--%>
 <%--@elvariable id="tracks" type="java.util.List<de.codewave.mytunesrss.datastore.statement.Track>"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseMovie/${auth}/<mt:encrypt>index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -32,8 +31,6 @@
 </head>
 
 <body class="browse">
-
-    <jsp:include page="incl_edit_tags.jsp" />
 
     <div class="body">
 
@@ -79,13 +76,13 @@
                         <div class="trackName">
                             <c:if test="${!empty(track.imageHash)}">
                             	<div class="albumCover">
-                                <img id="trackthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
-                                <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
+                                <img id="trackthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
+                                <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
 	                            </div>
                             </c:if>
                             <c:if test="${track.protected}"><img src="${themeUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
                             <a id="functionsDialogName${fnCount}"
-                               href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
+                               href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                onmouseover="showTooltip(this)"
                                onmouseout="hideTooltip(this)"
 							   title="<fmt:message key="video"/>" class="movie">
@@ -110,15 +107,13 @@
                                                filename="${mtfn:virtualTrackName(track)}"
                                                track="${track}"
                                                externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"
-                                               editTagsResource="TrackResource"
-                                               editTagsParams="{track:'${track.id}'}"
                                                defaultPlaylistName="${track.name}"
                                                shareText="${track.name}"
                                                shareImageHash="${track.imageHash}"/>
                             </c:when>
                             <c:otherwise>
                                 <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
-                                    <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>track=${track.id}</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt>playlistParams=<mt:encode64>track=${track.id}</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                 </c:if>
                                 <a id="linkAddToPlaylist${loopStatus.index}" class="add" onclick="addTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.id)}']))" title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message key="playlist.addToPlaylist"/></span></a>
                             </c:otherwise>

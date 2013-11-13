@@ -7,10 +7,15 @@
 
     <body>
 
-        <release version="4.10.0" date="___D___">
+        <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="update">
+                Several optimizations to handle much larger libraries than before (no problem with about 1.000.000 tracks).
+            </action>
+            <action dev="mdescher" type="remove">
+                Removed tagging support completely.
+            </action>
             <action dev="mdescher" type="add">
-                Added button for database maintenance which runs some analyze/optimize calls. This maintenance also
-                runs every hour during a database update.
+                Added button for database maintenance which runs some analyze/optimize calls.
             </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-459] Missing permission handling in REST resources

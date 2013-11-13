@@ -256,7 +256,7 @@ public class LuceneTrackService {
     }
 
     private Query createQuery(String[] searchTerms, int fuzziness) {
-        String[] fields = {"name", "album", "artist", "series", "comment", "tags", "album_artist", "composer"};
+        String[] fields = {"name", "album", "artist", "series", "comment", "album_artist", "composer"};
         BooleanQuery finalQuery = new BooleanQuery();
         BooleanQuery searchTermAndQuery = new BooleanQuery();
         for (String searchTerm : searchTerms) {
@@ -342,9 +342,6 @@ public class LuceneTrackService {
                     break;
                 case genre:
                     addToAndQuery(andQuery, "genre", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
-                    break;
-                case tag:
-                    addToAndQuery(andQuery, "tags", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
                 case title:
                     addToAndQuery(andQuery, "name", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);

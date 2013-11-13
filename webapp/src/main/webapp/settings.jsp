@@ -11,7 +11,6 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
@@ -324,15 +323,6 @@
                                 <td>
                                     <input type="checkbox" name="showExternalSites" value="true" <c:if test="${config.showExternalSites}">checked="checked"</c:if> />
                                     <img src="${themeUrl}/images/action-links.png" alt="external links" style="vertical-align:text-top;" />
-                                </td>
-                            </tr>
-                        </c:if>
-                        <c:if test="${authUser.editTags}">
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.showEditTags" /></td>
-                                <td>
-                                    <input type="checkbox" name="showEditTags" value="true" <c:if test="${config.showEditTags}">checked="checked"</c:if> />
-                                    <img src="${themeUrl}/images/action-tags.png" alt="edit tags" style="vertical-align:text-top;" />
                                 </td>
                             </tr>
                         </c:if>

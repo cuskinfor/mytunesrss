@@ -17,13 +17,12 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="photos" type="java.util.List<de.codewave.mytunesrss.datastore.statement.Photo>"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">/photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt>/photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/index=${param.index}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <head>
     <jsp:include page="incl_head.jsp"/>
@@ -31,7 +30,7 @@
     <script type="text/javascript">
         function loadThumbnails() {
             <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
-                $jQ("#img${loopStatus.index}").attr("src", "${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${photo.imageHash}/photoId=${cwfn:encodeUrl(photo.id)}/size=${imageSize}</mt:encrypt>");
+                $jQ("#img${loopStatus.index}").attr("src", "${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${photo.imageHash}/photoId=${cwfn:encodeUrl(photo.id)}/size=${imageSize}</mt:encrypt>");
             </c:forEach>
         }
     </script>
@@ -74,13 +73,13 @@
             <ul class="thumblist">
                 <c:forEach items="${photos}" var="photo" varStatus="loopStatus">
                     <li>
-                        <div><span></span><img id="img${loopStatus.index}" src="${themeUrl}/images/animated_progress.gif" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
+                        <div><span></span><img id="img${loopStatus.index}" src="${themeUrl}/images/animated_progress.gif" onclick="self.document.location.href='${servletUrl}/browseSinglePhoto/${auth}/<mt:encrypt>photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}/photoIndex=${firstPhotoIndex + loopStatus.index}</mt:encrypt>/photosBackUrl=${param.backUrl}/size=' + $jQ('div.content-inner').innerWidth()" alt="<c:out value="${photo.name}"/>"/></div>
                     </li>
                 </c:forEach>
             </ul>
             <c:if test="${!empty pager}">
                 <c:set var="pagerCommand"
-                       scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt key="${encryptionKey}">photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
+                       scope="request">${servletUrl}/browsePhoto/${auth}/<mt:encrypt>photoalbum=${param.photoalbum}/photoalbumid=${param.photoalbumid}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
                 <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                 <jsp:include page="incl_bottomPager.jsp" />
             </c:if>

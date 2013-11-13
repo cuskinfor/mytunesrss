@@ -12,7 +12,7 @@
     <div class="playlisttop"></div>
     <div class="playlist">
 	    <a id="linkCancel" class="close" href="${servletUrl}/cancelCreatePlaylist/${auth}/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="doCancel" />"><fmt:message key="doCancel" /></a>
-		<a id="linkFinish" class="finish" href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="finishPlaylist" />"><fmt:message key="finishPlaylist" /></a>
+		<a id="linkFinish" class="finish" href="${servletUrl}/showResource/${auth}/<mt:encrypt>resource=EditPlaylist</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="finishPlaylist" />"><fmt:message key="finishPlaylist" /></a>
 		<span>
 			<strong>${cwfn:choose (empty editPlaylistName, newPlaylistName, editPlaylistName)}</strong>
 			- <fmt:message key="playlistTrackCount" />:

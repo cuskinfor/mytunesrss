@@ -6,7 +6,7 @@
         <atom:link href="${feedUrl}" rel="self" type="application/rss+xml" />
         <c:if test="${!empty imageTrackId}">
             <image>
-                <url>${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${imageHash}</mt:encrypt></url>
+                <url>${permServletUrl}/showImage/${auth}/<mt:encrypt>hash=${imageHash}</mt:encrypt></url>
                 <title><c:out value="${channel}"/></title>
                 <link>${feedUrl}</link>
             </image>
@@ -14,10 +14,10 @@
         <description><c:out value="${globalConfig.rssDescription}"/></description><c:forEach items="${tracks}" var="track">
             <item>
                 <title><c:out value="${track.name}"/></title>
-                <description><c:if test="${!empty(track.imageHash)}">&lt;img src="${permServletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=128</mt:encrypt>" /&gt;&lt;br/&gt;</c:if><c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" /></description>
+                <description><c:if test="${!empty(track.imageHash)}">&lt;img src="${permServletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=128</mt:encrypt>" /&gt;&lt;br/&gt;</c:if><c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" /></description>
                 <dc:creator><c:out value="${track.originalArtist}"/></dc:creator>
-                <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></link>
-                <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt></guid>
+                <link>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt></link>
+                <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt></guid>
                 <pubDate>${mtfn:rssDate(track['tsUpdated'])}</pubDate>
                 <enclosure url="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>/${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.${mtfn:suffix(config, authUser, track)}"
                            type="${mtfn:contentType(config, authUser, track)}"

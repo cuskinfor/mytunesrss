@@ -18,7 +18,6 @@ public class ArtistRepresentation implements RestRepresentation {
     private URI myXspfUri;
     private URI myRssUri;
     private URI myDownloadUri;
-    private URI myTagsUri;
     private Integer myAlbumCount;
     private String myName;
     private Integer myTrackCount;
@@ -96,14 +95,6 @@ public class ArtistRepresentation implements RestRepresentation {
 
     public void setDownloadUri(URI downloadUri) {
         myDownloadUri = downloadUri;
-    }
-
-    public URI getTagsUri() {
-        return myTagsUri;
-    }
-
-    public void setTagsUri(URI tagsUri) {
-        myTagsUri = tagsUri;
     }
 
     /**

@@ -164,8 +164,6 @@
                                     <option value="title.not"><fmt:message key="smartPlaylist.smartInfo.title.not"/></option>
                                     <option value="file"><fmt:message key="smartPlaylist.smartInfo.file"/></option>
                                     <option value="file.not"><fmt:message key="smartPlaylist.smartInfo.file.not"/></option>
-                                    <option value="tag"><fmt:message key="smartPlaylist.smartInfo.tag"/></option>
-                                    <option value="tag.not"><fmt:message key="smartPlaylist.smartInfo.tag.not"/></option>
                                     <option value="comment"><fmt:message key="smartPlaylist.smartInfo.comment"/></option>
                                     <option value="comment.not"><fmt:message key="smartPlaylist.smartInfo.comment.not"/></option>
                                     <option value="composer"><fmt:message key="smartPlaylist.smartInfo.composer"/></option>

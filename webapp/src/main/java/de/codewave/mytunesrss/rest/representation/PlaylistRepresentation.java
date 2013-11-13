@@ -22,7 +22,6 @@ public class PlaylistRepresentation implements RestRepresentation {
     private URI myTracksUri;
     private URI myChildrenUri;
     private URI myParentUri;
-    private URI myTagsUri;
     private URI myDownloadUri;
     private String myName;
     private String myContainerId;
@@ -78,17 +77,6 @@ public class PlaylistRepresentation implements RestRepresentation {
 
     public void setParentUri(URI parentUri) {
         myParentUri = parentUri;
-    }
-
-    /**
-     * URI to the tags of the playlist.
-     */
-    public URI getTagsUri() {
-        return myTagsUri;
-    }
-
-    public void setTagsUri(URI tagsUri) {
-        myTagsUri = tagsUri;
     }
 
     /**

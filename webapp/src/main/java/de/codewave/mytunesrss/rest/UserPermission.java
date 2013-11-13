@@ -9,7 +9,7 @@ import de.codewave.mytunesrss.config.User;
 
 public enum UserPermission {
 
-    Audio(), Video(), Rss(), Playlist(), Download(), YahooPlayer(), SpecialPlaylists(), Player(), RemoteControl(), ExternalSites(), EditTags(),
+    Audio(), Video(), Rss(), Playlist(), Download(), YahooPlayer(), SpecialPlaylists(), Player(), RemoteControl(), ExternalSites(),
     Trascoder(), ChangePassword(), changeEmail(), EditLastFmAccount(), EditWebSettings(), CreatePlaylists(), CreatePublicPlaylists(), Photos(),
     DownloadPhotoAlbum(), Share();
 
@@ -35,8 +35,6 @@ public enum UserPermission {
                 return user.isRemoteControl();
             case ExternalSites:
                 return user.isExternalSites();
-            case EditTags:
-                return user.isEditTags();
             case Trascoder:
                 return user.isTranscoder();
             case ChangePassword:

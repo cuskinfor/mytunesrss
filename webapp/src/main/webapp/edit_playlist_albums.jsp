@@ -166,7 +166,7 @@
         }
 
         function switchToTracks() {
-            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${param.backUrl}</mt:encrypt>/unsavedChanges=" + unsavedChanges;
+            document.location.href = "${servletUrl}/showResource/${auth}/<mt:encrypt>resource=EditPlaylist/backUrl=${param.backUrl}</mt:encrypt>/unsavedChanges=" + unsavedChanges;
         }
 
     </script>
@@ -190,7 +190,7 @@
 
 		    <ul class="menu">
 		    	<li>
-					<a id="linkBrowseArtist" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
+					<a id="linkBrowseArtist" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt>page=${config.browserStartIndex}</mt:encrypt>">
 						<fmt:message key="addMoreSongs" />
 					</a>
 		    	</li>

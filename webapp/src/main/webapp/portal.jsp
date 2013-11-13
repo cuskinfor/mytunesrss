@@ -12,7 +12,6 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
@@ -26,7 +25,7 @@
 
 <%--@elvariable id="playlists" type="java.util.List"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">index=${param.index}</mt:encrypt></c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showPortal/${auth}/<mt:encrypt>index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -40,15 +39,13 @@
 
     <c:if test="${authUser.rss}">
         <c:forEach items="${playlists}" var="playlist">
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/_cdi=${cwfn:encodeUrl(playlist.name)}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${playlist.name}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt>playlist=${playlist.id}/_cdi=${cwfn:encodeUrl(playlist.name)}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${playlist.name}" />" />
         </c:forEach>
     </c:if>
 
 </head>
 
 <body onload="document.forms[0].elements['searchTerm'].focus()" class="startpage">
-
-<jsp:include page="incl_edit_tags.jsp" />
 
 <div class="body">
 
@@ -71,7 +68,7 @@
                 </a></li>
             </c:if>
             <c:if test="${showRemoteControl}">
-                <li class="servers <c:if test="${!authUser.editWebSettings && !globalConfig.serverBrowserActive}">first</c:if>"><a id="linkRemoteControl" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                <li class="servers <c:if test="${!authUser.editWebSettings && !globalConfig.serverBrowserActive}">first</c:if>"><a id="linkRemoteControl" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                     <fmt:message key="showRemoteControl" />
                 </a></li>
             </c:if>
@@ -111,24 +108,24 @@
 	                </td>
 
                     <mttag:portalLink test="${!globalConfig.disableBrowser && authUser.audio && (statistics.albumCount > 0 || statistics.artistCount > 0 || statistics.genreCount > 0)}">
-                        <a id="linkBrowseArtist" class="music" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">
+                        <a id="linkBrowseArtist" class="music" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt>page=${config.browserStartIndex}</mt:encrypt>">
                             <fmt:message key="browseLibraryAudio" />
                         </a>
                     </mttag:portalLink>
                     <mttag:portalLink test="${!globalConfig.disableBrowser && authUser.video && statistics.movieCount > 0}">
                         <a id="linkBrowseMovie" class="movie"
-                           href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                           href="${servletUrl}/browseMovie/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryMovie"/>
                         </a>
                     </mttag:portalLink>
                     <mttag:portalLink test="${!globalConfig.disableBrowser && authUser.video && statistics.tvShowCount > 0}">
-                        <a id="linkBrowseTvShow" class="tvshow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                        <a id="linkBrowseTvShow" class="tvshow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryTvShow" />
                         </a>
                     </mttag:portalLink>
                     <mttag:portalLink test="${!globalConfig.disableBrowser && statistics.photoCount > 0 && authUser.photos}">
                         <a id="linkBrowsePhotoAlbum" class="photo"
-                           href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
+                           href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">
                             <fmt:message key="browseLibraryPhoto"/>
                         </a>
                     </mttag:portalLink>
@@ -140,7 +137,7 @@
                                 </a>
                             </c:when>
                             <c:otherwise>
-                                <a id="linkFinishPlaylist" class="playlists" href="${servletUrl}/showResource/${auth}/<mt:encrypt key="${encryptionKey}">resource=EditPlaylist/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>"
+                                <a id="linkFinishPlaylist" class="playlists" href="${servletUrl}/showResource/${auth}/<mt:encrypt>resource=EditPlaylist/backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>"
                                    style="background-image:url('${themeUrl}/images/feeds_small.gif');">
                                     <fmt:message key="finishPlaylist" />
                                 </a>
@@ -178,7 +175,7 @@
                 </td>
             </tr>
             <tr class="odd">
-                <td id="linkParentFolder" class="parentfolder" colspan="3" style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${container.containerId}</mt:encrypt>'">
+                <td id="linkParentFolder" class="parentfolder" colspan="3" style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt>cid=${container.containerId}</mt:encrypt>'">
                     &nbsp;
                 </td>
             </tr>
@@ -186,21 +183,21 @@
 
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">
-                <td id="functionsDialogName${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">cid=${playlist.id}</mt:encrypt>'"</c:if>>
+                <td id="functionsDialogName${loopStatus.index}" class="${fn:toLowerCase(playlist.type)}" <c:if test="${playlist.type == 'ITunesFolder'}">style="cursor:pointer" onclick="self.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt>cid=${playlist.id}</mt:encrypt>'"</c:if>>
                     <c:choose>
                         <c:when test="${playlist.type != 'ITunesFolder' && playlist.trackCount >= 0}">
-                            <a id="linkNameBrowseTrack${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playlistName=${mtfn:encode64(playlist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${playlist.name}" /></a>
+                            <a id="linkNameBrowseTrack${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt>playlist=${playlist.id}/playlistName=${mtfn:encode64(playlist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${playlist.name}" /></a>
                         </c:when>
                         <c:otherwise>
                             <c:out value="${playlist.name}" />
                         </c:otherwise>
                     </c:choose>
-                    <c:if test="${playlist.type == 'MyTunesSmart' && playlist.userOwner eq authUser.name}"><img id="linkRefreshSmartPlaylist${loopStatus.index}" style="vertical-align:middle;cursor:pointer" src="${themeUrl}/images/refresh.png" onclick="showLoading('<fmt:message key="loading.refreshSmartPlaylist"><fmt:param>${mtfn:escapeJs(playlist.name)}</fmt:param></fmt:message>');self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt key="${encryptionKey}">refreshSmartPlaylistId=${playlist.id}</mt:encrypt>'"/></c:if>
+                    <c:if test="${playlist.type == 'MyTunesSmart' && playlist.userOwner eq authUser.name}"><img id="linkRefreshSmartPlaylist${loopStatus.index}" style="vertical-align:middle;cursor:pointer" src="${themeUrl}/images/refresh.png" onclick="showLoading('<fmt:message key="loading.refreshSmartPlaylist"><fmt:param>${mtfn:escapeJs(playlist.name)}</fmt:param></fmt:message>');self.document.location.href='${servletUrl}/showPortal/${auth}/<mt:encrypt>refreshSmartPlaylistId=${playlist.id}</mt:encrypt>'"/></c:if>
                 </td>
                 <td class="tracks">
                     <c:choose>
                         <c:when test="${playlist.trackCount >= 0}">
-                            <a id="linkButtonBrowseTrack${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">playlist=${playlist.id}/playlistName=${mtfn:encode64(playlist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${playlist.trackCount} </a>
+                            <a id="linkButtonBrowseTrack${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt>playlist=${playlist.id}/playlistName=${mtfn:encode64(playlist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${playlist.trackCount} </a>
                         </c:when>
                         <c:otherwise>
                             &nbsp;
@@ -212,9 +209,7 @@
                                    backUrl="${mtfn:encode64(backUrl)}"
                                    linkFragment="playlist=${playlist.id}"
                                    filename="${playlist.name}"
-                                   zipFileCount="${playlist.trackCount}"
-                                   editTagsResource="PlaylistResource"
-                                   editTagsParams="{playlist:'${playlist.id}'}" />
+                                   zipFileCount="${playlist.trackCount}" />
                 </td>
             </tr>
         </c:forEach>
@@ -242,12 +237,12 @@
                 <fmt:message key="statistics" />:
                 <c:set var="separator" value="" />
                 <c:if test="${authUser.audio && statistics.musicCount > 0}">${statistics.musicCount} <fmt:message key="statistics.tracks" /><c:set var="separator" value="| "/></c:if>
-                <c:if test="${authUser.audio && statistics.albumCount > 0}">${separator}<a id="linkStatsAlbum" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.albumCount} <fmt:message key="statistics.albums"/></a><c:set var="separator" value="| "/></c:if>
-                <c:if test="${authUser.audio && statistics.artistCount > 0}">${separator}<a id="linkStatsArtist" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.artistCount} <fmt:message key="statistics.artists"/></a><c:set var="separator" value="| "/></c:if>
-                <c:if test="${authUser.audio && statistics.genreCount > 0}">${separator}<a id="linkStatsGenre" href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres"/></a><c:set var="separator" value="| "/></c:if>
-                <c:if test="${authUser.video && statistics.movieCount > 0}">${separator}<a id="linkStatsMovie" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.movieCount} <fmt:message key="statistics.movies" /></a><c:set var="separator" value="| "/></c:if>
-                <c:if test="${authUser.video && statistics.tvShowCount > 0}">${separator}<a id="linkStatsTvShow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.tvShowCount} <fmt:message key="statistics.tvshows" /></a><c:set var="separator" value="| "/></c:if>
-                <c:if test="${statistics.photoCount > 0 && authUser.photos}">${separator}<a id="linkStatsPhoto" href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.photoCount} <fmt:message key="statistics.photos" /></a></c:if>
+                <c:if test="${authUser.audio && statistics.albumCount > 0}">${separator}<a id="linkStatsAlbum" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt>page=${config.browserStartIndex}</mt:encrypt>">${statistics.albumCount} <fmt:message key="statistics.albums"/></a><c:set var="separator" value="| "/></c:if>
+                <c:if test="${authUser.audio && statistics.artistCount > 0}">${separator}<a id="linkStatsArtist" href="${servletUrl}/browseArtist/${auth}/<mt:encrypt>page=${config.browserStartIndex}</mt:encrypt>">${statistics.artistCount} <fmt:message key="statistics.artists"/></a><c:set var="separator" value="| "/></c:if>
+                <c:if test="${authUser.audio && statistics.genreCount > 0}">${separator}<a id="linkStatsGenre" href="${servletUrl}/browseGenre/${auth}/<mt:encrypt>page=${config.browserStartIndex}</mt:encrypt>">${statistics.genreCount} <fmt:message key="statistics.genres"/></a><c:set var="separator" value="| "/></c:if>
+                <c:if test="${authUser.video && statistics.movieCount > 0}">${separator}<a id="linkStatsMovie" href="${servletUrl}/browseMovie/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.movieCount} <fmt:message key="statistics.movies" /></a><c:set var="separator" value="| "/></c:if>
+                <c:if test="${authUser.video && statistics.tvShowCount > 0}">${separator}<a id="linkStatsTvShow" href="${servletUrl}/browseTvShow/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.tvShowCount} <fmt:message key="statistics.tvshows" /></a><c:set var="separator" value="| "/></c:if>
+                <c:if test="${statistics.photoCount > 0 && authUser.photos}">${separator}<a id="linkStatsPhoto" href="${servletUrl}/browsePhotoAlbum/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>">${statistics.photoCount} <fmt:message key="statistics.photos" /></a></c:if>
             </c:if>
         </div>
     </div>

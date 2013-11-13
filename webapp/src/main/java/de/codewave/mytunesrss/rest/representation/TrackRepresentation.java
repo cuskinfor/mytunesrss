@@ -29,7 +29,6 @@ public class TrackRepresentation implements RestRepresentation {
     private URI myDownloadUri;
     private URI myPlaybackUri;
     private URI myHttpLiveStreamUri;
-    private URI myTagsUri;
     private URI myArtistUri;
     private URI myAlbumUri;
     private String myId;
@@ -170,17 +169,6 @@ public class TrackRepresentation implements RestRepresentation {
 
     public void setHttpLiveStreamUri(URI httpLiveStreamUri) {
         myHttpLiveStreamUri = httpLiveStreamUri;
-    }
-
-    /**
-     * URI to the tags of the track.
-     */
-    public URI getTagsUri() {
-        return myTagsUri;
-    }
-
-    public void setTagsUri(URI tagsUri) {
-        myTagsUri = tagsUri;
     }
 
     /**

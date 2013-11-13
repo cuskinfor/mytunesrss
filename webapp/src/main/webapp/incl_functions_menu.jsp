@@ -10,7 +10,6 @@
     <h2>MyTunesRSS</h2>
     <div id="functions" class="actionsMenu">
         <a id="functions_externalsites" class="links" onclick="functionMenuClick('externalsites');">dummy</a>
-        <a id="functions_edittags" class="tags" onclick="functionMenuClick('edittags');">dummy</a>
         <a id="functions_share" class="share" onclick="functionMenuClick('share');">dummy</a>
         <a id="functions_remotecontrol" class="remote" onclick="functionMenuClick('remotecontrol');">dummy</a>
         <a id="functions_addremotecontrol" class="addremote" onclick="functionMenuClick('addremotecontrol');">dummy</a>
@@ -27,7 +26,6 @@
         $jQ('#functions').data('functionIndex', index);
         $jQ('#functions').data('title', title);
         $jQ('#functions_externalsites').text($jQ('#fn_externalsites' + index).attr('title'));
-        $jQ('#functions_edittags').text($jQ('#fn_edittags' + index).attr('title'));
         $jQ('#functions_share').text($jQ('#fn_share' + index).attr('title'));
         $jQ('#functions_remotecontrol').text($jQ('#fn_remotecontrol' + index).attr('title'));
         $jQ('#functions_addremotecontrol').text($jQ('#fn_addremotecontrol' + index).attr('title'));
@@ -37,7 +35,6 @@
         $jQ('#functions_download').text($jQ('#fn_download' + index).attr('title'));
         $jQ('#functions_oneclickplaylist').text($jQ('#fn_oneclickplaylist' + index).attr('title'));
         showHideLink("externalsites");
-        showHideLink("edittags");
         showHideLink("share");
         showHideLink("remotecontrol");
         showHideLink("addremotecontrol");
@@ -67,7 +64,7 @@
 <script type="text/javascript">
     function showShareLink(index, text, imageHash) {
         new $jQ.ajax({
-            url : "${servletUrl}/showShareLink/${auth}/<mt:encrypt key="${encryptionKey}">backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>",
+            url : "${servletUrl}/showShareLink/${auth}/<mt:encrypt>backUrl=${mtfn:encode64(backUrl)}</mt:encrypt>",
             type : "POST",
             contentType : "application/x-www-form-urlencoded",
             processData : true,

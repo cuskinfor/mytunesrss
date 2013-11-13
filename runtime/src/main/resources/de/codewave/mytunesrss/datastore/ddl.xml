@@ -177,13 +177,6 @@
                 CONSTRAINT fk_smart_info_playlist_id FOREIGN KEY (playlist_id) REFERENCES playlist (id) ON DELETE CASCADE
             )
         </sql>
-        <sql>
-            {create_table_prefix} tag (
-                track_id VARCHAR(100) NOT NULL,
-                tag VARCHAR(50) NOT NULL,
-                CONSTRAINT fk_tag_track_id FOREIGN KEY (track_id) REFERENCES track (id) ON DELETE CASCADE
-            )
-        </sql>
         <sql>CREATE INDEX idx_track_artist ON track (artist)</sql>
         <sql>CREATE INDEX idx_track_lower_artist ON track (lower_artist)</sql>
         <sql>CREATE INDEX idx_track_album_artist ON track (album_artist)</sql>
@@ -222,15 +215,12 @@
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>CREATE INDEX idx_statistics_type ON statistics (type)</sql>
         <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
-        <sql>CREATE INDEX idx_tag_track_id ON tag (track_id)</sql>
-        <sql>CREATE INDEX idx_tag_tag ON tag (tag)</sql>
         <sql>CREATE INDEX idx_link_photo_album_photo_id ON link_photo_album (photo_id)</sql>
         <sql>CREATE INDEX idx_link_photo_album_album_id ON link_photo_album (album_id)</sql>
         <sql>{create_playlist_id_sequence}</sql>
     </statement>
 
     <statement name="dropAllTables">
-        <sql>DROP TABLE tag</sql>
         <sql>DROP TABLE statistics</sql>
         <sql>DROP TABLE smart_info</sql>
         <sql>DROP TABLE link_track_playlist</sql>

@@ -32,7 +32,8 @@ public class ResourceBundleManager {
         if (bundle == null) {
             bundle = loadBundle(locale, bundleName);
             if (bundle != null) {
-                return myCache.putIfAbsent(getCacheKey(locale, bundleName), bundle);
+                ResourceBundle existingBundle = myCache.putIfAbsent(getCacheKey(locale, bundleName), bundle);
+                return existingBundle != null ? existingBundle : bundle;
             }
         }
         return bundle;

@@ -11,7 +11,6 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
@@ -87,7 +86,7 @@
         <input id="facebookLink" type="hidden" name="link" value="http://www.codewave.de/mytunesrss.php"/>
         <c:choose>
             <c:when test="${!empty imageHash}">
-                <c:set var="imageUri">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${imageHash}/size=128</mt:encrypt></c:set>
+                <c:set var="imageUri">${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${imageHash}/size=128</mt:encrypt></c:set>
                 <input type="hidden" name="picture" value="${fn:replace(fn:replace(imageUri, '%7B', '{'), '%7D', '}')}"/>
             </c:when>
             <c:otherwise>

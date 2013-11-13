@@ -12,7 +12,6 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
@@ -24,7 +23,7 @@
 <%--@elvariable id="artistPager" type="de.codewave.mytunesrss.Pager"--%>
 <%--@elvariable id="indexPager" type="de.codewave.mytunesrss.Pager"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt>album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -44,15 +43,13 @@
                     <c:set var="artistname" value="${artist.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}/_cdi=${cwfn:encodeUrl(mtfn:virtualArtistName(artist))}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt>artist=${mtfn:encode64(artist.name)}/_cdi=${cwfn:encodeUrl(mtfn:virtualArtistName(artist))}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${artistname}" />" />
         </c:forEach>
     </c:if>
 
 </head>
 
 <body class="browse">
-
-    <jsp:include page="incl_edit_tags.jsp" />
 
     <div class="body">
 
@@ -72,10 +69,10 @@
                 		<span><fmt:message key="browseArtist"/></span>
                 	</li>
                     <li>
-                        <a id="linkBrowseAlbum" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">page=${cwfn:choose(empty param.album, param.page, '1')}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
+                        <a id="linkBrowseAlbum" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt>page=${cwfn:choose(empty param.album, param.page, '1')}</mt:encrypt>"><fmt:message key="browseAlbums"/></a>
                     </li>
                     <li>
-                        <a id="linkBrowseGenre" href="${servletUrl}/browseGenre/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
+                        <a id="linkBrowseGenre" href="${servletUrl}/browseGenre/${auth}/<mt:encrypt>page=${param.page}</mt:encrypt>"><fmt:message key="browseGenres"/></a>
                     </li>
                     <c:if test="${!stateEditPlaylist && authUser.createPlaylists}">
                         <li>
@@ -107,7 +104,7 @@
                 <c:set var="filterToggle" scope="request" value="true" />
                 <jsp:include page="incl_pager.jsp" />
 
-                <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+                <c:set var="displayFilterUrl" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt>page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
                 <jsp:include page="/incl_display_filter.jsp"/>
 
                 <table class="tracklist" cellspacing="0">
@@ -128,15 +125,15 @@
                                         <fmt:message key="unknownArtist"/>
                                     </c:when>
                                     <c:otherwise>
-                                        <a id="linkAlbumsOfArtistName${loopStatus.index}" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${artist.name}" /></a>
+                                        <a id="linkAlbumsOfArtistName${loopStatus.index}" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt>artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"><c:out value="${artist.name}" /></a>
                                     </c:otherwise>
                                 </c:choose>
                             </td>
                             <td class="album">
-                                <a id="linkAlbumsOfArtistAlbum${loopStatus.index}" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.albumCount} </a>
+                                <a id="linkAlbumsOfArtistAlbum${loopStatus.index}" href="${servletUrl}/browseAlbum/${auth}/<mt:encrypt>artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.albumCount} </a>
                             </td>
                             <td class="tracks">
-                                <a id="linkTracksOfArtist${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt key="${encryptionKey}">artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.trackCount} </a>
+                                <a id="linkTracksOfArtist${loopStatus.index}" href="${servletUrl}/browseTrack/${auth}/<mt:encrypt>artist=${mtfn:encode64(artist.name)}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"> ${artist.trackCount} </a>
                             </td>
                             <td class="actions">
                                 <c:choose>
@@ -147,14 +144,12 @@
                                                        filename="${mtfn:virtualArtistName(artist)}"
                                                        zipFileCount="${artist.trackCount}"
                                                        externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}"
-                                                       editTagsResource="ArtistResource"
-                                                       editTagsParams="{artist:'${artist.name}'}"
                                                        defaultPlaylistName="${artist.name}"
                                                        shareText="${artist.name}" />
                                     </c:when>
                                     <c:otherwise>
                                         <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
-                                            <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=<mt:encode64>artist=${mtfn:encode64(artist.name)}/fullAlbums=false</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                            <a id="linkEditPlaylistFlash${loopStatus.index}" class="flash" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt>playlistParams=<mt:encode64>artist=${mtfn:encode64(artist.name)}/fullAlbums=false</mt:encode64></mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                         </c:if>
                                         <a id="linkAddToPlaylist${loopStatus.index}" class="add" onclick="addArtistsToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(artist.name)}']))" title="<fmt:message key="playlist.addArtist"/>"><span><fmt:message key="playlist.addArtist"/></span></a>
                                     </c:otherwise>
@@ -166,7 +161,7 @@
 
                 <c:if test="${!empty indexPager}">
                     <c:set var="pager" scope="request" value="${indexPager}" />
-                    <c:set var="pagerCommand" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt key="${encryptionKey}">page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
+                    <c:set var="pagerCommand" scope="request">${servletUrl}/browseArtist/${auth}/<mt:encrypt>page=${param.page}/album=${cwfn:encodeUrl(param.album)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
                     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                     <jsp:include page="incl_bottomPager.jsp" />
                 </c:if>

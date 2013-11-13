@@ -11,13 +11,11 @@
 <%--@elvariable id="servletUrl" type="java.lang.String"--%>
 <%--@elvariable id="permFeedServletUrl" type="java.lang.String"--%>
 <%--@elvariable id="auth" type="java.lang.String"--%>
-<%--@elvariable id="encryptionKey" type="javax.crypto.SecretKey"--%>
 <%--@elvariable id="authUser" type="de.codewave.mytunesrss.config.User"--%>
 <%--@elvariable id="globalConfig" type="de.codewave.mytunesrss.config.MyTunesRssConfig"--%>
 <%--@elvariable id="config" type="de.codewave.mytunesrss.servlet.WebConfig"--%>
 <%--@elvariable id="originalDownloadLink" type="java.lang.Boolean"--%>
 <%--@elvariable id="track" type="de.codewave.mytunesrss.datastore.statement.Track"--%>
-<%--@elvariable id="tags" type="java.util.Collection"--%>
 <%--@elvariable id="mp3info" type="de.codewave.camel.mp3.Mp3Info"--%>
 <%--@elvariable id="userAgent" type="java.lang.String"--%>
 <%--@elvariable id="msgUnknownSeries" type="java.lang.String"--%>
@@ -25,7 +23,7 @@
 <%--@elvariable id="msgUnknownArtist" type="java.lang.String"--%>
 <%--@elvariable id="themeUrl" type="java.lang.String"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/showTrackInfo/${auth}/<mt:encrypt key="${encryptionKey}">track=${cwfn:encodeUrl(param.track)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${cwfn:encodeUrl(param.track)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -190,18 +188,6 @@
                             </td>
                         </tr>
                     </c:if>
-                    <c:if test="${!empty tags}">
-                        <tr <mt:flipFlop/>>
-                            <td class="label">
-                                <fmt:message key="trackTags" />:
-                            </td>
-                            <td>
-                                <c:forEach var="tag" items="${tags}">
-                                    <c:out value="${tag}"/>
-                                </c:forEach>
-                            </td>
-                        </tr>
-                    </c:if>
                     <tr <mt:flipFlop/>>
                         <td class="label"><fmt:message key="type"/>:</td>
                         <td>
@@ -214,17 +200,17 @@
                         <td>&nbsp;</td>
                         <td class="actions">
                             <c:if test="${authUser.remoteControl && config.remoteControl && globalConfig.remoteControl}">
-                                <a id="linkRemoteControl" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote Control</span></a>
+                                <a id="linkRemoteControl" class="remote" href="${servletUrl}/showRemoteControl/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}" title="<fmt:message key="tooltip.remotecontrol"/>"><span>Remote Control</span></a>
                             </c:if>
                             <c:if test="${authUser.rss && config.showRss}">
-                                    <a id="linkRssFeed" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/_cdi=${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.xml</mt:encrypt>" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
+                                    <a id="linkRssFeed" class="rss" href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt>track=${track.id}/_cdi=${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.xml</mt:encrypt>" title="<fmt:message key="tooltip.rssfeed"/>"><span>RSS</span></a>
                             </c:if>
                             <c:if test="${authUser.playlist && config.showPlaylist}">
-                                    <a id="linkPlaylist" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt key="${encryptionKey}">track=${track.id}/type=${config.playlistType}/_cdi=${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.${config.playlistFileSuffix}</mt:encrypt>" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
+                                    <a id="linkPlaylist" class="playlist" href="${servletUrl}/createPlaylist/${auth}/<mt:encrypt>track=${track.id}/type=${config.playlistType}/_cdi=${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.${config.playlistFileSuffix}</mt:encrypt>" title="<fmt:message key="tooltip.playlist"/>"><span>Playlist</span></a>
                             </c:if>
                             <c:if test="${globalConfig.flashPlayer && authUser.player && config.showPlayer}">
                                 <c:set var="playlistParams"><mt:encode64>track=${track.id}</mt:encode64></c:set>
-                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt key="${encryptionKey}">playlistParams=${playlistParams}</mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
+                                    <a id="linkFlashPlayer" class="flash" style="cursor:pointer" onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt>playlistParams=${playlistParams}</mt:encrypt>/playerId='); return false;" title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                             </c:if>
                             <c:if test="${authUser.download && config.showDownload}">
                                     <a id="linkDownload" class="download" href="<c:out value="${mtfn:downloadLink(pageContext, track, null)}"/>" title="<fmt:message key="tooltip.playtrack"/>"><span>Download</span></a>
@@ -296,12 +282,12 @@
                             <c:choose>
                                 <c:when test="${track.mediaType == 'Video'}">
                                     <c:set var="imgUrl" value="${themeUrl}/images/movie_poster.png"/>
-                                    <c:if test="${!empty(track.imageHash)}"><c:set var="imgUrl">${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt></c:set></c:if>
+                                    <c:if test="${!empty(track.imageHash)}"><c:set var="imgUrl">${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=256</mt:encrypt></c:set></c:if>
                                     <embed src="${imgUrl}" href="<c:out value="${mtfn:playbackLink(pageContext, track, null)}"/>" type="${mtfn:contentType(config, authUser, track)}" <c:if test="${userAgent == 'Iphone'}">target="myself"</c:if> scale="1"></embed>
                                 </c:when>
                                 <c:otherwise>
                                     <img alt="${track.name} Album Art"
-                                      src="${servletUrl}/showImage/${auth}/<mt:encrypt key="${encryptionKey}">hash=${track.imageHash}/size=256</mt:encrypt>"
+                                      src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=256</mt:encrypt>"
                                       width="200" style="display: block; margin: 10px auto;"/>
                                 </c:otherwise>
                             </c:choose>

@@ -140,7 +140,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (getAuthUser() != null && getAuthUser().isQuotaExceeded()) {
             addError(new BundleError("error.quotaExceeded." + getAuthUser().getQuotaType().name()));
         }
-        getRequest().setAttribute("encryptionKey", MyTunesRss.CONFIG.getPathInfoKey());
         getRequest().setAttribute("globalConfig", MyTunesRss.CONFIG);
         setResourceBundle();
         if (MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning()) {

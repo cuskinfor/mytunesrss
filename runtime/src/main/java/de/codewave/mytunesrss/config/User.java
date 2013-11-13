@@ -109,7 +109,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private User myParent;
     private boolean myExternalSites = true;
     private int mySearchFuzziness = -1;
-    private boolean myEditTags = true;
     private Set<String> myForceTranscoders = new HashSet<String>();
     private long myExpiration;
     private boolean myYahooPlayer = true;
@@ -320,7 +319,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     /**
      * Get a set of permitted data source IDs.
-     * 
+     *
      * @return A set of permitted data source IDs. This can be empty if all available data sources are
      * excluded. This is NULL if no data sources are excluded.
      */
@@ -496,14 +495,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setSearchFuzziness(int searchFuzziness) {
         mySearchFuzziness = searchFuzziness;
-    }
-
-    public boolean isEditTags() {
-        return getParent() != null ? getParent().isEditTags() : myEditTags;
-    }
-
-    public void setEditTags(boolean editTags) {
-        myEditTags = editTags;
     }
 
     public Set<String> getForceTranscoders() {
@@ -730,7 +721,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", myExternalSites));
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", myChangeEmail));
         setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", mySearchFuzziness));
-        setEditTags(JXPathUtils.getBooleanValue(settings, "editTags", myEditTags));
         Set<String> availableTranscoders = new HashSet<String>();
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
             availableTranscoders.add(config.getName());
@@ -835,7 +825,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "externalSites", isExternalSites()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "changeEmail", isChangeEmail()));
         users.appendChild(DOMUtils.createIntElement(settings, "searchFuzziness", getSearchFuzziness()));
-        users.appendChild(DOMUtils.createBooleanElement(settings, "editTags", isEditTags()));
         if (myForceTranscoders != null && myForceTranscoders.size() > 0) {
             Element forceTranscoders = settings.createElement("forcetranscoder");
             users.appendChild(forceTranscoders);
