@@ -382,6 +382,7 @@ public class MyTunesRss {
                             }
                         }
                     } finally {
+                        MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
                         dataStoreSession.rollback();
                     }
                     LOGGER.info("Finished recreating lucene index from scratch (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");

@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
@@ -128,13 +129,6 @@ public class LuceneTrackService {
 
     public synchronized void updateTrack(LuceneTrack track) throws IOException {
         myTrackBuffer.add(track);
-        if (myTrackBuffer.size() >= MAX_TRACK_BUFFER) {
-            flushTrackBuffer();
-        }
-    }
-
-    public synchronized void updateTracks(Collection<LuceneTrack> tracks) throws IOException {
-        myTrackBuffer.addAll(tracks);
         if (myTrackBuffer.size() >= MAX_TRACK_BUFFER) {
             flushTrackBuffer();
         }
