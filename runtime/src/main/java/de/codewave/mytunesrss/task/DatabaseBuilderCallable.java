@@ -79,6 +79,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     }
 
     public Boolean call() throws Exception {
+        myQueue.start();
         Boolean result = Boolean.FALSE;
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
         try {
