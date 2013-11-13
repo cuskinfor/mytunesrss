@@ -182,7 +182,7 @@ public class MyTunesRss {
     public static String PREFERENCES_DATA_PATH;
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
-    public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP = true;
+    public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
     public static JmDNS BONJOUR;
     public static String HEAPDUMP_FILENAME;
