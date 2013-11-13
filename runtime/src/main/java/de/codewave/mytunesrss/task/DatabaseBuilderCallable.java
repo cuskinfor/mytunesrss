@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 import java.util.concurrent.Callable;
 
@@ -118,8 +119,12 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 }
                 myQueue.offer(new CommittingDataStoreStatementEvent(new DataStoreStatement() {
                     public void execute(Connection connection) throws SQLException {
-                        connection.createStatement().execute(
-                                "UPDATE system_information SET lastupdate = " + timeUpdateStart);
+                        Statement statement = connection.createStatement();
+                        try {
+                            statement.execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
+                        } finally {
+                            statement.close();
+                        }
                     }
                 }, false));
             }

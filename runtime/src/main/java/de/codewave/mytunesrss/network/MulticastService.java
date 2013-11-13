@@ -43,7 +43,7 @@ public class MulticastService extends Thread {
             THREAD.myStopRequested = true;
             while (THREAD.isAlive()) {
                 try {
-                    Thread.sleep(200);
+                    MulticastService.class.wait(200);
                 } catch (InterruptedException e) {
                     // intentionally left blank
                 }

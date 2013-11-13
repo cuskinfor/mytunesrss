@@ -492,7 +492,12 @@ public class MyTunesRss {
             File file = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/system.properties");
             if (file.isFile()) {
                 Properties properties = new Properties();
-                properties.load(new FileInputStream(file));
+                FileInputStream inStream = new FileInputStream(file);
+                try {
+                    properties.load(inStream);
+                } finally {
+                    IOUtils.closeQuietly(inStream);
+                }
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Setting system properties from \"" + file.getAbsolutePath() + "\".");
                 }

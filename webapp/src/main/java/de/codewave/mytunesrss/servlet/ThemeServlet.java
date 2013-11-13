@@ -16,11 +16,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLConnection;
+import java.nio.charset.Charset;
 
 /**
  * de.codewave.mytunesrss.servlet.ThemeServlet
@@ -75,7 +73,12 @@ public class ThemeServlet extends HttpServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending stylesheet \"" + stylesheet.getAbsolutePath() + "\".");
             }
-            IOUtils.copy(new FileReader(stylesheet), httpServletResponse.getWriter());
+            Reader inReader = new InputStreamReader(new FileInputStream(stylesheet), Charset.forName("UTF-8"));
+            try {
+                IOUtils.copy(inReader, httpServletResponse.getWriter());
+            } finally {
+                inReader.close();
+            }
         }
     }
 
@@ -92,7 +95,12 @@ public class ThemeServlet extends HttpServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending image \"" + image.getAbsolutePath() + "\" with content type \"" + httpServletResponse.getContentType() + "\".");
             }
-            IOUtils.copy(new FileInputStream(image), httpServletResponse.getOutputStream());
+            FileInputStream inStream = new FileInputStream(image);
+            try {
+                IOUtils.copy(inStream, httpServletResponse.getOutputStream());
+            } catch (IOException e) {
+                inStream.close();
+            }
         }
     }
 }

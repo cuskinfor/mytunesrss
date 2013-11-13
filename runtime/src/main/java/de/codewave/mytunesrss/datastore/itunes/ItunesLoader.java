@@ -81,30 +81,27 @@ public class ItunesLoader {
         if (iTunesXmlFile.isFile() && iTunesMasterFile.isFile() && iTunesMasterFile.lastModified() - iTunesXmlFile.lastModified() > 2000) {
             MyTunesRss.ADMIN_NOTIFY.notifyOutdatedItunesXml(iTunesMasterFile, iTunesXmlFile);
         }
-        URL iTunesLibraryXml = iTunesXmlFile.toURL();
-        if (iTunesLibraryXml != null) {
-            PListHandler handler = new PListHandler();
-            Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
-            LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-            trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackIds);
-            playlistListener = new PlaylistListener(config, executionThread, queue, libraryListener, trackIdToPersId, config);
-            handler.addListener("/plist/dict", libraryListener);
-            handler.addListener("/plist/dict[Tracks]/dict", trackListener);
-            handler.addListener("/plist/dict[Playlists]/array", playlistListener);
-            try {
-                LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
-                XmlUtils.parseApplePList(iTunesLibraryXml, handler);
-            } catch (IOException e) {
-                LOG.error("Could not read data from iTunes xml file.", e);
-            } catch (ParserConfigurationException e) {
-                LOG.error("Could not read data from iTunes xml file.", e);
-            } catch (SAXException e) {
-                LOG.error("Could not read data from iTunes xml file.", e);
-            }
-            LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() +
-                    " files were missing.");
-            return new MissingItunesFiles(trackListener.getMissingFiles(), trackListener.getMissingFilePaths());
+        URL iTunesLibraryXml = iTunesXmlFile.toURI().toURL();
+        PListHandler handler = new PListHandler();
+        Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
+        LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
+        trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackIds);
+        playlistListener = new PlaylistListener(config, executionThread, queue, libraryListener, trackIdToPersId, config);
+        handler.addListener("/plist/dict", libraryListener);
+        handler.addListener("/plist/dict[Tracks]/dict", trackListener);
+        handler.addListener("/plist/dict[Playlists]/array", playlistListener);
+        try {
+            LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
+            XmlUtils.parseApplePList(iTunesLibraryXml, handler);
+        } catch (IOException e) {
+            LOG.error("Could not read data from iTunes xml file.", e);
+        } catch (ParserConfigurationException e) {
+            LOG.error("Could not read data from iTunes xml file.", e);
+        } catch (SAXException e) {
+            LOG.error("Could not read data from iTunes xml file.", e);
         }
-        return new MissingItunesFiles();
+        LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() +
+                " files were missing.");
+        return new MissingItunesFiles(trackListener.getMissingFiles(), trackListener.getMissingFilePaths());
     }
 }

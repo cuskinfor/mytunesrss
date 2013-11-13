@@ -20,7 +20,7 @@ public class DatabaseUpdateQueue {
 
     public DatabaseUpdateQueue(final long maxTxDurationMillis) {
         new Thread(new Runnable() {
-            public void run() {
+            public synchronized void run() {
                 long txBegin = System.currentTimeMillis();
                 long checkpointStartTime = 0;
                 DataStoreSession tx = null;
@@ -66,10 +66,8 @@ public class DatabaseUpdateQueue {
                     if (tx != null) {
                         tx.commit();
                     }
-                    synchronized (myTerminated) {
-                        myTerminated.set(true);
-                        myTerminated.notifyAll();
-                    }
+                    myTerminated.set(true);
+                    myTerminated.notifyAll();
                 }
                 LOGGER.info("Terminating database update queue thread.");
             }
@@ -82,15 +80,13 @@ public class DatabaseUpdateQueue {
         }
     }
 
-    public void waitForTermination() {
-        synchronized (myTerminated) {
+    public synchronized void waitForTermination() {
+        try {
             while (!myTerminated.get()) {
-                try {
-                    myTerminated.wait(30000);
-                } catch (InterruptedException e) {
-                    LOGGER.warn("Interrupted while waiting for queue termination.", e);
-                }
+                myTerminated.wait();
             }
+        } catch (InterruptedException e) {
+            LOGGER.warn("Interrupted while waiting for queue termination.", e);
         }
     }
 }

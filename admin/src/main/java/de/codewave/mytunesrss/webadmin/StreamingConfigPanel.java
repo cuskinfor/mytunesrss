@@ -185,10 +185,10 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setTranscoderConfigs(configs);
         int maxGiB = myTranscodingCacheMaxGiB.getIntegerValue(1);
         MyTunesRss.CONFIG.setTranscodingCacheMaxGiB(maxGiB);
-        MyTunesRss.TRANSCODER_CACHE.setMaxSizeBytes(maxGiB * 1024 * 1024 * 1024);
+        MyTunesRss.TRANSCODER_CACHE.setMaxSizeBytes((long)maxGiB * 1024L * 1024L * 1024L);
         maxGiB = myHttpLiveStreamCacheMaxGiB.getIntegerValue(5);
         MyTunesRss.CONFIG.setHttpLiveStreamCacheMaxGiB(maxGiB);
-        MyTunesRss.HTTP_LIVE_STREAMING_CACHE.setMaxSizeBytes(maxGiB * 1024 * 1024 * 1024);
+        MyTunesRss.HTTP_LIVE_STREAMING_CACHE.setMaxSizeBytes((long)maxGiB * 1024L * 1024L * 1024L);
         String vlcBinary = myVlcBinary.getStringValue(null);
         File vlcExecutable = vlcBinary != null ? new File(vlcBinary) : null;
         if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {

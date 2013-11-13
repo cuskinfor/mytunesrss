@@ -244,11 +244,12 @@ public class LibraryResource extends RestResource {
             }
         }
         List<TvShowRepresentation> shows = new ArrayList<TvShowRepresentation>();
-        for (String name : episodeCountPerShow.keySet()) {
+        for (Map.Entry<String, MutableInt> entry : episodeCountPerShow.entrySet()) {
             TvShowRepresentation representation = new TvShowRepresentation();
+            String name = entry.getKey();
             representation.setName(name);
             representation.setSeasonCount(seasonsPerShow.get(name).size());
-            representation.setEpisodeCount(episodeCountPerShow.get(name).intValue());
+            representation.setEpisodeCount(entry.getValue().intValue());
             representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name));
             if (imageHashPerShow.containsKey(name)) {
                 representation.setImageHash(StringUtils.trimToNull(imageHashPerShow.get(name)));

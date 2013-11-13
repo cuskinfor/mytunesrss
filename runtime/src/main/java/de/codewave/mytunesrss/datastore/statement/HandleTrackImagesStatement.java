@@ -290,7 +290,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                     }
                                 }
                             }
-                            if (itcFile.isFile()) {
+                            if (itcFile != null && itcFile.isFile()) {
                                 LOGGER.debug("Reading atoms from ITC file \"" + itcFile.getAbsolutePath() + "\".");
                                 Mp4Atom itemAtom = MyTunesRss.MP4_PARSER.parseAndGet(itcFile, "item");
                                 if (itemAtom != null) {

@@ -65,7 +65,7 @@ public class FileSystemCache implements Runnable {
         }
     }
 
-    public void setMaxSizeBytes(long maxSizeBytes) {
+    public synchronized void setMaxSizeBytes(long maxSizeBytes) {
         myMaxSizeBytes = maxSizeBytes;
     }
 

@@ -4,10 +4,12 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import java.io.Serializable;
+
 /**
  * de.codewave.mytunesrss.datastore.statement.Playlist
  */
-public class Playlist {
+public class Playlist implements Serializable {
     private String myId;
     private String myContainerId;
     private String myName;

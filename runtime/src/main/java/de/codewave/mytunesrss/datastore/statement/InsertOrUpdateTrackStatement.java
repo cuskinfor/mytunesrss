@@ -38,7 +38,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         return artist;
     }
 
-    public static final String UNKNOWN = new String("!");
+    public static final String UNKNOWN = "!";
 
     private String myId;
     private String myName;
@@ -160,7 +160,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myCompilation = compilation;
     }
 
-    public synchronized void execute(Connection connection) throws SQLException {
+    public void execute(Connection connection) throws SQLException {
         try {
             String originalArtist = myArtist;
             String originalAlbumArtist = myAlbumArtist;

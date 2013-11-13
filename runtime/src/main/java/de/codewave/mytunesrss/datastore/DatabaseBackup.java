@@ -64,6 +64,23 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof DatabaseBackup)) return false;
+
+        DatabaseBackup that = (DatabaseBackup) o;
+
+        if (myDate != that.myDate) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (myDate ^ (myDate >>> 32));
+    }
+
+    @Override
     public String toString() {
         return new SimpleDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "backupDateFormat")).format(new Date(myDate));
     }

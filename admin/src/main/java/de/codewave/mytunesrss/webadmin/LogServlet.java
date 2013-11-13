@@ -17,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 
 public class LogServlet extends HttpServlet {
@@ -35,7 +36,12 @@ public class LogServlet extends HttpServlet {
 
     private void sendPage(HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        IOUtils.copy(getClass().getResourceAsStream("logservlet.html"), response.getOutputStream());
+        InputStream inStream = getClass().getResourceAsStream("logservlet.html");
+        try {
+            IOUtils.copy(inStream, response.getOutputStream());
+        } finally {
+            inStream.close();
+        }
     }
 
     private void sendLogLines(long index, String lineSeparator, HttpServletResponse response) throws IOException {

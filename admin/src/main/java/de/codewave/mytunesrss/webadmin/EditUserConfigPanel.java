@@ -573,5 +573,22 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         public int compareTo(AlbumDate other) {
             return (int)Math.signum(myCompareDate - other.myCompareDate);
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof AlbumDate)) return false;
+
+            AlbumDate albumDate = (AlbumDate) o;
+
+            if (myCompareDate != albumDate.myCompareDate) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) (myCompareDate ^ (myCompareDate >>> 32));
+        }
     }
 }

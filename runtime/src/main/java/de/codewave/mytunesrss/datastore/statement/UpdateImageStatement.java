@@ -39,7 +39,7 @@ public class UpdateImageStatement {
         }
     }
 
-    public synchronized void execute(Connection connection) throws SQLException {
+    public void execute(Connection connection) throws SQLException {
         if (myData != null) {
             try {
                 if (myStatement == null) {

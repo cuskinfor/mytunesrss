@@ -137,11 +137,15 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                                 conditionals.put("order_playcount", true);
                                 conditionals.put("order_desc", true);
                                 break;
+                            default:
+                                // no conditionals in other cases
                         }
                         break;
                     case sizeLimit:
                         conditionals.put("limit", true);
                         break;
+                    default:
+                        // no conditionals in other cases
                 }
             }
             final SmartStatement queryStatement = MyTunesRssUtils.createStatement(connection, "getTracksForSmartPlaylist", conditionals, ResultSetType.TYPE_FORWARD_ONLY);
@@ -168,6 +172,8 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     case sizeLimit:
                         queryStatement.setInt("maxCount", Integer.parseInt(smartInfo.getPattern()));
                         break;
+                    default:
+                        // nothing in all other cases
                 }
             }
             DataStoreQuery<List<String>> dataStoreQuery = new DataStoreQuery<List<String>>() {

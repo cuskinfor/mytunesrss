@@ -69,11 +69,14 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                     if (cachedFile == null || !cachedFile.isFile()) {
                         LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
                         tempFile = File.createTempFile("mytunesrss_", ".zip", MyTunesRss.TEMP_CACHE.getBaseDir());
+                        FileOutputStream outputStream = new FileOutputStream(tempFile);
                         try {
-                            createZipArchive(user, new FileOutputStream(tempFile), tracks, baseName, null);
+                            createZipArchive(user, outputStream, tracks, baseName, null);
                         } catch (Exception e) {
                             tempFile.delete();
                             throw e;
+                        } finally {
+                            outputStream.close();
                         }
                     } else {
                         LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
@@ -127,11 +130,11 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
             if (track.getFile().exists() && !user.isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
-                if (trackArtist.equals(InsertTrackStatement.UNKNOWN)) {
+                if (InsertTrackStatement.UNKNOWN.equals(trackArtist)) {
                     trackArtist = "Unknown artist";
                 }
                 String trackAlbum = track.getAlbum();
-                if (trackAlbum.equals(InsertTrackStatement.UNKNOWN)) {
+                if (InsertTrackStatement.UNKNOWN.equals(trackAlbum)) {
                     trackAlbum = "Unknown Album";
                 }
                 int number = 1;
@@ -152,12 +155,15 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                 ZipArchiveEntry entry = new ZipArchiveEntry(baseName + "/" + entryName);
                 zipStream.putArchiveEntry(entry);
                 InputStream file = new FileInputStream(track.getFile());
-                for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
-                    if (length > 0) {
-                        zipStream.write(buffer, 0, length);
+                try {
+                    for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
+                        if (length > 0) {
+                            zipStream.write(buffer, 0, length);
+                        }
                     }
+                } finally {
+                    file.close();
                 }
-                file.close();
                 zipStream.closeArchiveEntry();
                 playlistBuilder.add(track, trackArtist, trackAlbum, entryName);
                 trackCount++;
@@ -226,7 +232,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         }
     }
 
-    private class XspfPlaylistsBuilder implements PlaylistBuilder {
+    private static class XspfPlaylistsBuilder implements PlaylistBuilder {
 
         private String lineSeparator = System.getProperty("line.separator");
 

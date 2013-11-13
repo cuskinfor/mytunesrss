@@ -82,6 +82,23 @@ public class TvShowSeasonRepresentation implements RestRepresentation, Comparabl
     }
 
     public int compareTo(TvShowSeasonRepresentation o) {
-        return getName().compareTo(o.getName());
+        return myName.compareTo(o.myName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TvShowSeasonRepresentation)) return false;
+
+        TvShowSeasonRepresentation that = (TvShowSeasonRepresentation) o;
+
+        if (!myName.equals(that.myName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return myName.hashCode();
     }
 }

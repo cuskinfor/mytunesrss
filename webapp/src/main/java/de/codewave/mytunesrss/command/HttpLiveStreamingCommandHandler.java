@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.UUID;
@@ -98,7 +99,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                 File playlistFile = waitForPlaylistFile(dir, 30000);
                 MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
                 byte[] playlistBytes = FileUtils.readFileToByteArray(playlistFile);
-                LOG.debug("Sending playlist: " + new String(playlistBytes));
+                LOG.debug("Sending playlist: " + new String(playlistBytes, Charset.forName("UTF-8")));
                 sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
             } else {
                 sender = new StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
@@ -149,7 +150,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
         throw new IOException("Timeout waiting for playlist file.");
     }
 
-    public class HttpLiveStreamingSegmenterRunnable implements Runnable {
+    public static class HttpLiveStreamingSegmenterRunnable implements Runnable {
 
         private File myTargetDir;
 

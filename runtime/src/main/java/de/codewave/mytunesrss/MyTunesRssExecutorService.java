@@ -49,7 +49,7 @@ public class MyTunesRssExecutorService {
 
     private ExecutorService ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(5);
 
-    public void shutdown() throws InterruptedException {
+    public synchronized void shutdown() throws InterruptedException {
         DATABASE_JOB_EXECUTOR.shutdownNow();
         DATABASE_JOB_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
         LUCENE_UPDATE_EXECUTOR.shutdownNow();

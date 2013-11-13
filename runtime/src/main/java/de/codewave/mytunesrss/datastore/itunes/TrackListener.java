@@ -30,7 +30,7 @@ import java.util.*;
  */
 public class TrackListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(TrackListener.class);
-    private static final String MP4_CODEC_NOT_CHECKED = new String();
+    private static final String MP4_CODEC_NOT_CHECKED = new String(); // we absolutely want a special object instance here
 
     private DatabaseUpdateQueue myQueue;
     private LibraryListener myLibraryListener;

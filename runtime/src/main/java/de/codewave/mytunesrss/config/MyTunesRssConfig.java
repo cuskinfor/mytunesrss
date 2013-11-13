@@ -31,6 +31,7 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -39,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
-    private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(), "DES");
+    private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(Charset.forName("UTF-8")), "DES");
     private static final String CREATION_TIME_KEY = "playmode";
     public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864";
 
@@ -154,7 +155,7 @@ public class MyTunesRssConfig {
      *
      * @return A shallow copy of the list of data source configs.
      */
-    public List<DatasourceConfig> getDatasources() {
+    public synchronized List<DatasourceConfig> getDatasources() {
         return new ArrayList<DatasourceConfig>(myDatasources);
     }
 
@@ -166,7 +167,7 @@ public class MyTunesRssConfig {
      *
      * @return The data source config for the specified source id.
      */
-    public DatasourceConfig getDatasource(String sourceId) {
+    public synchronized DatasourceConfig getDatasource(String sourceId) {
         for (DatasourceConfig config : getDatasources()) {
             if (config.getId().equals(sourceId)) {
                 return config;
@@ -175,106 +176,106 @@ public class MyTunesRssConfig {
         return null;
     }
 
-    public void setDatasources(List<DatasourceConfig> datasources) {
+    public synchronized void setDatasources(List<DatasourceConfig> datasources) {
         myDatasources = new ArrayList<DatasourceConfig>(datasources);
         Collections.sort(myDatasources);
     }
 
-    public String getHost() {
+    public synchronized String getHost() {
         return myHost;
     }
 
-    public void setHost(String host) {
+    public synchronized void setHost(String host) {
         myHost = StringUtils.trimToNull(host);
     }
 
-    public int getPort() {
+    public synchronized int getPort() {
         return myPort;
     }
 
-    public void setPort(int port) {
+    public synchronized void setPort(int port) {
         myPort = port;
     }
 
-    public String getServerName() {
+    public synchronized String getServerName() {
         return myServerName;
     }
 
-    public void setServerName(String serverName) {
+    public synchronized void setServerName(String serverName) {
         if (StringUtils.isNotEmpty(serverName)) {
             myServerName = serverName;
         }
     }
 
-    public boolean isAvailableOnLocalNet() {
+    public synchronized boolean isAvailableOnLocalNet() {
         return myAvailableOnLocalNet;
     }
 
-    public void setAvailableOnLocalNet(boolean availableOnLocalNet) {
+    public synchronized void setAvailableOnLocalNet(boolean availableOnLocalNet) {
         myAvailableOnLocalNet = availableOnLocalNet;
     }
 
-    public boolean isCheckUpdateOnStart() {
+    public synchronized boolean isCheckUpdateOnStart() {
         return myCheckUpdateOnStart;
     }
 
-    public void setCheckUpdateOnStart(boolean checkUpdateOnStart) {
+    public synchronized void setCheckUpdateOnStart(boolean checkUpdateOnStart) {
         myCheckUpdateOnStart = checkUpdateOnStart;
     }
 
-    public String getVersion() {
+    public synchronized String getVersion() {
         return myVersion;
     }
 
-    public void setVersion(String version) {
+    public synchronized void setVersion(String version) {
         myVersion = version;
     }
 
-    public boolean isLocalTempArchive() {
+    public synchronized boolean isLocalTempArchive() {
         return myLocalTempArchive;
     }
 
-    public void setLocalTempArchive(boolean localTempArchive) {
+    public synchronized void setLocalTempArchive(boolean localTempArchive) {
         myLocalTempArchive = localTempArchive;
     }
 
-    public SecretKey getPathInfoKey() {
+    public synchronized SecretKey getPathInfoKey() {
         return myPathInfoKey;
     }
 
-    public void setPathInfoKey(SecretKey pathInfoKey) {
+    public synchronized void setPathInfoKey(SecretKey pathInfoKey) {
         myPathInfoKey = pathInfoKey;
     }
 
-    public long getTranscodingCacheMaxGiB() {
+    public synchronized long getTranscodingCacheMaxGiB() {
         return myTranscodingCacheMaxGiB;
     }
 
-    public void setTranscodingCacheMaxGiB(long transcodingCacheMaxGiB) {
+    public synchronized void setTranscodingCacheMaxGiB(long transcodingCacheMaxGiB) {
         myTranscodingCacheMaxGiB = transcodingCacheMaxGiB;
     }
 
-    public long getTempMaxGiB() {
+    public synchronized long getTempMaxGiB() {
         return myTempMaxGiB;
     }
 
-    public void setTempMaxGiB(long tempMaxGiB) {
+    public synchronized void setTempMaxGiB(long tempMaxGiB) {
         myTempMaxGiB = tempMaxGiB;
     }
 
-    public long getHttpLiveStreamCacheMaxGiB() {
+    public synchronized long getHttpLiveStreamCacheMaxGiB() {
         return myHttpLiveStreamCacheMaxGiB;
     }
 
-    public void setHttpLiveStreamCacheMaxGiB(long httpLiveStreamCacheMaxGiB) {
+    public synchronized void setHttpLiveStreamCacheMaxGiB(long httpLiveStreamCacheMaxGiB) {
         myHttpLiveStreamCacheMaxGiB = httpLiveStreamCacheMaxGiB;
     }
 
-    public Level getCodewaveLogLevel() {
+    public synchronized Level getCodewaveLogLevel() {
         return myCodewaveLogLevel;
     }
 
-    public void setCodewaveLogLevel(Level codewaveLogLevel) {
+    public synchronized void setCodewaveLogLevel(Level codewaveLogLevel) {
         myCodewaveLogLevel = codewaveLogLevel;
     }
 
@@ -312,399 +313,399 @@ public class MyTunesRssConfig {
         return true;
     }
 
-    public String getSupportEmail() {
+    public synchronized String getSupportEmail() {
         return mySupportEmail;
     }
 
-    public void setSupportEmail(String supportEmail) {
+    public synchronized void setSupportEmail(String supportEmail) {
         mySupportEmail = supportEmail;
     }
 
-    public String getSupportName() {
+    public synchronized String getSupportName() {
         return mySupportName;
     }
 
-    public void setSupportName(String supportName) {
+    public synchronized void setSupportName(String supportName) {
         mySupportName = supportName;
     }
 
-    public String getProxyHost() {
+    public synchronized String getProxyHost() {
         return myProxyHost;
     }
 
-    public void setProxyHost(String proxyHost) {
+    public synchronized void setProxyHost(String proxyHost) {
         myProxyHost = proxyHost;
     }
 
-    public int getProxyPort() {
+    public synchronized int getProxyPort() {
         return myProxyPort;
     }
 
-    public void setProxyPort(int proxyPort) {
+    public synchronized void setProxyPort(int proxyPort) {
         myProxyPort = proxyPort;
     }
 
-    public boolean isProxyServer() {
+    public synchronized boolean isProxyServer() {
         return StringUtils.isNotBlank(myProxyHost) && myProxyPort > 0 && myProxyPort < 65536;
     }
 
-    public byte[] getMyTunesRssComPasswordHash() {
-        return myMyTunesRssComPasswordHash;
+    public synchronized byte[] getMyTunesRssComPasswordHash() {
+        return myMyTunesRssComPasswordHash != null ? myMyTunesRssComPasswordHash.clone() : null;
     }
 
-    public void setMyTunesRssComPasswordHash(byte[] myTunesRssComPasswordHash) {
-        myMyTunesRssComPasswordHash = myTunesRssComPasswordHash;
+    public synchronized void setMyTunesRssComPasswordHash(byte[] myTunesRssComPasswordHash) {
+        myMyTunesRssComPasswordHash = myTunesRssComPasswordHash != null ? myTunesRssComPasswordHash.clone() : null;
     }
 
-    public String getMyTunesRssComUser() {
+    public synchronized String getMyTunesRssComUser() {
         return myMyTunesRssComUser;
     }
 
-    public void setMyTunesRssComUser(String myTunesRssComUser) {
+    public synchronized void setMyTunesRssComUser(String myTunesRssComUser) {
         myMyTunesRssComUser = myTunesRssComUser;
     }
 
-    public boolean isMyTunesRssComSsl() {
+    public synchronized boolean isMyTunesRssComSsl() {
         return myMyTunesRssComSsl;
     }
 
-    public void setMyTunesRssComSsl(boolean myTunesRssComSsl) {
+    public synchronized void setMyTunesRssComSsl(boolean myTunesRssComSsl) {
         myMyTunesRssComSsl = myTunesRssComSsl;
     }
 
-    public String getWebWelcomeMessage() {
+    public synchronized String getWebWelcomeMessage() {
         return myWebWelcomeMessage;
     }
 
-    public void setWebWelcomeMessage(String webWelcomeMessage) {
+    public synchronized void setWebWelcomeMessage(String webWelcomeMessage) {
         myWebWelcomeMessage = webWelcomeMessage;
     }
 
-    public String getWebLoginMessage() {
+    public synchronized String getWebLoginMessage() {
         return myWebLoginMessage;
     }
 
-    public void setWebLoginMessage(String webLoginMessage) {
+    public synchronized void setWebLoginMessage(String webLoginMessage) {
         myWebLoginMessage = webLoginMessage;
     }
 
-    public void setLastNewVersionInfo(String lastNewVersionInfo) {
+    public synchronized void setLastNewVersionInfo(String lastNewVersionInfo) {
         myLastNewVersionInfo = lastNewVersionInfo;
     }
 
-    public boolean isDeleteDatabaseOnExit() {
+    public synchronized boolean isDeleteDatabaseOnExit() {
         return myDeleteDatabaseOnExit;
     }
 
-    public void setDeleteDatabaseOnExit(boolean deleteDatabaseOnExit) {
+    public synchronized void setDeleteDatabaseOnExit(boolean deleteDatabaseOnExit) {
         myDeleteDatabaseOnExit = deleteDatabaseOnExit;
     }
 
-    public void setUpdateIgnoreVersion(String updateIgnoreVersion) {
+    public synchronized void setUpdateIgnoreVersion(String updateIgnoreVersion) {
         myUpdateIgnoreVersion = updateIgnoreVersion;
     }
 
-    public List<String> getDatabaseUpdateTriggers() {
+    public synchronized List<String> getDatabaseUpdateTriggers() {
         return myDatabaseUpdateTriggers;
     }
 
-    public void setDatabaseUpdateTriggers(List<String> databaseCronTriggers) {
+    public synchronized void setDatabaseUpdateTriggers(List<String> databaseCronTriggers) {
         myDatabaseUpdateTriggers = databaseCronTriggers;
     }
 
-    public List<String> getDatabaseBackupTriggers() {
+    public synchronized List<String> getDatabaseBackupTriggers() {
         return myDatabaseBackupTriggers;
     }
 
-    public void setDatabaseBackupTriggers(List<String> databaseBackupTriggers) {
+    public synchronized void setDatabaseBackupTriggers(List<String> databaseBackupTriggers) {
         myDatabaseBackupTriggers = databaseBackupTriggers;
     }
 
-    public String getDatabaseConnection() {
+    public synchronized String getDatabaseConnection() {
         return myDatabaseConnection;
     }
 
-    public void setDatabaseConnection(String databaseConnection) {
+    public synchronized void setDatabaseConnection(String databaseConnection) {
         myDatabaseConnection = databaseConnection;
     }
 
-    public String getDatabasePassword() {
+    public synchronized String getDatabasePassword() {
         return myDatabasePassword;
     }
 
-    public void setDatabasePassword(String databasePassword) {
+    public synchronized void setDatabasePassword(String databasePassword) {
         myDatabasePassword = databasePassword;
     }
 
-    public DatabaseType getDatabaseType() {
+    public synchronized DatabaseType getDatabaseType() {
         return myDatabaseType;
     }
 
-    public void setDatabaseType(DatabaseType databaseType) {
+    public synchronized void setDatabaseType(DatabaseType databaseType) {
         myDatabaseType = databaseType;
     }
 
-    public String getDatabaseUser() {
+    public synchronized String getDatabaseUser() {
         return myDatabaseUser;
     }
 
-    public void setDatabaseUser(String databaseUser) {
+    public synchronized void setDatabaseUser(String databaseUser) {
         myDatabaseUser = databaseUser;
     }
 
-    public String getDatabaseDriver() {
+    public synchronized String getDatabaseDriver() {
         return myDatabaseDriver;
     }
 
-    public void setDatabaseDriver(String databaseDriver) {
+    public synchronized void setDatabaseDriver(String databaseDriver) {
         myDatabaseDriver = databaseDriver;
     }
 
-    public String getDatabaseConnectionOptions() {
+    public synchronized String getDatabaseConnectionOptions() {
         return myDatabaseConnectionOptions;
     }
 
-    public void setDatabaseConnectionOptions(String databaseConnectionOptions) {
+    public synchronized void setDatabaseConnectionOptions(String databaseConnectionOptions) {
         myDatabaseConnectionOptions = databaseConnectionOptions;
     }
 
-    public String getWebappContext() {
+    public synchronized String getWebappContext() {
         return myWebappContext;
     }
 
-    public void setWebappContext(String webappContext) {
+    public synchronized void setWebappContext(String webappContext) {
         myWebappContext = webappContext;
     }
 
-    public String getTomcatMaxThreads() {
+    public synchronized String getTomcatMaxThreads() {
         return myTomcatMaxThreads;
     }
 
-    public void setTomcatMaxThreads(String tomcatMaxThreads) {
+    public synchronized void setTomcatMaxThreads(String tomcatMaxThreads) {
         myTomcatMaxThreads = tomcatMaxThreads;
     }
 
-    public String getAjpHost() {
+    public synchronized String getAjpHost() {
         return myAjpHost;
     }
 
-    public void setAjpHost(String ajpHost) {
+    public synchronized void setAjpHost(String ajpHost) {
         myAjpHost = StringUtils.trimToNull(ajpHost);
     }
 
-    public int getTomcatAjpPort() {
+    public synchronized int getTomcatAjpPort() {
         return myTomcatAjpPort;
     }
 
-    public void setTomcatAjpPort(int tomcatAjpPort) {
+    public synchronized void setTomcatAjpPort(int tomcatAjpPort) {
         myTomcatAjpPort = tomcatAjpPort;
     }
 
-    public String getSslKeystoreFile() {
+    public synchronized String getSslKeystoreFile() {
         return mySslKeystoreFile;
     }
 
-    public void setSslKeystoreFile(String sslKeystoreFile) {
+    public synchronized void setSslKeystoreFile(String sslKeystoreFile) {
         mySslKeystoreFile = sslKeystoreFile;
     }
 
-    public String getSslKeystoreKeyAlias() {
+    public synchronized String getSslKeystoreKeyAlias() {
         return mySslKeystoreKeyAlias;
     }
 
-    public void setSslKeystoreKeyAlias(String sslKeystoreKeyAlias) {
+    public synchronized void setSslKeystoreKeyAlias(String sslKeystoreKeyAlias) {
         mySslKeystoreKeyAlias = sslKeystoreKeyAlias;
     }
 
-    public String getSslKeystorePass() {
+    public synchronized String getSslKeystorePass() {
         return mySslKeystorePass;
     }
 
-    public void setSslKeystorePass(String sslKeystorePass) {
+    public synchronized void setSslKeystorePass(String sslKeystorePass) {
         mySslKeystorePass = sslKeystorePass;
     }
 
-    public String getSslHost() {
+    public synchronized String getSslHost() {
         return mySslHost;
     }
 
-    public void setSslHost(String sslHost) {
+    public synchronized void setSslHost(String sslHost) {
         mySslHost = StringUtils.trimToNull(sslHost);
     }
 
-    public int getSslPort() {
+    public synchronized int getSslPort() {
         return mySslPort;
     }
 
-    public void setSslPort(int sslPort) {
+    public synchronized void setSslPort(int sslPort) {
         mySslPort = sslPort;
     }
 
-    public String getMailHost() {
+    public synchronized String getMailHost() {
         return myMailHost;
     }
 
-    public void setMailHost(String mailHost) {
+    public synchronized void setMailHost(String mailHost) {
         myMailHost = mailHost;
     }
 
-    public String getMailLogin() {
+    public synchronized String getMailLogin() {
         return myMailLogin;
     }
 
-    public void setMailLogin(String mailLogin) {
+    public synchronized void setMailLogin(String mailLogin) {
         myMailLogin = mailLogin;
     }
 
-    public String getMailPassword() {
+    public synchronized String getMailPassword() {
         return myMailPassword;
     }
 
-    public void setMailPassword(String mailPassword) {
+    public synchronized void setMailPassword(String mailPassword) {
         myMailPassword = mailPassword;
     }
 
-    public int getMailPort() {
+    public synchronized int getMailPort() {
         return myMailPort;
     }
 
-    public void setMailPort(int mailPort) {
+    public synchronized void setMailPort(int mailPort) {
         myMailPort = mailPort;
     }
 
-    public SmtpProtocol getSmtpProtocol() {
+    public synchronized SmtpProtocol getSmtpProtocol() {
         return mySmtpProtocol;
     }
 
-    public void setSmtpProtocol(SmtpProtocol smtpProtocol) {
+    public synchronized void setSmtpProtocol(SmtpProtocol smtpProtocol) {
         mySmtpProtocol = smtpProtocol;
     }
 
-    public String getMailSender() {
+    public synchronized String getMailSender() {
         return myMailSender;
     }
 
-    public void setMailSender(String mailSender) {
+    public synchronized void setMailSender(String mailSender) {
         myMailSender = mailSender;
     }
 
-    public String getAdminEmail() {
+    public synchronized String getAdminEmail() {
         return myAdminEmail;
     }
 
-    public void setAdminEmail(String adminEmail) {
+    public synchronized void setAdminEmail(String adminEmail) {
         myAdminEmail = adminEmail;
     }
 
-    public boolean isNotifyOnPasswordChange() {
+    public synchronized boolean isNotifyOnPasswordChange() {
         return myNotifyOnPasswordChange;
     }
 
-    public void setNotifyOnPasswordChange(boolean notifyOnPasswordChange) {
+    public synchronized void setNotifyOnPasswordChange(boolean notifyOnPasswordChange) {
         myNotifyOnPasswordChange = notifyOnPasswordChange;
     }
 
-    public boolean isNotifyOnEmailChange() {
+    public synchronized boolean isNotifyOnEmailChange() {
         return myNotifyOnEmailChange;
     }
 
-    public void setNotifyOnEmailChange(boolean notifyOnEmailChange) {
+    public synchronized void setNotifyOnEmailChange(boolean notifyOnEmailChange) {
         myNotifyOnEmailChange = notifyOnEmailChange;
     }
 
-    public boolean isNotifyOnQuotaExceeded() {
+    public synchronized boolean isNotifyOnQuotaExceeded() {
         return myNotifyOnQuotaExceeded;
     }
 
-    public void setNotifyOnQuotaExceeded(boolean notifyOnQuotaExceeded) {
+    public synchronized void setNotifyOnQuotaExceeded(boolean notifyOnQuotaExceeded) {
         myNotifyOnQuotaExceeded = notifyOnQuotaExceeded;
     }
 
-    public boolean isNotifyOnLoginFailure() {
+    public synchronized boolean isNotifyOnLoginFailure() {
         return myNotifyOnLoginFailure;
     }
 
-    public void setNotifyOnLoginFailure(boolean notifyOnLoginFailure) {
+    public synchronized void setNotifyOnLoginFailure(boolean notifyOnLoginFailure) {
         myNotifyOnLoginFailure = notifyOnLoginFailure;
     }
 
-    public boolean isNotifyOnWebUpload() {
+    public synchronized boolean isNotifyOnWebUpload() {
         return myNotifyOnWebUpload;
     }
 
-    public void setNotifyOnWebUpload(boolean notifyOnWebUpload) {
+    public synchronized void setNotifyOnWebUpload(boolean notifyOnWebUpload) {
         myNotifyOnWebUpload = notifyOnWebUpload;
     }
 
-    public boolean isNotifyOnTranscodingFailure() {
+    public synchronized boolean isNotifyOnTranscodingFailure() {
         return myNotifyOnTranscodingFailure;
     }
 
-    public void setNotifyOnTranscodingFailure(boolean notifyOnTranscodingFailure) {
+    public synchronized void setNotifyOnTranscodingFailure(boolean notifyOnTranscodingFailure) {
         myNotifyOnTranscodingFailure = notifyOnTranscodingFailure;
     }
 
-    public boolean isNotifyOnInternalError() {
+    public synchronized boolean isNotifyOnInternalError() {
         return myNotifyOnInternalError;
     }
 
-    public void setNotifyOnInternalError(boolean notifyOnInternalError) {
+    public synchronized void setNotifyOnInternalError(boolean notifyOnInternalError) {
         myNotifyOnInternalError = notifyOnInternalError;
     }
 
-    public boolean isNotifyOnDatabaseUpdate() {
+    public synchronized boolean isNotifyOnDatabaseUpdate() {
         return myNotifyOnDatabaseUpdate;
     }
 
-    public void setNotifyOnDatabaseUpdate(boolean notifyOnDatabaseUpdate) {
+    public synchronized void setNotifyOnDatabaseUpdate(boolean notifyOnDatabaseUpdate) {
         myNotifyOnDatabaseUpdate = notifyOnDatabaseUpdate;
     }
 
-    public boolean isNotifyOnMissingFile() {
+    public synchronized boolean isNotifyOnMissingFile() {
         return myNotifyOnMissingFile;
     }
 
-    public void setNotifyOnMissingFile(boolean notifyOnMissingFile) {
+    public synchronized void setNotifyOnMissingFile(boolean notifyOnMissingFile) {
         myNotifyOnMissingFile = notifyOnMissingFile;
     }
 
-    public boolean isNotifyOnOutdatedItunesXml() {
+    public synchronized boolean isNotifyOnOutdatedItunesXml() {
         return myNotifyOnOutdatedItunesXml;
     }
 
-    public void setNotifyOnOutdatedItunesXml(boolean notifyOnOutdatedItunesXml) {
+    public synchronized void setNotifyOnOutdatedItunesXml(boolean notifyOnOutdatedItunesXml) {
         myNotifyOnOutdatedItunesXml = notifyOnOutdatedItunesXml;
     }
 
-    public boolean isNotifyOnSkippedDatabaseUpdate() {
+    public synchronized boolean isNotifyOnSkippedDatabaseUpdate() {
         return myNotifyOnSkippedDatabaseUpdate;
     }
 
-    public void setNotifyOnSkippedDatabaseUpdate(boolean notifyOnSkippedDatabaseUpdate) {
+    public synchronized void setNotifyOnSkippedDatabaseUpdate(boolean notifyOnSkippedDatabaseUpdate) {
         myNotifyOnSkippedDatabaseUpdate = notifyOnSkippedDatabaseUpdate;
     }
 
-    public int getStatisticKeepTime() {
+    public synchronized int getStatisticKeepTime() {
         return myStatisticKeepTime;
     }
 
-    public void setStatisticKeepTime(int statisticKeepTime) {
+    public synchronized void setStatisticKeepTime(int statisticKeepTime) {
         myStatisticKeepTime = statisticKeepTime;
     }
 
-    public Collection<TranscoderConfig> getTranscoderConfigs() {
+    public synchronized Collection<TranscoderConfig> getTranscoderConfigs() {
         return myTranscoderConfigs != null ? new ArrayList<TranscoderConfig>(myTranscoderConfigs) : new ArrayList<TranscoderConfig>();
     }
 
-    public void setTranscoderConfigs(Collection<TranscoderConfig> configs) {
+    public synchronized void setTranscoderConfigs(Collection<TranscoderConfig> configs) {
         myTranscoderConfigs = configs != null ? new ArrayList<TranscoderConfig>(configs) : new ArrayList<TranscoderConfig>();
     }
 
-    public List<ExternalSiteDefinition> getExternalSites() {
+    public synchronized List<ExternalSiteDefinition> getExternalSites() {
         return new ArrayList<ExternalSiteDefinition>(myExternalSites);
     }
 
-    public List<ExternalSiteDefinition> getExternalSites(String type) {
+    public synchronized List<ExternalSiteDefinition> getExternalSites(String type) {
         List<ExternalSiteDefinition> result = new ArrayList<ExternalSiteDefinition>();
         for (ExternalSiteDefinition def : myExternalSites) {
             if (StringUtils.equals(type, def.getType())) {
@@ -714,11 +715,11 @@ public class MyTunesRssConfig {
         return result;
     }
 
-    public void addExternalSite(ExternalSiteDefinition definition) {
+    public synchronized void addExternalSite(ExternalSiteDefinition definition) {
         myExternalSites.add(definition);
     }
 
-    public void removeExternalSite(ExternalSiteDefinition definition) {
+    public synchronized void removeExternalSite(ExternalSiteDefinition definition) {
         for (Iterator<ExternalSiteDefinition> iter = myExternalSites.iterator(); iter.hasNext();) {
             if (definition.equals(iter.next())) {
                 iter.remove();
@@ -727,87 +728,87 @@ public class MyTunesRssConfig {
         }
     }
 
-    public String getAutoLogin() {
+    public synchronized String getAutoLogin() {
         return myAutoLogin;
     }
 
-    public void setAutoLogin(String autoLogin) {
+    public synchronized void setAutoLogin(String autoLogin) {
         myAutoLogin = autoLogin;
     }
 
-    public boolean isDisableBrowser() {
+    public synchronized boolean isDisableBrowser() {
         return myDisableBrowser;
     }
 
-    public void setDisableBrowser(boolean disableBrowser) {
+    public synchronized void setDisableBrowser(boolean disableBrowser) {
         myDisableBrowser = disableBrowser;
     }
 
-    public boolean isServerBrowserActive() {
+    public synchronized boolean isServerBrowserActive() {
         return myServerBrowserActive;
     }
 
-    public void setServerBrowserActive(boolean serverBrowserActive) {
+    public synchronized void setServerBrowserActive(boolean serverBrowserActive) {
         myServerBrowserActive = serverBrowserActive;
     }
 
-    public boolean isOpenIdActive() {
+    public synchronized boolean isOpenIdActive() {
         return myOpenIdActive;
     }
 
-    public void setOpenIdActive(boolean openIdActive) {
+    public synchronized void setOpenIdActive(boolean openIdActive) {
         myOpenIdActive = openIdActive;
     }
 
-    public boolean isDisableWebLogin() {
+    public synchronized boolean isDisableWebLogin() {
         return myDisableWebLogin;
     }
 
-    public void setDisableWebLogin(boolean disableWebLogin) {
+    public synchronized void setDisableWebLogin(boolean disableWebLogin) {
         myDisableWebLogin = disableWebLogin;
     }
 
-    public LdapConfig getLdapConfig() {
+    public synchronized LdapConfig getLdapConfig() {
         return myLdapConfig;
     }
 
-    public boolean isAdminPassword() {
+    public synchronized boolean isAdminPassword() {
         return !Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), MyTunesRss.SHA1_DIGEST.get().digest(new byte[0]));
     }
 
-    public byte[] getAdminPasswordHash() {
-        return myAdminPasswordHash != null ? myAdminPasswordHash : MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(""));
+    public synchronized byte[] getAdminPasswordHash() {
+        return myAdminPasswordHash != null ? myAdminPasswordHash.clone() : MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(""));
     }
 
-    public void setAdminPasswordHash(byte[] adminPasswordHash) {
-        myAdminPasswordHash = adminPasswordHash;
+    public synchronized void setAdminPasswordHash(byte[] adminPasswordHash) {
+        myAdminPasswordHash = adminPasswordHash != null ? adminPasswordHash.clone() : null;
     }
 
-    public String getAdminHost() {
+    public synchronized String getAdminHost() {
         return myAdminHost;
     }
 
-    public void setAdminHost(String adminHost) {
+    public synchronized void setAdminHost(String adminHost) {
         myAdminHost = StringUtils.trimToNull(adminHost);
     }
 
-    public int getAdminPort() {
+    public synchronized int getAdminPort() {
         return myAdminPort;
     }
 
-    public void setAdminPort(int adminPort) {
+    public synchronized void setAdminPort(int adminPort) {
         myAdminPort = adminPort;
     }
 
-    public Set<FlashPlayerConfig> getFlashPlayers() {
+    public synchronized Set<FlashPlayerConfig> getFlashPlayers() {
         return new HashSet<FlashPlayerConfig>(myFlashPlayers);
     }
 
-    public boolean isFlashPlayer() {
+    public synchronized boolean isFlashPlayer() {
         return myFlashPlayers != null && !myFlashPlayers.isEmpty();
     }
 
-    public FlashPlayerConfig getFlashPlayer(String id) {
+    public synchronized FlashPlayerConfig getFlashPlayer(String id) {
         for (FlashPlayerConfig flashPlayer : myFlashPlayers) {
             if (flashPlayer.getId().equals(id)) {
                 return flashPlayer;
@@ -816,11 +817,11 @@ public class MyTunesRssConfig {
         return null;
     }
 
-    public void addFlashPlayer(FlashPlayerConfig flashPlayer) {
+    public synchronized void addFlashPlayer(FlashPlayerConfig flashPlayer) {
         myFlashPlayers.add(flashPlayer);
     }
 
-    public FlashPlayerConfig removeFlashPlayer(String id) {
+    public synchronized FlashPlayerConfig removeFlashPlayer(String id) {
         FlashPlayerConfig config = getFlashPlayer(id);
         if (config != null) {
             myFlashPlayers.remove(new FlashPlayerConfig(id, null, null, 0, 0, TimeUnit.SECONDS));
@@ -828,236 +829,236 @@ public class MyTunesRssConfig {
         return config;
     }
 
-    public boolean isInitialWizard() {
+    public synchronized boolean isInitialWizard() {
         return myInitialWizard;
     }
 
-    public void setInitialWizard(boolean initialWizard) {
+    public synchronized void setInitialWizard(boolean initialWizard) {
         myInitialWizard = initialWizard;
     }
 
-    public boolean isUpnpAdmin() {
+    public synchronized boolean isUpnpAdmin() {
         return myUpnpAdmin;
     }
 
-    public void setUpnpAdmin(boolean upnpAdmin) {
+    public synchronized void setUpnpAdmin(boolean upnpAdmin) {
         myUpnpAdmin = upnpAdmin;
     }
 
-    public boolean isUpnpUserHttp() {
+    public synchronized boolean isUpnpUserHttp() {
         return myUpnpUserHttp;
     }
 
-    public void setUpnpUserHttp(boolean upnpUserHttp) {
+    public synchronized void setUpnpUserHttp(boolean upnpUserHttp) {
         myUpnpUserHttp = upnpUserHttp;
     }
 
-    public boolean isUpnpUserHttps() {
+    public synchronized boolean isUpnpUserHttps() {
         return myUpnpUserHttps;
     }
 
-    public void setUpnpUserHttps(boolean upnpUserHttps) {
+    public synchronized void setUpnpUserHttps(boolean upnpUserHttps) {
         myUpnpUserHttps = upnpUserHttps;
     }
 
-    public String getSelfRegisterTemplateUser() {
+    public synchronized String getSelfRegisterTemplateUser() {
         return mySelfRegisterTemplateUser;
     }
 
-    public void setSelfRegisterTemplateUser(String selfRegisterTemplateUser) {
+    public synchronized void setSelfRegisterTemplateUser(String selfRegisterTemplateUser) {
         mySelfRegisterTemplateUser = selfRegisterTemplateUser;
     }
 
-    public boolean isSelfRegAdminEmail() {
+    public synchronized boolean isSelfRegAdminEmail() {
         return mySelfRegAdminEmail;
     }
 
-    public void setSelfRegAdminEmail(boolean selfRegAdminEmail) {
+    public synchronized void setSelfRegAdminEmail(boolean selfRegAdminEmail) {
         mySelfRegAdminEmail = selfRegAdminEmail;
     }
 
-    public String getDefaultUserInterfaceTheme() {
+    public synchronized String getDefaultUserInterfaceTheme() {
         return myDefaultUserInterfaceTheme;
     }
 
-    public void setDefaultUserInterfaceTheme(String defaultUserInterfaceTheme) {
+    public synchronized void setDefaultUserInterfaceTheme(String defaultUserInterfaceTheme) {
         myDefaultUserInterfaceTheme = defaultUserInterfaceTheme;
     }
 
-    public String getFacebookApiKey() {
+    public synchronized String getFacebookApiKey() {
         return myFacebookApiKey;
     }
 
-    public void setFacebookApiKey(String facebookApiKey) {
+    public synchronized void setFacebookApiKey(String facebookApiKey) {
         myFacebookApiKey = facebookApiKey;
     }
 
-    public int getNumberKeepDatabaseBackups() {
+    public synchronized int getNumberKeepDatabaseBackups() {
         return myNumberKeepDatabaseBackups;
     }
 
-    public void setNumberKeepDatabaseBackups(int numberKeepDatabaseBackups) {
+    public synchronized void setNumberKeepDatabaseBackups(int numberKeepDatabaseBackups) {
         myNumberKeepDatabaseBackups = numberKeepDatabaseBackups;
     }
 
-    public boolean isBackupDatabaseAfterInit() {
+    public synchronized boolean isBackupDatabaseAfterInit() {
         return myBackupDatabaseAfterInit;
     }
 
-    public void setBackupDatabaseAfterInit(boolean backupDatabaseAfterInit) {
+    public synchronized void setBackupDatabaseAfterInit(boolean backupDatabaseAfterInit) {
         myBackupDatabaseAfterInit = backupDatabaseAfterInit;
     }
 
-    public boolean isHeadless() {
+    public synchronized boolean isHeadless() {
         return myHeadless;
     }
 
-    public void setHeadless(boolean headless) {
+    public synchronized void setHeadless(boolean headless) {
         myHeadless = headless;
     }
 
-    public File getVlcExecutable() {
+    public synchronized File getVlcExecutable() {
         return myVlcExecutable;
     }
 
-    public void setVlcExecutable(File vlcExecutable) {
+    public synchronized void setVlcExecutable(File vlcExecutable) {
         myVlcExecutable = vlcExecutable;
     }
 
-    public VlcVersion getVlcVersion() {
+    public synchronized VlcVersion getVlcVersion() {
         return myVlcVersion;
     }
 
-    public void setVlcVersion(VlcVersion vlcVersion) {
+    public synchronized void setVlcVersion(VlcVersion vlcVersion) {
         myVlcVersion = vlcVersion;
     }
 
-    public File getGmExecutable() {
+    public synchronized File getGmExecutable() {
         return myGmExecutable;
     }
 
-    public void setGmExecutable(File gmExecutable) {
+    public synchronized void setGmExecutable(File gmExecutable) {
         myGmExecutable = gmExecutable;
     }
 
-    public boolean isGmEnabled() {
+    public synchronized boolean isGmEnabled() {
         return myGmEnabled;
     }
 
-    public void setGmEnabled(boolean gmEnabled) {
+    public synchronized void setGmEnabled(boolean gmEnabled) {
         myGmEnabled = gmEnabled;
     }
 
-    public boolean isVlcEnabled() {
+    public synchronized boolean isVlcEnabled() {
         return myVlcEnabled;
     }
 
-    public void setVlcEnabled(boolean vlcEnabled) {
+    public synchronized void setVlcEnabled(boolean vlcEnabled) {
         myVlcEnabled = vlcEnabled;
     }
 
-    public int getVlcSocketTimeout() {
+    public synchronized int getVlcSocketTimeout() {
         return myVlcSocketTimeout;
     }
 
-    public void setVlcSocketTimeout(int vlcSocketTimeout) {
+    public synchronized void setVlcSocketTimeout(int vlcSocketTimeout) {
         myVlcSocketTimeout = vlcSocketTimeout;
     }
 
-    public int getVlcRaopVolume() {
+    public synchronized int getVlcRaopVolume() {
         return myVlcRaopVolume;
     }
 
-    public void setVlcRaopVolume(int vlcRaopVolume) {
+    public synchronized void setVlcRaopVolume(int vlcRaopVolume) {
         myVlcRaopVolume = vlcRaopVolume;
     }
 
-    public String getRssDescription() {
+    public synchronized String getRssDescription() {
         return myRssDescription;
     }
 
-    public void setRssDescription(String rssDescription) {
+    public synchronized void setRssDescription(String rssDescription) {
         myRssDescription = rssDescription;
     }
 
-    public long getImageExpirationMillis() {
+    public synchronized long getImageExpirationMillis() {
         return myImageExpirationMillis;
     }
 
-    public void setImageExpirationMillis(long imageExpirationMillis) {
+    public synchronized void setImageExpirationMillis(long imageExpirationMillis) {
         myImageExpirationMillis = imageExpirationMillis;
     }
 
-    public long getRestApiJsExpirationMillis() {
+    public synchronized long getRestApiJsExpirationMillis() {
         return myRestApiJsExpirationMillis;
     }
 
-    public void setRestApiJsExpirationMillis(long restApiJsExpirationMillis) {
+    public synchronized void setRestApiJsExpirationMillis(long restApiJsExpirationMillis) {
         myRestApiJsExpirationMillis = restApiJsExpirationMillis;
     }
 
-    public int getJpegQuality() {
+    public synchronized int getJpegQuality() {
         return myJpegQuality;
     }
 
-    public void setJpegQuality(int jpegQuality) {
+    public synchronized void setJpegQuality(int jpegQuality) {
         myJpegQuality = jpegQuality;
     }
 
-    public int getOnDemandThumbnailGenerationThreads() {
+    public synchronized int getOnDemandThumbnailGenerationThreads() {
         return myOnDemandThumbnailGenerationThreads;
     }
 
-    public void setOnDemandThumbnailGenerationThreads(int onDemandThumbnailGenerationThreads) {
+    public synchronized void setOnDemandThumbnailGenerationThreads(int onDemandThumbnailGenerationThreads) {
         myOnDemandThumbnailGenerationThreads = onDemandThumbnailGenerationThreads;
         MyTunesRss.EXECUTOR_SERVICE.setOnDemandThumbnailGeneratorThreads(onDemandThumbnailGenerationThreads);
     }
 
-    public int getOnDemandThumbnailGenerationTimeoutSeconds() {
+    public synchronized int getOnDemandThumbnailGenerationTimeoutSeconds() {
         return myOnDemandThumbnailGenerationTimeoutSeconds;
     }
 
-    public void setOnDemandThumbnailGenerationTimeoutSeconds(int onDemandThumbnailGenerationTimeoutSeconds) {
+    public synchronized void setOnDemandThumbnailGenerationTimeoutSeconds(int onDemandThumbnailGenerationTimeoutSeconds) {
         myOnDemandThumbnailGenerationTimeoutSeconds = onDemandThumbnailGenerationTimeoutSeconds;
     }
 
-    public String getAccessLogTz() {
+    public synchronized String getAccessLogTz() {
         return myAccessLogTz;
     }
 
-    public void setAccessLogTz(String accessLogTz) {
+    public synchronized void setAccessLogTz(String accessLogTz) {
         myAccessLogTz = accessLogTz;
     }
 
-    public boolean isAdminAccessLogExtended() {
+    public synchronized boolean isAdminAccessLogExtended() {
         return myAdminAccessLogExtended;
     }
 
-    public void setAdminAccessLogExtended(boolean adminAccessLogExtended) {
+    public synchronized void setAdminAccessLogExtended(boolean adminAccessLogExtended) {
         myAdminAccessLogExtended = adminAccessLogExtended;
     }
 
-    public boolean isUserAccessLogExtended() {
+    public synchronized boolean isUserAccessLogExtended() {
         return myUserAccessLogExtended;
     }
 
-    public void setUserAccessLogExtended(boolean userAccessLogExtended) {
+    public synchronized void setUserAccessLogExtended(boolean userAccessLogExtended) {
         myUserAccessLogExtended = userAccessLogExtended;
     }
 
-    public int getAdminAccessLogRetainDays() {
+    public synchronized int getAdminAccessLogRetainDays() {
         return myAdminAccessLogRetainDays;
     }
 
-    public void setAdminAccessLogRetainDays(int adminAccessLogRetainDays) {
+    public synchronized void setAdminAccessLogRetainDays(int adminAccessLogRetainDays) {
         myAdminAccessLogRetainDays = adminAccessLogRetainDays;
     }
 
-    public int getUserAccessLogRetainDays() {
+    public synchronized int getUserAccessLogRetainDays() {
         return myUserAccessLogRetainDays;
     }
 
-    public void setUserAccessLogRetainDays(int userAccessLogRetainDays) {
+    public synchronized void setUserAccessLogRetainDays(int userAccessLogRetainDays) {
         myUserAccessLogRetainDays = userAccessLogRetainDays;
     }
 
@@ -1073,7 +1074,7 @@ public class MyTunesRssConfig {
         return null;
     }
 
-    public long getConfigCreationTime() {
+    public synchronized long getConfigCreationTime() {
         try {
             Cipher cipher = Cipher.getInstance(CHECKSUM_KEY.getAlgorithm());
             cipher.init(Cipher.DECRYPT_MODE, CHECKSUM_KEY);
@@ -1085,7 +1086,7 @@ public class MyTunesRssConfig {
         return 1;
     }
 
-    public void load() {
+    public synchronized void load() {
         try {
             File file = getSettingsFile();
             LOGGER.info("Loading configuration from \"" + file.getAbsolutePath() + "\".");
@@ -1120,7 +1121,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    public void loadFromContext(JXPathContext settings) {
+    public synchronized void loadFromContext(JXPathContext settings) {
         try {
             setVersion(MyTunesRss.VERSION);
             load(settings);
@@ -1281,7 +1282,7 @@ public class MyTunesRssConfig {
     /**
      * Mark all groups users as groups
      */
-    private synchronized void markGroupUsers() {
+    private void markGroupUsers() {
         // mark them
         for (User userToCheck : myUsers) {
             for (User user : myUsers) {
@@ -1467,7 +1468,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    public void setDefaultDatabaseSettings() throws IOException {
+    public synchronized void setDefaultDatabaseSettings() throws IOException {
         if (getDatabaseType() == DatabaseType.h2) {
             setDatabaseDriver("org.h2.Driver");
             setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS");
@@ -1859,113 +1860,31 @@ public class MyTunesRssConfig {
         return fallback;
     }
 
-    public boolean isDefaultDatabase() {
+    public synchronized boolean isDefaultDatabase() {
         return getDatabaseType() == null || getDatabaseType() == DatabaseType.h2;
     }
 
-    public boolean isRemoteControl() {
-        return MyTunesRss.CONFIG.isVlcEnabled() && isExecutable(getVlcExecutable());
+    public synchronized boolean isRemoteControl() {
+        return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.isExecutable(getVlcExecutable());
     }
 
-    public boolean isMyTunesRssComActive() {
+    public synchronized boolean isMyTunesRssComActive() {
         return StringUtils.isNotEmpty(myMyTunesRssComUser) && myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0;
     }
 
-    public boolean isValidMailConfig() {
+    public synchronized boolean isValidMailConfig() {
         return StringUtils.isNotEmpty(getMailHost()) && StringUtils.isNotEmpty(getMailSender());
     }
 
-    public boolean isShowInitialWizard() {
+    public synchronized boolean isShowInitialWizard() {
         return isInitialWizard() && getUsers().isEmpty() && getDatasources().isEmpty();
     }
 
-    public boolean isValidVlcConfig() {
-        return isVlcEnabled() && MyTunesRssConfig.isExecutable(getVlcExecutable());
+    public synchronized boolean isValidVlcConfig() {
+        return isVlcEnabled() && MyTunesRssUtils.isExecutable(getVlcExecutable());
     }
 
-    public static boolean isExecutable(File executable) {
-        return executable != null && executable.isFile() && executable.canExecute();
-    }
-
-    /*public static boolean isVlc(final File executable, boolean checkOutput) {
-        LOGGER.debug("Checking VLC executable \"" + executable.getAbsolutePath() + "\".");
-        if (executable != null && executable.isFile() && "vlc".equalsIgnoreCase(FilenameUtils.getBaseName(executable.getName()))) {
-            LOGGER.debug("Executable is a file.");
-            if (checkOutput) {
-                LOGGER.debug("Checking output of executable.");
-                try {
-                    ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "--version");
-                    processBuilder.redirectErrorStream(true);
-                    LOGGER.debug("Starting process.");
-                    final Process process = processBuilder.start();
-                    try {
-                        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                        Thread checkThread = new Thread(new Runnable() {
-                            public void run() {
-                                try {
-                                    org.apache.commons.io.IOUtils.copy(process.getInputStream(), baos);
-                                } catch (IOException e) {
-                                    LOGGER.info("Could not copy process stream.", e);
-                                }
-                            }
-                        });
-                        checkThread.start();
-                        try {
-                            checkThread.join(3000);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                        String vlcOutput = org.apache.commons.io.IOUtils.toString(new ByteArrayInputStream(baos.toByteArray()));
-                        LOGGER.debug("VLC output is \"" + vlcOutput + "\".");
-                        return StringUtils.containsIgnoreCase(vlcOutput, "vlc");
-                    } finally {
-                        process.destroy();
-                    }
-                } catch (IOException e) {
-                    LOGGER.info("Could not start process.", e);
-                }
-            } else {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static boolean isGraphicsMagick(final File executable) {
-        if (executable != null && executable.isFile() && executable.canExecute()) {
-            try {
-                ProcessBuilder processBuilder = new ProcessBuilder(executable.getAbsolutePath(), "version");
-                processBuilder.redirectErrorStream(true);
-                final Process process = processBuilder.start();
-                final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                try {
-                    Thread checkThread = new Thread(new Runnable() {
-                        public void run() {
-                            try {
-                                org.apache.commons.io.IOUtils.copy(process.getInputStream(), baos);
-                            } catch (IOException e) {
-                                LOGGER.info("Could not copy process stream.", e);
-                            }
-                        }
-                    });
-                    checkThread.start();
-                    try {
-                        checkThread.join(3000);
-                    } catch (InterruptedException e) {
-                        // ignore
-                    }
-                    return StringUtils.containsIgnoreCase(org.apache.commons.io.IOUtils.toString(new ByteArrayInputStream(baos.toByteArray())), "GraphicsMagick");
-                } finally {
-                    process.destroy();
-                }
-            } catch (IOException e) {
-                LOGGER.info("Could not start process.", e);
-            }
-        }
-        return false;
-    }*/
-
-    public void replaceDatasourceConfig(DatasourceConfig config) {
+    public synchronized void replaceDatasourceConfig(DatasourceConfig config) {
         for (Iterator<DatasourceConfig> iterConfigs = myDatasources.iterator(); iterConfigs.hasNext(); ) {
             if (iterConfigs.next().getId().equals(config.getId())) {
                 iterConfigs.remove();
@@ -1975,7 +1894,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    public List<DatasourceConfig> getUploadableDatasources() {
+    public synchronized List<DatasourceConfig> getUploadableDatasources() {
         List<DatasourceConfig> uploadableDatasources = new ArrayList<DatasourceConfig>();
         for (DatasourceConfig datasource : getDatasources()) {
             if (datasource.isUploadable() && datasource.isUpload()) {
@@ -1985,7 +1904,7 @@ public class MyTunesRssConfig {
         return uploadableDatasources;
     }
 
-    public boolean isUploadableDatasource() {
+    public synchronized boolean isUploadableDatasource() {
         for (DatasourceConfig datasource : getDatasources()) {
             if (datasource.isUploadable() && datasource.isUpload()) {
                 return true;

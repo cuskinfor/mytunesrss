@@ -55,7 +55,7 @@ public class MyTunesRssHttpClient {
                 LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
             }
         }
-        return new Integer(-1); // this is a non-existent id
+        return Integer.valueOf(-1); // this is a non-existent id
     }
 
     private static String getMyTunesRssComPasswordParamValue() {

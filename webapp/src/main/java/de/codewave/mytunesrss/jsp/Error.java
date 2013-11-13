@@ -12,11 +12,11 @@ public abstract class Error {
     private boolean escapeXml = true;
 
     protected Error(Object... parameters) {
-        myParameters = parameters;
+        myParameters = parameters != null ? parameters.clone() : null;
     }
 
     public Object[] getParameters() {
-        return myParameters;
+        return myParameters != null ? myParameters.clone() : null;
     }
 
     public boolean isEscapeXml() {

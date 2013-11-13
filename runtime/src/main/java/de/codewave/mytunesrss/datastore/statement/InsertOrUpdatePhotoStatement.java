@@ -48,7 +48,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
         myStatement = statement;
     }
 
-    public synchronized void execute(Connection connection) throws SQLException {
+    public void execute(Connection connection) throws SQLException {
         try {
             if (myStatement == null) {
                 myStatement = MyTunesRssUtils.createStatement(connection, getStatementName());

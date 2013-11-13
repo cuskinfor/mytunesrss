@@ -6,8 +6,7 @@
 package de.codewave.vaadin.validation;
 
 import com.vaadin.data.validator.AbstractStringValidator;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
-import org.apache.commons.lang.SystemUtils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import java.io.File;
 
@@ -22,7 +21,7 @@ public class GraphicsMagickExecutableFileValidator extends AbstractStringValidat
         if (value != null) {
             File file = null;
             file = new File(value);
-            return MyTunesRssConfig.isExecutable(file);
+            return MyTunesRssUtils.isExecutable(file);
         }
         return true;
     }

@@ -95,6 +95,23 @@ public class TvShowRepresentation implements RestRepresentation, Comparable<TvSh
     }
 
     public int compareTo(TvShowRepresentation o) {
-        return getName().compareTo(o.getName());
+        return myName.compareTo(o.myName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TvShowRepresentation)) return false;
+
+        TvShowRepresentation that = (TvShowRepresentation) o;
+
+        if (!myName.equals(that.myName)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return myName.hashCode();
     }
 }

@@ -134,7 +134,6 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
 
     public void buttonClick(Button.ClickEvent event) {
         if (event.getButton() == myDeleteButton) {
-            final ComponentContainer parent = (ComponentContainer)getParent();
             final Button yes = new Button(myApplication.getBundleString("button.yes"));
             Button no = new Button(myApplication.getBundleString("button.no"));
             new OptionWindow(30, Sizeable.UNITS_EM, null, myApplication.getBundleString("transcoderPanel.deleteConfirmation.caption"), myApplication.getBundleString("transcoderPanel.deleteConfirmation.message", myNameTextField.getStringValue("")), yes, no) {

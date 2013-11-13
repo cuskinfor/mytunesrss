@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.command.StatusCodeSender;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -333,7 +332,7 @@ public class MyTunesRssWebUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Checking for HTTP Live Streaming.");
         }
-        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssConfig.isExecutable(MyTunesRss.CONFIG.getVlcExecutable()) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
+        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.isExecutable(MyTunesRss.CONFIG.getVlcExecutable()) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("HTTP Live Streaming available, user agent is iPhone and media type is video.");
             }

@@ -82,7 +82,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                             if (rs.next()) {
                                 return rs.getInt("COUNT");
                             }
-                            return new Long(0);
+                            return Long.valueOf(0);
                         }
                     }));
                 } else {
@@ -95,7 +95,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                             if (rs.next()) {
                                 return rs.getInt("COUNT");
                             }
-                            return new Long(0);
+                            return Long.valueOf(0);
                         }
                     }));
                 }

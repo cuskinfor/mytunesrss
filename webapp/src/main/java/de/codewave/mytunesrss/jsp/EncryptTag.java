@@ -14,11 +14,6 @@ import java.io.IOException;
  * de.codewave.mytunesrss.jsp.FlipFlopTag
  */
 public class EncryptTag extends BodyTagSupport {
-    private SecretKey myKey;
-
-    public void setKey(SecretKey key) {
-        myKey = key;
-    }
 
     @Override
     public int doStartTag() {

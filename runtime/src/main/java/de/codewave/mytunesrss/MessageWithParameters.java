@@ -20,6 +20,6 @@ public class MessageWithParameters {
     }
 
     public Object[] getParameters() {
-        return myParameters;
+        return myParameters != null ? myParameters.clone() : null;
     }
 }

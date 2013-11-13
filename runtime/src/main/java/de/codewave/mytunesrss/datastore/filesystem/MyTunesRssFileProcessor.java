@@ -519,25 +519,25 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private String getFallbackTitleName(File file) {
-        return myDatasourceConfig.getTitleFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getTitleFallback())) : null;
+        return myDatasourceConfig.getTitleFallback() != null ? getFallbackName(file, myDatasourceConfig.getTitleFallback()) : null;
     }
 
     private String getFallbackAlbumName(File file) {
-        return myDatasourceConfig.getAlbumFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getAlbumFallback())) : null;
+        return myDatasourceConfig.getAlbumFallback() != null ? getFallbackName(file, myDatasourceConfig.getAlbumFallback()) : null;
     }
 
     private String getFallbackArtistName(File file) {
-        return myDatasourceConfig.getArtistFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getArtistFallback())) : null;
+        return myDatasourceConfig.getArtistFallback() != null ? getFallbackName(file, myDatasourceConfig.getArtistFallback()) : null;
     }
 
 
     private String getFallbackSeries(File file) {
-        return myDatasourceConfig.getSeriesFallback() != null ? getFallbackName(file, new String(myDatasourceConfig.getSeriesFallback())) : null;
+        return myDatasourceConfig.getSeriesFallback() != null ? getFallbackName(file, myDatasourceConfig.getSeriesFallback()) : null;
     }
 
     private int getFallbackSeason(File file) {
         if (myDatasourceConfig.getSeasonFallback() != null) {
-            String fallback = StringUtils.trimToNull(getFallbackName(file, new String(myDatasourceConfig.getSeasonFallback())));
+            String fallback = StringUtils.trimToNull(getFallbackName(file, myDatasourceConfig.getSeasonFallback()));
             return StringUtils.isNumeric(fallback) ? Integer.parseInt(fallback) : 0;
         } else {
             return 0;
@@ -546,7 +546,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private int getFallbackEpisode(File file) {
         if (myDatasourceConfig.getEpisodeFallback() != null) {
-            String fallback = StringUtils.trimToNull(getFallbackName(file, new String(myDatasourceConfig.getEpisodeFallback())));
+            String fallback = StringUtils.trimToNull(getFallbackName(file, myDatasourceConfig.getEpisodeFallback()));
             return StringUtils.isNumeric(fallback) ? Integer.parseInt(fallback) : 0;
         } else {
             return 0;
@@ -554,12 +554,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     private String getPhotoAlbum(File file) {
-        return myDatasourceConfig.getPhotoAlbumPattern() != null ? getFallbackName(file, new String(myDatasourceConfig.getPhotoAlbumPattern())) : null;
+        return myDatasourceConfig.getPhotoAlbumPattern() != null ? getFallbackName(file, myDatasourceConfig.getPhotoAlbumPattern()) : null;
     }
 
     String getFallbackName(File file, String pattern) {
         try {
-            String name = new String(pattern);
+            String name = pattern;
             String[] dirTokens = MyTunesRssUtils.substringsBetween(pattern, "[[[dir:", "]]]");
             if (dirTokens != null) {
                 for (String token : dirTokens) {

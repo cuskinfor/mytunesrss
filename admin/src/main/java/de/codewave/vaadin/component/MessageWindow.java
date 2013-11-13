@@ -10,8 +10,6 @@ import com.vaadin.ui.*;
 
 public abstract class MessageWindow extends Window implements Button.ClickListener {
 
-    private Button[] myButtons;
-
     public void show(Window parent) {
         parent.addWindow(this);
     }

@@ -64,13 +64,13 @@ public class MyTunesRssRegistration {
                 }
             }
         } finally {
-            if (inputStream != null) {
-                try {
+            try {
+                if (inputStream != null) {
                     inputStream.close();
-                } finally {
-                    if (outputStream != null) {
-                        outputStream.close();
-                    }
+                }
+            } finally {
+                if (outputStream != null) {
+                    outputStream.close();
                 }
             }
         }

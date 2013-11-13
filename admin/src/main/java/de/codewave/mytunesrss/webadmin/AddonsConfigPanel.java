@@ -180,25 +180,27 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
         });
         for (LanguageDefinition languageDefinition : languages) {
-            Button uploadUpdateButton = null;
-            if (languageDefinition != null && (languageDefinition.getId() == null || MyTunesRssHttpClient.getMyTunesRssComAccountId().equals(languageDefinition.getAccountId()))) {
-                uploadUpdateButton = createTableRowButton("button.upload", this, languageDefinition, "UploadLanguage");
-                uploadUpdateButton.setEnabled(MyTunesRss.CONFIG.isMyTunesRssComActive());
-            } else {
-                uploadUpdateButton = createTableRowButton("button.update", this, languageDefinition.getId(), "UpdateLanguage");
+            if (languageDefinition != null) {
+                Button uploadUpdateButton = null;
+                if (languageDefinition.getId() == null || MyTunesRssHttpClient.getMyTunesRssComAccountId().equals(languageDefinition.getAccountId())) {
+                    uploadUpdateButton = createTableRowButton("button.upload", this, languageDefinition, "UploadLanguage");
+                    uploadUpdateButton.setEnabled(MyTunesRss.CONFIG.isMyTunesRssComActive());
+                } else {
+                    uploadUpdateButton = createTableRowButton("button.update", this, languageDefinition.getId(), "UpdateLanguage");
+                }
+                myLanguagesTable.addItem(
+                        new Object[] {
+                            languageDefinition.getLocale().getDisplayName(getApplication().getLocale()),
+                            languageDefinition.getVersion(),
+                            languageDefinition.getNick(),
+                            uploadUpdateButton,
+                            createTableRowButton("button.edit", this, languageDefinition.getCode() + ";" + (languageDefinition.getId() != null ? languageDefinition.getId().toString() : ""), "EditLanguage"),
+                            createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
+                            createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
+                        },
+                        languageDefinition.getCode()
+                );
             }
-            myLanguagesTable.addItem(
-                    new Object[] {
-                        languageDefinition.getLocale().getDisplayName(getApplication().getLocale()),
-                        languageDefinition.getVersion(),
-                        languageDefinition.getNick(),
-                        uploadUpdateButton,
-                        createTableRowButton("button.edit", this, languageDefinition.getCode() + ";" + (languageDefinition.getId() != null ? languageDefinition.getId().toString() : ""), "EditLanguage"),
-                        createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
-                        createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
-                    },
-                    languageDefinition.getCode()
-            );
         }
     }
 

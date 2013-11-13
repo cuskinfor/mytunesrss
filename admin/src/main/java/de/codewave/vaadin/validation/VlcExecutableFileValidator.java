@@ -6,14 +6,10 @@
 package de.codewave.vaadin.validation;
 
 import com.vaadin.data.validator.AbstractStringValidator;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.lang.SystemUtils;
 
 import java.io.File;
-import java.util.regex.Pattern;
 
 public class VlcExecutableFileValidator extends AbstractStringValidator {
 
@@ -29,7 +25,7 @@ public class VlcExecutableFileValidator extends AbstractStringValidator {
             if (file.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(file.getName())) {
                 file = new File(file, "Contents/MacOS/VLC");
             }
-            return MyTunesRssConfig.isExecutable(file);
+            return MyTunesRssUtils.isExecutable(file);
         }
         return true;
     }

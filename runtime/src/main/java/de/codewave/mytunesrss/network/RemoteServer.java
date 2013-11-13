@@ -38,6 +38,9 @@ public class RemoteServer {
 
     @Override
     public boolean equals(Object other) {
+        if (other == null || !RemoteServer.class.isAssignableFrom(other.getClass())) {
+            return false;
+        }
         return (myAddress + ":" + myPort).equals(((RemoteServer) other).myAddress + ":" + ((RemoteServer) other).myPort);
     }
 }

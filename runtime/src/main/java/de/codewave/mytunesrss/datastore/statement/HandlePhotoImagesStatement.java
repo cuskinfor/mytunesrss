@@ -48,8 +48,8 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
     public void execute(Connection connection) throws SQLException {
         try {
             Image image = getImage();
-            String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
             if (image != null && image.getData() != null && image.getData().length > 0) {
+                String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
                 List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
@@ -61,14 +61,16 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                     Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myFile, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + myFile.getAbsolutePath());
                     new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
                 }
+                myImageHash = imageHash;
             }
-            myImageHash = imageHash;
         } catch (Exception e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", e);
             }
         } finally {
-            new UpdateImageForPhotoStatement(myPhotoId, myImageHash).execute(connection);
+            if (myImageHash != null) {
+                new UpdateImageForPhotoStatement(myPhotoId, myImageHash).execute(connection);
+            }
         }
     }
 

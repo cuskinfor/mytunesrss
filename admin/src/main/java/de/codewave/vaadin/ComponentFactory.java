@@ -8,17 +8,32 @@ package de.codewave.vaadin;
 import com.vaadin.data.Validator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
+import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
 
+import java.io.IOException;
+import java.io.Serializable;
 import java.text.MessageFormat;
 import java.util.Collection;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class ComponentFactory {
+public class ComponentFactory implements Serializable {
 
-    private ResourceBundle myBundle;
+    private static final long serialVersionUID = 1;
+    
+    private String myBundleName;
+    private Locale myLocale;
+    private transient ResourceBundle myBundle;
 
-    public ComponentFactory(ResourceBundle bundle) {
-        myBundle = bundle;
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        myBundle = MyTunesRssWebAdmin.RESOURCE_BUNDLE_MANAGER.getBundle(myBundleName, myLocale);
+    }
+    
+    public ComponentFactory(String bundleName, Locale locale) {
+        myBundleName = bundleName;
+        myLocale = locale;
+        myBundle = MyTunesRssWebAdmin.RESOURCE_BUNDLE_MANAGER.getBundle(bundleName, locale);
     }
 
     private String getBundleString(String key, Object... parameters) {
@@ -130,4 +145,6 @@ public class ComponentFactory {
         }
         return panel;
     }
+    
+    
 }

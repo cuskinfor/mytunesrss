@@ -111,4 +111,17 @@ public class SmartTextField extends TextField implements Comparable<SmartTextFie
         }
         return getStringValue("").compareTo(o.getStringValue(""));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof SmartTextField)) return false;
+
+        return getStringValue("").equals(((SmartTextField) o).getStringValue(""));
+    }
+
+    @Override
+    public int hashCode() {
+        return getStringValue("").hashCode();
+    }
 }

@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
-import de.codewave.utils.io.StreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
@@ -29,7 +28,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.quartz.SchedulerException;
@@ -442,9 +440,7 @@ public class MyTunesRssUtils {
     public static Playlist[] getPlaylistPath(Playlist playlist, List<Playlist> playlists) {
         List<Playlist> path = new ArrayList<Playlist>();
         for (; playlist != null; playlist = findPlaylistWithId(playlists, playlist.getContainerId())) {
-            if (playlist != null) {
-                path.add(0, playlist);
-            }
+            path.add(0, playlist);
         }
         return path.toArray(new Playlist[path.size()]);
     }
@@ -476,9 +472,11 @@ public class MyTunesRssUtils {
 
     public static int getRootPlaylistCount(List<Playlist> playlists) {
         int count = 0;
-        for (Playlist playlist : playlists) {
-            if (playlist.getContainerId() == null) {
-                count++;
+        if (playlists != null) {
+            for (Playlist playlist : playlists) {
+                if (playlist.getContainerId() == null) {
+                    count++;
+                }
             }
         }
         return count;
@@ -871,7 +869,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isExecutable(file)) {
+            if (isExecutable(file)) {
                 LOGGER.info("Found VLC executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -903,7 +901,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isExecutable(file)) {
+            if (isExecutable(file)) {
                 LOGGER.info("Found GraphicsMagick executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -935,8 +933,10 @@ public class MyTunesRssUtils {
 
     public static Collection<String> toDatasourceIds(Collection<DatasourceConfig> configs) {
         Set<String> ids = new HashSet<String>();
-        for (DatasourceConfig datasourceConfig : configs) {
-            ids.add(datasourceConfig.getId());
+        if (configs != null) {
+            for (DatasourceConfig datasourceConfig : configs) {
+                ids.add(datasourceConfig.getId());
+            }
         }
         return ids;
     }
@@ -1036,5 +1036,9 @@ public class MyTunesRssUtils {
         requestLog.setLogTimeZone(tz);
         requestLogHandler.setRequestLog(requestLog);
         return requestLogHandler;
+    }
+
+    public static boolean isExecutable(File executable) {
+        return executable != null && executable.isFile() && executable.canExecute();
     }
 }

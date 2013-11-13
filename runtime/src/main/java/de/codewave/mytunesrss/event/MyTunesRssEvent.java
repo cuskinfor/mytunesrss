@@ -29,8 +29,8 @@ public class MyTunesRssEvent {
     public MyTunesRssEvent(EventType type, String messageKey, Object[] messageParams, Object[] eventParams) {
         myType = type;
         myMessageKey = messageKey;
-        myMessageParams = messageParams;
-        myEventParams = eventParams;
+        myMessageParams = messageParams != null ? messageParams.clone() : null;
+        myEventParams = eventParams != null ? myEventParams.clone() : null;
     }
 
     public EventType getType() {
@@ -46,18 +46,18 @@ public class MyTunesRssEvent {
     }
 
     public Object[] getMessageParams() {
-        return myMessageParams;
+        return myMessageParams != null ? myMessageParams.clone() : null;
     }
 
     public void setMessageParams(Object... messageParams) {
-        myMessageParams = messageParams;
+        myMessageParams = messageParams != null ? messageParams.clone() : null;
     }
 
     public Object[] getEventParams() {
-        return myEventParams;
+        return myEventParams != null ? myEventParams.clone() : null;
     }
 
     public void setEventParams(Object[] eventParams) {
-        myEventParams = eventParams;
+        myEventParams = eventParams != null ? eventParams.clone() : null;
     }
 }

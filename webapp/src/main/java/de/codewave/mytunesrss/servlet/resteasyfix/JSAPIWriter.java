@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.nio.charset.Charset;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -84,8 +85,7 @@ public class JSAPIWriter
 	private void copyResource(String name, PrintWriter writer)
 	throws IOException
 	{
-		Reader reader = new InputStreamReader(getClass()
-				.getResourceAsStream(name));
+		Reader reader = new InputStreamReader(getClass().getResourceAsStream(name), Charset.forName("UTF-8"));
 		char[] array = new char[1024];
 		int read;
 		while ((read = reader.read(array)) >= 0)
@@ -188,7 +188,7 @@ public class JSAPIWriter
 			String type)
 	{
 		String paramName = metaData.getParamName();
-		writer.println(String.format(" if(Object.prototype.hasOwnProperty.call(params, '%s'))\n  request.add%s('%s', params.%s);", paramName, type, paramName, paramName));
+		writer.println(String.format(" if(Object.prototype.hasOwnProperty.call(params, '%s'))%n  request.add%s('%s', params.%s);", paramName, type, paramName, paramName));
 	}
 
 

@@ -31,6 +31,8 @@ public class MyTunesRssWebAdmin extends Application {
     public static final ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRssWebAdmin.class.getClassLoader());
 
     public static final int ADMIN_REFRESHER_INTERVAL_MILLIS = 5000;
+    
+    private static final String BUNDLE_NAME = "de.codewave.mytunesrss.webadmin.MyTunesRssAdmin";
 
     public static String getBundleString(ResourceBundle bundle, String key, Object... parameters) {
         if (parameters == null || parameters.length == 0) {
@@ -39,16 +41,13 @@ public class MyTunesRssWebAdmin extends Application {
         return MessageFormat.format(bundle.getString(key), parameters);
     }
 
-    private ResourceBundle myBundle;
-
     private ComponentFactory myComponentFactory;
 
     private ValidatorFactory myValidatorFactory;
 
     public void init() {
-        myBundle = RESOURCE_BUNDLE_MANAGER.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin", getLocale());
-        myComponentFactory = new ComponentFactory(myBundle);
-        myValidatorFactory = new ValidatorFactory(myBundle);
+        myComponentFactory = new ComponentFactory(BUNDLE_NAME, getLocale());
+        myValidatorFactory = new ValidatorFactory(BUNDLE_NAME, getLocale());
         setTheme("mytunesrss");
         setMainWindow(new MainWindow(getBundleString("mainWindowTitle", MyTunesRss.VERSION), getNewWindowPanel()));
     }
@@ -66,6 +65,7 @@ public class MyTunesRssWebAdmin extends Application {
         return panel;
     }
 
+
     @Override
     public Window getWindow(String name) {
         Window window = super.getWindow(name);
@@ -78,11 +78,11 @@ public class MyTunesRssWebAdmin extends Application {
     }
 
     public ResourceBundle getBundle() {
-        return myBundle;
+        return MyTunesRssWebAdmin.RESOURCE_BUNDLE_MANAGER.getBundle(BUNDLE_NAME, getLocale());
     }
 
     public String getBundleString(String key, Object... parameters) {
-        return getBundleString(myBundle, key, parameters);
+        return getBundleString(getBundle(), key, parameters);
     }
 
     public ComponentFactory getComponentFactory() {

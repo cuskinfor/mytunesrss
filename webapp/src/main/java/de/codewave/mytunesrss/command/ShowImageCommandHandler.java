@@ -32,16 +32,6 @@ import java.util.concurrent.TimeoutException;
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
 
-    private static class SimplePhoto {
-        private String myImageHash;
-        private File myFile;
-
-        private SimplePhoto(String imageHash, File file) {
-            myImageHash = imageHash;
-            myFile = file;
-        }
-    }
-
     private Map<Integer, Image> myDefaultImages = new HashMap<Integer, Image>();
 
     private Image getDefaultImage(int size) {
@@ -131,22 +121,22 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private DatabaseImage getImageForPhotoId(final String photoId, int size) throws SQLException {
         LOG.debug("Trying to generate thumbnail for photo \"" + photoId + "\".");
         DataStoreSession session = getTransaction();
-        SimplePhoto photo = session.executeQuery(new DataStoreQuery<SimplePhoto>() {
+        File photoFile = session.executeQuery(new DataStoreQuery<File>() {
             @Override
-            public SimplePhoto execute(Connection connection) throws SQLException {
+            public File execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoImageHashAndFile");
                 statement.setString("id", photoId);
-                QueryResult<SimplePhoto> queryResult = execute(statement, new ResultBuilder<SimplePhoto>() {
-                    public SimplePhoto create(ResultSet resultSet) throws SQLException {
-                        return new SimplePhoto(resultSet.getString("image_hash"), new File(resultSet.getString("file")));
+                QueryResult<File> queryResult = execute(statement, new ResultBuilder<File>() {
+                    public File create(ResultSet resultSet) throws SQLException {
+                        return new File(resultSet.getString("file"));
                     }
                 });
                 return queryResult.getResultSize() == 1 ? queryResult.getResult(0) : null;
             }
         });
-        if (photo != null && photo.myFile != null && photo.myFile.exists()) {
-            LOG.debug("Photo file is \"" + photo.myFile.getAbsolutePath() + "\".");
-            Future<String> result = MyTunesRss.EXECUTOR_SERVICE.generatePhotoThumbnail(photoId, photo.myFile);
+        if (photoFile != null && photoFile.exists()) {
+            LOG.debug("Photo file is \"" + photoFile.getAbsolutePath() + "\".");
+            Future<String> result = MyTunesRss.EXECUTOR_SERVICE.generatePhotoThumbnail(photoId, photoFile);
             try {
                 String imageHash = result.get(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
                 LOG.debug("Photo image hash is \"" + imageHash + "\".");

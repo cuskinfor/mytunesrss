@@ -36,7 +36,7 @@ public class TranscoderStream extends InputStream {
     }
 
     private void init() throws IOException {
-        LOG.debug("Creating transcoder stream for transcoder \"" + myTranscoderConfig.getName() + "\", file \"" + myInputFile.getAbsolutePath() + "\", and cache file \"" + myCacheFile.getAbsolutePath() + "\".");
+        LOG.debug("Creating transcoder stream for transcoder \"" + myTranscoderConfig.getName() + "\", file \"" + myInputFile.getAbsolutePath() + "\", and cache file \"" + (myCacheFile != null ? myCacheFile.getAbsolutePath() : "---none---") + "\".");
         if (myCacheFile != null && myCacheFile.isFile()) {
             LOG.debug("Found transcoded file \"" + myCacheFile.getAbsolutePath() + "\" in cache.");
             myCacheFile.setLastModified(System.currentTimeMillis()); // touch file to prevent expiration

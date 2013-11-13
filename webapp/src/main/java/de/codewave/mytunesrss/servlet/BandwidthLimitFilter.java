@@ -15,7 +15,7 @@ public class BandwidthLimitFilter implements Filter {
     private static final ThreadLocal<Integer> LIMIT = new ThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
-            return new Integer(0); // no limit
+            return Integer.valueOf(0); // no limit
         }
     };
 
@@ -25,7 +25,7 @@ public class BandwidthLimitFilter implements Filter {
      * @param limit Limit in bytes per second.
      */
     public static void setLimit(int limit) {
-        LIMIT.set(new Integer(limit));
+        LIMIT.set(Integer.valueOf(limit));
     }
 
     public void init(FilterConfig filterConfig) throws ServletException {

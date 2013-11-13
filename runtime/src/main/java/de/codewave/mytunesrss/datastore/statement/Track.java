@@ -339,6 +339,9 @@ public class Track {
 
     @Override
     public boolean equals(Object other) {
+        if (other == null || !Track.class.isAssignableFrom(other.getClass())) {
+            return false;
+        }
         if (getId() == null) {
             return ((Track) other).getId() == null;
         }

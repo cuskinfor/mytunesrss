@@ -244,6 +244,36 @@ public class TrackUtils {
         public void setSectionPlaylistId(String sectionPlaylistId) {
             mySectionPlaylistId = sectionPlaylistId;
         }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof EnhancedTrack)) return false;
+            if (!super.equals(o)) return false;
+
+            EnhancedTrack that = (EnhancedTrack) o;
+
+            if (myContinuation != that.myContinuation) return false;
+            if (myNewSection != that.myNewSection) return false;
+            if (mySimple != that.mySimple) return false;
+            if (mySectionIds != null ? !mySectionIds.equals(that.mySectionIds) : that.mySectionIds != null)
+                return false;
+            if (mySectionPlaylistId != null ? !mySectionPlaylistId.equals(that.mySectionPlaylistId) : that.mySectionPlaylistId != null)
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + (myNewSection ? 1 : 0);
+            result = 31 * result + (myContinuation ? 1 : 0);
+            result = 31 * result + (mySimple ? 1 : 0);
+            result = 31 * result + (mySectionIds != null ? mySectionIds.hashCode() : 0);
+            result = 31 * result + (mySectionPlaylistId != null ? mySectionPlaylistId.hashCode() : 0);
+            return result;
+        }
     }
 
     public static class TvShowEpisode extends Track {
@@ -313,6 +343,42 @@ public class TrackUtils {
 
         public void setSeasonSectionPlaylistId(String seasonSectionPlaylistId) {
             mySeasonSectionPlaylistId = seasonSectionPlaylistId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (!(o instanceof TvShowEpisode)) return false;
+            if (!super.equals(o)) return false;
+
+            TvShowEpisode that = (TvShowEpisode) o;
+
+            if (myContinuation != that.myContinuation) return false;
+            if (myNewSeason != that.myNewSeason) return false;
+            if (myNewSeries != that.myNewSeries) return false;
+            if (mySeasonSectionIds != null ? !mySeasonSectionIds.equals(that.mySeasonSectionIds) : that.mySeasonSectionIds != null)
+                return false;
+            if (mySeasonSectionPlaylistId != null ? !mySeasonSectionPlaylistId.equals(that.mySeasonSectionPlaylistId) : that.mySeasonSectionPlaylistId != null)
+                return false;
+            if (mySeriesSectionIds != null ? !mySeriesSectionIds.equals(that.mySeriesSectionIds) : that.mySeriesSectionIds != null)
+                return false;
+            if (mySeriesSectionPlaylistId != null ? !mySeriesSectionPlaylistId.equals(that.mySeriesSectionPlaylistId) : that.mySeriesSectionPlaylistId != null)
+                return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = super.hashCode();
+            result = 31 * result + (myNewSeries ? 1 : 0);
+            result = 31 * result + (myNewSeason ? 1 : 0);
+            result = 31 * result + (myContinuation ? 1 : 0);
+            result = 31 * result + (mySeriesSectionIds != null ? mySeriesSectionIds.hashCode() : 0);
+            result = 31 * result + (mySeriesSectionPlaylistId != null ? mySeriesSectionPlaylistId.hashCode() : 0);
+            result = 31 * result + (mySeasonSectionIds != null ? mySeasonSectionIds.hashCode() : 0);
+            result = 31 * result + (mySeasonSectionPlaylistId != null ? mySeasonSectionPlaylistId.hashCode() : 0);
+            return result;
         }
     }
 }

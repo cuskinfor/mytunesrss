@@ -39,7 +39,12 @@ public class MyTunesFunctions {
 
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
-    private static final SimpleDateFormat PUBLISH_DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
+    private static final ThreadLocal<SimpleDateFormat> PUBLISH_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
+        @Override
+        protected SimpleDateFormat initialValue() {
+            return new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
+        }
+    };
 
     public static boolean unknown(String trackAlbumOrArtist) {
         return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
@@ -333,7 +338,7 @@ public class MyTunesFunctions {
     }
 
     public static String rssDate(long timestamp) {
-        return PUBLISH_DATE_FORMAT.format(new Date(timestamp));
+        return PUBLISH_DATE_FORMAT.get().format(new Date(timestamp));
     }
 
     public static boolean isExternalSites(String type) {

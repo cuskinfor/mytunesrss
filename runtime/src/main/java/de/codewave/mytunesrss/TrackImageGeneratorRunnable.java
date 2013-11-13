@@ -41,7 +41,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
 
     private AtomicBoolean myTerminated = new AtomicBoolean(false);
 
-    public void run() {
+    public synchronized void run() {
         try {
             final Set<String> sourceIds = new HashSet<String>();
             for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
@@ -105,10 +105,8 @@ public class TrackImageGeneratorRunnable implements Runnable {
         } catch (RuntimeException e) {
             LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         } finally {
-            synchronized (myTerminated) {
-                myTerminated.set(true);
-                myTerminated.notifyAll();
-            }
+            myTerminated.set(true);
+            myTerminated.notifyAll();
         }
     }
 
@@ -120,15 +118,13 @@ public class TrackImageGeneratorRunnable implements Runnable {
         });
     }
 
-    public void waitForTermination() {
-        synchronized (myTerminated) {
+    public synchronized void waitForTermination() {
+        try {
             while (!myTerminated.get()) {
-                try {
-                    myTerminated.wait(30000);
-                } catch (InterruptedException e) {
-                    LOGGER.warn("Interrupted while waiting for photo thumbnail generation termination.");
-                }
+                myTerminated.wait();
             }
+        } catch (InterruptedException e) {
+            LOGGER.warn("Interrupted while waiting for photo thumbnail generation termination.");
         }
     }
 }

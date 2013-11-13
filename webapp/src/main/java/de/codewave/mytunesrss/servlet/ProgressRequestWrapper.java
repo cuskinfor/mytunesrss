@@ -17,8 +17,6 @@ import java.io.PrintWriter;
 public class ProgressRequestWrapper extends HttpServletRequestWrapper {
     private int myByteCount;
     private int myPercentage;
-    private HttpServletResponse myHttpServletResponse;
-    PrintWriter myWriter;
 
     public ProgressRequestWrapper(HttpServletRequest httpServletRequest) throws IOException {
         super(httpServletRequest);

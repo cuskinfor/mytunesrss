@@ -70,7 +70,12 @@ public class FlashPlayerServlet extends HttpServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending flash player file \"" + file.getAbsolutePath() + "\" with content-type \"" + contentType + "\" and length \"" + length + "\".");
             }
-            IOUtils.copy(new FileInputStream(file), httpServletResponse.getOutputStream());
+            FileInputStream inStream = new FileInputStream(file);
+            try {
+                IOUtils.copy(inStream, httpServletResponse.getOutputStream());
+            } finally {
+                inStream.close();
+            }
         }
     }
 

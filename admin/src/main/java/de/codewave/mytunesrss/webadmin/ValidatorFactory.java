@@ -8,14 +8,28 @@ package de.codewave.mytunesrss.webadmin;
 import de.codewave.vaadin.validation.EmailValidator;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.Locale;
 import java.util.ResourceBundle;
 
-public class ValidatorFactory {
+public class ValidatorFactory implements Serializable {
 
-    private ResourceBundle myBundle;
+    private static final long serialVersionUID = 1;
+    
+    private String myBundleName;
+    private Locale myLocale;
+    private transient ResourceBundle myBundle;
 
-    public ValidatorFactory(ResourceBundle bundle) {
-        myBundle = bundle;
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        myBundle = MyTunesRssWebAdmin.RESOURCE_BUNDLE_MANAGER.getBundle(myBundleName, myLocale);
+    }
+
+    public ValidatorFactory(String bundleName, Locale locale) {
+        myBundleName = bundleName;
+        myLocale = locale;
+        myBundle = MyTunesRssWebAdmin.RESOURCE_BUNDLE_MANAGER.getBundle(bundleName, locale);
     }
 
     public MinMaxIntegerValidator createPortValidator() {

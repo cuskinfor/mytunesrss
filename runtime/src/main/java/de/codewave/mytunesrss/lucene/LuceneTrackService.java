@@ -352,6 +352,8 @@ public class LuceneTrackService {
                 case tvshow:
                     addToAndQuery(andQuery, "series", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
                     break;
+                default:
+                    // nothing to add to query in other cases
             }
         }
         return andQuery;

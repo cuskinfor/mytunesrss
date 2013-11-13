@@ -88,7 +88,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         myPlaylists.sort();
         myPlaylists.setPageLength(Math.min(MyTunesRssUtils.getRootPlaylistCount(playlists), 20));
         myGenres.sort();
-        myGenres.setPageLength(Math.min(genres.size(), 20));
+        myGenres.setPageLength(genres != null ? Math.min(genres.size(), 20) : 0);
     }
 
     protected void writeToConfig() {

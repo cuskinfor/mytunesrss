@@ -51,6 +51,11 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         public boolean equals(Object o) {
             return o != null && o instanceof TimeUnitWrapper && myTimeUnit.equals(((TimeUnitWrapper) o).getTimeUnit());
         }
+
+        @Override
+        public int hashCode() {
+            return myTimeUnit.hashCode();
+        }
     }
 
     private AddonsConfigPanel myAddonsConfigPanel;

@@ -32,7 +32,7 @@ public class GetStatisticsEventsQuery extends DataStoreQuery<DataStoreQuery.Quer
     public GetStatisticsEventsQuery(long from, long to, StatEventType... types) {
         myFrom = from;
         myTo = to;
-        myTypes = types;
+        myTypes = types != null ? types.clone() : null;
     }
 
     @Override

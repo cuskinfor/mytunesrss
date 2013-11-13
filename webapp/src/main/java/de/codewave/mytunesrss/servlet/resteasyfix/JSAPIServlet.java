@@ -27,9 +27,10 @@ public class JSAPIServlet extends HttpServlet
 	private static final long serialVersionUID = -1985015444704126795L;
 
 	private final static Logger logger = Logger.getLogger(JSAPIServlet.class);
-	private ServiceRegistry service;
+    
+	private transient ServiceRegistry service;
 
-	private JSAPIWriter apiWriter;
+	private transient JSAPIWriter apiWriter;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException

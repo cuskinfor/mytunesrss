@@ -161,7 +161,18 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
 
     @Override
     public Object clone() {
-        return new FlashPlayerConfig(myId, myName, myPlaylistFileType, myWidth, myHeight, myTimeUnit);
+        try {
+            FlashPlayerConfig clone = (FlashPlayerConfig) super.clone();
+            clone.myId = myId;
+            clone.myName = myName;
+            clone.myPlaylistFileType = myPlaylistFileType;
+            clone.myWidth = myWidth;
+            clone.myHeight = myHeight;
+            clone.myTimeUnit = myTimeUnit;
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Could not clone flash player config.", e);
+        }
     }
 
     public File getBaseDir() throws IOException {

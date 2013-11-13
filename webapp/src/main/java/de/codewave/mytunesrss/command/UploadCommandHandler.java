@@ -32,6 +32,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -138,7 +139,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Creating M3U playlist for all files of ZIP archive: \"" + file.getAbsolutePath() + "\".");
                         }
-                        FileUtils.writeByteArrayToFile(file, m3uPlaylist.toString().getBytes());
+                        FileUtils.writeByteArrayToFile(file, m3uPlaylist.toString().getBytes(Charset.forName("UTF-8")));
                     }
                 }
             } else {

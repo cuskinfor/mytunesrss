@@ -139,7 +139,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public byte[] getPasswordHash() {
-        return myPasswordHash;
+        return myPasswordHash != null ? myPasswordHash.clone() : null;
     }
 
     public String getHexEncodedPasswordHash() {
@@ -147,7 +147,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setPasswordHash(byte[] passwordHash) {
-        myPasswordHash = passwordHash;
+        myPasswordHash = passwordHash != null ? passwordHash.clone() : null;
     }
 
     public boolean isEmptyPassword() {
@@ -447,11 +447,11 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public byte[] getLastFmPasswordHash() {
-        return myLastFmPasswordHash;
+        return myLastFmPasswordHash != null ? myLastFmPasswordHash.clone() : null;
     }
 
     public void setLastFmPasswordHash(byte[] lastFmPasswordHash) {
-        myLastFmPasswordHash = lastFmPasswordHash;
+        myLastFmPasswordHash = lastFmPasswordHash != null ? lastFmPasswordHash.clone() : null;
     }
 
     public boolean isLastFmAccount() {
@@ -648,6 +648,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             case Day:
                 calendar.add(Calendar.DAY_OF_MONTH, 1);
                 break;
+            default:
+                throw new RuntimeException("Unexpected quota type \"" + myQuotaType + "\".");
         }
         if (calendar.getTimeInMillis() <= System.currentTimeMillis()) {
             myQuotaDownBytes = 0;
@@ -875,9 +877,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
                     }
                     if (myLastFmSession != null) {
                         if (LastFmUtils.sendSubmissions(myLastFmSession) && LastFmUtils.sendNowPlaying(myLastFmSession, track)) {
-                            if (myLastFmSession != null) {
-                                myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
-                            }
+                            myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
                         } else {
                             myLastFmHardFailureCount++;
                             LOG.warn("Hard LastFM failure (count = " + myLastFmHardFailureCount + ").");

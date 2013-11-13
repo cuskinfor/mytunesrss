@@ -54,7 +54,17 @@ public class WebServer {
                     // copy default keystore to configured location
                     LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
                     File keystore = new File(MyTunesRss.CACHE_DATA_PATH, "mytunesrss.keystore");
-                    IOUtils.copy(getClass().getResourceAsStream("/keystore"), new FileOutputStream(keystore));
+                    InputStream inStream = getClass().getResourceAsStream("/keystore");
+                    try {
+                        FileOutputStream outStream = new FileOutputStream(keystore);
+                        try {
+                            IOUtils.copy(inStream, outStream);
+                        } finally {
+                            outStream.close();
+                        }
+                    } finally {
+                        inStream.close();
+                    }
                     sslContextFactory.setKeyStore(keystore.getAbsolutePath());
                     sslContextFactory.setKeyStorePassword("changeit");
                 } else {

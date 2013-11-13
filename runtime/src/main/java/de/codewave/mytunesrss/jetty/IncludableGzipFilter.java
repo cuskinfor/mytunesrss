@@ -87,7 +87,7 @@ public class IncludableGzipFilter extends GzipFilter
         }
     }
 
-    public class IncludableGzipStream extends GzipStream
+    public static class IncludableGzipStream extends GzipStream
     {
         public IncludableGzipStream(HttpServletRequest request, HttpServletResponse response, long contentLength, int bufferSize, int minGzipSize)
                 throws IOException

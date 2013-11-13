@@ -20,6 +20,7 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -65,7 +66,12 @@ public class MyTunesRssDataStore extends DataStore {
     @Override
     protected void beforeDestroy(Connection connection) throws SQLException {
         if (MyTunesRss.CONFIG.isDefaultDatabase()) {
-            connection.createStatement().execute("SHUTDOWN COMPACT");
+            Statement statement = connection.createStatement();
+            try {
+                statement.execute("SHUTDOWN COMPACT");
+            } finally {
+                statement.close();
+            }
         }
     }
 
@@ -104,7 +110,7 @@ public class MyTunesRssDataStore extends DataStore {
                 LOG.info("Waiting for pool to become inactive (" + myConnectionPool.getNumActive() + ").");
             }
             try {
-                Thread.sleep(100);
+                wait(100);
             } catch (InterruptedException e) {
                 //Thread.currentThread().interrupt();
             }

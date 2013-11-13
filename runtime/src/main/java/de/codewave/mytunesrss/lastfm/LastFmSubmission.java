@@ -51,4 +51,22 @@ public class LastFmSubmission implements Delayed {
     public int compareTo(Delayed o) {
         return (int) (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LastFmSubmission)) return false;
+
+        LastFmSubmission that = (LastFmSubmission) o;
+
+        if (getDelay(TimeUnit.MILLISECONDS) != that.getDelay(TimeUnit.MILLISECONDS)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        long delay = getDelay(TimeUnit.MILLISECONDS);
+        return (int) (delay ^ (delay >>> 32));
+    }
 }

@@ -114,7 +114,7 @@ public abstract class PhotoListener implements PListHandlerListener {
                             createDate = Long.valueOf((modDateAsTimerInterval.longValue() * 1000L) + 978303600000L);
                         }
                     }
-                    statement.setDate(createDate);
+                    statement.setDate(createDate != null ? createDate.longValue() : 0);
                     statement.setFile(filename);
                     myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
                     //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
