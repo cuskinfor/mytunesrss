@@ -13,7 +13,6 @@ import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
 import org.springframework.util.CollectionUtils;
@@ -43,7 +42,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness, maxResults);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         query.myMediaTypes = getQueryMediaTypes(user);
-        query.myVideoType = getQueryVideoType(user);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
     }
@@ -56,39 +54,28 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm, maxResults);
         query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
         query.myMediaTypes = getQueryMediaTypes(user);
-        query.myVideoType = getQueryVideoType(user);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
     }
 
     static MediaType[] getQueryMediaTypes(User user, MediaType... mediaTypes) {
-        if (!user.isAudio() || (!user.isMovies() && !user.isTvShows())) {
-            Set<MediaType> resultTypes = mediaTypes != null ? new HashSet<MediaType>(Arrays.asList(mediaTypes)) : new HashSet<MediaType>(Arrays.asList(MediaType.values()));
+        if (!user.isAudio() || !user.isVideo()) {
+            Set<MediaType> resultTypes = mediaTypes != null && mediaTypes.length > 0 ? new HashSet<MediaType>(Arrays.asList(mediaTypes)) : new HashSet<MediaType>(Arrays.asList(MediaType.values()));
             if (!user.isAudio()) {
                 resultTypes.remove(MediaType.Audio);
             }
-            if (!user.isMovies() && !user.isTvShows()) {
+            if (!user.isVideo()) {
                 resultTypes.remove(MediaType.Video);
             }
             return resultTypes.toArray(new MediaType[resultTypes.size()]);
         } else {
-            return null;
+            return mediaTypes;
         }
     }
     
     static String[] getPermittedDataSources(User user) {
         Set<String> ids = user.getPermittedDataSourceIds();
         return ids != null ? ids.toArray(new String[ids.size()]) : null;
-    }
-
-    static VideoType getQueryVideoType(User user, VideoType... videoTypes) {
-        if (user.isMovies() && !user.isTvShows()) {
-            return ArrayUtils.contains(videoTypes, VideoType.Movie) ? VideoType.Movie : VideoType.None;
-        } else if (!user.isMovies() && user.isTvShows()) {
-            return ArrayUtils.contains(videoTypes, VideoType.TvShow) ? VideoType.TvShow : VideoType.None;
-        } else {
-            return null;
-        }
     }
 
     public static FindTrackQuery getForAlbum(User user, String[] albums, String[] albumArtists, SortOrder sortOrder) {
@@ -143,7 +130,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Video));
-        query.setVideoType(getQueryVideoType(user, VideoType.Movie));
+        query.setVideoType(VideoType.Movie);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
     }
@@ -154,7 +141,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Video));
-        query.setVideoType(getQueryVideoType(user, VideoType.TvShow));
+        query.setVideoType(VideoType.TvShow);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
     }
@@ -165,7 +152,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Video));
-        query.setVideoType(getQueryVideoType(user, VideoType.TvShow));
+        query.setVideoType(VideoType.TvShow);
         query.setSeries(series);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
@@ -177,7 +164,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Video));
-        query.setVideoType(getQueryVideoType(user, VideoType.TvShow));
+        query.setVideoType(VideoType.TvShow);
         query.setSeries(series);
         query.setSeason(season);
         query.myPermittedDataSources = getPermittedDataSources(user);
@@ -261,7 +248,10 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
-        setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
+        setQueryMediaTypes(statement, myMediaTypes);
+        if (myVideoType != null) {
+            statement.setString("videoType", myVideoType.name());
+        }
         statement.setString("series", mySeries);
         if (mySeason != null) {
             statement.setInt("season", mySeason);
@@ -270,16 +260,13 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     }
 
-    static void setQueryMediaAndVideoTypes(SmartStatement statement, MediaType[] mediaTypes, VideoType videoType) throws SQLException {
+    static void setQueryMediaTypes(SmartStatement statement, MediaType[] mediaTypes) throws SQLException {
         if (mediaTypes != null && mediaTypes.length > 0) {
             String[] mediaTypeNames = new String[mediaTypes.length];
             for (int i = 0; i < mediaTypes.length; i++) {
                 mediaTypeNames[i] = mediaTypes[i].name();
             }
             statement.setItems("mediaTypes", mediaTypeNames);
-        }
-        if (videoType != null) {
-            statement.setString("videoType", videoType.name());
         }
     }
 }

@@ -21,15 +21,16 @@
                 AND rltp.track_id = t.id
                 AND t.album = a.name
             </restricted>
+            <track>
+                AND t.album = a.name                
+            </track>
             <excluded>
-                AND t.album = a.name
                 AND t.id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
-            <videotype>AND t.videotype = :videoType</videotype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
             GROUP BY a.name, a.track_count, a.artist_count, a.artist, a.image_hash, a.year, a.compilation
             <albumorder>ORDER BY LOWER(a.name)</albumorder>
@@ -56,15 +57,16 @@
                 AND rltp.track_id = t.id
                 AND t.artist = a.name
             </restricted>
-            <excluded>
+            <track>
                 AND t.artist = a.name
+            </track>
+            <excluded>
                 AND t.id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
-            <videotype>AND t.videotype = :videoType</videotype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
             GROUP BY a.name, a.track_count, a.album_count
             ORDER BY LOWER(a.name)
@@ -97,8 +99,10 @@
                 AND rltp.track_id = t.id
                 AND t.genre = g.name
             </restricted>
-            <excluded>
+            <track>
                 AND t.genre = g.name
+            </track>
+            <excluded>
                 AND t.id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
@@ -106,7 +110,6 @@
             </excluded>
             <nohidden>AND (g.hidden IS NULL OR g.hidden = FALSE)</nohidden>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
-            <videotype>AND t.videotype = :videoType</videotype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
             GROUP BY g.name, g.track_count, g.artist_count, g.album_count, g.hidden
             ORDER BY LOWER(g.name)
@@ -118,7 +121,7 @@
         <sql>
             <![CDATA[
             SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id
-            FROM playlist p<restricted>, link_track_playlist rltp</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded>
+            FROM playlist p<restricted>, link_track_playlist rltp</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded><track>, link_track_playlist ltpt, track t</track>
             WHERE type != 'TEMP'
             <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
             <matching>AND user_owner = :username</matching>
@@ -143,11 +146,14 @@
             <id>AND p.id = :id</id>
             <container>AND container_id = :containerId</container>
             <rootcontainer>AND container_id IS NULL</rootcontainer>
+            <track>
+                AND ltpt.playlist_id = p.id
+                AND ltpt.track_id = t.id
+            </track>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
-            <videotype>AND t.videotype = :videoType</videotype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
             GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
-            ORDER BY LOWER(name)
+            ORDER BY LOWER(p.name)
             ]]>
         </sql>
     </statement>
@@ -175,7 +181,6 @@
                 )
             </excluded>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
-            <videotype>AND t.videotype = :videoType</videotype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
             GROUP BY ltp.idx, {trackColumnsForGrouping}
             <indexorder>ORDER BY idx</indexorder>
@@ -202,7 +207,6 @@
                 )
             </excluded>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
-            <videotype>AND t.videotype = :videoType</videotype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
             GROUP BY {trackColumnsForGrouping}
             <albumorder>ORDER BY LOWER(album), pos_number, track_number, LOWER(name)</albumorder>
@@ -236,6 +240,7 @@
         <album>AND t.lower_album IN (:album[])</album>
         <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
         <videotype>AND t.videotype = :videoType</videotype>
+        <datasource>AND t.source_id IN (:datasources[])</datasource>
         <tvshow>AND t.series = :series</tvshow>
         <tvshowseason>AND t.season = :season</tvshowseason>
         <restricted>

@@ -29,7 +29,6 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
-    private VideoType myVideoType;
     private String[] myPermittedDataSources;
     
     public FindGenreQuery(User user, boolean includeHidden, int index) {
@@ -39,7 +38,6 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
             myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
             myExcludedPlaylistIds = user.getExcludedPlaylistIds();
             myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
-            myVideoType = FindTrackQuery.getQueryVideoType(user);
             myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
         }
     }
@@ -52,14 +50,14 @@ public class FindGenreQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ge
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("nohidden", !myIncludeHidden);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
-        conditionals.put("videotype", myVideoType != null);
         conditionals.put("datasource", myPermittedDataSources != null);
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
-        FindTrackQuery.setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
+        FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
         return execute(statement, new GenreResultBuilder());
     }
 

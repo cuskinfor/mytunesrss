@@ -32,7 +32,6 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     private boolean myIncludeHidden;
     private boolean myMatchingOwnerOnly;
     private MediaType[] myMediaTypes;
-    private VideoType myVideoType;
     private String[] myPermittedDataSources;
 
     public FindPlaylistQuery(List<PlaylistType> types, String id, String containerId, boolean includeHidden) {
@@ -50,7 +49,6 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         myUserName = user.getName();
         myMatchingOwnerOnly = matchingOwnerOnly;
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
-        myVideoType = FindTrackQuery.getQueryVideoType(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
@@ -68,8 +66,8 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
-        conditionals.put("videotype", myVideoType != null);
         conditionals.put("datasource", myPermittedDataSources != null);
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists", conditionals);
         if (myTypes != null && !myTypes.isEmpty()) {
             List<String> typeNames = new ArrayList<String>(myTypes.size());
@@ -86,7 +84,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         statement.setString("username", myUserName);
         statement.setBoolean("includeHidden", myIncludeHidden);
         statement.setItems("datasources", myPermittedDataSources);
-        FindTrackQuery.setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
+        FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
         return execute(statement, new PlaylistResultBuilder());
     }
 

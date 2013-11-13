@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
+import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
 import de.codewave.utils.servlet.ServletUtils;
@@ -33,13 +34,6 @@ import java.util.*;
 @ValidateRequest
 @Path("session")
 public class SessionResource extends RestResource {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SessionResource.class);
-    private static final String[] PERMISSION_NAMES = new String[] {
-            "audio", "movies", "tvShows", "rss", "playlist", "download", "yahooPlayer", "specialPlaylists", "player", "remoteControl", "externalSites", "editTags",
-            "transcoder", "changePassword", "changeEmail", "editLastFmAccount", "editWebSettings", "createPlaylists", "createPublicPlaylists", "photos",
-            "downloadPhotoAlbum", "share"
-    };
 
     /**
      * Get the settings for the current session.
@@ -86,17 +80,9 @@ public class SessionResource extends RestResource {
 
     public List<String> getPermissions(User user) {
         List<String> permissions = new ArrayList<String>();
-        for (String permission : PERMISSION_NAMES) {
-            try {
-                if ((Boolean) User.class.getMethod("is" + StringUtils.capitalize(permission)).invoke(user)) {
-                    permissions.add(permission);
-                }
-            } catch (IllegalAccessException e) {
-                LOGGER.warn("Could not get permission \"" + permission + "\".", e);
-            } catch (InvocationTargetException e) {
-                LOGGER.warn("Could not get permission \"" + permission + "\".", e);
-            } catch (NoSuchMethodException e) {
-                LOGGER.warn("Could not get permission \"" + permission + "\".", e);
+        for (UserPermission permission : UserPermission.values()) {
+            if (permission.isGranted(user)) {
+                permissions.add(StringUtils.uncapitalize(permission.name()));
             }
         }
         return permissions;

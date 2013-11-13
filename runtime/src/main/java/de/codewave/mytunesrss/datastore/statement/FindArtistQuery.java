@@ -32,7 +32,6 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
-    private VideoType myVideoType;
     private String[] myPermittedDataSources;
     
     public FindArtistQuery(User user, String filter, String album, String genre, int index) {
@@ -43,7 +42,6 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
-        myVideoType = FindTrackQuery.getQueryVideoType(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
@@ -57,8 +55,8 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
-        conditionals.put("videotype", myVideoType != null);
         conditionals.put("datasource", myPermittedDataSources != null);
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("album", StringUtils.lowerCase(myAlbum));
@@ -67,7 +65,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
-        FindTrackQuery.setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
+        FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
         return execute(statement, new ArtistResultBuilder());
     }
 

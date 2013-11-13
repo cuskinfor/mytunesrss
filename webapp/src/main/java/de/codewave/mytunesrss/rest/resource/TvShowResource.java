@@ -33,7 +33,7 @@ import java.util.*;
 
 @ValidateRequest
 @Path("tvshow/{show}")
-@RequiredUserPermissions({UserPermission.TvShows})
+@RequiredUserPermissions({UserPermission.Video})
 public class TvShowResource extends RestResource {
 
     /**

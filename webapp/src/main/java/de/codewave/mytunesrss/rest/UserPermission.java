@@ -9,18 +9,16 @@ import de.codewave.mytunesrss.config.User;
 
 public enum UserPermission {
 
-    Audio(), Movies(), TvShows(), Rss(), Playlist(), Download(), YahooPlayer(), SpecialPlaylists(), Player(), RemoteControl(), ExternalSites(), EditTags(),
+    Audio(), Video(), Rss(), Playlist(), Download(), YahooPlayer(), SpecialPlaylists(), Player(), RemoteControl(), ExternalSites(), EditTags(),
     Trascoder(), ChangePassword(), changeEmail(), EditLastFmAccount(), EditWebSettings(), CreatePlaylists(), CreatePublicPlaylists(), Photos(),
     DownloadPhotoAlbum(), Share();
 
-    boolean isGranted(User user) {
+    public boolean isGranted(User user) {
         switch (this) {
            case Audio:
                 return user.isAudio();
-            case Movies:
-                return user.isMovies();
-            case TvShows:
-                return user.isTvShows();
+            case Video:
+                return user.isVideo();
             case Rss:
                 return user.isRss();
             case Playlist:

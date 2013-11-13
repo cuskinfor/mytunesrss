@@ -202,7 +202,7 @@ public class LibraryResource extends RestResource {
     @Path("movies")
     @Produces({"application/json"})
     @GZIP
-    @RequiredUserPermissions({UserPermission.Movies})
+    @RequiredUserPermissions({UserPermission.Video})
     public List<TrackRepresentation> getMovies(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
@@ -222,7 +222,7 @@ public class LibraryResource extends RestResource {
     @Path("tvshows")
     @Produces({"application/json"})
     @GZIP
-    @RequiredUserPermissions({UserPermission.TvShows})
+    @RequiredUserPermissions({UserPermission.Video})
     public List<TvShowRepresentation> getTvShows(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request

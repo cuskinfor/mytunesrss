@@ -119,8 +119,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myShare = true;
     private boolean myDownloadPhotoAlbum = true;
     private boolean myAudio = true;
-    private boolean myMovies = true;
-    private boolean myTvShows = true;
+    private boolean myVideo = true;
     private int myBandwidthLimit;
 
     public User(String name) {
@@ -583,20 +582,12 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         myAudio = audio;
     }
 
-    public boolean isMovies() {
-        return getParent() != null ? getParent().isMovies() : myMovies;
+    public boolean isVideo() {
+        return getParent() != null ? getParent().isVideo() : myVideo;
     }
 
-    public void setMovies(boolean movies) {
-        myMovies = movies;
-    }
-
-    public boolean isTvShows() {
-        return getParent() != null ? getParent().isTvShows() : myTvShows;
-    }
-
-    public void setTvShows(boolean tvShows) {
-        myTvShows = tvShows;
+    public void setVideo(boolean video) {
+        myVideo = video;
     }
 
     public int getBandwidthLimit() {
@@ -757,8 +748,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setShare(JXPathUtils.getBooleanValue(settings, "featureShare", myShare));
         setDownloadPhotoAlbum(JXPathUtils.getBooleanValue(settings, "featureDownloadPhotoAlbum", myDownloadPhotoAlbum));
         setAudio(JXPathUtils.getBooleanValue(settings, "featureAudio", myAudio));
-        setMovies(JXPathUtils.getBooleanValue(settings, "featureMovies", myMovies));
-        setTvShows(JXPathUtils.getBooleanValue(settings, "featureTvShows", myTvShows));
+        setVideo(JXPathUtils.getBooleanValue(settings, "featureVideo", myVideo));
         setBandwidthLimit(JXPathUtils.getIntValue(settings, "bandwidthLimit", myBandwidthLimit));
         //        try {
         //            setLastFmPasswordHash(MyTunesRss.REGISTRATION.isRegistered() ? MyTunesRss.MD5_DIGEST.digest(JXPathUtils.getStringValue(settings, "lastFmPassword", "").getBytes("UTF-8")) : null);
@@ -861,8 +851,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureShare", isShare()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureDownloadPhotoAlbum", isDownloadPhotoAlbum()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureAudio", isAudio()));
-        users.appendChild(DOMUtils.createBooleanElement(settings, "featureMovies", isMovies()));
-        users.appendChild(DOMUtils.createBooleanElement(settings, "featureTvShows", isTvShows()));
+        users.appendChild(DOMUtils.createBooleanElement(settings, "featureVideo", isVideo()));
         users.appendChild(DOMUtils.createIntElement(settings, "bandwidthLimit", getBandwidthLimit()));
     }
 

@@ -33,7 +33,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
     private MediaType[] myMediaTypes;
-    private VideoType myVideoType;
     private String[] myPermittedDataSources;
     
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
@@ -46,7 +45,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
-        myVideoType = FindTrackQuery.getQueryVideoType(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
@@ -60,7 +58,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty() && (myRestrictedPlaylistIds.size() > 1 || !myRestrictedPlaylistIds.get(0).equals(myId)));
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
-        conditionals.put("videotype", myVideoType != null);
         conditionals.put("datasource", myPermittedDataSources != null);
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId) || PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals, myResultSetType);
@@ -84,7 +81,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
-        FindTrackQuery.setQueryMediaAndVideoTypes(statement, myMediaTypes, myVideoType);
+        FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
         return execute(statement, new TrackResultBuilder());
     }
 }

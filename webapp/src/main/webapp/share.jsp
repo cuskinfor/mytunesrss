@@ -96,7 +96,7 @@
         </c:choose>
         <input type="hidden" name="name" value="<c:out value="${artistAndTitle}"/>"/>
         <input type="hidden" name="caption" value="MyTunesRSS - Your personal Media Server"/>
-        <input type="hidden" name="description" value="Enjoy your music, movies and photos from anywhere in the world. All you need is a web browser and internet access."/>
+        <input type="hidden" name="description" value="Enjoy your music, video and photos from anywhere in the world. All you need is a web browser and internet access."/>
         <input type="hidden" name="redirect_uri" value="http://mytunesrss.com/tools/close_window.php"/>
     </form>
 </c:if>
