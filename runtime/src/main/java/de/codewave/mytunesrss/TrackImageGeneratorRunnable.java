@@ -106,7 +106,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
             LOGGER.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         } finally {
             myTerminated.set(true);
-            myTerminated.notifyAll();
+            notifyAll();
         }
     }
 
@@ -121,7 +121,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
     public synchronized void waitForTermination() {
         try {
             while (!myTerminated.get()) {
-                myTerminated.wait();
+                wait();
             }
         } catch (InterruptedException e) {
             LOGGER.warn("Interrupted while waiting for photo thumbnail generation termination.");

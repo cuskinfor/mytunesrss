@@ -67,7 +67,7 @@ public class DatabaseUpdateQueue {
                         tx.commit();
                     }
                     myTerminated.set(true);
-                    myTerminated.notifyAll();
+                    notifyAll();
                 }
                 LOGGER.info("Terminating database update queue thread.");
             }
@@ -83,7 +83,7 @@ public class DatabaseUpdateQueue {
     public synchronized void waitForTermination() {
         try {
             while (!myTerminated.get()) {
-                myTerminated.wait();
+                wait();
             }
         } catch (InterruptedException e) {
             LOGGER.warn("Interrupted while waiting for queue termination.", e);
