@@ -78,7 +78,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("compilation", myType != AlbumType.ALL);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || (StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist) || (StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist));
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || (StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist) || (StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("artist", StringUtils.lowerCase(myArtist));

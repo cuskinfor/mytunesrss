@@ -19,7 +19,6 @@
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND rltp.track_id = t.id
-                AND t.album = a.name
             </restricted>
             <track>
                 AND t.album = a.name
