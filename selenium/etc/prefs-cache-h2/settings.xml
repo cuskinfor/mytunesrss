@@ -22,6 +22,7 @@
       <definition>../../selenium/etc/iTunes/iTunes Library.xml</definition>
       <id>496cd935-bca9-4b8f-ad66-937635b3df26</id>
       <deleteMissingFiles>false</deleteMissingFiles>
+      <track-image-import>Never</track-image-import>
     </datasource>
   </datasources>
   <uploadDir/>
@@ -217,7 +218,7 @@
   <streamingCacheTimeout>20</streamingCacheTimeout>
   <streamingCacheMaxFiles>300</streamingCacheMaxFiles>
   <ignoreArtwork>true</ignoreArtwork>
-  <codewaveLogLevel>WARN</codewaveLogLevel>
+  <codewaveLogLevel>INFO</codewaveLogLevel>
   <lastNewVersionInfo>0</lastNewVersionInfo>
   <updateIgnoreVersion>4.1.0</updateIgnoreVersion>
   <crontriggers>
