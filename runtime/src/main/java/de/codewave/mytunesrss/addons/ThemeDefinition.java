@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.addons;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ThemeDefinition implements Comparable<ThemeDefinition> {
     private String myName;

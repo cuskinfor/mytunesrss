@@ -16,7 +16,7 @@ import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
 import de.codewave.utils.servlet.ServletUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 import org.slf4j.Logger;

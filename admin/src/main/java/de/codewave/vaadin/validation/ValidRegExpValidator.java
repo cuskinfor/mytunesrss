@@ -6,7 +6,7 @@
 package de.codewave.vaadin.validation;
 
 import com.vaadin.data.validator.AbstractStringValidator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;

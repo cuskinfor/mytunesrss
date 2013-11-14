@@ -5,7 +5,7 @@ import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.ResultBuilder;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.sql.ResultSet;

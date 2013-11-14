@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

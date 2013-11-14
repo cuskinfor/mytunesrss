@@ -24,8 +24,9 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.JavaVersion;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.eclipse.jetty.server.NCSARequestLog;
@@ -980,7 +981,7 @@ public class MyTunesRssUtils {
     }
 
     public static boolean canExecute(File file) {
-        if (SystemUtils.JAVA_VERSION_FLOAT < 1.6) {
+        if (!SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_6)) {
             return file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
         }
         return file.canExecute();

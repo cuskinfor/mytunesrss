@@ -15,7 +15,7 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.vlc.HttpResponseStatus;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.sql.DataStoreQuery;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
 import java.util.List;

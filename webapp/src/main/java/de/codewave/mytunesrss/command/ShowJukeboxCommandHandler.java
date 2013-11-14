@@ -5,7 +5,7 @@ import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.config.PlaylistFileType;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.concurrent.TimeUnit;
 

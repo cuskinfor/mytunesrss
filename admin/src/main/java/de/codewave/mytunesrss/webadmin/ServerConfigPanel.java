@@ -17,7 +17,7 @@ import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.FileValidator;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.SameValidator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;

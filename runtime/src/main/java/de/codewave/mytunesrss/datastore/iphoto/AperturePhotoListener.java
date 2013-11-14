@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.datastore.iphoto;
 import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
 import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

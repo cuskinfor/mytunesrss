@@ -8,7 +8,7 @@ package de.codewave.vaadin;
 import com.vaadin.data.Property;
 import com.vaadin.ui.TextField;
 import de.codewave.utils.MiscUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
 import java.util.Map;

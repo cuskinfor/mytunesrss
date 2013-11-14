@@ -16,7 +16,7 @@ import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.sql.SQLException;

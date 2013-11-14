@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.webadmin.statistics;
 import de.codewave.mytunesrss.statistics.DownloadEvent;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
-import org.apache.commons.lang.mutable.MutableLong;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.jfree.data.time.Day;
 
 import java.sql.SQLException;

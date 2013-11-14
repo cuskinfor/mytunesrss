@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.rest.resource.EditPlaylistResource;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * de.codewave.mytunesrss.command.CancelCreatePlaylistCommandHandler

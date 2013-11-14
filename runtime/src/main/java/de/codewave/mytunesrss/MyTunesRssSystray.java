@@ -6,7 +6,7 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.systray.SystrayUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

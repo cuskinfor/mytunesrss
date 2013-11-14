@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.codehaus.jackson.map.ObjectMapper;

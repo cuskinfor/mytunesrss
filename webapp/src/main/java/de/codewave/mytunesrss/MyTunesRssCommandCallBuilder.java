@@ -7,7 +7,7 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.utils.MiscUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;

@@ -8,7 +8,7 @@ import de.codewave.mytunesrss.datastore.statement.DatabaseImage;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

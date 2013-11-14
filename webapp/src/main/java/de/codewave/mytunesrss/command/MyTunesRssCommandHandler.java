@@ -20,8 +20,8 @@ import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.CommandHandler;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

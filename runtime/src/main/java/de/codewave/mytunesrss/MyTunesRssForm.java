@@ -9,8 +9,8 @@ import de.codewave.mytunesrss.desktop.DesktopWrapper;
 import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
 import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.task.SendSupportRequestRunnable;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

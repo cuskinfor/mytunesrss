@@ -6,7 +6,7 @@
 package de.codewave.mytunesrss.webadmin.statistics;
 
 import de.codewave.mytunesrss.datastore.statement.Track;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class TopNameChartGenerator extends TopTrackDownloadChartGenerator {
 

@@ -201,7 +201,7 @@
             Capitalize a string, i.e. make the first character upper case.
         </description>
         <name>capitalize</name>
-        <function-class>org.apache.commons.lang.StringUtils</function-class>
+        <function-class>org.apache.commons.lang3.StringUtils</function-class>
         <function-signature>java.lang.String capitalize(java.lang.String)
         </function-signature>
         <example>
@@ -375,8 +375,8 @@
             Escape string for javascript usage.
         </description>
         <name>escapeJs</name>
-        <function-class>org.apache.commons.lang.StringEscapeUtils</function-class>
-        <function-signature>java.lang.String escapeJavaScript(java.lang.String)</function-signature>
+        <function-class>org.apache.commons.lang3.StringEscapeUtils</function-class>
+        <function-signature>java.lang.String escapeEcmaScript(java.lang.String)</function-signature>
     </function>
 
     <function>

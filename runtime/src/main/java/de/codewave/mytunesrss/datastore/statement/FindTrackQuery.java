@@ -13,7 +13,7 @@ import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
 import org.springframework.util.CollectionUtils;
 

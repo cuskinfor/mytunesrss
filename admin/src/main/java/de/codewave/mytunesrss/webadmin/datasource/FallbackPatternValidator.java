@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.webadmin.datasource;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class FallbackPatternValidator extends ValidRegExpValidator {
 

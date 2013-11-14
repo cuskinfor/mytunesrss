@@ -4,7 +4,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.itunes.MissingItunesFiles;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

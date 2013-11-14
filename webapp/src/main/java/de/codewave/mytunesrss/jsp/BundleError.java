@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * de.codewave.mytunesrss.jsp.BundleError

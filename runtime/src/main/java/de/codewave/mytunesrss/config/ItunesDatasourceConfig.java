@@ -11,7 +11,7 @@ import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.PListHandlerListener;
 import de.codewave.utils.xml.XmlUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;

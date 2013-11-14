@@ -2,7 +2,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * de.codewave.mytunesrss.command.DisplayFilter

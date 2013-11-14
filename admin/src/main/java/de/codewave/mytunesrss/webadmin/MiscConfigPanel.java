@@ -17,8 +17,8 @@ import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.GraphicsMagickExecutableFileValidator;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.VlcExecutableFileValidator;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
 import java.util.Arrays;

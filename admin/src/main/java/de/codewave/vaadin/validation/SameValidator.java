@@ -7,7 +7,7 @@ package de.codewave.vaadin.validation;
 
 import com.vaadin.data.validator.AbstractValidator;
 import com.vaadin.ui.AbstractField;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.Arrays;
 

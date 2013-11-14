@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.webadmin;
 import de.codewave.mytunesrss.IndexedLoggingEvent;
 import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.PatternLayout;
 
 import javax.servlet.ServletException;

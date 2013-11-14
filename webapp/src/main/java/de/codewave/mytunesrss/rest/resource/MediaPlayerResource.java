@@ -16,7 +16,7 @@ import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;

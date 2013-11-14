@@ -6,7 +6,7 @@
 package de.codewave.vaadin.validation;
 
 import com.vaadin.data.validator.IntegerValidator;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class MinMaxIntegerValidator extends IntegerValidator {
 

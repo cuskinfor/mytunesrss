@@ -7,7 +7,7 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,7 +6,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * de.codewave.mytunesrss.command.ContinueExistingPlaylistCommandHandler

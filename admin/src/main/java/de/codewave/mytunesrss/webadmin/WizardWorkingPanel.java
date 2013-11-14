@@ -11,7 +11,7 @@ import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.VaadinUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -6,7 +6,7 @@
 package de.codewave.mytunesrss.rest;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;

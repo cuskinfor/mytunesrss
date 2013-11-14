@@ -7,7 +7,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.config.FileType;
 import de.codewave.mytunesrss.config.MediaType;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 

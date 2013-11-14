@@ -12,8 +12,8 @@ import de.codewave.mytunesrss.statistics.DownloadEvent;
 import de.codewave.mytunesrss.statistics.StatEventType;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.mutable.MutableLong;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.jfree.data.time.Day;
 
 import java.sql.SQLException;

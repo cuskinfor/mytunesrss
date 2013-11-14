@@ -14,8 +14,8 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.io.JsonStringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -358,7 +358,7 @@ public class MyTunesFunctions {
         if (items instanceof Iterable) {
             for (Object item : (Iterable) items) {
                 if (item instanceof String) {
-                    builder.append("'").append(StringEscapeUtils.escapeJavaScript((String) item)).append("'");
+                    builder.append("'").append(StringEscapeUtils.escapeEcmaScript((String) item)).append("'");
                 } else {
                     builder.append(item.toString());
                 }
@@ -367,7 +367,7 @@ public class MyTunesFunctions {
         } else if (items.getClass().isArray()) {
             for (Object item : (Object[]) items) {
                 if (item instanceof String) {
-                    builder.append("'").append(StringEscapeUtils.escapeJavaScript((String) item)).append("'");
+                    builder.append("'").append(StringEscapeUtils.escapeEcmaScript((String) item)).append("'");
                 } else {
                     builder.append(item.toString());
                 }

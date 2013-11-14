@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.webadmin.statistics;
 
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
-import org.apache.commons.lang.mutable.MutableLong;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.JFreeChart;
 import org.jfree.data.general.DefaultPieDataset;

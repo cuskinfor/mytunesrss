@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
 import java.io.IOException;
