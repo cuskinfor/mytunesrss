@@ -14,15 +14,6 @@ public class LibraryListener implements PListHandlerListener {
     private static final Logger LOG = LoggerFactory.getLogger(LibraryListener.class);
 
     private String myLibraryId;
-    private long myTimeLastUpate;
-
-    public LibraryListener(long timeLastUpate) {
-        myTimeLastUpate = timeLastUpate;
-    }
-
-    public long getTimeLastUpate() {
-        return myTimeLastUpate;
-    }
 
     public String getLibraryId() {
         return myLibraryId;

@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class IphotoPhotoListener extends PhotoListener {
     public IphotoPhotoListener(IphotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId,
-                               Collection<String> photoIds) throws SQLException {
-        super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId, photoIds);
+                               Map<String, Long> photoTsUpdate) throws SQLException {
+        super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId, photoTsUpdate);
         myXmlModDate = new File(datasourceConfig.getDefinition(), IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME).lastModified();
     }
 }

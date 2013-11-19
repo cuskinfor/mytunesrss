@@ -36,7 +36,7 @@ public class TrackListener implements PListHandlerListener {
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
-    private Collection<String> myTrackIds;
+    private Map<String, Long> myTrackTsUpdate;
     private long myMissingFiles;
     private List<String> myMissingFilePaths = new ArrayList<String>();
     private String[] myDisabledMp4Codecs;
@@ -45,13 +45,13 @@ public class TrackListener implements PListHandlerListener {
     private ItunesDatasourceConfig myDatasourceConfig;
 
     public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
-                         Collection<String> trackIds) throws SQLException {
+                         Map<String, Long> trackTsUpdate) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
-        myTrackIds = trackIds;
+        myTrackTsUpdate = trackTsUpdate;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
         myPathReplacements = new HashSet<CompiledReplacementRule>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
@@ -81,7 +81,7 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
         try {
-            if (processTrack(track, myTrackIds.remove(trackId))) {
+            if (processTrack(track, myTrackTsUpdate.remove(trackId))) {
                 myUpdatedCount++;
             }
         } catch (InterruptedException e) {
@@ -100,7 +100,7 @@ public class TrackListener implements PListHandlerListener {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
 
-    private boolean processTrack(Map track, boolean existing) throws InterruptedException {
+    private boolean processTrack(Map track, Long tsUpdated) throws InterruptedException {
         if (myWatchdogThread.isInterrupted()) {
             Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
@@ -111,7 +111,7 @@ public class TrackListener implements PListHandlerListener {
         if (trackType == null || "File".equals(trackType)) {
             String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
             if (StringUtils.isNotBlank(filename)) {
-                String mp4Codec = getMp4Codec(track, filename, myLibraryListener.getTimeLastUpate());
+                String mp4Codec = getMp4Codec(track, filename, tsUpdated);
                 if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && myDatasourceConfig.isSupported(filename) && !isMp4CodecDisabled(mp4Codec)) {
                     File file = MyTunesRssUtils.searchFile(filename);
                     if (!file.isFile()) {
@@ -125,9 +125,8 @@ public class TrackListener implements PListHandlerListener {
                         long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
                         Date dateAdded = ((Date) track.get("Date Added"));
                         long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                        if (!existing || dateModifiedTime >= myLibraryListener.getTimeLastUpate() || dateAddedTime >= myLibraryListener.getTimeLastUpate()) {
-                            InsertOrUpdateTrackStatement statement =
-                                    existing ? new UpdateTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId());
+                        if (tsUpdated == null || dateModifiedTime >= tsUpdated.longValue() || dateAddedTime >= tsUpdated.longValue()) {
+                            InsertOrUpdateTrackStatement statement = tsUpdated != null ? new UpdateTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId());
                             statement.clear();
                             statement.setId(trackId);
                             statement.setName(name.trim());
@@ -175,11 +174,11 @@ public class TrackListener implements PListHandlerListener {
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
-                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), 0) : mp4Codec);
+                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), Long.valueOf(0)) : mp4Codec);
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                             return true;
-                        } else if (existing) {
+                        } else if (tsUpdated != null) {
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                         }
                         return false;
@@ -203,8 +202,8 @@ public class TrackListener implements PListHandlerListener {
         return mp4Codec != null && ArrayUtils.contains(myDisabledMp4Codecs, mp4Codec.toLowerCase());
     }
 
-    private String getMp4Codec(Map track, String filename, long lastUpdateTime) {
-        if (new File(filename).lastModified() < lastUpdateTime) {
+    private String getMp4Codec(Map track, String filename, Long lastUpdateTime) {
+        if (lastUpdateTime != null && new File(filename).lastModified() < lastUpdateTime.longValue()) {
             return MP4_CODEC_NOT_CHECKED;
         }
         if (FileSupportUtils.isMp4(filename)) {

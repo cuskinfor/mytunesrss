@@ -48,6 +48,7 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.h2.mvstore.MVStore;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;

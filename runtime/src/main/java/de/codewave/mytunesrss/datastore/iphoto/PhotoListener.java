@@ -31,20 +31,20 @@ public abstract class PhotoListener implements PListHandlerListener {
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<String, String> myPhotoIdToPersId;
-    private Collection<String> myPhotoIds;
+    private Map<String, Long> myPhotoTsUpdate;
     private Thread myWatchdogThread;
     private Set<CompiledReplacementRule> myPathReplacements;
     private PhotoDatasourceConfig myDatasourceConfig;
     protected long myXmlModDate;
 
     public PhotoListener(PhotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId,
-                         Collection<String> photoIds) throws SQLException {
+                         Map<String, Long> photoTsUpdate) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
         myLibraryListener = libraryListener;
         myPhotoIdToPersId = photoIdToPersId;
-        myPhotoIds = photoIds;
+        myPhotoTsUpdate = photoTsUpdate;
         myPathReplacements = new HashSet<CompiledReplacementRule>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
@@ -60,7 +60,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         String photoId = calculatePhotoId(key, photo);
         if (photoId != null) {
             try {
-                if (processPhoto(key, photo, photoId, myPhotoIds.remove(photoId))) {
+                if (processPhoto(key, photo, photoId, myPhotoTsUpdate.remove(photoId))) {
                     myUpdatedCount++;
                 }
             } catch (InterruptedException e) {
@@ -83,7 +83,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         throw new UnsupportedOperationException("method beforeArrayAdd of iPhoto photo listener is not supported!");
     }
 
-    private boolean processPhoto(String key, Map photo, String photoId, boolean existing) throws InterruptedException {
+    private boolean processPhoto(String key, Map photo, String photoId, Long tsUpdated) throws InterruptedException {
         if (myWatchdogThread.isInterrupted()) {
             Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
@@ -94,8 +94,8 @@ public abstract class PhotoListener implements PListHandlerListener {
             String filename = applyReplacements(getImagePath(photo));
             if (StringUtils.isNotBlank(filename) && myDatasourceConfig.isSupported(filename)) {
                 File file = MyTunesRssUtils.searchFile(filename);
-                if (file.isFile() && (!existing || myXmlModDate >= myLibraryListener.getTimeLastUpate() || file.lastModified() >= myLibraryListener.getTimeLastUpate())) {
-                    InsertOrUpdatePhotoStatement statement = existing ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
+                if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated.longValue() || file.lastModified() >= tsUpdated.longValue())) {
+                    InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
                     statement.clear();
                     statement.setId(photoId);
                     statement.setName(name.trim());
@@ -121,7 +121,7 @@ public abstract class PhotoListener implements PListHandlerListener {
                     //myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
                     myPhotoIdToPersId.put(key, photoId);
                     return true;
-                } else if (existing) {
+                } else if (tsUpdated != null) {
                     myPhotoIdToPersId.put(key, photoId);
                 }
                 return false;

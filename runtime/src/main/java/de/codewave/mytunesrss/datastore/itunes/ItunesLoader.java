@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -51,26 +52,16 @@ public class ItunesLoader {
         return null;
     }
 
-    static File getFileForLocation(String location) {
-        try {
-            return new File(new URI(location).getPath());
-        } catch (URISyntaxException e) {
-            LOG.error("Could not create URI from location \"" + location + "\".", e);
-        }
-        return null;
-    }
-
     /**
      * Load tracks from an iTunes XML file.
      *
      * @param config
      * @param queue
-     * @param timeLastUpdate
-     * @param trackIds
+     * @param trackTsUpdate
      * @return Number of missing files.
      * @throws SQLException
      */
-    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> trackIds) throws SQLException, MalformedURLException {
+    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
         File iTunesXmlFile = new File(config.getDefinition());
@@ -83,9 +74,10 @@ public class ItunesLoader {
         }
         URL iTunesLibraryXml = iTunesXmlFile.toURI().toURL();
         PListHandler handler = new PListHandler();
-        Map<Long, String> trackIdToPersId = new HashMap<Long, String>();
-        LibraryListener libraryListener = new LibraryListener(timeLastUpdate);
-        trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackIds);
+        Map<Long, String> trackIdToPersId = mvStore.openMap("trackIdToPers");
+        trackIdToPersId.clear();
+        LibraryListener libraryListener = new LibraryListener();
+        trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackTsUpdate);
         playlistListener = new PlaylistListener(config, executionThread, queue, libraryListener, trackIdToPersId, config);
         handler.addListener("/plist/dict", libraryListener);
         handler.addListener("/plist/dict[Tracks]/dict", trackListener);

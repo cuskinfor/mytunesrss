@@ -31,6 +31,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.h2.mvstore.MVStore;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -230,10 +231,8 @@ public class MyTunesRssUtils {
             }
         } catch (Exception e) {
             LOGGER.error("Exception during shutdown.", e);
-
         } finally {
-
-            LOGGER.debug("Very last log message before shutdown.");
+            LOGGER.info("Very last log message before shutdown.");
             System.exit(0);
         }
     }
@@ -1041,5 +1040,13 @@ public class MyTunesRssUtils {
 
     public static boolean isExecutable(File executable) {
         return executable != null && executable.isFile() && executable.canExecute();
+    }
+
+    public static File newMvStoreFile(String name) {
+        File mvStoreFile = new File(MyTunesRss.CACHE_DATA_PATH, name + ".mvstore");
+        if (mvStoreFile.isFile()) {
+            mvStoreFile.delete();
+        }
+        return mvStoreFile;
     }
 }

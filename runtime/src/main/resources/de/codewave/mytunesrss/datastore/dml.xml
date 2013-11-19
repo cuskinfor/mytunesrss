@@ -327,9 +327,9 @@
         </sql>
     </statement>
 
-    <statement name="getTrackIds">
+    <statement name="getTracksIdAndUpdateTs">
         <sql>
-            SELECT id AS id FROM track
+            SELECT id AS id, ts_updated AS ts FROM track
         </sql>
     </statement>
 
@@ -469,19 +469,19 @@
     </statement>
 
     <statement name="insertPhoto">
-        <sql>INSERT INTO photo (id, name, date, file, source_id) VALUES (:id, :name, :date, :file, :source_id)</sql>
+        <sql>INSERT INTO photo (id, name, date, file, source_id, ts_updated) VALUES (:id, :name, :date, :file, :source_id, :now)</sql>
     </statement>
 
     <statement name="updatePhoto">
-        <sql>UPDATE photo SET name = :name, date = :date, file = :file, source_id = :source_id, image_hash = NULL WHERE id = :id</sql>
+        <sql>UPDATE photo SET name = :name, date = :date, file = :file, source_id = :source_id, image_hash = NULL, ts_updated = :now WHERE id = :id</sql>
     </statement>
 
     <statement name="getPhotoAlbumIds">
         <sql>SELECT id FROM photoalbum</sql>
     </statement>
 
-    <statement name="getPhotoIds">
-        <sql>SELECT id FROM photo</sql>
+    <statement name="getPhotosIdAndUpdateTs">
+        <sql>SELECT id AS id, ts_updated AS ts FROM photo</sql>
     </statement>
 
     <statement name="findPhotos">

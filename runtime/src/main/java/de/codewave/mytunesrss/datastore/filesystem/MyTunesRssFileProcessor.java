@@ -55,23 +55,23 @@ import java.util.regex.Pattern;
 public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
 
-    private long myLastUpdateTime;
     private DatabaseUpdateQueue myQueue;
     private int myUpdatedCount;
     private Set<String> myExistingIds = new HashSet<String>();
-    private Collection<String> myTrackIds;
-    private Collection<String> myPhotoIds;
+    private Map<String, Long> myTrackTsUpdate;
+    private Map<String, Long> myPhotoTsUpdate;
     private String[] myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myDatasourceConfig;
     private Map<String, Pattern> myPatterns = new HashMap<String, Pattern>();
     private Set<String> myPhotoAlbumIds;
+    private long processedCount;
+    private long lastProcessedCountLog = System.currentTimeMillis();
 
-    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) throws SQLException {
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, Long> photoTsUpdate) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myQueue = queue;
-        myLastUpdateTime = lastUpdateTime;
-        myTrackIds = trackIds;
-        myPhotoIds = photoIds;
+        myTrackTsUpdate = trackTsUpdate;
+        myPhotoTsUpdate = photoTsUpdate;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
         myPhotoAlbumIds = new HashSet<String>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
@@ -93,12 +93,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (file.isFile() && myDatasourceConfig.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myExistingIds.contains(fileId)) {
-                    boolean existing = myTrackIds.contains(fileId) || myPhotoIds.contains(fileId);
+                    boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
                     if (existing) {
                         myExistingIds.add(fileId);
                     }
                     FileType type = myDatasourceConfig.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
-                    if ((file.lastModified() >= myLastUpdateTime || !existing || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
+                    if ((!existing || (myTrackTsUpdate.containsKey(fileId) && myTrackTsUpdate.get(fileId).longValue() < file.lastModified()) || (myPhotoTsUpdate.containsKey(fileId) && myPhotoTsUpdate.get(fileId).longValue() < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
@@ -135,6 +135,12 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
+        } finally {
+            processedCount++;
+            if (System.currentTimeMillis() - lastProcessedCountLog > 60000) {
+                LOGGER.info("Processed " + processedCount + " files.");
+                lastProcessedCountLog = System.currentTimeMillis();
+            }
         }
     }
 

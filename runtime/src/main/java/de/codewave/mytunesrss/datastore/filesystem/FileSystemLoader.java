@@ -14,6 +14,7 @@ import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.filesystem.FileSystemLoaderr
@@ -21,11 +22,11 @@ import java.util.Collection;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, long lastUpdateTime, Collection<String> trackIds, Collection<String> photoIds) throws IOException, SQLException {
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, Long> photoTsUpdate) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
-            fileProcessor = new MyTunesRssFileProcessor(datasource, queue, lastUpdateTime, trackIds, photoIds);
+            fileProcessor = new MyTunesRssFileProcessor(datasource, queue, trackTsUpdate, photoTsUpdate);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }
@@ -38,8 +39,12 @@ public class FileSystemLoader {
                     return file.isDirectory() || (datasource.isIncluded(file) && datasource.isSupported(file.getName()));
                 }
             });
-            trackIds.removeAll(fileProcessor.getExistingIds());
-            photoIds.removeAll(fileProcessor.getExistingIds());
+            for (String id : fileProcessor.getExistingIds()) {
+                trackTsUpdate.remove(id);
+            }
+            for (String id : fileProcessor.getExistingIds()) {
+                photoTsUpdate.remove(id);
+            }
             PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());
             IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
                 public boolean accept(File file) {

@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
 import org.apache.commons.io.FileUtils;
+import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -27,7 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * de.codewave.mytunesrss.datastore.itunes.IphotoLoaderr
+ * de.codewave.mytunesrss.datastore.iphoto.ApertureLoader
  */
 public class ApertureLoader {
     private static final Logger LOG = LoggerFactory.getLogger(ApertureLoader.class);
@@ -37,20 +38,20 @@ public class ApertureLoader {
      * @param executionThread
      * @param config
      * @param queue
-     * @param timeLastUpdate
-     * @param photoIds
+     * @param photoTsUpdate
      * @throws java.sql.SQLException
      * @throws java.net.MalformedURLException
      */
-    public static void loadFromAperture(Thread executionThread, ApertureDatasourceConfig config, DatabaseUpdateQueue queue, long timeLastUpdate, Collection<String> photoIds) throws SQLException, MalformedURLException {
+    public static void loadFromAperture(Thread executionThread, ApertureDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
         File iPhotoLibraryXmlFile = new File(config.getDefinition(), ApertureDatasourceConfig.APERTURE_XML_FILE_NAME);
         URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURL();
         if (iPhotoLibraryXml != null) {
             try {
                 PListHandler handler = new PListHandler();
-                Map<String, String> photoIdToPersId = new HashMap<String, String>();
-                LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile, timeLastUpdate);
-                PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoIds);
+                Map<String, String> photoIdToPersId = mvStore.openMap("trackIdToPers");
+                photoIdToPersId.clear();
+                LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile);
+                PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoTsUpdate);
                 handler.addListener("/plist/dict", libraryListener);
                 // first add all photos
                 handler.addListener("/plist/dict[Master Image List]/dict", photoListener);

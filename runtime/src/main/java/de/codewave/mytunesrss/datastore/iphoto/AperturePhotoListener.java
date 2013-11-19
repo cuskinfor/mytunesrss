@@ -22,8 +22,8 @@ public class AperturePhotoListener extends PhotoListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(AperturePhotoListener.class);
 
     public AperturePhotoListener(ApertureDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId,
-                                 Collection<String> photoIds) throws SQLException {
-        super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId, photoIds);
+                                 Map<String, Long> photoTsUpdate) throws SQLException {
+        super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId, photoTsUpdate);
         myXmlModDate = new File(datasourceConfig.getDefinition(), ApertureDatasourceConfig.APERTURE_XML_FILE_NAME).lastModified();
     }
 }

@@ -59,6 +59,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
             myStatement.setString("name", myName);
             myStatement.setLong("date", myDate);
             myStatement.setString("file", myFile);
+            myStatement.setLong("now", System.currentTimeMillis());
             myStatement.execute();
         } catch (SQLException e) {
             logError(myId, e);

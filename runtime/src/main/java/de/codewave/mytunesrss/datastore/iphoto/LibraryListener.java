@@ -22,16 +22,10 @@ public class LibraryListener implements PListHandlerListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(LibraryListener.class);
 
     private String myLibraryId;
-    private long myTimeLastUpate;
     private File myIphotoLibraryXml;
 
-    public LibraryListener(File iphotoLibraryXml, long timeLastUpate) {
+    public LibraryListener(File iphotoLibraryXml) {
         myIphotoLibraryXml = iphotoLibraryXml;
-        myTimeLastUpate = timeLastUpate;
-    }
-
-    public long getTimeLastUpate() {
-        return myTimeLastUpate;
     }
 
     public String getLibraryId() {

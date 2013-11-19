@@ -54,6 +54,7 @@
                 date NUMERIC(19),
                 image_hash CHAR(24),
                 last_image_update NUMERIC(19),
+                ts_updated NUMERIC(19),
                 source_id VARCHAR(100),
                 UNIQUE (id)
             )
