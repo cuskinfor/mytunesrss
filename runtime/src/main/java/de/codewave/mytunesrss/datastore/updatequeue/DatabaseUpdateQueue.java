@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,8 +30,8 @@ public class DatabaseUpdateQueue implements Runnable {
     }
 
     public void offer(DatabaseUpdateEvent event) throws InterruptedException {
-        if (!myQueue.offer(event, 600000, TimeUnit.MILLISECONDS)) {
-            LOGGER.error("Lost database update event \"" + event + "\".");
+        while (!myQueue.offer(event, 3600000L, TimeUnit.MILLISECONDS)) {
+            LOGGER.error("Could not offer database event \"" + event + "\" for an hour!");
         }
     }
 
