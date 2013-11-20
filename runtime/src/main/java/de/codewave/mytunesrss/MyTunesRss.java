@@ -48,7 +48,6 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.h2.mvstore.MVStore;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -354,8 +353,7 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
-                LOGGER.info("Recreating lucene index from scratch.");
-                long start = System.currentTimeMillis();
+                StopWatch.start("Recreating lucene index from scratch");
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
                     FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
@@ -387,11 +385,12 @@ public class MyTunesRss {
                         MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
                         dataStoreSession.rollback();
                     }
-                    LOGGER.info("Finished recreating lucene index from scratch (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
                 } catch (IOException e) {
                     LOGGER.error("Could not recreate lucene index.", e);
                 } catch (SQLException e) {
                     LOGGER.error("Could not recreate lucene index.", e);
+                } finally {
+                    StopWatch.stop();
                 }
             }
             while (true) {

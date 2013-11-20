@@ -5,15 +5,13 @@
 
 package de.codewave.mytunesrss.datastore.updatequeue;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.mytunesrss.statistics.GetStatisticsEventsQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.sql.SQLException;
 
 public class CheckpointEvent implements DatabaseUpdateEvent {
@@ -38,40 +36,36 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
     protected void refreshAccessories(DataStoreSession session) {
         session.commit();
         try {
-            long start = System.currentTimeMillis();
-            LOGGER.info("Recreating help tables.");
+            StopWatch.start("Recreating help tables");
             session.executeStatement(new RecreateHelpTablesStatement());
-            LOGGER.info("Done recreating help tables (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
             session.commit();
         }
         try {
-            long start = System.currentTimeMillis();
-            LOGGER.info("Refreshing smart playlists.");
+            StopWatch.start("Refreshing smart playlists");
             session.executeStatement(new RefreshSmartPlaylistsStatement());
-            LOGGER.info("Done refreshing smart playlists (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
             session.commit();
         }
         try {
-            long start = System.currentTimeMillis();
-            LOGGER.info("Updating statistics.");
+            StopWatch.start("Updating statistics");
             session.executeStatement(new UpdateStatisticsStatement());
-            LOGGER.info("Done updating statistics (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
             session.commit();
         }
         try {
-            long start = System.currentTimeMillis();
-            LOGGER.info("Updating user database references.");
+            StopWatch.start("Updating user database references");
             MyTunesRssUtils.updateUserDatabaseReferences(session);
-            LOGGER.info("Done updating user database references (duration = " + (System.currentTimeMillis() - start) + " milliseconds).");
+            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not update user database references.", e);
         } finally {

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.task;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.iphoto.ApertureLoader;
@@ -173,8 +174,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     private Map<String, MissingItunesFiles> runUpdate(MVStore mvStore) throws SQLException, IOException, InterruptedException {
         Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<String, MissingItunesFiles>();
         final Map<String, Long> trackTsUpdate = mvStore.openMap("trackTsUpdate");
-        LOGGER.info("Fetching existing tracks.");
-        long start = System.currentTimeMillis();
+        StopWatch.start("Fetching existing tracks");
         MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
             public Void execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksIdAndUpdateTs", ResultSetType.TYPE_FORWARD_ONLY);
@@ -185,8 +185,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 return null;
             }
         });
-        LOGGER.info("Fetched " + trackTsUpdate.size() + " existing tracks with timestamps (duration = " + (System.currentTimeMillis() - start) + " ms).");
-        LOGGER.info("Fetching existing photos.");
+        StopWatch.stop();
+        StopWatch.start("Fetching existing photos.");
         final Map<String, Long> photoTsUpdate = mvStore.openMap("photoTsUpdate");
         MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
             public Void execute(Connection connection) throws SQLException {
@@ -199,7 +199,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 return null;
             }
         });
-        LOGGER.info("Fetched " + photoTsUpdate.size() + " existing photos with timestamps (duration = " + (System.currentTimeMillis() - start) + " ms).");
+        StopWatch.stop();
         if (myDatasources != null && !Thread.currentThread().isInterrupted()) {
             try {
                 for (DatasourceConfig datasource : myDatasources) {
@@ -256,31 +256,21 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         }
         if (!Thread.currentThread().isInterrupted()) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Trying to remove up to " + trackTsUpdate.size() + " tracks from database.");
-            }
             myQueue.offer(new DataStoreStatementEvent(new RemoveTrackStatement(trackTsUpdate.keySet(), updatedDataSourceIds), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Trying to remove up to " + photoTsUpdate.size() + " photos from database.");
-            }
             myQueue.offer(new DataStoreStatementEvent(new RemovePhotoStatement(photoTsUpdate.keySet(), updatedDataSourceIds), true));
         }
         if (!Thread.currentThread().isInterrupted()) {
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Removing outdated playlists and photo albums.");
-            }
             myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAndPhotoAlbumsAfterUpdate");
                     statement.setItems("source_id", updatedDataSourceIds);
+                    StopWatch.start("Removing outdated playlists and photo albums");
                     statement.execute();
+                    StopWatch.stop();
                 }
             }, true));
-            if (LOGGER.isInfoEnabled()) {
-                LOGGER.info("Obsolete tracks, photos and playlists removed from database.");
-            }
         }
         return missingItunesFiles;
     }

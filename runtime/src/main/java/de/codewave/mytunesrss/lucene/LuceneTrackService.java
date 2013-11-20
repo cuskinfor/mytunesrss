@@ -1,9 +1,8 @@
 package de.codewave.mytunesrss.lucene;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.datastore.statement.SmartInfo;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
@@ -25,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * de.codewave.mytunesrss.lucene.LuceneTrackService
@@ -136,8 +133,7 @@ public class LuceneTrackService {
 
     public synchronized void flushTrackBuffer() throws IOException {
         try {
-            LOGGER.info("Indexing " + myTrackBuffer.size() + " tracks.");
-            long start = System.currentTimeMillis();
+            StopWatch.start("Indexing " + myTrackBuffer.size() + " tracks");
             long doneCount = 0;
             for (LuceneTrack track = myTrackBuffer.peek(); track != null; track = myTrackBuffer.peek()) {
                 Document document = createTrackDocument(track);
@@ -152,7 +148,7 @@ public class LuceneTrackService {
                 doneCount++;
             }
             getIndexWriter().commit();
-            LOGGER.info("Finished indexing " + doneCount + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
+            StopWatch.stop();
         } catch (Exception e) {
             LOGGER.error("Could not flush track buffer to lucene index.", e);
             shutdown();
@@ -161,17 +157,17 @@ public class LuceneTrackService {
 
     public synchronized void deleteTracksForSourceIds(Collection<String> sourceIds) throws IOException {
         flushTrackBuffer();
+        StopWatch.start("Removing tracks for " + sourceIds.size() + " data sources from index");
         try {
-            LOGGER.info("Removing tracks for " + sourceIds.size() + " data sources from index.");
-            long start = System.currentTimeMillis();
             for (String sourceId : sourceIds) {
                 getIndexWriter().deleteDocuments(new Term("source_id", sourceId));
                 getIndexWriter().commit();
             }
-            LOGGER.info("Finished removing tracks for " + sourceIds.size() + " data sources (duration: " + (System.currentTimeMillis() - start) + " ms).");
         } catch (Exception e) {
             LOGGER.error("Could not flush track buffer to lucene index.", e);
             shutdown();
+        } finally {
+            StopWatch.stop();
         }
     }
 

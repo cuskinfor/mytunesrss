@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -23,6 +24,8 @@ import java.util.Collection;
  */
 public class RemovePhotoStatement implements DataStoreStatement {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RemovePhotoStatement.class);
+    
     private Collection<String> myPhotoIds;
     private Collection<String> myDataSourceIds;
 
@@ -38,6 +41,8 @@ public class RemovePhotoStatement implements DataStoreStatement {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removePhoto");
         statement.setObject("photo_id", myPhotoIds);
         statement.setItems("source_id", myDataSourceIds);
+        StopWatch.start("Removing up to " + myPhotoIds.size() + " photos from database");
         statement.execute();
+        StopWatch.stop();
     }
 }

@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -39,7 +40,9 @@ public class RemoveTrackStatement implements DataStoreStatement {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTrack");
         statement.setObject("track_id", myTrackIds);
         statement.setItems("source_id", myDataSourceIds);
+        StopWatch.start("Removing up to " + myTrackIds.size() + " tracks from database");
         statement.execute();
+        StopWatch.stop();
         try {
             MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForIds(myTrackIds);
         } catch (IOException e) {

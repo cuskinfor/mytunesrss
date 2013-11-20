@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
@@ -13,18 +14,17 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MaintenanceStatement implements DataStoreStatement {
     private static final Logger LOG = LoggerFactory.getLogger(MaintenanceStatement.class);
 
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "maintenance");
-        long startTime = System.currentTimeMillis();
-        LOG.info("Database maintenance.");
-        statement.execute();
-        long endTime = System.currentTimeMillis();
-        LOG.info("Done with database maintenance (duration = " + (endTime - startTime) + " milliseconds).");
+        StopWatch.start("Database maintenance");
+        try {
+            statement.execute();
+        } finally {
+            StopWatch.stop();
+        }
     }
 }
