@@ -8,6 +8,9 @@
     <body>
 
         <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-462] Lost database events
+            </action>
             <action dev="mdescher" type="update">
                 Use mvstore for potentially large temporary maps during database import.
             </action>
