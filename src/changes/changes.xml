@@ -8,6 +8,9 @@
     <body>
 
         <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-460] Modal info dialog for long running startup tasks
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-462] Lost database events
             </action>

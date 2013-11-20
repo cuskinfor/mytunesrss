@@ -354,6 +354,8 @@ public class MyTunesRss {
             if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
                 StopWatch.start("Recreating lucene index from scratch");
+                DelayedModalInfo info = new DelayedModalInfo(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
+                info.show(2000L);
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
                     FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
@@ -391,6 +393,7 @@ public class MyTunesRss {
                     LOGGER.error("Could not recreate lucene index.", e);
                 } finally {
                     StopWatch.stop();
+                    info.destroy();
                 }
             }
             while (true) {
@@ -553,6 +556,8 @@ public class MyTunesRss {
     }
 
     private static void copyOldPrefsAndCache() {
+        DelayedModalInfo info = new DelayedModalInfo(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.copyOldPrefsAndCaches"));
+        info.show(2000L);
         try {
             File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
             File prefsDataPath = new File(MyTunesRss.PREFERENCES_DATA_PATH);
@@ -576,6 +581,8 @@ public class MyTunesRss {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not copy old preferences/caches.");
             }
+        } finally {
+            info.destroy();
         }
     }
 
