@@ -10,6 +10,7 @@ import com.vaadin.terminal.gwt.server.WebApplicationContext;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 
@@ -17,7 +18,7 @@ import java.util.Arrays;
 
 public class LoginPanel extends Panel implements Button.ClickListener {
 
-    private SmartTextField myPassword;
+    private SmartPasswordField myPassword;
 
     public void attach() {
         super.attach();

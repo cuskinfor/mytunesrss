@@ -44,8 +44,8 @@ public class VlcPlayer {
 
     static {
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-        MAPPER.getDeserializationConfig().setAnnotationIntrospector(introspector);
-        MAPPER.getSerializationConfig().setAnnotationIntrospector(introspector);
+        MAPPER.getDeserializationConfig().withAnnotationIntrospector(introspector);
+        MAPPER.getSerializationConfig().withAnnotationIntrospector(introspector);
         MAPPER.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

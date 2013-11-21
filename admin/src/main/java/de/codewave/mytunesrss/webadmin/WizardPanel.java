@@ -14,6 +14,8 @@ import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.webadmin.datasource.DatasourcesConfigPanel;
+import de.codewave.vaadin.SmartField;
+import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
@@ -33,8 +35,8 @@ public class WizardPanel extends Panel implements Button.ClickListener {
     private Button myAddDatasourceButton;
     private SmartTextField myDatasourcePath;
     private SmartTextField myUsername;
-    private SmartTextField myPassword;
-    private SmartTextField myRetypePassword;
+    private SmartPasswordField myPassword;
+    private SmartPasswordField myRetypePassword;
     private Button myFinishButton;
     private Button mySkipButton;
 
@@ -111,8 +113,8 @@ public class WizardPanel extends Panel implements Button.ClickListener {
         }
     }
 
-    private boolean isAnyEmpty(SmartTextField... fields) {
-        for (SmartTextField field : fields) {
+    private boolean isAnyEmpty(SmartField... fields) {
+        for (SmartField field : fields) {
             if (StringUtils.isEmpty(field.getStringValue(null))) {
                 return true;
             }

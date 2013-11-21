@@ -19,6 +19,7 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.EmailValidator;
@@ -38,8 +39,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private Form myIdentificationForm;
     private Form myOptionsForm;
     private SmartTextField myUsername;
-    private SmartTextField myPassword;
-    private SmartTextField myRetypePassword;
+    private SmartPasswordField myPassword;
+    private SmartPasswordField myRetypePassword;
     private SmartTextField myEmail;
     private CheckBox myPermRss;
     private CheckBox myPermPlaylist;
@@ -75,7 +76,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private SmartTextField mySessionTimeout;
     private CheckBox mySharedUser;
     private SmartTextField myLastFmUsername;
-    private SmartTextField myLastFmPassword;
+    private SmartPasswordField myLastFmPassword;
     private User myUser;
     private UserConfigPanel myUserConfigPanel;
     private CheckBox myExpire;

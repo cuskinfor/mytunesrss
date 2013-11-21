@@ -44,6 +44,19 @@ public class ComponentFactory implements Serializable {
     }
 
 
+    public TextArea createTextArea(String labelKey) {
+        return createTextArea(labelKey, null);
+    }
+
+    public TextArea createTextArea(String labelKey, Validator validator) {
+        TextArea textArea = new TextArea(labelKey != null ? getBundleString(labelKey) : null);
+        textArea.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        if (validator != null) {
+            textArea.addValidator(validator);
+        }
+        return textArea;
+    }
+
     public SmartTextField createTextField(String labelKey) {
         return createTextField(labelKey, null);
     }
@@ -67,16 +80,17 @@ public class ComponentFactory implements Serializable {
         field.setRequiredError(null);
     }
 
-    public SmartTextField createPasswordTextField(String labelKey) {
-        SmartTextField textField = createTextField(labelKey);
-        textField.setSecret(true);
-        return textField;
+    public SmartPasswordField createPasswordTextField(String labelKey) {
+        return createPasswordTextField(labelKey, null);
     }
 
-    public SmartTextField createPasswordTextField(String labelKey, Validator validator) {
-        SmartTextField textField = createTextField(labelKey, validator);
-        textField.setSecret(true);
-        return textField;
+    public SmartPasswordField createPasswordTextField(String labelKey, Validator validator) {
+        SmartPasswordField passwordField = new SmartPasswordField(labelKey != null ? getBundleString(labelKey) : null);
+        passwordField.setWidth(100, Sizeable.UNITS_PERCENTAGE);
+        if (validator != null) {
+            passwordField.addValidator(validator);
+        }
+        return passwordField;
     }
 
     public Button createButton(String textKey, Button.ClickListener listener) {

@@ -1096,7 +1096,7 @@ public class MyTunesRssConfig {
                         "<settings><" + CREATION_TIME_KEY + ">" + freshCryptedCreationTime + "</" + CREATION_TIME_KEY +
                                 "></settings>");
             }
-            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURL()), "settings");
+            JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURI().toURL()), "settings");
             setVersion(StringUtils.defaultIfEmpty(JXPathUtils.getStringValue(settings, "version", "0"), "0"));
             Version currentAppVersion = new Version(MyTunesRss.VERSION);
             Version currentConfigVersion = new Version(getVersion());

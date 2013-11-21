@@ -5,11 +5,8 @@
 
 package de.codewave.mytunesrss.webadmin.datasource;
 
-import com.vaadin.Application;
 import com.vaadin.data.Item;
 import com.vaadin.data.Property;
-import com.vaadin.data.util.DefaultItemSorter;
-import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
@@ -17,18 +14,15 @@ import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
-import de.codewave.mytunesrss.webadmin.EditUserConfigPanel;
 import de.codewave.mytunesrss.webadmin.MainWindow;
 import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.vaadin.SmartField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
-import de.codewave.vaadin.component.SinglePanelWindow;
-import de.codewave.vaadin.validation.FileValidator;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -91,7 +85,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         return id;
     }
 
-    private SmartTextField createNameTextField(final DatasourceConfig datasource) {
+    private SmartField createNameTextField(final DatasourceConfig datasource) {
         SmartTextField smartTextField = new SmartTextField();
         smartTextField.setImmediate(true);
         smartTextField.setValue(datasource.getName());
@@ -217,7 +211,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 DatasourceConfig newConfig = DatasourceConfig.create(UUID.randomUUID().toString(), null, file.getAbsolutePath());
                 if (newConfig != null) {
                     if (itemId != null) {
-                        ((SmartTextField) myDatasources.getItem(itemId).getItemProperty("name").getValue()).setValue(newConfig.getName());
+                        ((SmartField) myDatasources.getItem(itemId).getItemProperty("name").getValue()).setValue(newConfig.getName());
                         ((CheckBox) myDatasources.getItem(itemId).getItemProperty("upload").getValue()).setEnabled(newConfig.isUploadable());
                         myDatasources.getItem(itemId).getItemProperty("path").setValue(file.getAbsolutePath());
                         myDatasources.getItem(itemId).getItemProperty("icon").setValue(new Embedded("", getDatasourceImage(newConfig.getType())));

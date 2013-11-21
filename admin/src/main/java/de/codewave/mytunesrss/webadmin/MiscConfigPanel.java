@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.SmtpProtocol;
+import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
@@ -32,7 +33,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private Form mySmtpForm;
     private CheckBox myHeadless;
     private SmartTextField myMyTunesRssComUser;
-    private SmartTextField myMyTunesRssComPassword;
+    private SmartPasswordField myMyTunesRssComPassword;
     private CheckBox myMyTunesRssComSsl;
     private SmartTextField myWebLoginMessage;
     private SmartTextField myWebWelcomeMessage;
@@ -45,7 +46,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myMailPort;
     private Select mySmtpProtocol;
     private SmartTextField myMailLogin;
-    private SmartTextField myMailPassword;
+    private SmartPasswordField myMailPassword;
     private SmartTextField myMailSender;
     private CheckBox myGraphicsMagickEnabled;
     private SmartTextField myGraphicsMagickBinary;

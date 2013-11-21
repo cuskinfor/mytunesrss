@@ -5,13 +5,11 @@ import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.datastore.statement.SmartInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
 import org.apache.lucene.analysis.WhitespaceAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.index.IndexNotFoundException;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.Term;
+import org.apache.lucene.index.*;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.*;
@@ -46,15 +44,19 @@ public class LuceneTrackService {
             myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
         }
         if (myAnalyzer == null) {
-            myAnalyzer = new WhitespaceAnalyzer(Version.LUCENE_35);
+            myAnalyzer = new LimitTokenCountAnalyzer(new WhitespaceAnalyzer(Version.LUCENE_35), 300);
         }
         try {
             if (myIndexWriter == null) {
-                myIndexWriter = new IndexWriter(myDirectory, myAnalyzer, false, new IndexWriter.MaxFieldLength(300));
+                IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, myAnalyzer);
+                indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.APPEND);
+                myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
             }
         } catch (IndexNotFoundException e) {
             LOGGER.warn("No lucene index found, creating a new one.", e);
-            myIndexWriter = new IndexWriter(myDirectory, myAnalyzer, true, new IndexWriter.MaxFieldLength(300));
+            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, myAnalyzer);
+            indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+            myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
         }
         return myIndexWriter;
     }
@@ -134,7 +136,6 @@ public class LuceneTrackService {
     public synchronized void flushTrackBuffer() throws IOException {
         try {
             StopWatch.start("Indexing " + myTrackBuffer.size() + " tracks");
-            long doneCount = 0;
             for (LuceneTrack track = myTrackBuffer.peek(); track != null; track = myTrackBuffer.peek()) {
                 Document document = createTrackDocument(track);
                 if (track.isAdd()) {
@@ -145,7 +146,6 @@ public class LuceneTrackService {
                     LOGGER.warn("Lucence track type \"" + track.getClass().getName() + "\" is neither add nor update.");
                 }
                 myTrackBuffer.pop(); // element done
-                doneCount++;
             }
             getIndexWriter().commit();
             StopWatch.stop();

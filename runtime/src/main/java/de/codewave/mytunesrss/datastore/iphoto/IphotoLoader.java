@@ -42,7 +42,7 @@ public class IphotoLoader {
      */
     public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
         File iPhotoLibraryXmlFile = new File(config.getDefinition(), IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME);
-        URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURL();
+        URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURI().toURL();
         if (iPhotoLibraryXml != null) {
             try {
                 PListHandler handler = new PListHandler();

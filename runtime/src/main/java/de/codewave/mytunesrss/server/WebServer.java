@@ -65,10 +65,10 @@ public class WebServer {
                     } finally {
                         inStream.close();
                     }
-                    sslContextFactory.setKeyStore(keystore.getAbsolutePath());
+                    sslContextFactory.setKeyStorePath(keystore.getAbsolutePath());
                     sslContextFactory.setKeyStorePassword("changeit");
                 } else {
-                    sslContextFactory.setKeyStore(MyTunesRss.CONFIG.getSslKeystoreFile());
+                    sslContextFactory.setKeyStorePath(MyTunesRss.CONFIG.getSslKeystoreFile());
                     if (StringUtils.isNotEmpty(MyTunesRss.CONFIG.getSslKeystorePass())) {
                         sslContextFactory.setKeyStorePassword(MyTunesRss.CONFIG.getSslKeystorePass());
                     }

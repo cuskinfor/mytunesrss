@@ -38,7 +38,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
     private Button myShowLog;
     private SmartTextField myName;
     private SmartTextField myEmail;
-    private SmartTextField myDescription;
+    private TextArea myDescription;
     private CheckBox myIncludeItunesXml;
     private Button mySendSupport;
     private SmartTextField myRegName;
@@ -52,7 +52,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySupportForm = getComponentFactory().createForm(null, true);
         myName = getComponentFactory().createTextField("supportConfigPanel.name");
         myEmail = getComponentFactory().createTextField("supportConfigPanel.email");
-        myDescription = getComponentFactory().createTextField("supportConfigPanel.description");
+        myDescription = getComponentFactory().createTextArea("supportConfigPanel.description");
         myDescription.setRows(10);
         myIncludeItunesXml = getComponentFactory().createCheckBox("supportConfigPanel.includeItunesXml");
         mySendSupport = getComponentFactory().createButton("supportConfigPanel.sendSupport", this);

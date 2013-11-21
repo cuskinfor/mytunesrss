@@ -6,31 +6,31 @@
 package de.codewave.vaadin;
 
 import com.vaadin.data.Property;
-import com.vaadin.ui.TextField;
+import com.vaadin.ui.PasswordField;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.security.MessageDigest;
 import java.util.Map;
 
-public class SmartTextField extends TextField implements Comparable<SmartField>, SmartField {
+public class SmartPasswordField extends PasswordField implements Comparable<SmartField>, SmartField {
 
-    public SmartTextField() {
+    public SmartPasswordField() {
     }
 
-    public SmartTextField(String caption) {
+    public SmartPasswordField(String caption) {
         super(caption);
     }
 
-    public SmartTextField(Property dataSource) {
+    public SmartPasswordField(Property dataSource) {
         super(dataSource);
     }
 
-    public SmartTextField(String caption, Property dataSource) {
+    public SmartPasswordField(String caption, Property dataSource) {
         super(caption, dataSource);
     }
 
-    public SmartTextField(String caption, String value) {
+    public SmartPasswordField(String caption, String value) {
         super(caption, value);
     }
 
@@ -66,7 +66,6 @@ public class SmartTextField extends TextField implements Comparable<SmartField>,
         return defaultValue;
     }
 
-    @Override
     public void setValue(Object newValue) throws ReadOnlyException, ConversionException {
         if (newValue instanceof String || newValue == null) {
             super.setValue(StringUtils.trimToEmpty((String)newValue));
@@ -100,7 +99,6 @@ public class SmartTextField extends TextField implements Comparable<SmartField>,
         }
     }
 
-    @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);    //To change body of overridden methods use File | Settings | File Templates.
     }

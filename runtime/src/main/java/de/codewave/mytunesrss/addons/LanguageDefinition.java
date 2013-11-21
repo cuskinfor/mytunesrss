@@ -21,8 +21,8 @@ public class LanguageDefinition {
 
     static {
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-        MAPPER.getDeserializationConfig().setAnnotationIntrospector(introspector);
-        MAPPER.getSerializationConfig().setAnnotationIntrospector(introspector);
+        MAPPER.getDeserializationConfig().withAnnotationIntrospector(introspector);
+        MAPPER.getSerializationConfig().withAnnotationIntrospector(introspector);
     }
 
 

@@ -78,7 +78,7 @@ public class MyTunesRssRegistration {
 
     private static boolean isValidRegistration(File file) {
         try {
-            return RegistrationUtils.getRegistrationData(file.toURL(), getPublicKey()) != null;
+            return RegistrationUtils.getRegistrationData(file.toURI().toURL(), getPublicKey()) != null;
         } catch (Exception e) {
             if (LOG.isErrorEnabled()) {
                 LOG.error("Could not check registration file, assuming it is invalid.", e);
@@ -106,7 +106,7 @@ public class MyTunesRssRegistration {
         }
 
         String path = MyTunesRss.PREFERENCES_DATA_PATH;
-        String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURL() : new File(path + "/MyTunesRSS.key").toURL(),
+        String registration = RegistrationUtils.getRegistrationData(file != null ? file.toURI().toURL() : new File(path + "/MyTunesRSS.key").toURI().toURL(),
                 getPublicKey());
         if (registration != null) {
             if (LOG.isInfoEnabled()) {

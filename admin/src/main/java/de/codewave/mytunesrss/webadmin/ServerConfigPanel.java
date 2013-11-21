@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
@@ -64,8 +65,8 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private Form myAccessLogForm;
     private Select myAdminListenAddress;
     private SmartTextField myAdminPort;
-    private SmartTextField myAdminPassword;
-    private SmartTextField myRetypeAdminPassword;
+    private SmartPasswordField myAdminPassword;
+    private SmartPasswordField myRetypeAdminPassword;
     private CheckBox myLocalTempArchive;
     private CheckBox myAvailableOnLocalNet;
     private SmartTextField myServerName;
@@ -79,7 +80,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField mySslPort;
     private SmartTextField mySslKeystoreFile;
     private Button mySslKeystoreFileSelect;
-    private SmartTextField mySslKeystorePass;
+    private SmartPasswordField mySslKeystorePass;
     private SmartTextField mySslKeystoreKeyAlias;
     private CheckBox myUpnpAdmin;
     private CheckBox myUpnpUserHttp;

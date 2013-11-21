@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
+import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -29,7 +30,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private SmartTextField myDatabaseConnection;
     private SmartTextField myConnectionOptions;
     private SmartTextField myDatabaseUser;
-    private SmartTextField myDatabasePassword;
+    private SmartPasswordField myDatabasePassword;
     private Table myUpdateTriggers;
     private Table myBackupTriggers;
     private Button myAddUpdateTrigger;

@@ -44,7 +44,7 @@ public class ApertureLoader {
      */
     public static void loadFromAperture(Thread executionThread, ApertureDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
         File iPhotoLibraryXmlFile = new File(config.getDefinition(), ApertureDatasourceConfig.APERTURE_XML_FILE_NAME);
-        URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURL();
+        URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURI().toURL();
         if (iPhotoLibraryXml != null) {
             try {
                 PListHandler handler = new PListHandler();

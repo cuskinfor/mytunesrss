@@ -890,7 +890,7 @@ public class MyTunesRss {
                 Collection<URL> urls = new ArrayList<URL>();
                 for (File file : files) {
                     LOGGER.info("Adding \"" + file.getAbsolutePath() + "\" to extra classpath.");
-                    urls.add(file.toURL());
+                    urls.add(file.toURI().toURL());
                 }
                 return new URLClassLoader(urls.toArray(new URL[urls.size()]), ClassLoader.getSystemClassLoader());
             }

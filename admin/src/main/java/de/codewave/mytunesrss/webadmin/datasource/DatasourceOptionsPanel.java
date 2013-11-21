@@ -10,6 +10,7 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
+import de.codewave.vaadin.SmartField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -194,9 +195,9 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected void addFileType(FileType fileType) {
         CheckBox active = new CheckBox();
         active.setValue(fileType.isActive());
-        SmartTextField suffix = new SmartTextField();
+        SmartField suffix = new SmartTextField();
         suffix.setValue(fileType.getSuffix());
-        SmartTextField mimeType = new SmartTextField();
+        SmartField mimeType = new SmartTextField();
         mimeType.setValue(fileType.getMimeType());
         Select mediaType = getComponentFactory().createSelect(null, Arrays.asList(MediaType.Audio, MediaType.Video, MediaType.Image, MediaType.Other));
         mediaType.setValue(fileType.getMediaType());
