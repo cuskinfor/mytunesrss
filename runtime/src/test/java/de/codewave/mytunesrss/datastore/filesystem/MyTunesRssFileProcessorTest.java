@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.datastore.filesystem;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
+import org.h2.mvstore.MVStore;
+import org.h2.mvstore.OffHeapStore;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +30,7 @@ public class MyTunesRssFileProcessorTest {
     @Before
     public void before() throws URISyntaxException, SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
         MyTunesRssTestUtils.before();
-        myProcessor = new MyTunesRssFileProcessor(new WatchfolderDatasourceConfig("id1", "wfname", "dummy1"), new DatabaseUpdateQueue(2500), null, null);
+        myProcessor = new MyTunesRssFileProcessor(new WatchfolderDatasourceConfig("id1", "wfname", "dummy1"), new DatabaseUpdateQueue(2500), null, null, new MVStore.Builder().fileStore(new OffHeapStore()).open());
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());
     }
 

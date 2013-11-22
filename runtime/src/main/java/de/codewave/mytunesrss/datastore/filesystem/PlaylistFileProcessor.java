@@ -27,7 +27,6 @@ public class PlaylistFileProcessor implements FileProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(PlaylistFileProcessor.class);
 
     private DatabaseUpdateQueue myQueue;
-    private Collection<String> myExistingIds = new HashSet<String>();
     private Set<String> myExistingTrackIds;
     private WatchfolderDatasourceConfig myDatasourceConfig;
 
@@ -64,7 +63,6 @@ public class PlaylistFileProcessor implements FileProcessor {
                         statement.setUpdate(true);
                     }
                     myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert/update playlist from \"" + playlistFile + "\" into database."));
-                    myExistingIds.add(id);
                 }
             } catch (IOException e) {
                 if (LOG.isErrorEnabled()) {
@@ -80,7 +78,4 @@ public class PlaylistFileProcessor implements FileProcessor {
         }
     }
 
-    public Collection<String> getExistingIds() {
-        return myExistingIds;
-    }
 }

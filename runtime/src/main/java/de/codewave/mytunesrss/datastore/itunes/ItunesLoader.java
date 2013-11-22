@@ -74,7 +74,7 @@ public class ItunesLoader {
         }
         URL iTunesLibraryXml = iTunesXmlFile.toURI().toURL();
         PListHandler handler = new PListHandler();
-        Map<Long, String> trackIdToPersId = mvStore.openMap("trackIdToPers");
+        Map<Long, String> trackIdToPersId = MyTunesRssUtils.openMvMap(mvStore, "trackIdToPers");
         trackIdToPersId.clear();
         LibraryListener libraryListener = new LibraryListener();
         trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackTsUpdate);

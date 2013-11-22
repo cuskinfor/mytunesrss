@@ -254,11 +254,11 @@ public class MyTunesRss {
             }
         });
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
-        copyOldPrefsAndCache();
-        createMissingPrefDirs();
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
         enableHeapDumpOnOutOfMemoryError();
+        copyOldPrefsAndCache();
+        createMissingPrefDirs();
         WEBSERVER = new WebServer();
         MAILER = new MailSender();
         ADMIN_NOTIFY = new AdminNotifier();
@@ -354,7 +354,7 @@ public class MyTunesRss {
             if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
                 StopWatch.start("Recreating lucene index from scratch");
-                DelayedModalInfo info = new DelayedModalInfo(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
+                ModelInfoDialog info = new ModelInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
                 info.show(2000L);
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
@@ -555,7 +555,7 @@ public class MyTunesRss {
     }
 
     private static void copyOldPrefsAndCache() {
-        DelayedModalInfo info = new DelayedModalInfo(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.copyOldPrefsAndCaches"));
+        ModelInfoDialog info = new ModelInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.copyOldPrefsAndCaches"));
         info.show(2000L);
         try {
             File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);

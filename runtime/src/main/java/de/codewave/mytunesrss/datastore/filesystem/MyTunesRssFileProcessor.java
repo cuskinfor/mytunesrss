@@ -34,6 +34,7 @@ import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
+import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     private DatabaseUpdateQueue myQueue;
     private int myUpdatedCount;
-    private Set<String> myExistingIds = new HashSet<String>();
+    private Map<String, Byte> myExistingIds;
     private Map<String, Long> myTrackTsUpdate;
     private Map<String, Long> myPhotoTsUpdate;
     private String[] myDisabledMp4Codecs;
@@ -67,7 +68,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private long processedCount;
     private long lastProcessedCountLog = System.currentTimeMillis();
 
-    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, Long> photoTsUpdate) throws SQLException {
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException {
+        myExistingIds = MyTunesRssUtils.openMvMap(mvStore, "existingIds");
         myDatasourceConfig = datasourceConfig;
         myQueue = queue;
         myTrackTsUpdate = trackTsUpdate;
@@ -77,7 +79,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     }
 
     public Set<String> getExistingIds() {
-        return myExistingIds;
+        return myExistingIds.keySet();
     }
 
     public Set<String> getExistingPhotoAlbumIds() {
@@ -92,10 +94,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         try {
             if (file.isFile() && myDatasourceConfig.isSupported(file.getName())) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
-                if (!myExistingIds.contains(fileId)) {
+                if (!myExistingIds.containsKey(fileId)) {
                     boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
                     if (existing) {
-                        myExistingIds.add(fileId);
+                        myExistingIds.put(fileId, (byte)0);
                     }
                     FileType type = myDatasourceConfig.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                     if ((!existing || (myTrackTsUpdate.containsKey(fileId) && myTrackTsUpdate.get(fileId).longValue() < file.lastModified()) || (myPhotoTsUpdate.containsKey(fileId) && myPhotoTsUpdate.get(fileId).longValue() < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
@@ -171,7 +173,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
         myUpdatedCount++;
-        myExistingIds.add(fileId);
+        myExistingIds.put(fileId, (byte)0);
         return false;
     }
 
@@ -255,7 +257,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         myUpdatedCount++;
-        myExistingIds.add(photoFileId);
+        myExistingIds.put(photoFileId, (byte)0);
     }
 
     private TrackMetaData parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {

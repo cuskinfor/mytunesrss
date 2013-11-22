@@ -4,7 +4,7 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.DelayedModalInfo;
+import de.codewave.mytunesrss.ModelInfoDialog;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
@@ -59,7 +59,7 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                                 }
                             }
                         }
-                        DelayedModalInfo info = new DelayedModalInfo(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.migratingDatabase"));
+                        ModelInfoDialog info = new ModelInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.migratingDatabase"));
                         info.show(2000L);
                         try {
                             session.executeStatement(new MigrationStatement());

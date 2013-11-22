@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandler;
@@ -43,7 +44,7 @@ public class ApertureLoader {
         if (iPhotoLibraryXml != null) {
             try {
                 PListHandler handler = new PListHandler();
-                Map<String, String> photoIdToPersId = mvStore.openMap("trackIdToPers");
+                Map<String, String> photoIdToPersId = MyTunesRssUtils.openMvMap(mvStore, "trackIdToPers");
                 photoIdToPersId.clear();
                 LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile);
                 PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoTsUpdate);

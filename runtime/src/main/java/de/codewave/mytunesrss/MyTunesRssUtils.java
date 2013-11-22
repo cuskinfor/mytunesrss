@@ -31,6 +31,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.h2.mvstore.FileStore;
+import org.h2.mvstore.MVStore;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1034,11 +1036,19 @@ public class MyTunesRssUtils {
         return executable != null && executable.isFile() && executable.canExecute();
     }
 
-    public static File newMvStoreFile(String name) {
-        File mvStoreFile = new File(MyTunesRss.CACHE_DATA_PATH, name + ".mvstore");
-        if (mvStoreFile.isFile()) {
-            mvStoreFile.delete();
+    public static MVStore.Builder getMvStoreBuilder(String filename) {
+        File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
-        return mvStoreFile;
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            file.delete();
+        }
+        return new MVStore.Builder().fileStore(new FileStore()).fileName(file.getAbsolutePath());
+    }
+
+    public static <K, V> Map<K, V> openMvMap(MVStore store, String name) {
+        return new InterruptSafeMvMap<K, V>(store.<K, V>openMap(name));
     }
 }

@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss;
 
 import org.h2.mvstore.MVStore;
-import org.h2.mvstore.OffHeapStore;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -19,15 +18,15 @@ public class OffHeapSessionStoreListener implements ServletContextListener, Http
     }
 
     private static Map<Object, Object> getSessions(HttpSession session) {
-        return getMVStore(session.getServletContext()).openMap("sessions");
+        return MyTunesRssUtils.openMvMap(getMVStore(session.getServletContext()), "sessions");
     }
-    
+
     private static MVStore getMVStore(ServletContext sc) {
         return (MVStore) sc.getAttribute(OffHeapSessionStoreListener.class.getName());
     }
 
     public void contextInitialized(ServletContextEvent sce) {
-        sce.getServletContext().setAttribute(OffHeapSessionStoreListener.class.getName(), new MVStore.Builder().fileStore(new OffHeapStore()).open());
+        sce.getServletContext().setAttribute(OffHeapSessionStoreListener.class.getName(), MyTunesRssUtils.getMvStoreBuilder("sessions").open());
     }
 
     public void contextDestroyed(ServletContextEvent sce) {

@@ -21,7 +21,6 @@ import de.codewave.mytunesrss.datastore.updatequeue.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.utils.sql.*;
 import org.h2.mvstore.MVStore;
-import org.h2.mvstore.OffHeapStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,7 +88,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         myQueue.start();
         Boolean result = Boolean.FALSE;
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
-        MVStore mvStore = new MVStore.Builder().fileStore(new OffHeapStore()).open();
+        MVStore mvStore = MyTunesRssUtils.getMvStoreBuilder("database-import").compressData().open();
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
             myQueue.offer(new MyTunesRssEventEvent(event));
@@ -169,7 +168,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
      */
     private Map<String, MissingItunesFiles> runUpdate(MVStore mvStore) throws SQLException, IOException, InterruptedException {
         Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<String, MissingItunesFiles>();
-        final Map<String, Long> trackTsUpdate = mvStore.openMap("trackTsUpdate");
+        final Map<String, Long> trackTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "trackTsUpdate");
         StopWatch.start("Fetching existing tracks");
         MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
             public Void execute(Connection connection) throws SQLException {
@@ -182,8 +181,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         });
         StopWatch.stop();
-        StopWatch.start("Fetching existing photos.");
-        final Map<String, Long> photoTsUpdate = mvStore.openMap("photoTsUpdate");
+        StopWatch.start("Fetching existing photos");
+        final Map<String, Long> photoTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "photoTsUpdate");
         MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
             public Void execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdAndUpdateTs");
@@ -218,7 +217,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue, trackTsUpdate, photoTsUpdate);
+                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue, trackTsUpdate, photoTsUpdate, mvStore);
                     }
                 }
             } catch (ShutdownRequestedException e) {
