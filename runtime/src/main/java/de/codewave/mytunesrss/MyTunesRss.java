@@ -359,8 +359,7 @@ public class MyTunesRss {
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
                     FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
-                    query.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
-                    query.setFetchSize(1000);
+                    query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                     DataStoreSession dataStoreSession = MyTunesRss.STORE.getTransaction();
                     try {
                         DataStoreQuery.QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);

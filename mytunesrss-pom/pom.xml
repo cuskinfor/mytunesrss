@@ -135,7 +135,7 @@
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>codewave-utils</artifactId>
-                <version>1.18</version>
+                <version>1.21</version>
             </dependency>
             <dependency>
                 <groupId>de.codewave</groupId>

@@ -44,7 +44,6 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private boolean myMatchAlbumArtist;
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
-    private ResultSetType myResultSetType;
     
     public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String genre, int index, int minYear, int maxYear, boolean sortByYear, boolean albumsBeforeCompilations, AlbumType type) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
@@ -61,11 +60,6 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myType = type;
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
-    }
-
-    public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String genre, int index, int minYear, int maxYear, boolean sortByYear, boolean albumsBeforeCompilations, AlbumType type, ResultSetType resultSetType) {
-        this(user, filter, artist, matchAlbumArtist, genre, index, minYear, maxYear, sortByYear, albumsBeforeCompilations, type);
-        myResultSetType = resultSetType;
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
@@ -87,7 +81,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
         conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || (StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist) || (StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
-        SmartStatement statement = myResultSetType != null ? MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals, myResultSetType) : MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("artist", StringUtils.lowerCase(myArtist));
         statement.setString("genre", StringUtils.lowerCase(myGenre));

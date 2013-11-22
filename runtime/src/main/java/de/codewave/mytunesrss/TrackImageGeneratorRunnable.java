@@ -55,7 +55,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                     DataStoreQuery<Collection<SimpleTrack>> query = new DataStoreQuery<Collection<SimpleTrack>>() {
                         @Override
                         public Collection<SimpleTrack> execute(Connection connection) throws SQLException {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages", ResultSetType.TYPE_FORWARD_ONLY);
+                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages");
                             statement.setItems("sourceIds", sourceIds);
                             return execute(statement, new ResultBuilder<SimpleTrack>() {
                                 public SimpleTrack create(ResultSet resultSet) throws SQLException {
@@ -64,7 +64,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                             }).getNextResults(10000);
                         }
                     };
-                    query.setFetchSize(1000);
+                    query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                     Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(query);
                     int count = 0;
                     Map<String, String> folderImageCache = new LinkedHashMap<String, String>(64, 0.75f, true) {

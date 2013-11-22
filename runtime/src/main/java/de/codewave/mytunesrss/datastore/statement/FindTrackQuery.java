@@ -179,7 +179,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
-    private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
     private MediaType[] myMediaTypes;
     private VideoType myVideoType;
     private String mySeries;
@@ -188,10 +187,6 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     private FindTrackQuery() {
         // intentionally left blank
-    }
-
-    public void setResultSetType(ResultSetType resultSetType) {
-        myResultSetType = resultSetType;
     }
 
     public void setMediaTypes(MediaType... mediaTypes) {
@@ -216,7 +211,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
         if (!CollectionUtils.isEmpty(myIds)) {
-            statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable", myResultSetType);
+            statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
             statement.setObject("track_id", myIds);
             statement.execute();
             conditionals.put("temptables", Boolean.TRUE);

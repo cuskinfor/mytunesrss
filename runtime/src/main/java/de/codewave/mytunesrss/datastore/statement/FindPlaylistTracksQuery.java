@@ -31,7 +31,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
-    private ResultSetType myResultSetType = ResultSetType.TYPE_SCROLL_INSENSITIVE;
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
     
@@ -48,10 +47,6 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
-    public void setResultSetType(ResultSetType resultSetType) {
-        myResultSetType = resultSetType;
-    }
-
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
@@ -60,7 +55,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId) || PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
-            statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals, myResultSetType);
+            statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals);
             conditionals.put("albumorder", PSEUDO_ID_ALL_BY_ALBUM.equals(myId));
             conditionals.put("artistorder", PSEUDO_ID_ALL_BY_ARTIST.equals(myId));
         } else {
@@ -71,7 +66,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
             if (parts.length == 3) {
                 conditionals.put("index", parts.length == 3);
             }
-            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracks", conditionals, myResultSetType);
+            statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracks", conditionals);
             statement.setString("id", parts[0]);
             if (parts.length == 3) {
                 statement.setInt("firstIndex", Integer.parseInt(parts[1]));

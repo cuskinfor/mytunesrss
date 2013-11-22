@@ -148,7 +148,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         // no conditionals in other cases
                 }
             }
-            final SmartStatement queryStatement = MyTunesRssUtils.createStatement(connection, "getTracksForSmartPlaylist", conditionals, ResultSetType.TYPE_FORWARD_ONLY);
+            final SmartStatement queryStatement = MyTunesRssUtils.createStatement(connection, "getTracksForSmartPlaylist", conditionals);
             for (SmartInfo smartInfo : smartInfos) {
                 switch (smartInfo.getFieldType()) {
                     case mintime:
@@ -186,7 +186,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     }).getRemainingResults();
                 }
             };
-            dataStoreQuery.setFetchSize(10000);
+            dataStoreQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 10000);
             List<String> tracks = dataStoreQuery.execute(connection);
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
             statement.setString("id", playlistId);

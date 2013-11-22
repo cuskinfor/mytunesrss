@@ -279,18 +279,10 @@ public class MyTunesRssUtils {
     }
 
     public static SmartStatement createStatement(Connection connection, String name) throws SQLException {
-        return createStatement(connection, name, Collections.<String, Boolean>emptyMap(), ResultSetType.TYPE_SCROLL_INSENSITIVE);
+        return createStatement(connection, name, Collections.<String, Boolean>emptyMap());
     }
 
-    public static SmartStatement createStatement(Connection connection, String name, Map<String, Boolean> conditionals) throws SQLException {
-        return createStatement(connection, name, conditionals, ResultSetType.TYPE_SCROLL_INSENSITIVE);
-    }
-
-    public static SmartStatement createStatement(Connection connection, String name, ResultSetType resultSetType) throws SQLException {
-        return createStatement(connection, name, Collections.<String, Boolean>emptyMap(), resultSetType);
-    }
-
-    public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals, ResultSetType resultSetType) throws SQLException {
+    public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals) throws SQLException {
         return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>) Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[]{Map.class}, new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("get".equals(method.getName()) && args.length == 1 && args[0] instanceof String) {
@@ -299,7 +291,7 @@ public class MyTunesRssUtils {
                     return method.invoke(conditionals, args);
                 }
             }
-        }), resultSetType);
+        }));
     }
 
     public static void setCodewaveLogLevel(Level level) {
