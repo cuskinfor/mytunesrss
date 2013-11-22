@@ -21,6 +21,7 @@ import de.codewave.mytunesrss.datastore.updatequeue.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.utils.sql.*;
 import org.h2.mvstore.MVStore;
+import org.h2.mvstore.OffHeapStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,8 +89,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         myQueue.start();
         Boolean result = Boolean.FALSE;
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
-        File mvStoreFile = MyTunesRssUtils.newMvStoreFile("database-update");
-        MVStore mvStore = MVStore.open(mvStoreFile.getAbsolutePath());
+        MVStore mvStore = new MVStore.Builder().fileStore(new OffHeapStore()).open();
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
             myQueue.offer(new MyTunesRssEventEvent(event));
@@ -108,11 +108,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             myQueue.offer(new TerminateEvent());
             myQueue.waitForTermination();
             MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
-            try {
-                mvStore.close();
-            } finally {
-                mvStoreFile.delete();
-            }
+            mvStore.close();
         }
         return result;
     }

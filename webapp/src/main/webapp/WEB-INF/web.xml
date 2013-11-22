@@ -54,6 +54,12 @@
         <param-name>sessionInfoClass</param-name>
         <param-value>de.codewave.mytunesrss.server.MyTunesRssSessionInfo</param-value>
     </context-param>
+    <!-- Listener for off heap session store -->
+    <listener>
+        <description>Off heap session store listener</description>
+        <display-name>OffHeapSessionStoreListener</display-name>
+        <listener-class>de.codewave.mytunesrss.OffHeapSessionStoreListener</listener-class>
+    </listener>
     <!-- Bandwidth limit filter -->
     <filter>
         <description>Banwidth limit filter.</description>

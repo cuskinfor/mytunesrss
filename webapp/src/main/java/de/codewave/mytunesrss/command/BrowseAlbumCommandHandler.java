@@ -6,10 +6,12 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 
@@ -37,33 +39,46 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 genre = null;
             }
             getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-            FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(),
-                                                               getDisplayFilter().getTextFilter(),
-                                                               artist,
-                                                               false,
-                                                               genre,
-                                                               getIntegerRequestParameter("page", -1),
-                                                               getDisplayFilter().getMinYear(),
-                                                               getDisplayFilter().getMaxYear(),
-                                                               getBooleanRequestParameter("sortByYear", false),
-                                                               StringUtils.isNotBlank(artist),
-                                                               getDisplayFilter().getAlbumType());
-            DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
+            OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
+            String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
+            List<Album> cachedAlbums = offHeapSessionStore.getCurrentList(currentListId);
+            if (cachedAlbums == null) {
+                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(),
+                                                                   getDisplayFilter().getTextFilter(),
+                                                                   artist,
+                                                                   false,
+                                                                   genre,
+                                                                   getIntegerRequestParameter("page", -1),
+                                                                   getDisplayFilter().getMinYear(),
+                                                                   getDisplayFilter().getMaxYear(),
+                                                                   getBooleanRequestParameter("sortByYear", false),
+                                                                   StringUtils.isNotBlank(artist),
+                                                                   getDisplayFilter().getAlbumType());
+                findAlbumQuery.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+                findAlbumQuery.setFetchSize(1000);
+                DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
+                currentListId = offHeapSessionStore.newCurrentList();
+                for (Album album = queryResult.nextResult(); album != null; album = queryResult.nextResult()) {
+                    offHeapSessionStore.addToCurrentList(album);
+                }
+                cachedAlbums = offHeapSessionStore.getCurrentList(currentListId);
+            }
+            getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Album> albums = new ArrayList<Album>();
             int trackCount = 0;
             int current = getSafeIntegerRequestParameter("index", 0);
-            int queryResultSize = queryResult.getResultSize();
-            if (pageSize > 0 && queryResultSize > pageSize) {
-                Pager pager = createPager(queryResultSize, current);
+            if (pageSize > 0 && cachedAlbums.size() > pageSize) {
+                Pager pager = createPager(cachedAlbums.size(), current);
                 getRequest().setAttribute("indexPager", pager);
             }
-            for (int i = 0; i < queryResultSize; i++) {
-                Album album = queryResult.nextResult();
+            int i = 0;
+            for (Album album : cachedAlbums) {
                 trackCount += album.getTrackCount();
                 if (pageSize == 0 || (i >= current * pageSize && i < (current + 1) * pageSize)) {
                     albums.add(album);
                 }
+                i++;
             }
             getRequest().setAttribute("albums", albums);
             Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));
