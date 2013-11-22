@@ -60,10 +60,17 @@
         <display-name>OffHeapSessionStoreListener</display-name>
         <listener-class>de.codewave.mytunesrss.OffHeapSessionStoreListener</listener-class>
     </listener>
+    <!-- Off heap session store filter -->
+    <filter>
+        <description>Off heap session store filter.</description>
+        <display-name>OffHeapSessionStoreFilter</display-name>
+        <filter-name>OffHeapSessionStoreFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.OffHeapSessionStoreFilter</filter-class>
+    </filter>
     <!-- Bandwidth limit filter -->
     <filter>
         <description>Banwidth limit filter.</description>
-        <display-name>andwidthLimitFilter</display-name>
+        <display-name>BandwidthLimitFilter</display-name>
         <filter-name>BandwidthLimitFilter</filter-name>
         <filter-class>de.codewave.mytunesrss.servlet.BandwidthLimitFilter</filter-class>
     </filter>
@@ -123,6 +130,10 @@
     <filter-mapping>
         <filter-name>GzipCompressionFilter</filter-name>
         <servlet-name>CommandServlet</servlet-name>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>OffHeapSessionStoreFilter</filter-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>BandwidthLimitFilter</filter-name>
