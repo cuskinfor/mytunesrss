@@ -1,18 +1,18 @@
 package de.codewave.mytunesrss;
 
+import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVStore;
 import org.h2.mvstore.OffHeapStore;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.io.IOException;
 import java.util.Map;
 
-public class OffHeapSessionStoreListener implements ServletContextListener, HttpSessionListener {
+public class OffHeapSessionStoreListener implements ServletContextListener, HttpSessionListener, Filter {
 
     static OffHeapSessionStore getOffHeapSessionStore(HttpServletRequest request) {
         return (OffHeapSessionStore) getSessions(request.getSession()).get(request.getSession().getId());
@@ -41,5 +41,24 @@ public class OffHeapSessionStoreListener implements ServletContextListener, Http
 
     public void sessionDestroyed(HttpSessionEvent se) {
         getSessions(se.getSession()).remove(se.getSession().getId());
+    }
+
+    public void init(FilterConfig filterConfig) throws ServletException {
+        // nothing to initialize
+    }
+
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        if (request instanceof HttpServletRequest) {
+            String currentListId = request.getParameter(OffHeapSessionStore.CURRENT_LIST_ID);
+            if (StringUtils.isBlank(currentListId)) {
+                OffHeapSessionStore.get((HttpServletRequest) request).removeCurrentList();
+            }
+
+        }
+        chain.doFilter(request, response);
+    }
+
+    public void destroy() {
+        // nothing to destroy
     }
 }
