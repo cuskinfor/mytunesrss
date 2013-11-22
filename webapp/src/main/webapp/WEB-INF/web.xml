@@ -132,10 +132,6 @@
         <servlet-name>CommandServlet</servlet-name>
     </filter-mapping>
     <filter-mapping>
-        <filter-name>OffHeapSessionStoreFilter</filter-name>
-        <url-pattern>/mytunesrss/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
         <filter-name>BandwidthLimitFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
@@ -153,6 +149,10 @@
     </filter-mapping>
     <filter-mapping>
         <filter-name>ServletRequestParameterTrimmer</filter-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>OffHeapSessionStoreFilter</filter-name>
         <url-pattern>/mytunesrss/*</url-pattern>
     </filter-mapping>
     <filter-mapping>

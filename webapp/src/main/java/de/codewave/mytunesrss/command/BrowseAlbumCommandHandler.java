@@ -57,7 +57,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                 currentListId = offHeapSessionStore.newCurrentList();
                 cachedAlbums = offHeapSessionStore.getCurrentList(currentListId);
-                getTransaction().executeQuery(findAlbumQuery).addResults(cachedAlbums);
+                getTransaction().executeQuery(findAlbumQuery).addRemainingResults(cachedAlbums);
             }
             getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
             int pageSize = getWebConfig().getEffectivePageSize();
