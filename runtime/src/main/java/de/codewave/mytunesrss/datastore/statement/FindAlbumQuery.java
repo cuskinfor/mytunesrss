@@ -63,7 +63,8 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
-    public void setResultSetType(ResultSetType resultSetType) {
+    public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String genre, int index, int minYear, int maxYear, boolean sortByYear, boolean albumsBeforeCompilations, AlbumType type, ResultSetType resultSetType) {
+        this(user, filter, artist, matchAlbumArtist, genre, index, minYear, maxYear, sortByYear, albumsBeforeCompilations, type);
         myResultSetType = resultSetType;
     }
 

@@ -53,8 +53,8 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                                                                    getDisplayFilter().getMaxYear(),
                                                                    getBooleanRequestParameter("sortByYear", false),
                                                                    StringUtils.isNotBlank(artist),
-                                                                   getDisplayFilter().getAlbumType());
-                findAlbumQuery.setResultSetType(ResultSetType.TYPE_FORWARD_ONLY);
+                                                                   getDisplayFilter().getAlbumType(),
+                                                                   ResultSetType.TYPE_FORWARD_ONLY);
                 findAlbumQuery.setFetchSize(1000);
                 DataStoreQuery.QueryResult<Album> queryResult = getTransaction().executeQuery(findAlbumQuery);
                 currentListId = offHeapSessionStore.newCurrentList();
