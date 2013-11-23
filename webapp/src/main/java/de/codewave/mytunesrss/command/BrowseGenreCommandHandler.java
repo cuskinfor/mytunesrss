@@ -4,10 +4,12 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
@@ -24,21 +26,34 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
         if (isSessionAuthorized()) {
             String page = getRequest().getParameter("page");
             getRequest().setAttribute("genrePager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-            DataStoreQuery.QueryResult<Genre> queryResult;
-            if (StringUtils.isNotEmpty(page)) {
-                queryResult = getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), false, Integer.parseInt(page)));
-            } else {
-                queryResult = getTransaction().executeQuery(new FindGenreQuery(getAuthUser(), false, -1));
+
+            OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
+            String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
+            List<Genre> cachedGenres = offHeapSessionStore.getCurrentList(currentListId);
+
+            if (cachedGenres == null)
+            {
+                FindGenreQuery query;
+                if (StringUtils.isNotEmpty(page)) {
+                    query = new FindGenreQuery(getAuthUser(), false, Integer.parseInt(page));
+                } else {
+                    query = new FindGenreQuery(getAuthUser(), false, -1);
+                }
+                query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+                currentListId = offHeapSessionStore.newCurrentList();
+                cachedGenres = offHeapSessionStore.getCurrentList(currentListId);
+                getTransaction().executeQuery(query).addRemainingResults(cachedGenres);
             }
+            getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Genre> genres;
-            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
+            if (pageSize > 0 && cachedGenres.size() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(queryResult.getResultSize(), current);
+                Pager pager = createPager(cachedGenres.size(), current);
                 getRequest().setAttribute("indexPager", pager);
-                genres = queryResult.getResults(current * pageSize, pageSize);
+                genres = cachedGenres.subList(current * pageSize, Math.min((current * pageSize) + pageSize, cachedGenres.size()));
             } else {
-                genres = queryResult.getResults();
+                genres = cachedGenres;
             }
             getRequest().setAttribute("genres", genres);
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),

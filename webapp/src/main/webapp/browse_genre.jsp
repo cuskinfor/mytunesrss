@@ -154,7 +154,7 @@
 
                     <c:if test="${!empty indexPager}">
                         <c:set var="pager" scope="request" value="${indexPager}" />
-                        <c:set var="pagerCommand" scope="request">${servletUrl}/browseGenre/${auth}/<mt:encrypt>page=${param.page}</mt:encrypt>/index={index}</c:set>
+                        <c:set var="pagerCommand" scope="request">${servletUrl}/browseGenre/${auth}/<mt:encrypt>page=${param.page}/backUrl=${param.backUrl}/currentListId=${currentListId}</mt:encrypt>/index={index}</c:set>
                         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
                         <jsp:include page="incl_bottomPager.jsp" />
                     </c:if>
