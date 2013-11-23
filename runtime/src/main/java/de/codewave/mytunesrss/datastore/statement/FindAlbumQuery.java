@@ -44,7 +44,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private boolean myMatchAlbumArtist;
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
-    
+
     public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String genre, int index, int minYear, int maxYear, boolean sortByYear, boolean albumsBeforeCompilations, AlbumType type) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myArtist = artist;
@@ -65,7 +65,6 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     public QueryResult<Album> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
-        conditionals.put("track", StringUtils.isNotBlank(myArtist) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist);
         conditionals.put("albumartist", StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist);
@@ -80,7 +79,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("compilation", myType != AlbumType.ALL);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || (StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist) || (StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || StringUtils.isNotBlank(myArtist) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("artist", StringUtils.lowerCase(myArtist));

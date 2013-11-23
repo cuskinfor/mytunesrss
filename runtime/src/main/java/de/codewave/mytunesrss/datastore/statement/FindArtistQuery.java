@@ -33,7 +33,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
-    
+
     public FindArtistQuery(User user, String filter, String album, String genre, int index) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myAlbum = album;
@@ -48,7 +48,6 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
     public QueryResult<Artist> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
-        conditionals.put("track", StringUtils.isNotBlank(myAlbum) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myAlbum));
         conditionals.put("genre", StringUtils.isNotBlank(myGenre));
@@ -56,7 +55,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || StringUtils.isNotBlank(myAlbum) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("album", StringUtils.lowerCase(myAlbum));
