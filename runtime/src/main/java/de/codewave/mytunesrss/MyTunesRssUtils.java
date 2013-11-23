@@ -231,6 +231,7 @@ public class MyTunesRssUtils {
                     LOGGER.error("Could not delete default database files.", e);
                 }
             }
+            MyTunesRssUtils.removeMvStoreData();
         } catch (Exception e) {
             LOGGER.error("Exception during shutdown.", e);
         } finally {
@@ -1050,5 +1051,10 @@ public class MyTunesRssUtils {
 
     public static <K, V> Map<K, V> openMvMap(MVStore store, String name) {
         return new InterruptSafeMvMap<K, V>(store.<K, V>openMap(name));
+    }
+
+    private static void removeMvStoreData() throws IOException {
+        FileUtils.deleteDirectory(new File(MyTunesRss.CACHE_DATA_PATH, "mvstore"));
+
     }
 }

@@ -4,14 +4,13 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
-import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.Pager;
-import de.codewave.mytunesrss.TrackUtils;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -33,8 +32,14 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             String sortOrderName = getRequestParameter("sortOrder", SortOrder.Album.name());
             SortOrder sortOrderValue = SortOrder.valueOf(sortOrderName);
 
+            OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
+            String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
+            List<Track> cachedTracks = offHeapSessionStore.getCurrentList(currentListId);
+
             DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
-            if (StringUtils.isNotEmpty(searchTerm)) {
+
+            if (StringUtils.isNotEmpty(searchTerm) && (cachedTracks == null || sortOrderValue != offHeapSessionStore.getCurrentSortOrder())) {
+                StopWatch.start("Lucene search and query preparation");
                 if (getWebConfig().getSearchFuzziness() == -1) {
                     try {
                         query = FindTrackQuery.getForExpertSearchTerm(getAuthUser(), searchTerm, sortOrderValue, getWebConfig().getMaxSearchResults());
@@ -55,30 +60,48 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     } else {
                         addError(new BundleError("error.searchTermMinSize", 2));
                         forward(MyTunesRssCommand.ShowPortal);
-                        return;// early return
+                        return; // early return
                     }
                 }
+                StopWatch.stop();
             } else {
                 query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
-            }
-            List<TrackUtils.EnhancedTrack> tracks = null;
-            if (query != null) {
-                DataStoreQuery.QueryResult<Track> result = getTransaction().executeQuery(query);
-                int pageSize = getWebConfig().getEffectivePageSize();
-                TrackUtils.EnhancedTracks enhancedTracks;
                 if (query instanceof FindPlaylistTracksQuery) {// keep sort order for playlists
                     sortOrderValue = SortOrder.KeepOrder;
                 }
-                if (pageSize > 0 && result.getResultSize() > pageSize) {
-                    int current = getSafeIntegerRequestParameter("index", 0);
-                    Pager pager = createPager(result.getResultSize(), current);
-                    getRequest().setAttribute("pager", pager);
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), result.getResults(current * pageSize, pageSize), sortOrderValue);
-                } else {
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), result.getResults(), sortOrderValue);
+                if (cachedTracks != null && sortOrderValue == offHeapSessionStore.getCurrentSortOrder()) {
+                    query = null;
                 }
-                getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()) &&
-                        sortOrderValue != SortOrder.KeepOrder);
+            }
+
+            if (query != null) {
+                query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+                currentListId = offHeapSessionStore.newCurrentList();
+                cachedTracks = offHeapSessionStore.getCurrentList(currentListId);
+                StopWatch.start("SQL query for tracks");
+                getTransaction().executeQuery(query).addRemainingResults(cachedTracks);
+                StopWatch.stop();
+                offHeapSessionStore.setCurrentSortOrder(sortOrderValue);
+            }
+
+            List<TrackUtils.EnhancedTrack> tracks = null;
+
+            if (cachedTracks != null) {
+                getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
+
+                int pageSize = getWebConfig().getEffectivePageSize();
+                TrackUtils.EnhancedTracks enhancedTracks;
+                StopWatch.start("Creating enhanced tracks");
+                if (pageSize > 0 && cachedTracks.size() > pageSize) {
+                    int current = getSafeIntegerRequestParameter("index", 0);
+                    Pager pager = createPager(cachedTracks.size(), current);
+                    getRequest().setAttribute("pager", pager);
+                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), cachedTracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, cachedTracks.size())), sortOrderValue);
+                } else {
+                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), cachedTracks, sortOrderValue);
+                }
+                StopWatch.stop();
+                getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()) && sortOrderValue != SortOrder.KeepOrder);
                 tracks = (List<TrackUtils.EnhancedTrack>)enhancedTracks.getTracks();
                 if (pageSize > 0 && tracks.size() > pageSize) {
                     tracks.get(0).setContinuation(!tracks.get(0).isNewSection());
@@ -86,6 +109,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 }
                 getRequest().setAttribute("tracks", tracks);
             }
+
             if (tracks == null || tracks.isEmpty()) {
                 addError(new BundleError("error.browseTrackNoResult"));
                 if (StringUtils.isNotEmpty(getRequestParameter("backUrl", null))) {

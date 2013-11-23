@@ -5,10 +5,12 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.ServletException;
@@ -32,21 +34,30 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
                 genre = null;
             }
             getRequest().setAttribute("artistPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
-            FindArtistQuery findArtistQuery = new FindArtistQuery(getAuthUser(),
-                                                                  getDisplayFilter().getTextFilter(),
-                                                                  album,
-                                                                  genre,
-                                                                  getIntegerRequestParameter("page", -1));
-            DataStoreQuery.QueryResult<Artist> queryResult = getTransaction().executeQuery(findArtistQuery);
+            OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
+            String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
+            List<Artist> cachedArtists = offHeapSessionStore.getCurrentList(currentListId);
+            if (cachedArtists == null) {
+                FindArtistQuery findArtistQuery = new FindArtistQuery(getAuthUser(),
+                                                                      getDisplayFilter().getTextFilter(),
+                                                                      album,
+                                                                      genre,
+                                                                      getIntegerRequestParameter("page", -1));
+                findArtistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+                currentListId = offHeapSessionStore.newCurrentList();
+                cachedArtists = offHeapSessionStore.getCurrentList(currentListId);
+                getTransaction().executeQuery(findArtistQuery).addRemainingResults(cachedArtists);
+            }
+            getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Artist> artists;
-            if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
+            if (pageSize > 0 && cachedArtists.size() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(queryResult.getResultSize(), current);
+                Pager pager = createPager(cachedArtists.size(), current);
                 getRequest().setAttribute("indexPager", pager);
-                artists = queryResult.getResults(current * pageSize, pageSize);
+                artists = cachedArtists.subList(current * pageSize, Math.min((current * pageSize) + pageSize, cachedArtists.size()));
             } else {
-                artists = queryResult.getResults();
+                artists = cachedArtists;
             }
             getRequest().setAttribute("artists", artists);
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),

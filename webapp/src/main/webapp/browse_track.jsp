@@ -271,7 +271,7 @@
 
 <c:if test="${!empty pager}">
     <c:set var="pagerCommand"
-           scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt>playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/albumartist=${cwfn:encodeUrl(param.albumartist)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/sortOrder=${sortOrder}/playlistName=${param.playlistName}</mt:encrypt>/index={index}/backUrl=${param.backUrl}</c:set>
+           scope="request">${servletUrl}/browseTrack/${auth}/<mt:encrypt>playlist=${cwfn:encodeUrl(param.playlist)}/fullAlbums=${param.fullAlbums}/album=${cwfn:encodeUrl(param.album)}/albumartist=${cwfn:encodeUrl(param.albumartist)}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/searchTerm=${cwfn:encodeUrl(param.searchTerm)}/fuzzy=${cwfn:encodeUrl(param.fuzzy)}/sortOrder=${sortOrder}/playlistName=${param.playlistName}/backUrl=${param.backUrl}/currentListId=${currentListId}</mt:encrypt>/index={index}</c:set>
     <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
     <jsp:include page="incl_bottomPager.jsp" />
 </c:if>
