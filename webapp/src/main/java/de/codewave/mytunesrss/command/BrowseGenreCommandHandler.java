@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.command;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -51,7 +52,7 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
                 int current = getSafeIntegerRequestParameter("index", 0);
                 Pager pager = createPager(cachedGenres.size(), current);
                 getRequest().setAttribute("indexPager", pager);
-                genres = cachedGenres.subList(current * pageSize, Math.min((current * pageSize) + pageSize, cachedGenres.size()));
+                genres = MyTunesRssUtils.getSubList(cachedGenres, current * pageSize, pageSize);
             } else {
                 genres = cachedGenres;
             }

@@ -6,10 +6,12 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,36 +44,46 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
             String containerId = getRequestParameter("cid", null);
-            List<Playlist> playlists = new ArrayList<Playlist>();
-            if (StringUtils.isEmpty(containerId) && getAuthUser().isSpecialPlaylists()) {
-                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, PlaylistType.MyTunesSmart, getBundleString(
-                        "playlist.specialAllByAlbum"), -1));
-                playlists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunesSmart, getBundleString(
-                        "playlist.specialAllByArtist"), -1));
+
+            OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
+            String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
+            List<Playlist> cachedPlaylists = offHeapSessionStore.getCurrentList(currentListId);
+
+            if (cachedPlaylists == null) {
+
+                currentListId = offHeapSessionStore.newCurrentList();
+                cachedPlaylists = offHeapSessionStore.getCurrentList(currentListId);
+
+                if (StringUtils.isEmpty(containerId) && getAuthUser().isSpecialPlaylists()) {
+                    cachedPlaylists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, PlaylistType.MyTunesSmart, getBundleString(
+                            "playlist.specialAllByAlbum"), -1));
+                    cachedPlaylists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunesSmart, getBundleString(
+                            "playlist.specialAllByArtist"), -1));
+                }
+                if (StringUtils.isNotEmpty(containerId)) {
+                    Playlist container = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, containerId, null, false, false))
+                            .nextResult();
+                    getRequest().setAttribute("container", container);
+                }
+                containerId = getRequestParameter("cid", "ROOT");
+                FindPlaylistQuery query = new FindPlaylistQuery(getAuthUser(), null, null, containerId, false, false);
+                query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+                getTransaction().executeQuery(query).addRemainingResults(cachedPlaylists);
             }
-            if (StringUtils.isNotEmpty(containerId)) {
-                Playlist container = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, containerId, null, false, false))
-                        .nextResult();
-                getRequest().setAttribute("container", container);
-            }
-            containerId = getRequestParameter("cid", "ROOT");
-            DataStoreQuery.QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
-                                                                                                                   null,
-                                                                                                                   null,
-                                                                                                                   containerId,
-                                                                                                                   false,
-                                                                                                                   false));
-            for (Playlist playlist = queryResult.nextResult(); playlist != null; playlist = queryResult.nextResult()) {
-                playlists.add(playlist);
-                playlists.addAll(createSplittedPlaylists(playlist));
-            }
+
+            getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
+
+            List<Playlist> playlists;
             int pageSize = getWebConfig().getEffectivePageSize();
-            if (pageSize > 0 && playlists.size() > pageSize) {
+            if (pageSize > 0 && cachedPlaylists.size() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(playlists.size(), current);
+                Pager pager = createPager(cachedPlaylists.size(), current);
                 getRequest().setAttribute("pager", pager);
-                playlists = MyTunesRssUtils.getSubList(playlists, current * pageSize, pageSize);
+                playlists = MyTunesRssUtils.getSubList(cachedPlaylists, current * pageSize, pageSize);
+            } else {
+                playlists = cachedPlaylists;
             }
+
             getRequest().setAttribute("playlists", playlists);
             getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && MyTunesRss.CONFIG.isUploadableDatasource());
             getRequest().setAttribute("statistics", getTransaction().executeQuery(new GetSystemInformationQuery()));
@@ -82,32 +94,4 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private List<Playlist> createSplittedPlaylists(Playlist playlist) {
-        List<Playlist> splittedPlaylists = new ArrayList<Playlist>();
-        int maxCount = getWebConfig().getRssFeedLimit();
-        if (maxCount > 0 && playlist.getTrackCount() > maxCount) {
-            int startIndex = 0;
-            while (startIndex < playlist.getTrackCount()) {
-                int endIndex = Math.min(startIndex + maxCount - 1, playlist.getTrackCount() - 1);
-                Playlist splittedPlaylist = new Playlist();
-                splittedPlaylist.setType(playlist.getType());
-                splittedPlaylist.setId(playlist.getId() + "@" + startIndex + "@" + endIndex);
-                splittedPlaylist.setName(playlist.getName() + " [" + createFixedLengthNumber(startIndex + 1, playlist.getTrackCount()) + "-" +
-                        createFixedLengthNumber(endIndex + 1, playlist.getTrackCount()) + "]");
-                splittedPlaylist.setTrackCount(endIndex - startIndex + 1);
-                splittedPlaylists.add(splittedPlaylist);
-                startIndex = endIndex + 1;
-            }
-        }
-        return splittedPlaylists;
-    }
-
-    private String createFixedLengthNumber(int number, int maxNumber) {
-        String fixedLengthNumber = Integer.toString(number);
-        int length = Integer.toString(maxNumber).length();
-        while (fixedLengthNumber.length() < length) {
-            fixedLengthNumber = "0" + fixedLengthNumber;
-        }
-        return fixedLengthNumber;
-    }
 }

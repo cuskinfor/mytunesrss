@@ -66,7 +66,6 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         error |= transferAndValidateMaxSearchResults(webConfig);
         error |= transferAndValidatePhotoPageSize(webConfig);
         error |= transferAndValidatePhotoJpegQuality(webConfig);
-        error |= transferAndValidateRssFeedLimit(webConfig);
         error |= transferAndValidatePassword();
         error |= transferAndValidateLastFmAccount();
         return !error;
@@ -176,17 +175,4 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
         return false;
     }
 
-    private boolean transferAndValidateRssFeedLimit(WebConfig webConfig) {
-        try {
-            webConfig.setRssFeedLimit(getIntegerRequestParameter("rssFeedLimit", 0));
-            if (webConfig.getRssFeedLimit() < 0 || webConfig.getRssFeedLimit() > 999) {
-                addError(new BundleError("error.settingsFeedLimitSizeRange"));
-                return true;
-            }
-        } catch (NumberFormatException e) {
-            addError(new BundleError("error.settingsFeedLimitSizeRange"));
-            return true;
-        }
-        return false;
-    }
 }

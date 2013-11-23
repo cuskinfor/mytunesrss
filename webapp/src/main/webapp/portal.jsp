@@ -223,7 +223,7 @@
     </table>
 
     <c:if test="${!empty pager}">
-        <c:set var="pagerCommand" scope="request" value="${servletUrl}/showPortal/${auth}/index={index}" />
+        <c:set var="pagerCommand" scope="request">${servletUrl}/showPortal/${auth}/<mt:encrypt>currentListId=${currentListId}</mt:encrypt>/index={index}"</c:set>
         <c:set var="pagerCurrent" scope="request" value="${cwfn:choose(!empty param.index, param.index, '0')}" />
         <jsp:include page="incl_bottomPager.jsp" />
     </c:if>

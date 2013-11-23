@@ -96,7 +96,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     int current = getSafeIntegerRequestParameter("index", 0);
                     Pager pager = createPager(cachedTracks.size(), current);
                     getRequest().setAttribute("pager", pager);
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), cachedTracks.subList(current * pageSize, Math.min((current * pageSize) + pageSize, cachedTracks.size())), sortOrderValue);
+                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), MyTunesRssUtils.getSubList(cachedTracks, current * pageSize, pageSize), sortOrderValue);
                 } else {
                     enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), cachedTracks, sortOrderValue);
                 }

@@ -29,7 +29,6 @@ public class WebConfig {
     private static final String CONFIG_COOKIE_NAME = MyTunesRss.APPLICATION_IDENTIFIER + "Cookie";
     private static final String CFG_FEED_TYPE_RSS = "feedTypeRss";
     private static final String CFG_FEED_TYPE_PLAYLIST = "feedTypePlaylist";
-    private static final String CFG_RSS_LIMIT = "rssLimit";
     private static final String CFG_PAGE_SIZE = "pageSize";
     private static final String CFG_PHOTO_PAGE_SIZE = "photoPageSize";
     private static final String CFG_SHOW_DOWNLOAD = "showDownload";
@@ -53,7 +52,7 @@ public class WebConfig {
     private static final String CFG_PHOTO_JPEG_QUALITY = "pjq";
     private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
 
-    private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_RSS_LIMIT, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
+    private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_PLAYLIST_TYPE, CFG_THEME,
             CFG_FLASH_PLAYER, CFG_YAHOO_MEDIAPLAYER, CFG_BROWSER_START_INDEX, CFG_MYTUNESRSSCOM_ADDRESS,
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_SHOW_ADD_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS,
@@ -113,7 +112,6 @@ public class WebConfig {
     private void initWithDefaults() {
         myConfigValues.put(CFG_FEED_TYPE_RSS, "true");
         myConfigValues.put(CFG_FEED_TYPE_PLAYLIST, "true");
-        myConfigValues.put(CFG_RSS_LIMIT, "0");
         myConfigValues.put(CFG_PAGE_SIZE, "30");
         myConfigValues.put(CFG_PHOTO_PAGE_SIZE, "20");
         myConfigValues.put(CFG_SHOW_DOWNLOAD, "true");
@@ -324,18 +322,6 @@ public class WebConfig {
         int count = isShowRss() ? 1 : 0;
         count += (isShowPlaylist() ? 1 : 0);
         return count;
-    }
-
-    public int getRssFeedLimit() {
-        String rssLimit = myConfigValues.get(CFG_RSS_LIMIT);
-        if (StringUtils.isNotEmpty(rssLimit)) {
-            return Integer.parseInt(rssLimit);
-        }
-        return 0;
-    }
-
-    public void setRssFeedLimit(int rssFeedLimit) {
-        myConfigValues.put(CFG_RSS_LIMIT, Integer.toString(rssFeedLimit));
     }
 
     public Map<String, String> getFeedFileSuffix() {

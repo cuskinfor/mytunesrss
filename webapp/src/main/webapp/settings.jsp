@@ -194,18 +194,6 @@
                                        maxlength="5"
                                        value="<c:out value="${cwfn:choose(config.maxSearchResults > 0, config.maxSearchResults, '')}"/>" /></td>
                         </tr>
-                        <c:if test="${authUser.rss}">
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.rssFeedLimit" /></td>
-                                <td>
-                                    <input class="number"
-                                           type="text"
-                                           name="rssFeedLimit"
-                                           maxlength="3"
-                                           value="<c:out value="${cwfn:choose(config.rssFeedLimit > 0, config.rssFeedLimit, '')}"/>" />
-                                </td>
-                            </tr>
-                        </c:if>
                         <c:if test="${globalConfig.myTunesRssComActive}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.myTunesRssComAddress" /></td>
