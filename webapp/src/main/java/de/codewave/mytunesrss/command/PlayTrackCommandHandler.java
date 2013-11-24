@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler
@@ -36,12 +37,11 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
             LOG.debug(ServletUtils.getRequestInfo(getRequest()));
         }
         StreamSender streamSender;
-        Track track = null;
         String trackId = getRequest().getParameter("track");
         try {
             DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
             if (tracks.getResultSize() > 0) {
-                track = tracks.nextResult();
+                final Track track = tracks.nextResult();
                 if (!getAuthUser().isQuotaExceeded()) {
                     File file = track.getFile();
                     if (!file.exists()) {
@@ -58,8 +58,16 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                     } else {
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
-                        getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[] {track.getId()}));
-                        getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(true));
+                        MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                            public void run() {
+                                try {
+                                    MyTunesRss.STORE.executeStatement(new UpdatePlayCountAndDateStatement(new String[]{track.getId()}));
+                                    MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(true));
+                                } catch (SQLException e) {
+                                    LOG.info("Could not update play count and/or refresh smart playlists.", e);
+                                }
+                            }
+                        });
                         streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                         getAuthUser().playLastFmTrack(track);
                     }

@@ -13,10 +13,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Statement for updating all smart playlists.
@@ -176,18 +173,19 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         // nothing in all other cases
                 }
             }
-            DataStoreQuery<List<String>> dataStoreQuery = new DataStoreQuery<List<String>>() {
+            Collection<String> tracks = new LinkedHashSet<String>();
+            DataStoreQuery<DataStoreQuery.QueryResult<String>> dataStoreQuery = new DataStoreQuery<DataStoreQuery.QueryResult<String>>() {
                 @Override
-                public List<String> execute(Connection connection) throws SQLException {
+                public QueryResult<String> execute(Connection connection) throws SQLException {
                     return execute(queryStatement, new ResultBuilder<String>() {
                         public String create(ResultSet resultSet) throws SQLException {
                             return resultSet.getString(1);
                         }
-                    }).getRemainingResults();
+                    });
                 }
             };
             dataStoreQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 10000);
-            List<String> tracks = dataStoreQuery.execute(connection);
+            dataStoreQuery.execute(connection).addRemainingResults(tracks);
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
             statement.setString("id", playlistId);
             statement.setObject("track_id", tracks);
