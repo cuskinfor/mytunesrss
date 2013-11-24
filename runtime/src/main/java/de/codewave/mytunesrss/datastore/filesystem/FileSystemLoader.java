@@ -46,16 +46,18 @@ public class FileSystemLoader {
             for (String id : fileProcessor.getExistingIds()) {
                 photoTsUpdate.remove(id);
             }
-            PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());
-            IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
-                public boolean accept(File file) {
-                    if (watchdogThread.isInterrupted()) {
-                        Thread.currentThread().interrupt();
-                        throw new ShutdownRequestedException();
+            if (datasource.isImportPlaylists()) {
+                PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());
+                IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
+                    public boolean accept(File file) {
+                        if (watchdogThread.isInterrupted()) {
+                            Thread.currentThread().interrupt();
+                            throw new ShutdownRequestedException();
+                        }
+                        return file.isDirectory() || (datasource.isIncluded(file) && "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase())));
                     }
-                    return file.isDirectory() || (datasource.isIncluded(file) && "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase())));
-                }
-            });
+                });
+            }
             if (LOG.isInfoEnabled()) {
                 LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
             }

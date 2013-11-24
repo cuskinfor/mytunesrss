@@ -9,6 +9,9 @@
 
         <release version="5.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                Option to disable playlist import for watch folders.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-460] Modal info dialog for long running startup tasks
             </action>
             <action dev="mdescher" type="fix">

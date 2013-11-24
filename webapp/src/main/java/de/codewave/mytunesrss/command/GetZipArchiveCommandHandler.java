@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
@@ -44,8 +45,8 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
     public void executeAuthorized() throws Exception {
         User user = getAuthUser();
         if (isRequestAuthorized() && user.isDownload()) {
-            String baseName = getRequest().getPathInfo();
-            baseName = baseName.substring(baseName.lastIndexOf("/") + 1, baseName.lastIndexOf("."));
+            String baseName = getRequestParameter("_cda", "MyTunesRSS");
+            baseName = MyTunesRssUtils.getLegalFileName(baseName.substring(0, baseName.lastIndexOf(".")));
             String tracklist = getRequestParameter("tracklist", null);
             DataStoreQuery.QueryResult<Track> tracks;
             if (StringUtils.isNotEmpty(tracklist)) {

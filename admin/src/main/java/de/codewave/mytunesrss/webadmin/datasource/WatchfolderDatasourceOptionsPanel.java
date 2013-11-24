@@ -36,6 +36,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private Select myVideoType;
     private CheckBox myIgnoreFileMeta;
     private SmartTextField myId3v2TrackComment;
+    private CheckBox myImportPlaylists;
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, WatchfolderDatasourceConfig config) {
@@ -70,6 +71,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         mySeasonFallback = getComponentFactory().createTextField("datasourceOptionsPanel.seasonFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
         myEpisodeFallback = getComponentFactory().createTextField("datasourceOptionsPanel.episodeFallback", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
         myPhotoAlbumPattern = getComponentFactory().createTextField("datasourceOptionsPanel.photoAlbumPattern", new FallbackPatternValidator("datasourceOptionsPanel.error.invalidFallbackPattern"));
+        myImportPlaylists = getComponentFactory().createCheckBox("datasourceOptionsPanel.importPlaylist");
         myFallbackForm.addField(myTitleFallback, myTitleFallback);
         myFallbackForm.addField(myAlbumFallback, myAlbumFallback);
         myFallbackForm.addField(myArtistFallback, myArtistFallback);
@@ -92,6 +94,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscOptionsForm.addField(myTrackImageImportType, myTrackImageImportType);
         myMiscOptionsForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
+        myMiscOptionsForm.addField(myImportPlaylists, myImportPlaylists);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
         addDefaultComponents(0, 5, 0, 5, false);
@@ -125,6 +128,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImagePatterns(patterns);
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
+        myConfig.setImportPlaylists(myImportPlaylists.booleanValue());
         myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
@@ -158,6 +162,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getTrackImageImportType()));
         myPhotoThumbnailImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getPhotoThumbnailImportType()));
+        myImportPlaylists.setValue(myConfig.isImportPlaylists());
         myTrackImagePatternsTable.removeAllItems();
         for (String pattern : myConfig.getTrackImagePatterns()) {
             addTrackImagePattern(pattern);

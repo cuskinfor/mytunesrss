@@ -1343,6 +1343,7 @@ public class MyTunesRssConfig {
                             readFileTypes(datasourceContext, watchfolderDatasourceConfig);
                             watchfolderDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
                             watchfolderDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
+                            watchfolderDatasourceConfig.setImportPlaylists(JXPathUtils.getBooleanValue(datasourceContext, "import-playlists", true));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1736,6 +1737,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", watchfolderDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", watchfolderDatasourceConfig.getPhotoThumbnailImportType().name()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", watchfolderDatasourceConfig.isUseSingleImageInFolder()));
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "import-playlists", watchfolderDatasourceConfig.isImportPlaylists()));
                     writeTrackImagePatterns(settings, dataSource, watchfolderDatasourceConfig);
                     writeFileTypes(settings, dataSource, watchfolderDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));

@@ -45,6 +45,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
     private boolean myUseSingleImageInFolder = false;
+    private boolean myImportPlaylists = true;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
         super(source);
@@ -68,6 +69,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myTrackImageImportType = source.getTrackImageImportType();
         myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
         myUseSingleImageInFolder = source.isUseSingleImageInFolder();
+        myImportPlaylists = source.isImportPlaylists();
     }
 
     public WatchfolderDatasourceConfig(String id, String name, String definition) {
@@ -289,5 +291,13 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
 
     public void setUseSingleImageInFolder(boolean useSingleImageInFolder) {
         myUseSingleImageInFolder = useSingleImageInFolder;
+    }
+
+    public boolean isImportPlaylists() {
+        return myImportPlaylists;
+    }
+
+    public void setImportPlaylists(boolean importPlaylists) {
+        myImportPlaylists = importPlaylists;
     }
 }
