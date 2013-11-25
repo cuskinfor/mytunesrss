@@ -19,17 +19,6 @@ public class TerminateEvent extends CheckpointEvent {
 
     public boolean execute(DataStoreSession session) {
         try {
-            /*
-            try {
-                session.executeStatement(new DataStoreStatement() {
-                    public void execute(Connection connection) throws SQLException {
-                        MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
-                    }
-                });
-            } catch (SQLException e) {
-                LOGGER.warn("Could not execute data store statement.", e);
-            }
-            */
             refreshAccessories(session);
             super.execute(session);
             session.commit();

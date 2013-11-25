@@ -499,13 +499,10 @@
         <sql>UPDATE photoalbum SET updated = TRUE WHERE id = :id</sql>
     </statement>
 
-    <statement name="removeOrphanedImages">
+    <statement name="getAllImageHashes">
         <sql>
-            DELETE FROM image
-            WHERE NOT EXISTS
-            ( SELECT * FROM track t WHERE t.image_hash = hash )
-            AND NOT EXISTS
-            ( SELECT * FROM photo p WHERE p.image_hash = hash )
+            SELECT unique(image_hash) FROM track
+            UNION SELECT unique(image_hash) FROM photo
         </sql>
     </statement>
 

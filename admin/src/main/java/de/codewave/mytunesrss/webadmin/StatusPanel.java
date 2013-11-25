@@ -13,6 +13,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.RemoveImagesForDataSourcesStatement;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
@@ -25,12 +26,14 @@ import de.codewave.mytunesrss.webadmin.datasource.DatasourcesSelectionPanel;
 import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.network.UpdateInfo;
+import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -306,12 +309,19 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImageRemoval"));
                             MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
                             try {
-                                MyTunesRss.STORE.executeStatement(new RemoveImagesForDataSourcesStatement(MyTunesRssUtils.toDatasourceIds(datasources)));
-                                MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
-                                    public void execute(Connection connection) throws SQLException {
-                                        MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
-                                    }
-                                });
+                                OrphanedImageRemover orphanedImageRemover = new OrphanedImageRemover();
+                                orphanedImageRemover.init();
+                                try {
+                                    MyTunesRss.STORE.executeStatement(new RemoveImagesForDataSourcesStatement(MyTunesRssUtils.toDatasourceIds(datasources)));
+                                    MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+                                        public void execute(Connection connection) throws SQLException {
+                                            MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
+                                        }
+                                    });
+                                    orphanedImageRemover.remove();
+                                } finally {
+                                    orphanedImageRemover.destroy();
+                                }
                             } catch (SQLException e) {
                                 LOGGER.error("Could not remove images.", e);
                             } finally {

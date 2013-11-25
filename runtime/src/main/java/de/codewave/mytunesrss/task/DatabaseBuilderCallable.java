@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.filesystem.FileSystemLoader;
 import de.codewave.mytunesrss.datastore.iphoto.ApertureLoader;
 import de.codewave.mytunesrss.datastore.iphoto.IphotoLoader;
@@ -89,10 +90,13 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         Boolean result = Boolean.FALSE;
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
         MVStore mvStore = MyTunesRssUtils.getMvStoreBuilder("database-import").compressData().open();
+        OrphanedImageRemover orphanedImageRemover = new OrphanedImageRemover();
+        orphanedImageRemover.init();
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunning");
             myQueue.offer(new MyTunesRssEventEvent(event));
             internalExecute(mvStore);
+            orphanedImageRemover.remove();
             result = Boolean.TRUE;
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
@@ -104,6 +108,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             if (Thread.interrupted()) { // clear interrupt status here to prevent interrupted exception in offer call
                 LOGGER.info("Database update cancelled.");
             }
+            orphanedImageRemover.destroy();
             myQueue.offer(new TerminateEvent());
             myQueue.waitForTermination();
             MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();

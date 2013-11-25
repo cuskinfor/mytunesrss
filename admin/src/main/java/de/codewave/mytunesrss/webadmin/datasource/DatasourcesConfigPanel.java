@@ -127,7 +127,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         removedDatasourceIds.removeAll(MyTunesRssUtils.toDatasourceIds(myConfigs.values()));
         MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
         MyTunesRss.CONFIG.save();
-        // cleanup database in backgoround
+        // cleanup database in background
         if (!removedDatasourceIds.isEmpty()) {
             MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
                 public void run() {

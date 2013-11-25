@@ -4,6 +4,7 @@ import com.ibm.icu.text.Normalizer;
 import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
+import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
@@ -942,28 +943,27 @@ public class MyTunesRssUtils {
 
     public static void removeDataForSources(DataStoreSession session, final Set<String> sourceIds) throws SQLException {
         LOGGER.debug("Removing data for " + sourceIds.size() + " datasource(s).");
-        session.executeStatement(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeDataForSourceIds");
-                statement.setItems("sourceIds", sourceIds);
-                statement.execute();
-            }
-        });
+        OrphanedImageRemover orphanedImageRemover = new OrphanedImageRemover();
+        orphanedImageRemover.init();
         try {
-            MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForSourceIds(sourceIds);
-        } catch (IOException e) {
-            LOGGER.warn("Could not delete tracks from lucene index.", e);
-        }
-        LOGGER.debug("Recreating help tables.");
-        session.executeStatement(new RecreateHelpTablesStatement());
-        LOGGER.debug("Removing orphaned images.");
-        /*
-        session.executeStatement(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
+            session.executeStatement(new DataStoreStatement() {
+                public void execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeDataForSourceIds");
+                    statement.setItems("sourceIds", sourceIds);
+                    statement.execute();
+                }
+            });
+            try {
+                MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForSourceIds(sourceIds);
+            } catch (IOException e) {
+                LOGGER.warn("Could not delete tracks from lucene index.", e);
             }
-        });
-        */
+            LOGGER.debug("Recreating help tables.");
+            session.executeStatement(new RecreateHelpTablesStatement());
+            orphanedImageRemover.remove();
+        } finally {
+            orphanedImageRemover.destroy();
+        }
         LOGGER.debug("Updating statistics.");
         session.executeStatement(new UpdateStatisticsStatement());
     }
@@ -1049,6 +1049,17 @@ public class MyTunesRssUtils {
             file.delete();
         }
         return new MVStore.Builder().fileStore(new FileStore()).fileName(file.getAbsolutePath());
+    }
+    
+    public static void removeMvStoreFile(String filename) {
+        File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        File file = new File(dir, filename);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     public static <K, V> Map<K, V> openMvMap(MVStore store, String name) {

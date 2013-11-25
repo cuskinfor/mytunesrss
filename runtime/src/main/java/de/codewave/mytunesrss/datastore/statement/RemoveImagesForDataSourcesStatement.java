@@ -31,9 +31,5 @@ public class RemoveImagesForDataSourcesStatement implements DataStoreStatement {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeImagesForDataSources");
         statement.setItems("source_id", myDataSourceIds);
         statement.execute();
-        /*
-        statement = MyTunesRssUtils.createStatement(connection, "removeOrphanedImages");
-        statement.execute();
-        */
     }
 }
