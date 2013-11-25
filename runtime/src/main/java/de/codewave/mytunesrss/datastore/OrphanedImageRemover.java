@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.StopWatch;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,30 +23,28 @@ public class OrphanedImageRemover {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrphanedImageRemover.class);
     
     private MVStore myStore;
-
+    
     public void init() throws SQLException {
         StopWatch.start("Initializing orphaned image remover");
-        myStore = MyTunesRssUtils.getMvStoreBuilder("orphaned-image-remover").compressData().open();
         try {
+            myStore = MyTunesRssUtils.getMvStoreBuilder("orphaned-image-remover").compressData().open();
+            final Map<String, Byte> hashes = myStore.openMap("hashes");
             DataStoreQuery<Void> query = new DataStoreQuery<Void>() {
                 @Override
                 public Void execute(Connection connection) throws SQLException {
-                    Map<String, Byte> hashes = myStore.openMap("hashes");
                     ResultSet rs = MyTunesRssUtils.createStatement(connection, "getAllImageHashes").executeQuery();
                     while (rs.next()) {
-                        hashes.put(rs.getString("hash"), Byte.valueOf((byte) 0));
+                        String hash = rs.getString(1);
+                        if (StringUtils.isNotBlank(hash)) {
+                            hashes.put(hash, Byte.valueOf((byte) 0));
+                        }
                     }
                     return null;
                 }
             };
             query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
             MyTunesRss.STORE.executeQuery(query);
-        } catch (SQLException e) {
-            destroy();
-            throw e;
         } finally {
-            myStore.commit();
-            myStore.close();
             StopWatch.stop();
         }
     }
@@ -57,30 +56,51 @@ public class OrphanedImageRemover {
             DataStoreQuery<Void> query = new DataStoreQuery<Void>() {
                 @Override
                 public Void execute(Connection connection) throws SQLException {
-                    ResultSet rs = MyTunesRssUtils.createStatement(connection, "").executeQuery();
+                    ResultSet rs = MyTunesRssUtils.createStatement(connection, "getAllImageHashes").executeQuery();
                     while (rs.next()) {
-                        hashes.remove(rs.getString("hash"));
+                        String hash = rs.getString(1);
+                        if (StringUtils.isNotBlank(hash)) {
+                            hashes.remove(hash);
+                        }
                     }
                     return null;
                 }
             };
             query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
             MyTunesRss.STORE.executeQuery(query);
+            LOGGER.info("Removing " + hashes.size() + " orphaned images.");
+            File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
             for (String hash : hashes.keySet()) {
-                File imageDir = MyTunesRssUtils.getImageDir(hash);
-                try {
-                    FileUtils.deleteDirectory(imageDir);
-                } catch (IOException e) {
-                    LOGGER.info("Could not remove orphaned images from \"" + imageDir.getAbsolutePath() + "\".");
+                if (StringUtils.isNotBlank(hash)) {
+                    LOGGER.debug("Deleting image \"" + hash + "\".");
+                    File imageDir = MyTunesRssUtils.getImageDir(hash);
+                    if (imageDir.isDirectory()) {
+                        try {
+                            LOGGER.debug("Deleting image directory \"" + imageDir.getAbsolutePath() + "\".");
+                            FileUtils.deleteDirectory(imageDir);
+                            for (File dir = imageDir.getParentFile(); !dir.equals(cacheDataPath) && dir.listFiles().length == 0; dir = dir.getParentFile()) {
+                                LOGGER.debug("Deleting image directory \"" + dir.getAbsolutePath() + "\".");
+                                FileUtils.deleteDirectory(dir);
+                            }
+                        } catch (IOException e) {
+                            LOGGER.info("Could not remove orphaned images from \"" + imageDir.getAbsolutePath() + "\".");
+                        }
+                    }
                 }
             }
+            hashes.clear();
         } finally {
-            myStore.close();
             StopWatch.stop();
         }
     }
     
     public void destroy() {
-        MyTunesRssUtils.removeMvStoreFile("orphaned-image-remover");
+        if (myStore != null) {
+            try {
+                myStore.close();
+            } finally {
+                MyTunesRssUtils.removeMvStoreFile("orphaned-image-remover");
+            }
+        }
     }
 }

@@ -501,8 +501,8 @@
 
     <statement name="getAllImageHashes">
         <sql>
-            SELECT unique(image_hash) FROM track
-            UNION SELECT unique(image_hash) FROM photo
+            SELECT DISTINCT(image_hash) FROM track WHERE image_hash IS NOT NULL
+            UNION SELECT DISTINCT(image_hash) FROM photo WHERE image_hash IS NOT NULL
         </sql>
     </statement>
 
