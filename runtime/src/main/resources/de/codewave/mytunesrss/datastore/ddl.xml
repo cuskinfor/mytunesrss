@@ -153,16 +153,6 @@
             )
         </sql>
         <sql>
-            {create_table_prefix} image (
-                hash CHAR(24) NOT NULL,
-                size INTEGER NOT NULL,
-                mimetype VARCHAR(50) NOT NULL,
-                data {image_datatype} NOT NULL,
-                ts_updated NUMERIC(19) NOT NULL,
-                UNIQUE (hash, size)
-            )
-        </sql>
-        <sql>
             {create_table_prefix} statistics (
                 ts_create BIGINT NOT NULL,
                 type INTEGER NOT NULL,
@@ -215,7 +205,6 @@
         <sql>CREATE INDEX idx_playlist_id ON playlist (id)</sql>
         <sql>CREATE INDEX idx_statistics_creation ON statistics (ts_create)</sql>
         <sql>CREATE INDEX idx_statistics_type ON statistics (type)</sql>
-        <sql>CREATE INDEX idx_image_hash ON image (hash)</sql>
         <sql>CREATE INDEX idx_link_photo_album_photo_id ON link_photo_album (photo_id)</sql>
         <sql>CREATE INDEX idx_link_photo_album_album_id ON link_photo_album (album_id)</sql>
         <sql>{create_playlist_id_sequence}</sql>

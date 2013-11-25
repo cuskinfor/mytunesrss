@@ -8,7 +8,6 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
@@ -28,9 +27,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
 
@@ -72,8 +69,15 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                         String mimeType = MyTunesRssUtils.IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
                         StreamSender sender = null;
                         if (mimeType != null) {
-                            Image scaledImage = MyTunesRssUtils.resizeImageWithMaxSize(photoFile, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
-                            sender = new StreamSender(new ByteArrayInputStream(scaledImage.getData()), scaledImage.getMimeType(), scaledImage.getData().length);
+                            File tempFile = MyTunesRssUtils.createTempFile("jpg");
+                            byte[] image;
+                            try {
+                                MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
+                                image = FileUtils.readFileToByteArray(tempFile);
+                            } finally {
+                                tempFile.delete();
+                            }
+                            sender = new StreamSender(new ByteArrayInputStream(image), "image/jpg", tempFile.length());
                             // no need to close the byte array input stream later
                         } else {
                             sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(photo.myFile), Locale.ENGLISH), photoFile.length());

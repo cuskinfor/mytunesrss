@@ -19,8 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -50,7 +50,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
             Image image = getImage();
             if (image != null && image.getData() != null && image.getData().length > 0) {
                 String imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
-                List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
+                Collection<Integer> imageSizes = MyTunesRssUtils.getImageSizes(imageHash);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
                 }
@@ -58,8 +58,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }
-                    Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(myFile, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + myFile.getAbsolutePath());
-                    new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
+                    MyTunesRssUtils.resizeImageWithMaxSize(myFile, MyTunesRssUtils.getSaveImageFile(imageHash, 128, "image/jpg"), 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + myFile.getAbsolutePath());
                 }
                 myImageHash = imageHash;
             }

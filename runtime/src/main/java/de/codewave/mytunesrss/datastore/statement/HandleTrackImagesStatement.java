@@ -92,37 +92,33 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 image = getLocalFileImage();
                 if (image != null && image.getData() != null && image.getData().length > 0) {
                     imageHash = MyTunesRssBase64Utils.encode(MyTunesRss.MD5_DIGEST.get().digest(image.getData()));
-                    List<Integer> imageSizes = new GetImageSizesQuery(imageHash).execute(connection).getResults();
+                    Collection<Integer> imageSizes = MyTunesRssUtils.getImageSizes(imageHash);
                     if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
+                        LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " files.");
                     }
                     if (!imageSizes.contains(Integer.valueOf(32))) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Inserting image with size 32.");
+                            LOGGER.debug("Saving image with size 32.");
                         }
-                        Image image32 = MyTunesRssUtils.resizeImageWithMaxSize(image, 32, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                        new InsertImageStatement(imageHash, 32, image32.getMimeType(), image32.getData()).execute(connection);
+                        MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 32, "image/jpg"), 32, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                     }
                     if (!imageSizes.contains(Integer.valueOf(64))) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Inserting image with size 64.");
+                            LOGGER.debug("Saving image with size 64.");
                         }
-                        Image image64 = MyTunesRssUtils.resizeImageWithMaxSize(image, 64, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                        new InsertImageStatement(imageHash, 64, image64.getMimeType(), image64.getData()).execute(connection);
+                        MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 64, "image/jpg"), 64, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                     }
                     if (!imageSizes.contains(Integer.valueOf(128))) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Inserting image with size 128.");
+                            LOGGER.debug("Saving image with size 128.");
                         }
-                        Image image128 = MyTunesRssUtils.resizeImageWithMaxSize(image, 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                        new InsertImageStatement(imageHash, 128, image128.getMimeType(), image128.getData()).execute(connection);
+                        MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 128, "image/jpg"), 128, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                     }
                     if (!imageSizes.contains(Integer.valueOf(256))) {
                         if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Inserting image with size 256.");
+                            LOGGER.debug("Saving image with size 256.");
                         }
-                        Image image256 = MyTunesRssUtils.resizeImageWithMaxSize(image, 256, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
-                        new InsertImageStatement(imageHash, 256, image256.getMimeType(), image256.getData()).execute(connection);
+                        MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 256, "image/jpg"), 256, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                     }
                     int originalSize = MyTunesRssUtils.getMaxImageSize(image);
                     if (originalSize > 256) {
@@ -131,13 +127,14 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         int bigImageSize = originalSize <= 2048 ? originalSize : 2048;
                         if (!imageSizes.contains(Integer.valueOf(bigImageSize))) {
                             if (LOGGER.isDebugEnabled()) {
-                                LOGGER.debug("Inserting image with size " + bigImageSize + ".");
+                                LOGGER.debug("Saving image with size " + bigImageSize + ".");
                             }
                             if (bigImageSize < originalSize) {
                                 // image must be resized
-                                bigImage = MyTunesRssUtils.resizeImageWithMaxSize(image, 2048, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                                MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 2048, "image/jpg"), 2048, (float)MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
+                            } else {
+                                MyTunesRssUtils.saveImage(imageHash, bigImageSize, bigImage.getMimeType(), bigImage.getData());
                             }
-                            new InsertImageStatement(imageHash, bigImageSize, bigImage.getMimeType(), bigImage.getData()).execute(connection);
                         }
                     }
                 }
@@ -147,9 +144,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 }
             }
         } catch (IOException e) {
-            LOGGER.warn("Could not extract or resize image from file \"" + myFile.getAbsolutePath() + "\".", e);
-        } catch (SQLException e) {
-            LOGGER.error("Could not get existing image sizes or insert new image for \"" + myFile.getAbsolutePath() + "\".", e);
+            LOGGER.warn("Could not extractor resize image from file \"" + myFile.getAbsolutePath() + "\" or store resulting thumbnail.", e);
         } catch (RuntimeException e) {
             LOGGER.warn("Unknown problem handling images for \"" + myFile.getAbsolutePath() + "\".", e);
         } finally {

@@ -8,13 +8,10 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
-import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreQuery;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,9 +75,19 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
                             inputStream = new FileInputStream(photoFile);
                             IOUtils.copy(inputStream, zipStream);
                         } else {
-                            byte[] imageData = MyTunesRssUtils.resizeImageWithMaxSize(photoFile, (photoSize * MyTunesRssUtils.getMaxImageSize(photoFile)) / 100, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + photoFile.getAbsolutePath()).getData();
-                            zipStream.write(imageData);
-                            archiveEntry.setSize(imageData.length);
+                            File tempFile = MyTunesRssUtils.createTempFile("jpg");
+                            try {
+                                MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, (photoSize * MyTunesRssUtils.getMaxImageSize(photoFile)) / 100, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + photoFile.getAbsolutePath());
+                                FileInputStream fileInputStream = new FileInputStream(tempFile);
+                                try {
+                                    IOUtils.copyLarge(fileInputStream, zipStream);
+                                } finally {
+                                    fileInputStream.close();
+                                }
+                                archiveEntry.setSize(tempFile.length());
+                            } finally {
+                                tempFile.delete();
+                            }
                         }
                         zipStream.closeArchiveEntry();
                         if (sendCounter != null) {

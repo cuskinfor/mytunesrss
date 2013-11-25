@@ -334,8 +334,11 @@
         <sql>UPDATE smart_info SET field_type = 'order', pattern = 'random' WHERE field_type = 'randomOrder'</sql>
         <sql>DELETE FROM playlist WHERE id IN ('system_movies', 'system_tvshows', 'system_audio')</sql>
         <sql>DELETE FROM playlist WHERE id LIKE 'system_ds_%'</sql>
+        <sql>UPDATE track SET image_hash = NULL</sql>
+        <sql>UPDATE photo SET image_hash = NULL</sql>
         <sql>DROP TABLE tag</sql>
         <sql>ALTER TABLE photo ADD COLUMN ts_updated NUMERIC(19)</sql>
+        <sql>DROP TABLE image</sql>
     </statement>
 
     <statement name="migrate_5.0.0_part_2">

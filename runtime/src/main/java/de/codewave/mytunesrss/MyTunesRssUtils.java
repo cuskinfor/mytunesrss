@@ -13,7 +13,6 @@ import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
@@ -41,7 +40,7 @@ import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
-import javax.imageio.stream.MemoryCacheImageOutputStream;
+import javax.imageio.stream.FileImageOutputStream;
 import javax.mail.internet.ContentType;
 import javax.mail.internet.ParseException;
 import javax.naming.AuthenticationException;
@@ -69,7 +68,6 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -77,15 +75,24 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MyTunesRssUtils {
 
     public static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
+    public static Map<String, String> MIME_TO_SUFFIX = new HashMap<String, String>();
 
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
         IMAGE_TO_MIME.put("gif", "image/gif");
         IMAGE_TO_MIME.put("png", "image/png");
     }
+    
+    static {
+        MIME_TO_SUFFIX.put("image/gif", "gif");
+        MIME_TO_SUFFIX.put("image/jpg", "jpg");
+        MIME_TO_SUFFIX.put("image/jpeg", "jpg");
+        MIME_TO_SUFFIX.put("image/png", "png");
+    }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
     private static RandomAccessFile LOCK_FILE;
+    private static final int IMAGE_PATH_SPLIT_SIZE = 6;
 
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {
@@ -651,21 +658,21 @@ public class MyTunesRssUtils {
         return true;
     }
 
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+    public static void resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         if (isExecutableGraphicsMagick() && source.getImageFile() != null) {
-            return resizeImageWithMaxSizeExternalProcess(source.getImageFile(), maxSize, jpegQuality, debugInfo);
+            resizeImageWithMaxSizeExternalProcess(source.getImageFile(), target, maxSize, jpegQuality, debugInfo);
         } else {
-            return resizeImageWithMaxSizeJava(source, maxSize, jpegQuality, debugInfo);
+            resizeImageWithMaxSizeJava(source, target, maxSize, jpegQuality, debugInfo);
         }
     }
 
-    public static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSize(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+    public static void resizeImageWithMaxSize(File source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         if (isExecutableGraphicsMagick()) {
-            return resizeImageWithMaxSizeExternalProcess(source, maxSize, jpegQuality, debugInfo);
+            resizeImageWithMaxSizeExternalProcess(source, target, maxSize, jpegQuality, debugInfo);
         } else {
             String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
             de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(mimeType, FileUtils.readFileToByteArray(source));
-            return resizeImageWithMaxSizeJava(image, maxSize, jpegQuality, debugInfo);
+            resizeImageWithMaxSizeJava(image, target, maxSize, jpegQuality, debugInfo);
         }
     }
 
@@ -693,39 +700,28 @@ public class MyTunesRssUtils {
         }
     }
 
-    private static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeExternalProcess(File source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+    private static void resizeImageWithMaxSizeExternalProcess(File source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         try {
-            File tempOutFile = createTempFile(".jpg");
+            List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), target.getAbsolutePath());
+            String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
+            LOGGER.debug(msg);
+            final Process process = new ProcessBuilder(resizeCommand).redirectErrorStream(true).start();
+            MyTunesRss.SPAWNED_PROCESSES.add(process);
             try {
-                List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "convert", source.getAbsolutePath(), "-resize", maxSize + "x" + maxSize, "-quality", Float.toString(jpegQuality), tempOutFile.getAbsolutePath());
-                String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
-                LOGGER.debug(msg);
-                final Process process = new ProcessBuilder(resizeCommand).redirectErrorStream(true).start();
-                MyTunesRss.SPAWNED_PROCESSES.add(process);
-                try {
-                    LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Info, msg, null);
-                    stdoutCopyThread.setDaemon(true);
-                    stdoutCopyThread.start();
-                    waitForProcess(process, 10000);
-                } finally {
-                    MyTunesRss.SPAWNED_PROCESSES.remove(process);
-                }
-                FileInputStream is = FileUtils.openInputStream(tempOutFile);
-                try {
-                    return new de.codewave.mytunesrss.meta.Image("image/jpg", is);
-                } finally {
-                    is.close();
-                }
+                LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger("GM"), LogStreamCopyThread.LogLevel.Info, msg, null);
+                stdoutCopyThread.setDaemon(true);
+                stdoutCopyThread.start();
+                waitForProcess(process, 10000);
             } finally {
-                tempOutFile.delete();
+                MyTunesRss.SPAWNED_PROCESSES.remove(process);
             }
         } finally {
-            LOGGER.debug("Resizing (external process) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
+            LOGGER.debug("Resizing (external process) [" + debugInfo + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
         }
     }
 
-    private static de.codewave.mytunesrss.meta.Image resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, int maxSize, float jpegQuality, String debugInfo) throws IOException {
+    private static void resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {
@@ -733,7 +729,12 @@ public class MyTunesRssUtils {
             int width = original.getWidth();
             int height = original.getHeight();
             if (Math.max(width, height) <= maxSize) {
-                return source; // original does not exceed max size
+                FileOutputStream fileOutputStream = new FileOutputStream(target);
+                try {
+                    IOUtils.write(source.getData(), fileOutputStream);
+                } finally {
+                    fileOutputStream.close();
+                }
             }
             if (width > height) {
                 height = (height * maxSize) / width;
@@ -749,7 +750,7 @@ public class MyTunesRssUtils {
             try {
                 ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
                 try {
-                    writer.setOutput(new MemoryCacheImageOutputStream(byteArrayOutputStream));
+                    writer.setOutput(new FileImageOutputStream(target));
                     ImageWriteParam param = writer.getDefaultWriteParam();
                     param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
                     param.setCompressionQuality(jpegQuality / 100f);
@@ -758,7 +759,6 @@ public class MyTunesRssUtils {
                 } finally {
                     writer.dispose();
                 }
-                return new de.codewave.mytunesrss.meta.Image("image/jpeg", byteArrayOutputStream.toByteArray());
             } finally {
                 byteArrayOutputStream.close();
             }
@@ -957,11 +957,13 @@ public class MyTunesRssUtils {
         LOGGER.debug("Recreating help tables.");
         session.executeStatement(new RecreateHelpTablesStatement());
         LOGGER.debug("Removing orphaned images.");
+        /*
         session.executeStatement(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
                 MyTunesRssUtils.createStatement(connection, "removeOrphanedImages").execute();
             }
         });
+        */
         LOGGER.debug("Updating statistics.");
         session.executeStatement(new UpdateStatisticsStatement());
     }
@@ -1056,5 +1058,75 @@ public class MyTunesRssUtils {
     private static void removeMvStoreData() throws IOException {
         FileUtils.deleteDirectory(new File(MyTunesRss.CACHE_DATA_PATH, "mvstore"));
 
+    }
+
+    public static File getImageDir(String imageHash) {
+        File file = new File(MyTunesRss.CACHE_DATA_PATH, "thumbs");
+        file.mkdirs();
+        while (imageHash.length() > 0) {
+            file = new File(file, imageHash.substring(0, Math.min(imageHash.length(), IMAGE_PATH_SPLIT_SIZE)));
+            file.mkdirs();
+            imageHash = imageHash.substring(Math.min(imageHash.length(), IMAGE_PATH_SPLIT_SIZE));
+        }
+        return file;
+    }
+    
+    public static Collection<Integer> getImageSizes(String imageHash) {
+        Collection<Integer> sizes = new LinkedHashSet<Integer>();
+        for (String filename : getImageDir(imageHash).list()) {
+            String basename = FilenameUtils.getBaseName(filename);
+            if (basename.startsWith("img")) {
+                sizes.add(Integer.parseInt(basename.substring(3)));
+            }
+        }
+        return sizes;
+    }
+    
+    public static File getMaxSizedImage(String imageHash) {
+        File maxSizedFile = null;
+        int maxSize = 0;
+        for (File file : getImageDir(imageHash).listFiles()) {
+            String basename = FilenameUtils.getBaseName(file.getName());
+            if (basename.startsWith("img")) {
+                if (Integer.parseInt(basename.substring(3)) > maxSize) {
+                    maxSizedFile = file;
+                }
+            }
+        }
+        return maxSizedFile;
+    }
+    
+    public static File getImage(String imageHash, int size) {
+        if (size > 0) {
+            for (File file : getImageDir(imageHash).listFiles()) {
+                String basename = FilenameUtils.getBaseName(file.getName());
+                if (basename.startsWith("img")) {
+                    if (Integer.parseInt(basename.substring(3)) == size) {
+                        return file;
+                    }
+                }
+            }
+        } else {
+            return getMaxSizedImage(imageHash);
+        }
+        return null;
+    }
+    
+    public static File getSaveImageFile(String imageHash, int size, String mimeType) {
+        File file = getImage(imageHash, size);
+        if (file != null) {
+            file.delete();
+        }
+        return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType));
+    }
+    
+    public static void saveImage(String imageHash, int size, String mimeType, byte[] data) throws IOException {
+        File file = getSaveImageFile(imageHash, size, mimeType);
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        try {
+            IOUtils.write(data, fileOutputStream);
+        } finally {
+            fileOutputStream.close();
+        }
     }
 }

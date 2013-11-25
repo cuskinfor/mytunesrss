@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * de.codewave.mytunesrss.datastore.statement.InsertImageStatement
- */
 public class UpdateImageForTrackStatement {
     private static final Logger LOG = LoggerFactory.getLogger(UpdateImageForTrackStatement.class);
 

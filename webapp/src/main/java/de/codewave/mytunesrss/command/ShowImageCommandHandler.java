@@ -3,19 +3,18 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.datastore.statement.FindImageQuery;
 import de.codewave.mytunesrss.datastore.statement.DatabaseImage;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.sql.*;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +44,13 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                     try {
                         inputStream = MyTunesRssCommandHandler.class.getClassLoader().getResourceAsStream("de/codewave/mytunesrss/default_rss_image.png");
                         Image image = new Image("image/png", inputStream);
-                        myDefaultImages.put(size, MyTunesRssUtils.resizeImageWithMaxSize(image, size, (float)MyTunesRss.CONFIG.getJpegQuality(), "default image"));
+                        File tempFile = MyTunesRssUtils.createTempFile("jpg");
+                        try {
+                            MyTunesRssUtils.resizeImageWithMaxSize(image, tempFile, size, (float)MyTunesRss.CONFIG.getJpegQuality(), "default image");
+                            myDefaultImages.put(size, new Image("image/jpg", FileUtils.readFileToByteArray(tempFile)));
+                        } finally {
+                            tempFile.delete();
+                        }
                     } catch (IOException e) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not copy default image data into byte array.", e);
@@ -103,7 +108,10 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             }
         } else {
             if (StringUtils.isNotBlank(hash)) {
-                image = getTransaction().executeQuery(new FindImageQuery(hash, size));
+                File file = MyTunesRssUtils.getImage(hash, size);
+                if (file != null) {
+                    image = new DatabaseImage(URLConnection.guessContentTypeFromName(file.getName()), new FileInputStream(file), file.lastModified());
+                }
             } else if (StringUtils.isNotBlank(photoId)) {
                 image = getImageForPhotoId(photoId, size);
             } else {
@@ -118,7 +126,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    private DatabaseImage getImageForPhotoId(final String photoId, int size) throws SQLException {
+    private DatabaseImage getImageForPhotoId(final String photoId, int size) throws SQLException, IOException {
         LOG.debug("Trying to generate thumbnail for photo \"" + photoId + "\".");
         DataStoreSession session = getTransaction();
         File photoFile = session.executeQuery(new DataStoreQuery<File>() {
@@ -141,7 +149,10 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 String imageHash = result.get(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
                 LOG.debug("Photo image hash is \"" + imageHash + "\".");
                 if (StringUtils.isNotBlank(imageHash)) {
-                    return MyTunesRss.STORE.executeQuery(new FindImageQuery(imageHash, size));
+                    File file = MyTunesRssUtils.getImage(imageHash, size);
+                    if (file != null) {
+                        return new DatabaseImage(URLConnection.guessContentTypeFromName(file.getName()), new FileInputStream(file), file.lastModified());
+                    }
                 }
             } catch (InterruptedException e) {
                 LOG.warn("On-demand photo thumbnail generation interrupted.", e);

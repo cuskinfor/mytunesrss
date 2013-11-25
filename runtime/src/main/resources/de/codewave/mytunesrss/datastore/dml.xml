@@ -285,10 +285,6 @@
         </sql>
     </statement>
 
-    <statement name="getImageSizes">
-        <sql>SELECT size FROM image WHERE hash = :hash ORDER BY size</sql>
-    </statement>
-
     <statement name="findTrackIdsForSource">
         <sql>
             SELECT id AS id FROM track WHERE source = :source
@@ -312,14 +308,6 @@
         <sql>UPDATE system_information SET version = :version</sql>
     </statement>
 
-    <statement name="insertImage">
-        <sql>INSERT INTO image (hash, size, mimetype, data, ts_updated) VALUES (:hash, :size, :mimetype, :data, :now)</sql>
-    </statement>
-
-    <statement name="updateImage">
-        <sql>UPDATE image SET data = :data, mimetype = :mimetype, ts_updated = :now WHERE hash = :hash AND size = :size</sql>
-    </statement>
-
     <statement name="updateImageForTrack">
         <sql>UPDATE track SET image_hash = :hash WHERE id = :track_id</sql>
         <sql>
@@ -340,37 +328,10 @@
     <statement name="removeImagesForDataSources">
         <sql>UPDATE track SET image_hash = NULL WHERE source_id IN (:source_id[])</sql>
         <sql>UPDATE photo SET image_hash = NULL WHERE source_id IN (:source_id[])</sql>
-        <sql>
-            DELETE FROM image
-            WHERE NOT EXISTS
-            ( SELECT * FROM track t WHERE t.image_hash = hash )
-            AND NOT EXISTS
-            ( SELECT * FROM photo p WHERE p.image_hash = hash )
-        </sql>
     </statement>
 
     <statement name="removePhoto">
         <sql loop="photo_id" loopbatch="10000" loopcommit="10000">DELETE FROM photo WHERE id = :loopitem_photo_id AND source_id in (:source_id[])</sql>
-    </statement>
-
-    <statement name="findImage">
-        <sql>
-            SELECT mimetype, data AS data, ts_updated AS ts_updated FROM image WHERE hash = :hash AND size = :size
-        </sql>
-    </statement>
-
-    <statement name="findMaxSizeImage">
-        <sql>
-            SELECT im1.mimetype, im1.data AS data, im1.ts_updated as ts_updated FROM image im1
-            LEFT OUTER JOIN image im2 ON (im1.hash = im2.hash AND im1.size &lt; im2.size)
-            WHERE im1.hash = :hash AND im2.hash IS NULL
-        </sql>
-    </statement>
-
-    <statement name="findTrackImage">
-        <sql>
-            SELECT i.mimetype, i.data AS data, i.ts_updated AS ts_updated FROM image AS i, track AS t WHERE i.hash = t.image_hash AND size = :size AND t.id = :track_id
-        </sql>
     </statement>
 
     <statement name="insertTrack">
