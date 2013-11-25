@@ -282,16 +282,16 @@ public class LuceneTrackService {
         return finalQuery;
     }
 
-    public List<String> searchTrackIds(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
+    public Collection<String> searchTrackIds(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
-        List<String> trackIds;
+        Collection<String> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
             Query luceneQuery = createQuery(smartInfos, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            trackIds = new ArrayList<String>();
+            trackIds = new LinkedHashSet<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
