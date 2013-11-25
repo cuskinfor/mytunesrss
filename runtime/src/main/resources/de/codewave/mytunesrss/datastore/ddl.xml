@@ -221,7 +221,6 @@
         <sql>DROP TABLE track</sql>
         <sql>DROP TABLE system_information</sql>
         <sql>{drop_playlist_id_sequence}</sql>
-        <sql>DROP TABLE image</sql>
         <sql>DROP TABLE link_photo_album</sql>
         <sql>DROP TABLE photo</sql>
         <sql>DROP TABLE photoalbum</sql>
