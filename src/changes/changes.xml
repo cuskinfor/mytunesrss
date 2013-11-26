@@ -8,6 +8,9 @@
     <body>
 
         <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-448] Use ServerSentEvents for logfile display in admin
+            </action>
             <action dev="mdescher" type="add">
                 Store image thumbnails in file system and not in database. No migration for existing images,
                 i.e. the thumbs import will run again for all tracks/photos after the upgrade.

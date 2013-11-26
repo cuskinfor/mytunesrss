@@ -5,31 +5,30 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import de.codewave.mytunesrss.IndexedLoggingEvent;
 import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.PatternLayout;
+import org.apache.log4j.spi.LoggingEvent;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Iterator;
+import java.io.PrintWriter;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 public class LogServlet extends HttpServlet {
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!Boolean.TRUE.equals(request.getSession().getAttribute("MyTunesRSSWebAdmin"))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login to the MyTunesRSS web admin.");
         } else {
-            if (StringUtils.isBlank(request.getParameter("index"))) {
-                sendPage(response);
+            if ("true".equals(request.getParameter("events"))) {
+                sendEvents(response);
             } else {
-                String lineSeparator = "\r\n";
-                sendLogLines(Long.parseLong(request.getParameter("index")), lineSeparator, response);
+                sendPage(response);
             }
         }
     }
@@ -43,35 +42,32 @@ public class LogServlet extends HttpServlet {
             inStream.close();
         }
     }
-
-    private void sendLogLines(long index, String lineSeparator, HttpServletResponse response) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m" + lineSeparator);
-        long lastIndex = Long.MIN_VALUE;
-        for (Iterator<IndexedLoggingEvent> iter = MyTunesRss.LOG_BUFFER.iterator(); iter.hasNext();) {
-            IndexedLoggingEvent indexedLoggingEvent = iter.next();
-            if (indexedLoggingEvent.getIndex() >= index) {
-                baos.write(layout.format(indexedLoggingEvent.getLoggingEvent()).getBytes("UTF-8"));
-                if (layout.ignoresThrowable() && indexedLoggingEvent.getLoggingEvent().getThrowableStrRep() != null) {
-                    for (String s : indexedLoggingEvent.getLoggingEvent().getThrowableStrRep()) {
-                        baos.write(s.getBytes("UTF-8"));
-                        baos.write(lineSeparator.getBytes("UTF-8"));
+    
+    private void sendEvents(HttpServletResponse response) throws IOException {
+        response.setContentType("text/event-stream");
+        PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m");
+        PrintWriter writer = response.getWriter();
+        BlockingQueue<LoggingEvent> queue = MyTunesRss.LOG_QUEUE_MANAGER.createQueue();
+        try {
+            for (LoggingEvent event = queue.poll(10000, TimeUnit.MILLISECONDS); true; event = queue.poll(10000, TimeUnit.MILLISECONDS)) {
+                if (event != null) {
+                    writer.println("event: log");
+                    writer.println("data: " + layout.format(event));
+                    if (layout.ignoresThrowable() && event.getThrowableStrRep() != null) {
+                        for (String s : event.getThrowableStrRep()) {
+                            writer.println(s);
+                        }
                     }
+                } else {
+                    writer.println("event: noop");
                 }
+                writer.println();
+                writer.flush();
             }
-            lastIndex = indexedLoggingEvent.getIndex();
-        }
-        response.setHeader("X-MYTUNESRSS-LASTINDEX", Long.toString(lastIndex));
-        byte[] buffer = baos.toByteArray();
-        baos.close();
-        baos = null; // early GC
-        if (buffer.length > 0) {
-            response.setContentType("text/plain");
-            response.setCharacterEncoding("UTF-8");
-            response.setContentLength(buffer.length);
-            response.getOutputStream().write(buffer);
-        } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+        } catch (InterruptedException e) {
+            // ignore and stop writing
+        } finally {
+            MyTunesRss.LOG_QUEUE_MANAGER.removeQueue(queue);
         }
     }
 

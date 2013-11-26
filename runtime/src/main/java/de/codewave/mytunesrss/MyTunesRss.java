@@ -172,7 +172,7 @@ public class MyTunesRss {
     public static Server ADMIN_SERVER;
     public static final AtomicBoolean UNHANDLED_EXCEPTION = new AtomicBoolean(false);
     public static ResourceBundleManager RESOURCE_BUNDLE_MANAGER = new ResourceBundleManager(MyTunesRss.class.getClassLoader());
-    public static BlockingQueue<IndexedLoggingEvent> LOG_BUFFER = new LinkedBlockingQueue<IndexedLoggingEvent>();
+    public static final LogQueueManager LOG_QUEUE_MANAGER = new LogQueueManager();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
     public static AtomicReference<MyTunesRssEvent> LAST_DATABASE_EVENT = new AtomicReference<MyTunesRssEvent>();
@@ -536,10 +536,7 @@ public class MyTunesRss {
         AppenderSkeleton appender = new AppenderSkeleton() {
             @Override
             protected void append(LoggingEvent event) {
-                LOG_BUFFER.offer(new IndexedLoggingEvent(event));
-                if (LOG_BUFFER.size() > 10000) { // limit backlog
-                    LOG_BUFFER.poll();
-                }
+                LOG_QUEUE_MANAGER.offer(event);
             }
 
             public boolean requiresLayout() {
@@ -547,7 +544,7 @@ public class MyTunesRss {
             }
 
             public void close() {
-                LOG_BUFFER.clear();
+                // nothing to do here
             }
         };
         org.apache.log4j.Logger.getRootLogger().addAppender(appender);
