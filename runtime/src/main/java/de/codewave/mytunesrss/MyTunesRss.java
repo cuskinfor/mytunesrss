@@ -354,7 +354,7 @@ public class MyTunesRss {
             if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
                 StopWatch.start("Recreating lucene index from scratch");
-                ModelInfoDialog info = new ModelInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
+                ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
                 info.show(2000L);
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
@@ -552,7 +552,7 @@ public class MyTunesRss {
     }
 
     private static void copyOldPrefsAndCache() {
-        ModelInfoDialog info = new ModelInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.copyOldPrefsAndCaches"));
+        ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.copyOldPrefsAndCaches"));
         info.show(2000L);
         try {
             File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
