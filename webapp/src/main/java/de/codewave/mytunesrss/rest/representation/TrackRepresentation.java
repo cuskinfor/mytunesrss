@@ -45,7 +45,6 @@ public class TrackRepresentation implements RestRepresentation {
     private MediaType myMediaType;
     private String myMp4Codec;
     private String myName;
-    private String myOriginalArtist;
     private Long myPlayCount;
     private Integer myDiscNumber;
     private Integer myDiscCount;
@@ -78,7 +77,6 @@ public class TrackRepresentation implements RestRepresentation {
         setMediaType(track.getMediaType());
         setMp4Codec(track.getMp4Codec());
         setName(track.getName());
-        setOriginalArtist(track.getOriginalArtist());
         setPlayCount(track.getPlayCount());
         setDiscNumber(track.getPosNumber());
         setDiscCount(track.getPosSize());
@@ -345,17 +343,6 @@ public class TrackRepresentation implements RestRepresentation {
 
     public void setName(String name) {
         myName = name;
-    }
-
-    /**
-     * Original artist name of the track.
-     */
-    public String getOriginalArtist() {
-        return myOriginalArtist;
-    }
-
-    public void setOriginalArtist(String originalArtist) {
-        myOriginalArtist = originalArtist;
     }
 
     /**

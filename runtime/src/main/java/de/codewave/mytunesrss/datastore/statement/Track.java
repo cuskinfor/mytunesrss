@@ -19,7 +19,6 @@ public class Track {
     private String myName;
     private String myAlbum;
     private String myArtist;
-    private String myOriginalArtist;
     private int myTime;
     private int myTrackNumber;
     private File myFile;
@@ -57,7 +56,6 @@ public class Track {
         setName(source.getName());
         setAlbum(source.getAlbum());
         setArtist(source.getArtist());
-        setOriginalArtist(source.getOriginalArtist());
         setTime(source.getTime());
         setTrackNumber(source.getTrackNumber());
         setFilename(source.getFilename());
@@ -99,14 +97,6 @@ public class Track {
 
     public void setArtist(String artist) {
         myArtist = artist;
-    }
-
-    public String getOriginalArtist() {
-        return myOriginalArtist;
-    }
-
-    public void setOriginalArtist(String originalArtist) {
-        myOriginalArtist = originalArtist;
     }
 
     public File getFile() {

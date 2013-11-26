@@ -21,7 +21,6 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setId(resultSet.getString("ID"));
         track.setName(resultSet.getString("NAME"));
         track.setArtist(resultSet.getString("ARTIST"));
-        track.setOriginalArtist(resultSet.getString("ORIGINAL_ARTIST"));
         track.setAlbum(resultSet.getString("ALBUM"));
         track.setTime(resultSet.getInt("TIME"));
         track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));

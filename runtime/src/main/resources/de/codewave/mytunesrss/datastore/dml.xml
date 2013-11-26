@@ -343,8 +343,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, lower_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, LOWER(:album_artist), :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
         </sql>
     </statement>
 
@@ -357,8 +357,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, original_artist, album_artist, lower_album_artist, original_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :original_artist, :album_artist, LOWER(:album_artist), :original_album_artist, :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, lower_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, LOWER(:album_artist), :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
         </sql>
     </statement>
 
@@ -371,12 +371,12 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
+            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
                              lower_name = LOWER(:name), lower_album = LOWER(:album), year = :year,
                              series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
-                             album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist, composer = :composer,
+                             album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), composer = :composer,
                              compilation = :compilation, source_id = :source_id, image_hash = NULL
             WHERE id = :id
         </sql>
@@ -397,12 +397,12 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            UPDATE track SET name = :name, album = :album, artist = :artist, original_artist = :original_artist, time = :time, track_number = :track_number,
+            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
                              pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
                              year = :year, series = :series, lower_series = LOWER(:series), season = :season, episode = :episode,
-                             videotype = :videotype, album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), original_album_artist = :original_album_artist,
+                             videotype = :videotype, album_artist = :album_artist, lower_album_artist = LOWER(:album_artist),
                              composer = :composer, compilation = :compilation, source_id = :source_id
             WHERE id = :id
         </sql>
@@ -767,14 +767,14 @@
     </fragment>
 
     <fragment name="trackColumns">
-        t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.original_artist AS original_artist, t.album AS album, t.time AS time, t.track_number AS track_number,
+        t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
         t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
         t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode, t.composer AS composer, t.album_artist AS album_artist, t.source_id AS source_id
     </fragment>
 
     <fragment name="trackColumnsForGrouping">
-        t.source, t.id, t.name, t.artist, t.original_artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
+        t.source, t.id, t.name, t.artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
         t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode, t.composer, t.album_artist, t.source_id
     </fragment>
 

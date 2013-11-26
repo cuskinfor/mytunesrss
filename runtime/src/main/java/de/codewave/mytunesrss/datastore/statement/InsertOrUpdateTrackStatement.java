@@ -25,7 +25,7 @@ import java.util.StringTokenizer;
 public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InsertOrUpdateTrackStatement.class);
-    
+
     static String dropWordsFromArtist(String artist, String dropWords) {
         if (StringUtils.isNotBlank(dropWords) && StringUtils.isNotBlank(artist)) {
             for (StringTokenizer tokenizer = new StringTokenizer(dropWords, ","); tokenizer.hasMoreTokens();) {
@@ -162,8 +162,6 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
 
     public void execute(Connection connection) throws SQLException {
         try {
-            String originalArtist = myArtist;
-            String originalAlbumArtist = myAlbumArtist;
             DatasourceConfig config = MyTunesRss.CONFIG.getDatasource(mySourceId);
             String dropWords = config instanceof CommonTrackDatasourceConfig ? ((CommonTrackDatasourceConfig)config).getArtistDropWords() : null;
             myArtist = UpdateTrackStatement.dropWordsFromArtist(myArtist, dropWords);
@@ -175,9 +173,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setString("id", myId);
             myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
             myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
-            myStatement.setString("original_artist", StringUtils.isNotEmpty(originalArtist) ? originalArtist : UNKNOWN);
             myStatement.setString("album_artist", StringUtils.isNotEmpty(myAlbumArtist) ? myAlbumArtist : UNKNOWN);
-            myStatement.setString("original_album_artist", StringUtils.isNotEmpty(originalAlbumArtist) ? originalAlbumArtist : UNKNOWN);
             myStatement.setString("album", StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN);
             myStatement.setInt("time", myTime);
             myStatement.setInt("track_number", myTrackNumber);

@@ -339,6 +339,8 @@
         <sql>DROP TABLE tag</sql>
         <sql>ALTER TABLE photo ADD COLUMN ts_updated NUMERIC(19)</sql>
         <sql>DROP TABLE image</sql>
+        <sql>ALTER TABLE track DROP COLUMN original_artist</sql>
+        <sql>ALTER TABLE track DROP COLUMN original_album_artist</sql>
     </statement>
 
     <statement name="migrate_5.0.0_part_2">
