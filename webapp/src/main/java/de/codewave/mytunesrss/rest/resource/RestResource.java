@@ -158,12 +158,10 @@ public class RestResource {
         if (user.isDownload()) {
             representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(request, track, null)).build());
         }
-        if (user.isDownload() && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true, true)) {
+        if (MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true, true)) {
             representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(request, track, null)).build());
         }
-        if (user.isDownload()) {
-            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
-        }
+        representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
         representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getArtist())));
         representation.setAlbumUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getAlbumArtist()), MiscUtils.getUtf8UrlEncoded(track.getAlbum())));
         return representation;
