@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 public class LogServlet extends HttpServlet {
-    
+
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!Boolean.TRUE.equals(request.getSession().getAttribute("MyTunesRSSWebAdmin"))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login to the MyTunesRSS web admin.");
@@ -42,7 +43,7 @@ public class LogServlet extends HttpServlet {
             inStream.close();
         }
     }
-    
+
     private void sendEvents(HttpServletResponse response) throws IOException {
         response.setContentType("text/event-stream");
         PatternLayout layout = new PatternLayout("%d [%t] %-5p %c - %m");
@@ -52,10 +53,10 @@ public class LogServlet extends HttpServlet {
             for (LoggingEvent event = queue.poll(10000, TimeUnit.MILLISECONDS); true; event = queue.poll(10000, TimeUnit.MILLISECONDS)) {
                 if (event != null) {
                     writer.println("event: log");
-                    writer.println("data: " + layout.format(event));
+                    writer.println("data: " + StringEscapeUtils.escapeHtml4(layout.format(event)));
                     if (layout.ignoresThrowable() && event.getThrowableStrRep() != null) {
                         for (String s : event.getThrowableStrRep()) {
-                            writer.println(s);
+                            writer.println("data: " + StringEscapeUtils.escapeHtml4(s));
                         }
                     }
                 } else {

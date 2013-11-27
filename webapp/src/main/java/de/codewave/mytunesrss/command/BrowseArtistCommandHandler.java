@@ -42,7 +42,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
                 FindArtistQuery findArtistQuery = new FindArtistQuery(getAuthUser(),
                                                                       getDisplayFilter().getTextFilter(),
                                                                       album,
-                                                                      new String[] {genre},
+                                                                      genre != null ? new String[] {genre} : null,
                                                                       getIntegerRequestParameter("page", -1));
                 findArtistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                 currentListId = offHeapSessionStore.newCurrentList();

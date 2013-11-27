@@ -11,7 +11,7 @@
             var $jQ = jQuery.noConflict();
 
             function init() {
-                
+
                 var source = new EventSource("?events=true");
                 source.addEventListener("log", function(event) {
                     $jQ("#log").append(event.data).append("\n");

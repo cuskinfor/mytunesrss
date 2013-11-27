@@ -7,11 +7,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class LogQueueManager {
-    private static final int BACKLOG_SIZE = 10000;
+    private static final int BACKLOG_SIZE = 1000;
     private static final int QUEUE_SIZE = BACKLOG_SIZE * 2;
     private Queue<LoggingEvent> myBacklog = new ArrayDeque<LoggingEvent>(BACKLOG_SIZE);
     private Set<Queue<LoggingEvent>> myQueues = new HashSet<Queue<LoggingEvent>>();
-    
+
     public synchronized void offer(LoggingEvent event) {
         if (myBacklog.size() == BACKLOG_SIZE) {
             myBacklog.poll();

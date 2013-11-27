@@ -63,7 +63,7 @@
                 <table cellspacing="0" class="settings">
                     <tr>
                         <th colspan="2" class="active">
-                            <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}" />
+                            <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" />
                             -
                             <c:out value="${track.name}" />
                         </th>
@@ -108,7 +108,7 @@
                                     <fmt:message key="artist"/>:
                                 </td>
                                 <td>
-                                    <c:out value="${cwfn:choose(mtfn:unknown(track.originalArtist), msgUnknownArtist, track.originalArtist)}"/>
+                                    <c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}"/>
                                 </td>
                             </tr>
                             <c:if test="${!empty track.composer}">
