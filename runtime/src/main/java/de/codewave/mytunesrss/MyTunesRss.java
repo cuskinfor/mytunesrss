@@ -373,6 +373,7 @@ public class MyTunesRss {
                             luceneTrack.setComment(track.getComment());
                             luceneTrack.setComposer(track.getComposer());
                             luceneTrack.setFilename(track.getFilename());
+                            luceneTrack.setGenre(track.getGenre());
                             luceneTrack.setName(track.getName());
                             luceneTrack.setSeries(track.getSeries());
                             try {

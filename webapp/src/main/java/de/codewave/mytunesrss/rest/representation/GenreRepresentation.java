@@ -10,8 +10,6 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
 import java.net.URI;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * Representation of a genre.
@@ -85,7 +83,7 @@ public class GenreRepresentation implements RestRepresentation {
     }
 
     /**
-     * Name of the genre. This is the user display name.
+     * Name of the genre.
      */
     public String getName() {
         return myName;

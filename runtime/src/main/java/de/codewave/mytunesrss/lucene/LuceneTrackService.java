@@ -36,10 +36,9 @@ public class LuceneTrackService {
     private IndexWriter myIndexWriter;
 
     private Directory getDirectory() throws IOException {
-        File dir = new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track");
-        return FSDirectory.open(dir);
+        return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
     }
-    
+
     private synchronized IndexWriter getIndexWriter() throws IOException {
         if (myDirectory == null) {
             myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
@@ -61,7 +60,7 @@ public class LuceneTrackService {
         }
         return myIndexWriter;
     }
-    
+
     public synchronized boolean exists() {
         return new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track").isDirectory();
     }
@@ -121,6 +120,9 @@ public class LuceneTrackService {
         }
         if (StringUtils.isNotBlank(track.getAlbumArtist())) {
             document.add(new Field("album_artist", StringUtils.lowerCase(track.getAlbumArtist()), Field.Store.NO, Field.Index.ANALYZED));
+        }
+        if (StringUtils.isNotBlank(track.getGenre())) {
+            document.add(new Field("genre", StringUtils.lowerCase(track.getGenre()), Field.Store.NO, Field.Index.ANALYZED));
         }
         if (StringUtils.isNotBlank(track.getComposer())) {
             document.add(new Field("composer", StringUtils.lowerCase(track.getComposer()), Field.Store.NO, Field.Index.ANALYZED));

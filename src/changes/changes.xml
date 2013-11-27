@@ -9,9 +9,6 @@
 
         <release version="5.0.0" date="___D___">
             <action dev="mdescher" type="add">
-                Added virtual genres.
-            </action>
-            <action dev="mdescher" type="add">
                 Support for multiple filter genres when querying albums or artists.
             </action>
             <action dev="mdescher" type="remove">

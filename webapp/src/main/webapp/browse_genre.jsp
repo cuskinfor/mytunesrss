@@ -132,12 +132,9 @@
                                 <td class="actions">
                                     <c:choose>
                                         <c:when test="${!stateEditPlaylist}">
-                                            <c:forEach items="${genre.effectiveGenres}" var="effectiveGenre">
-                                                <c:set scope="page" var="genresLinkFragment">${genresLinkFragment}&genre=${mtfn:encode64(effectiveGenre)}</c:set>
-                                            </c:forEach> 
                                             <mttag:actions index="${loopStatus.index}"
                                                            backUrl="${mtfn:encode64(backUrl)}"
-                                                           linkFragment="${fn:substring(genresLinkFragment, 1, fn:length(genresLinkFragment)}"
+                                                           linkFragment="genre=${mtfn:encode64(genre.name)}"
                                                            filename="${genre.name}"
                                                            zipFileCount="${genre.trackCount}"
                                                            defaultPlaylistName="${genre.name}"

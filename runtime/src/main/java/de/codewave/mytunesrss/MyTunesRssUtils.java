@@ -1152,33 +1152,5 @@ public class MyTunesRssUtils {
         } else {
             return null;
         }
-    }
-
-    public static List<VirtualGenre> getVirtualGenres(List<Genre> genres) {
-        List<VirtualGenre> virtualGenres = new ArrayList<VirtualGenre>();
-        for (Genre genre : genres) {
-            String virtualGenreName = MyTunesRssUtils.getVirtualGenreName(genre.getName());
-            int index = virtualGenres.size() - 1;
-            while (index > -1) {
-                if (virtualGenreName.equalsIgnoreCase(virtualGenres.get(index).getName())) {
-                    break;
-                }
-                index--;
-            }
-            if (index == -1) {
-                virtualGenres.add(new VirtualGenre(virtualGenreName, genre));
-            } else {
-                virtualGenres.get(index).addRealGenre(genre);
-            }
-        }
-        Collections.sort(virtualGenres);
-        return virtualGenres;
-    }
-
-    public static String getVirtualGenreName(String realGenreName) {
-        if (!StringUtils.isNotBlank(realGenreName)) {
-            return realGenreName; // TODO use mapping table
-        }
-        return "";
-    }
+    } 
 }

@@ -64,19 +64,6 @@
 
     <function>
         <description>
-            Create a virtual name from a genre.
-        </description>
-        <name>virtualGenreName</name>
-        <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
-        <function-signature>java.lang.String getVirtualGenreName(java.lang.String)
-        </function-signature>
-        <example>
-            &lt;c:out value="${mtfn:virtualGenreName(genre)}"/&gt;
-        </example>
-    </function>
-
-    <function>
-        <description>
             Get the lower case suffix for the file of a track.
         </description>
         <name>lowerSuffix</name>

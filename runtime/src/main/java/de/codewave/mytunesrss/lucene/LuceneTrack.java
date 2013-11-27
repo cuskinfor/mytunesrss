@@ -10,6 +10,7 @@ public abstract class LuceneTrack {
     private String filename;
     private String comment;
     private String albumArtist;
+    private String genre;
     private String composer;
 
     public String getId() {
@@ -84,6 +85,14 @@ public abstract class LuceneTrack {
         this.albumArtist = albumArtist;
     }
 
+    public String getGenre() {
+        return genre;
+    }
+
+    public void setGenre(String genre) {
+        this.genre = genre;
+    }
+
     public String getComposer() {
         return composer;
     }
@@ -108,6 +117,7 @@ public abstract class LuceneTrack {
                 ", filename='" + filename + '\'' +
                 ", comment='" + comment + '\'' +
                 ", albumArtist='" + albumArtist + '\'' +
+                ", genre='" + genre + '\'' +
                 ", composer='" + composer + '\'' +
                 '}';
     }

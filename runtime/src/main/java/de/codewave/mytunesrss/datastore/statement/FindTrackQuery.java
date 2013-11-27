@@ -71,7 +71,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
             return mediaTypes;
         }
     }
-    
+
     static String[] getPermittedDataSources(User user) {
         Set<String> ids = user.getPermittedDataSourceIds();
         return ids != null ? ids.toArray(new String[ids.size()]) : null;

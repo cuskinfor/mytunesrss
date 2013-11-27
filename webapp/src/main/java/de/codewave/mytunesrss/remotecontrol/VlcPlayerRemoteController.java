@@ -47,8 +47,8 @@ public class VlcPlayerRemoteController implements RemoteController {
         loadItems(query);
     }
 
-    public void loadGenre(User user, String[] genreNames) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(user, genreNames, SortOrder.Album);
+    public void loadGenre(User user, String genreName) throws SQLException, VlcPlayerException {
+        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
         loadItems(query);
     }
 

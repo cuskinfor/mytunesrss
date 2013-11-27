@@ -159,7 +159,7 @@ public class EditPlaylistResource extends RestResource {
             @FormParam("album") String[] album,
             @FormParam("albumArtist") String[] albumArtist,
             @FormParam("artist") String[] artist,
-            @FormParam("genre") String[] genres,
+            @FormParam("genre") String[] genre,
             @FormParam("playlist") String[] playlist
     ) throws SQLException {
         if (track != null && track.length > 0) {
@@ -172,11 +172,8 @@ public class EditPlaylistResource extends RestResource {
         if (artist != null && artist.length > 0) {
             addTracks(request, FindTrackQuery.getForArtist(user, artist, SortOrder.KeepOrder));
         }
-        if (genres != null && genres.length > 0) {
-            String[] realGenreNames = getRealGenreNames(request, genres);
-            if (realGenreNames.length > 0) {
-                addTracks(request, FindTrackQuery.getForGenre(user, realGenreNames, SortOrder.KeepOrder));
-            }
+        if (genre != null && genre.length > 0) {
+            addTracks(request, FindTrackQuery.getForGenre(user, genre, SortOrder.KeepOrder));
         }
         if (playlist != null && playlist.length > 0) {
             for (String eachPlaylist : playlist) {

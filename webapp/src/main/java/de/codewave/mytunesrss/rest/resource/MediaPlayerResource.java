@@ -46,7 +46,7 @@ public class MediaPlayerResource extends RestResource {
      * @param album An album name (all tracks of the album will be added).
      * @param albumArtist An album artist name to exactly specify the album.
      * @param artist An artist name (all tracks of the artist will be added).
-     * @param genres Genre names (all tracks if the genres will be added).
+     * @param genre A genre name (all tracks if the genre will be added).
      * @param tracks A list of individual track IDs to add.
      *
      * @return List of tracks in the current playlist.
@@ -63,7 +63,7 @@ public class MediaPlayerResource extends RestResource {
             @FormParam("album") String album,
             @FormParam("albumArtist") String albumArtist,
             @FormParam("artist") String artist,
-            @FormParam("genre") String[] genres,
+            @FormParam("genre") String genre,
             @FormParam("track") String[] tracks
     ) throws Exception {
         if (StringUtils.isNotBlank(playlist)) {
@@ -72,13 +72,8 @@ public class MediaPlayerResource extends RestResource {
             getController().loadAlbum(MyTunesRssWebUtils.getAuthUser(request), album, albumArtist);
         } else if (StringUtils.isNotBlank(artist)) {
             getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false);
-        } else if (genres != null && genres.length > 0) {
-            String[] realGenreNames = getRealGenreNames(request, genres);
-            if (realGenreNames.length > 0) {
-                getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), realGenreNames);
-            } else {
-                getController().clearPlaylist();
-            }
+        } else if (StringUtils.isNotBlank(genre)) {
+            getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(tracks);
         }

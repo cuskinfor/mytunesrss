@@ -16,7 +16,8 @@ import org.apache.commons.lang3.StringUtils;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler
@@ -46,17 +47,14 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
             int pageSize = getWebConfig().getEffectivePageSize();
-            
-            List<? extends Genre> enhancedGenres = MyTunesRssUtils.getVirtualGenres(cachedGenres);
-            
-            List<? extends Genre> genres;
-            if (pageSize > 0 && enhancedGenres.size() > pageSize) {
+            List<Genre> genres;
+            if (pageSize > 0 && cachedGenres.size() > pageSize) {
                 int current = getSafeIntegerRequestParameter("index", 0);
-                Pager pager = createPager(enhancedGenres.size(), current);
+                Pager pager = createPager(cachedGenres.size(), current);
                 getRequest().setAttribute("indexPager", pager);
-                genres = MyTunesRssUtils.getSubList(enhancedGenres, current * pageSize, pageSize);
+                genres = MyTunesRssUtils.getSubList(cachedGenres, current * pageSize, pageSize);
             } else {
-                genres = enhancedGenres;
+                genres = cachedGenres;
             }
             getRequest().setAttribute("genres", genres);
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
@@ -72,5 +70,4 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
             forward(MyTunesRssResource.Login);
         }
     }
-
 }

@@ -23,7 +23,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.List;
 
 @ValidateRequest
@@ -89,11 +88,7 @@ public class ArtistResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        String[] realGenreNames = getRealGenreNames(request, genres);
-        if (realGenreNames.length == 0 && genres.length > 0) {
-            return Collections.emptyList(); // special case where none of the specified genres exists
-        }
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, realGenreNames, -1, minYear, maxYear, sortYear, groupByType, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, -1, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
