@@ -173,7 +173,10 @@ public class EditPlaylistResource extends RestResource {
             addTracks(request, FindTrackQuery.getForArtist(user, artist, SortOrder.KeepOrder));
         }
         if (genres != null && genres.length > 0) {
-            addTracks(request, FindTrackQuery.getForGenre(user, getRealGenreNames(request, genres), SortOrder.KeepOrder));
+            String[] realGenreNames = getRealGenreNames(request, genres);
+            if (realGenreNames.length > 0) {
+                addTracks(request, FindTrackQuery.getForGenre(user, realGenreNames, SortOrder.KeepOrder));
+            }
         }
         if (playlist != null && playlist.length > 0) {
             for (String eachPlaylist : playlist) {

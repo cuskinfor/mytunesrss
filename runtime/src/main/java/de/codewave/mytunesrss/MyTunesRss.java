@@ -351,7 +351,7 @@ public class MyTunesRss {
             }
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
-            if (REBUILD_LUCENE_INDEX_ON_STARTUP) {
+            if (REBUILD_LUCENE_INDEX_ON_STARTUP || !MyTunesRss.LUCENE_TRACK_SERVICE.exists()) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
                 StopWatch.start("Recreating lucene index from scratch");
                 ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
@@ -373,7 +373,6 @@ public class MyTunesRss {
                             luceneTrack.setComment(track.getComment());
                             luceneTrack.setComposer(track.getComposer());
                             luceneTrack.setFilename(track.getFilename());
-                            luceneTrack.setGenre(track.getGenre());
                             luceneTrack.setName(track.getName());
                             luceneTrack.setSeries(track.getSeries());
                             try {

@@ -1176,6 +1176,12 @@ public class MyTunesRssUtils {
     }
 
     public static String getVirtualGenreName(String realGenreName) {
-        return realGenreName; // TODO use mapping table
+        if (!StringUtils.isNotBlank(realGenreName)) {
+            if ("Schlager".equals(realGenreName) || "Vocal".equals(realGenreName)) {
+                return "Junkfood";
+            }
+            return realGenreName; // TODO use mapping table
+        }
+        return "";
     }
 }

@@ -36,9 +36,10 @@ public class LuceneTrackService {
     private IndexWriter myIndexWriter;
 
     private Directory getDirectory() throws IOException {
-        return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
+        File dir = new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track");
+        return FSDirectory.open(dir);
     }
-
+    
     private synchronized IndexWriter getIndexWriter() throws IOException {
         if (myDirectory == null) {
             myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
@@ -59,6 +60,10 @@ public class LuceneTrackService {
             myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
         }
         return myIndexWriter;
+    }
+    
+    public synchronized boolean exists() {
+        return new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track").isDirectory();
     }
 
     public synchronized void shutdown() {
@@ -117,9 +122,6 @@ public class LuceneTrackService {
         if (StringUtils.isNotBlank(track.getAlbumArtist())) {
             document.add(new Field("album_artist", StringUtils.lowerCase(track.getAlbumArtist()), Field.Store.NO, Field.Index.ANALYZED));
         }
-        if (StringUtils.isNotBlank(track.getGenre())) {
-            document.add(new Field("genre", StringUtils.lowerCase(track.getGenre()), Field.Store.NO, Field.Index.ANALYZED));
-        }
         if (StringUtils.isNotBlank(track.getComposer())) {
             document.add(new Field("composer", StringUtils.lowerCase(track.getComposer()), Field.Store.NO, Field.Index.ANALYZED));
         }
@@ -134,8 +136,8 @@ public class LuceneTrackService {
     }
 
     public synchronized void flushTrackBuffer() throws IOException {
+        StopWatch.start("Indexing " + myTrackBuffer.size() + " tracks");
         try {
-            StopWatch.start("Indexing " + myTrackBuffer.size() + " tracks");
             for (LuceneTrack track = myTrackBuffer.peek(); track != null; track = myTrackBuffer.peek()) {
                 Document document = createTrackDocument(track);
                 if (track.isAdd()) {
@@ -148,10 +150,11 @@ public class LuceneTrackService {
                 myTrackBuffer.pop(); // element done
             }
             getIndexWriter().commit();
-            StopWatch.stop();
         } catch (Exception e) {
             LOGGER.error("Could not flush track buffer to lucene index.", e);
             shutdown();
+        } finally {
+            StopWatch.stop();
         }
     }
 

@@ -73,7 +73,12 @@ public class MediaPlayerResource extends RestResource {
         } else if (StringUtils.isNotBlank(artist)) {
             getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false);
         } else if (genres != null && genres.length > 0) {
-            getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), getRealGenreNames(request, genres));
+            String[] realGenreNames = getRealGenreNames(request, genres);
+            if (realGenreNames.length > 0) {
+                getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), realGenreNames);
+            } else {
+                getController().clearPlaylist();
+            }
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(tracks);
         }

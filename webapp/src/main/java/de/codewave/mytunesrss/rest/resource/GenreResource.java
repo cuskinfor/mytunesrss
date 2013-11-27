@@ -23,6 +23,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 
 @ValidateRequest
@@ -50,7 +51,11 @@ public class GenreResource extends RestResource {
             @PathParam("genre") String genre,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForGenre(MyTunesRssWebUtils.getAuthUser(request), getRealGenreNames(request, new String[]{genre}), sortOrder));
+        String[] realGenreNames = getRealGenreNames(request, new String[]{genre});
+        if (realGenreNames.length == 0) {
+            return Collections.emptyList();
+        }
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForGenre(MyTunesRssWebUtils.getAuthUser(request), realGenreNames, sortOrder));
         return toTrackRepresentations(uriInfo, request, queryResult.getResults());
     }
 
@@ -86,7 +91,11 @@ public class GenreResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, false, getRealGenreNames(request, new String[]{genre}), index, minYear, maxYear, sortYear, groupByType, type));
+        String[] realGenreNames = getRealGenreNames(request, new String[]{genre});
+        if (realGenreNames.length == 0) {
+            return Collections.emptyList();
+        }
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, false, realGenreNames, index, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
@@ -112,7 +121,11 @@ public class GenreResource extends RestResource {
             @QueryParam("genre") String genre,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, getRealGenreNames(request, new String[]{genre}), index));
+        String[] realGenreNames = getRealGenreNames(request, new String[]{genre});
+        if (realGenreNames.length == 0) {
+            return Collections.emptyList();
+        }
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, realGenreNames, index));
         return toArtistRepresentations(uriInfo, request, queryResult.getResults());
     }
 }
