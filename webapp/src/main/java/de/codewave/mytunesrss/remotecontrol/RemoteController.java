@@ -17,7 +17,7 @@ public interface RemoteController {
 
     void loadArtist(User user, String artistName, boolean fullAlbums) throws Exception;
 
-    void loadGenre(User user, String genreName) throws Exception;
+    void loadGenre(User user, String[] genreNames) throws Exception;
 
     void loadTracks(String[] trackIds) throws Exception;
 

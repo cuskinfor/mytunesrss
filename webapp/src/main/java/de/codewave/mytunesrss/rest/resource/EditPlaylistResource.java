@@ -24,7 +24,6 @@ import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
@@ -160,7 +159,7 @@ public class EditPlaylistResource extends RestResource {
             @FormParam("album") String[] album,
             @FormParam("albumArtist") String[] albumArtist,
             @FormParam("artist") String[] artist,
-            @FormParam("genre") String[] genre,
+            @FormParam("genre") String[] genres,
             @FormParam("playlist") String[] playlist
     ) throws SQLException {
         if (track != null && track.length > 0) {
@@ -173,8 +172,8 @@ public class EditPlaylistResource extends RestResource {
         if (artist != null && artist.length > 0) {
             addTracks(request, FindTrackQuery.getForArtist(user, artist, SortOrder.KeepOrder));
         }
-        if (genre != null && genre.length > 0) {
-            addTracks(request, FindTrackQuery.getForGenre(user, genre, SortOrder.KeepOrder));
+        if (genres != null && genres.length > 0) {
+            addTracks(request, FindTrackQuery.getForGenre(user, getRealGenreNames(request, genres), SortOrder.KeepOrder));
         }
         if (playlist != null && playlist.length > 0) {
             for (String eachPlaylist : playlist) {

@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
@@ -88,19 +89,19 @@ public class RestResource {
         return representation;
     }
 
-    protected List<GenreRepresentation> toGenreRepresentations(UriInfo uriInfo, List<Genre> genres) {
+    protected List<GenreRepresentation> toGenreRepresentations(UriInfo uriInfo, List<VirtualGenre> virtualGenres) {
         List<GenreRepresentation> representations = new ArrayList<GenreRepresentation>();
-        for (Genre genre : genres) {
+        for (VirtualGenre genre : virtualGenres) {
             representations.add(toGenreRepresentation(uriInfo, genre));
         }
         return representations;
     }
 
-    protected GenreRepresentation toGenreRepresentation(UriInfo uriInfo, Genre genre) {
-        GenreRepresentation representation = new GenreRepresentation(genre);
-        representation.setTracksUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
-        representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
-        representation.setArtistsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreArtists").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+    protected GenreRepresentation toGenreRepresentation(UriInfo uriInfo, VirtualGenre virtualGenre) {
+        GenreRepresentation representation = new GenreRepresentation(virtualGenre);
+        representation.setTracksUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(virtualGenre.getName())));
+        representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(virtualGenre.getName())));
+        representation.setArtistsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreArtists").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(virtualGenre.getName())));
         return representation;
     }
 
@@ -215,4 +216,10 @@ public class RestResource {
         }
         CacheControlInterceptor.setLastModified(lastModified);
     }
+
+    protected String[] getRealGenreNames(HttpServletRequest request, String[] virtualGenreNames) throws SQLException {
+        List<Genre> genres = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), true, -1)).getResults();
+        return MyTunesRssUtils.getRealGenreNames(genres, virtualGenreNames);
+    }
+
 }

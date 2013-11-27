@@ -14,10 +14,8 @@ import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
-import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
@@ -48,7 +46,7 @@ public class MediaPlayerResource extends RestResource {
      * @param album An album name (all tracks of the album will be added).
      * @param albumArtist An album artist name to exactly specify the album.
      * @param artist An artist name (all tracks of the artist will be added).
-     * @param genre A genre name (all tracks if the genre will be added).
+     * @param genres Genre names (all tracks if the genres will be added).
      * @param tracks A list of individual track IDs to add.
      *
      * @return List of tracks in the current playlist.
@@ -65,7 +63,7 @@ public class MediaPlayerResource extends RestResource {
             @FormParam("album") String album,
             @FormParam("albumArtist") String albumArtist,
             @FormParam("artist") String artist,
-            @FormParam("genre") String genre,
+            @FormParam("genre") String[] genres,
             @FormParam("track") String[] tracks
     ) throws Exception {
         if (StringUtils.isNotBlank(playlist)) {
@@ -74,8 +72,8 @@ public class MediaPlayerResource extends RestResource {
             getController().loadAlbum(MyTunesRssWebUtils.getAuthUser(request), album, albumArtist);
         } else if (StringUtils.isNotBlank(artist)) {
             getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false);
-        } else if (StringUtils.isNotBlank(genre)) {
-            getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
+        } else if (genres != null && genres.length > 0) {
+            getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), getRealGenreNames(request, genres));
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(tracks);
         }

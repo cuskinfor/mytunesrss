@@ -24,7 +24,7 @@ public class OffHeapSessionStore {
         // Only the listener in the same package creates instances.
     }
 
-    public synchronized List getCurrentList(String id) {
+    public synchronized <T> List<T> getCurrentList(String id) {
         if (StringUtils.equals(id, myCurrentListId)) {
             return myCurrentList;
         }
@@ -35,13 +35,6 @@ public class OffHeapSessionStore {
         myCurrentListId = UUID.randomUUID().toString();
         myCurrentList = new ArrayList();
         return myCurrentListId;
-    }
-
-    public synchronized void addToCurrentList(Object o) {
-        if (myCurrentList == null) {
-            throw new IllegalStateException("No current list available");
-        }
-        myCurrentList.add(o);
     }
 
     public synchronized void removeCurrentList() {

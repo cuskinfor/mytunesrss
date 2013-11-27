@@ -24,7 +24,7 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void loadGenre(User user, String genreName) {
+    public void loadGenre(User user, String[] genreNames) {
         // intentionally left blank
     }
 

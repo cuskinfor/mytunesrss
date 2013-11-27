@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
@@ -100,7 +101,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, index, minYear, maxYear, sortYear, groupByType, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, getRealGenreNames(request, genres), index, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
@@ -131,7 +132,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("genre") String[] genres,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genres, index));
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, getRealGenreNames(request, genres), index));
         return toArtistRepresentations(uriInfo, request, queryResult.getResults());
     }
 
@@ -159,7 +160,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
         DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index));
-        return toGenreRepresentations(uriInfo, queryResult.getResults());
+        return toGenreRepresentations(uriInfo, MyTunesRssUtils.getVirtualGenres(queryResult.getResults()));
     }
 
     /**

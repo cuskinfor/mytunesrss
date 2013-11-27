@@ -23,9 +23,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @ValidateRequest
 @Path("artist/{artist}")
@@ -90,7 +88,7 @@ public class ArtistResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, -1, minYear, maxYear, sortYear, groupByType, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, getRealGenreNames(request, genres), -1, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
