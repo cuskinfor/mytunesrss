@@ -43,7 +43,7 @@
                     <c:set var="genrename" value="${genre.name}"/>
                 </c:otherwise>
             </c:choose>
-            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt>genre=${mtfn:encode64(genre.name)}/_cdi=${cwfn:encodeUrl(mtfn:virtualGenreName(genre))}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${genrename}" />" />
+            <link href="${permFeedServletUrl}/createRSS/${auth}/<mt:encrypt>genre=${mtfn:encode64(genre.name)}/_cdi=${cwfn:encodeUrl(genre.name)}.xml</mt:encrypt>" rel="alternate" type="application/rss+xml" title="<c:out value="${genrename}" />" />
         </c:forEach>
     </c:if>
 
@@ -138,7 +138,7 @@
                                             <mttag:actions index="${loopStatus.index}"
                                                            backUrl="${mtfn:encode64(backUrl)}"
                                                            linkFragment="${fn:substring(genresLinkFragment, 1, fn:length(genresLinkFragment)}"
-                                                           filename="${mtfn:virtualGenreName(genre)}"
+                                                           filename="${genre.name}"
                                                            zipFileCount="${genre.trackCount}"
                                                            defaultPlaylistName="${genre.name}"
                                                            shareText="${genre.name}" />

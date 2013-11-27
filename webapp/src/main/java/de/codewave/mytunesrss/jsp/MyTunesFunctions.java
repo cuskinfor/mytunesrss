@@ -73,10 +73,6 @@ public class MyTunesFunctions {
         return artist.getName();
     }
 
-    public static String virtualGenreName(Genre genre) {
-        return genre.getName();
-    }
-
     public static String lowerSuffix(WebConfig config, User user, Track track) {
         String suffix = suffix(config, user, track);
         return suffix != null ? suffix.toLowerCase() : suffix;

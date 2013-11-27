@@ -11,7 +11,7 @@
         <c:if test="${!empty item.mediaType}">"mediaType" : "${mtfn:escapeJson(item.mediaType)}",</c:if>
         <c:if test="${!empty item.contentType}">"contentType" : "${mtfn:escapeJson(item.contentType)}",</c:if>
         <c:if test="${!empty item.comment}">"comment" : "${mtfn:escapeJson(item.comment)}",</c:if>
-        <c:if test="${!empty item.genre}">"genre" : "${mtfn:escapeJson(item.genre)}",</c:if>
+        <c:if test="${!empty item.genre}">"genre" : "${mtfn:escapeJson(mtfn:virtualGenreName(item.genre))}",</c:if>
         <c:if test="${item.time > 0}">"duration" : ${item.time * timefactor},</c:if>
         <c:if test="${!empty(item.imageHash)}">"image" : "<mt:escapeJson>${permServletUrl}/showImage/${auth}/<mt:encrypt>hash=${item.imageHash}</mt:encrypt></mt:escapeJson>",</c:if>
         "info" : "<mt:escapeJson>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${cwfn:encodeUrl(item.id)}</mt:encrypt></mt:escapeJson>"

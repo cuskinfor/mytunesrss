@@ -67,8 +67,8 @@
             Create a virtual name from a genre.
         </description>
         <name>virtualGenreName</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
-        <function-signature>java.lang.String virtualGenreName(de.codewave.mytunesrss.datastore.statement.Genre)
+        <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
+        <function-signature>java.lang.String getVirtualGenreName(java.lang.String)
         </function-signature>
         <example>
             &lt;c:out value="${mtfn:virtualGenreName(genre)}"/&gt;

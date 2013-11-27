@@ -253,7 +253,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
             playlist.append("        <album>").append(StringEscapeUtils.escapeXml(trackAlbum)).append("</album>").append(lineSeparator);
             playlist.append("        <title>").append(StringEscapeUtils.escapeXml(track.getName())).append("</title>").append(lineSeparator);
             if (StringUtils.isNotEmpty(track.getGenre())) {
-                playlist.append("        <annotation>").append(StringEscapeUtils.escapeXml(track.getGenre())).append("</annotation>").append(lineSeparator);
+                playlist.append("        <annotation>").append(StringEscapeUtils.escapeXml(MyTunesRssUtils.getVirtualGenreName(track.getGenre()))).append("</annotation>").append(lineSeparator);
             }
             playlist.append("        <duration>").append(track.getTime() * 1000).append("</duration>").append(lineSeparator);
 //            if (track.getMediaType() != MediaType.Image && StringUtils.isNotEmpty(track.getImageHash())) {

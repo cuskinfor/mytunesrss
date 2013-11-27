@@ -30,7 +30,9 @@ import javax.ws.rs.core.UriInfo;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class RestResource {
 
@@ -219,7 +221,16 @@ public class RestResource {
 
     protected String[] getRealGenreNames(HttpServletRequest request, String[] virtualGenreNames) throws SQLException {
         List<Genre> genres = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), true, -1)).getResults();
-        return MyTunesRssUtils.getRealGenreNames(genres, virtualGenreNames);
+        Set<String> realGenreNames = new HashSet<String>();
+        for (Genre genre : genres) {
+            String genreVirtualName = MyTunesRssUtils.getVirtualGenreName(genre.getName());
+            for (String virtualGenreName : virtualGenreNames) {
+                if (genreVirtualName.equalsIgnoreCase(virtualGenreName)) {
+                    realGenreNames.add(genre.getName());
+                }
+            }
+        }
+        return realGenreNames.toArray(new String[realGenreNames.size()]);
     }
 
 }

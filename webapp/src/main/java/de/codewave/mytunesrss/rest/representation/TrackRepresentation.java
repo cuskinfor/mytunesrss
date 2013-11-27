@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.rest.representation;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -71,7 +72,7 @@ public class TrackRepresentation implements RestRepresentation {
         setComposer(track.getComposer());
         setEpisode(track.getEpisode());
         setFilename(track.getFilename());
-        setGenre(track.getGenre());
+        setGenre(MyTunesRssUtils.getVirtualGenreName(track.getGenre()));
         setImageHash(StringUtils.trimToNull(track.getImageHash()));
         setLastImageUpdate(track.getLastImageUpdate());
         setMediaType(track.getMediaType());
