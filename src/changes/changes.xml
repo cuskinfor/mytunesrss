@@ -8,6 +8,9 @@
     <body>
 
         <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="add">
+                Support for multiple filter genres when querying albums or artists.
+            </action>
             <action dev="mdescher" type="remove">
                 Removed original artist and original album artist. The former one was removed from the track representation
                 in the REST API as well.

@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,7 +31,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
 
     private String myFilter;
     private String myArtist;
-    private String myGenre;
+    private String[] myGenres;
     private int myIndex;
     private int myMinYear;
     private int myMaxYear;
@@ -45,11 +44,11 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
 
-    public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String genre, int index, int minYear, int maxYear, boolean sortByYear, boolean albumsBeforeCompilations, AlbumType type) {
+    public FindAlbumQuery(User user, String filter, String artist, boolean matchAlbumArtist, String[] genres, int index, int minYear, int maxYear, boolean sortByYear, boolean albumsBeforeCompilations, AlbumType type) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myArtist = artist;
         myMatchAlbumArtist = matchAlbumArtist;
-        myGenre = genre;
+        myGenres = genres;
         myIndex = index;
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
         myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;
@@ -68,7 +67,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist);
         conditionals.put("albumartist", StringUtils.isNotBlank(myArtist) && myMatchAlbumArtist);
-        conditionals.put("genre", StringUtils.isNotBlank(myGenre));
+        conditionals.put("genre", myGenres != null && myGenres.length > 0);
         conditionals.put("year", myMinYear > Integer.MIN_VALUE || myMaxYear < Integer.MAX_VALUE);
         conditionals.put("albumorder", !mySortByYear && !myAlbumsBeforeCompilations);
         conditionals.put("compilationalbumorder", !mySortByYear && myAlbumsBeforeCompilations);
@@ -79,11 +78,11 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
         conditionals.put("compilation", myType != AlbumType.ALL);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || StringUtils.isNotBlank(myArtist) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || StringUtils.isNotBlank(myArtist) || (myGenres != null && myGenres.length > 0) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findAlbums", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("artist", StringUtils.lowerCase(myArtist));
-        statement.setString("genre", StringUtils.lowerCase(myGenre));
+        statement.setItems("genre", MyTunesRssUtils.toLowerCase(myGenres));
         statement.setInt("index", myIndex);
         statement.setInt("min_year", myMinYear);
         statement.setInt("max_year", myMaxYear);

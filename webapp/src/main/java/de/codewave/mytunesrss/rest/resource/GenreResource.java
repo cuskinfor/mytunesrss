@@ -86,7 +86,7 @@ public class GenreResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, false, genre, index, minYear, maxYear, sortYear, groupByType, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, false, new String[] {genre}, index, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
@@ -112,7 +112,7 @@ public class GenreResource extends RestResource {
             @QueryParam("genre") String genre,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, genre, index));
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, new String[] {genre}, index));
         return toArtistRepresentations(uriInfo, request, queryResult.getResults());
     }
 }

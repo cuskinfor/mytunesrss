@@ -63,7 +63,7 @@ public class ArtistResource extends RestResource {
      *
      * @param filter Filter for album name (ony matching ones are returned).
      * @param artist Artist name.
-     * @param genre Filter for album genre (ony matching ones are returned).
+     * @param genres Filter for album genres, can be specified multiple times (ony matching albums are returned).
      * @param minYear Filter for minimum album year (ony matching ones are returned).
      * @param maxYear Filter for maximum album year (ony matching ones are returned).
      * @param sortYear "true" to sort results by year or "false" to return in database order.
@@ -83,14 +83,14 @@ public class ArtistResource extends RestResource {
             @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
             @PathParam("artist") String artist,
-            @QueryParam("genre") String genre,
+            @QueryParam("genre") String[] genres,
             @QueryParam("minYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Minimum year must be a value from -1 to 9999.") int minYear,
             @QueryParam("maxYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Maximum year must be a value from -1 to 9999.") int maxYear,
             @QueryParam("sortYear") @DefaultValue("false") boolean sortYear,
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genre, -1, minYear, maxYear, sortYear, groupByType, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, -1, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 

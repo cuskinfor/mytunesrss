@@ -2,7 +2,9 @@ package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
 import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.config.LdapConfig;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -53,7 +55,6 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.InvocationHandler;
@@ -1140,4 +1141,16 @@ public class MyTunesRssUtils {
             fileOutputStream.close();
         }
     }
+
+    public static String[] toLowerCase(String[] s) {
+        if (s != null) {
+            String[] result = new String[s.length];
+            for (int i = 0; i < s.length; i++) {
+                result[i] = StringUtils.lowerCase(s[i]);
+            }
+            return result;
+        } else {
+            return null;
+        }
+    } 
 }

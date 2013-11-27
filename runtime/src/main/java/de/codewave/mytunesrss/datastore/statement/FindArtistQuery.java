@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -27,17 +26,17 @@ import java.util.Map;
 public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Artist>> {
     private String myFilter;
     private String myAlbum;
-    private String myGenre;
+    private String[] myGenres;
     private int myIndex;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
 
-    public FindArtistQuery(User user, String filter, String album, String genre, int index) {
+    public FindArtistQuery(User user, String filter, String album, String[] genres, int index) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myAlbum = album;
-        myGenre = genre;
+        myGenres = genres;
         myIndex = index;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
@@ -50,16 +49,16 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myAlbum));
-        conditionals.put("genre", StringUtils.isNotBlank(myGenre));
+        conditionals.put("genre", myGenres != null && myGenres.length > 0);
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || StringUtils.isNotBlank(myAlbum) || StringUtils.isNotBlank(myGenre) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || StringUtils.isNotBlank(myAlbum) || (myGenres != null && myGenres.length > 0) || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtists", conditionals);
         statement.setString("filter", myFilter);
         statement.setString("album", StringUtils.lowerCase(myAlbum));
-        statement.setString("genre", StringUtils.lowerCase(myGenre));
+        statement.setItems("genre", MyTunesRssUtils.toLowerCase(myGenres));
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);

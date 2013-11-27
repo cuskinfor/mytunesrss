@@ -14,7 +14,7 @@
             <filter>AND a.lower_name LIKE :filter ESCAPE '!'</filter>
             <albumartist>AND t.lower_album_artist = :artist</albumartist>
             <artist>AND (t.lower_artist = :artist OR t.lower_album_artist = :artist) AND t.album_artist = a.artist</artist>
-            <genre>AND t.lower_genre = :genre AND t.album = a.name</genre>
+            <genre>AND t.lower_genre IN (:genre[]) AND t.album = a.name</genre>
             <year>AND a.year >= :min_year AND a.year <= :max_year</year>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
@@ -50,7 +50,7 @@
             <index>AND ({letterRegionByIndex})</index>
             <filter>AND a.lower_name LIKE :filter ESCAPE '!'</filter>
             <album>AND t.lower_album = :album AND (t.artist = a.name OR t.album_artist = a.name)</album>
-            <genre>AND t.lower_genre = :genre AND (t.artist = a.name OR t.album_artist = a.name)</genre>
+            <genre>AND t.lower_genre IN (:genre[]) AND (t.artist = a.name OR t.album_artist = a.name)</genre>
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND rltp.track_id = t.id

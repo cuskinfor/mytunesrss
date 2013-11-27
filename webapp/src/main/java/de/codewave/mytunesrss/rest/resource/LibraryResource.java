@@ -68,7 +68,7 @@ public class LibraryResource extends RestResource {
      *
      * @param filter Album name filter.
      * @param artist Artist name filter.
-     * @param genre Genre filter.
+     * @param genres Genre filter, can be specified multiple times.
      * @param index The index can be "-1" for all, "0" for albums in the section "0-9", "1" for the section "A-C",
      *              "2" for "D-F", "3" for "G-I", "4" for "J-L", "5" for "M-O", "6" for "P-S", "7" for "T-V" and
      *              "8" for "W-Z".
@@ -92,7 +92,7 @@ public class LibraryResource extends RestResource {
             @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
             @QueryParam("artist") String artist,
-            @QueryParam("genre") String genre,
+            @QueryParam("genre") String[] genres,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index,
             @QueryParam("minYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Minimum year must be a value from -1 to 9999.") int minYear,
             @QueryParam("maxYear") @DefaultValue("-1") @Range(min = -1, max = 9999, message = "Maximum year must be a value from -1 to 9999.") int maxYear,
@@ -100,7 +100,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genre, index, minYear, maxYear, sortYear, groupByType, type));
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, index, minYear, maxYear, sortYear, groupByType, type));
         return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
     }
 
@@ -109,7 +109,7 @@ public class LibraryResource extends RestResource {
      *
      * @param filter Artist name filter.
      * @param album Album name filter (i.e. only artist with matching albums are returned).
-     * @param genre Genre name filter.
+     * @param genres Genre name filter, can be specified multiple times.
      * @param index The index can be "-1" for all, "0" for albums in the section "0-9", "1" for the section "A-C",
      *              "2" for "D-F", "3" for "G-I", "4" for "J-L", "5" for "M-O", "6" for "P-S", "7" for "T-V" and
      *              "8" for "W-Z".
@@ -128,10 +128,10 @@ public class LibraryResource extends RestResource {
             @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
             @QueryParam("album") String album,
-            @QueryParam("genre") String genre,
+            @QueryParam("genre") String[] genres,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genre, index));
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genres, index));
         return toArtistRepresentations(uriInfo, request, queryResult.getResults());
     }
 

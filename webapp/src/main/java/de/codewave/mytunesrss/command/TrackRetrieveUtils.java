@@ -96,7 +96,7 @@ public class TrackRetrieveUtils {
             }
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
-                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, genre, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
+                FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, new String[] {genre}, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
                 DataStoreQuery.QueryResult<Album> albumsWithGenre = session.executeQuery(findAlbumQuery);
                 List<String> albumNames = new ArrayList<String>();
                 for (Album albumWithGenre = albumsWithGenre.nextResult(); albumWithGenre != null; albumWithGenre = albumsWithGenre.nextResult()) {

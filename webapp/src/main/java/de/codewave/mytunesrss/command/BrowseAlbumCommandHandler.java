@@ -47,7 +47,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                                                                    getDisplayFilter().getTextFilter(),
                                                                    artist,
                                                                    false,
-                                                                   genre,
+                                                                   new String[] {genre},
                                                                    getIntegerRequestParameter("page", -1),
                                                                    getDisplayFilter().getMinYear(),
                                                                    getDisplayFilter().getMaxYear(),
