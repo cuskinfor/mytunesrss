@@ -341,22 +341,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, lower_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, LOWER(:album_artist), :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
-        </sql>
-    </statement>
-
-    <statement name="insertTrackAndImage">
-        <parameter name="time" type="java.lang.Integer"/>
-        <parameter name="track_number" type="java.lang.Integer"/>
-        <parameter name="protected" type="java.lang.Boolean"/>
-        <parameter name="mediatype" type="java.lang.String"/>
-        <parameter name="videotype" type="java.lang.String"/>
-        <parameter name="episode" type="java.lang.Integer"/>
-        <parameter name="season" type="java.lang.Integer"/>
-        <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, lower_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, LOWER(:album_artist), :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :suffix, :mp4codec, :ts_updated, 0, :ts_updated, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, lower_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, original_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, LOWER(:album_artist), :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :original_genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
         </sql>
     </statement>
 
@@ -370,7 +356,7 @@
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
             UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
-                             file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
+                             file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, original_genre = :original_genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
                              lower_name = LOWER(:name), lower_album = LOWER(:album), year = :year,
                              series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
@@ -382,27 +368,7 @@
 
     <statement name="updateTrackFileType">
         <sql>
-            UPDATE track SET protected = :protected, mediatype = :mediatype, videotype = :videotype WHERE suffix = :suffix
-        </sql>
-    </statement>
-
-    <statement name="updateTrackAndImage">
-        <parameter name="time" type="java.lang.Integer"/>
-        <parameter name="track_number" type="java.lang.Integer"/>
-        <parameter name="protected" type="java.lang.Boolean"/>
-        <parameter name="mediatype" type="java.lang.String"/>
-        <parameter name="videotype" type="java.lang.String"/>
-        <parameter name="episode" type="java.lang.Integer"/>
-        <parameter name="season" type="java.lang.Integer"/>
-        <sql>
-            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
-                             file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, suffix = :suffix, mp4codec = :mp4codec,
-                             ts_updated = :ts_updated, comment = :comment, last_image_update = :ts_updated, pos_number = :pos_number,
-                             pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist), lower_name = LOWER(:name), lower_album = LOWER(:album),
-                             year = :year, series = :series, lower_series = LOWER(:series), season = :season, episode = :episode,
-                             videotype = :videotype, album_artist = :album_artist, lower_album_artist = LOWER(:album_artist),
-                             composer = :composer, compilation = :compilation, source_id = :source_id
-            WHERE id = :id
+            UPDATE track SET protected = :protected, mediatype = :mediatype, videotype = :videotype WHERE source_id = :source_id AND suffix = :suffix
         </sql>
     </statement>
 
@@ -765,6 +731,13 @@
         <sql>DELETE FROM playlist WHERE source_id IN (:sourceIds[])</sql>
         <sql>DELETE FROM photo WHERE source_id IN (:sourceIds[])</sql>
         <sql>DELETE FROM track WHERE source_id IN (:sourceIds[])</sql>
+    </statement>
+    
+    <statement name="renameGenres">
+        <sql>UPDATE track SET genre = original_genre, lower_genre = LOWER(original_genre)</sql>
+        <sql loop="mappings" loopcommit="1">
+            UPDATE track SET genre = :loopitem_mappings_value, lower_genre = LOWER(:loopitem_mappings_value) WHERE lower_genre = :loopitem_mappings_key
+        </sql>
     </statement>
 
     <!-- reusable sql fragments -->

@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
@@ -15,42 +16,62 @@ import java.util.List;
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
  */
 public class RecreateHelpTablesStatement implements DataStoreStatement {
-    private static final Logger LOG = LoggerFactory.getLogger(RecreateHelpTablesStatement.class);
+
+    private final boolean myRecreateAlbums;
+    private final boolean myRecreateArtists;
+    private final boolean myRecreateGenres;
+
+    public RecreateHelpTablesStatement(boolean recreateAlbums, boolean recreateArtists, boolean recreateGenres) {
+        myRecreateAlbums = recreateAlbums;
+        myRecreateArtists = recreateArtists;
+        myRecreateGenres = recreateGenres;
+    }
 
     public void execute(Connection connection) throws SQLException {
-        List<Genre> genres = new FindGenreQuery(null, true, -1).execute(connection).getResults();
-        List<String> hiddenGenres = new ArrayList<String>();
-        List<String> genreNames = new ArrayList<String>();
-        for (Genre genre : genres) {
-            genreNames.add(genre.getName());
-            if (genre.isHidden()) {
-                hiddenGenres.add(genre.getName());
+
+        if (myRecreateAlbums) {
+            StopWatch.start("Recreating albums help table");
+            try {
+                SmartStatement statementAlbum = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum");
+                statementAlbum.execute();
+                connection.commit();
+            } finally {
+                StopWatch.stop();
             }
         }
-        SmartStatement statementAlbum = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum");
-        long startTime = System.currentTimeMillis();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Recreating albums help table.");
+
+        if (myRecreateArtists) {
+            StopWatch.start("Recreating artists help table");
+            try {
+                SmartStatement statementArtist = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesArtist");
+                statementArtist.execute();
+                connection.commit();
+            } finally {
+                StopWatch.stop();
+            }
         }
-        statementAlbum.execute();
-        connection.commit();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Recreating artists help table.");
+
+        if (myRecreateGenres) {
+            StopWatch.start("Recreating genres help table");
+            try {
+                List<Genre> genres = new FindGenreQuery(null, true, -1).execute(connection).getResults();
+                List<String> hiddenGenres = new ArrayList<String>();
+                List<String> genreNames = new ArrayList<String>();
+                for (Genre genre : genres) {
+                    genreNames.add(genre.getName());
+                    if (genre.isHidden()) {
+                        hiddenGenres.add(genre.getName());
+                    }
+                }
+                SmartStatement statementGenre = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesGenre");
+                statementGenre.setObject("hidden_genres", hiddenGenres);
+                statementGenre.setObject("genres", genreNames);
+                statementGenre.execute();
+                connection.commit();
+            } finally {
+                StopWatch.stop();
+            }
         }
-        SmartStatement statementArtist = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesArtist");
-        statementArtist.execute();
-        connection.commit();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Recreating genres help table.");
-        }
-        SmartStatement statementGenre = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesGenre");
-        statementGenre.setObject("hidden_genres", hiddenGenres);
-        statementGenre.setObject("genres", genreNames);
-        statementGenre.execute();
-        connection.commit();
-        long endTime = System.currentTimeMillis();
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Time for building help tables: " + (endTime - startTime));
-        }
+
     }
 }

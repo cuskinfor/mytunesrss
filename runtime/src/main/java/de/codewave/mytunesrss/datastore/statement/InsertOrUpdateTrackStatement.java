@@ -181,7 +181,8 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setBoolean("protected", myProtected);
             myStatement.setString("mediatype", myMediaType.name());
             myStatement.setString("source", mySource.name());
-            myStatement.setString("genre", myGenre);
+            myStatement.setString("genre", StringUtils.defaultIfBlank(MyTunesRss.CONFIG.getGenreMapping(myGenre), myGenre));
+            myStatement.setString("original_genre", myGenre);
             myStatement.setString("suffix", FileSupportUtils.getFileSuffix(myFileName));
             myStatement.setString("mp4codec", myMp4Codec);
             myStatement.setLong("ts_updated", System.currentTimeMillis());

@@ -960,7 +960,7 @@ public class MyTunesRssUtils {
                 LOGGER.warn("Could not delete tracks from lucene index.", e);
             }
             LOGGER.debug("Recreating help tables.");
-            session.executeStatement(new RecreateHelpTablesStatement());
+            session.executeStatement(new RecreateHelpTablesStatement(true, true, true));
             orphanedImageRemover.remove();
         } finally {
             orphanedImageRemover.destroy();

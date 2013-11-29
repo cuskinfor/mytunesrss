@@ -148,6 +148,7 @@ public class MyTunesRssConfig {
     private boolean myUserAccessLogExtended;
     private boolean myAdminAccessLogExtended;
     private String myAccessLogTz;
+    private Map<String, String> myGenreMappings = new HashMap<String, String>();
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -1030,6 +1031,22 @@ public class MyTunesRssConfig {
         myAccessLogTz = accessLogTz;
     }
 
+    public synchronized Map<String, String> getGenreMappings() {
+        return new HashMap<String, String>(myGenreMappings);
+    }
+    
+    public synchronized String getGenreMapping(String fromGenre) {
+        return myGenreMappings.get(fromGenre);
+    }
+    
+    public synchronized void clearGenreMappings() {
+        myGenreMappings.clear();
+    }
+    
+    public synchronized void addGenreMapping(String fromGenre, String toGenre) {
+        myGenreMappings.put(fromGenre, toGenre);
+    }
+    
     public synchronized boolean isAdminAccessLogExtended() {
         return myAdminAccessLogExtended;
     }
@@ -1277,6 +1294,13 @@ public class MyTunesRssConfig {
         setAdminAccessLogRetainDays(JXPathUtils.getIntValue(settings, "accesslog-admin-retain", 5));
         setUserAccessLogExtended(JXPathUtils.getBooleanValue(settings, "accesslog-user-ext", true));
         setAdminAccessLogExtended(JXPathUtils.getBooleanValue(settings, "accesslog-admin-ext", true));
+        clearGenreMappings();
+        Iterator<JXPathContext> genreMappingsIterator = JXPathUtils.getContextIterator(settings, "genre-mappings/mapping");
+        while (genreMappingsIterator.hasNext()) {
+            JXPathContext genreMappingContext = genreMappingsIterator.next();
+            addGenreMapping(JXPathUtils.getStringValue(genreMappingContext, "from", ""), JXPathUtils.getStringValue(genreMappingContext, "to", ""));
+        }
+        myGenreMappings.remove(""); // if the default was used for any 'from' key
     }
 
     /**
@@ -1691,6 +1715,16 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "accesslog-admin-retain", getAdminAccessLogRetainDays()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "accesslog-user-ext", isUserAccessLogExtended()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "accesslog-admin-ext", isAdminAccessLogExtended()));
+            if (!getGenreMappings().isEmpty()) {
+                Element genreMappingsElement = settings.createElement("genre-mappings");
+                root.appendChild(genreMappingsElement);
+                for (Map.Entry<String, String> genreMapping : getGenreMappings().entrySet()) {
+                    Element genreMappingElement = settings.createElement("mapping");
+                    genreMappingsElement.appendChild(genreMappingElement);
+                    genreMappingElement.appendChild(DOMUtils.createTextElement(settings, "from", genreMapping.getKey()));
+                    genreMappingElement.appendChild(DOMUtils.createTextElement(settings, "to", genreMapping.getValue()));
+                }
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

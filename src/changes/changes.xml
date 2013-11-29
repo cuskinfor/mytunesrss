@@ -8,6 +8,9 @@
     <body>
 
         <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-464] Rename patterns for genres
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed album/artist queries and counts for genres.
             </action>

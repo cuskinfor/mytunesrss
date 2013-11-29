@@ -24,6 +24,7 @@
                 source_id VARCHAR(100),
                 genre VARCHAR(255),
                 lower_genre VARCHAR(255),
+                original_genre VARCHAR(255),
                 mp4codec VARCHAR(4),
                 ts_played NUMERIC(19),
                 ts_updated NUMERIC(19),
