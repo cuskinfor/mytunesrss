@@ -40,30 +40,33 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
 
             if (StringUtils.isNotEmpty(searchTerm) && (cachedTracks == null || sortOrderValue != offHeapSessionStore.getCurrentSortOrder())) {
                 StopWatch.start("Lucene search and query preparation");
-                if (getWebConfig().getSearchFuzziness() == -1) {
-                    try {
-                        query = FindTrackQuery.getForExpertSearchTerm(getAuthUser(), searchTerm, sortOrderValue, getWebConfig().getMaxSearchResults());
-                    } catch (LuceneQueryParserException e) {
-                        addError(new BundleError("error.illegalExpertSearchTerm"));
-                        forward(MyTunesRssCommand.ShowPortal);
-                        return; // early return
-                    }
-                } else {
-                    int maxTermSize = 0;
-                    for (String term : searchTerm.split(" ")) {
-                        if (term.length() > maxTermSize) {
-                            maxTermSize = term.length();
+                try {
+                    if (getWebConfig().getSearchFuzziness() == -1) {
+                        try {
+                            query = FindTrackQuery.getForExpertSearchTerm(getAuthUser(), searchTerm, sortOrderValue, getWebConfig().getMaxSearchResults());
+                        } catch (LuceneQueryParserException e) {
+                            addError(new BundleError("error.illegalExpertSearchTerm"));
+                            forward(MyTunesRssCommand.ShowPortal);
+                            return; // early return
+                        }
+                    } else {
+                        int maxTermSize = 0;
+                        for (String term : searchTerm.split(" ")) {
+                            if (term.length() > maxTermSize) {
+                                maxTermSize = term.length();
+                            }
+                        }
+                        if (maxTermSize >= 2) {
+                            query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue, getWebConfig().getMaxSearchResults());
+                        } else {
+                            addError(new BundleError("error.searchTermMinSize", 2));
+                            forward(MyTunesRssCommand.ShowPortal);
+                            return; // early return
                         }
                     }
-                    if (maxTermSize >= 2) {
-                        query = FindTrackQuery.getForSearchTerm(getAuthUser(), searchTerm, getWebConfig().getSearchFuzziness(), sortOrderValue, getWebConfig().getMaxSearchResults());
-                    } else {
-                        addError(new BundleError("error.searchTermMinSize", 2));
-                        forward(MyTunesRssCommand.ShowPortal);
-                        return; // early return
-                    }
+                } finally {
+                    StopWatch.stop();
                 }
-                StopWatch.stop();
             } else {
                 query = TrackRetrieveUtils.getQuery(getTransaction(), getRequest(), getAuthUser(), true);
                 if (query instanceof FindPlaylistTracksQuery) {// keep sort order for playlists
@@ -79,8 +82,11 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 currentListId = offHeapSessionStore.newCurrentList();
                 cachedTracks = offHeapSessionStore.getCurrentList(currentListId);
                 StopWatch.start("SQL query for tracks");
-                getTransaction().executeQuery(query).addRemainingResults(cachedTracks);
-                StopWatch.stop();
+                try {
+                    getTransaction().executeQuery(query).addRemainingResults(cachedTracks);
+                } finally {
+                    StopWatch.stop();
+                }
                 offHeapSessionStore.setCurrentSortOrder(sortOrderValue);
             }
 
@@ -92,15 +98,18 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 int pageSize = getWebConfig().getEffectivePageSize();
                 TrackUtils.EnhancedTracks enhancedTracks;
                 StopWatch.start("Creating enhanced tracks");
-                if (pageSize > 0 && cachedTracks.size() > pageSize) {
-                    int current = getSafeIntegerRequestParameter("index", 0);
-                    Pager pager = createPager(cachedTracks.size(), current);
-                    getRequest().setAttribute("pager", pager);
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), MyTunesRssUtils.getSubList(cachedTracks, current * pageSize, pageSize), sortOrderValue);
-                } else {
-                    enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), cachedTracks, sortOrderValue);
+                try {
+                    if (pageSize > 0 && cachedTracks.size() > pageSize) {
+                        int current = getSafeIntegerRequestParameter("index", 0);
+                        Pager pager = createPager(cachedTracks.size(), current);
+                        getRequest().setAttribute("pager", pager);
+                        enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), MyTunesRssUtils.getSubList(cachedTracks, current * pageSize, pageSize), sortOrderValue);
+                    } else {
+                        enhancedTracks = TrackUtils.getEnhancedTracks(getTransaction(), cachedTracks, sortOrderValue);
+                    }
+                } finally {
+                    StopWatch.stop();
                 }
-                StopWatch.stop();
                 getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()) && sortOrderValue != SortOrder.KeepOrder);
                 tracks = (List<TrackUtils.EnhancedTrack>)enhancedTracks.getTracks();
                 if (pageSize > 0 && tracks.size() > pageSize) {

@@ -42,7 +42,10 @@ public class RemovePhotoStatement implements DataStoreStatement {
         statement.setObject("photo_id", myPhotoIds);
         statement.setItems("source_id", myDataSourceIds);
         StopWatch.start("Removing up to " + myPhotoIds.size() + " photos from database");
-        statement.execute();
-        StopWatch.stop();
+        try {
+            statement.execute();
+        } finally {
+            StopWatch.stop();
+        }
     }
 }

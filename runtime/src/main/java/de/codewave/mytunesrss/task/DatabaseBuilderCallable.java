@@ -175,31 +175,38 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<String, MissingItunesFiles>();
         final Map<String, Long> trackTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "trackTsUpdate");
         StopWatch.start("Fetching existing tracks");
-        MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
-            public Void execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksIdAndUpdateTs");
-                ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
-                while (rs.next()) {
-                    trackTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
+        try {
+            MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
+                public Void execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksIdAndUpdateTs");
+                    ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
+                    while (rs.next()) {
+                        trackTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
+                    }
+                    return null;
                 }
-                return null;
-            }
-        });
-        StopWatch.stop();
+            });
+        } finally {
+            StopWatch.stop();
+        }
         StopWatch.start("Fetching existing photos");
-        final Map<String, Long> photoTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "photoTsUpdate");
-        MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
-            public Void execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdAndUpdateTs");
-                ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
-                Set<String> ids = new HashSet<String>();
-                while (rs.next()) {
-                    photoTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
+        final Map<String, Long> photoTsUpdate;
+        try {
+            photoTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "photoTsUpdate");
+            MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
+                public Void execute(Connection connection) throws SQLException {
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdAndUpdateTs");
+                    ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
+                    Set<String> ids = new HashSet<String>();
+                    while (rs.next()) {
+                        photoTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
+                    }
+                    return null;
                 }
-                return null;
-            }
-        });
-        StopWatch.stop();
+            });
+        } finally {
+            StopWatch.stop();
+        }
         if (myDatasources != null && !Thread.currentThread().isInterrupted()) {
             try {
                 for (DatasourceConfig datasource : myDatasources) {
@@ -267,8 +274,11 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAndPhotoAlbumsAfterUpdate");
                     statement.setItems("source_id", updatedDataSourceIds);
                     StopWatch.start("Removing outdated playlists and photo albums");
-                    statement.execute();
-                    StopWatch.stop();
+                    try {
+                        statement.execute();
+                    } finally {
+                        StopWatch.stop();                    
+                    }
                 }
             }, true));
         }

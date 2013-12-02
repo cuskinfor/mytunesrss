@@ -38,43 +38,42 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         try {
             StopWatch.start("Recreating help tables");
             session.executeStatement(new RecreateHelpTablesStatement(true, true, true));
-            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
+            StopWatch.stop();
             session.commit();
         }
         try {
             StopWatch.start("Refreshing smart playlists");
             session.executeStatement(new RefreshSmartPlaylistsStatement());
-            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
+            StopWatch.stop();
             session.commit();
         }
         try {
             StopWatch.start("Updating statistics");
             session.executeStatement(new UpdateStatisticsStatement());
-            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {
+            StopWatch.stop();
             session.commit();
         }
         try {
             StopWatch.start("Updating user database references");
             MyTunesRssUtils.updateUserDatabaseReferences(session);
-            StopWatch.stop();
         } catch (SQLException e) {
             LOGGER.warn("Could not update user database references.", e);
         } finally {
+            StopWatch.stop();
             session.commit();
         }
         try {
             SystemInformation systemInformation = session.executeQuery(new GetSystemInformationQuery());
             LOGGER.info("System information: " + systemInformation + ".");
-            session.commit();
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {

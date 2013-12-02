@@ -41,8 +41,11 @@ public class RemoveTrackStatement implements DataStoreStatement {
         statement.setObject("track_id", myTrackIds);
         statement.setItems("source_id", myDataSourceIds);
         StopWatch.start("Removing up to " + myTrackIds.size() + " tracks from database");
-        statement.execute();
-        StopWatch.stop();
+        try {
+            statement.execute();
+        } finally {
+            StopWatch.stop();
+        }
         try {
             MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForIds(myTrackIds);
         } catch (IOException e) {

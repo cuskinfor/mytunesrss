@@ -106,6 +106,10 @@ public class MyTunesRssExecutorService {
             LOGGER.error("Could not schedule database maintenance task.", e);
         }
     }
+    
+    public synchronized <T> Future<T> scheduleDatabaseJob(Callable<T> job) {
+        return DATABASE_JOB_EXECUTOR.submit(job);
+    }
 
     public synchronized boolean isDatabaseJobRunning() {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {

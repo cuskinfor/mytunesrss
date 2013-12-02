@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.Sizeable;
-import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Panel;
@@ -14,11 +13,15 @@ import com.vaadin.ui.Window;
 import de.codewave.mytunesrss.MessageWithParameters;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.component.MessageWindow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class MainWindow extends Window {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
+    
     public MainWindow(String caption, Panel panel) {
         super(caption);
         getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
@@ -73,6 +76,32 @@ public class MainWindow extends Window {
                 // intentionally left blank
             }
         }.show(this);
+    }
+    
+    private AtomicReference<MessageWindow> myBlockingWindow = new AtomicReference<MessageWindow>();
+    
+    public void showBlockingMessage(String messageKey, Object... parameters) {
+        synchronized (myBlockingWindow) {
+            hideBlockingMessage();
+            myBlockingWindow.set(new MessageWindow(50, Sizeable.UNITS_EM, null, null, getBundleString(messageKey, parameters)) {
+                @Override
+                protected void onClick(Button button) {
+                    // intentionally left blank
+                }
+            });
+            LOGGER.debug("Showing blocking message \"" + messageKey + "\".");     
+            myBlockingWindow.get().show(this);            
+        }
+    }
+    
+    public void hideBlockingMessage() {
+        synchronized (myBlockingWindow) {
+            if (myBlockingWindow.get() != null) {
+                LOGGER.debug("Hiding blocking message.");
+                removeWindow(myBlockingWindow.get());
+            }
+            myBlockingWindow.set(null);
+        }
     }
 
     public void checkUnhandledException() {

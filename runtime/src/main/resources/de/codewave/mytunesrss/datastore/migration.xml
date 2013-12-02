@@ -346,6 +346,7 @@
 
     <statement name="migrate_5.0.0_part_2">
         <sql>UPDATE photo SET ts_updated = (SELECT lastupdate FROM system_information)</sql>
+        <sql>UPDATE track SET original_genre = genre</sql>
     </statement>
 
 </statements>

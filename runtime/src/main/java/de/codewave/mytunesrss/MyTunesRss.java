@@ -353,9 +353,9 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (REBUILD_LUCENE_INDEX_ON_STARTUP || !MyTunesRss.LUCENE_TRACK_SERVICE.exists()) {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
-                StopWatch.start("Recreating lucene index from scratch");
                 ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
                 info.show(2000L);
+                StopWatch.start("Recreating lucene index from scratch");
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
                     FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
