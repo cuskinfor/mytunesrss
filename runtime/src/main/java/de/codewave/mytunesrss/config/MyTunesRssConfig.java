@@ -1496,7 +1496,7 @@ public class MyTunesRssConfig {
     public synchronized void setDefaultDatabaseSettings() throws IOException {
         if (getDatabaseType() == DatabaseType.h2) {
             setDatabaseDriver("org.h2.Driver");
-            setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS;TRACE_LEVEL_FILE=3;MAX_LOG_SIZE=64");
+            setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS;MAX_LOG_SIZE=64;MULTI_THREADED=1");
             setDatabaseUser("sa");
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.mysqlinternal) {
