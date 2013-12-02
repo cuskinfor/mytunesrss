@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import java.util.Locale;
 
 public enum DatabaseType {
-    h2(), mysqlinternal(), h2custom(), postgres(), mysql();
+    h2(), hsqldb(), mysqlinternal(), h2custom(), postgres(), mysql();
 
     @Override
     public String toString() {
@@ -24,6 +24,8 @@ public enum DatabaseType {
                 return "mysql";
             case postgres:
                 return "postgres";
+            case hsqldb:
+                return "hsqldb";
             default:
                 return "h2";
         }

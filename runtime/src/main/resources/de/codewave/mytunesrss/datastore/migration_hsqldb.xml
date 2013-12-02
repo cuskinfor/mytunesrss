@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+
+    <statement name="migrate31eap131eap4">
+        <sql>ALTER TABLE track ALTER COLUMN id VARCHAR(100) NOT NULL</sql>
+        <sql>ALTER TABLE link_track_playlist ALTER COLUMN track_id VARCHAR(100) NOT NULL</sql>
+    </statement>
+
+    <statement name="migrate31eap6to31eap9">
+        <sql>ALTER TABLE playlist ALTER COLUMN id VARCHAR(100)</sql>
+        <sql>ALTER TABLE link_track_playlist ALTER COLUMN playlist_id VARCHAR(100)</sql>
+    </statement>
+
+    <statement name="migrate_3.2_eap_16_part2">
+        <sql>UPDATE track SET original_artist = artist</sql>
+        <sql>ALTER TABLE track ALTER COLUMN original_artist SET NOT NULL</sql>
+    </statement>
+
+    <statement name="migrate_3.8.0_eap_10">
+        <sql>ALTER TABLE system_information ALTER COLUMN version VARCHAR(30) NOT NULL</sql>
+    </statement>
+
+</statements>

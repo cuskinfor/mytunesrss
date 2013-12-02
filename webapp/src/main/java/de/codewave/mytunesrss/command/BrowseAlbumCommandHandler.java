@@ -91,7 +91,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                             statement.setString("name", finalArtist);
                             ResultSet rs = statement.executeQuery();
                             if (rs.next()) {
-                                return rs.getInt("COUNT");
+                                return rs.getInt("TRACK_COUNT");
                             }
                             return Long.valueOf(0);
                         }
@@ -104,7 +104,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                             statement.setString("name", finalGenre);
                             ResultSet rs = statement.executeQuery();
                             if (rs.next()) {
-                                return rs.getInt("COUNT");
+                                return rs.getInt("TRACK_COUNT");
                             }
                             return Long.valueOf(0);
                         }

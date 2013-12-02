@@ -20,6 +20,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
+import org.hsqldb.jdbc.JDBCDriver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -1034,19 +1035,19 @@ public class MyTunesRssConfig {
     public synchronized Map<String, String> getGenreMappings() {
         return new HashMap<String, String>(myGenreMappings);
     }
-    
+
     public synchronized String getGenreMapping(String fromGenre) {
         return myGenreMappings.get(fromGenre);
     }
-    
+
     public synchronized void clearGenreMappings() {
         myGenreMappings.clear();
     }
-    
+
     public synchronized void addGenreMapping(String fromGenre, String toGenre) {
         myGenreMappings.put(fromGenre, toGenre);
     }
-    
+
     public synchronized boolean isAdminAccessLogExtended() {
         return myAdminAccessLogExtended;
     }
@@ -1477,16 +1478,16 @@ public class MyTunesRssConfig {
     }
 
     private void loadDatabaseSettings(JXPathContext settings) throws IOException {
-        setDatabaseType(DatabaseType.h2);
-        setDatabaseType(DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", getDatabaseType().name())));
+        DatabaseType databaseType = DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", DatabaseType.h2.name()));
+        setDatabaseType(databaseType);
         setDefaultDatabaseSettings();
-        if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.h2custom) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2custom && databaseType != DatabaseType.hsqldb) {
             setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
         }
-        if (getDatabaseType() != DatabaseType.h2) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.hsqldb) {
             setDatabaseConnectionOptions(JXPathUtils.getStringValue(settings, "database/conn-options", getDatabaseConnectionOptions()));
         }
-        if (getDatabaseType() != DatabaseType.h2 && getDatabaseType() != DatabaseType.mysqlinternal) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.mysqlinternal && databaseType != DatabaseType.hsqldb) {
             setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
             setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
             setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
@@ -1497,6 +1498,11 @@ public class MyTunesRssConfig {
         if (getDatabaseType() == DatabaseType.h2) {
             setDatabaseDriver("org.h2.Driver");
             setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS;MAX_LOG_SIZE=64;MULTI_THREADED=1");
+            setDatabaseUser("sa");
+            setDatabasePassword("");
+        } else if (getDatabaseType() == DatabaseType.hsqldb) {
+            setDatabaseDriver(JDBCDriver.class.getName());
+            setDatabaseConnection("jdbc:hsqldb:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "hsqldb/MyTunesRSS");
             setDatabaseUser("sa");
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.mysqlinternal) {

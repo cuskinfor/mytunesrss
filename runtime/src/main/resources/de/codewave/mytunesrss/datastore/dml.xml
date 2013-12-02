@@ -74,13 +74,13 @@
 
     <statement name="findArtistTrackCount">
         <sql>
-            SELECT COUNT(id) AS count FROM track WHERE lower_artist = LOWER(:name) OR lower_album_artist = LOWER(:name)
+            SELECT COUNT(id) AS track_count FROM track WHERE lower_artist = LOWER(:name) OR lower_album_artist = LOWER(:name)
         </sql>
     </statement>
 
     <statement name="findGenreTrackCount">
         <sql>
-            SELECT track_count AS count FROM genre WHERE lower_name = LOWER(:name)
+            SELECT track_count AS track_count FROM genre WHERE lower_name = LOWER(:name)
         </sql>
     </statement>
 
@@ -515,15 +515,25 @@
         </sql>
         <sql>
             UPDATE artist SET track_count = (
-                (SELECT COUNT(id) FROM track WHERE mediatype = 'Audio' AND lower_artist = artist.lower_name)
-                + (SELECT COUNT(id) FROM track WHERE mediatype = 'Audio' AND lower_artist != artist.lower_name AND lower_album_artist = artist.lower_name)
+                SELECT COUNT(id) FROM track WHERE mediatype = 'Audio' AND lower_artist = artist.lower_name
             )
         </sql>
         <sql>
+            UPDATE artist SET track_count =
+                track_count + (
+                    SELECT COUNT(id) FROM track WHERE mediatype = 'Audio' AND lower_artist != artist.lower_name AND lower_album_artist = artist.lower_name
+                )
+        </sql>
+        <sql>
             UPDATE artist SET album_count = (
-                (SELECT COUNT(DISTINCT(album)) FROM track WHERE mediatype = 'Audio' AND lower_artist = artist.lower_name)
-                + (SELECT COUNT(DISTINCT(album)) FROM track WHERE mediatype = 'Audio' AND lower_artist != artist.lower_name AND lower_album_artist = artist.lower_name)
+                SELECT COUNT(DISTINCT(album)) FROM track WHERE mediatype = 'Audio' AND lower_artist = artist.lower_name
             )
+        </sql>
+        <sql>
+            UPDATE artist SET album_count =
+                album_count + (
+                    SELECT COUNT(DISTINCT(album)) FROM track WHERE mediatype = 'Audio' AND lower_artist != artist.lower_name AND lower_album_artist = artist.lower_name
+                )
         </sql>
     </statement>
 
@@ -732,7 +742,7 @@
         <sql>DELETE FROM photo WHERE source_id IN (:sourceIds[])</sql>
         <sql>DELETE FROM track WHERE source_id IN (:sourceIds[])</sql>
     </statement>
-    
+
     <statement name="renameGenres">
         <sql>UPDATE track SET genre = original_genre, lower_genre = LOWER(original_genre)</sql>
         <sql loop="mappings" loopcommit="1">

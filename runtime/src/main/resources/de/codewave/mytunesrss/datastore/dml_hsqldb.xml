@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+  ~ Copyright (c) 2013. Codewave Software Michael Descher.
+  ~ All rights reserved.
+  -->
+
+<statements>
+
+    <statement name="findAlbumImage">
+        <sql>
+            SELECT LIMIT 0 1 data AS data
+            FROM image i, track t
+            WHERE t.album = :album
+            AND i.hash = t.image_hash
+            AND i.size = :size
+        </sql>
+    </statement>
+
+    <statement name="nextPlaylistId">
+        <sql>SELECT TOP 1 NEXT VALUE FOR playlist_id_sequence AS id FROM system_information</sql>
+    </statement>
+
+    <statement name="createSearchTempTables">
+        <sql>
+            CREATE TEMPORARY TABLE IF NOT EXISTS temp_lucene_tracks (
+                pos INTEGER IDENTITY,
+                track_id VARCHAR(100),
+                UNIQUE(track_id)
+            )
+        </sql>
+    </statement>
+
+    <statement name="maintenance">
+        <sql>ANALYZE</sql>
+    </statement>
+
+    <!-- reusable sql fragments -->
+
+    <fragment name="smartPlaylistOrderAndLimitHead">
+        <![CDATA[
+            SELECT <limit>LIMIT 0 :maxCount </limit>
+        ]]>
+    </fragment>
+
+    <fragment name="smartPlaylistOrderAndLimitTail">
+        <![CDATA[
+            <order_random>ORDER BY RAND()</order_random>
+        ]]>
+    </fragment>
+
+</statements>
