@@ -9,6 +9,9 @@
 
         <release version="5.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                Automatic detection of VLC player version.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-464] Rename patterns for genres
             </action>
             <action dev="mdescher" type="fix">

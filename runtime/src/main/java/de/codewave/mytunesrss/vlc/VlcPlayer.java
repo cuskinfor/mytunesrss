@@ -40,7 +40,7 @@ public class VlcPlayer {
     private static final Logger LOGGER = LoggerFactory.getLogger(VlcPlayer.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private static final int MAX_START_FAILURES = 3;
+    private static final int MAX_START_FAILURES = 2 * VlcVersion.values().length;
 
     static {
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
@@ -152,6 +152,7 @@ public class VlcPlayer {
             final AtomicBoolean startupFailed = new AtomicBoolean(false);
             myWatchdog = new Thread(new Runnable() {
                 public void run() {
+                    VlcVersion vlcVersion = MyTunesRss.CONFIG.getVlcVersion();
                     int startFailures = 0;
                     try {
                         while (startFailures < MAX_START_FAILURES && !Thread.interrupted()) {
@@ -168,7 +169,7 @@ public class VlcPlayer {
                                 command.add("--intf=http");
                                 command.add("--http-host=" + myVlcHost);
                                 command.add("--http-port=" + myVlcPort);
-                                if (MyTunesRss.CONFIG.getVlcVersion() != null && MyTunesRss.CONFIG.getVlcVersion().isHttpPassword()) {
+                                if (vlcVersion != null && vlcVersion.isHttpPassword()) {
                                     command.add("--http-password=" + myPassword);
                                 }
                                 if (myRaopTargets != null && myRaopTargets.length > 0) {
@@ -254,15 +255,19 @@ public class VlcPlayer {
                                 }
                                 if (!Thread.currentThread().isInterrupted() && isRunning(process)) {
                                     startFailures = 0;
+                                    MyTunesRss.CONFIG.setVlcVersion(vlcVersion);
+                                    MyTunesRss.CONFIG.save();
                                     LOGGER.debug("Releasing semaphore, waiting for process.");
                                     semaphore.release();
                                     process.waitFor();
                                 } else if (!isRunning(process)) {
                                     startFailures++;
+                                    vlcVersion = vlcVersion.next();
                                 }
                             } catch (IOException e) {
                                 LOGGER.warn("Could not start VLC player.", e);
                                 startFailures++;
+                                vlcVersion = vlcVersion.next();
                             } catch (InterruptedException e) {
                                 LOGGER.debug("Interrupted while waiting for process to exit.", e);
                                 break;

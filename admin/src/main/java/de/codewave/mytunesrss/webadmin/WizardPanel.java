@@ -81,35 +81,53 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                     getParent().removeWindow(this);
                 }
             }.show(getWindow());
-        } else if (clickEvent.getSource() == myFinishButton) {
-            if (isAnyEmpty(myDatasourcePath, myUsername, myPassword, myRetypePassword)) {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("wizardPanel.error.allFieldsMandatory");
-            } else {
-                DatasourceConfig datasourceConfig = DatasourceConfig.create(UUID.randomUUID().toString(), "Default", myDatasourcePath.getStringValue(null));
-                if (datasourceConfig == null) {
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.invalidDatasourcePath");
-                } else if (!myPassword.getStringValue("1").equals(myRetypePassword.getStringValue("2"))) {
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("editUserConfigPanel.error.retypePassword");
+        } else {
+            final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
+            if (clickEvent.getSource() == myFinishButton) {
+                if (isAnyEmpty(myDatasourcePath, myUsername, myPassword, myRetypePassword)) {
+                    applicationWindow.showError("wizardPanel.error.allFieldsMandatory");
                 } else {
-                    MyTunesRss.CONFIG.setDatasources(Collections.singletonList(datasourceConfig));
-                    User user = new User(myUsername.getStringValue(null));
-                    user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
-                    user.setEmptyPassword(false);
-                    MyTunesRss.CONFIG.addUser(user);
-                    MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
-                    MyTunesRss.CONFIG.save();
-                    try {
-                        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
-                    } catch (DatabaseJobRunningException e) {
-                        LOGGER.error("There was already a database job running!", e);
+                    DatasourceConfig datasourceConfig = DatasourceConfig.create(UUID.randomUUID().toString(), "Default", myDatasourcePath.getStringValue(null));
+                    if (datasourceConfig == null) {
+                        applicationWindow.showError("error.invalidDatasourcePath");
+                    } else if (!myPassword.getStringValue("1").equals(myRetypePassword.getStringValue("2"))) {
+                        applicationWindow.showError("editUserConfigPanel.error.retypePassword");
+                    } else {
+                        MyTunesRss.CONFIG.setDatasources(Collections.singletonList(datasourceConfig));
+                        User user = new User(myUsername.getStringValue(null));
+                        user.setPasswordHash(myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
+                        user.setEmptyPassword(false);
+                        MyTunesRss.CONFIG.addUser(user);
+                        MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
+                        MyTunesRss.CONFIG.save();
+                        try {
+                            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), true);
+                        } catch (DatabaseJobRunningException e) {
+                            LOGGER.error("There was already a database job running!", e);
+                        }
+                        applicationWindow.showBlockingMessage("wizard.working.message");
+                        Thread wizardWatchdog = new Thread(new Runnable() {
+                            public void run() {
+                                while (MyTunesRss.EXECUTOR_SERVICE.isDatabaseJobRunning()) {
+                                    try {
+                                        Thread.sleep(1000);
+                                    } catch (InterruptedException e) {
+                                        LOGGER.info("Wizard watchdog thread has been interrupted!");
+                                    }
+                                }
+                                applicationWindow.hideBlockingMessage();
+                            }
+                        }, "WizardWatchdog");
+                        wizardWatchdog.setDaemon(true);
+                        wizardWatchdog.start();
+                        applicationWindow.showComponent(new StatusPanel());
                     }
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new WizardWorkingPanel());
                 }
+            } else if (clickEvent.getSource() == mySkipButton) {
+                MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
+                MyTunesRss.CONFIG.save();
+                applicationWindow.showComponent(getApplication().getNewWindowPanel());
             }
-        } else if (clickEvent.getSource() == mySkipButton) {
-            MyTunesRss.CONFIG.setInitialWizard(false); // do not run wizard again
-            MyTunesRss.CONFIG.save();
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(getApplication().getNewWindowPanel());
         }
     }
 
