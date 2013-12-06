@@ -4,8 +4,9 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.utils.sql.*;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
@@ -20,7 +21,6 @@ import java.net.URL;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -65,14 +65,7 @@ public class MyTunesRssDataStore extends DataStore {
 
     @Override
     protected void beforeDestroy(Connection connection) throws SQLException {
-        if (MyTunesRss.CONFIG.isDefaultDatabase()) {
-            Statement statement = connection.createStatement();
-            try {
-                statement.execute("SHUTDOWN COMPACT");
-            } finally {
-                statement.close();
-            }
-        }
+        MyTunesRssUtils.createStatement(connection, "shutdown").execute();
     }
 
     private void initSmartStatementFactory(DatabaseType databaseType) {
@@ -82,15 +75,15 @@ public class MyTunesRssDataStore extends DataStore {
                         "dml.xml")), JXPathUtils.getContext(getClass().getResource("migration.xml"))};
         URL url = getClass().getResource("ddl_" + databaseType.getDialect() + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         url = getClass().getResource("dml_" + databaseType.getDialect() + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         url = getClass().getResource("migration_" + databaseType.getDialect() + ".xml");
         if (url != null) {
-            contexts = (JXPathContext[]) ArrayUtils.add(contexts, JXPathUtils.getContext(url));
+            contexts = ArrayUtils.add(contexts, JXPathUtils.getContext(url));
         }
         mySmartStatementFactory = SmartStatementFactory.getInstance(contexts);
     }
@@ -112,10 +105,13 @@ public class MyTunesRssDataStore extends DataStore {
             try {
                 wait(100);
             } catch (InterruptedException e) {
-                //Thread.currentThread().interrupt();
+                LOG.debug("Interrupted while waiting for connection pool to become inactive.", e);
+                break;
             }
         }
-        LOG.info("Pool is inactive, proceeding with destruction.");
+        if (myConnectionPool == null || myConnectionPool.getNumActive() == 0) {
+            LOG.info("Pool is inactive, proceeding with destruction.");
+        }
         super.destroy();
     }
 
@@ -161,6 +157,7 @@ public class MyTunesRssDataStore extends DataStore {
                         }
                     }
                 } catch (InterruptedException e) {
+                    LOG.debug("Caught interrupted exception.", e);
                     Thread.currentThread().interrupt();
                 }
             }

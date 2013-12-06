@@ -26,6 +26,8 @@
         <sql>VACUUM ANALYZE</sql>
     </statement>
 
+    <statement name="shutdown" />
+    
     <!-- reusable sql fragments -->
 
     <fragment name="smartPlaylistOrderAndLimitHead">

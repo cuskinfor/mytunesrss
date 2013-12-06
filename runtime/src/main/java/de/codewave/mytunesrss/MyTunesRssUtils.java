@@ -174,6 +174,8 @@ public class MyTunesRssUtils {
     }
 
     public static void shutdownGracefully() {
+        ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.shuttingDown"));
+        info.show(2000L);
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
         LOGGER.debug("Shutting down gracefully.");
         MyTunesRss.CONFIG.save();

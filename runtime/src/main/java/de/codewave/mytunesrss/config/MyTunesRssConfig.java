@@ -1602,13 +1602,16 @@ public class MyTunesRssConfig {
                 Element database = settings.createElement("database");
                 root.appendChild(database);
                 database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType().name()));
-                database.appendChild(DOMUtils.createTextElement(settings, "conn-options", getDatabaseConnectionOptions()));
-                // for internal mysql database we should not save additional info in the config
-                if (getDatabaseType() != DatabaseType.mysqlinternal) {
-                    database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
-                    database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
-                    database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
-                    database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+                if (getDatabaseType() != DatabaseType.hsqldb) {
+                    // for hsqldb we only save the type
+                    database.appendChild(DOMUtils.createTextElement(settings, "conn-options", getDatabaseConnectionOptions()));
+                    // for internal mysql database we should not save additional info in the config
+                    if (getDatabaseType() != DatabaseType.mysqlinternal) {
+                        database.appendChild(DOMUtils.createTextElement(settings, "driver", getDatabaseDriver()));
+                        database.appendChild(DOMUtils.createTextElement(settings, "connection", getDatabaseConnection()));
+                        database.appendChild(DOMUtils.createTextElement(settings, "user", getDatabaseUser()));
+                        database.appendChild(DOMUtils.createTextElement(settings, "password", getDatabasePassword()));
+                    }
                 }
             }
             Element tomcat = settings.createElement("tomcat");

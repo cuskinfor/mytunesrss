@@ -35,6 +35,10 @@
         <sql>ANALYZE</sql>
     </statement>
 
+    <statement name="shutdown">
+        SHUTDOWN COMPACT
+    </statement>
+
     <!-- reusable sql fragments -->
 
     <fragment name="smartPlaylistOrderAndLimitHead">
