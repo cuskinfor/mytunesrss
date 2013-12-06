@@ -24,7 +24,6 @@ public class BackupDatabaseRunnable implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(BackupDatabaseRunnable.class);
 
     public void run() {
-        MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
         try {
             MyTunesRssUtils.backupDatabase();
             MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
@@ -33,8 +32,6 @@ public class BackupDatabaseRunnable implements Runnable {
             LOGGER.error("Error while backing up database.", e);
         } catch (IOException e) {
             LOGGER.error("Error while backing up database.", e);
-        } finally {
-            MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
         }
     }
 }

@@ -664,7 +664,7 @@ public class MyTunesRss {
             }
 
             if (backupAfterSuccessfulInit && MyTunesRss.CONFIG.isBackupDatabaseAfterInit() && MyTunesRss.CONFIG.isDefaultDatabase()) {
-                MyTunesRssUtils.backupDatabase();
+                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseBackup();
             }
             MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
             break; // ok, continue with main flow
