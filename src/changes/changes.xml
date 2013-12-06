@@ -9,6 +9,9 @@
 
         <release version="5.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                Use BACKUP sql command for backing up H2 databases.
+            </action>
+            <action dev="mdescher" type="add">
                 Automatic detection of VLC player version.
             </action>
             <action dev="mdescher" type="add">

@@ -64,6 +64,7 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -510,46 +511,35 @@ public class MyTunesRssUtils {
     }
 
     public static void backupDatabase() throws IOException, SQLException {
-        LOGGER.info("Creating database backup.");
         if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
             throw new IllegalStateException("Cannot backup non-default database.");
         }
         if (!MyTunesRss.STORE.isInitialized()) {
             throw new IllegalStateException("Database must already be initialized for starting a backup.");
         }
-        LOGGER.debug("Destroying store before backup.");
-        MyTunesRss.STORE.destroy();
-        try {
-            File databaseDir = new File(MyTunesRss.CACHE_DATA_PATH + "/" + "h2");
-            File backupFile = DatabaseBackup.createBackupFile();
-            LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
-            ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(backupFile);
-            try {
-                ZipUtils.addFilesToZipRecursively("", databaseDir, new FileFilter() {
-                    public boolean accept(File file) {
-                        if (file.getName().toLowerCase(Locale.ENGLISH).contains(".lock.db")) {
-                            return false;
-                        }
-                        return true;
-                    }
-                }, zipOutputStream);
-            } finally {
-                zipOutputStream.close();
+        final File backupFile = DatabaseBackup.createBackupFile();
+        LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
+        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+            public void execute(Connection connection) throws SQLException {
+                PreparedStatement preparedStatement = connection.prepareStatement("BACKUP TO ?");
+                try {
+                    preparedStatement.setString(1, backupFile.getAbsolutePath());
+                    preparedStatement.execute();
+                } finally {
+                    preparedStatement.close();
+                }
             }
-        } finally {
-            LOGGER.debug("Restarting store after backup.");
-            MyTunesRss.STORE.init();
-        }
+        });
     }
 
     public static void restoreDatabaseBackup(DatabaseBackup backup) throws IOException {
-        LOGGER.info("Restoring database backup from file \"" + backup.getFile().getAbsolutePath() + "\".");
         if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
             throw new IllegalStateException("Cannot restore non-default database.");
         }
         if (MyTunesRss.STORE.isInitialized()) {
             throw new IllegalStateException("Database must not be initialized for restoring a backup.");
         }
+        LOGGER.info("Restoring database backup from file \"" + backup.getFile().getAbsolutePath() + "\".");
         File databaseDir = new File(MyTunesRss.CACHE_DATA_PATH + "/" + "h2");
         FileUtils.deleteDirectory(databaseDir);
         databaseDir.mkdir();
