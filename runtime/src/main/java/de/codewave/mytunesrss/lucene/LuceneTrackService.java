@@ -195,18 +195,18 @@ public class LuceneTrackService {
     public List<String> searchTrackIds(String[] searchTerms, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
-        List<String> trackIds;
+        Collection<String> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
             isearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = createQuery(searchTerms, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            trackIds = new ArrayList<String>();
+            trackIds = new LinkedHashSet<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
-            return trackIds;
+            return new ArrayList<String>(trackIds);
         } finally {
             if (isearcher != null) {
                 isearcher.close();
@@ -235,11 +235,11 @@ public class LuceneTrackService {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            List<String> trackIds = new ArrayList<String>();
+            Collection<String> trackIds = new LinkedHashSet<String>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
-            return trackIds;
+            return new ArrayList<String>(trackIds);
         } finally {
             if (isearcher != null) {
                 isearcher.close();

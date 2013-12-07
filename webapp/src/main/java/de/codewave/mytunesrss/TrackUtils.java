@@ -21,16 +21,16 @@ import java.util.*;
 public class TrackUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackUtils.class);
 
-    public static EnhancedTracks getEnhancedTracks(DataStoreSession transaction, Collection<Track> tracks,
-            SortOrder sortOrder) {
+    public static EnhancedTracks getEnhancedTracks(DataStoreSession transaction, List<Track> tracks, int first, int count, SortOrder sortOrder) {
         EnhancedTracks enhancedTracks = new EnhancedTracks();
-        enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(tracks.size()));
+        enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(count));
         String lastAlbum = TrackUtils.class.getName();// we need some dummy name
         String lastArtist = TrackUtils.class.getName();// we need some dummy name
         List<EnhancedTrack> sectionTracks = new ArrayList<EnhancedTrack>();
         boolean variousPerSection = false;
         int sectionCount = 0;
-        for (Track track : tracks) {
+        for (int i = first; i < first + count; i++) {
+            Track track = tracks.get(i);
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
@@ -50,7 +50,23 @@ public class TrackUtils {
             lastAlbum = track.getAlbum();
             lastArtist = track.getArtist();
         }
-        finishSection(transaction, sectionTracks, variousPerSection);
+        for (int i = first + count; i < tracks.size(); i++) {
+            Track track = tracks.get(i);
+            EnhancedTrack enhancedTrack = new EnhancedTrack(track);
+            boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
+            boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
+            if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
+                finishSection(transaction, sectionTracks, variousPerSection);
+                break; // no we are done with the last section
+            } else {
+                if ((sortOrder == SortOrder.Album && !track.getArtist().equals(track.getAlbumArtist())) || (sortOrder == SortOrder.Artist && newAlbum)) {
+                    variousPerSection = true;
+                }
+            }
+            sectionTracks.add(enhancedTrack);
+            lastAlbum = track.getAlbum();
+            lastArtist = track.getArtist();
+        }
         enhancedTracks.setSimpleResult(sectionCount == 1 && !variousPerSection);
         return enhancedTracks;
     }
