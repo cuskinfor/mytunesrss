@@ -8,17 +8,31 @@ package de.codewave.mytunesrss.webadmin.datasource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ImageImportType;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.webadmin.MainWindow;
 import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
 import de.codewave.vaadin.SmartField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatasourceOptionsPanel.class);
 
     public class VideoTypeRepresentation {
         private VideoType myVideoType;
@@ -291,4 +305,56 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         }
         return fileTypes;
     }
+
+    protected void updateModifiedFileTypes(List<FileType> previousFileTypes, List<FileType> newFileTypes) {
+        final List<FileType> changeset = new ArrayList<FileType>();
+        for (FileType newFileType : newFileTypes) {
+            int i = previousFileTypes.indexOf(newFileType);
+            if (i == -1) {
+                LOGGER.debug("Adding new file type \"" + newFileType.getSuffix() + "\" to change set.");
+                changeset.add(newFileType);
+            } else {
+                FileType previousFileType = previousFileTypes.get(i);
+                boolean changed = previousFileType.isProtected() != newFileType.isProtected();
+                changed |= previousFileType.getMediaType() != newFileType.getMediaType();
+                if (changed) {
+                    LOGGER.debug("Adding changed file type \"" + newFileType.getSuffix() + "\" to change set.");
+                    changeset.add(newFileType);
+                }
+            }
+        }
+        if (!changeset.isEmpty()) {
+            final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
+            applicationWindow.showBlockingMessage("datasourceOptionsPanel.info.updatingDatabase");
+            MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseJob(new Callable<Object>() {
+                public Object call() throws Exception {
+                    DataStoreSession transaction = MyTunesRss.STORE.getTransaction();
+                    StopWatch.start("Updating tracks for " + changeset.size() + " changed file types");
+                    try {
+                        for (final FileType fileType : changeset) {
+                            transaction.executeStatement(new DataStoreStatement() {
+                                public void execute(Connection connection) throws SQLException {
+                                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateTrackFileType");
+                                    statement.setBoolean("protected", fileType.isProtected());
+                                    statement.setString("mediatype", fileType.getMediaType().name());
+                                    statement.setString("source_id", myDatasourceConfig.getId());
+                                    statement.setString("suffix", fileType.getSuffix());
+                                    statement.execute();
+                                }
+                            });
+                        }
+                        transaction.commit();
+                    } catch (Exception e) {
+                        LOGGER.info("Could not update track file types.");
+                        transaction.rollback();
+                    } finally {
+                        StopWatch.stop();
+                        applicationWindow.hideBlockingMessage();
+                    }
+                    return null;
+                }
+            });
+        }
+    }
+
 }

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.FileType;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
@@ -129,6 +130,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         myConfig.setImportPlaylists(myImportPlaylists.booleanValue());
+        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
         myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();

@@ -66,7 +66,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         panel = new Panel(getBundleString("contentsConfigPanel.visibleGenres.caption"));
         panel.addComponent(myGenres);
         addComponent(panel);
-        
+
         myGenreMappings = new Table();
         myGenreMappings.setCacheRate(50);
         myGenreMappings.setWidth(100, UNITS_PERCENTAGE);
@@ -91,7 +91,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         myGenres.setPageLength(Math.min(myGenres.getItemIds().size(), 15));
         myGenreMappings.setPageLength(Math.min(myGenreMappings.getItemIds().size(), 10));
     }
-    
+
     protected void initFromConfig() {
         myPlaylists.removeAllItems();
         myGenres.removeAllItems();
@@ -155,11 +155,11 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
             MyTunesRss.CONFIG.addGenreMapping((String) getTableCellPropertyValue(myGenreMappings, itemId, "from"), (String) getTableCellPropertyValue(myGenreMappings, itemId, "to"));
         }
         final boolean genreMappingsChanged = isGenreMappingsChanged();
-        final boolean hiddenPlaylistsChanged = isHiddenPlaylistsChanged();                 
+        final boolean hiddenPlaylistsChanged = isHiddenPlaylistsChanged();
         final boolean hiddenGenresChanged = isHiddenGenresChanged();
         LOG.debug("genreMappingsChanged = " + genreMappingsChanged + ", hiddenPlaylistsChanged = " + hiddenPlaylistsChanged + ", hiddenGenresChanged = " + hiddenGenresChanged + ".");
         if (hiddenGenresChanged || hiddenPlaylistsChanged || genreMappingsChanged) {
-            final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(ContentConfigPanel.this);
+            final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
             applicationWindow.showBlockingMessage("contentConfigPanel.info.updatingDatabase");
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseJob(new Callable<Void>() {
                 public Void call() {
@@ -238,7 +238,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                     } catch (RuntimeException e) {
                         LOG.warn("Unhandled exception during database update after content config change.", e);
                     } finally {
-                        applicationWindow.hideBlockingMessage();                        
+                        applicationWindow.hideBlockingMessage();
                     }
                     return null;
                 }
@@ -251,7 +251,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         Map<String, String> genreMappings = new HashMap<String, String>();
         for (Object itemId : myGenreMappings.getItemIds()) {
             genreMappings.put((String) getTableCellPropertyValue(myGenreMappings, itemId, "from"), (String) getTableCellPropertyValue(myGenreMappings, itemId, "to"));
-        }        
+        }
         if (oldGenreMappings.size() != genreMappings.size()) {
             return true;
         }
@@ -262,7 +262,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         }
         return false;
     }
-    
+
     private boolean isHiddenGenresChanged() {
         Set<String> hiddenGenres = new HashSet<String>();
         for (Object itemId : myGenres.getItemIds()) {
@@ -273,7 +273,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         }
         return !CollectionUtils.isEqualCollection(hiddenGenres, oldHiddenGenres);
     }
-    
+
     private boolean isHiddenPlaylistsChanged() {
         Set<String> hiddenPlaylists = new HashSet<String>();
         for (Object itemId : myPlaylists.getItemIds()) {
@@ -299,7 +299,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         Button delButton = getComponentFactory().createButton("contentsConfigPanel.genreMappings.delete", this);
         myGenreMappings.addItem(new Object[]{fromTextField, toTextField, delButton}, UUID.randomUUID().toString());
     }
-    
+
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddGenreMapping) {
             addGenreMapping("", "");

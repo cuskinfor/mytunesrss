@@ -56,6 +56,7 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
             myConfig.addPathReplacement(new ReplacementRule((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
+        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
         myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();

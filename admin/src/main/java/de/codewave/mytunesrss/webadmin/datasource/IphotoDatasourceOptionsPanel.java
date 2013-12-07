@@ -54,6 +54,7 @@ public class IphotoDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setImportAlbums(myImportAlbums.booleanValue());
         myConfig.setImportRolls(myImportRolls.booleanValue());
         myConfig.setPhotoThumbnailImportType(((DatasourceOptionsPanel.ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
+        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
         myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();

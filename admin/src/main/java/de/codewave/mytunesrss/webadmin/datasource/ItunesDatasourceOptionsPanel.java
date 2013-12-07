@@ -94,6 +94,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImagePatterns(patterns);
         myConfig.setUseSingleImageInFolder(myUseSingleImageInput.booleanValue());
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
+        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
         myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
