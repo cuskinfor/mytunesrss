@@ -29,7 +29,7 @@ public class TrackUtils {
         List<EnhancedTrack> sectionTracks = new ArrayList<EnhancedTrack>();
         boolean variousPerSection = false;
         int sectionCount = 0;
-        for (int i = first; i < first + count; i++) {
+        for (int i = first; i < first + count && i < tracks.size(); i++) {
             Track track = tracks.get(i);
             EnhancedTrack enhancedTrack = new EnhancedTrack(track);
             boolean newAlbum = !lastAlbum.equalsIgnoreCase(track.getAlbum());
