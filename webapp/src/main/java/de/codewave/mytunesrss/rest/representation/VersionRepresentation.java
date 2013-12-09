@@ -22,18 +22,10 @@ public class VersionRepresentation implements RestRepresentation {
     }
 
     public VersionRepresentation(Version version) {
-        if (IncludeExcludeInterceptor.isAttr("major")) {
-            myMajor = version.getMajor();
-        }
-        if (IncludeExcludeInterceptor.isAttr("minor")) {
-            myMinor = version.getMinor();
-        }
-        if (IncludeExcludeInterceptor.isAttr("bugfix")) {
-            myBugfix = version.getBugfix();
-        }
-        if (IncludeExcludeInterceptor.isAttr("text")) {
-            myText = version.toString();
-        }
+        myMajor = version.getMajor();
+        myMinor = version.getMinor();
+        myBugfix = version.getBugfix();
+        myText = version.toString();
     }
 
     /**
