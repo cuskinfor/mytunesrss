@@ -9,13 +9,16 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.PhotoRepresentation;
+import de.codewave.mytunesrss.rest.representation.QueryResultIterable;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
@@ -46,34 +49,44 @@ public class PhotoAlbumResource extends RestResource {
     @Path("photos")
     @Produces({"application/json"})
     @GZIP
-    public List<PhotoRepresentation> getPhotos(
+    public Iterable<PhotoRepresentation> getPhotos(
             @PathParam("album") String albumId,
-            @QueryParam("size") @Range(min = 1, max = Long.MAX_VALUE, message = "Size must be a positive long value.") Long photoSize,
+            @QueryParam("size") @Range(min = 1, max = Long.MAX_VALUE, message = "Size must be a positive long value.") final Long photoSize,
             @QueryParam("first") @DefaultValue("0") @Range(min = 0, max = Integer.MAX_VALUE, message = "The first index must be 0 or a positive integer value.") int first,
-            @QueryParam("count") @DefaultValue("2147483647") @Range(min = 1, max = Integer.MAX_VALUE, message = "The count must be a positive integer value") int count,
-            @Context UriInfo uriInfo,
-            @Context HttpServletRequest request
+            @QueryParam("count") @DefaultValue("2147483647") @Range(min = 1, max = Integer.MAX_VALUE, message = "The count must be a positive integer value") final int count,
+            @Context final UriInfo uriInfo,
+            @Context final HttpServletRequest request
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Photo> photos = TransactionFilter.getTransaction().executeQuery(FindPhotoQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), albumId));
-        List<PhotoRepresentation> results = new ArrayList<PhotoRepresentation>();
-        if (first >= photos.getResultSize()) {
-            throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "FIRST_INDEX_OUT_OF_BOUNDS");
-        }
-        for (Photo photo : photos.getResults(first, count)) {
-            PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
-            if (StringUtils.isNotBlank(photo.getImageHash())) {
-                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + photo.getImageHash())));
-            } else {
-                photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+        FindPhotoQuery findPhotoQuery = FindPhotoQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), albumId);
+        findPhotoQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Photo> photos = TransactionFilter.getTransaction().executeQuery(findPhotoQuery);
+        for (int skip = 0; skip < first; skip++) {
+            if (photos.nextResult() == null) {
+                throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "FIRST_INDEX_OUT_OF_BOUNDS");
             }
-            if (photoSize != null) {
-                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc(request, "size=" + photoSize)));
-            } else {
-                photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
-            }
-            photoRepresentation.setExifDataUri(uriInfo.getBaseUriBuilder().path(PhotoResource.class).path(PhotoResource.class, "getExifData").build(photo.getId()));
-            results.add(photoRepresentation);
         }
-        return results;
+        return new QueryResultIterable<Photo, PhotoRepresentation>(photos, new QueryResultIterable.ResultTransformer<Photo, PhotoRepresentation>() {
+            public PhotoRepresentation transform(Photo photo) {
+                PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
+                if (IncludeExcludeInterceptor.isAttr("thumbnailImageUri")) {
+                    if (StringUtils.isNotBlank(photo.getImageHash())) {
+                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + photo.getImageHash())));
+                    } else {
+                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+                    }
+                }
+                if (IncludeExcludeInterceptor.isAttr("originalImageUri")) {
+                    if (photoSize != null) {
+                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc(request, "size=" + photoSize)));
+                    } else {
+                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+                    }
+                }
+                if (IncludeExcludeInterceptor.isAttr("exifDataUri")) {
+                    photoRepresentation.setExifDataUri(uriInfo.getBaseUriBuilder().path(PhotoResource.class).path(PhotoResource.class, "getExifData").build(photo.getId()));
+                }
+                return photoRepresentation;
+            }
+        }, count);
     }
 }

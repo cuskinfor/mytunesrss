@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.ArtistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -47,7 +48,9 @@ public class ArtistResource extends RestResource {
             @Context HttpServletRequest request,
             @PathParam("artist") String artist
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), artist, null, null, -1));
+        FindArtistQuery query = new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), artist, null, null, -1);
+        query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(query);
         for (Artist result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
             if (result.getName().equals(artist)) {
                 return toArtistRepresentation(uriInfo, request, result);
@@ -76,7 +79,7 @@ public class ArtistResource extends RestResource {
     @Path("albums")
     @Produces({"application/json"})
     @GZIP
-    public List<AlbumRepresentation> getAlbums(
+    public Iterable<AlbumRepresentation> getAlbums(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
@@ -88,8 +91,10 @@ public class ArtistResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, -1, minYear, maxYear, sortYear, groupByType, type));
-        return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
+        FindAlbumQuery findAlbumQuery = new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, -1, minYear, maxYear, sortYear, groupByType, type);
+        findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
+        return toAlbumRepresentations(uriInfo, request, queryResult);
     }
 
     /**
@@ -106,14 +111,16 @@ public class ArtistResource extends RestResource {
     @Path("tracks")
     @Produces({"application/json"})
     @GZIP
-    public List<TrackRepresentation> getTracks(
+    public Iterable<TrackRepresentation> getTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @PathParam("artist") String artist,
             @QueryParam("sort") @DefaultValue("Album") SortOrder sortOrder
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForArtist(MyTunesRssWebUtils.getAuthUser(request), new String[] {artist}, sortOrder));
-        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
+        FindTrackQuery findTrackQuery = FindTrackQuery.getForArtist(MyTunesRssWebUtils.getAuthUser(request), new String[]{artist}, sortOrder);
+        findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
 }

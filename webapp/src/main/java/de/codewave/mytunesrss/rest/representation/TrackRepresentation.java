@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
@@ -63,33 +64,87 @@ public class TrackRepresentation implements RestRepresentation {
     }
 
     public TrackRepresentation(Track track) {
-        setId(track.getId());
-        setAlbum(track.getAlbum());
-        setAlbumArtist(track.getAlbumArtist());
-        setArtist(track.getArtist());
-        setComment(track.getComment());
-        setComposer(track.getComposer());
-        setEpisode(track.getEpisode());
-        setFilename(track.getFilename());
-        setGenre(track.getGenre());
-        setImageHash(StringUtils.trimToNull(track.getImageHash()));
-        setLastImageUpdate(track.getLastImageUpdate());
-        setMediaType(track.getMediaType());
-        setMp4Codec(track.getMp4Codec());
-        setName(track.getName());
-        setPlayCount(track.getPlayCount());
-        setDiscNumber(track.getPosNumber());
-        setDiscCount(track.getPosSize());
-        setProtected(track.isProtected());
-        setTsPlayed(track.getTsPlayed());
-        setTsUpdated(track.getTsUpdated());
-        setSeason(track.getSeason());
-        setTvShow(track.getSeries());
-        setSource(track.getSource());
-        setTime(track.getTime());
-        setTrackNumber(track.getTrackNumber());
-        setVideoType(track.getVideoType());
-        setYear(track.getYear());
+        if (IncludeExcludeInterceptor.isAttr("id")) {
+            setId(track.getId());
+        }
+        if (IncludeExcludeInterceptor.isAttr("album")) {
+            setAlbum(track.getAlbum());
+        }
+        if (IncludeExcludeInterceptor.isAttr("albumArtist")) {
+            setAlbumArtist(track.getAlbumArtist());
+        }
+        if (IncludeExcludeInterceptor.isAttr("artist")) {
+            setArtist(track.getArtist());
+        }
+        if (IncludeExcludeInterceptor.isAttr("comment")) {
+            setComment(track.getComment());
+        }
+        if (IncludeExcludeInterceptor.isAttr("composer")) {
+            setComposer(track.getComposer());
+        }
+        if (IncludeExcludeInterceptor.isAttr("episode")) {
+            setEpisode(track.getEpisode());
+        }
+        if (IncludeExcludeInterceptor.isAttr("filename")) {
+            setFilename(track.getFilename());
+        }
+        if (IncludeExcludeInterceptor.isAttr("genre")) {
+            setGenre(track.getGenre());
+        }
+        if (IncludeExcludeInterceptor.isAttr("imageHash")) {
+            setImageHash(StringUtils.trimToNull(track.getImageHash()));
+        }
+        if (IncludeExcludeInterceptor.isAttr("lastImageUpdate")) {
+            setLastImageUpdate(track.getLastImageUpdate());
+        }
+        if (IncludeExcludeInterceptor.isAttr("mediaType")) {
+            setMediaType(track.getMediaType());
+        }
+        if (IncludeExcludeInterceptor.isAttr("mp4Codec")) {
+            setMp4Codec(track.getMp4Codec());
+        }
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            setName(track.getName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("playCount")) {
+            setPlayCount(track.getPlayCount());
+        }
+        if (IncludeExcludeInterceptor.isAttr("discNumber")) {
+            setDiscNumber(track.getPosNumber());
+        }
+        if (IncludeExcludeInterceptor.isAttr("discCount")) {
+            setDiscCount(track.getPosSize());
+        }
+        if (IncludeExcludeInterceptor.isAttr("protected")) {
+            setProtected(track.isProtected());
+        }
+        if (IncludeExcludeInterceptor.isAttr("tsPlayed")) {
+            setTsPlayed(track.getTsPlayed());
+        }
+        if (IncludeExcludeInterceptor.isAttr("tsUpdated")) {
+            setTsUpdated(track.getTsUpdated());
+        }
+        if (IncludeExcludeInterceptor.isAttr("season")) {
+            setSeason(track.getSeason());
+        }
+        if (IncludeExcludeInterceptor.isAttr("tvShow")) {
+            setTvShow(track.getSeries());
+        }
+        if (IncludeExcludeInterceptor.isAttr("source")) {
+            setSource(track.getSource());
+        }
+        if (IncludeExcludeInterceptor.isAttr("time")) {
+            setTime(track.getTime());
+        }
+        if (IncludeExcludeInterceptor.isAttr("trackNumber")) {
+            setTrackNumber(track.getTrackNumber());
+        }
+        if (IncludeExcludeInterceptor.isAttr("videoType")) {
+            setVideoType(track.getVideoType());
+        }
+        if (IncludeExcludeInterceptor.isAttr("year")) {
+            setYear(track.getYear());
+        }
     }
 
     /**

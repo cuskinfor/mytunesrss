@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.remotecontrol.RemoteTrackInfo;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,11 +23,21 @@ public class MediaPlayerRepresentation implements RestRepresentation {
     }
 
     public MediaPlayerRepresentation(RemoteTrackInfo remoteTrackInfo) {
-        setCurrentTime(remoteTrackInfo.getCurrentTime());
-        setCurrentTrack(remoteTrackInfo.getCurrentTrack());
-        setLength(remoteTrackInfo.getLength());
-        setPlaying(remoteTrackInfo.isPlaying());
-        setVolume(remoteTrackInfo.getVolume());
+        if (IncludeExcludeInterceptor.isAttr("currentTime")) {
+            setCurrentTime(remoteTrackInfo.getCurrentTime());
+        }
+        if (IncludeExcludeInterceptor.isAttr("currentTrack")) {
+            setCurrentTrack(remoteTrackInfo.getCurrentTrack());
+        }
+        if (IncludeExcludeInterceptor.isAttr("length")) {
+            setLength(remoteTrackInfo.getLength());
+        }
+        if (IncludeExcludeInterceptor.isAttr("playing")) {
+            setPlaying(remoteTrackInfo.isPlaying());
+        }
+        if (IncludeExcludeInterceptor.isAttr("volume")) {
+            setVolume(remoteTrackInfo.getVolume());
+        }
     }
 
     /**

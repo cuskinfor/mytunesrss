@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Genre;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -31,11 +32,21 @@ public class GenreRepresentation implements RestRepresentation {
     }
 
     public GenreRepresentation(Genre genre) {
-        setAlbumCount(genre.getAlbumCount());
-        setArtistCount(genre.getArtistCount());
-        setHidden(genre.isHidden());
-        setName(genre.getName());
-        setTrackCount(genre.getTrackCount());
+        if (IncludeExcludeInterceptor.isAttr("albumCount")) {
+            setAlbumCount(genre.getAlbumCount());
+        }
+        if (IncludeExcludeInterceptor.isAttr("artistCount")) {
+            setArtistCount(genre.getArtistCount());
+        }
+        if (IncludeExcludeInterceptor.isAttr("hidden")) {
+            setHidden(genre.isHidden());
+        }
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            setName(genre.getName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("trackCount")) {
+            setTrackCount(genre.getTrackCount());
+        }
     }
 
     /**

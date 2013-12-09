@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
@@ -49,12 +50,24 @@ public class SessionResource extends RestResource {
     ) {
         SessionRepresentation session = new SessionRepresentation();
         User user = MyTunesRssWebUtils.getAuthUser(request);
-        session.setLibraryUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build());
-        session.setTranscoders(getTranscoders(user));
-        session.setPermissions(getPermissions(user));
-        session.setAirtunesTargets(getAirtunesTargets());
-        session.setSessionTimeoutMinutes(user.getSessionTimeout());
-        session.setSearchFuzziness(user.getSearchFuzziness());
+        if (IncludeExcludeInterceptor.isAttr("libraryUri")) {
+            session.setLibraryUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("transcoders")) {
+            session.setTranscoders(getTranscoders(user));
+        }
+        if (IncludeExcludeInterceptor.isAttr("permissions")) {
+            session.setPermissions(getPermissions(user));
+        }
+        if (IncludeExcludeInterceptor.isAttr("airtunesTargets")) {
+            session.setAirtunesTargets(getAirtunesTargets());
+        }
+        if (IncludeExcludeInterceptor.isAttr("sessionTimeoutMinutes")) {
+            session.setSessionTimeoutMinutes(user.getSessionTimeout());
+        }
+        if (IncludeExcludeInterceptor.isAttr("searchFuzziness")) {
+            session.setSearchFuzziness(user.getSearchFuzziness());
+        }
         return session;
     }
 

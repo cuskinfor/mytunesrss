@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.NotFoundException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -148,14 +149,16 @@ public class PlaylistResource extends RestResource {
     @Path("{playlist}/tracks")
     @Produces({"application/json"})
     @GZIP
-    public List<TrackRepresentation> getTracks(
+    public Iterable<TrackRepresentation> getTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @PathParam("playlist") String playlist,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, sortOrder));
-        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
+        FindPlaylistTracksQuery findPlaylistTracksQuery = new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, sortOrder);
+        findPlaylistTracksQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistTracksQuery);
+        return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
     /**
@@ -174,7 +177,7 @@ public class PlaylistResource extends RestResource {
     @Path("{playlist}/playlists")
     @Produces({"application/json"})
     @GZIP
-    public List<PlaylistRepresentation> getPlaylistChildren(
+    public Iterable<PlaylistRepresentation> getPlaylistChildren(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @PathParam("playlist") String playlist,
@@ -182,8 +185,10 @@ public class PlaylistResource extends RestResource {
             @QueryParam("owner") @DefaultValue("false") boolean matchingOwner,
             @QueryParam("type") List<PlaylistType> types
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, playlist, includeHidden, matchingOwner));
-        return toPlaylistRepresentations(uriInfo, request, queryResult.getResults());
+        FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, playlist, includeHidden, matchingOwner);
+        findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistQuery);
+        return toPlaylistRepresentations(uriInfo, request, queryResult);
     }
 
 }

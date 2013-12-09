@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Artist;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -26,9 +27,15 @@ public class ArtistRepresentation implements RestRepresentation {
     }
 
     public ArtistRepresentation(Artist artist) {
-        setAlbumCount(artist.getAlbumCount());
-        setName(artist.getName());
-        setTrackCount(artist.getTrackCount());
+        if (IncludeExcludeInterceptor.isAttr("albumCount")) {
+            setAlbumCount(artist.getAlbumCount());
+        }
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            setName(artist.getName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("trackCount")) {
+            setTrackCount(artist.getTrackCount());
+        }
     }
 
     /**

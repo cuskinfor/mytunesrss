@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -36,14 +37,30 @@ public class PlaylistRepresentation implements RestRepresentation {
     }
 
     public PlaylistRepresentation(Playlist playlist) {
-        setName(playlist.getName());
-        setContainerId(playlist.getContainerId());
-        setHidden(playlist.isHidden());
-        setId(playlist.getId());
-        setTrackCount(playlist.getTrackCount());
-        setType(playlist.getType());
-        setOwner(playlist.getUserOwner());
-        setPrivate(playlist.isUserPrivate());
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            setName(playlist.getName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("containerId")) {
+            setContainerId(playlist.getContainerId());
+        }
+        if (IncludeExcludeInterceptor.isAttr("hidden")) {
+            setHidden(playlist.isHidden());
+        }
+        if (IncludeExcludeInterceptor.isAttr("id")) {
+            setId(playlist.getId());
+        }
+        if (IncludeExcludeInterceptor.isAttr("trackCount")) {
+            setTrackCount(playlist.getTrackCount());
+        }
+        if (IncludeExcludeInterceptor.isAttr("type")) {
+            setType(playlist.getType());
+        }
+        if (IncludeExcludeInterceptor.isAttr("owner")) {
+            setOwner(playlist.getUserOwner());
+        }
+        if (IncludeExcludeInterceptor.isAttr("private")) {
+            setPrivate(playlist.isUserPrivate());
+        }
     }
 
     /**

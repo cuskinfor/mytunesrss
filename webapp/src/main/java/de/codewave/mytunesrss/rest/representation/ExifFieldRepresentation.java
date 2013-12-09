@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.rest.representation;
 
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -22,8 +23,12 @@ public class ExifFieldRepresentation implements RestRepresentation {
     }
 
     public ExifFieldRepresentation(String name, String value) {
-        myName = name;
-        myValue = value;
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            myName = name;
+        }
+        if (IncludeExcludeInterceptor.isAttr("value")) {
+            myValue = value;
+        }
     }
 
     /**

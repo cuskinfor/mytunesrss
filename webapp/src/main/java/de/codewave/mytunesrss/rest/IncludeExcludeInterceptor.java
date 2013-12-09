@@ -5,75 +5,59 @@
 
 package de.codewave.mytunesrss.rest;
 
-import de.codewave.mytunesrss.rest.representation.RestRepresentation;
-import org.apache.commons.collections.CollectionUtils;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
+import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
+import org.jboss.resteasy.spi.Failure;
+import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.AcceptedByMethod;
-import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 @Provider
 @ServerInterceptor
-public class IncludeExcludeInterceptor implements PostProcessInterceptor, AcceptedByMethod {
+public class IncludeExcludeInterceptor implements PreProcessInterceptor, AcceptedByMethod {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(IncludeExcludeInterceptor.class);
+    private static final ThreadLocal<Set<String>> INCLUDES = new ThreadLocal<Set<String>>() {
+        @Override
+        protected Set<String> initialValue() {
+            return new HashSet<String>(); 
+        }
+    };
 
+    private static final ThreadLocal<Set<String>> EXCLUDES = new ThreadLocal<Set<String>>() {
+        @Override
+        protected Set<String> initialValue() {
+            return new HashSet<String>(); 
+        }
+    };
+    
+    public static boolean isAttr(String name) {
+        return (INCLUDES.get().isEmpty() || INCLUDES.get().contains(name)) && !EXCLUDES.get().contains(name);
+    }
+    
     @Context
     private HttpServletRequest myRequest;
 
-    public void postProcess(ServerResponse response) {
-        Object entity = response.getEntity();
-        List<String> includes = myRequest.getParameterValues("attr.incl") != null ? Arrays.asList(myRequest.getParameterValues("attr.incl")) : null;
-        List<String> excludes = myRequest.getParameterValues("attr.excl") != null ? Arrays.asList(myRequest.getParameterValues("attr.excl")) : null;
-        if (CollectionUtils.isNotEmpty(includes) || CollectionUtils.isNotEmpty(excludes)) {
-            if (entity instanceof RestRepresentation) {
-                handleRepresentation((RestRepresentation) entity, includes, excludes);
-            } else if (entity instanceof List) {
-                handleList((List) entity, includes, excludes);
-            }
-        }
-    }
 
-    private void handleList(List items, List<String> includes, List<String> excludes) {
-        for (Iterator iter = items.iterator(); iter.hasNext(); ) {
-            Object item = iter.next();
-            if (item instanceof RestRepresentation) {
-                handleRepresentation((RestRepresentation) item, includes, excludes);
-            } else if (item instanceof Collection) {
-                handleList((List) item, includes, excludes);
-            }
+    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
+        INCLUDES.get().clear();
+        if (myRequest.getParameterValues("attr.incl") != null) {
+            INCLUDES.get().addAll(Arrays.asList(myRequest.getParameterValues("attr.incl")));
         }
-    }
-
-    private void handleRepresentation(RestRepresentation item, List<String> includes, List<String> excludes) {
-        try {
-            for (PropertyDescriptor pd : Introspector.getBeanInfo(item.getClass()).getPropertyDescriptors()) {
-                if (pd.getReadMethod() != null && item.getClass().equals(pd.getReadMethod().getDeclaringClass()) && List.class.isAssignableFrom(pd.getPropertyType())) {
-                    handleList((List) pd.getReadMethod().invoke(item, new Object[0]), includes, excludes);
-                }
-                if (CollectionUtils.isNotEmpty(excludes) && excludes.contains(pd.getName()) || (CollectionUtils.isNotEmpty(includes) && !includes.contains(pd.getName()))) {
-                    if (pd.getWriteMethod() != null && item.getClass().equals(pd.getWriteMethod().getDeclaringClass())) {
-                        try {
-                            pd.getWriteMethod().invoke(item, new Object[] {null});
-                        } catch (Exception e) {
-                            LOGGER.info("Could not remove property \"" + pd.getName() + "\" from representation.", e);
-                        }
-                    }
-                }
-            }
-        } catch (Exception e) {
-            LOGGER.info("Could not remove properties from representation.", e);
+        EXCLUDES.get().clear();
+        if (myRequest.getParameterValues("attr.excl") != null) {
+            EXCLUDES.get().addAll(Arrays.asList(myRequest.getParameterValues("attr.excl")));
         }
+        return null;
     }
 
     public boolean accept(Class declaring, Method method) {

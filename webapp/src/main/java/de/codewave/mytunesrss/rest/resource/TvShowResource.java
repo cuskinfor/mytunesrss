@@ -16,6 +16,7 @@ import de.codewave.mytunesrss.rest.representation.TvShowRepresentation;
 import de.codewave.mytunesrss.rest.representation.TvShowSeasonRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jboss.resteasy.annotations.GZIP;
@@ -97,14 +98,16 @@ public class TvShowResource extends RestResource {
     @Path("season/{season}/episodes")
     @Produces({"application/json"})
     @GZIP
-    public List<TrackRepresentation> getEpisodes(
+    public Iterable<TrackRepresentation> getEpisodes(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @PathParam("show") String show,
             @PathParam("season") int season
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowSeriesSeasonEpisodes(MyTunesRssWebUtils.getAuthUser(request), show, season));
-        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
+        FindTrackQuery findTrackQuery = FindTrackQuery.getTvShowSeriesSeasonEpisodes(MyTunesRssWebUtils.getAuthUser(request), show, season);
+        findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
 }

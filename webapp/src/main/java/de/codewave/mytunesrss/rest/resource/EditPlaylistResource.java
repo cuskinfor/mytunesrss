@@ -73,10 +73,13 @@ public class EditPlaylistResource extends RestResource {
             @QueryParam("count") @DefaultValue("0") int count
     ) throws SQLException {
         List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+        List<TrackRepresentation> trackRepresentations = new ArrayList<TrackRepresentation>();
         if (from >= 0 && from < playlistTracks.size()) {
-            return toTrackRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistTracks, from, count));
+            for (int i = from; i < from + count && i < playlistTracks.size(); i++) {
+                trackRepresentations.add(toTrackRepresentation(uriInfo, request, playlistTracks.get(i)));
+            }
         }
-        return Collections.emptyList();
+        return trackRepresentations;
     }
 
     /**
@@ -130,9 +133,11 @@ public class EditPlaylistResource extends RestResource {
                 return StringUtils.trimToEmpty(a1.getName()).compareTo(StringUtils.trimToEmpty(a2.getName()));
             }
         });
-        List<AlbumRepresentation> representations = Collections.emptyList();
+        List<AlbumRepresentation> representations = new ArrayList<AlbumRepresentation>();
         if (from >= 0 && from < playlistTracks.size()) {
-            representations = toAlbumRepresentations(uriInfo, request, MyTunesRssUtils.getSubList(playlistAlbums, from, count));
+            for (int i = from; i < from + count && i < playlistTracks.size(); i++) {
+                representations.add(toAlbumRepresentation(uriInfo, request, playlistAlbums.get(i)));
+            }
         }
         return new PartialListRepresentation<AlbumRepresentation>(representations, playlistAlbums.size());
     }

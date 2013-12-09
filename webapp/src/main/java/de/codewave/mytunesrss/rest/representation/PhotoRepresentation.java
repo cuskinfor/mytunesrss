@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.Photo;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 
 import java.net.URI;
 
@@ -26,11 +27,21 @@ public class PhotoRepresentation implements RestRepresentation {
     }
 
     public PhotoRepresentation(Photo photo) {
-        setName(photo.getName());
-        setFile(photo.getFile());
-        setDate(photo.getDate());
-        setThumbnailImageHash(photo.getImageHash());
-        setLastThumbnailImageUpdate(photo.getLastImageUpdate());
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            setName(photo.getName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("file")) {
+            setFile(photo.getFile());
+        }
+        if (IncludeExcludeInterceptor.isAttr("date")) {
+            setDate(photo.getDate());
+        }
+        if (IncludeExcludeInterceptor.isAttr("thumbnailImageHash")) {
+            setThumbnailImageHash(photo.getImageHash());
+        }
+        if (IncludeExcludeInterceptor.isAttr("lastThumbnailImageUpdate")) {
+            setLastThumbnailImageUpdate(photo.getLastImageUpdate());
+        }
     }
 
     /**

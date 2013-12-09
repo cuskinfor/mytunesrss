@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.bonjour.BonjourDevice;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -21,10 +22,18 @@ public class BonjourDeviceRepresentation implements RestRepresentation {
     }
 
     public BonjourDeviceRepresentation(BonjourDevice bonjourDevice) {
-        myId = bonjourDevice.getId();
-        myName = bonjourDevice.getName();
-        myHost = bonjourDevice.getInetAddress().getCanonicalHostName();
-        myPort = bonjourDevice.getPort();
+        if (IncludeExcludeInterceptor.isAttr("id")) {
+            myId = bonjourDevice.getId();
+        }
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            myName = bonjourDevice.getName();
+        }
+        if (IncludeExcludeInterceptor.isAttr("host")) {
+            myHost = bonjourDevice.getInetAddress().getCanonicalHostName();
+        }
+        if (IncludeExcludeInterceptor.isAttr("port")) {
+            myPort = bonjourDevice.getPort();
+        }
     }
 
     /**

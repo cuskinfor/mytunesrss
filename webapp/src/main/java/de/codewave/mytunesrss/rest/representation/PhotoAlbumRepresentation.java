@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
@@ -28,10 +29,18 @@ public class PhotoAlbumRepresentation implements RestRepresentation {
     }
 
     public PhotoAlbumRepresentation(PhotoAlbum photoAlbum) {
-        setFirstDate(photoAlbum.getFirstDate());
-        setLastDate(photoAlbum.getLastDate());
-        setName(photoAlbum.getName());
-        setPhotoCount(photoAlbum.getPhotoCount());
+        if (IncludeExcludeInterceptor.isAttr("firstDate")) {
+            setFirstDate(photoAlbum.getFirstDate());
+        }
+        if (IncludeExcludeInterceptor.isAttr("lastDate")) {
+            setLastDate(photoAlbum.getLastDate());
+        }
+        if (IncludeExcludeInterceptor.isAttr("name")) {
+            setName(photoAlbum.getName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("photoCount")) {
+            setPhotoCount(photoAlbum.getPhotoCount());
+        }
     }
 
     /**

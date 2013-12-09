@@ -9,6 +9,9 @@
 
         <release version="5.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                Use query result iterables and limited fetch sizes for REST queries.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-465] Statement "updateTrackFileType" not used in Java code
             </action>
             <action dev="mdescher" type="add">

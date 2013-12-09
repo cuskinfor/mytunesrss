@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.remotecontrol.NoopRemoteController;
 import de.codewave.mytunesrss.remotecontrol.RemoteController;
 import de.codewave.mytunesrss.remotecontrol.VlcPlayerRemoteController;
@@ -24,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
+import java.util.ArrayList;
 import java.util.List;
 
 @ValidateRequest
@@ -201,6 +203,14 @@ public class MediaPlayerResource extends RestResource {
             @Context HttpServletRequest request
     ) throws Exception {
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
+    }
+
+    private List<TrackRepresentation> toTrackRepresentations(UriInfo uriInfo, HttpServletRequest request, List<Track> tracks) {
+        List<TrackRepresentation> trackRepresentations = new ArrayList<TrackRepresentation>();
+        for (Track track : tracks) {
+            trackRepresentations.add(toTrackRepresentation(uriInfo, request, track));
+        }
+        return trackRepresentations;
     }
 
     /**

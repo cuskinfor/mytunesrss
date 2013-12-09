@@ -11,12 +11,14 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.Version;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.lucene.queryParser.ParseException;
@@ -49,17 +51,39 @@ public class LibraryResource extends RestResource {
     @GZIP
     public LibraryRepresentation getLibrary(@Context UriInfo uriInfo) {
         LibraryRepresentation libraryRepresentation = new LibraryRepresentation();
-        libraryRepresentation.setVersion(new VersionRepresentation(new Version(MyTunesRss.VERSION)));
-        libraryRepresentation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getAlbums").build());
-        libraryRepresentation.setArtistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getArtists").build());
-        libraryRepresentation.setGenresUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getGenres").build());
-        libraryRepresentation.setMoviesUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getMovies").build());
-        libraryRepresentation.setPlaylistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPlaylists").build());
-        libraryRepresentation.setTracksUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "findTracks").build());
-        libraryRepresentation.setTvShowsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getTvShows").build());
-        libraryRepresentation.setPhotoAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPhotoAlbums").build());
-        libraryRepresentation.setMediaPlayerUri(uriInfo.getBaseUriBuilder().path(MediaPlayerResource.class).build());
-        libraryRepresentation.setSessionUri(uriInfo.getBaseUriBuilder().path(SessionResource.class).build());
+        if (IncludeExcludeInterceptor.isAttr("version")) {
+            libraryRepresentation.setVersion(new VersionRepresentation(new Version(MyTunesRss.VERSION)));
+        }
+        if (IncludeExcludeInterceptor.isAttr("albumsUri")) {
+            libraryRepresentation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getAlbums").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("artistsUri")) {
+            libraryRepresentation.setArtistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getArtists").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("genresUri")) {
+            libraryRepresentation.setGenresUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getGenres").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("moviesUri")) {
+            libraryRepresentation.setMoviesUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getMovies").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("playlistsUri")) {
+            libraryRepresentation.setPlaylistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPlaylists").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("tracksUri")) {
+            libraryRepresentation.setTracksUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "findTracks").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("tvShowsUri")) {
+            libraryRepresentation.setTvShowsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getTvShows").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("photoAlbumsUri")) {
+            libraryRepresentation.setPhotoAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPhotoAlbums").build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("mediaPlayerUri")) {
+            libraryRepresentation.setMediaPlayerUri(uriInfo.getBaseUriBuilder().path(MediaPlayerResource.class).build());
+        }
+        if (IncludeExcludeInterceptor.isAttr("sessionUri")) {
+            libraryRepresentation.setSessionUri(uriInfo.getBaseUriBuilder().path(SessionResource.class).build());
+        }
         return libraryRepresentation;
     }
 
@@ -87,7 +111,7 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Audio})
-    public List<AlbumRepresentation> getAlbums(
+    public Iterable<AlbumRepresentation> getAlbums(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
@@ -100,8 +124,10 @@ public class LibraryResource extends RestResource {
             @QueryParam("groupByType") @DefaultValue("false") boolean groupByType,
             @QueryParam("type") @DefaultValue("ALL")FindAlbumQuery.AlbumType type
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, index, minYear, maxYear, sortYear, groupByType, type));
-        return toAlbumRepresentations(uriInfo, request, queryResult.getResults());
+        FindAlbumQuery findAlbumQuery = new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, index, minYear, maxYear, sortYear, groupByType, type);
+        findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
+        return toAlbumRepresentations(uriInfo, request, queryResult);
     }
 
     /**
@@ -123,7 +149,7 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Audio})
-    public List<ArtistRepresentation> getArtists(
+    public Iterable<ArtistRepresentation> getArtists(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("filter") String filter,
@@ -131,8 +157,10 @@ public class LibraryResource extends RestResource {
             @QueryParam("genre") String[] genres,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genres, index));
-        return toArtistRepresentations(uriInfo, request, queryResult.getResults());
+        FindArtistQuery findArtistQuery = new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genres, index);
+        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(findArtistQuery);
+        findArtistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        return toArtistRepresentations(uriInfo, request, queryResult);
     }
 
     /**
@@ -152,14 +180,16 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Audio})
-    public List<GenreRepresentation> getGenres(
+    public Iterable<GenreRepresentation> getGenres(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index));
-        return toGenreRepresentations(uriInfo, queryResult.getResults());
+        FindGenreQuery findGenreQuery = new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index);
+        findGenreQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(findGenreQuery);
+        return toGenreRepresentations(uriInfo, queryResult);
     }
 
     /**
@@ -179,7 +209,7 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Audio, UserPermission.Playlist})
-    public List<PlaylistRepresentation> getPlaylists(
+    public Iterable<PlaylistRepresentation> getPlaylists(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
@@ -187,8 +217,10 @@ public class LibraryResource extends RestResource {
             @QueryParam("type") List<PlaylistType> types,
             @QueryParam("root") @DefaultValue("false") boolean root
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, root ? "ROOT": null, includeHidden, matchingOwner));
-        return toPlaylistRepresentations(uriInfo, request, queryResult.getResults());
+        FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, root ? "ROOT" : null, includeHidden, matchingOwner);
+        findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistQuery);
+        return toPlaylistRepresentations(uriInfo, request, queryResult);
     }
 
     /**
@@ -203,12 +235,14 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Video})
-    public List<TrackRepresentation> getMovies(
+    public Iterable<TrackRepresentation> getMovies(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getMovies(MyTunesRssWebUtils.getAuthUser(request)));
-        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
+        FindTrackQuery findTrackQuery = FindTrackQuery.getMovies(MyTunesRssWebUtils.getAuthUser(request));
+        findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
     /**
@@ -247,13 +281,25 @@ public class LibraryResource extends RestResource {
         for (Map.Entry<String, MutableInt> entry : episodeCountPerShow.entrySet()) {
             TvShowRepresentation representation = new TvShowRepresentation();
             String name = entry.getKey();
-            representation.setName(name);
-            representation.setSeasonCount(seasonsPerShow.get(name).size());
-            representation.setEpisodeCount(entry.getValue().intValue());
-            representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name));
+            if (IncludeExcludeInterceptor.isAttr("name")) {
+                representation.setName(name);
+            }
+            if (IncludeExcludeInterceptor.isAttr("seasonCount")) {
+                representation.setSeasonCount(seasonsPerShow.get(name).size());
+            }
+            if (IncludeExcludeInterceptor.isAttr("episodeCount")) {
+                representation.setEpisodeCount(entry.getValue().intValue());
+            }
+            if (IncludeExcludeInterceptor.isAttr("seasonsUri")) {
+                representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name));
+            }
             if (imageHashPerShow.containsKey(name)) {
-                representation.setImageHash(StringUtils.trimToNull(imageHashPerShow.get(name)));
-                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + imageHashPerShow.get(name))));
+                if (IncludeExcludeInterceptor.isAttr("imageHash")) {
+                    representation.setImageHash(StringUtils.trimToNull(imageHashPerShow.get(name)));
+                }
+                if (IncludeExcludeInterceptor.isAttr("imageUri")) {
+                    representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + imageHashPerShow.get(name))));
+                }
             }
             shows.add(representation);
         }
@@ -271,18 +317,22 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Photos})
-    public List<PhotoAlbumRepresentation> getPhotoAlbums(
-            @Context UriInfo uriInfo,
+    public Iterable<PhotoAlbumRepresentation> getPhotoAlbums(
+            @Context final UriInfo uriInfo,
             @Context HttpServletRequest request
     ) throws SQLException {
-        DataStoreQuery.QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(new GetPhotoAlbumsQuery(MyTunesRssWebUtils.getAuthUser(request)));
-        List<PhotoAlbumRepresentation> results = new ArrayList<PhotoAlbumRepresentation>();
-        for (PhotoAlbum photoAlbum : queryResult.getResults()) {
-            PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
-            photoAlbumRepresentation.setPhotosUri(uriInfo.getBaseUriBuilder().path(PhotoAlbumResource.class).path(PhotoAlbumResource.class, "getPhotos").build(photoAlbum.getId()));
-            results.add(photoAlbumRepresentation);
-        }
-        return results;
+        GetPhotoAlbumsQuery photoAlbumsQuery = new GetPhotoAlbumsQuery(MyTunesRssWebUtils.getAuthUser(request));
+        photoAlbumsQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(photoAlbumsQuery);
+        return new QueryResultIterable<PhotoAlbum, PhotoAlbumRepresentation>(queryResult, new QueryResultIterable.ResultTransformer<PhotoAlbum, PhotoAlbumRepresentation>() {
+            public PhotoAlbumRepresentation transform(PhotoAlbum photoAlbum) {
+                PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
+                if (IncludeExcludeInterceptor.isAttr("photosUri")) {
+                    photoAlbumRepresentation.setPhotosUri(uriInfo.getBaseUriBuilder().path(PhotoAlbumResource.class).path(PhotoAlbumResource.class, "getPhotos").build(photoAlbum.getId()));
+                }
+                return photoAlbumRepresentation;
+            }
+        });
     }
 
     /**
@@ -307,7 +357,7 @@ public class LibraryResource extends RestResource {
     @Produces({"application/json"})
     @GZIP
     @RequiredUserPermissions({UserPermission.Audio})
-    public List<TrackRepresentation> findTracks(
+    public Iterable<TrackRepresentation> findTracks(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @QueryParam("term") @NotBlank(message = "Missing search term.") String term,
@@ -319,14 +369,18 @@ public class LibraryResource extends RestResource {
         DataStoreQuery.QueryResult<Track> queryResult = null;
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (expert) {
-            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForExpertSearchTerm(user, term, sortOrder, maxItems));
+            FindTrackQuery findTrackQuery = FindTrackQuery.getForExpertSearchTerm(user, term, sortOrder, maxItems);
+            findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+            queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         } else {
             int userSearchFuzziness = user.getSearchFuzziness();
             if (userSearchFuzziness >= 0 && userSearchFuzziness <= 100) {
                 fuzziness = userSearchFuzziness; // use configured value if any and ignore parameter value
             }
-            queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getForSearchTerm(user, term, fuzziness, sortOrder, maxItems));
+            FindTrackQuery findTrackQuery = FindTrackQuery.getForSearchTerm(user, term, fuzziness, sortOrder, maxItems);
+            findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+            queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         }
-        return toTrackRepresentations(uriInfo, request, queryResult.getResults());
+        return toTrackRepresentations(uriInfo, request, queryResult);
     }
 }
