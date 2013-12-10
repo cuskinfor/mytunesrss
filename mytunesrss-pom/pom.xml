@@ -174,9 +174,9 @@
                 <version>1.5.2</version>
             </dependency>
             <dependency>
-                <groupId>org.mod4j.com.ibm</groupId>
-                <artifactId>icu</artifactId>
-                <version>4.0.1</version>
+                <groupId>com.ibm.icu</groupId>
+                <artifactId>icu4j</artifactId>
+                <version>52.1</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.integration</groupId>
