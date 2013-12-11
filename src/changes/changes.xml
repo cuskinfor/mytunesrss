@@ -9,6 +9,9 @@
 
         <release version="5.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                Last modified date in outdated iTunes XML admin mail and also logged on WARN level. 
+            </action>
+            <action dev="mdescher" type="add">
                 Use query result iterables and limited fetch sizes for REST queries.
             </action>
             <action dev="mdescher" type="add">
