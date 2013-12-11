@@ -8,6 +8,9 @@
     <body>
 
         <release version="4.9.15" date="___D___">
+            <action dev="mdescher" type="add">
+                Last modified date in outdated iTunes XML admin mail and also logged on WARN level.
+            </action>
             <action dev="mdescher" type="update">
                 Updated image mapping syntax. Search pattern is matched against the file name only and
                 The image name is the name of the image only without any file path.
