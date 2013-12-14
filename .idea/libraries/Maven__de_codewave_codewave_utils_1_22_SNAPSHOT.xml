@@ -1,13 +1,13 @@
 <component name="libraryTable">
   <library name="Maven: de.codewave:codewave-utils:1.22-SNAPSHOT">
     <CLASSES>
-      <root url="jar://$MAVEN_REPOSITORY$/de/codewave/codewave-utils/1.22-SNAPSHOT/codewave-utils-1.22-20131124.144533-3.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/codewave/codewave-utils/1.22-SNAPSHOT/codewave-utils-1.22-20131210.080733-5.jar!/" />
     </CLASSES>
     <JAVADOC>
-      <root url="jar://$MAVEN_REPOSITORY$/de/codewave/codewave-utils/1.22-SNAPSHOT/codewave-utils-1.22-20131124.144533-3-javadoc.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/codewave/codewave-utils/1.22-SNAPSHOT/codewave-utils-1.22-20131210.080733-5-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES>
-      <root url="jar://$MAVEN_REPOSITORY$/de/codewave/codewave-utils/1.22-SNAPSHOT/codewave-utils-1.22-20131124.144533-3-sources.jar!/" />
+      <root url="jar://$MAVEN_REPOSITORY$/de/codewave/codewave-utils/1.22-SNAPSHOT/codewave-utils-1.22-20131210.080733-5-sources.jar!/" />
     </SOURCES>
   </library>
 </component>

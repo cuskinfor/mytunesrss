@@ -8,8 +8,12 @@
     <body>
 
         <release version="5.0.0" date="___D___">
+            <action dev="mdescher" type="update">
+                Allow iTunes master file to be up to 48 hours newer than the corresponding XML file before
+                sending a warning message.
+            </action>
             <action dev="mdescher" type="add">
-                Last modified date in outdated iTunes XML admin mail and also logged on WARN level. 
+                Last modified date in outdated iTunes XML admin mail and also logged on WARN level.
             </action>
             <action dev="mdescher" type="add">
                 Use query result iterables and limited fetch sizes for REST queries.

@@ -24,9 +24,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -34,6 +32,7 @@ import java.util.Map;
  */
 public class ItunesLoader {
     private static final Logger LOG = LoggerFactory.getLogger(ItunesLoader.class);
+    private static final long MAX_ITUNES_MASTER_XML_DIFF_MILLIS = 1000L * 3600L * 48L; // 48 hours
 
     public static String getFileNameForLocation(String location) {
         if (StringUtils.isNotBlank(location)) {
@@ -72,7 +71,7 @@ public class ItunesLoader {
         }
         long iTunesXmlLastModified = iTunesXmlFile.lastModified();
         long iTunesMasterLastModified = iTunesMasterFile.lastModified();
-        if (iTunesXmlFile.isFile() && iTunesMasterFile.isFile() && iTunesMasterLastModified - iTunesXmlLastModified > 2000) {
+        if (iTunesXmlFile.isFile() && iTunesMasterFile.isFile() && iTunesMasterLastModified - iTunesXmlLastModified > MAX_ITUNES_MASTER_XML_DIFF_MILLIS) {
             LOG.warn("iTunes XML file \"" + iTunesXmlFile.getAbsolutePath() + "\" (last modified at " + new Date(iTunesXmlLastModified) + ") is older than iTunes master file \"" + iTunesMasterFile.getAbsolutePath() + "\" (last modified at " + new Date(iTunesMasterLastModified) + ").");
             MyTunesRss.ADMIN_NOTIFY.notifyOutdatedItunesXml(iTunesMasterFile, iTunesMasterLastModified, iTunesXmlFile, iTunesXmlLastModified);
         }
