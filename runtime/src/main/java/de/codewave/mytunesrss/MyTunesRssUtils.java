@@ -85,7 +85,7 @@ public class MyTunesRssUtils {
         IMAGE_TO_MIME.put("gif", "image/gif");
         IMAGE_TO_MIME.put("png", "image/png");
     }
-    
+
     static {
         MIME_TO_SUFFIX.put("image/gif", "gif");
         MIME_TO_SUFFIX.put("image/jpg", "jpg");
@@ -671,7 +671,7 @@ public class MyTunesRssUtils {
     }
 
     private static boolean isExecutableGraphicsMagick() {
-        return MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute();
+        return MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRssUtils.canExecute(MyTunesRss.CONFIG.getGmExecutable());
     }
 
     private static void waitForProcess(final Process process, long maxWaitMillis) {
@@ -858,7 +858,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (isExecutable(file)) {
+            if (canExecute(file)) {
                 LOGGER.info("Found VLC executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -890,7 +890,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (isExecutable(file)) {
+            if (canExecute(file)) {
                 LOGGER.info("Found GraphicsMagick executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -1028,10 +1028,6 @@ public class MyTunesRssUtils {
         return requestLogHandler;
     }
 
-    public static boolean isExecutable(File executable) {
-        return executable != null && executable.isFile() && executable.canExecute();
-    }
-
     public static MVStore.Builder getMvStoreBuilder(String filename) {
         File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
         if (!dir.exists()) {
@@ -1043,7 +1039,7 @@ public class MyTunesRssUtils {
         }
         return new MVStore.Builder().fileStore(new FileStore()).fileName(file.getAbsolutePath());
     }
-    
+
     public static void removeMvStoreFile(String filename) {
         File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
         if (!dir.exists()) {
@@ -1074,7 +1070,7 @@ public class MyTunesRssUtils {
         }
         return file;
     }
-    
+
     public static Collection<Integer> getImageSizes(String imageHash) {
         Collection<Integer> sizes = new LinkedHashSet<Integer>();
         for (String filename : getImageDir(imageHash).list()) {
@@ -1085,7 +1081,7 @@ public class MyTunesRssUtils {
         }
         return sizes;
     }
-    
+
     public static File getMaxSizedImage(String imageHash) {
         File maxSizedFile = null;
         int maxSize = 0;
@@ -1099,7 +1095,7 @@ public class MyTunesRssUtils {
         }
         return maxSizedFile;
     }
-    
+
     public static File getImage(String imageHash, int size) {
         if (size > 0) {
             for (File file : getImageDir(imageHash).listFiles()) {
@@ -1115,7 +1111,7 @@ public class MyTunesRssUtils {
         }
         return null;
     }
-    
+
     public static File getSaveImageFile(String imageHash, int size, String mimeType) {
         File file = getImage(imageHash, size);
         if (file != null) {
@@ -1123,7 +1119,7 @@ public class MyTunesRssUtils {
         }
         return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType));
     }
-    
+
     public static void saveImage(String imageHash, int size, String mimeType, byte[] data) throws IOException {
         File file = getSaveImageFile(imageHash, size, mimeType);
         FileOutputStream fileOutputStream = new FileOutputStream(file);
@@ -1144,5 +1140,5 @@ public class MyTunesRssUtils {
         } else {
             return null;
         }
-    } 
+    }
 }

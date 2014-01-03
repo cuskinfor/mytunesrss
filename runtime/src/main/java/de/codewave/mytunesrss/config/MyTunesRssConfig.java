@@ -1910,7 +1910,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized boolean isRemoteControl() {
-        return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.isExecutable(getVlcExecutable());
+        return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
     }
 
     public synchronized boolean isMyTunesRssComActive() {
@@ -1926,7 +1926,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized boolean isValidVlcConfig() {
-        return isVlcEnabled() && MyTunesRssUtils.isExecutable(getVlcExecutable());
+        return isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
     }
 
     public synchronized void replaceDatasourceConfig(DatasourceConfig config) {

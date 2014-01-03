@@ -25,7 +25,7 @@ public class VlcExecutableFileValidator extends AbstractStringValidator {
             if (file.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(file.getName())) {
                 file = new File(file, "Contents/MacOS/VLC");
             }
-            return MyTunesRssUtils.isExecutable(file);
+            return MyTunesRssUtils.canExecute(file);
         }
         return true;
     }
