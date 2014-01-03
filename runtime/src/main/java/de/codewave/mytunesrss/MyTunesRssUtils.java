@@ -678,7 +678,7 @@ public class MyTunesRssUtils {
     }
 
     private static boolean isExecutableGraphicsMagick() {
-        return MyTunesRss.CONFIG.isGmEnabled() && MyTunesRss.CONFIG.getGmExecutable() != null && MyTunesRss.CONFIG.getGmExecutable().isFile() && MyTunesRss.CONFIG.getGmExecutable().canExecute();
+        return MyTunesRss.CONFIG.isGmEnabled() && canExecute(MyTunesRss.CONFIG.getGmExecutable());
     }
 
     private static void waitForProcess(final Process process, long maxWaitMillis) {
@@ -920,7 +920,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isExecutable(file)) {
+            if (canExecute(file)) {
                 LOGGER.info("Found VLC executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -952,7 +952,7 @@ public class MyTunesRssUtils {
             };
         }
         for (File file : files) {
-            if (MyTunesRssConfig.isExecutable(file)) {
+            if (canExecute(file)) {
                 LOGGER.info("Found GraphicsMagick executable \"" + file.getAbsolutePath() + "\".");
                 try {
                     return file.getCanonicalPath();
@@ -1025,9 +1025,9 @@ public class MyTunesRssUtils {
 
     public static boolean canExecute(File file) {
         if (SystemUtils.JAVA_VERSION_FLOAT < 1.6) {
-            return file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
+            return file != null && file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
         }
-        return file.canExecute();
+        return file != null && file.exists() && file.isFile() && file.canExecute();
     }
 
     public static String getLegalFileName(String name) {

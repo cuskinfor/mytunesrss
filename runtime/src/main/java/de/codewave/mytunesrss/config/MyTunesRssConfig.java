@@ -1809,7 +1809,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isRemoteControl() {
-        return MyTunesRss.CONFIG.isVlcEnabled() && isExecutable(getVlcExecutable());
+        return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
     }
 
     public boolean isMyTunesRssComActive() {
@@ -1825,11 +1825,7 @@ public class MyTunesRssConfig {
     }
 
     public boolean isValidVlcConfig() {
-        return isVlcEnabled() && MyTunesRssConfig.isExecutable(getVlcExecutable());
-    }
-
-    public static boolean isExecutable(File executable) {
-        return executable != null && executable.isFile() && executable.canExecute();
+        return isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
     }
 
     /*public static boolean isVlc(final File executable, boolean checkOutput) {

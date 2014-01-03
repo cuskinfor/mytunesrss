@@ -333,7 +333,7 @@ public class MyTunesRssWebUtils {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Checking for HTTP Live Streaming.");
         }
-        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssConfig.isExecutable(MyTunesRss.CONFIG.getVlcExecutable()) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
+        if (MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.canExecute(MyTunesRss.CONFIG.getVlcExecutable()) && (ignoreUserAgent || getUserAgent(request) == UserAgent.Iphone) && track.getMediaType() == MediaType.Video) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("HTTP Live Streaming available, user agent is iPhone and media type is video.");
             }
