@@ -24,7 +24,6 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,11 +78,8 @@ public class ItunesLoader {
         if (!iTunesMasterFile.isFile()) {
             iTunesMasterFile = new File(iTunesXmlFile.getParentFile(), "iTunes Library");
         }
-        long iTunesXmlLastModified = iTunesXmlFile.lastModified();
-        long iTunesMasterLastModified = iTunesMasterFile.lastModified();
-        if (iTunesXmlFile.isFile() && iTunesMasterFile.isFile() && iTunesMasterLastModified - iTunesXmlLastModified > 2000) {
-            LOG.warn("iTunes XML file \"" + iTunesXmlFile.getAbsolutePath() + "\" (last modified at " + new Date(iTunesXmlLastModified) + ") is older than iTunes master file \"" + iTunesMasterFile.getAbsolutePath() + "\" (last modified at " + new Date(iTunesMasterLastModified) + ").");
-            MyTunesRss.ADMIN_NOTIFY.notifyOutdatedItunesXml(iTunesMasterFile, iTunesMasterLastModified, iTunesXmlFile, iTunesXmlLastModified);
+        if (iTunesXmlFile.isFile() && iTunesMasterFile.isFile() && iTunesMasterFile.lastModified() - iTunesXmlFile.lastModified() > 2000) {
+            MyTunesRss.ADMIN_NOTIFY.notifyOutdatedItunesXml(iTunesMasterFile, iTunesXmlFile);
         }
         URL iTunesLibraryXml = iTunesXmlFile.toURL();
         if (iTunesLibraryXml != null) {

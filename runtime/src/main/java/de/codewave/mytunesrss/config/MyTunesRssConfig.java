@@ -17,6 +17,7 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Level;
@@ -139,14 +140,9 @@ public class MyTunesRssConfig {
     private boolean myGmEnabled;
     private long myImageExpirationMillis;
     private long myRestApiJsExpirationMillis;
-    private int myJpegQuality;
-    private int myOnDemandThumbnailGenerationThreads;
-    private int myOnDemandThumbnailGenerationTimeoutSeconds;
-    private int myUserAccessLogRetainDays;
-    private int myAdminAccessLogRetainDays;
-    private boolean myUserAccessLogExtended;
-    private boolean myAdminAccessLogExtended;
-    private String myAccessLogTz;
+    private int jpegQuality;
+    private int onDemandThumbnailGenerationThreads;
+    private int onDemandThumbnailGenerationTimeoutSeconds;
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -997,68 +993,28 @@ public class MyTunesRssConfig {
     }
 
     public int getJpegQuality() {
-        return myJpegQuality;
+        return jpegQuality;
     }
 
     public void setJpegQuality(int jpegQuality) {
-        myJpegQuality = jpegQuality;
+        this.jpegQuality = jpegQuality;
     }
 
     public int getOnDemandThumbnailGenerationThreads() {
-        return myOnDemandThumbnailGenerationThreads;
+        return onDemandThumbnailGenerationThreads;
     }
 
     public void setOnDemandThumbnailGenerationThreads(int onDemandThumbnailGenerationThreads) {
-        myOnDemandThumbnailGenerationThreads = onDemandThumbnailGenerationThreads;
+        this.onDemandThumbnailGenerationThreads = onDemandThumbnailGenerationThreads;
         MyTunesRss.EXECUTOR_SERVICE.setOnDemandThumbnailGeneratorThreads(onDemandThumbnailGenerationThreads);
     }
 
     public int getOnDemandThumbnailGenerationTimeoutSeconds() {
-        return myOnDemandThumbnailGenerationTimeoutSeconds;
+        return onDemandThumbnailGenerationTimeoutSeconds;
     }
 
     public void setOnDemandThumbnailGenerationTimeoutSeconds(int onDemandThumbnailGenerationTimeoutSeconds) {
-        myOnDemandThumbnailGenerationTimeoutSeconds = onDemandThumbnailGenerationTimeoutSeconds;
-    }
-
-    public String getAccessLogTz() {
-        return myAccessLogTz;
-    }
-
-    public void setAccessLogTz(String accessLogTz) {
-        myAccessLogTz = accessLogTz;
-    }
-
-    public boolean isAdminAccessLogExtended() {
-        return myAdminAccessLogExtended;
-    }
-
-    public void setAdminAccessLogExtended(boolean adminAccessLogExtended) {
-        myAdminAccessLogExtended = adminAccessLogExtended;
-    }
-
-    public boolean isUserAccessLogExtended() {
-        return myUserAccessLogExtended;
-    }
-
-    public void setUserAccessLogExtended(boolean userAccessLogExtended) {
-        myUserAccessLogExtended = userAccessLogExtended;
-    }
-
-    public int getAdminAccessLogRetainDays() {
-        return myAdminAccessLogRetainDays;
-    }
-
-    public void setAdminAccessLogRetainDays(int adminAccessLogRetainDays) {
-        myAdminAccessLogRetainDays = adminAccessLogRetainDays;
-    }
-
-    public int getUserAccessLogRetainDays() {
-        return myUserAccessLogRetainDays;
-    }
-
-    public void setUserAccessLogRetainDays(int userAccessLogRetainDays) {
-        myUserAccessLogRetainDays = userAccessLogRetainDays;
+        this.onDemandThumbnailGenerationTimeoutSeconds = onDemandThumbnailGenerationTimeoutSeconds;
     }
 
     private String encryptCreationTime(long creationTime) {
@@ -1271,11 +1227,6 @@ public class MyTunesRssConfig {
         setJpegQuality(JXPathUtils.getIntValue(settings, "jpeg-quality", 80));
         setOnDemandThumbnailGenerationThreads(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-threads", 5));
         setOnDemandThumbnailGenerationTimeoutSeconds(JXPathUtils.getIntValue(settings, "on-demand-thumbnail-timoeut-seconds", 60));
-        setAccessLogTz(JXPathUtils.getStringValue(settings, "accesslog-tz", "GMT"));
-        setUserAccessLogRetainDays(JXPathUtils.getIntValue(settings, "accesslog-user-retain", 5));
-        setAdminAccessLogRetainDays(JXPathUtils.getIntValue(settings, "accesslog-admin-retain", 5));
-        setUserAccessLogExtended(JXPathUtils.getBooleanValue(settings, "accesslog-user-ext", true));
-        setAdminAccessLogExtended(JXPathUtils.getBooleanValue(settings, "accesslog-admin-ext", true));
     }
 
     /**
@@ -1341,7 +1292,6 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             readFileTypes(datasourceContext, watchfolderDatasourceConfig);
                             watchfolderDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
-                            watchfolderDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
                             dataSources.add(watchfolderDatasourceConfig);
                             break;
                         case Itunes:
@@ -1372,7 +1322,6 @@ public class MyTunesRssConfig {
                             readFileTypes(datasourceContext, itunesDatasourceConfig);
                             itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             itunesDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
-                            itunesDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
                             dataSources.add(itunesDatasourceConfig);
                             break;
                         case Iphoto:
@@ -1684,11 +1633,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createIntElement(settings, "jpeg-quality", getJpegQuality()));
             root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-threads", getOnDemandThumbnailGenerationThreads()));
             root.appendChild(DOMUtils.createIntElement(settings, "on-demand-thumbnail-timoeut-seconds", getOnDemandThumbnailGenerationTimeoutSeconds()));
-            root.appendChild(DOMUtils.createTextElement(settings, "accesslog-tz", getAccessLogTz()));
-            root.appendChild(DOMUtils.createIntElement(settings, "accesslog-user-retain", getUserAccessLogRetainDays()));
-            root.appendChild(DOMUtils.createIntElement(settings, "accesslog-admin-retain", getAdminAccessLogRetainDays()));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "accesslog-user-ext", isUserAccessLogExtended()));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "accesslog-admin-ext", isAdminAccessLogExtended()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
@@ -1734,7 +1678,6 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", watchfolderDatasourceConfig.getDisabledMp4Codecs()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", watchfolderDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", watchfolderDatasourceConfig.getPhotoThumbnailImportType().name()));
-                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", watchfolderDatasourceConfig.isUseSingleImageInFolder()));
                     writeTrackImageMappings(settings, dataSource, watchfolderDatasourceConfig);
                     writeFileTypes(settings, dataSource, watchfolderDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
@@ -1762,7 +1705,6 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", itunesDatasourceConfig.getArtistDropWords()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", itunesDatasourceConfig.getDisabledMp4Codecs()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));
-                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", itunesDatasourceConfig.isUseSingleImageInFolder()));
                     writeTrackImageMappings(settings, dataSource, itunesDatasourceConfig);
                     writeFileTypes(settings, dataSource, itunesDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));

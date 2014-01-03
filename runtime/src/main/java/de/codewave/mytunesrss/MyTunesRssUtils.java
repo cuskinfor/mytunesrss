@@ -29,9 +29,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.NCSARequestLog;
-import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1068,20 +1065,5 @@ public class MyTunesRssUtils {
             }
         }
         return tokens.toArray(new String[tokens.size()]);
-    }
-
-    public static RequestLogHandler createJettyAccessLogHandler(String prefix, int retainDays, boolean extended, String tz) {
-        File accessLogDir = new File(MyTunesRss.CACHE_DATA_PATH + "/accesslogs");
-        if (!accessLogDir.exists()) {
-            accessLogDir.mkdirs();
-        }
-        RequestLogHandler requestLogHandler = new RequestLogHandler();
-        NCSARequestLog requestLog = new NCSARequestLog(new File(accessLogDir, prefix + "-yyyy_mm_dd.log").getAbsolutePath());
-        requestLog.setRetainDays(retainDays);
-        requestLog.setAppend(true);
-        requestLog.setExtended(extended);
-        requestLog.setLogTimeZone(tz);
-        requestLogHandler.setRequestLog(requestLog);
-        return requestLogHandler;
     }
 }

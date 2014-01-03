@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.tools.ant.DirectoryScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,11 +21,13 @@ import javax.imageio.ImageReader;
 import javax.imageio.stream.MemoryCacheImageInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.InsertTrackImagesStatement
@@ -34,9 +35,9 @@ import java.util.*;
 public class HandleTrackImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
     private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
+
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
-        IMAGE_TO_MIME.put("jpeg", "image/jpeg");
         IMAGE_TO_MIME.put("gif", "image/gif");
         IMAGE_TO_MIME.put("png", "image/png");
     }
@@ -45,14 +46,12 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private String myTrackId;
     private TrackSource mySource;
     private String mySourceId;
-    private boolean myUseSingleImageInFolder;
 
-    public HandleTrackImagesStatement(TrackSource source, String sourceId, File file, String trackId, boolean useSingleImageInFolder) {
+    public HandleTrackImagesStatement(TrackSource source, String sourceId, File file, String trackId) {
         myFile = file;
         myTrackId = trackId;
         mySource = source;
         mySourceId = sourceId;
-        myUseSingleImageInFolder = useSingleImageInFolder;
     }
 
     public void execute(Connection connection) {
@@ -153,7 +152,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
             }
         }
     }
-
+    
     private Image getLocalFileImage() throws IOException {
         Image image = null;
         // look for special image file
@@ -211,44 +210,26 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     }
 
     private File findImageFile(File file) {
-        if (IMAGE_TO_MIME.keySet().contains(StringUtils.lowerCase(FilenameUtils.getExtension(file.getName())))) {
-            return file;
-        } else {
-            for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
-                LOGGER.debug("Trying to find image with replacement search pattern \"" + rule.getSearchPattern() + "\".");
-                CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
-                if (compiledReplacementRule.matches(file.getName())) {
-                    String imagePattern = compiledReplacementRule.replace(file.getName());
-                    LOGGER.debug("Trying image pattern \"" + imagePattern + "\".");
-                    DirectoryScanner directoryScanner = new DirectoryScanner();
-                    directoryScanner.setBasedir(file.getParentFile());
-                    directoryScanner.setIncludes(new String[]{imagePattern});
-                    directoryScanner.setCaseSensitive(false);
-                    directoryScanner.scan();
-                    for (String includedFile : directoryScanner.getIncludedFiles()) {
-                        File imageFile = new File(file.getParentFile(), includedFile);
-                        LOGGER.debug("Checking image file \"" + imageFile.getAbsolutePath() + "\".");
-                        if (imageFile.isFile()) {
-                            return imageFile;
-                        }
+        for (String suffix : IMAGE_TO_MIME.keySet()) {
+            File imageFile;
+            if (FilenameUtils.getExtension(file.getName()).equalsIgnoreCase(suffix)) {
+                imageFile = file;
+            } else {
+                String basePath = file.getAbsolutePath();
+                for (ReplacementRule rule : ((CommonTrackDatasourceConfig)MyTunesRss.CONFIG.getDatasource(mySourceId)).getTrackImageMappings()) {
+                    CompiledReplacementRule compiledReplacementRule = new CompiledReplacementRule(rule);
+                    if (compiledReplacementRule.matches(basePath)) {
+                        basePath = compiledReplacementRule.replace(basePath);
+                        break;
                     }
                 }
+                imageFile = new File(basePath + "." + suffix);
             }
-            // last resort: if there is only one image file in the folder, return it.
-            File[] imagesInFolder = myUseSingleImageInFolder ? getImagesInFolder(file.getParentFile()) : null;
-            return imagesInFolder != null && imagesInFolder.length == 1 ? imagesInFolder[0] : null;
+            if (imageFile.isFile()) {
+                return imageFile;
+            }
         }
-    }
-
-    private File[] getImagesInFolder(File folder) {
-        LOGGER.debug("Fetching images for folder \"" + folder.getAbsolutePath() + "\".");
-        File[] files = folder.listFiles(new FileFilter() {
-            public boolean accept(File file) {
-                return file.isFile() && IMAGE_TO_MIME.keySet().contains(StringUtils.lowerCase(FilenameUtils.getExtension(file.getName())));
-            }
-        });
-        LOGGER.debug("Found \"" + (files != null ? files.length : "0") + "\" images.");
-        return files;
+        return null;
     }
 
     private Image findItunesArtwork() throws IOException {
@@ -258,6 +239,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 File file = new File(datasource.getDefinition());
                 if (file.isFile()) {
                     // assume itunes xml
+                    LOGGER.debug("Trying directory \"" + file.getParentFile().getAbsolutePath() + "/Album Artwork\".");
                     String[] idPair = StringUtils.split(myTrackId, "_");
                     if (idPair.length == 2) {
                         String dirLevel1 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 1), 16), 2, '0');
@@ -265,20 +247,11 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         String dirLevel3 = StringUtils.leftPad("" + Long.parseLong("" + idPair[1].charAt(idPair[1].length() - 3), 16), 2, '0');
                         File itcFile = null;
                         File albumArtworkDir = new File(file.getParentFile(), "Album Artwork");
-                        LOGGER.debug("Trying album artwork base directory \"" + albumArtworkDir.getAbsolutePath() + "\".");
                         if (albumArtworkDir.isDirectory()) {
-                            LOGGER.debug("Listing subdirectories for album artwork base directory \"" + albumArtworkDir.getAbsolutePath() + "\"..");
                             File[] files = albumArtworkDir.listFiles();
                             if (files != null) {
                                 for (File subdir : files) {
-                                    LOGGER.debug("Trying directory \"" + subdir.getAbsolutePath() + "\".");
                                     itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc");
-                                    LOGGER.debug("Looking for ITC file \"" +itcFile.getAbsolutePath() + "\".");
-                                    if (itcFile.isFile()) {
-                                        break;
-                                    }
-                                    itcFile = new File(subdir, idPair[0] + "/" + dirLevel1 + "/" + dirLevel2 + "/" + dirLevel3 + "/" + idPair[0] + "-" + idPair[1] + ".itc2");
-                                    LOGGER.debug("Looking for ITC2 file \"" +itcFile.getAbsolutePath() + "\".");
                                     if (itcFile.isFile()) {
                                         break;
                                     }
@@ -291,16 +264,11 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                     LOGGER.debug("Found item atom in ITC file \"" + itcFile.getAbsolutePath() + "\".");
                                     int offset = CamelUtils.getIntValue(itemAtom.getData(), 0, 4, false, Endianness.Big);
                                     Iterator<ImageReader> iter = ImageIO.getImageReaders(new MemoryCacheImageInputStream(new ByteArrayInputStream(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8))));
-                                    while (iter.hasNext()) {
+                                    if (iter.hasNext()) {
                                         ImageReader reader = iter.next();
-                                        LOGGER.debug("Trying to read image using image reader of type \"" + reader.getClass().getName() + "\".");
-                                        try {
-                                            String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
-                                            LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
-                                            return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8)));
-                                        } catch (Exception e) {
-                                            LOGGER.info("Could not read image using image reader of type \"" + reader.getClass().getName() + "\".", e);
-                                        }
+                                        String mimeType = reader.getOriginatingProvider().getMIMETypes()[0];
+                                        LOGGER.debug("Extracting image of type \"" + mimeType + "\" from ITC file \"" + itcFile.getAbsolutePath() + "\".");
+                                        return new Image(mimeType, ArrayUtils.subarray(itemAtom.getData(), offset - 8, itemAtom.getData().length - (offset - 8)));
                                     }
                                 }
                             }

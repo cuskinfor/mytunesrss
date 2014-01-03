@@ -98,7 +98,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
             mappings.add(new ReplacementRule((String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "search"), (String) getTableCellPropertyValue(myTrackImageMappingsTable, itemId, "replace")));
         }
         myConfig.setTrackImageMappings(mappings);
-        myConfig.setUseSingleImageInFolder(myUseSingleImageInput.booleanValue());
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
@@ -126,7 +125,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         for (ReplacementRule mapping : myConfig.getTrackImageMappings()) {
             addTrackImageMapping(mapping);
         }
-        myUseSingleImageInput.setValue(myConfig.isUseSingleImageInFolder());
         setFileTypes(myConfig.getFileTypes());
         setTablePageLengths();
     }

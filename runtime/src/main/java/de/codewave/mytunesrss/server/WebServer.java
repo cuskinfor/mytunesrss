@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.servlet.SessionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
@@ -92,7 +93,6 @@ public class WebServer {
             myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
             myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
             myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-            myContext.setHandler(MyTunesRssUtils.createJettyAccessLogHandler("user", MyTunesRss.CONFIG.getUserAccessLogRetainDays(), MyTunesRss.CONFIG.isUserAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz()));
             myServer.setHandler(myContext);
             SelectChannelConnector httpConnector = new SelectChannelConnector();
             httpConnector.setPort(MyTunesRss.CONFIG.getPort());

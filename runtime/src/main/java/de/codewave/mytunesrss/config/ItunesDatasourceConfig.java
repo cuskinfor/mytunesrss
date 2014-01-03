@@ -63,7 +63,6 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private List<ReplacementRule> myTrackImageMappings = new ArrayList<ReplacementRule>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private String myMusicFolderFilename;
-    private boolean myUseSingleImageInFolder = false;
 
     public ItunesDatasourceConfig(String id, String name, String definition) {
         super(id, StringUtils.defaultIfBlank(name, "iTunes"), definition);
@@ -80,7 +79,6 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myTrackImageMappings = new ArrayList<ReplacementRule>(source.getTrackImageMappings());
         myTrackImageImportType = source.getTrackImageImportType();
         myMusicFolderFilename = extractMusicFolderFilename();
-        myUseSingleImageInFolder = source.isUseSingleImageInFolder();
     }
 
     @Override
@@ -234,11 +232,4 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         return getAutoAddToItunesFolder() != null;
     }
 
-    public boolean isUseSingleImageInFolder() {
-        return myUseSingleImageInFolder;
-    }
-
-    public void setUseSingleImageInFolder(boolean useSingleImageInFolder) {
-        myUseSingleImageInFolder = useSingleImageInFolder;
-    }
 }

@@ -75,7 +75,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                             break;
                         }
                         try {
-                            MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId, MyTunesRss.CONFIG.getDatasource(track.mySourceId).isUseSingleImageInFolder()));
+                            MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(track.mySource, track.mySourceId, new File(track.myFile), track.myId));
                             count++;
                             if (count % 250 == 0) {
                                 try {

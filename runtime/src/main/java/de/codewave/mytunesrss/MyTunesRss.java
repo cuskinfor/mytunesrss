@@ -740,7 +740,6 @@ public class MyTunesRss {
                 MyTunesRssUtils.deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
             }
             adminContext.setTempDirectory(workDir);
-            adminContext.setHandler(MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz())); // TODO config
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
             ROUTER_CONFIG.addAdminPortMapping(adminPort);

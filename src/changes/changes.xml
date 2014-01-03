@@ -7,32 +7,6 @@
 
     <body>
 
-        <release version="4.9.15" date="___D___">
-            <action dev="mdescher" type="add">
-                Last modified date in outdated iTunes XML admin mail and also logged on WARN level.
-            </action>
-            <action dev="mdescher" type="update">
-                Updated image mapping syntax. Search pattern is matched against the file name only and
-                The image name is the name of the image only without any file path.
-            </action>
-            <action dev="mdescher" type="add">
-                For watchfolder and itunes data sources try all mappings until one is found.
-                Optional: if exactly one image is in the file's folder, use it as last resort.
-            </action>
-            <action dev="mdescher" type="fix">
-                Prevent completely broken support request mails when no iTunes XML was found.
-            </action>
-            <action dev="mdescher" type="fix">
-                [MYTUNESRSS-456] Access log configuration
-            </action>
-            <action dev="mdescher" type="fix">
-                [MYTUNESRSS-457] Login failed event not sent for REST login
-            </action>
-            <action dev="mdescher" type="add">
-                [MYTUNESRSS-458] ITunes uses ITC2 suffix in addition to ITC suffix
-            </action>
-        </release>
-
         <release version="4.9.14" date="2013-11-01">
             <action dev="mdescher" type="fix">
                 Windows installer of v4.9.13 did not work in some situations.
