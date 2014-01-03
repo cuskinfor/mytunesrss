@@ -971,9 +971,9 @@ public class MyTunesRssUtils {
 
     public static boolean canExecute(File file) {
         if (!SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_6)) {
-            return file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
+            return file != null && file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
         }
-        return file.canExecute();
+        return file != null && file.exists() && file.isFile() && file.canExecute();
     }
 
     public static String getLegalFileName(String name) {
