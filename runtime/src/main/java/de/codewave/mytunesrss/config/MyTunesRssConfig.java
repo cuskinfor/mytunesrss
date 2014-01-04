@@ -43,7 +43,7 @@ public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(Charset.forName("UTF-8")), "DES");
     private static final String CREATION_TIME_KEY = "playmode";
-    public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864";
+    public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864&server.innodb_file_per_table=1";
 
     private String myHost;
     private int myPort;
