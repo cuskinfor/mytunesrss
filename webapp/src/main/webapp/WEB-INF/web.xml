@@ -195,7 +195,7 @@
     </servlet>
     <servlet>
         <servlet-name>resteasy-jsapi</servlet-name>
-        <servlet-class>de.codewave.mytunesrss.servlet.resteasyfix.JSAPIServlet</servlet-class>
+        <servlet-class>org.jboss.resteasy.jsapi.JSAPIServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>CommandServlet</servlet-name>
