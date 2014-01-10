@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="4.9.15" date="___D___">
+        <release version="4.9.15" date="2014-01-10">
             <action dev="mdescher" type="fix">
                 File#canExecute not available before Java 6.
             </action>
