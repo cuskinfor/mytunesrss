@@ -57,7 +57,7 @@ public class TrackUtils {
             boolean newArtist = !lastArtist.equalsIgnoreCase(track.getArtist());
             if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
                 finishSection(transaction, sectionTracks, variousPerSection);
-                break; // no we are done with the last section
+                break; // now we are done with the last section
             } else {
                 if ((sortOrder == SortOrder.Album && !track.getArtist().equals(track.getAlbumArtist())) || (sortOrder == SortOrder.Artist && newAlbum)) {
                     variousPerSection = true;
@@ -67,6 +67,7 @@ public class TrackUtils {
             lastAlbum = track.getAlbum();
             lastArtist = track.getArtist();
         }
+        finishSection(transaction, sectionTracks, variousPerSection);
         enhancedTracks.setSimpleResult(sectionCount == 1 && !variousPerSection);
         return enhancedTracks;
     }
