@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="5.0.0" date="___D___">
+        <release version="5.0.0" date="2014-01-19">
             <action dev="mdescher" type="update">
                 Updated a few libraries, dropped Java 5 support.
             </action>
@@ -106,6 +106,12 @@
             </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-458] ITunes uses ITC2 suffix in addition to ITC suffix
+            </action>
+        </release>
+
+        <release version="4.9.15" date="2014-01-10">
+            <action dev="mdescher" type="fix">
+                File#canExecute not available before Java 6.
             </action>
         </release>
 
