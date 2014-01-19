@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>codewave-utils</artifactId>
-                <version>1.22-SNAPSHOT</version>
+                <version>1.22</version>
             </dependency>
             <dependency>
                 <groupId>de.codewave</groupId>
