@@ -3,7 +3,7 @@
     <groupId>de.codewave.mytunesrss</groupId>
     <artifactId>mytunesrss-pom</artifactId>
     <packaging>pom</packaging>
-    <version>5.0.0-SNAPSHOT</version>
+    <version>5.0.0</version>
     <name>Codewave MyTunesRSS Common POM</name>
     <distributionManagement>
         <site>
@@ -140,7 +140,7 @@
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>codewave-utils</artifactId>
-                <version>1.22-SNAPSHOT</version>
+                <version>1.22</version>
             </dependency>
             <dependency>
                 <groupId>de.codewave</groupId>
@@ -404,4 +404,8 @@
             </plugin>
         </plugins>
     </build>
+
+  <scm>
+    <developerConnection>scm:svn:svn://svn.codewave.de/codewave-base/tags/mytunesrss-5.0.0/mytunesrss-pom</developerConnection>
+  </scm>
 </project>
