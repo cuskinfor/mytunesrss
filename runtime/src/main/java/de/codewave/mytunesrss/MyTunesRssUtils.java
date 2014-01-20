@@ -1088,8 +1088,10 @@ public class MyTunesRssUtils {
         for (File file : getImageDir(imageHash).listFiles()) {
             String basename = FilenameUtils.getBaseName(file.getName());
             if (basename.startsWith("img")) {
-                if (Integer.parseInt(basename.substring(3)) > maxSize) {
+                int imgSize = Integer.parseInt(basename.substring(3));
+                if (imgSize > maxSize) {
                     maxSizedFile = file;
+                    maxSize = imgSize;
                 }
             }
         }
