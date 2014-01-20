@@ -42,7 +42,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     public void attach() {
         super.attach();
         init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
-        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.mysqlinternal, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
+        myDatabaseType = getComponentFactory().createSelect("databaseConfigPanel.databaseType", Arrays.asList(DatabaseType.h2, DatabaseType.h2single, DatabaseType.mysqlinternal, DatabaseType.h2custom, DatabaseType.postgres, DatabaseType.mysql));
         myDatabaseType.addListener(this);
         myDatabaseDriver = getComponentFactory().createTextField("databaseConfigPanel.databaseDriver");
         myDatabaseConnection = getComponentFactory().createTextField("databaseConfigPanel.databaseConnection");
@@ -102,15 +102,15 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     protected void initFromConfig() {
         DatabaseType databaseType = MyTunesRss.CONFIG.getDatabaseType();
         myDatabaseType.select(databaseType);
-        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2custom) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2single && databaseType != DatabaseType.h2custom) {
             myDatabaseDriver.setValue(MyTunesRss.CONFIG.getDatabaseDriver());
         } else {
             myDatabaseDriver.setValue(null);
         }
-        if (databaseType != DatabaseType.h2) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2single) {
             myConnectionOptions.setValue(MyTunesRss.CONFIG.getDatabaseConnectionOptions());
         }
-        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.mysqlinternal) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2single && databaseType != DatabaseType.mysqlinternal) {
             myDatabaseConnection.setValue(MyTunesRss.CONFIG.getDatabaseConnection());
             myDatabaseUser.setValue(MyTunesRss.CONFIG.getDatabaseUser());
             myDatabasePassword.setValue(MyTunesRss.CONFIG.getDatabasePassword());
@@ -161,20 +161,20 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     private void showHideDatabaseBackup(DatabaseType type) {
-        myBackupTriggers.setEnabled(type == DatabaseType.h2);
-        myAddBackupTrigger.setEnabled(type == DatabaseType.h2);
-        myNumberKeepBackups.setEnabled(type == DatabaseType.h2);
-        myBackupAfterInit.setEnabled(type == DatabaseType.h2);
+        myBackupTriggers.setEnabled(type == DatabaseType.h2 || type == DatabaseType.h2single);
+        myAddBackupTrigger.setEnabled(type == DatabaseType.h2 || type == DatabaseType.h2single);
+        myNumberKeepBackups.setEnabled(type == DatabaseType.h2 || type == DatabaseType.h2single);
+        myBackupAfterInit.setEnabled(type == DatabaseType.h2 || type == DatabaseType.h2single);
     }
 
     private void showHideDatabaseDetails(DatabaseType type) {
-        myDatabaseDriver.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2custom);
-        myDatabaseConnection.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
-        myConnectionOptions.setEnabled(type != DatabaseType.h2);
-        myDatabaseUser.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
-        myDatabasePassword.setEnabled(type != DatabaseType.h2 && type != DatabaseType.mysqlinternal);
+        myDatabaseDriver.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2single && type != DatabaseType.h2custom);
+        myDatabaseConnection.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2single && type != DatabaseType.mysqlinternal);
+        myConnectionOptions.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2single);
+        myDatabaseUser.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2single && type != DatabaseType.mysqlinternal);
+        myDatabasePassword.setEnabled(type != DatabaseType.h2 && type != DatabaseType.h2single && type != DatabaseType.mysqlinternal);
         setOptional(myConnectionOptions);
-        if (type == DatabaseType.h2) {
+        if (type == DatabaseType.h2 || type == DatabaseType.h2single) {
             setOptional(myDatabaseDriver);
             setOptional(myDatabaseConnection);
             setOptional(myDatabaseUser);
@@ -277,7 +277,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     }
 
     private String validateDatabaseConnection() {
-        if (myDatabaseType.getValue() != DatabaseType.h2 && myDatabaseType.getValue() != DatabaseType.h2custom) {
+        if (myDatabaseType.getValue() != DatabaseType.h2 && myDatabaseType.getValue() != DatabaseType.h2single && myDatabaseType.getValue() != DatabaseType.h2custom) {
             String driverClass = myDatabaseDriver.getStringValue(null);
             try {
                 Class.forName(driverClass, false, MyTunesRss.EXTRA_CLASSLOADER);

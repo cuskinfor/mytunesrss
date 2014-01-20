@@ -1481,13 +1481,13 @@ public class MyTunesRssConfig {
         DatabaseType databaseType = DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", DatabaseType.h2.name()));
         setDatabaseType(databaseType);
         setDefaultDatabaseSettings();
-        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2custom && databaseType != DatabaseType.hsqldb) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2single && databaseType != DatabaseType.h2custom && databaseType != DatabaseType.hsqldb) {
             setDatabaseDriver(JXPathUtils.getStringValue(settings, "database/driver", getDatabaseDriver()));
         }
-        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.hsqldb) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2single && databaseType != DatabaseType.hsqldb) {
             setDatabaseConnectionOptions(JXPathUtils.getStringValue(settings, "database/conn-options", getDatabaseConnectionOptions()));
         }
-        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.mysqlinternal && databaseType != DatabaseType.hsqldb) {
+        if (databaseType != DatabaseType.h2 && databaseType != DatabaseType.h2single && databaseType != DatabaseType.mysqlinternal && databaseType != DatabaseType.hsqldb) {
             setDatabaseConnection(JXPathUtils.getStringValue(settings, "database/connection", getDatabaseConnection()));
             setDatabaseUser(JXPathUtils.getStringValue(settings, "database/user", getDatabaseUser()));
             setDatabasePassword(JXPathUtils.getStringValue(settings, "database/password", getDatabasePassword()));
@@ -1498,6 +1498,11 @@ public class MyTunesRssConfig {
         if (getDatabaseType() == DatabaseType.h2) {
             setDatabaseDriver("org.h2.Driver");
             setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS;MAX_LOG_SIZE=64;MULTI_THREADED=1");
+            setDatabaseUser("sa");
+            setDatabasePassword("");
+        } else if (getDatabaseType() == DatabaseType.h2single) {
+            setDatabaseDriver("org.h2.Driver");
+            setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS;MAX_LOG_SIZE=64");
             setDatabaseUser("sa");
             setDatabasePassword("");
         } else if (getDatabaseType() == DatabaseType.hsqldb) {
@@ -1602,7 +1607,7 @@ public class MyTunesRssConfig {
                 Element database = settings.createElement("database");
                 root.appendChild(database);
                 database.appendChild(DOMUtils.createTextElement(settings, "type", getDatabaseType().name()));
-                if (getDatabaseType() != DatabaseType.hsqldb) {
+                if (getDatabaseType() != DatabaseType.hsqldb && getDatabaseType() != DatabaseType.h2single) {
                     // for hsqldb we only save the type
                     database.appendChild(DOMUtils.createTextElement(settings, "conn-options", getDatabaseConnectionOptions()));
                     // for internal mysql database we should not save additional info in the config

@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="5.0.1" date="___D___">
+            <action dev="mdescher" type="add">
+                Added single threaded default H2 database option.
+            </action>
+        </release>
+        
         <release version="5.0.0" date="2014-01-19">
             <action dev="mdescher" type="update">
                 Updated a few libraries, dropped Java 5 support.
