@@ -35,11 +35,29 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                 String pattern = getRequestParameter("pattern_" + suffix, null);
                 boolean invert = getBooleanRequestParameter("invert_" + suffix, false);
                 if (StringUtils.isNotBlank(pattern)) {
-                    if (type == SmartFieldType.sizeLimit) {
+                    if (type == SmartFieldType.sizeLimit || type == SmartFieldType.mintime || type == SmartFieldType.maxtime || type == SmartFieldType.recentlyPlayed || type == SmartFieldType.recentlyUpdated) {
                         try {
                             Integer.parseInt(pattern);
                         } catch (NumberFormatException e) {
-                            addError(new BundleError("error.illegalSmartPlaylistSizeLimit"));
+                            switch (type) {
+                                case sizeLimit:
+                                    addError(new BundleError("error.illegalSmartPlaylistSizeLimit"));
+                                    break;
+                                case mintime:
+                                    addError(new BundleError("error.illegalSmartPlaylistMintime"));
+                                    break;
+                                case maxtime:
+                                    addError(new BundleError("error.illegalSmartPlaylistMaxtime"));
+                                    break;
+                                case recentlyPlayed:
+                                    addError(new BundleError("error.illegalSmartPlaylistRecentlyPlayed"));
+                                    break;
+                                case recentlyUpdated:
+                                    addError(new BundleError("error.illegalSmartPlaylistRecentlyUpdated"));
+                                    break;
+                                default:
+                                    throw new IllegalStateException("Logic error validating values!");
+                            }
                         }
                     }
                     smartInfos.add(new SmartInfo(type, pattern, invert));

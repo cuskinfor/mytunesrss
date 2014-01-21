@@ -20,6 +20,7 @@ import java.util.*;
  */
 public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
+    private static final long MILLIS_PER_DAY = 1000L * 3600L * 24L;
     private Collection<SmartInfo> mySmartInfos;
     private String myPlaylistId;
     private boolean myPlayCountLastPlayedOnly;
@@ -107,6 +108,12 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     case videotype:
                         conditionals.put("videotype", true);
                         break;
+                    case recentlyPlayed:
+                        conditionals.put((smartInfo.isInvert() ? "not_" : "") + "recently_played", true);
+                        break;
+                    case recentlyUpdated:
+                        conditionals.put((smartInfo.isInvert() ? "not_" : "") + "recently_updated", true);
+                        break;
                     case order:
                         conditionals.put("order_default", false);
                         switch (SmartOrder.valueOf(smartInfo.getPattern())) {
@@ -168,6 +175,12 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         break;
                     case sizeLimit:
                         queryStatement.setInt("maxCount", Integer.parseInt(smartInfo.getPattern()));
+                        break;
+                    case recentlyPlayed:
+                        queryStatement.setLong("ts_played", MILLIS_PER_DAY * Long.parseLong(smartInfo.getPattern()));
+                        break;
+                    case recentlyUpdated:
+                        queryStatement.setLong("ts_updated", MILLIS_PER_DAY * Long.parseLong(smartInfo.getPattern()));
                         break;
                     default:
                         // nothing in all other cases

@@ -135,6 +135,12 @@
                                         <c:if test="${smartInfo.fieldType == 'sizeLimit'}">
                                             <c:set var="hasSizeLimit" value="true" />
                                         </c:if>
+                                        <c:if test="${smartInfo.fieldType == 'recentlyPlayed'}">
+                                            <c:set var="hasRecentlyPlayed" value="true" />
+                                        </c:if>
+                                        <c:if test="${smartInfo.fieldType == 'recentlyUpdated'}">
+                                            <c:set var="hasRecentlyUpdated" value="true" />
+                                        </c:if>
                                         <td><input id="smartCriteriaValue${loopStatus.index}" type="text" name="pattern_${loopStatus.index}" value="<c:out value="${smartInfo.pattern}"/>" /></td>
                                         <td class="smartPlaylistDelCriteria">
                                             <img id="delSmartCriteria${loopStatus.index}" class="smartPlaylistDeleteAction" src="${themeUrl}/images/action-delete.png" onclick="$jQ('#playlist').attr('action', '${servletUrl}/delSmartPlaylistCriteria/${auth}');$jQ('#remove').attr('value', '${loopStatus.index}');$jQ('#playlist').submit()" alt="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>" title="<fmt:message key="smartPlaylist.smartInfo.delTooltip"/>"/>
@@ -173,6 +179,14 @@
                                     <option value="mediatype"><fmt:message key="smartPlaylist.smartInfo.mediatype"/></option>
                                     <option value="videotype"><fmt:message key="smartPlaylist.smartInfo.videotype"/></option>
                                     <option value="protection"><fmt:message key="smartPlaylist.smartInfo.protection"/></option>
+                                    <c:if test="${!hasRecentlyUpdated}">
+                                        <option value="recentlyUpdated"><fmt:message key="smartPlaylist.smartInfo.recentlyUpdated"/></option>
+                                        <option value="recentlyUpdated.not"><fmt:message key="smartPlaylist.smartInfo.recentlyUpdated.not"/></option>
+                                    </c:if>
+                                    <c:if test="${!hasRecentlyPlayed}">
+                                        <option value="recentlyPlayed"><fmt:message key="smartPlaylist.smartInfo.recentlyPlayed"/></option>
+                                        <option value="recentlyPlayed.not"><fmt:message key="smartPlaylist.smartInfo.recentlyPlayed.not"/></option>
+                                    </c:if>
                                     <c:if test="${!hasOrder}">
                                         <option value="order"><fmt:message key="smartPlaylist.smartInfo.order"/></option>
                                     </c:if>
