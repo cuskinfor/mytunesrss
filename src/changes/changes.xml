@@ -8,6 +8,9 @@
     <body>
 
         <release version="5.0.1" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-470] OR matches for smart playlists
+            </action>
             <action dev="mdescher" type="fix">
                 Image request without size does not always return largest available image.
             </action>

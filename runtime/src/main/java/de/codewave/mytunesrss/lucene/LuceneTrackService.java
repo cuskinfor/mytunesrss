@@ -316,33 +316,81 @@ public class LuceneTrackService {
         for (SmartInfo smartInfo : smartInfos) {
             switch (smartInfo.getFieldType()) {
                 case album:
-                    addToAndQuery(andQuery, "album", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    BooleanQuery orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "album", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case artist:
-                    for (String term : StringUtils.split(smartInfo.getPattern())) {
-                        BooleanQuery orQuery = new BooleanQuery();
-                        addToOrQuery(orQuery, "artist", StringUtils.lowerCase(term), fuzziness);
-                        addToOrQuery(orQuery, "album_artist", StringUtils.lowerCase(term), fuzziness);
-                        andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        for (String term : StringUtils.split(orTerm)) {
+                            BooleanQuery innerOrQuery = new BooleanQuery();
+                            addToOrQuery(innerOrQuery, "artist", StringUtils.lowerCase(term), fuzziness);
+                            addToOrQuery(innerOrQuery, "album_artist", StringUtils.lowerCase(term), fuzziness);
+                            innerAndQuery.add(innerOrQuery, BooleanClause.Occur.MUST);
+                        }
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case comment:
-                    addToAndQuery(andQuery, "comment", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "comment", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case composer:
-                    addToAndQuery(andQuery, "composer", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "composer", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case file:
-                    addToAndQuery(andQuery, "filename", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "filename", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case genre:
-                    addToAndQuery(andQuery, "genre", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "genre", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case title:
-                    addToAndQuery(andQuery, "name", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "name", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 case tvshow:
-                    addToAndQuery(andQuery, "series", smartInfo.isInvert(), StringUtils.lowerCase(smartInfo.getPattern()), fuzziness);
+                    orQuery = new BooleanQuery();
+                    for (String orTerm : StringUtils.split(smartInfo.getPattern(), "|")) {
+                        BooleanQuery innerAndQuery = new BooleanQuery();
+                        addToAndQuery(innerAndQuery, "series", false, StringUtils.lowerCase(orTerm), fuzziness);
+                        orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
+                    }
+                    andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                     break;
                 default:
                     // nothing to add to query in other cases
