@@ -86,12 +86,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                         if (!dir.isDirectory()) {
                             dir.mkdir();
                             MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
-                            try {
-                                getTransaction().executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
-                                getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(true));
-                            } finally {
-                                getTransaction().commit();
-                            }
+                            MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
                             getAuthUser().playLastFmTrack(track);
                         }
                     }

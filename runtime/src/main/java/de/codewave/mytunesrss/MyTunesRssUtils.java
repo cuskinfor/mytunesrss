@@ -1143,4 +1143,19 @@ public class MyTunesRssUtils {
             return null;
         }
     }
+
+    public static void asyncPlayCountAndDateUpdate(final String trackId) {
+        MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+            public void run() {
+                try {
+                    MyTunesRss.STORE.executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
+                    MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(true));
+                } catch (SQLException e) {
+                    LOGGER.info("Could not update play count and/or refresh smart playlists.", e);
+                }
+            }
+        });
+    }
+
+
 }

@@ -58,18 +58,9 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                     } else {
                         streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
-                        MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
-                            public void run() {
-                                try {
-                                    MyTunesRss.STORE.executeStatement(new UpdatePlayCountAndDateStatement(new String[]{track.getId()}));
-                                    MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(true));
-                                } catch (SQLException e) {
-                                    LOG.info("Could not update play count and/or refresh smart playlists.", e);
-                                }
-                            }
-                        });
-                        streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
+                        MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
                         getAuthUser().playLastFmTrack(track);
+                        streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
                     }
                 } else {
                     if (LOG.isWarnEnabled()) {
