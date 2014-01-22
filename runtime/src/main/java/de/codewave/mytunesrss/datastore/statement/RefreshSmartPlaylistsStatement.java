@@ -19,18 +19,22 @@ import java.util.*;
  * Statement for updating all smart playlists.
  */
 public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
+   
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
     private static final long MILLIS_PER_DAY = 1000L * 3600L * 24L;
+    public enum UpdateType {
+        SCHEDULED(), ON_PLAY(), DEFAULT()
+    }
     private Collection<SmartInfo> mySmartInfos;
     private String myPlaylistId;
-    private boolean myPlayCountLastPlayedOnly;
+    private UpdateType myUpdateType = UpdateType.DEFAULT;
 
     public RefreshSmartPlaylistsStatement() {
         // nothing to do here
     }
 
-    public RefreshSmartPlaylistsStatement(boolean playCountLastPlayedOnly) {
-        myPlayCountLastPlayedOnly = playCountLastPlayedOnly;
+    public RefreshSmartPlaylistsStatement(UpdateType updateType) {
+        myUpdateType = updateType;
     }
 
     public RefreshSmartPlaylistsStatement(Collection<SmartInfo> smartInfos, String playlistId) {
@@ -50,7 +54,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             }.execute(connection);
             for (SmartPlaylist smartPlaylist : smartPlaylists) {
                 Collection<SmartInfo> smartInfos = smartPlaylist.getSmartInfos();
-                if (!myPlayCountLastPlayedOnly || hasPlayCountLastPlayed(smartInfos)) {
+                if (myUpdateType == UpdateType.DEFAULT || (myUpdateType == UpdateType.ON_PLAY && isOnPlayRefresh(smartInfos)) || (myUpdateType == UpdateType.SCHEDULED && isScheduledUpdateRefresh(smartInfos))) {
                     refreshSmartPlaylist(connection, smartInfos, smartPlaylist.getPlaylist().getId());
                     connection.commit();
                 }
@@ -61,12 +65,21 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         LOGGER.info("Smart playlists have been refreshed.");
     }
 
-    private boolean hasPlayCountLastPlayed(Collection<SmartInfo> smartInfos) {
+    private boolean isOnPlayRefresh(Collection<SmartInfo> smartInfos) {
         for (SmartInfo smartInfo : smartInfos) {
             if (smartInfo.getFieldType() == SmartFieldType.order) {
                 SmartOrder smartOrder = SmartOrder.valueOf(smartInfo.getPattern());
                 return smartOrder == SmartOrder.lastplayed_asc || smartOrder == SmartOrder.lastplayed_desc || smartOrder == SmartOrder.playcount_asc || smartOrder == SmartOrder.playcount_desc;
             } else if (smartInfo.getFieldType() == SmartFieldType.recentlyPlayed) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isScheduledUpdateRefresh(Collection<SmartInfo> smartInfos) {
+        for (SmartInfo smartInfo : smartInfos) {
+            if (smartInfo.getFieldType() == SmartFieldType.recentlyUpdated || smartInfo.getFieldType() == SmartFieldType.recentlyPlayed) {
                 return true;
             }
         }

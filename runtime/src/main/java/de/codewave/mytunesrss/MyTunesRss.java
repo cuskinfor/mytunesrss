@@ -295,6 +295,7 @@ public class MyTunesRss {
             initializeDatabase();
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
+            EXECUTOR_SERVICE.scheduleSmartPlaylistRefresh();
             EXECUTOR_SERVICE.scheduleImageGenerators();
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {

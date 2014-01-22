@@ -1147,11 +1147,16 @@ public class MyTunesRssUtils {
     public static void asyncPlayCountAndDateUpdate(final String trackId) {
         MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
             public void run() {
+                StopWatch.start("Updating play count and refreshing play count/time related smart playlists.");
                 try {
                     MyTunesRss.STORE.executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
-                    MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(true));
+                    MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.ON_PLAY));
                 } catch (SQLException e) {
                     LOGGER.info("Could not update play count and/or refresh smart playlists.", e);
+                } catch (RuntimeException e) {
+                    LOGGER.info("Could not update play count and/or refresh smart playlists.", e);
+                } finally {
+                    StopWatch.stop();
                 }
             }
         });

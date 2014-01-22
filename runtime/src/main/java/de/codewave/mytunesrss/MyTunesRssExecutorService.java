@@ -8,12 +8,14 @@
 package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.task.*;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.concurrent.*;
 
@@ -27,7 +29,7 @@ public class MyTunesRssExecutorService {
 
     private final ExecutorService ROUTER_CONFIG_EXECUTOR = Executors.newSingleThreadExecutor();
 
-    private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(10);
+    private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(20);
 
     private Future<Boolean> DATABASE_UPDATE_FUTURE;
 
@@ -197,6 +199,28 @@ public class MyTunesRssExecutorService {
             GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 60, TimeUnit.SECONDS);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule external address update task.", e);
+        }
+    }
+
+    public synchronized void scheduleSmartPlaylistRefresh() {
+        try {
+            GENERAL_EXECUTOR.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    StopWatch.start("Running scheduled refresh  of update/play time related smart playlists.");
+                    try {
+                        MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.SCHEDULED));
+                    } catch (SQLException e) {
+                        LOGGER.warn("Could not update smart playlists.");
+                    } catch (RuntimeException e) {
+                        LOGGER.warn("Could not update smart playlists.");
+                    } finally {
+                        StopWatch.stop();
+                    }
+                }
+            }, 0, 1, TimeUnit.HOURS);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule smart playlist refresh task.", e);
         }
     }
 
