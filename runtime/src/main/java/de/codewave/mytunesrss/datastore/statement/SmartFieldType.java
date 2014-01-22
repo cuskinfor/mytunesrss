@@ -6,7 +6,9 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 public enum SmartFieldType {
-    album(), artist(), genre(), tvshow(), title(), file(), comment(), mintime(), maxtime(), mediatype(), videotype(), protection(), composer(), datasource(), order(), sizeLimit(), recentlyUpdated(), recentlyPlayed();
+    // the ordinal order here defines the order on the edit page
+    album(), artist(), genre(), tvshow(), title(), file(), comment(), mintime(), maxtime(), mediatype(),
+    videotype(), protection(), composer(), datasource(), recentlyUpdated(), recentlyPlayed(), order(), sizeLimit();
 
     public boolean isLucene() {
         switch (this) {
