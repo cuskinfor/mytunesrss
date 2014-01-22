@@ -66,6 +66,8 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             if (smartInfo.getFieldType() == SmartFieldType.order) {
                 SmartOrder smartOrder = SmartOrder.valueOf(smartInfo.getPattern());
                 return smartOrder == SmartOrder.lastplayed_asc || smartOrder == SmartOrder.lastplayed_desc || smartOrder == SmartOrder.playcount_asc || smartOrder == SmartOrder.playcount_desc;
+            } else if (smartInfo.getFieldType() == SmartFieldType.recentlyPlayed) {
+                return true;
             }
         }
         return false;
