@@ -192,10 +192,10 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         queryStatement.setInt("maxCount", Integer.parseInt(smartInfo.getPattern()));
                         break;
                     case recentlyPlayed:
-                        queryStatement.setLong("ts_played", MILLIS_PER_DAY * Long.parseLong(smartInfo.getPattern()));
+                        queryStatement.setLong("ts_played", System.currentTimeMillis() - (MILLIS_PER_DAY * Long.parseLong(smartInfo.getPattern())));
                         break;
                     case recentlyUpdated:
-                        queryStatement.setLong("ts_updated", MILLIS_PER_DAY * Long.parseLong(smartInfo.getPattern()));
+                        queryStatement.setLong("ts_updated", System.currentTimeMillis() - (MILLIS_PER_DAY * Long.parseLong(smartInfo.getPattern())));
                         break;
                     default:
                         // nothing in all other cases
