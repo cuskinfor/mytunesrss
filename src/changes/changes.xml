@@ -9,6 +9,9 @@
 
         <release version="5.0.1" date="___D___">
             <action dev="mdescher" type="add">
+                Fixed java script string escaping.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-469] Date matcher for smart playlists
             </action>
             <action dev="mdescher" type="fix">

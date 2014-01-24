@@ -354,7 +354,7 @@ public class MyTunesFunctions {
         if (items instanceof Iterable) {
             for (Object item : (Iterable) items) {
                 if (item instanceof String) {
-                    builder.append("'").append(StringEscapeUtils.escapeEcmaScript((String) item)).append("'");
+                    builder.append("'").append(MyTunesFunctions.escapeEcmaScript((String) item)).append("'");
                 } else {
                     builder.append(item.toString());
                 }
@@ -363,7 +363,7 @@ public class MyTunesFunctions {
         } else if (items.getClass().isArray()) {
             for (Object item : (Object[]) items) {
                 if (item instanceof String) {
-                    builder.append("'").append(StringEscapeUtils.escapeEcmaScript((String) item)).append("'");
+                    builder.append("'").append(MyTunesFunctions.escapeEcmaScript((String) item)).append("'");
                 } else {
                     builder.append(item.toString());
                 }
@@ -399,5 +399,9 @@ public class MyTunesFunctions {
 
     public static String escapeJson(String json) {
         return new String(JsonStringEncoder.getInstance().quoteAsString(json));
+    }
+    
+    public static String escapeEcmaScript(String in) {
+        return StringEscapeUtils.escapeEcmaScript(in.replace("\"", "&#34;").replace("'", "&#39;"));
     }
 }

@@ -362,7 +362,7 @@
             Escape string for javascript usage.
         </description>
         <name>escapeJs</name>
-        <function-class>org.apache.commons.lang3.StringEscapeUtils</function-class>
+        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
         <function-signature>java.lang.String escapeEcmaScript(java.lang.String)</function-signature>
     </function>
 
