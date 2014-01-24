@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="5.0.1" date="___D___">
+        <release version="5.0.1" date="2014-01-24">
             <action dev="mdescher" type="add">
                 Fixed java script string escaping.
             </action>
