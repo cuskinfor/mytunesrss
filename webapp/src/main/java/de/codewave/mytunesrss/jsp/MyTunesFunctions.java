@@ -402,6 +402,6 @@ public class MyTunesFunctions {
     }
     
     public static String escapeEcmaScript(String in) {
-        return StringEscapeUtils.escapeEcmaScript(in.replace("\"", "&#34;").replace("'", "&#39;"));
+        return StringEscapeUtils.escapeHtml4(StringEscapeUtils.escapeEcmaScript(in));
     }
 }
