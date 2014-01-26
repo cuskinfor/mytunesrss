@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
-import de.codewave.camel.mp4.Mp4Atom;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.LdapConfig;
 import de.codewave.mytunesrss.config.User;
@@ -17,7 +16,6 @@ import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
@@ -44,11 +42,10 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.stream.FileImageOutputStream;
-import javax.mail.internet.ContentType;
-import javax.mail.internet.ParseException;
 import javax.naming.AuthenticationException;
 import javax.naming.Context;
 import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
@@ -75,6 +72,7 @@ import java.util.List;
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
  */
+@SuppressWarnings({"OverlyComplexClass", "OverlyCoupledClass"})
 public class MyTunesRssUtils {
 
     public static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
@@ -128,6 +126,7 @@ public class MyTunesRssUtils {
         if (!isHeadless()) {
             JOptionPane.showMessageDialog(null, message);
         } else {
+            //noinspection UseOfSystemOutOrSystemErr
             System.err.println(message);
         }
     }
@@ -136,12 +135,9 @@ public class MyTunesRssUtils {
         return (MyTunesRss.CONFIG != null && MyTunesRss.CONFIG.isHeadless()) || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS) || GraphicsEnvironment.isHeadless();
     }
 
-    public static boolean isFakeHeadless() {
-        return ((MyTunesRss.CONFIG != null && MyTunesRss.CONFIG.isHeadless()) || MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_HEADLESS)) && !GraphicsEnvironment.isHeadless() && SystemUtils.IS_OS_MAC_OSX;
-    }
-
     public static void showErrorMessage(String message) {
         LOGGER.error(message);
+        //noinspection UseOfSystemOutOrSystemErr
         System.err.println(message);
     }
 
@@ -192,6 +188,7 @@ public class MyTunesRssUtils {
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();
         }
+        //noinspection finally
         try {
             LOGGER.info("Cancelling database jobs.");
             if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
@@ -244,7 +241,9 @@ public class MyTunesRssUtils {
                 }
             }
             MyTunesRssUtils.removeMvStoreData();
-        } catch (Exception e) {
+        } catch (IOException e) {
+            LOGGER.error("Exception during shutdown.", e);
+        } catch (InterruptedException e) {
             LOGGER.error("Exception during shutdown.", e);
         } finally {
             LOGGER.info("Very last log message before shutdown.");
@@ -298,9 +297,11 @@ public class MyTunesRssUtils {
     }
 
     public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals) throws SQLException {
+        //noinspection unchecked
         return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>) Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[]{Map.class}, new InvocationHandler() {
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("get".equals(method.getName()) && args.length == 1 && args[0] instanceof String) {
+                    //noinspection SuspiciousMethodCalls
                     return conditionals.containsKey(args[0]) ? conditionals.get(args[0]) : Boolean.FALSE;
                 } else {
                     return method.invoke(conditionals, args);
@@ -325,16 +326,6 @@ public class MyTunesRssUtils {
         LOGGER.error("Setting codewave log to level \"" + level + "\".");
     }
 
-    public static String getBaseType(String contentType) {
-        try {
-            ContentType type = new ContentType(StringUtils.trimToEmpty(contentType));
-            return type.getBaseType();
-        } catch (ParseException e) {
-            LOGGER.warn("Could not get base type from content type \"" + contentType + "\".", e);
-        }
-        return "application/octet-stream";
-    }
-
     public static String getBuiltinAddonsPath() {
         return System.getProperty("de.codewave.mytunesrss.addons.builtin", ".");
     }
@@ -344,7 +335,8 @@ public class MyTunesRssUtils {
             File file = new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.lck");
             file.deleteOnExit();
             LOCK_FILE = new RandomAccessFile(file, "rw");
-        } catch (IOException e) {
+        } catch (FileNotFoundException e) {
+            LOGGER.debug("File not found, not locking instance.", e);
             return false;
         }
         long endTime = System.currentTimeMillis() + timeoutMillis;
@@ -355,9 +347,9 @@ public class MyTunesRssUtils {
                 }
                 Thread.sleep(500);
             } catch (IOException e) {
-                // intentionally left blank
+                LOGGER.debug("Ignoring exception.", e);
             } catch (InterruptedException e) {
-                // intentionally left blank
+                LOGGER.debug("Ignoring exception.", e);
             }
         } while (System.currentTimeMillis() < endTime);
         return true;
@@ -378,7 +370,8 @@ public class MyTunesRssUtils {
         LOGGER.debug("Checking authorization with LDAP server.");
         LdapConfig ldapConfig = MyTunesRss.CONFIG.getLdapConfig();
         if (ldapConfig.isValid()) {
-            Hashtable<String, String> env = new Hashtable<String, String>();
+            // We have to use Hashtable here since the naming API requires it
+            @SuppressWarnings("UseOfObsoleteCollectionType") Hashtable<String, String> env = new Hashtable<String, String>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, "ldap://" + ldapConfig.getHost() + ":" + ldapConfig.getPort());
             env.put(Context.SECURITY_AUTHENTICATION, ldapConfig.getAuthMethod().name());
@@ -417,8 +410,10 @@ public class MyTunesRssUtils {
                 }
                 return !user.isGroup() && user.isActive();
             } catch (AuthenticationException e) {
-                LOGGER.info("LDAP login failed for \"" + userName + "\".");
-            } catch (Exception e) {
+                LOGGER.info("LDAP login failed for \"" + userName + "\".", e);
+            } catch (NamingException e) {
+                LOGGER.error("Could not validate username/password with LDAP server.", e);
+            } catch (UnsupportedEncodingException e) {
                 LOGGER.error("Could not validate username/password with LDAP server.", e);
             }
         }
@@ -442,14 +437,6 @@ public class MyTunesRssUtils {
                             locale, "common.dateFormat"))), true);
         }
         return null;
-    }
-
-    public static Playlist[] getPlaylistPath(Playlist playlist, List<Playlist> playlists) {
-        List<Playlist> path = new ArrayList<Playlist>();
-        for (; playlist != null; playlist = findPlaylistWithId(playlists, playlist.getContainerId())) {
-            path.add(0, playlist);
-        }
-        return path.toArray(new Playlist[path.size()]);
     }
 
     private static Playlist findPlaylistWithId(List<Playlist> playlists, String containerId) {
@@ -496,11 +483,12 @@ public class MyTunesRssUtils {
     /**
      * Get a sub list.
      *
-     * @param fullList
-     * @param first
-     * @param count If count is less than 1, the rest of the list is returned.
-     * @param <T>
-     * @return
+     * @param fullList The full list.
+     * @param first The first item to return.
+     * @param count Number of items to return. If count is less than 1, the rest of the list is returned.
+     * @param <T> List element type.
+     *
+     * @return Sublist starting with the "first" element and with "count" elements.
      */
     public static <T> List<T> getSubList(List<T> fullList, int first, int count) {
         if (count > 0) {
@@ -570,15 +558,6 @@ public class MyTunesRssUtils {
                 backups.get(i).getFile().delete();
             }
         }
-    }
-
-    public static Map<String, Mp4Atom> toMap(Collection<Mp4Atom> atoms) {
-        Map<String, Mp4Atom> result = new HashMap<String, Mp4Atom>();
-        for (Mp4Atom atom : atoms) {
-            result.put(atom.getPath(), atom);
-            result.putAll(toMap(atom.getChildren()));
-        }
-        return result;
     }
 
     public static int getMaxImageSize(de.codewave.mytunesrss.meta.Image source) throws IOException {
@@ -681,6 +660,7 @@ public class MyTunesRssUtils {
                     try {
                         process.waitFor();
                     } catch (InterruptedException e) {
+                        LOGGER.debug("Interrupted waiting for process to finish. Destroying process.", e);
                         process.destroy();
                     }
                 }
@@ -688,6 +668,7 @@ public class MyTunesRssUtils {
             waitForProcessThread.start();
             waitForProcessThread.join(maxWaitMillis);
         } catch (InterruptedException e) {
+            LOGGER.debug("Interrupted waiting for process thread to join. Interrupting thread.", e);
             Thread.currentThread().interrupt();
         } finally {
             process.destroy();
@@ -720,41 +701,43 @@ public class MyTunesRssUtils {
         ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
         try {
             BufferedImage original = ImageIO.read(imageInputStream);
-            int width = original.getWidth();
-            int height = original.getHeight();
-            if (Math.max(width, height) <= maxSize) {
-                FileOutputStream fileOutputStream = new FileOutputStream(target);
-                try {
-                    IOUtils.write(source.getData(), fileOutputStream);
-                } finally {
-                    fileOutputStream.close();
+            if (original != null) {
+                int width = original.getWidth();
+                int height = original.getHeight();
+                if (Math.max(width, height) <= maxSize) {
+                    FileOutputStream fileOutputStream = new FileOutputStream(target);
+                    try {
+                        IOUtils.write(source.getData(), fileOutputStream);
+                    } finally {
+                        fileOutputStream.close();
+                    }
                 }
-            }
-            if (width > height) {
-                height = (height * maxSize) / width;
-                width = maxSize;
-            } else {
-                width = (width * maxSize) / height;
-                height = maxSize;
-            }
-            Image scaledImage = original.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-            BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-            targetImage.getGraphics().drawImage(scaledImage, 0, 0, null);
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            try {
-                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-                try {
-                    writer.setOutput(new FileImageOutputStream(target));
-                    ImageWriteParam param = writer.getDefaultWriteParam();
-                    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                    param.setCompressionQuality(jpegQuality / 100f);
-                    param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
-                    writer.write(null, new IIOImage(targetImage, null, null), param);
-                } finally {
-                    writer.dispose();
+                if (width > height) {
+                    height = (height * maxSize) / width;
+                    width = maxSize;
+                } else {
+                    width = (width * maxSize) / height;
+                    height = maxSize;
                 }
-            } finally {
-                byteArrayOutputStream.close();
+                Image scaledImage = original.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+                targetImage.getGraphics().drawImage(scaledImage, 0, 0, null);
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                try {
+                    ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
+                    try {
+                        writer.setOutput(new FileImageOutputStream(target));
+                        ImageWriteParam param = writer.getDefaultWriteParam();
+                        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                        param.setCompressionQuality(jpegQuality / 100f);
+                        param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+                        writer.write(null, new IIOImage(targetImage, null, null), param);
+                    } finally {
+                        writer.dispose();
+                    }
+                } finally {
+                    byteArrayOutputStream.close();
+                }
             }
         } finally {
             imageInputStream.close();
@@ -863,7 +846,7 @@ public class MyTunesRssUtils {
                 try {
                     return file.getCanonicalPath();
                 } catch (IOException e) {
-                    LOGGER.warn("Could not get canonical path for VLC file. Using absolute path instead.");
+                    LOGGER.warn("Could not get canonical path for VLC file. Using absolute path instead.", e);
                 }
                 return file.getAbsolutePath();
             }
@@ -895,7 +878,7 @@ public class MyTunesRssUtils {
                 try {
                     return file.getCanonicalPath();
                 } catch (IOException e) {
-                    LOGGER.warn("Could not get canonical path for GM file. Using absolute path instead.");
+                    LOGGER.warn("Could not get canonical path for GM file. Using absolute path instead.", e);
                 }
                 return file.getAbsolutePath();
             }
