@@ -69,8 +69,8 @@ Section "Java Runtime Environment" Jre
   SetOutPath "$INSTDIR\data\jre"
   File /r /x .svn jre\*
 
-  ExecWait '"$INSTDIR\data\jre\bin\unpack200.exe" "$INSTDIR\data\jre\lib\rt.jar.gz" "$INSTDIR\data\jre\lib\rt.jar"'
-  Delete "$INSTDIR\data\jre\lib\rt.jar.gz"
+  ;ExecWait '"$INSTDIR\data\jre\bin\unpack200.exe" "$INSTDIR\data\jre\lib\rt.jar.gz" "$INSTDIR\data\jre\lib\rt.jar"'
+  ;Delete "$INSTDIR\data\jre\lib\rt.jar.gz"
 
 SectionEnd
 
