@@ -2,25 +2,25 @@
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
-	    <key>CFBundleDevelopmentRegion</key>
-	    <string>English</string>
-	    <key>CFBundleExecutable</key>
-	    <string>MyTunesRSS</string>
-	    <key>CFBundleIconFile</key>
-	    <string>MyTunesRSS.icns</string>
-	    <key>CFBundleIdentifier</key>
-	    <string>de.codewave.mytunesrss</string>
-	    <key>CFBundleDisplayName</key>
-	    <string>MyTunesRSS Media Server</string>
-	    <key>CFBundleInfoDictionaryVersion</key>
-	    <string>6.0</string>
-	    <key>CFBundleName</key>
-	    <string>MyTunesRSS</string>
-	    <key>CFBundlePackageType</key>
-	    <string>APPL</string>
-        <key>CFBundleShortVersionString</key>
-        <string>${version}</string>
-	    <key>CFBundleSignature</key>
+        <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
+    <key>CFBundleExecutable</key>
+    <string>MyTunesRSS</string>
+    <key>CFBundleIconFile</key>
+    <string>MyTunesRSS.icns</string>
+    <key>CFBundleIdentifier</key>
+    <string>de.codewave.mytunesrss</string>
+    <key>CFBundleDisplayName</key>
+    <string>MyTunesRSS Media Server</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>MyTunesRSS</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+           <key>CFBundleShortVersionString</key>
+           <string>${version}</string>
+    <key>CFBundleSignature</key>
 	    <string>????</string>
 	    <key>CFBundleVersion</key>
 	    <string>${version}</string>
@@ -41,17 +41,20 @@
         </dict>
         <key>JVMMainClassName</key>
         <string>de.codewave.mytunesrss.MyTunesRss</string>
+        <key>JVMMainJarName</key>
+        <string>mytunesrss.jar</string>
         <key>JVMOptions</key>
         <array>
 		    <string>-Xmx512m</string>
             <string>-XX:HeapDumpPath=.</string>
-            <string>-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar</string>
+            <string>-Xbootclasspath/p:./lib/xercesImpl-2.9.1.jar</string>
             <string>-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl</string>
             <string>-Dde.codewave.mytunesrss</string>
-            <string>-Djava.class.path=$APP_ROOT/Resources/Java/mytunesrss.jar</string>
-        </array>
+        </array> 
         <key>JVMArguments</key>
         <array>
         </array>
+        <key>WorkingDirectory</key>
+        <string>$APP_ROOT/Contents/Java</string>
     </dict>
 </plist>

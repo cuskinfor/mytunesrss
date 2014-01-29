@@ -11,13 +11,13 @@
                 <include>*:runtime:jar:*</include>
             </includes>
             <binaries>
-                <outputDirectory>MyTunesRSS.app/Contents/Resources/Java</outputDirectory>
+                <outputDirectory>MyTunesRSS.app/Contents/Java</outputDirectory>
                 <outputFileNameMapping>mytunesrss.jar</outputFileNameMapping>
                 <unpack>false</unpack>
                 <includeDependencies>true</includeDependencies>
                 <dependencySets>
                     <dependencySet>
-                        <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/lib</outputDirectory>
+                        <outputDirectory>MyTunesRSS.app/Contents/Java/lib</outputDirectory>
                         <includes>
                             <include>*:jar:*</include>
                         </includes>
@@ -30,7 +30,7 @@
                 <include>*:webapp:war:*</include>
             </includes>
             <binaries>
-                <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/webapps/ROOT</outputDirectory>
+                <outputDirectory>MyTunesRSS.app/Contents/Java/webapps/ROOT</outputDirectory>
                 <unpack>true</unpack>
                 <includeDependencies>false</includeDependencies>
             </binaries>
@@ -40,7 +40,7 @@
                 <include>*:admin:war:*</include>
             </includes>
             <binaries>
-                <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/webapps/ADMIN</outputDirectory>
+                <outputDirectory>MyTunesRSS.app/Contents/Java/webapps/ADMIN</outputDirectory>
                 <unpack>true</unpack>
                 <includeDependencies>false</includeDependencies>
             </binaries>
@@ -48,12 +48,12 @@
     </moduleSets>
     <dependencySets>
         <dependencySet>
-            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java/lib</outputDirectory>
+            <outputDirectory>MyTunesRSS.app/Contents/Java/lib</outputDirectory>
         </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>
-            <outputDirectory>MyTunesRSS.app/Contents/Resources/Java</outputDirectory>
+            <outputDirectory>MyTunesRSS.app/Contents/Java</outputDirectory>
             <directory>etc</directory>
             <includes>
                 <include>themes/**</include>
@@ -67,7 +67,7 @@
                 <include>**</include>
             </includes>
             <excludes>
-                <exclude>**/JavaApplicationStub*</exclude>
+                <exclude>**/MacOS/MyTunesRSS</exclude>
                 <exclude>**/Info.plist*</exclude>
             </excludes>
         </fileSet>
@@ -83,7 +83,7 @@
             <outputDirectory>.</outputDirectory>
             <directory>etc/MacOS-Bundle</directory>
             <includes>
-                <include>**/JavaApplicationStub*</include>
+                <include>**/MacOS/MyTunesRSS</include>
             </includes>
             <fileMode>755</fileMode>
         </fileSet>
