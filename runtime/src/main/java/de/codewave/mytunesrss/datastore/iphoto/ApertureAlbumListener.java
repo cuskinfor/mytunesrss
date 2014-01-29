@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
-import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
 import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 

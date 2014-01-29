@@ -6,17 +6,9 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.config.DatasourceConfig;
-import de.codewave.mytunesrss.event.MyTunesRssEvent;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
-import de.codewave.mytunesrss.datastore.updatequeue.MyTunesRssEventEvent;
-import de.codewave.mytunesrss.datastore.updatequeue.TerminateEvent;
-import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.Collection;
 
 public class ImageUpdateCallable extends DatabaseBuilderCallable {

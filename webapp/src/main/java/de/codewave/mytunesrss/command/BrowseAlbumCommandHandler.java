@@ -61,7 +61,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             }
             getRequest().setAttribute(OffHeapSessionStore.CURRENT_LIST_ID, currentListId);
             int pageSize = getWebConfig().getEffectivePageSize();
-            List<Album> albums = new ArrayList<Album>();
+            List<Album> albums = new ArrayList<>();
             int trackCount = 0;
             int current = getSafeIntegerRequestParameter("index", 0);
             if (pageSize > 0 && cachedAlbums.size() > pageSize) {

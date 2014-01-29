@@ -9,8 +9,6 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -23,7 +21,7 @@ import java.util.*;
 public class TranscoderConfig implements Cloneable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderConfig.class);
-    private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<TranscoderConfig>();
+    private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<>();
 
     static {
         TranscoderConfig mp3Audio = new TranscoderConfig();
@@ -50,7 +48,7 @@ public class TranscoderConfig implements Cloneable {
     }
 
     public static Collection<TranscoderConfig> getDefaultTranscoders() {
-        Set<TranscoderConfig> deepClone = new HashSet<TranscoderConfig>(DEFAULT_TRANSCODERS.size());
+        Set<TranscoderConfig> deepClone = new HashSet<>(DEFAULT_TRANSCODERS.size());
         for (TranscoderConfig config : DEFAULT_TRANSCODERS) {
             try {
                 deepClone.add((TranscoderConfig) config.clone());
@@ -65,7 +63,7 @@ public class TranscoderConfig implements Cloneable {
 
     private String myOptions;
 
-    private List<TranscoderActivation> myTranscoderActivations = new ArrayList<TranscoderActivation>();
+    private List<TranscoderActivation> myTranscoderActivations = new ArrayList<>();
 
     private String myTargetSuffix;
 
@@ -83,7 +81,7 @@ public class TranscoderConfig implements Cloneable {
         setTargetSuffix(JXPathUtils.getStringValue(context, "targetsuffix", null));
         setTargetContentType(JXPathUtils.getStringValue(context, "targetcontenttype", null));
         setTargetMux(JXPathUtils.getStringValue(context, "targetmux", null));
-        List<TranscoderActivation> activations = new ArrayList<TranscoderActivation>();
+        List<TranscoderActivation> activations = new ArrayList<>();
         Iterator<JXPathContext> activationContextIterator = JXPathUtils.getContextIterator(context, "activations/activation");
         while (activationContextIterator.hasNext()) {
             JXPathContext activationContext = activationContextIterator.next();
@@ -166,16 +164,16 @@ public class TranscoderConfig implements Cloneable {
     }
 
     public List<TranscoderActivation> getTranscoderActivations() {
-        return new ArrayList<TranscoderActivation>(myTranscoderActivations);
+        return new ArrayList<>(myTranscoderActivations);
     }
 
     public void setTranscoderActivations(List<TranscoderActivation> transcoderActivations) {
-        myTranscoderActivations = new ArrayList<TranscoderActivation>(transcoderActivations);
+        myTranscoderActivations = new ArrayList<>(transcoderActivations);
     }
 
     public boolean isValidFor(Track track) {
         boolean active = false;
-        List<TranscoderActivation> activations = new ArrayList<TranscoderActivation>(myTranscoderActivations);
+        List<TranscoderActivation> activations = new ArrayList<>(myTranscoderActivations);
         activations.add(new ProtectionTranscoderActivation(true)); // never activate for protected tracks
         for (TranscoderActivation activation : activations) {
             if (activation.isActive(track)) {
@@ -196,7 +194,7 @@ public class TranscoderConfig implements Cloneable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         TranscoderConfig clone = (TranscoderConfig) super.clone();
-        clone.myTranscoderActivations = new ArrayList<TranscoderActivation>();
+        clone.myTranscoderActivations = new ArrayList<>();
         for (TranscoderActivation activation : myTranscoderActivations) {
             clone.myTranscoderActivations.add((TranscoderActivation) activation.clone());
         }

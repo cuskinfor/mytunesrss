@@ -206,7 +206,7 @@ public class MediaPlayerResource extends RestResource {
     }
 
     private List<TrackRepresentation> toTrackRepresentations(UriInfo uriInfo, HttpServletRequest request, List<Track> tracks) {
-        List<TrackRepresentation> trackRepresentations = new ArrayList<TrackRepresentation>();
+        List<TrackRepresentation> trackRepresentations = new ArrayList<>();
         for (Track track : tracks) {
             trackRepresentations.add(toTrackRepresentation(uriInfo, request, track));
         }

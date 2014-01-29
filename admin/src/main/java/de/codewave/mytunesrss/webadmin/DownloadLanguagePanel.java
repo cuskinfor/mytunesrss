@@ -5,16 +5,10 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
-import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
-import de.codewave.mytunesrss.config.ReplacementRule;
-import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.OptionWindow;
-import de.codewave.vaadin.validation.ValidRegExpValidator;
 
 import java.util.*;
 
@@ -24,7 +18,7 @@ public abstract class DownloadLanguagePanel extends MyTunesRssConfigPanel {
     private Table myLanguageTable;
 
     public DownloadLanguagePanel(Collection<LanguageDefinition> languages) {
-        myLanguages = new ArrayList<LanguageDefinition>(languages);
+        myLanguages = new ArrayList<>(languages);
     }
 
     @Override

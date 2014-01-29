@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Locale;
-import java.util.concurrent.Callable;
 
 /**
  * de.codewave.mytunesrss.task.RecreateDatabaseRunnable

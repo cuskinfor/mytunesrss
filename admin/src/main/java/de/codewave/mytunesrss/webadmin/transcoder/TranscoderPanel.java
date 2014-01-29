@@ -92,7 +92,7 @@ public class TranscoderPanel extends Panel implements Button.ClickListener {
         config.setTargetContentType(myContentTypeTextField.getStringValue(""));
         config.setTargetMux(myMuxTextField.getStringValue(""));
         config.setTargetSuffix(mySuffixTextField.getStringValue(""));
-        List<TranscoderActivation> activations = new ArrayList<TranscoderActivation>();
+        List<TranscoderActivation> activations = new ArrayList<>();
         Iterator<Component> componentIterator = myActivationsPanel.getComponentIterator();
         while (componentIterator.hasNext()) {
             Component component = componentIterator.next();

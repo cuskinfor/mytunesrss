@@ -124,7 +124,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private List<User> getUsersSortedByName() {
-        List<User> users = new ArrayList<User>();
+        List<User> users = new ArrayList<>();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             if (!user.isGroup()) {
                 users.add(user);
@@ -288,7 +288,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private Select createGroupSelect(final User user) {
-        List<User> groups = new ArrayList<User>();
+        List<User> groups = new ArrayList<>();
         for (User group : MyTunesRss.CONFIG.getUsers()) {
             if (group.isGroup()) {
                 groups.add(group);

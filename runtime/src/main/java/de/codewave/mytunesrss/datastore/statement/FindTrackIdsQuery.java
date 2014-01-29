@@ -29,7 +29,7 @@ public class FindTrackIdsQuery extends DataStoreQuery<Collection<String>> {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findTrackIdsForSource");
         statement.setString("source", mySource);
         ResultSet resultSet = statement.executeQuery();
-        Set<String> trackIds = new HashSet<String>();
+        Set<String> trackIds = new HashSet<>();
         while (resultSet.next()) {
             trackIds.add(resultSet.getString("ID"));
         }

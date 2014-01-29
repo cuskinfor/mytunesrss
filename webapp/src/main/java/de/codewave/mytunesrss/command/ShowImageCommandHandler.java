@@ -31,7 +31,7 @@ import java.util.concurrent.TimeoutException;
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
 
-    private Map<Integer, Image> myDefaultImages = new HashMap<Integer, Image>();
+    private Map<Integer, Image> myDefaultImages = new HashMap<>();
 
     private Image getDefaultImage(int size) {
         if (size <= 0) {

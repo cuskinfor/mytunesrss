@@ -53,7 +53,7 @@ public class MulticastService extends Thread {
     }
 
     public static Collection<RemoteServer> getOtherInstances() {
-        Set<RemoteServer> otherInstances = new HashSet<RemoteServer>();
+        Set<RemoteServer> otherInstances = new HashSet<>();
         MulticastSocket socket = null;
         try {
             socket = new MulticastSocket();

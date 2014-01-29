@@ -49,7 +49,7 @@ public class MailSender {
         Properties mailProperties = new Properties();
         mailSender.setHost(MyTunesRss.CONFIG.getMailHost());
         mailProperties.setProperty("mail.debug", "true");
-        List<Integer> ports = new ArrayList<Integer>();
+        List<Integer> ports = new ArrayList<>();
         if (MyTunesRss.CONFIG.getMailPort() > 0) {
             ports.add(MyTunesRss.CONFIG.getMailPort());
         } else {

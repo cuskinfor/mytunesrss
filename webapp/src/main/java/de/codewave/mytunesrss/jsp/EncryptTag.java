@@ -2,7 +2,6 @@ package de.codewave.mytunesrss.jsp;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 
-import javax.crypto.SecretKey;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyTag;

@@ -34,9 +34,9 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
     private Table myGenres;
     private Table myGenreMappings;
     private Button myAddGenreMapping;
-    private Set<String> oldHiddenGenres = new HashSet<String>();
-    private Set<String> oldHiddenPlaylists = new HashSet<String>();
-    private Map<String, String> oldGenreMappings = new HashMap<String, String>();
+    private Set<String> oldHiddenGenres = new HashSet<>();
+    private Set<String> oldHiddenPlaylists = new HashSet<>();
+    private Map<String, String> oldGenreMappings = new HashMap<>();
 
     public void attach() {
         super.attach();
@@ -248,7 +248,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private boolean isGenreMappingsChanged() {
-        Map<String, String> genreMappings = new HashMap<String, String>();
+        Map<String, String> genreMappings = new HashMap<>();
         for (Object itemId : myGenreMappings.getItemIds()) {
             genreMappings.put((String) getTableCellPropertyValue(myGenreMappings, itemId, "from"), (String) getTableCellPropertyValue(myGenreMappings, itemId, "to"));
         }
@@ -264,7 +264,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private boolean isHiddenGenresChanged() {
-        Set<String> hiddenGenres = new HashSet<String>();
+        Set<String> hiddenGenres = new HashSet<>();
         for (Object itemId : myGenres.getItemIds()) {
             Genre genre = (Genre) itemId;
             if (!((Boolean) getTableCellPropertyValue(myGenres, genre, "visible"))) {
@@ -275,7 +275,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private boolean isHiddenPlaylistsChanged() {
-        Set<String> hiddenPlaylists = new HashSet<String>();
+        Set<String> hiddenPlaylists = new HashSet<>();
         for (Object itemId : myPlaylists.getItemIds()) {
             Playlist playlist = (Playlist) itemId;
             if (!((Boolean) getTableCellPropertyValue(myPlaylists, playlist, "visible"))) {

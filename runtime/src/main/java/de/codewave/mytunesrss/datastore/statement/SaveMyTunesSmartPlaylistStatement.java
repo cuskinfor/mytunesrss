@@ -36,7 +36,7 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         super.execute(connection);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, isUpdate() ? "updateSmartInfo" : "insertSmartInfo");
         statement.setString("playlist_id", getId());
-        Collection<List<Object>> params = new ArrayList<List<Object>>();
+        Collection<List<Object>> params = new ArrayList<>();
         for (SmartInfo smartInfo : mySmartInfos) {
             params.add(Arrays.asList(new Object[] {smartInfo.getFieldType().name(), smartInfo.getPattern(), smartInfo.isInvert()}));
         }

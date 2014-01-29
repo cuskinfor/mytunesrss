@@ -31,18 +31,18 @@ import java.util.*;
  */
 public class HandleTrackImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandleTrackImagesStatement.class);
-    private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
+    private static Map<String, String> IMAGE_TO_MIME = new HashMap<>();
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
         IMAGE_TO_MIME.put("jpeg", "image/jpeg");
         IMAGE_TO_MIME.put("gif", "image/gif");
         IMAGE_TO_MIME.put("png", "image/png");
     }
-    
+
     private static class ExtendedImage extends Image {
 
         private boolean myFolderImage;
-        
+
         public ExtendedImage(String mimeType, InputStream is, boolean folderImage) throws IOException {
             super(mimeType, is);
             myFolderImage = folderImage;

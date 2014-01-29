@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class HandlePhotoImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlePhotoImagesStatement.class);
-    private static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
+    private static Map<String, String> IMAGE_TO_MIME = new HashMap<>();
 
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");

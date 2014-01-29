@@ -17,8 +17,8 @@ import java.util.Map;
 
 public class MyTunesRssCommandCallBuilder {
     private MyTunesRssCommand myCommand;
-    private Map<String, String> myParams = new HashMap<String, String>();
-    private List<String> myPathInfoSegments = new ArrayList<String>();
+    private Map<String, String> myParams = new HashMap<>();
+    private List<String> myPathInfoSegments = new ArrayList<>();
     private String myFileName;
 
     public MyTunesRssCommandCallBuilder(MyTunesRssCommand command) {

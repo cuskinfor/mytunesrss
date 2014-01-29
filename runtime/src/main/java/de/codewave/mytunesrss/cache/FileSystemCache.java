@@ -145,7 +145,7 @@ public class FileSystemCache implements Runnable {
     }
 
     private List<CacheItem> listItems() {
-        List<CacheItem> items = new ArrayList<CacheItem>();
+        List<CacheItem> items = new ArrayList<>();
         for (File file : myBaseDir.listFiles()) {
             if (file.isDirectory()) {
                 items.add(new CacheItem(file.getName(), getDirSize(file), getDirLastModified(file)));

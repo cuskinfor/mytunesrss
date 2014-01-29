@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -43,7 +42,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
 
     public synchronized void run() {
         try {
-            final Set<String> sourceIds = new HashSet<String>();
+            final Set<String> sourceIds = new HashSet<>();
             for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
                 if (datasourceConfig instanceof CommonTrackDatasourceConfig && ((CommonTrackDatasourceConfig) datasourceConfig).getTrackImageImportType() == ImageImportType.Auto) {
                     // only consider tracks from data sources which have the image import set to "AUTO"

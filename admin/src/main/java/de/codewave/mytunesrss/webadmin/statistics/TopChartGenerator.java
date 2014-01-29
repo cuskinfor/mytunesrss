@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.webadmin.statistics;
 
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.statistics.StatisticsEvent;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.jfree.chart.ChartFactory;
@@ -22,7 +21,7 @@ public abstract class TopChartGenerator implements ReportChartGenerator {
 
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) throws SQLException {
         final Map<String, MutableLong> itemsWithCount = getItemsWithCount(eventsPerDay);
-        List<String> items = new ArrayList<String>(itemsWithCount.keySet());
+        List<String> items = new ArrayList<>(itemsWithCount.keySet());
         Collections.sort(items, new Comparator<String>() {
             public int compare(String id1, String id2) {
                 return itemsWithCount.get(id2).compareTo(itemsWithCount.get(id1));

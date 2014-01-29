@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -63,7 +62,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private Map<String, Long> myPhotoTsUpdate;
     private String[] myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myDatasourceConfig;
-    private Map<String, Pattern> myPatterns = new HashMap<String, Pattern>();
+    private Map<String, Pattern> myPatterns = new HashMap<>();
     private Set<String> myPhotoAlbumIds;
     private long processedCount;
     private long lastProcessedCountLog = System.currentTimeMillis();
@@ -75,7 +74,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         myTrackTsUpdate = trackTsUpdate;
         myPhotoTsUpdate = photoTsUpdate;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
-        myPhotoAlbumIds = new HashSet<String>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
+        myPhotoAlbumIds = new HashSet<>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
     public Set<String> getExistingIds() {

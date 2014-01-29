@@ -75,8 +75,8 @@ import java.util.List;
 @SuppressWarnings({"OverlyComplexClass", "OverlyCoupledClass"})
 public class MyTunesRssUtils {
 
-    public static Map<String, String> IMAGE_TO_MIME = new HashMap<String, String>();
-    public static Map<String, String> MIME_TO_SUFFIX = new HashMap<String, String>();
+    public static Map<String, String> IMAGE_TO_MIME = new HashMap<>();
+    public static Map<String, String> MIME_TO_SUFFIX = new HashMap<>();
 
     static {
         IMAGE_TO_MIME.put("jpg", "image/jpeg");
@@ -371,7 +371,7 @@ public class MyTunesRssUtils {
         LdapConfig ldapConfig = MyTunesRss.CONFIG.getLdapConfig();
         if (ldapConfig.isValid()) {
             // We have to use Hashtable here since the naming API requires it
-            @SuppressWarnings("UseOfObsoleteCollectionType") Hashtable<String, String> env = new Hashtable<String, String>();
+            @SuppressWarnings("UseOfObsoleteCollectionType") Hashtable<String, String> env = new Hashtable<>();
             env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
             env.put(Context.PROVIDER_URL, "ldap://" + ldapConfig.getHost() + ":" + ldapConfig.getPort());
             env.put(Context.SECURITY_AUTHENTICATION, ldapConfig.getAuthMethod().name());
@@ -535,7 +535,7 @@ public class MyTunesRssUtils {
     }
 
     public static List<DatabaseBackup> findDatabaseBackups() throws IOException {
-        List<DatabaseBackup> backups = new ArrayList<DatabaseBackup>();
+        List<DatabaseBackup> backups = new ArrayList<>();
         File[] files = new File(MyTunesRss.CACHE_DATA_PATH).listFiles();
         if (files != null) {
             for (File file : files) {
@@ -796,11 +796,11 @@ public class MyTunesRssUtils {
     }
 
     public static void updateUserDatabaseReferences(DataStoreSession session) throws SQLException {
-        Set<String> playlistIds = new HashSet<String>();
+        Set<String> playlistIds = new HashSet<>();
         for (Playlist playlist : session.executeQuery(new FindPlaylistQuery(null, null, null, true)).getResults()) {
             playlistIds.add(playlist.getId());
         }
-        Set<String> photoAlbumIds = new HashSet<String>(session.executeQuery(new FindPhotoAlbumIdsQuery()));
+        Set<String> photoAlbumIds = new HashSet<>(session.executeQuery(new FindPhotoAlbumIdsQuery()));
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             user.retainPlaylists(playlistIds);
             user.retainPhotoAlbums(photoAlbumIds);
@@ -808,7 +808,7 @@ public class MyTunesRssUtils {
     }
 
     public static List<String> getDefaultVlcCommand(File inputFile) {
-        List<String> command = new ArrayList<String>();
+        List<String> command = new ArrayList<>();
         command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
         command.add(inputFile.getAbsolutePath());
         command.add("vlc://quit");
@@ -887,7 +887,7 @@ public class MyTunesRssUtils {
     }
 
     public static Collection<String> getAvailableListenAddresses() {
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         try {
             Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
             while (networkInterfaces != null && networkInterfaces.hasMoreElements()) {
@@ -904,7 +904,7 @@ public class MyTunesRssUtils {
     }
 
     public static Collection<String> toDatasourceIds(Collection<DatasourceConfig> configs) {
-        Set<String> ids = new HashSet<String>();
+        Set<String> ids = new HashSet<>();
         if (configs != null) {
             for (DatasourceConfig datasourceConfig : configs) {
                 ids.add(datasourceConfig.getId());
@@ -945,7 +945,7 @@ public class MyTunesRssUtils {
     }
 
     public static Collection<DatasourceConfig> deepClone(Collection<DatasourceConfig> datasourceConfigs) {
-        Collection<DatasourceConfig> deepClone = new ArrayList<DatasourceConfig>();
+        Collection<DatasourceConfig> deepClone = new ArrayList<>();
         for (DatasourceConfig datasourceConfig : datasourceConfigs) {
             deepClone.add(DatasourceConfig.copy(datasourceConfig));
         }
@@ -975,7 +975,7 @@ public class MyTunesRssUtils {
     }
 
     public static String[] substringsBetween(String s, String left, String right) {
-        List<String> tokens = new ArrayList<String>();
+        List<String> tokens = new ArrayList<>();
         if (StringUtils.isNotEmpty(s) && StringUtils.isNotEmpty(left) && StringUtils.isNotEmpty(right) && s.length() >= left.length() + right.length()) {
             int k;
             for (int i = s.indexOf(left); i > -1; i = s.indexOf(left, k + right.length())) {
@@ -1035,7 +1035,7 @@ public class MyTunesRssUtils {
     }
 
     public static <K, V> Map<K, V> openMvMap(MVStore store, String name) {
-        return new InterruptSafeMvMap<K, V>(store.<K, V>openMap(name));
+        return new InterruptSafeMvMap<>(store.<K, V>openMap(name));
     }
 
     private static void removeMvStoreData() throws IOException {
@@ -1055,7 +1055,7 @@ public class MyTunesRssUtils {
     }
 
     public static Collection<Integer> getImageSizes(String imageHash) {
-        Collection<Integer> sizes = new LinkedHashSet<Integer>();
+        Collection<Integer> sizes = new LinkedHashSet<>();
         for (String filename : getImageDir(imageHash).list()) {
             String basename = FilenameUtils.getBaseName(filename);
             if (basename.startsWith("img")) {
@@ -1146,4 +1146,7 @@ public class MyTunesRssUtils {
     }
 
 
+    public static boolean isAppStoreVersion() {
+        return "apple-appstore".equals(MyTunesRss.REGISTRATION.getName());
+    }
 }

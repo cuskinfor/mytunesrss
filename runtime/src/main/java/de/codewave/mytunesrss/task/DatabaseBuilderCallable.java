@@ -47,7 +47,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     private static State myState = State.Idle;
 
-    private List<DatasourceConfig> myDatasources = new ArrayList<DatasourceConfig>();
+    private List<DatasourceConfig> myDatasources = new ArrayList<>();
 
     private boolean myIgnoreTimestamps;
 
@@ -172,7 +172,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
      * @throws IOException
      */
     private Map<String, MissingItunesFiles> runUpdate(MVStore mvStore) throws SQLException, IOException, InterruptedException {
-        Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<String, MissingItunesFiles>();
+        Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<>();
         final Map<String, Long> trackTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "trackTsUpdate");
         StopWatch.start("Fetching existing tracks");
         try {
@@ -197,7 +197,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 public Void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdAndUpdateTs");
                     ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
-                    Set<String> ids = new HashSet<String>();
+                    Set<String> ids = new HashSet<>();
                     while (rs.next()) {
                         photoTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
                     }
@@ -243,7 +243,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 public Set<String> execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getDataSourceIds");
                     ResultSet rs = statement.executeQuery();
-                    Set<String> ids = new HashSet<String>();
+                    Set<String> ids = new HashSet<>();
                     while (rs.next()) {
                         ids.add(rs.getString("source_id"));
                     }
@@ -277,7 +277,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     try {
                         statement.execute();
                     } finally {
-                        StopWatch.stop();                    
+                        StopWatch.stop();
                     }
                 }
             }, true));

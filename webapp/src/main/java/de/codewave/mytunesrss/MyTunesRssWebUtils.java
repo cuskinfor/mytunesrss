@@ -100,7 +100,7 @@ public class MyTunesRssWebUtils {
                 LOGGER.debug("Created session configuration.");
             }
             httpServletRequest.setAttribute("config", webConfig);
-            LOGGER.debug("Created request configuration: " + new HashMap<String, String>(webConfig.getMap()).toString());
+            LOGGER.debug("Created request configuration: " + new HashMap<>(webConfig.getMap()).toString());
         }
         String activeTranscodersFromRequest = MyTunesRssWebUtils.getActiveTranscodingFromRequest(httpServletRequest);
         if (activeTranscodersFromRequest != null) {
@@ -115,7 +115,7 @@ public class MyTunesRssWebUtils {
             synchronized (request.getSession()) {
                 errors = (Set<Error>) request.getSession().getAttribute(holderName);
                 if (errors == null) {
-                    errors = new LinkedHashSet<Error>();
+                    errors = new LinkedHashSet<>();
                     request.getSession().setAttribute(holderName, errors);
                 }
             }

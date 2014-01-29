@@ -30,8 +30,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 @ValidateRequest
 @Path("photoalbum/{album}")
@@ -65,7 +63,7 @@ public class PhotoAlbumResource extends RestResource {
                 throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "FIRST_INDEX_OUT_OF_BOUNDS");
             }
         }
-        return new QueryResultIterable<Photo, PhotoRepresentation>(photos, new QueryResultIterable.ResultTransformer<Photo, PhotoRepresentation>() {
+        return new QueryResultIterable<>(photos, new QueryResultIterable.ResultTransformer<Photo, PhotoRepresentation>() {
             public PhotoRepresentation transform(Photo photo) {
                 PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
                 if (IncludeExcludeInterceptor.isAttr("thumbnailImageUri")) {

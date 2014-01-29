@@ -7,9 +7,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 
@@ -33,7 +31,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
-    
+
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
         myId = id;
         mySortOrder = sortOrder;
@@ -49,7 +47,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
-        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty() && (myRestrictedPlaylistIds.size() > 1 || !myRestrictedPlaylistIds.get(0).equals(myId)));
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);

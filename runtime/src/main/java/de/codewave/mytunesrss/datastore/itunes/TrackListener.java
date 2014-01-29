@@ -1,9 +1,6 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.camel.mp4.CodecAtom;
 import de.codewave.camel.mp4.MoovAtom;
-import de.codewave.camel.mp4.Mp4Atom;
-import de.codewave.camel.mp4.SampleDescriptionsAtom;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
@@ -12,8 +9,6 @@ import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.mytunesrss.datastore.statement.UpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import de.codewave.mytunesrss.meta.MyTunesRssMp3Utils;
-import de.codewave.utils.MiscUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +33,7 @@ public class TrackListener implements PListHandlerListener {
     private Map<Long, String> myTrackIdToPersId;
     private Map<String, Long> myTrackTsUpdate;
     private long myMissingFiles;
-    private List<String> myMissingFilePaths = new ArrayList<String>();
+    private List<String> myMissingFilePaths = new ArrayList<>();
     private String[] myDisabledMp4Codecs;
     private Thread myWatchdogThread;
     private Set<CompiledReplacementRule> myPathReplacements;
@@ -53,7 +48,7 @@ public class TrackListener implements PListHandlerListener {
         myTrackIdToPersId = trackIdToPersId;
         myTrackTsUpdate = trackTsUpdate;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
-        myPathReplacements = new HashSet<CompiledReplacementRule>();
+        myPathReplacements = new HashSet<>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
         }

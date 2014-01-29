@@ -1,17 +1,13 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.DataStoreStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 public class TerminateEvent extends CheckpointEvent {
 

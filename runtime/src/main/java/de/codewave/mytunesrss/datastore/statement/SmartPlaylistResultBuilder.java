@@ -5,10 +5,7 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.ResultBuilder;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,13 +16,13 @@ import java.util.Map;
 
 public class SmartPlaylistResultBuilder implements ResultBuilder<SmartPlaylist> {
 
-    private Map<String, SmartPlaylist> smartPlaylists = new HashMap<String, SmartPlaylist>();
+    private Map<String, SmartPlaylist> smartPlaylists = new HashMap<>();
 
     public SmartPlaylist create(ResultSet resultSet) throws SQLException {
         SmartPlaylist smartPlaylist = smartPlaylists.get(resultSet.getString("ID"));
         if (smartPlaylist == null) {
             Playlist playlist = new Playlist();
-            Collection<SmartInfo> smartInfos = new HashSet<SmartInfo>();
+            Collection<SmartInfo> smartInfos = new HashSet<>();
             smartPlaylist = new SmartPlaylist();
             smartPlaylist.setPlaylist(playlist);
             smartPlaylist.setSmartInfos(smartInfos);

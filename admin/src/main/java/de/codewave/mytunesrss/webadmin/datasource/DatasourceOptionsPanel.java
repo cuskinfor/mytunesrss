@@ -105,7 +105,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     protected final Protection PROTECTED = new Protection(true);
     protected final Protection UNPROTECTED = new Protection(false);
 
-    protected final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<ImageImportType, ImageImportTypeRepresentation>();
+    protected final Map<ImageImportType, ImageImportTypeRepresentation> IMPORT_TYPE_MAPPINGS = new HashMap<>();
 
     protected Panel myImageMappingsPanel;
     protected Table myTrackImagePatternsTable;
@@ -294,7 +294,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     protected List<FileType> getFileTypesAsList() {
-        List<FileType> fileTypes = new ArrayList<FileType>();
+        List<FileType> fileTypes = new ArrayList<>();
         for (Object itemId : myFileTypes.getItemIds()) {
             Boolean active = (Boolean) getTableCellPropertyValue(myFileTypes, itemId, "active");
             String suffix = (String) getTableCellPropertyValue(myFileTypes, itemId, "suffix");
@@ -307,7 +307,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
     }
 
     protected void updateModifiedFileTypes(List<FileType> previousFileTypes, List<FileType> newFileTypes) {
-        final List<FileType> changeset = new ArrayList<FileType>();
+        final List<FileType> changeset = new ArrayList<>();
         for (FileType newFileType : newFileTypes) {
             int i = previousFileTypes.indexOf(newFileType);
             if (i == -1) {

@@ -262,9 +262,9 @@ public class LibraryResource extends RestResource {
             @Context HttpServletRequest request
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(MyTunesRssWebUtils.getAuthUser(request)));
-        Map<String, Set<Integer>> seasonsPerShow = new HashMap<String, Set<Integer>>();
-        Map<String, MutableInt> episodeCountPerShow = new HashMap<String, MutableInt>();
-        Map<String, String> imageHashPerShow = new HashMap<String, String>();
+        Map<String, Set<Integer>> seasonsPerShow = new HashMap<>();
+        Map<String, MutableInt> episodeCountPerShow = new HashMap<>();
+        Map<String, String> imageHashPerShow = new HashMap<>();
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
             if (!imageHashPerShow.containsKey(track.getSeries())) {
                 imageHashPerShow.put(track.getSeries(), track.getImageHash());
@@ -274,10 +274,10 @@ public class LibraryResource extends RestResource {
                 seasonsPerShow.get(track.getSeries()).add(track.getSeason());
             } else {
                 episodeCountPerShow.put(track.getSeries(), new MutableInt(1));
-                seasonsPerShow.put(track.getSeries(), new HashSet<Integer>(Collections.singleton(track.getSeason())));
+                seasonsPerShow.put(track.getSeries(), new HashSet<>(Collections.singleton(track.getSeason())));
             }
         }
-        List<TvShowRepresentation> shows = new ArrayList<TvShowRepresentation>();
+        List<TvShowRepresentation> shows = new ArrayList<>();
         for (Map.Entry<String, MutableInt> entry : episodeCountPerShow.entrySet()) {
             TvShowRepresentation representation = new TvShowRepresentation();
             String name = entry.getKey();
@@ -324,7 +324,7 @@ public class LibraryResource extends RestResource {
         GetPhotoAlbumsQuery photoAlbumsQuery = new GetPhotoAlbumsQuery(MyTunesRssWebUtils.getAuthUser(request));
         photoAlbumsQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
         DataStoreQuery.QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(photoAlbumsQuery);
-        return new QueryResultIterable<PhotoAlbum, PhotoAlbumRepresentation>(queryResult, new QueryResultIterable.ResultTransformer<PhotoAlbum, PhotoAlbumRepresentation>() {
+        return new QueryResultIterable<>(queryResult, new QueryResultIterable.ResultTransformer<PhotoAlbum, PhotoAlbumRepresentation>() {
             public PhotoAlbumRepresentation transform(PhotoAlbum photoAlbum) {
                 PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
                 if (IncludeExcludeInterceptor.isAttr("photosUri")) {

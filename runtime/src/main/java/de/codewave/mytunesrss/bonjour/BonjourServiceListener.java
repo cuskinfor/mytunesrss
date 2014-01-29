@@ -23,7 +23,7 @@ public class BonjourServiceListener implements ServiceListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BonjourServiceListener.class);
 
-    private ConcurrentHashMap<String, BonjourDevice> myDevices = new ConcurrentHashMap<String, BonjourDevice>();
+    private ConcurrentHashMap<String, BonjourDevice> myDevices = new ConcurrentHashMap<>();
 
     public void serviceAdded(ServiceEvent event) {
         LOGGER.debug("Bonjour service added.");
@@ -75,6 +75,6 @@ public class BonjourServiceListener implements ServiceListener {
     }
 
     public Collection<BonjourDevice> getDevices() {
-        return new HashSet<BonjourDevice>(myDevices.values());
+        return new HashSet<>(myDevices.values());
     }
 }

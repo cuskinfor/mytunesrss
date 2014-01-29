@@ -33,7 +33,7 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     private String myName;
     private String myDefinition;
     private String myId;
-    private List<FileType> myFileTypes = new ArrayList<FileType>();
+    private List<FileType> myFileTypes = new ArrayList<>();
     private long myLastUpdate;
     private boolean myUpload;
 
@@ -101,11 +101,11 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     }
 
     public List<FileType> getFileTypes() {
-        return new ArrayList<FileType>(myFileTypes);
+        return new ArrayList<>(myFileTypes);
     }
 
     public void setFileTypes(List<FileType> fileTypes) {
-        myFileTypes = new ArrayList<FileType>(fileTypes);
+        myFileTypes = new ArrayList<>(fileTypes);
     }
 
     public FileType getFileType(String suffix) {

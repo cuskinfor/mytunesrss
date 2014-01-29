@@ -9,9 +9,7 @@ import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.datastore.statement.UpdatePlayCountAndDateStatement;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
@@ -23,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 
 /**
  * de.codewave.mytunesrss.command.PlayTrackCommandHandler

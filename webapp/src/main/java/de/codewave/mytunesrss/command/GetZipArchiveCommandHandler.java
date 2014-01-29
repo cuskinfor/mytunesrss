@@ -7,13 +7,11 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
-import de.codewave.utils.io.FileCache;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.SessionManager.SessionInfo;
@@ -108,7 +106,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
      * @return Identifier for the list of tracks.
      */
     private String calculateIdentifier(QueryResult<Track> tracks) {
-        List<String> trackIds = new ArrayList<String>();
+        List<String> trackIds = new ArrayList<>();
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
             trackIds.add(track.getId());
         }
@@ -123,7 +121,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         zipStream.setLevel(ZipArchiveOutputStream.STORED);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
         byte[] buffer = new byte[102400];
-        Set<String> entryNames = new HashSet<String>();
+        Set<String> entryNames = new HashSet<>();
         PlaylistBuilder playlistBuilder = WebConfig.PlaylistType.Xspf.name().equals(getWebConfig().getPlaylistType()) ? new XspfPlaylistsBuilder() : new M3uPlaylistsBuilder();
 
         int trackCount = 0;

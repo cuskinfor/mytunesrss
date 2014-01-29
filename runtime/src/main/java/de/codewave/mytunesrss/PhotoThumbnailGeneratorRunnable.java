@@ -7,7 +7,6 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.config.CommonPhotoDatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceConfig;
-import de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -41,7 +40,7 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
 
     public synchronized void run() {
         try {
-            final Set<String> sourceIds = new HashSet<String>();
+            final Set<String> sourceIds = new HashSet<>();
             for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
                 if (datasourceConfig instanceof CommonPhotoDatasourceConfig && ((CommonPhotoDatasourceConfig) datasourceConfig).getPhotoThumbnailImportType() == ImageImportType.Auto) {
                     // only consider photos from data sources which have the thumbnail import set to "AUTO"

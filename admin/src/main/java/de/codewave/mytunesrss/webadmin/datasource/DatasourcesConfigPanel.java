@@ -68,7 +68,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myDatasources.removeAllItems();
         Collection<DatasourceConfig> configs = myConfigs == null ? MyTunesRssUtils.deepClone(MyTunesRss.CONFIG.getDatasources()) : myConfigs.values();
-        myConfigs = new HashMap<Long, DatasourceConfig>();
+        myConfigs = new HashMap<>();
         for (DatasourceConfig datasource : configs) {
             myConfigs.put(addDatasource(datasource), datasource);
         }
@@ -123,9 +123,9 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        final Set<String> removedDatasourceIds = new HashSet<String>(MyTunesRssUtils.toDatasourceIds(MyTunesRss.CONFIG.getDatasources()));
+        final Set<String> removedDatasourceIds = new HashSet<>(MyTunesRssUtils.toDatasourceIds(MyTunesRss.CONFIG.getDatasources()));
         removedDatasourceIds.removeAll(MyTunesRssUtils.toDatasourceIds(myConfigs.values()));
-        MyTunesRss.CONFIG.setDatasources(new ArrayList<DatasourceConfig>(myConfigs.values()));
+        MyTunesRss.CONFIG.setDatasources(new ArrayList<>(myConfigs.values()));
         MyTunesRss.CONFIG.save();
         // cleanup database in background
         if (!removedDatasourceIds.isEmpty()) {

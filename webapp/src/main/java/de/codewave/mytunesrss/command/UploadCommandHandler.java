@@ -58,7 +58,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
             if (datasource == null || !datasource.isUpload() || !datasource.isUploadable()) {
                 throw new BadRequestException("Datasource missing or not uploadable.");
             }
-            List<File> uploadedItunesFiles = new ArrayList<File>();
+            List<File> uploadedItunesFiles = new ArrayList<>();
             StringBuilder info = new StringBuilder();
             int uploadCount = 0;
             long lastModified = datasource.getDefinitionLastModified();
@@ -115,7 +115,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private List<File> processItem(DatasourceConfig datasource, FileItem item) throws IOException {
-        List<File> uploadedItunesFiles = new ArrayList<File>();
+        List<File> uploadedItunesFiles = new ArrayList<>();
         if (StringUtils.isNotEmpty(item.getName())) {
             if (item.getName().toLowerCase().endsWith(".zip")) {
                 if (LOG.isDebugEnabled()) {

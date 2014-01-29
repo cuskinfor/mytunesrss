@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest.representation;
 
-import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.utils.Version;
 
 /**

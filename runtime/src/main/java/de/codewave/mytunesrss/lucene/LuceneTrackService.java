@@ -30,7 +30,7 @@ public class LuceneTrackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneTrackService.class);
     private static final int MAX_TRACK_BUFFER = 5000;
 
-    private Deque<LuceneTrack> myTrackBuffer = new ArrayDeque<LuceneTrack>();
+    private Deque<LuceneTrack> myTrackBuffer = new ArrayDeque<>();
     private FSDirectory myDirectory;
     private Analyzer myAnalyzer;
     private IndexWriter myIndexWriter;
@@ -202,11 +202,11 @@ public class LuceneTrackService {
             isearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = createQuery(searchTerms, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            trackIds = new LinkedHashSet<String>();
+            trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
-            return new ArrayList<String>(trackIds);
+            return new ArrayList<>(trackIds);
         } finally {
             if (isearcher != null) {
                 isearcher.close();
@@ -235,11 +235,11 @@ public class LuceneTrackService {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            Collection<String> trackIds = new LinkedHashSet<String>();
+            Collection<String> trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
-            return new ArrayList<String>(trackIds);
+            return new ArrayList<>(trackIds);
         } finally {
             if (isearcher != null) {
                 isearcher.close();
@@ -296,7 +296,7 @@ public class LuceneTrackService {
             isearcher = new IndexSearcher(IndexReader.open(directory));
             Query luceneQuery = createQuery(smartInfos, fuzziness);
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            trackIds = new LinkedHashSet<String>();
+            trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }

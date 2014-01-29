@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.datastore.updatequeue;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +14,7 @@ public class DatabaseUpdateQueue implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseUpdateQueue.class);
 
-    private BlockingQueue<DatabaseUpdateEvent> myQueue = new SynchronousQueue<DatabaseUpdateEvent>();
+    private BlockingQueue<DatabaseUpdateEvent> myQueue = new SynchronousQueue<>();
 
     private AtomicBoolean myTerminated = new AtomicBoolean(false);
 

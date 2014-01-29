@@ -11,7 +11,6 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.vaadin.SmartPasswordField;
-import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 
 import java.util.Arrays;

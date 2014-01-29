@@ -436,9 +436,9 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setSpecialPlaylists(myPermStandardPlaylist.booleanValue());
         myUser.setTranscoder(myPermTranscoder.booleanValue());
         myUser.setUpload(myPermUpload.booleanValue());
-        Set<String> restricted = new HashSet<String>();
-        Set<String> excluded = new HashSet<String>();
-        Set<String> hidden = new HashSet<String>();
+        Set<String> restricted = new HashSet<>();
+        Set<String> excluded = new HashSet<>();
+        Set<String> hidden = new HashSet<>();
         for (Object itemId : myPlaylistsRestrictions.getItemIds()) {
             Playlist playlist = (Playlist) itemId;
             if ((Boolean) getTableCellPropertyValue(myPlaylistsRestrictions, playlist, "restricted")) {
@@ -455,8 +455,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setRestrictedPlaylistIds(restricted);
         myUser.setExcludedPlaylistIds(excluded);
         myUser.setHiddenPlaylistIds(hidden);
-        restricted = new HashSet<String>();
-        excluded = new HashSet<String>();
+        restricted = new HashSet<>();
+        excluded = new HashSet<>();
         for (Object itemId : myPhotoAlbumRestrictions.getItemIds()) {
             PhotoAlbum photoAlbum = (PhotoAlbum) itemId;
             if ((Boolean) getTableCellPropertyValue(myPhotoAlbumRestrictions, photoAlbum, "restricted")) {
@@ -468,7 +468,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
         myUser.setRestrictedPhotoAlbumIds(restricted);
         myUser.setExcludedPhotoAlbumIds(excluded);
-        excluded = new HashSet<String>();
+        excluded = new HashSet<>();
         for (Object itemId : myDatasourceExclusions.getItemIds()) {
             String id = (String) itemId;
             if ((Boolean) getTableCellPropertyValue(myDatasourceExclusions, id, "excluded")) {

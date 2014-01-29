@@ -41,7 +41,7 @@ public class PlaylistFileProcessor implements FileProcessor {
             try {
                 String id = "file_" + IOUtils.getFilenameHash(playlistFile);
                 String[] tracks = FileUtils.readFileToString(playlistFile).split("[\\r\\n]");
-                List<String> trackIds = new ArrayList<String>();
+                List<String> trackIds = new ArrayList<>();
                 for (String track : tracks) {
                     if (!track.trim().startsWith("#")) {
                         File trackFile = new File(playlistFile.getParentFile(), track.trim());// relative track path

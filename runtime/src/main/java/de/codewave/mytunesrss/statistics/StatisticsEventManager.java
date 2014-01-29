@@ -17,7 +17,7 @@ public class StatisticsEventManager {
         return SINGLETON;
     }
 
-    private Set<StatisticsEventListener> myListeners = new HashSet<StatisticsEventListener>();
+    private Set<StatisticsEventListener> myListeners = new HashSet<>();
 
     public void addListener(StatisticsEventListener listener) {
         myListeners.add(listener);

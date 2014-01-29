@@ -11,7 +11,7 @@ public class LastFmSession {
     private String mySessionId;
     private String myNowPlayingUrl;
     private String mySubmissionUrl;
-    private Queue<LastFmSubmission> mySubmissions = new ConcurrentLinkedQueue<LastFmSubmission>();
+    private Queue<LastFmSubmission> mySubmissions = new ConcurrentLinkedQueue<>();
     private String myLastSubmittedTrackId;
 
     public String getNowPlayingUrl() {

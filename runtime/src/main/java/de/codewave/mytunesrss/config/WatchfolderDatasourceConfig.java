@@ -41,7 +41,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private String myArtistDropWords = "";
     private String myId3v2TrackComment = "";
     private String myDisabledMp4Codecs = "";
-    private List<String> myTrackImagePatterns = new ArrayList<String>();
+    private List<String> myTrackImagePatterns = new ArrayList<>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
     private boolean myUseSingleImageInFolder = false;
@@ -65,7 +65,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myArtistDropWords = source.getArtistDropWords();
         myId3v2TrackComment = source.getId3v2TrackComment();
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
-        myTrackImagePatterns = new ArrayList<String>(source.getTrackImagePatterns());
+        myTrackImagePatterns = new ArrayList<>(source.getTrackImagePatterns());
         myTrackImageImportType = source.getTrackImageImportType();
         myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
         myUseSingleImageInFolder = source.isUseSingleImageInFolder();
@@ -226,11 +226,11 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     }
 
     public List<String> getTrackImagePatterns() {
-        return new ArrayList<String>(myTrackImagePatterns);
+        return new ArrayList<>(myTrackImagePatterns);
     }
 
     public void setTrackImagePatterns(List<String> trackImagePatterns) {
-        this.myTrackImagePatterns = new ArrayList<String>(trackImagePatterns);
+        this.myTrackImagePatterns = new ArrayList<>(trackImagePatterns);
     }
 
     public ImageImportType getTrackImageImportType() {
@@ -250,7 +250,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     }
 
     public List<FileType> getDefaultFileTypes() {
-        List<FileType> types = new ArrayList<FileType>();
+        List<FileType> types = new ArrayList<>();
         types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
         types.add(new FileType(true, "m4p", "audio/x-m4p", MediaType.Audio, true));
         types.add(new FileType(true, "wav", "audio/wav", MediaType.Audio, false));

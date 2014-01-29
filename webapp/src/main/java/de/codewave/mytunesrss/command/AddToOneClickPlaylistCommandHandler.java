@@ -27,7 +27,7 @@ public class AddToOneClickPlaylistCommandHandler extends MyTunesRssCommandHandle
         if (isSessionAuthorized()) {
             String playlistId = getRequestParameter("playlistId", null);
             SavePlaylistStatement statement;
-            List<String> trackIds = new ArrayList<String>();
+            List<String> trackIds = new ArrayList<>();
             if (StringUtils.isNotBlank(playlistId)) {
                 FindPlaylistQuery query = new FindPlaylistQuery(getAuthUser(), Collections.singletonList(PlaylistType.MyTunes), playlistId, null, true, true);
                 List<Playlist> queryResult = getTransaction().executeQuery(query).getResults();
@@ -74,7 +74,7 @@ public class AddToOneClickPlaylistCommandHandler extends MyTunesRssCommandHandle
     }
 
     private List<String> getTrackIds(Collection<Track> playlistContent) {
-        List<String> trackIds = new ArrayList<String>(playlistContent.size());
+        List<String> trackIds = new ArrayList<>(playlistContent.size());
         for (Track track : playlistContent) {
             trackIds.add(track.getId());
         }

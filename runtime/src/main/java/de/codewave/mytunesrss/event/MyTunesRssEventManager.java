@@ -17,7 +17,7 @@ public class MyTunesRssEventManager {
         return SINGLETON;
     }
 
-    private Set<MyTunesRssEventListener> myListeners = new HashSet<MyTunesRssEventListener>();
+    private Set<MyTunesRssEventListener> myListeners = new HashSet<>();
 
     public void addListener(MyTunesRssEventListener listener) {
         myListeners.add(listener);

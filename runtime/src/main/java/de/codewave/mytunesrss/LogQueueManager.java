@@ -9,8 +9,8 @@ import java.util.concurrent.BlockingQueue;
 public class LogQueueManager {
     private static final int BACKLOG_SIZE = 1000;
     private static final int QUEUE_SIZE = BACKLOG_SIZE * 2;
-    private Queue<LoggingEvent> myBacklog = new ArrayDeque<LoggingEvent>(BACKLOG_SIZE);
-    private Set<Queue<LoggingEvent>> myQueues = new HashSet<Queue<LoggingEvent>>();
+    private Queue<LoggingEvent> myBacklog = new ArrayDeque<>(BACKLOG_SIZE);
+    private Set<Queue<LoggingEvent>> myQueues = new HashSet<>();
 
     public synchronized void offer(LoggingEvent event) {
         if (myBacklog.size() == BACKLOG_SIZE) {
@@ -27,7 +27,7 @@ public class LogQueueManager {
     }
 
     public synchronized BlockingQueue<LoggingEvent> createQueue() {
-        BlockingQueue<LoggingEvent> queue = new ArrayBlockingQueue<LoggingEvent>(QUEUE_SIZE);
+        BlockingQueue<LoggingEvent> queue = new ArrayBlockingQueue<>(QUEUE_SIZE);
         for (Iterator<LoggingEvent> iterator = myBacklog.iterator(); iterator.hasNext(); ) {
             queue.offer(iterator.next());
         }

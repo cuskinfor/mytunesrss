@@ -38,7 +38,7 @@ public class MaintenanceRunnable implements Runnable {
 
     private void removePlaylistsWithoutUser() {
         LOGGER.debug("Maintenance job: removing orphaned playlist.");
-        final Set<String> userNames = new HashSet<String>();
+        final Set<String> userNames = new HashSet<>();
         for (User user : MyTunesRss.CONFIG.getUsers()) {
             userNames.add(user.getName());
         }

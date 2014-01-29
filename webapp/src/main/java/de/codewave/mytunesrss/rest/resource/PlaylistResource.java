@@ -72,7 +72,7 @@ public class PlaylistResource extends RestResource {
         if (queryResult.getResultSize() == 0) {
             throw new NotFoundException("Playlist \"" + playlist + "\" not found.");
         }
-        List<Track> tracks = new ArrayList<Track>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, null)).getResults());
+        List<Track> tracks = new ArrayList<>(TransactionFilter.getTransaction().executeQuery(new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, null)).getResults());
         request.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, queryResult.nextResult());
         request.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS, tracks);
         return Response.created(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).build()).build();

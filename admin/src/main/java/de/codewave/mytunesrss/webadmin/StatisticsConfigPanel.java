@@ -123,7 +123,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private Map<Day, List<StatisticsEvent>> createEmptyEventsPerDayMap() {
-        Map<Day, List<StatisticsEvent>> eventsPerDay = new HashMap<Day, List<StatisticsEvent>>();
+        Map<Day, List<StatisticsEvent>> eventsPerDay = new HashMap<>();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime((Date)myReportFromDate.getValue());
         while (calendar.getTime().compareTo((Date)myReportToDate.getValue()) <= 0) {

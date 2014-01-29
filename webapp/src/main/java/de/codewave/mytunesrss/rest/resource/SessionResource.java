@@ -20,8 +20,6 @@ import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -29,7 +27,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 @ValidateRequest
@@ -73,7 +70,7 @@ public class SessionResource extends RestResource {
 
     private List<BonjourDeviceRepresentation> getAirtunesTargets() {
         Collection<BonjourDevice> devices = MyTunesRss.VLC_PLAYER.getRaopDevices();
-        List<BonjourDeviceRepresentation> airtunesTargets = new ArrayList<BonjourDeviceRepresentation>(devices.size());
+        List<BonjourDeviceRepresentation> airtunesTargets = new ArrayList<>(devices.size());
         for (BonjourDevice device : devices) {
             airtunesTargets.add(new BonjourDeviceRepresentation(device));
         }
@@ -81,7 +78,7 @@ public class SessionResource extends RestResource {
     }
 
     public List<String> getTranscoders(User user) {
-        List<String> transcoderNames = new ArrayList<String>();
+        List<String> transcoderNames = new ArrayList<>();
         if (user.isTranscoder() && MyTunesRss.CONFIG.isValidVlcConfig()) {
             for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
                 transcoderNames.add(config.getName());
@@ -92,7 +89,7 @@ public class SessionResource extends RestResource {
     }
 
     public List<String> getPermissions(User user) {
-        List<String> permissions = new ArrayList<String>();
+        List<String> permissions = new ArrayList<>();
         for (UserPermission permission : UserPermission.values()) {
             if (permission.isGranted(user)) {
                 permissions.add(StringUtils.uncapitalize(permission.name()));

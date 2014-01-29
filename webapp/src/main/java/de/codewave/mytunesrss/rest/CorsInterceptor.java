@@ -8,16 +8,11 @@ package de.codewave.mytunesrss.rest;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.interception.MessageBodyWriterContext;
-import org.jboss.resteasy.spi.interception.MessageBodyWriterInterceptor;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 
 @Provider
 @ServerInterceptor

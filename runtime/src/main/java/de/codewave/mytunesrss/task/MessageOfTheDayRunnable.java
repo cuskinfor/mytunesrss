@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MessageOfTheDayRunnable implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(MessageOfTheDayRunnable.class);
 
-    private Queue<MessageOfTheDay> myMessageOfTheDay = new ConcurrentLinkedQueue<MessageOfTheDay>();
+    private Queue<MessageOfTheDay> myMessageOfTheDay = new ConcurrentLinkedQueue<>();
 
     public void run() {
         try {

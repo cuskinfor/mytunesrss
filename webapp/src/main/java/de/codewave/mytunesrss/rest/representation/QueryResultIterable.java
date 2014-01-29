@@ -10,12 +10,12 @@ public class QueryResultIterable<S, T> implements Iterable<T> {
 
     public static interface ResultTransformer<S, T> {
         T transform(S input);
-    } 
-    
+    }
+
     private DataStoreQuery.QueryResult<S> myQueryResult;
     private ResultTransformer<S, T> myResultTransformer;
-    private AtomicReference<S> myNextResult = new AtomicReference<S>();
-    private int myRemainingCount;    
+    private AtomicReference<S> myNextResult = new AtomicReference<>();
+    private int myRemainingCount;
 
     public QueryResultIterable(DataStoreQuery.QueryResult<S> queryResult, ResultTransformer<S, T> resultTransformer) {
         this(queryResult, resultTransformer, Integer.MAX_VALUE);

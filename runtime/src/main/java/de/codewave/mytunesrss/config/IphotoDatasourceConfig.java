@@ -5,9 +5,6 @@
 
 package de.codewave.mytunesrss.config;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class IphotoDatasourceConfig extends PhotoDatasourceConfig {
 
     private boolean myImportRolls = true;

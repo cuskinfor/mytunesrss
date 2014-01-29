@@ -72,7 +72,7 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
                 }).getResult(0);
                 File photoFile = new File(filename);
                 if (photoFile.isFile()) {
-                    List<ExifField> exifFieldList = new ArrayList<ExifField>();
+                    List<ExifField> exifFieldList = new ArrayList<>();
                     for (TiffField tiffField : MyTunesRssExifUtils.getExifData(photoFile)) {
                         try {
                             if (!"Undefined".equals(tiffField.getFieldTypeName())) {

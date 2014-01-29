@@ -24,7 +24,7 @@ public abstract class LoadPlaylistCommandHandler extends MyTunesRssCommandHandle
         if (StringUtils.isNotEmpty(playlistId)) {
             Playlist playlist = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, playlistId, null, false, false)).nextResult()
                     ;
-            List<Track> tracks = new ArrayList<Track>(getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(),
+            List<Track> tracks = new ArrayList<>(getTransaction().executeQuery(new FindPlaylistTracksQuery(getAuthUser(),
                                                                                                                 playlistId,
                                                                                                                 null)).getResults());
             getRequest().getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, playlist);

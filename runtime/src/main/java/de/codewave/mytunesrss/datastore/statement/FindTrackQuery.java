@@ -39,7 +39,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness, maxResults);
-        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
+        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<>(luceneResult);
         query.myMediaTypes = getQueryMediaTypes(user);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
@@ -51,7 +51,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm, maxResults);
-        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<String>(luceneResult);
+        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<>(luceneResult);
         query.myMediaTypes = getQueryMediaTypes(user);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
@@ -59,7 +59,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     static MediaType[] getQueryMediaTypes(User user, MediaType... mediaTypes) {
         if (!user.isAudio() || !user.isVideo()) {
-            Set<MediaType> resultTypes = mediaTypes != null && mediaTypes.length > 0 ? new HashSet<MediaType>(Arrays.asList(mediaTypes)) : new HashSet<MediaType>(Arrays.asList(MediaType.values()));
+            Set<MediaType> resultTypes = mediaTypes != null && mediaTypes.length > 0 ? new HashSet<>(Arrays.asList(mediaTypes)) : new HashSet<>(Arrays.asList(MediaType.values()));
             if (!user.isAudio()) {
                 resultTypes.remove(MediaType.Audio);
             }
@@ -206,7 +206,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
 
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
-        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        Map<String, Boolean> conditionals = new HashMap<>();
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
         if (!CollectionUtils.isEmpty(myIds)) {

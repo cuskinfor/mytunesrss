@@ -73,7 +73,7 @@ public class PlaylistListener implements PListHandlerListener {
             String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
                     "Parent Persistent ID") : null;
             List<Map> items = (List<Map>) playlist.get("Playlist Items");
-            List<String> tracks = new ArrayList<String>();
+            List<String> tracks = new ArrayList<>();
             if (items != null && !items.isEmpty()) {
                 for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
                     Map item = itemIterator.next();

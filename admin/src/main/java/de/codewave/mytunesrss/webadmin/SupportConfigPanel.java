@@ -48,7 +48,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
 
     public void attach() {
         super.attach();
-        init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, MyTunesRssUtils.isAppStoreVersion() ? 3 : 4, true, true));
         mySupportForm = getComponentFactory().createForm(null, true);
         myName = getComponentFactory().createTextField("supportConfigPanel.name");
         myEmail = getComponentFactory().createTextField("supportConfigPanel.email");
@@ -62,28 +62,30 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySupportForm.addField("includeItunesXml", myIncludeItunesXml);
         mySupportForm.addField("sendSupport", mySendSupport);
         addComponent(getComponentFactory().surroundWithPanel(mySupportForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.support")));
-        myRegistrationForm = getComponentFactory().createForm(null, true);
-        myRegName = getComponentFactory().createTextField("supportConfigPanel.regName");
-        myRegName.setEnabled(false);
-        myExpirationDate = new DateField(getBundleString("supportConfigPanel.expirationDate"));
-        myExpirationDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
-        myExpirationDate.setResolution(DateField.RESOLUTION_DAY);
-        myExpirationDate.setEnabled(false);
-        myRegistrationForm.addField("regName", myRegName);
-        myRegistrationForm.addField("expirationDate", myExpirationDate);
-        Panel registrationPanel = getComponentFactory().surroundWithPanel(myRegistrationForm, new Layout.MarginInfo(false, true, true, true), getBundleString("supportConfigPanel.caption.registration"));
-        if (!MyTunesRss.REGISTRATION.isReleaseVersion()) {
-            Label label = new Label(getBundleString("supportConfigPanel.prereleaseCannotBeRegistered"));
-            registrationPanel.addComponent(label);
-        } else {
-            myUploadLicense = new Upload(null, this);
-            myUploadLicense.setButtonCaption(getBundleString("supportConfigPanel.uploadLicense"));
-            myUploadLicense.setImmediate(true);
-            myUploadLicense.addListener((Upload.SucceededListener) this);
-            myUploadLicense.addListener((Upload.FailedListener) this);
-            registrationPanel.addComponent(myUploadLicense);
+        if (!MyTunesRssUtils.isAppStoreVersion()) {
+            myRegistrationForm = getComponentFactory().createForm(null, true);
+            myRegName = getComponentFactory().createTextField("supportConfigPanel.regName");
+            myRegName.setEnabled(false);
+            myExpirationDate = new DateField(getBundleString("supportConfigPanel.expirationDate"));
+            myExpirationDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
+            myExpirationDate.setResolution(DateField.RESOLUTION_DAY);
+            myExpirationDate.setEnabled(false);
+            myRegistrationForm.addField("regName", myRegName);
+            myRegistrationForm.addField("expirationDate", myExpirationDate);
+            Panel registrationPanel = getComponentFactory().surroundWithPanel(myRegistrationForm, new Layout.MarginInfo(false, true, true, true), getBundleString("supportConfigPanel.caption.registration"));
+            if (!MyTunesRss.REGISTRATION.isReleaseVersion()) {
+                Label label = new Label(getBundleString("supportConfigPanel.prereleaseCannotBeRegistered"));
+                registrationPanel.addComponent(label);
+            } else {
+                myUploadLicense = new Upload(null, this);
+                myUploadLicense.setButtonCaption(getBundleString("supportConfigPanel.uploadLicense"));
+                myUploadLicense.setImmediate(true);
+                myUploadLicense.addListener((Upload.SucceededListener) this);
+                myUploadLicense.addListener((Upload.FailedListener) this);
+                registrationPanel.addComponent(myUploadLicense);
+            }
+            addComponent(registrationPanel);
         }
-        addComponent(registrationPanel);
         mySysInfoForm = getComponentFactory().createForm(null, true);
         myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG));
         myShowLog = getComponentFactory().createButton("supportConfigPanel.showLog", this);
@@ -100,9 +102,11 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         myLogLevel.setValue(MyTunesRss.CONFIG.getCodewaveLogLevel());
         myName.setValue(MyTunesRss.CONFIG.getSupportName());
         myEmail.setValue(MyTunesRss.CONFIG.getSupportEmail());
-        myRegName.setValue(MyTunesRss.REGISTRATION.getName());
-        if (MyTunesRss.REGISTRATION.isExpirationDate()) {
-            myExpirationDate.setValue(new Date(MyTunesRss.REGISTRATION.getExpiration()));
+        if (!MyTunesRssUtils.isAppStoreVersion()) {
+            myRegName.setValue(MyTunesRss.REGISTRATION.getName());
+            if (MyTunesRss.REGISTRATION.isExpirationDate()) {
+                myExpirationDate.setValue(new Date(MyTunesRss.REGISTRATION.getExpiration()));
+            }
         }
     }
 

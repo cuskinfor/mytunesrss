@@ -24,7 +24,7 @@ public class BrowseTvShowCommandHandler extends BrowseVideoCommandHandler {
         int seriesCount = getSeriesCount(episodes);
         int seasonCount = getSeasonCount(episodes);
         if (seriesCount > 1) {
-            List<TrackUtils.TvShowEpisode> filteredEpisodes = new ArrayList<TrackUtils.TvShowEpisode>();
+            List<TrackUtils.TvShowEpisode> filteredEpisodes = new ArrayList<>();
             for (TrackUtils.TvShowEpisode episode : episodes) {
                 if (episode.isNewSeries()) {
                     episode.setId(null);
@@ -34,7 +34,7 @@ public class BrowseTvShowCommandHandler extends BrowseVideoCommandHandler {
             }
             return filteredEpisodes;
         } else if (seasonCount > 1) {
-            List<TrackUtils.TvShowEpisode> filteredEpisodes = new ArrayList<TrackUtils.TvShowEpisode>();
+            List<TrackUtils.TvShowEpisode> filteredEpisodes = new ArrayList<>();
             for (TrackUtils.TvShowEpisode episode : episodes) {
                 if (episode.isNewSeason()) {
                     episode.setId(null);

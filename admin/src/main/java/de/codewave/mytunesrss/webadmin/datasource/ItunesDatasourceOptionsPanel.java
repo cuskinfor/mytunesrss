@@ -43,7 +43,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myIgnoreItunesPlaylists.addContainerProperty("check", CheckBox.class, null, "", null, null);
         myIgnoreItunesPlaylists.addContainerProperty("type", ItunesPlaylistType.class, null, getBundleString("datasourceOptionsPanel.ignoreItunesPlaylistType"), null, null);
         myIgnoreItunesPlaylists.setEditable(false);
-        List<ItunesPlaylistType> types = new ArrayList<ItunesPlaylistType>(Arrays.asList(ItunesPlaylistType.values()));
+        List<ItunesPlaylistType> types = new ArrayList<>(Arrays.asList(ItunesPlaylistType.values()));
         types.remove(ItunesPlaylistType.Master); // "Master" type is always ignored
         Collections.sort(types, new Comparator<ItunesPlaylistType>() {
             public int compare(ItunesPlaylistType o1, ItunesPlaylistType o2) {
@@ -87,7 +87,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
                 myConfig.addIgnorePlaylist(type);
             }
         }
-        List<String> patterns = new ArrayList<String>();
+        List<String> patterns = new ArrayList<>();
         for (Object itemId : myTrackImagePatternsTable.getItemIds()) {
             patterns.add((String) getTableCellPropertyValue(myTrackImagePatternsTable, itemId, "pattern"));
         }

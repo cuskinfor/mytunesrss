@@ -28,7 +28,6 @@ import de.codewave.vaadin.component.SelectWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -158,7 +157,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private void refreshFlashPlayers() {
         myFlashPlayersTable.removeAllItems();
-        List<FlashPlayerConfig> flashPlayers = new ArrayList<FlashPlayerConfig>(MyTunesRss.CONFIG.getFlashPlayers());
+        List<FlashPlayerConfig> flashPlayers = new ArrayList<>(MyTunesRss.CONFIG.getFlashPlayers());
         Collections.sort(flashPlayers);
         for (FlashPlayerConfig flashPlayer : flashPlayers) {
             File jukeboxDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer/" + flashPlayer.getId());
@@ -172,7 +171,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private void refreshLanguages() {
         myLanguagesTable.removeAllItems();
-        List<LanguageDefinition> languages = new ArrayList<LanguageDefinition>(AddonsUtils.getLanguages(false));
+        List<LanguageDefinition> languages = new ArrayList<>(AddonsUtils.getLanguages(false));
         Collections.sort(languages, new Comparator<LanguageDefinition>() {
             public int compare(LanguageDefinition languageDefinition1, LanguageDefinition languageDefinition2) {
                 Locale adminLocale = AddonsConfigPanel.this.getApplication().getLocale();
@@ -206,7 +205,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
     private void refreshThemes() {
         myThemesTable.removeAllItems();
-        List<ThemeDefinition> themes = new ArrayList<ThemeDefinition>(AddonsUtils.getThemes(false));
+        List<ThemeDefinition> themes = new ArrayList<>(AddonsUtils.getThemes(false));
         Collections.sort(themes);
         boolean isDefault = StringUtils.isEmpty(MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
         Embedded checkmark = new Embedded("", new ThemeResource("img/checkmark.png"));
@@ -383,7 +382,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
             flashPlayerEditWindow.show(getWindow());
         } else if (clickEvent.getSource() == myAddLanguage) {
-            List<LocaleRepresentation> localeRepresentations = new ArrayList<LocaleRepresentation>();
+            List<LocaleRepresentation> localeRepresentations = new ArrayList<>();
             for (Locale locale : Locale.getAvailableLocales()) {
                 if (AddonsUtils.getUserLanguageFile(locale) == null) {
                     localeRepresentations.add(new LocaleRepresentation(locale));
@@ -629,7 +628,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
 
         @Override
         protected boolean isValidString(String s) {
-            Set<String> others = new HashSet<String>();
+            Set<String> others = new HashSet<>();
             for (Object itemId : mySitesTable.getItemIds()) {
                 if (StringUtils.equals((String) getTableCellPropertyValue(mySitesTable, itemId, myProperty), s)) {
                     String other = (String) getTableCellPropertyValue(mySitesTable, itemId, myOtherProperty);

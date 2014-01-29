@@ -53,7 +53,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private List<String> getTrackIds(Collection<Track> playlistContent) {
-        List<String> trackIds = new ArrayList<String>(playlistContent.size());
+        List<String> trackIds = new ArrayList<>(playlistContent.size());
         for (Track track : playlistContent) {
             trackIds.add(track.getId());
         }

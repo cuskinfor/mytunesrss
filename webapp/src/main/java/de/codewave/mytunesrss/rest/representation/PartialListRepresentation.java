@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.rest.representation;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 import java.util.List;
 
 /**

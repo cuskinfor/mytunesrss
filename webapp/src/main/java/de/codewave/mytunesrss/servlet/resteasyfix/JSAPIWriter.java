@@ -45,7 +45,7 @@ public class JSAPIWriter
 		copyResource("/codewave-resteasy-client.js", writer);
 		writer.println("// start JAX-RS API");
 		writer.println("REST.apiURL = '" + uri + "';");
-		Set<String> declaredPrefixes = new HashSet<String>();
+		Set<String> declaredPrefixes = new HashSet<>();
 		printService(writer, serviceRegistry, declaredPrefixes);
 	}
 

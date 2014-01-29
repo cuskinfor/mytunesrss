@@ -4,8 +4,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.StopWatch;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -55,8 +53,8 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
             StopWatch.start("Recreating genres help table");
             try {
                 List<Genre> genres = new FindGenreQuery(null, true, -1).execute(connection).getResults();
-                List<String> hiddenGenres = new ArrayList<String>();
-                List<String> genreNames = new ArrayList<String>();
+                List<String> hiddenGenres = new ArrayList<>();
+                List<String> genreNames = new ArrayList<>();
                 for (Genre genre : genres) {
                     genreNames.add(genre.getName());
                     if (genre.isHidden()) {

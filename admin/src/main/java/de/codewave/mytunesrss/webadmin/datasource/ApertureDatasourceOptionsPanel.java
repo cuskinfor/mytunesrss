@@ -5,23 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin.datasource;
 
-import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.ImageImportType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
-import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.webadmin.MainWindow;
-import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
-import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.OptionWindow;
-import de.codewave.vaadin.validation.ValidRegExpValidator;
-
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
 

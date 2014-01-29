@@ -110,7 +110,7 @@ public class VlcPlayer {
         }
     }
 
-    private List<Track> myTracks = new ArrayList<Track>();
+    private List<Track> myTracks = new ArrayList<>();
 
     private int myCurrent;
 
@@ -130,7 +130,7 @@ public class VlcPlayer {
 
     private BonjourServiceListener myAirplayListener;
 
-    private AtomicReference<HttpResponseStatus> myCurrentStatus = new AtomicReference<HttpResponseStatus>(newInitialStatus());
+    private AtomicReference<HttpResponseStatus> myCurrentStatus = new AtomicReference<>(newInitialStatus());
 
     private StatusUpdater myStatusUpdater = new StatusUpdater();
 
@@ -164,7 +164,7 @@ public class VlcPlayer {
                                 myVlcPort = serverSocket.getLocalPort();
                                 serverSocket.close();
                                 // process builder
-                                List<String> command = new ArrayList<String>();
+                                List<String> command = new ArrayList<>();
                                 command.add(MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath());
                                 command.add("--intf=http");
                                 command.add("--http-host=" + myVlcHost);
@@ -334,7 +334,7 @@ public class VlcPlayer {
     }
 
     public synchronized void setRaopTargets(String[] raopTargets) throws VlcPlayerException {
-        Set<String> trimmedTargets = new HashSet<String>();
+        Set<String> trimmedTargets = new HashSet<>();
         for (String raopTarget : raopTargets) {
             trimmedTargets.add(StringUtils.trimToEmpty(raopTarget));
         }
@@ -372,7 +372,7 @@ public class VlcPlayer {
     public synchronized void setTracks(List<Track> tracks) throws VlcPlayerException {
         clearPlaylist();
         LOGGER.debug("Setting playlist of " + tracks.size() + " tracks.");
-        myTracks = new ArrayList<Track>(tracks);
+        myTracks = new ArrayList<>(tracks);
     }
 
     public synchronized void addTracks(List<Track> tracks, boolean startPlaybackIfStopped) throws VlcPlayerException {
@@ -395,7 +395,7 @@ public class VlcPlayer {
                 }
             }
         }
-        return new ArrayList<HttpResponsePlaylist>();
+        return new ArrayList<>();
     }
 
     public synchronized void setVolume(int volume) throws VlcPlayerException {

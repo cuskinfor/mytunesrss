@@ -55,12 +55,12 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         }
     }
 
-    private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
+    private Set<ReplacementRule> myPathReplacements = new HashSet<>();
     private boolean myDeleteMissingFiles = true;
-    private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<ItunesPlaylistType>();
+    private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<>();
     private String myArtistDropWords;
     private String myDisabledMp4Codecs = "";
-    private List<String> myTrackImagePatterns = new ArrayList<String>();
+    private List<String> myTrackImagePatterns = new ArrayList<>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private String myMusicFolderFilename;
     private boolean myUseSingleImageInFolder = false;
@@ -72,12 +72,12 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
 
     public ItunesDatasourceConfig(ItunesDatasourceConfig source) {
         super(source);
-        myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
-        myIgnorePlaylists = new HashSet<ItunesPlaylistType>(source.getIgnorePlaylists());
+        myPathReplacements = new HashSet<>(source.getPathReplacements());
+        myIgnorePlaylists = new HashSet<>(source.getIgnorePlaylists());
         myDeleteMissingFiles = source.isDeleteMissingFiles();
         myArtistDropWords = source.getArtistDropWords();
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
-        myTrackImagePatterns = new ArrayList<String>(source.getTrackImagePatterns());
+        myTrackImagePatterns = new ArrayList<>(source.getTrackImagePatterns());
         myTrackImageImportType = source.getTrackImageImportType();
         myMusicFolderFilename = extractMusicFolderFilename();
         myUseSingleImageInFolder = source.isUseSingleImageInFolder();
@@ -89,7 +89,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     public Set<ReplacementRule> getPathReplacements() {
-        return new HashSet<ReplacementRule>(myPathReplacements);
+        return new HashSet<>(myPathReplacements);
     }
 
     public void clearPathReplacements() {
@@ -109,7 +109,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     public Set<ItunesPlaylistType> getIgnorePlaylists() {
-        return new HashSet<ItunesPlaylistType>(myIgnorePlaylists);
+        return new HashSet<>(myIgnorePlaylists);
     }
 
     public void addIgnorePlaylist(ItunesPlaylistType type) {
@@ -141,11 +141,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     public List<String> getTrackImagePatterns() {
-        return new ArrayList<String>(myTrackImagePatterns);
+        return new ArrayList<>(myTrackImagePatterns);
     }
 
     public void setTrackImagePatterns(List<String> trackImageMappings) {
-        this.myTrackImagePatterns = new ArrayList<String>(trackImageMappings);
+        this.myTrackImagePatterns = new ArrayList<>(trackImageMappings);
     }
 
     public ImageImportType getTrackImageImportType() {
@@ -157,7 +157,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     public File getAutoAddToItunesFolder() {
-        List<CompiledReplacementRule> pathReplacements = new ArrayList<CompiledReplacementRule>();
+        List<CompiledReplacementRule> pathReplacements = new ArrayList<>();
         for (ReplacementRule pathReplacement : getPathReplacements()) {
             pathReplacements.add(new CompiledReplacementRule(pathReplacement));
         }
@@ -180,7 +180,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     public List<FileType> getDefaultFileTypes() {
-        List<FileType> types = new ArrayList<FileType>();
+        List<FileType> types = new ArrayList<>();
         types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
         types.add(new FileType(true, "m4p", "audio/x-m4p", MediaType.Audio, true));
         types.add(new FileType(true, "mp4", "video/x-mp4", MediaType.Video, false));

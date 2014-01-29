@@ -9,9 +9,6 @@ import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 import javax.servlet.ServletException;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class DelSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCommandHandler {
 

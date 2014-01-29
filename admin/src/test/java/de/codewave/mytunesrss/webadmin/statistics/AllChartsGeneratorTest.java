@@ -77,7 +77,7 @@ public class AllChartsGeneratorTest {
     }
 
     private Map<Day, List<StatisticsEvent>> createEmptyEventsPerDayMap() {
-        Map<Day, List<StatisticsEvent>> eventsPerDay = new HashMap<Day, List<StatisticsEvent>>();
+        Map<Day, List<StatisticsEvent>> eventsPerDay = new HashMap<>();
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(myFrom);
         while (calendar.getTime().compareTo(new Date()) <= 0) {

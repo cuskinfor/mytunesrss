@@ -13,7 +13,6 @@ import de.codewave.mytunesrss.datastore.statement.SavePhotoAlbumStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandlerListener;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,7 @@ public abstract class AlbumListener implements PListHandlerListener {
         myWatchdogThread = watchdogThread;
         myQueue = queue;
         myLibraryListener = libraryListener;
-        myPhotoAlbumIds = new HashSet<String>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
+        myPhotoAlbumIds = new HashSet<>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
     public boolean beforeDictPut(Map dict, String key, Object value) {
@@ -67,7 +66,7 @@ public abstract class AlbumListener implements PListHandlerListener {
             String albumId = getAlbumId(album);
             if (albumId != null) {
                 String albumName = getAlbumName(album);
-                List<String> photos = new ArrayList<String>();
+                List<String> photos = new ArrayList<>();
                 for (String id : (List<String>) album.get("KeyList")) {
                     String persId = myPhotoIdToPersId.get(id);
                     if (StringUtils.isNotBlank(persId)) {

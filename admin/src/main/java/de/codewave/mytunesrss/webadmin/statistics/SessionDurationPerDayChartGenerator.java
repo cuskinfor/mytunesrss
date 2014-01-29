@@ -54,7 +54,7 @@ public class SessionDurationPerDayChartGenerator extends TimeSeriesCharGenerator
     }
 
     private long getMedian(List<StatisticsEvent> events) {
-        List<Long> durations = new ArrayList<Long>();
+        List<Long> durations = new ArrayList<>();
         for (StatisticsEvent event : events) {
             durations.add(Long.valueOf(((SessionEndEvent)event).myDuration / 1000)); // seconds
         }

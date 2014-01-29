@@ -43,7 +43,7 @@ public class AddonsUtils {
     }
 
     public static Collection<ThemeDefinition> getThemes(boolean builtinThemes) {
-        Set<ThemeDefinition> themeSet = new HashSet<ThemeDefinition>();
+        Set<ThemeDefinition> themeSet = new HashSet<>();
         try {
             File themesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes");
             if (!themesDir.exists() && builtinThemes) {
@@ -59,7 +59,7 @@ public class AddonsUtils {
                 LOG.error("Problem reading existing themes.", e);
             }
         }
-        List<ThemeDefinition> themes = new ArrayList<ThemeDefinition>(themeSet);
+        List<ThemeDefinition> themes = new ArrayList<>(themeSet);
         Collections.sort(themes, new Comparator<ThemeDefinition>() {
             public int compare(ThemeDefinition o1, ThemeDefinition o2) {
                 return o1.getName().compareTo(o2.getName());
@@ -77,7 +77,7 @@ public class AddonsUtils {
     }
 
     private static Collection<ThemeDefinition> getThemesFromDir(File themesDir) throws IOException {
-        Collection<ThemeDefinition> themes = new HashSet<ThemeDefinition>();
+        Collection<ThemeDefinition> themes = new HashSet<>();
         if (themesDir.isDirectory()) {
             String[] themeFileNames = themesDir.list(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
@@ -99,7 +99,7 @@ public class AddonsUtils {
     }
 
     public static Collection<LanguageDefinition> getLanguages(boolean builtinLanguages) {
-        Set<LanguageDefinition> languageSet = new HashSet<LanguageDefinition>();
+        Set<LanguageDefinition> languageSet = new HashSet<>();
         try {
             File languagesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages");
             if (!languagesDir.exists() && builtinLanguages) {
@@ -117,7 +117,7 @@ public class AddonsUtils {
                 LOG.error("Problem reading existing themes and languages.", e);
             }
         }
-        List<LanguageDefinition> languages = new ArrayList<LanguageDefinition>(languageSet);
+        List<LanguageDefinition> languages = new ArrayList<>(languageSet);
         Collections.sort(languages, new Comparator<LanguageDefinition>() {
             public int compare(LanguageDefinition o1, LanguageDefinition o2) {
                 return o1.getCode().compareTo(o2.getCode());
@@ -135,7 +135,7 @@ public class AddonsUtils {
     }
 
     private static Collection<LanguageDefinition> getLanguagesFromDir(File languagesDir) throws IOException {
-        Collection<LanguageDefinition> languages = new HashSet<LanguageDefinition>();
+        Collection<LanguageDefinition> languages = new HashSet<>();
         if (languagesDir.isDirectory()) {
             String[] languageFileNames = languagesDir.list(new FilenameFilter() {
                 public boolean accept(File dir, String name) {
@@ -421,7 +421,7 @@ public class AddonsUtils {
 
     private static List<String> getLanguageFileNames(Locale locale) {
         String[] codes = locale.toString().split("_");
-        List<String> fileNames = new ArrayList<String>();
+        List<String> fileNames = new ArrayList<>();
         if (codes.length == 3) {
             fileNames.add("MyTunesRssWeb_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties");
         }
@@ -444,7 +444,7 @@ public static enum AddFileResult {
             if (httpClient.executeMethod(method) == 200) {
                 List<LanguageDefinition> definitions = LanguageDefinition.deserializeList(method.getResponseBodyAsStream());
                 ArtifactVersion appVersion = new DefaultArtifactVersion(MyTunesRss.VERSION);
-                Map<String, LanguageDefinition> bestDefinitions = new HashMap<String, LanguageDefinition>();
+                Map<String, LanguageDefinition> bestDefinitions = new HashMap<>();
                 for (Iterator<LanguageDefinition> iter = definitions.iterator(); iter.hasNext(); ) {
                     LanguageDefinition definition = iter.next();
                     DefaultArtifactVersion langVersion = new DefaultArtifactVersion(definition.getVersion());
@@ -468,7 +468,7 @@ public static enum AddFileResult {
         HttpClient client = MyTunesRssUtils.createHttpClient();
         PostMethod postMethod = new PostMethod(STORE_LANG_URI);
         try {
-            List<Part> parts = new ArrayList<Part>();
+            List<Part> parts = new ArrayList<>();
             if (languageDefinition.getId() != null && languageDefinition.getVersion().equals(MyTunesRss.VERSION)) {
                 parts.add(new StringPart("id", Integer.toString(languageDefinition.getId())));
             }

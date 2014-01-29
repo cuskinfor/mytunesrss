@@ -7,8 +7,6 @@ package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.FileType;
-import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.webadmin.MainWindow;
@@ -121,7 +119,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setArtistDropWords(myArtistDropWords.getStringValue(""));
         myConfig.setId3v2TrackComment(myId3v2TrackComment.getStringValue(""));
         myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(""));
-        List<String> patterns = new ArrayList<String>();
+        List<String> patterns = new ArrayList<>();
         for (Object itemId : myTrackImagePatternsTable.getItemIds()) {
             patterns.add((String) getTableCellPropertyValue(myTrackImagePatternsTable, itemId, "pattern"));
         }

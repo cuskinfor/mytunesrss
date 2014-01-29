@@ -21,7 +21,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class MainWindow extends Window {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MainWindow.class);
-    
+
     public MainWindow(String caption, Panel panel) {
         super(caption);
         getContent().setWidth(100, Sizeable.UNITS_PERCENTAGE);
@@ -77,9 +77,9 @@ public class MainWindow extends Window {
             }
         }.show(this);
     }
-    
-    private AtomicReference<MessageWindow> myBlockingWindow = new AtomicReference<MessageWindow>();
-    
+
+    private AtomicReference<MessageWindow> myBlockingWindow = new AtomicReference<>();
+
     public void showBlockingMessage(String messageKey, Object... parameters) {
         synchronized (myBlockingWindow) {
             hideBlockingMessage();
@@ -89,11 +89,11 @@ public class MainWindow extends Window {
                     // intentionally left blank
                 }
             });
-            LOGGER.debug("Showing blocking message \"" + messageKey + "\".");     
-            myBlockingWindow.get().show(this);            
+            LOGGER.debug("Showing blocking message \"" + messageKey + "\".");
+            myBlockingWindow.get().show(this);
         }
     }
-    
+
     public void hideBlockingMessage() {
         synchronized (myBlockingWindow) {
             if (myBlockingWindow.get() != null) {

@@ -27,7 +27,7 @@ public class TopUserSessionChartGenerator extends TopChartGenerator {
 
     @Override
     protected Map<String, MutableLong> getItemsWithCount(Map<Day, List<StatisticsEvent>> eventsPerDay) throws SQLException {
-        Map<String, MutableLong> itemsWithCount = new HashMap<String, MutableLong>();
+        Map<String, MutableLong> itemsWithCount = new HashMap<>();
         for (List<StatisticsEvent> eventList : eventsPerDay.values()) {
             for (StatisticsEvent event : eventList) {
                 String user = ((SessionEndEvent)event).myUser;

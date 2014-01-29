@@ -10,7 +10,6 @@ import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +71,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     public FlashPlayerEditPanel(AddonsConfigPanel addonsConfigPanel, FlashPlayerConfig flashPlayerConfig) {
         myAddonsConfigPanel = addonsConfigPanel;
         myFlashPlayerConfig = flashPlayerConfig;
-        myIllegalNames = new ArrayList<String>();
+        myIllegalNames = new ArrayList<>();
         for (FlashPlayerConfig config : MyTunesRss.CONFIG.getFlashPlayers()) {
             myIllegalNames.add(config.getName().toLowerCase(Locale.ENGLISH));
         }

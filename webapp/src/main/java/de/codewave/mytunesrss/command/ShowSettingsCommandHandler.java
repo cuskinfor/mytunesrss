@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.addons.ThemeDefinition;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang3.StringUtils;
 

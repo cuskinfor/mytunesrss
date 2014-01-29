@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.rest;
 
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
@@ -15,9 +14,7 @@ import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,8 +28,8 @@ import java.util.TimeZone;
 @ServerInterceptor
 public class CacheControlInterceptor implements PreProcessInterceptor, PostProcessInterceptor {
 
-    private static final ThreadLocal<Long> LAST_MODIFIED = new ThreadLocal<Long>();
-    private static final ThreadLocal<Long> IF_MODIFIED_SINCE = new ThreadLocal<Long>();
+    private static final ThreadLocal<Long> LAST_MODIFIED = new ThreadLocal<>();
+    private static final ThreadLocal<Long> IF_MODIFIED_SINCE = new ThreadLocal<>();
     private static final ThreadLocal<DateFormat> DATE_FORMAT = new ThreadLocal<DateFormat>() {
         @Override
         protected DateFormat initialValue() {
@@ -41,11 +38,11 @@ public class CacheControlInterceptor implements PreProcessInterceptor, PostProce
             return format;
         }
     };
-    
+
     public static void setLastModified(long lastModified) {
         LAST_MODIFIED.set(lastModified);
     }
-    
+
     public static Long getIfModifiedSince() {
         return IF_MODIFIED_SINCE.get();
     }

@@ -26,7 +26,7 @@ public class TrackUtils {
         enhancedTracks.setTracks(new ArrayList<EnhancedTrack>(count));
         String lastAlbum = TrackUtils.class.getName();// we need some dummy name
         String lastArtist = TrackUtils.class.getName();// we need some dummy name
-        List<EnhancedTrack> sectionTracks = new ArrayList<EnhancedTrack>();
+        List<EnhancedTrack> sectionTracks = new ArrayList<>();
         boolean variousPerSection = false;
         int sectionCount = 0;
         for (int i = first; i < first + count && i < tracks.size(); i++) {
@@ -73,11 +73,11 @@ public class TrackUtils {
     }
 
     public static List<TvShowEpisode> getTvShowEpisodes(DataStoreSession transaction, Collection<Track> tracks) {
-        List<TvShowEpisode> episodes = new ArrayList<TvShowEpisode>(tracks.size());
+        List<TvShowEpisode> episodes = new ArrayList<>(tracks.size());
         String lastSeries = TrackUtils.class.getName(); // we need some dummy name
         Integer lastSeason = null;
-        List<TvShowEpisode> seriesEpisodes = new ArrayList<TvShowEpisode>();
-        List<TvShowEpisode> seasonEpisodes = new ArrayList<TvShowEpisode>();
+        List<TvShowEpisode> seriesEpisodes = new ArrayList<>();
+        List<TvShowEpisode> seasonEpisodes = new ArrayList<>();
         for (Track track : tracks) {
             TvShowEpisode episode = new TvShowEpisode(track);
             boolean newSeries = !lastSeries.equalsIgnoreCase(track.getSeries());

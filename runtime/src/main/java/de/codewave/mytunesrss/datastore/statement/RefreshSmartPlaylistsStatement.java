@@ -19,7 +19,7 @@ import java.util.*;
  * Statement for updating all smart playlists.
  */
 public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
-   
+
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
     private static final long MILLIS_PER_DAY = 1000L * 3600L * 24L;
     public enum UpdateType {
@@ -99,7 +99,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     statement.execute();
                 }
             }
-            Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+            Map<String, Boolean> conditionals = new HashMap<>();
             conditionals.put("order_default", true);
             conditionals.put("lucene", SmartInfo.isLuceneCriteria(smartInfos));
             conditionals.put("nolucene", !SmartInfo.isLuceneCriteria(smartInfos));
@@ -201,7 +201,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         // nothing in all other cases
                 }
             }
-            Collection<String> tracks = new LinkedHashSet<String>();
+            Collection<String> tracks = new LinkedHashSet<>();
             DataStoreQuery<DataStoreQuery.QueryResult<String>> dataStoreQuery = new DataStoreQuery<DataStoreQuery.QueryResult<String>>() {
                 @Override
                 public QueryResult<String> execute(Connection connection) throws SQLException {

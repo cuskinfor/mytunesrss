@@ -10,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +26,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
 
     public static final FlashPlayerConfig ABSOLUTE_DEFAULT = JW46;
 
-    private static final Set<FlashPlayerConfig> DEFAULTS = new HashSet<FlashPlayerConfig>();
+    private static final Set<FlashPlayerConfig> DEFAULTS = new HashSet<>();
 
     static {
         DEFAULTS.add(JW316);
@@ -57,7 +56,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     }
 
     public static Set<FlashPlayerConfig> getDefaults() {
-        HashSet<FlashPlayerConfig> defaults = new HashSet<FlashPlayerConfig>();
+        HashSet<FlashPlayerConfig> defaults = new HashSet<>();
         for (FlashPlayerConfig config : DEFAULTS) {
             defaults.add((FlashPlayerConfig) config.clone());
         }

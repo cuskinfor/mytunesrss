@@ -4,8 +4,6 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 

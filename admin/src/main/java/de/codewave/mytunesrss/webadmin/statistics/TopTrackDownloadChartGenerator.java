@@ -28,14 +28,14 @@ public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
     }
 
     protected List<Track> getFlatTrackList(Map<Day, List<StatisticsEvent>> eventsPerDay) throws SQLException {
-        List<String> trackIds = new ArrayList<String>();
+        List<String> trackIds = new ArrayList<>();
         for (List<StatisticsEvent> eventList : eventsPerDay.values()) {
             for (StatisticsEvent event : eventList) {
                 trackIds.add(((DownloadEvent)event).myTrackId);
             }
         }
-        Set<String> uniqueTrackIds = new HashSet<String>(trackIds);
-        Map<String, Track> trackMapping = new HashMap<String, Track>();
+        Set<String> uniqueTrackIds = new HashSet<>(trackIds);
+        Map<String, Track> trackMapping = new HashMap<>();
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
             for (Track track : tx.executeQuery(FindTrackQuery.getForIds(uniqueTrackIds.toArray(new String[uniqueTrackIds.size()]))).getResults()) {
@@ -44,7 +44,7 @@ public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
         } finally {
             tx.rollback();
         }
-        List<Track> tracks = new ArrayList<Track>();
+        List<Track> tracks = new ArrayList<>();
         for (String trackId : trackIds) {
             tracks.add(trackMapping.get(trackId));
         }
@@ -52,7 +52,7 @@ public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
     }
 
     protected Map<String, MutableLong> getItemsWithCount(Map<Day, List<StatisticsEvent>> eventsPerDay) throws SQLException {
-        Map<String, MutableLong> items = new HashMap<String, MutableLong>();
+        Map<String, MutableLong> items = new HashMap<>();
         for (Track track : getFlatTrackList(eventsPerDay)) {
             if (track != null) {
                 String item = getItem(track);

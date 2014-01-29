@@ -117,7 +117,7 @@ public class LastFmUtils {
                 PostMethod postMethod = new PostMethod(session.getSubmissionUrl());
                 postMethod.getParams().setContentCharset("UTF-8");
                 postMethod.setParameter("s", session.getSessionId());
-                List<LastFmSubmission> submissions = new ArrayList<LastFmSubmission>();
+                List<LastFmSubmission> submissions = new ArrayList<>();
                 for (LastFmSubmission submission = session.pollSubmission(); submission != null && index < 50;
                      submission = session.pollSubmission()) {
                     if (submission.getTrack().getTime() >= 30 && submission.getTrack().getMediaType() == MediaType.Audio) {// only track with at least 30 seconds

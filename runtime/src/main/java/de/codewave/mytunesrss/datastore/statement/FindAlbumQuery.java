@@ -62,7 +62,7 @@ public class FindAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Al
     }
 
     public QueryResult<Album> execute(Connection connection) throws SQLException {
-        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
         conditionals.put("filter", StringUtils.isNotBlank(myFilter));
         conditionals.put("artist", StringUtils.isNotBlank(myArtist) && !myMatchAlbumArtist);

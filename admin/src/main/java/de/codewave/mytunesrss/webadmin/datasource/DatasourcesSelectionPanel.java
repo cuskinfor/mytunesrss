@@ -99,7 +99,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
     protected abstract void onContinue(Collection<DatasourceConfig> datasources, boolean ignoreTimestamps);
 
     public Collection<DatasourceConfig> getSelectedDatasources() {
-        Collection<DatasourceConfig> selectedDatasources = new HashSet<DatasourceConfig>();
+        Collection<DatasourceConfig> selectedDatasources = new HashSet<>();
         for (Object itemId : myDataSources.getItemIds()) {
             DatasourceConfig config = (DatasourceConfig) itemId;
             if ((Boolean) getTableCellPropertyValue(myDataSources, itemId, "selected")) {

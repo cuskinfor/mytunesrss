@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.itunes;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Set;
 
 public class MissingItunesFiles {
     public static final int MAX_MISSING_FILE_PATHS = 100;
@@ -16,7 +15,7 @@ public class MissingItunesFiles {
     private Collection<String> myPaths;
 
     public MissingItunesFiles() {
-        myPaths = new HashSet<String>();
+        myPaths = new HashSet<>();
     }
 
     public MissingItunesFiles(long count, Collection<String> paths) {

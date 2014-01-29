@@ -12,7 +12,6 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
-import de.codewave.mytunesrss.rest.representation.TvShowRepresentation;
 import de.codewave.mytunesrss.rest.representation.TvShowSeasonRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -56,8 +55,8 @@ public class TvShowResource extends RestResource {
             @PathParam("show") String show
     ) throws SQLException {
         DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowSeriesEpisodes(MyTunesRssWebUtils.getAuthUser(request), show));
-        Map<Integer, MutableInt> episodesPerSeason = new HashMap<Integer, MutableInt>();
-        Map<Integer, String> imageHashPerEpisode = new HashMap<Integer, String>();
+        Map<Integer, MutableInt> episodesPerSeason = new HashMap<>();
+        Map<Integer, String> imageHashPerEpisode = new HashMap<>();
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
             if (!imageHashPerEpisode.containsKey(track.getSeason())) {
                 imageHashPerEpisode.put(track.getSeason(), track.getImageHash());
@@ -68,7 +67,7 @@ public class TvShowResource extends RestResource {
                 episodesPerSeason.put(track.getSeason(), new MutableInt(1));
             }
         }
-        List<TvShowSeasonRepresentation> seasons = new ArrayList<TvShowSeasonRepresentation>();
+        List<TvShowSeasonRepresentation> seasons = new ArrayList<>();
         for (Map.Entry<Integer, MutableInt> entry : episodesPerSeason.entrySet()) {
             TvShowSeasonRepresentation representation = new TvShowSeasonRepresentation();
             representation.setName(entry.getKey());

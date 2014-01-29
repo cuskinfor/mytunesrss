@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.SmartFieldType;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 
 import javax.servlet.ServletException;
@@ -16,7 +15,7 @@ public class AddSmartPlaylistCriteriaCommandHandler extends SaveSmartPlaylistCom
 
     @Override
     public void executeAuthorized() throws IOException, ServletException {
-        Map<String, String> newModel = new HashMap<String, String>();
+        Map<String, String> newModel = new HashMap<>();
         String fieldType = getRequestParameter("newFieldType", "");
         if (fieldType.endsWith(".not")) {
             newModel.put("fieldType", fieldType.substring(0, fieldType.length() - ".not".length()));

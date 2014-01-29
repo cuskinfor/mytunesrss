@@ -205,12 +205,12 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         MyTunesRss.CONFIG.setDatabaseConnectionOptions(myConnectionOptions.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseUser(myDatabaseUser.getStringValue(null));
         MyTunesRss.CONFIG.setDatabasePassword(myDatabasePassword.getStringValue(null));
-        List<String> updateTriggers = new ArrayList<String>();
+        List<String> updateTriggers = new ArrayList<>();
         for (Object itemId : myUpdateTriggers.getItemIds()) {
             updateTriggers.add("0 " + getTableCellString(myUpdateTriggers, itemId, "minute") + " " + getTableCellString(myUpdateTriggers, itemId, "hour") + " ? * " + getTableCellString(myUpdateTriggers, itemId, "day"));
         }
         MyTunesRss.CONFIG.setDatabaseUpdateTriggers(updateTriggers);
-        List<String> backupTriggers = new ArrayList<String>();
+        List<String> backupTriggers = new ArrayList<>();
         for (Object itemId : myBackupTriggers.getItemIds()) {
             backupTriggers.add("0 " + getTableCellString(myBackupTriggers, itemId, "minute") + " " + getTableCellString(myBackupTriggers, itemId, "hour") + " ? * " + getTableCellString(myBackupTriggers, itemId, "day"));
         }

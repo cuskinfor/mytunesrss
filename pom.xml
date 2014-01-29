@@ -91,7 +91,6 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/assembly/system-independent.xml</descriptor>
-                                        <descriptor>src/assembly/macosx.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                                 <goals>
@@ -172,6 +171,7 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/assembly/macosx.xml</descriptor>
+                                        <descriptor>src/assembly/macosx-appstore.xml</descriptor>
                                         <descriptor>src/assembly/system-independent.xml</descriptor>
                                         <descriptor>src/assembly/windows.xml</descriptor>
                                     </descriptors>

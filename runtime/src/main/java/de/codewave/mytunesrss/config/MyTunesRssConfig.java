@@ -49,10 +49,10 @@ public class MyTunesRssConfig {
     private int myPort;
     private String myServerName = "MyTunesRSS";
     private boolean myAvailableOnLocalNet = true;
-    private List<DatasourceConfig> myDatasources = new ArrayList<DatasourceConfig>();
+    private List<DatasourceConfig> myDatasources = new ArrayList<>();
     private boolean myCheckUpdateOnStart = true;
     private String myVersion;
-    private Collection<User> myUsers = new HashSet<User>();
+    private Collection<User> myUsers = new HashSet<>();
     private String mySupportName = "";
     private String mySupportEmail = "";
     private String myProxyHost = "";
@@ -71,8 +71,8 @@ public class MyTunesRssConfig {
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
     private String myUpdateIgnoreVersion;
-    private List<String> myDatabaseUpdateTriggers = new ArrayList<String>();
-    private List<String> myDatabaseBackupTriggers = new ArrayList<String>();
+    private List<String> myDatabaseUpdateTriggers = new ArrayList<>();
+    private List<String> myDatabaseBackupTriggers = new ArrayList<>();
     private DatabaseType myDatabaseType;
     private String myDatabaseConnection;
     private String myDatabaseUser;
@@ -108,8 +108,8 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnSkippedDatabaseUpdate;
     private int myStatisticKeepTime = 60;
     private String myCryptedCreationTime;
-    private Collection<TranscoderConfig> myTranscoderConfigs = new ArrayList<TranscoderConfig>();
-    private List<ExternalSiteDefinition> myExternalSites = new ArrayList<ExternalSiteDefinition>();
+    private Collection<TranscoderConfig> myTranscoderConfigs = new ArrayList<>();
+    private List<ExternalSiteDefinition> myExternalSites = new ArrayList<>();
     private String myAutoLogin;
     private boolean myDisableBrowser;
     private boolean myServerBrowserActive;
@@ -119,7 +119,7 @@ public class MyTunesRssConfig {
     private byte[] myAdminPasswordHash;
     private String myAdminHost;
     private int myAdminPort;
-    private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<FlashPlayerConfig>();
+    private Set<FlashPlayerConfig> myFlashPlayers = new HashSet<>();
     private boolean myInitialWizard;
     private boolean myUpnpAdmin;
     private boolean myUpnpUserHttp;
@@ -149,7 +149,7 @@ public class MyTunesRssConfig {
     private boolean myUserAccessLogExtended;
     private boolean myAdminAccessLogExtended;
     private String myAccessLogTz;
-    private Map<String, String> myGenreMappings = new HashMap<String, String>();
+    private Map<String, String> myGenreMappings = new HashMap<>();
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -158,7 +158,7 @@ public class MyTunesRssConfig {
      * @return A shallow copy of the list of data source configs.
      */
     public synchronized List<DatasourceConfig> getDatasources() {
-        return new ArrayList<DatasourceConfig>(myDatasources);
+        return new ArrayList<>(myDatasources);
     }
 
     /**
@@ -179,7 +179,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized void setDatasources(List<DatasourceConfig> datasources) {
-        myDatasources = new ArrayList<DatasourceConfig>(datasources);
+        myDatasources = new ArrayList<>(datasources);
         Collections.sort(myDatasources);
     }
 
@@ -282,7 +282,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized Collection<User> getUsers() {
-        Collection<User> users = new HashSet<User>();
+        Collection<User> users = new HashSet<>();
         for (User user : myUsers) {
             users.add(user);
         }
@@ -696,19 +696,19 @@ public class MyTunesRssConfig {
     }
 
     public synchronized Collection<TranscoderConfig> getTranscoderConfigs() {
-        return myTranscoderConfigs != null ? new ArrayList<TranscoderConfig>(myTranscoderConfigs) : new ArrayList<TranscoderConfig>();
+        return myTranscoderConfigs != null ? new ArrayList<>(myTranscoderConfigs) : new ArrayList<TranscoderConfig>();
     }
 
     public synchronized void setTranscoderConfigs(Collection<TranscoderConfig> configs) {
-        myTranscoderConfigs = configs != null ? new ArrayList<TranscoderConfig>(configs) : new ArrayList<TranscoderConfig>();
+        myTranscoderConfigs = configs != null ? new ArrayList<>(configs) : new ArrayList<TranscoderConfig>();
     }
 
     public synchronized List<ExternalSiteDefinition> getExternalSites() {
-        return new ArrayList<ExternalSiteDefinition>(myExternalSites);
+        return new ArrayList<>(myExternalSites);
     }
 
     public synchronized List<ExternalSiteDefinition> getExternalSites(String type) {
-        List<ExternalSiteDefinition> result = new ArrayList<ExternalSiteDefinition>();
+        List<ExternalSiteDefinition> result = new ArrayList<>();
         for (ExternalSiteDefinition def : myExternalSites) {
             if (StringUtils.equals(type, def.getType())) {
                 result.add(def);
@@ -803,7 +803,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized Set<FlashPlayerConfig> getFlashPlayers() {
-        return new HashSet<FlashPlayerConfig>(myFlashPlayers);
+        return new HashSet<>(myFlashPlayers);
     }
 
     public synchronized boolean isFlashPlayer() {
@@ -1033,7 +1033,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized Map<String, String> getGenreMappings() {
-        return new HashMap<String, String>(myGenreMappings);
+        return new HashMap<>(myGenreMappings);
     }
 
     public synchronized String getGenreMapping(String fromGenre) {
@@ -1177,12 +1177,12 @@ public class MyTunesRssConfig {
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
         Iterator<JXPathContext> updateTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database");
-        myDatabaseUpdateTriggers = new ArrayList<String>();
+        myDatabaseUpdateTriggers = new ArrayList<>();
         while (updateTriggerIterator.hasNext()) {
             myDatabaseUpdateTriggers.add(JXPathUtils.getStringValue(updateTriggerIterator.next(), ".", ""));
         }
         Iterator<JXPathContext> backupTriggerIterator = JXPathUtils.getContextIterator(settings, "crontriggers/database-backup");
-        myDatabaseBackupTriggers = new ArrayList<String>();
+        myDatabaseBackupTriggers = new ArrayList<>();
         while (backupTriggerIterator.hasNext()) {
             myDatabaseBackupTriggers.add(JXPathUtils.getStringValue(backupTriggerIterator.next(), ".", ""));
         }
@@ -1222,13 +1222,13 @@ public class MyTunesRssConfig {
             // intentionally left blank; keep default
         }
         Iterator<JXPathContext> transcoderConfigIterator = JXPathUtils.getContextIterator(settings, "transcoders/config");
-        myTranscoderConfigs = new ArrayList<TranscoderConfig>();
+        myTranscoderConfigs = new ArrayList<>();
         while (transcoderConfigIterator.hasNext()) {
             JXPathContext transcoderConfigContext = transcoderConfigIterator.next();
             myTranscoderConfigs.add(new TranscoderConfig(transcoderConfigContext));
         }
         Iterator<JXPathContext> externalSitesIterator = JXPathUtils.getContextIterator(settings, "external-sites/site");
-        myExternalSites = new ArrayList<ExternalSiteDefinition>();
+        myExternalSites = new ArrayList<>();
         while (externalSitesIterator.hasNext()) {
             JXPathContext externalSiteContext = externalSitesIterator.next();
             String name = JXPathUtils.getStringValue(externalSiteContext, "name", null);
@@ -1326,7 +1326,7 @@ public class MyTunesRssConfig {
     }
 
     private void readDataSources(JXPathContext settings) {
-        List<DatasourceConfig> dataSources = new ArrayList<DatasourceConfig>();
+        List<DatasourceConfig> dataSources = new ArrayList<>();
         Iterator<JXPathContext> contextIterator = JXPathUtils.getContextIterator(settings, "datasources/datasource");
         while (contextIterator.hasNext()) {
             JXPathContext datasourceContext = contextIterator.next();
@@ -1449,7 +1449,7 @@ public class MyTunesRssConfig {
     }
 
     private void readFileTypes(JXPathContext settings, DatasourceConfig datasourceConfig) {
-        List<FileType> fileTypesList = new ArrayList<FileType>();
+        List<FileType> fileTypesList = new ArrayList<>();
         Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
         while (fileTypes != null && fileTypes.hasNext()) {
             JXPathContext fileTypeContext = fileTypes.next();
@@ -1468,7 +1468,7 @@ public class MyTunesRssConfig {
     }
 
     private List<String> readTrackImagePatterns(JXPathContext settings) {
-        List<String> patterns = new ArrayList<String>();
+        List<String> patterns = new ArrayList<>();
         Iterator<JXPathContext> trackImageMappingIterator = JXPathUtils.getContextIterator(settings, "track-image-patterns/pattern");
         while (trackImageMappingIterator.hasNext()) {
             JXPathContext mappingContext = trackImageMappingIterator.next();
@@ -1945,7 +1945,7 @@ public class MyTunesRssConfig {
     }
 
     public synchronized List<DatasourceConfig> getUploadableDatasources() {
-        List<DatasourceConfig> uploadableDatasources = new ArrayList<DatasourceConfig>();
+        List<DatasourceConfig> uploadableDatasources = new ArrayList<>();
         for (DatasourceConfig datasource : getDatasources()) {
             if (datasource.isUploadable() && datasource.isUpload()) {
                 uploadableDatasources.add(DatasourceConfig.copy(datasource));

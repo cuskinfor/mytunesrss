@@ -7,9 +7,7 @@ package de.codewave.mytunesrss.servlet;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 /**
  * de.codewave.mytunesrss.servlet.ProgressRequestWrapper

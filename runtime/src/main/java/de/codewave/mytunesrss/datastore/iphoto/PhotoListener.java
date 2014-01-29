@@ -45,7 +45,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         myLibraryListener = libraryListener;
         myPhotoIdToPersId = photoIdToPersId;
         myPhotoTsUpdate = photoTsUpdate;
-        myPathReplacements = new HashSet<CompiledReplacementRule>();
+        myPathReplacements = new HashSet<>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
         }

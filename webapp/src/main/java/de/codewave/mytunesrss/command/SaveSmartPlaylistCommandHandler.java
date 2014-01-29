@@ -1,7 +1,5 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -21,7 +19,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         if (StringUtils.isBlank(getRequestParameter("smartPlaylist.playlist.name", null))) {
             addError(new BundleError("error.needPlaylistNameForSave"));
         }
-        Collection<SmartInfo> smartInfos = new ArrayList<SmartInfo>();
+        Collection<SmartInfo> smartInfos = new ArrayList<>();
         if (isError()) {
             handleError();
             return;
@@ -79,25 +77,25 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         getTransaction().executeStatement(new RefreshSmartPlaylistsStatement(smartInfos, statement.getPlaylistIdAfterExecute()));
         forward(MyTunesRssCommand.ShowPlaylistManager);
     }
-    
+
     private void handleError() throws IOException, ServletException {
         getRequest().setAttribute("smartPlaylist", createRedisplayModel(null, null));
         forward(MyTunesRssResource.EditSmartPlaylist);
     }
 
     protected Map<String, Object> createRedisplayModel(String remove, Map<String, String> add) throws IOException, ServletException {
-        Map<String, Object> playlistModel = new HashMap<String, Object>();
+        Map<String, Object> playlistModel = new HashMap<>();
         playlistModel.put("name", getRequestParameter("smartPlaylist.playlist.name", null));
         playlistModel.put("id", getRequestParameter("smartPlaylist.playlist.id", null));
         playlistModel.put("userPrivate", getRequestParameter("smartPlaylist.playlist.userPrivate", null));
-        List<Map<String, String>> smartInfos = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> smartInfos = new ArrayList<>();
         Enumeration<String> namesEnum = getRequest().getParameterNames();
         while (namesEnum.hasMoreElements()) {
             String name = namesEnum.nextElement();
             if (name.startsWith("type_")) {
                 String suffix = name.substring(5);
                 if (!suffix.equals(remove)) {
-                    Map<String, String> smartInfo = new HashMap<String, String>();
+                    Map<String, String> smartInfo = new HashMap<>();
                     smartInfo.put("fieldType", getRequestParameter("type_" + suffix, ""));
                     smartInfo.put("pattern", getRequestParameter("pattern_" + suffix, ""));
                     smartInfo.put("invert", getRequestParameter("invert_" + suffix, ""));
@@ -105,10 +103,10 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                 }
             }
         }
-        if (add != null) { 
+        if (add != null) {
             smartInfos.add(add);
         }
-        Map<String, Object> smartPlaylistModel = new HashMap<String, Object>();
+        Map<String, Object> smartPlaylistModel = new HashMap<>();
         smartPlaylistModel.put("smartInfos", smartInfos);
         smartPlaylistModel.put("playlist", playlistModel);
         sortModelSmartInfos(smartPlaylistModel);
@@ -116,7 +114,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private void sortModelSmartInfos(Map<String, Object> model) {
-        List<Map<String, String>> smartInfos = (List<Map<String, String>>) model.get("smartInfos"); 
+        List<Map<String, String>> smartInfos = (List<Map<String, String>>) model.get("smartInfos");
         Collections.sort(smartInfos, new Comparator<Map<String, String>>() {
             public int compare(Map<String, String> o1, Map<String, String> o2) {
                 try {

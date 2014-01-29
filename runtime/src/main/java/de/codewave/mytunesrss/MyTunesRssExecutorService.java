@@ -10,7 +10,6 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.task.*;
-import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,7 +107,7 @@ public class MyTunesRssExecutorService {
             LOGGER.error("Could not schedule database maintenance task.", e);
         }
     }
-    
+
     public synchronized <T> Future<T> scheduleDatabaseJob(Callable<T> job) {
         return DATABASE_JOB_EXECUTOR.submit(job);
     }

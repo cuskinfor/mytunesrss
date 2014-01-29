@@ -38,7 +38,7 @@ public class FindPhotoQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Ph
     }
 
     public QueryResult<Photo> execute(Connection connection) throws SQLException {
-        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("excluded", myUser != null && !myUser.getExcludedPhotoAlbumIds().isEmpty());
         conditionals.put("restricted", myUser != null && !myUser.getRestrictedPhotoAlbumIds().isEmpty());
         conditionals.put("excludedDatasources", myUser != null && !myUser.getExcludedDataSourceIds().isEmpty());

@@ -22,9 +22,6 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 @ValidateRequest
 @Path("artist/{artist}/album/{album}")

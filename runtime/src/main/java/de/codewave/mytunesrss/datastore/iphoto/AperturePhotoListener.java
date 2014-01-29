@@ -6,15 +6,12 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
-import de.codewave.mytunesrss.config.IphotoDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.*;
-import java.util.Collection;
 import java.util.Map;
 
 public class AperturePhotoListener extends PhotoListener {

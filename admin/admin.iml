@@ -37,6 +37,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave:codewave-utils:1.22" level="project" />
     <orderEntry type="library" name="Maven: com.vaadin:vaadin:6.8.12" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addons:refresher:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.vaadin.addon:jfreechartwrapper:2.5.0" level="project" />

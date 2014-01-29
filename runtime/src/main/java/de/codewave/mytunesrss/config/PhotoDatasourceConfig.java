@@ -11,7 +11,7 @@ import java.util.*;
 
 public abstract class PhotoDatasourceConfig extends DatasourceConfig implements CommonPhotoDatasourceConfig {
 
-    private Set<ReplacementRule> myPathReplacements = new HashSet<ReplacementRule>();
+    private Set<ReplacementRule> myPathReplacements = new HashSet<>();
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
 
     public PhotoDatasourceConfig(String id, String name, String definition) {
@@ -20,12 +20,12 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig implements 
 
     public PhotoDatasourceConfig(PhotoDatasourceConfig source) {
         super(source);
-        myPathReplacements = new HashSet<ReplacementRule>(source.getPathReplacements());
+        myPathReplacements = new HashSet<>(source.getPathReplacements());
         myPhotoThumbnailImportType = source.getPhotoThumbnailImportType();
     }
 
     public Set<ReplacementRule> getPathReplacements() {
-        return new HashSet<ReplacementRule>(myPathReplacements);
+        return new HashSet<>(myPathReplacements);
     }
 
     public void clearPathReplacements() {
@@ -45,7 +45,7 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig implements 
     }
 
     public List<FileType> getDefaultFileTypes() {
-        List<FileType> types = new ArrayList<FileType>();
+        List<FileType> types = new ArrayList<>();
         types.add(new FileType(true, "mp4", "video/x-mp4", MediaType.Video, false));
         types.add(new FileType(true, "avi", "video/x-msvideo", MediaType.Video, false));
         types.add(new FileType(true, "mov", "video/quicktime", MediaType.Video, false));

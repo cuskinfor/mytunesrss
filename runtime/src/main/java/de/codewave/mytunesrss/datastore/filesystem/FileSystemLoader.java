@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
-import de.codewave.mytunesrss.FileSupportUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
@@ -14,7 +13,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Map;
 
 /**

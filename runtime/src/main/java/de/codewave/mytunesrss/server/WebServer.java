@@ -243,7 +243,7 @@ public class WebServer {
 
     public List<MyTunesRssSessionInfo> getSessionInfos() {
         if (isRunning()) {
-            List<MyTunesRssSessionInfo> sessionInfos = new ArrayList<MyTunesRssSessionInfo>((Collection<MyTunesRssSessionInfo>) SessionManager
+            List<MyTunesRssSessionInfo> sessionInfos = new ArrayList<>((Collection<MyTunesRssSessionInfo>) SessionManager
                     .getAllSessionInfo(myContext.getServletContext()));
             Collections.sort(sessionInfos, new Comparator<MyTunesRssSessionInfo>() {
                 public int compare(MyTunesRssSessionInfo sessionInfo, MyTunesRssSessionInfo sessionInfo1) {

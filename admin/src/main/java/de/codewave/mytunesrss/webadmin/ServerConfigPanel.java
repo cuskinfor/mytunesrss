@@ -16,7 +16,6 @@ import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.ServerSideFileChooser;
 import de.codewave.vaadin.component.ServerSideFileChooserWindow;
 import de.codewave.vaadin.validation.FileValidator;
-import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.SameValidator;
 import org.apache.commons.lang3.StringUtils;
 
@@ -87,7 +86,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myUpnpUserHttps;
     private SmartTextField myUserAccessLogRetainDays;
     private SmartTextField myAdminAccessLogRetainDays;
-    private CheckBox myUserAccessLogExtended; 
+    private CheckBox myUserAccessLogExtended;
     private CheckBox myAdminAccessLogExtended;
     private Select myAccessLogTz;
 
@@ -127,7 +126,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myAdminAccessLogRetainDays = getComponentFactory().createTextField("serverConfigPanel.accesslog.admin.retain", getApplication().getValidatorFactory().createMinMaxValidator(1, 90));
         myUserAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.user.ext");
         myAdminAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.admin.retain");
-        List<String> timezones = new ArrayList<String>();
+        List<String> timezones = new ArrayList<>();
         for (int i = 12; i > 0; i--) {
             timezones.add("GMT-" + StringUtils.leftPad("" + i, 2, '0'));
         }
@@ -194,7 +193,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private Collection<ListenAddress> getListenAddresses() {
-        List<ListenAddress> addresses = new ArrayList<ListenAddress>();
+        List<ListenAddress> addresses = new ArrayList<>();
         addresses.add(new ListenAddress(null, getBundleString("serverConfigPanel.listenAddress.all")));
         for (String address : MyTunesRssUtils.getAvailableListenAddresses()) {
             addresses.add(new ListenAddress(address, address));

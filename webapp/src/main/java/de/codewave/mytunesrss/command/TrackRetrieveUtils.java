@@ -48,7 +48,7 @@ public class TrackRetrieveUtils {
     private static String[] getNonEmptyParameterValues(HttpServletRequest request, String name) {
         String[] values = request.getParameterValues(name);
         if (values != null && values.length > 0) {
-            List<String> nonEmptyValues = new ArrayList<String>();
+            List<String> nonEmptyValues = new ArrayList<>();
             for (String value : values) {
                 if (StringUtils.isNotEmpty(value)) {
                     nonEmptyValues.add(value);
@@ -79,7 +79,7 @@ public class TrackRetrieveUtils {
             return FindTrackQuery.getForAlbum(user, albums, albumArtists != null ? albumArtists : new String[0], sortOrderValue);
         } else if (artists != null && artists.length > 0) {
             if (fullAlbums) {
-                Collection<String> albumNames = new HashSet<String>();
+                Collection<String> albumNames = new HashSet<>();
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
                     FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, false, null, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
                     DataStoreQuery.QueryResult<Album> albumsWithArtist = session.executeQuery(findAlbumQuery);
@@ -98,7 +98,7 @@ public class TrackRetrieveUtils {
             if (fullAlbums) {
                 FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, new String[] {genre}, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
                 DataStoreQuery.QueryResult<Album> albumsWithGenre = session.executeQuery(findAlbumQuery);
-                List<String> albumNames = new ArrayList<String>();
+                List<String> albumNames = new ArrayList<>();
                 for (Album albumWithGenre = albumsWithGenre.nextResult(); albumWithGenre != null; albumWithGenre = albumsWithGenre.nextResult()) {
                     albumNames.add(albumWithGenre.getName());
                 }

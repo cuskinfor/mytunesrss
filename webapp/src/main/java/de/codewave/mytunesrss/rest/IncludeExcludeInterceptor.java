@@ -29,21 +29,21 @@ public class IncludeExcludeInterceptor implements PreProcessInterceptor, Accepte
     private static final ThreadLocal<Set<String>> INCLUDES = new ThreadLocal<Set<String>>() {
         @Override
         protected Set<String> initialValue() {
-            return new HashSet<String>(); 
+            return new HashSet<>();
         }
     };
 
     private static final ThreadLocal<Set<String>> EXCLUDES = new ThreadLocal<Set<String>>() {
         @Override
         protected Set<String> initialValue() {
-            return new HashSet<String>(); 
+            return new HashSet<>();
         }
     };
-    
+
     public static boolean isAttr(String name) {
         return (INCLUDES.get().isEmpty() || INCLUDES.get().contains(name)) && !EXCLUDES.get().contains(name);
     }
-    
+
     @Context
     private HttpServletRequest myRequest;
 

@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
@@ -23,7 +22,7 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
     private static final int LEAK_TIME = 900000; // 15 minutes
     private static final int CHECK_TIME = 60000; // 60 seconds
 
-    private Map<Object, BorrowInformation> myActiveObjects = new ConcurrentHashMap<Object, BorrowInformation>();
+    private Map<Object, BorrowInformation> myActiveObjects = new ConcurrentHashMap<>();
 
     private AtomicLong myLastValidationTimestamp = new AtomicLong();
 
@@ -72,7 +71,7 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
     private void check() {
         if (System.currentTimeMillis() - myLastValidationTimestamp.get() > CHECK_TIME) {
             myLastValidationTimestamp.set(System.currentTimeMillis());
-            for (BorrowInformation borrowInformation : new ArrayList<BorrowInformation>(myActiveObjects.values())) {
+            for (BorrowInformation borrowInformation : new ArrayList<>(myActiveObjects.values())) {
                 if (borrowInformation.getAgeMillis() > LEAK_TIME) {
                     LOGGER.error("Connection in database connection pool seems to have leaked. Allocation (" + borrowInformation + ") information follows.", borrowInformation.getThreadInfo());
                 }

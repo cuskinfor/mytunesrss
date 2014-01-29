@@ -50,7 +50,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
             return getBundleString("streamingConfigPanel.vlcVersion." + myVlcVersion.name());
         }
     }
-    
+
     private Panel myTranscoderPanel;
     private Accordion myTranscoderAccordion;
     private Form myCacheForm;
@@ -70,7 +70,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Button myVlcHomepageButton;
     private Button myRestartVlcPlayer;
     private Button myClearAllCachesButton;
-    private Map<VlcVersion, VlcVersionRepresentation> myVlcVersionMap = new LinkedHashMap<VlcVersion, VlcVersionRepresentation>();
+    private Map<VlcVersion, VlcVersionRepresentation> myVlcVersionMap = new LinkedHashMap<>();
 
     public void attach() {
         super.attach();
@@ -131,7 +131,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig() {
-        List<TranscoderConfig> transcoderConfigs = new ArrayList<TranscoderConfig>(MyTunesRss.CONFIG.getTranscoderConfigs());
+        List<TranscoderConfig> transcoderConfigs = new ArrayList<>(MyTunesRss.CONFIG.getTranscoderConfigs());
         if (!transcoderConfigs.isEmpty()) {
             Collections.sort(transcoderConfigs, new Comparator<TranscoderConfig>() {
                 Collator myCollator = Collator.getInstance(getLocale());
@@ -159,8 +159,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        Collection<TranscoderConfig> configs = new ArrayList<TranscoderConfig>();
-        Set<String> obsoleteTranscoderNames = new HashSet<String>();
+        Collection<TranscoderConfig> configs = new ArrayList<>();
+        Set<String> obsoleteTranscoderNames = new HashSet<>();
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
             obsoleteTranscoderNames.add(config.getName());
         }
@@ -256,7 +256,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myCacheForm, myVlcForm);
         Iterator<Component> iterator = myTranscoderAccordion.getComponentIterator();
-        Set<String> transcoderNames = new HashSet<String>();
+        Set<String> transcoderNames = new HashSet<>();
         boolean duplicateName = false;
         while (iterator.hasNext()) {
             Component component = iterator.next();

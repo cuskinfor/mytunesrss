@@ -12,7 +12,7 @@ import java.io.IOException;
  * de.codewave.mytunesrss.servlet.TransactionFilter
  */
 public class TransactionFilter implements Filter {
-    private static final ThreadLocal<DataStoreSession> TRANSACTIONS = new ThreadLocal<DataStoreSession>();
+    private static final ThreadLocal<DataStoreSession> TRANSACTIONS = new ThreadLocal<>();
 
     public void init(FilterConfig filterConfig) throws ServletException {
         // intentionally left blank

@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -53,7 +52,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
     }
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
-        Map<String, Boolean> conditionals = new HashMap<String, Boolean>();
+        Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("container", StringUtils.isNotBlank(myContainerId) && !"ROOT".equals(myContainerId));
         conditionals.put("rootcontainer", StringUtils.equals(myContainerId, "ROOT"));
         conditionals.put("nohidden", !myIncludeHidden);
@@ -70,7 +69,7 @@ public class FindPlaylistQuery extends DataStoreQuery<DataStoreQuery.QueryResult
         conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findPlaylists", conditionals);
         if (myTypes != null && !myTypes.isEmpty()) {
-            List<String> typeNames = new ArrayList<String>(myTypes.size());
+            List<String> typeNames = new ArrayList<>(myTypes.size());
             for (PlaylistType type : myTypes) {
                 typeNames.add(type.name());
             }

@@ -49,7 +49,7 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
     private void checkPermissions(ResourceMethod method, User user) {
         RequiredUserPermissions classPermissions = method.getResourceClass().getAnnotation(RequiredUserPermissions.class);
         RequiredUserPermissions methodPermissions = method.getMethod().getAnnotation(RequiredUserPermissions.class);
-        List<UserPermission> requiredPermission = new ArrayList<UserPermission>();
+        List<UserPermission> requiredPermission = new ArrayList<>();
         if (classPermissions != null && classPermissions.value() != null && classPermissions.value().length > 0) {
             requiredPermission.addAll(Arrays.asList(classPermissions.value()));
         }

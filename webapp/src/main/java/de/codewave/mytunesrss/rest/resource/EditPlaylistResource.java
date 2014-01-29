@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -73,7 +72,7 @@ public class EditPlaylistResource extends RestResource {
             @QueryParam("count") @DefaultValue("0") int count
     ) throws SQLException {
         List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
-        List<TrackRepresentation> trackRepresentations = new ArrayList<TrackRepresentation>();
+        List<TrackRepresentation> trackRepresentations = new ArrayList<>();
         if (from >= 0 && from < playlistTracks.size()) {
             for (int i = from; i < from + count && i < playlistTracks.size(); i++) {
                 trackRepresentations.add(toTrackRepresentation(uriInfo, request, playlistTracks.get(i)));
@@ -102,7 +101,7 @@ public class EditPlaylistResource extends RestResource {
             @QueryParam("count") @DefaultValue("0") int count
     ) throws SQLException {
         List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
-        List<Album> playlistAlbums = new ArrayList<Album>();
+        List<Album> playlistAlbums = new ArrayList<>();
         for (Track track : playlistTracks) {
             Album album = null;
             for (Album existingAlbum : playlistAlbums) {
@@ -133,13 +132,13 @@ public class EditPlaylistResource extends RestResource {
                 return StringUtils.trimToEmpty(a1.getName()).compareTo(StringUtils.trimToEmpty(a2.getName()));
             }
         });
-        List<AlbumRepresentation> representations = new ArrayList<AlbumRepresentation>();
+        List<AlbumRepresentation> representations = new ArrayList<>();
         if (from >= 0 && from < playlistTracks.size()) {
             for (int i = from; i < from + count && i < playlistTracks.size(); i++) {
                 representations.add(toAlbumRepresentation(uriInfo, request, playlistAlbums.get(i)));
             }
         }
-        return new PartialListRepresentation<AlbumRepresentation>(representations, playlistAlbums.size());
+        return new PartialListRepresentation<>(representations, playlistAlbums.size());
     }
 
     /**
@@ -236,10 +235,10 @@ public class EditPlaylistResource extends RestResource {
 
     private void addTracks(HttpServletRequest request, DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
         Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
-        Collection<Track> playlistTracks = new LinkedHashSet<Track>((Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS));
+        Collection<Track> playlistTracks = new LinkedHashSet<>((Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS));
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
         playlistTracks.addAll(tracks);
-        request.getSession().setAttribute(KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>(playlistTracks));
+        request.getSession().setAttribute(KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<>(playlistTracks));
         playlist.setTrackCount(playlistTracks.size());
     }
 
@@ -274,7 +273,7 @@ public class EditPlaylistResource extends RestResource {
         statement.setId(playlist.getId());
         statement.setName(playlistName);
         statement.setUpdate(StringUtils.isNotEmpty(playlist.getId()));
-        List<String> trackIds = new ArrayList<String>(playlistTracks.size());
+        List<String> trackIds = new ArrayList<>(playlistTracks.size());
         for (Track track : playlistTracks) {
             trackIds.add(track.getId());
         }

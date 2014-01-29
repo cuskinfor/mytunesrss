@@ -203,7 +203,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             synchronized (getSession()) {
                 states = (Map<String, Boolean>) getSession().getAttribute("states");
                 if (states == null) {
-                    states = new HashMap<String, Boolean>();
+                    states = new HashMap<>();
                     getSession().setAttribute("states", states);
                 }
             }
@@ -335,7 +335,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected Pager createPager(int itemCount, int pageSize, int current) {
         if (pageSize > 0) {
-            List<Pager.Page> pages = new ArrayList<Pager.Page>();
+            List<Pager.Page> pages = new ArrayList<>();
             int page = 0;
             for (int index = 0; index < itemCount; index += pageSize) {
                 pages.add(new Pager.Page(Integer.toString(page), Integer.toString(page + 1)));

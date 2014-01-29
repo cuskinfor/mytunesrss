@@ -19,8 +19,8 @@ public class Pager {
     private int myFirstPageInBar;
 
     public Pager(List<Page> pages, int pageCountInBar) {
-        myPages = pages != null ? new ArrayList<Page>(pages) : new ArrayList<Page>();
-        myCurrentPages = new ArrayList<Page>(pageCountInBar);
+        myPages = pages != null ? new ArrayList<>(pages) : new ArrayList<Page>();
+        myCurrentPages = new ArrayList<>(pageCountInBar);
         myPageCountInBar = pageCountInBar;
         myFirstPageInBar = 0;
         updateCurrentPages();

@@ -26,14 +26,12 @@ import de.codewave.mytunesrss.webadmin.datasource.DatasourcesSelectionPanel;
 import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
 import de.codewave.utils.network.UpdateInfo;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -473,7 +471,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myExternalAddresses.setPageLength(myExternalAddresses.getItemIds().size());
         // refresh active connections
         myConnections.removeAllItems();
-        Map<String, SessionInfo> infos = new HashMap<String, SessionInfo>();
+        Map<String, SessionInfo> infos = new HashMap<>();
         for (MyTunesRssSessionInfo session : MyTunesRss.WEBSERVER.getSessionInfos()) {
             if (session.getUser() != null) {
                 String key = session.getBestRemoteAddress() + session.getUser().getName();

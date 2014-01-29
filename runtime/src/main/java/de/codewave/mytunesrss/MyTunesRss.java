@@ -115,13 +115,13 @@ public class MyTunesRss {
 
     public static final String APPLICATION_IDENTIFIER = "MyTunesRSS5";
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS4", "MyTunesRSS3"};
-    public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<String, String[]>();
+    public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
     public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
     public static final long STARTUP_TIME = System.currentTimeMillis();
-    private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<MessageWithParameters>(10);
+    private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<>(10);
     public static String VERSION;
     public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -175,7 +175,7 @@ public class MyTunesRss {
     public static final LogQueueManager LOG_QUEUE_MANAGER = new LogQueueManager();
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
-    public static AtomicReference<MyTunesRssEvent> LAST_DATABASE_EVENT = new AtomicReference<MyTunesRssEvent>();
+    public static AtomicReference<MyTunesRssEvent> LAST_DATABASE_EVENT = new AtomicReference<>();
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
     public static RouterConfig ROUTER_CONFIG = new RouterConfig();
     public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();
@@ -184,7 +184,7 @@ public class MyTunesRss {
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
     public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP = false;
-    public static final Set<Process> SPAWNED_PROCESSES = new HashSet<Process>();
+    public static final Set<Process> SPAWNED_PROCESSES = new HashSet<>();
     public static JmDNS BONJOUR;
     public static String HEAPDUMP_FILENAME;
     public static ClassLoader EXTRA_CLASSLOADER;
@@ -283,7 +283,11 @@ public class MyTunesRss {
 
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-            EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+            if (!MyTunesRssUtils.isAppStoreVersion()) {
+                EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
+            } else {
+                LOGGER.warn("Update check has been disabled for AppStore license.");
+            }
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
@@ -884,7 +888,7 @@ public class MyTunesRss {
         try {
             Collection<File> files = libDir.isDirectory() ? FileUtils.listFiles(libDir, new String[]{"jar", "zip"}, false) : null;
             if (files != null && !files.isEmpty()) {
-                Collection<URL> urls = new ArrayList<URL>();
+                Collection<URL> urls = new ArrayList<>();
                 for (File file : files) {
                     LOGGER.info("Adding \"" + file.getAbsolutePath() + "\" to extra classpath.");
                     urls.add(file.toURI().toURL());

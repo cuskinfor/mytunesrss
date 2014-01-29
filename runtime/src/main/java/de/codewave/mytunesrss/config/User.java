@@ -87,14 +87,14 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private int mySessionTimeout = 20;
     private boolean mySpecialPlaylists = true;
     private boolean myTranscoder = true;
-    private Set<String> myRestrictedPlaylistIds = new HashSet<String>();
-    private Set<String> myExcludedPlaylistIds = new HashSet<String>();
-    private Set<String> myHiddenPlaylistIds = new HashSet<String>();
-    private Set<String> myRestrictedPhotoAlbumIds = new HashSet<String>();
-    private Set<String> myExcludedPhotoAlbumIds = new HashSet<String>();
-    private Set<String> myExcludedDataSourceIds = new HashSet<String>();
+    private Set<String> myRestrictedPlaylistIds = new HashSet<>();
+    private Set<String> myExcludedPlaylistIds = new HashSet<>();
+    private Set<String> myHiddenPlaylistIds = new HashSet<>();
+    private Set<String> myRestrictedPhotoAlbumIds = new HashSet<>();
+    private Set<String> myExcludedPhotoAlbumIds = new HashSet<>();
+    private Set<String> myExcludedDataSourceIds = new HashSet<>();
     private boolean mySharedUser;
-    private Map<String, String> myWebConfigs = new HashMap<String, String>();
+    private Map<String, String> myWebConfigs = new HashMap<>();
     private boolean myCreatePlaylists = true;
     private boolean myEditWebSettings = true;
     private String myLastFmUsername;
@@ -109,7 +109,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private User myParent;
     private boolean myExternalSites = true;
     private int mySearchFuzziness = -1;
-    private Set<String> myForceTranscoders = new HashSet<String>();
+    private Set<String> myForceTranscoders = new HashSet<>();
     private long myExpiration;
     private boolean myYahooPlayer = true;
     private boolean myGroup = false;
@@ -298,7 +298,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public List<String> getRestrictedPlaylistIds() {
-        return getParent() != null ? getParent().getRestrictedPlaylistIds() : new ArrayList<String>(myRestrictedPlaylistIds);
+        return getParent() != null ? getParent().getRestrictedPlaylistIds() : new ArrayList<>(myRestrictedPlaylistIds);
     }
 
     public void addRestrictedPlaylistId(String playlistId) {
@@ -310,11 +310,11 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setRestrictedPlaylistIds(Set<String> playlistIds) {
-        myRestrictedPlaylistIds = new HashSet<String>(playlistIds);
+        myRestrictedPlaylistIds = new HashSet<>(playlistIds);
     }
 
     public List<String> getExcludedPlaylistIds() {
-        return getParent() != null ? getParent().getExcludedPlaylistIds() : new ArrayList<String>(myExcludedPlaylistIds);
+        return getParent() != null ? getParent().getExcludedPlaylistIds() : new ArrayList<>(myExcludedPlaylistIds);
     }
 
     /**
@@ -328,7 +328,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         if (exclusions == null || exclusions.isEmpty()) {
             return null; // no exclusions
         }
-        Set<String> result = new HashSet<String>();
+        Set<String> result = new HashSet<>();
         for (DatasourceConfig datasourceConfig : MyTunesRss.CONFIG.getDatasources()) {
             if (!exclusions.contains(datasourceConfig.getId())) {
                 result.add(datasourceConfig.getId());
@@ -346,11 +346,11 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setExcludedPlaylistIds(Set<String> playlistIds) {
-        myExcludedPlaylistIds = new HashSet<String>(playlistIds);
+        myExcludedPlaylistIds = new HashSet<>(playlistIds);
     }
 
     public List<String> getHiddenPlaylistIds() {
-        return getParent() != null ? getParent().getHiddenPlaylistIds() : new ArrayList<String>(myHiddenPlaylistIds);
+        return getParent() != null ? getParent().getHiddenPlaylistIds() : new ArrayList<>(myHiddenPlaylistIds);
     }
 
     public void addHiddenPlaylistId(String playlistId) {
@@ -362,11 +362,11 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setHiddenPlaylistIds(Set<String> playlistIds) {
-        myHiddenPlaylistIds = new HashSet<String>(playlistIds);
+        myHiddenPlaylistIds = new HashSet<>(playlistIds);
     }
 
     public List<String> getRestrictedPhotoAlbumIds() {
-        return getParent() != null ? getParent().getRestrictedPhotoAlbumIds() : new ArrayList<String>(myRestrictedPhotoAlbumIds);
+        return getParent() != null ? getParent().getRestrictedPhotoAlbumIds() : new ArrayList<>(myRestrictedPhotoAlbumIds);
     }
 
     public void addRestrictedPhotoAlbumId(String photoAlbumId) {
@@ -378,11 +378,11 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setRestrictedPhotoAlbumIds(Set<String> photoAlbumIds) {
-        myRestrictedPhotoAlbumIds = new HashSet<String>(photoAlbumIds);
+        myRestrictedPhotoAlbumIds = new HashSet<>(photoAlbumIds);
     }
 
     public List<String> getExcludedPhotoAlbumIds() {
-        return getParent() != null ? getParent().getExcludedPhotoAlbumIds() : new ArrayList<String>(myExcludedPhotoAlbumIds);
+        return getParent() != null ? getParent().getExcludedPhotoAlbumIds() : new ArrayList<>(myExcludedPhotoAlbumIds);
     }
 
     public void addExcludedPhotoAlbumId(String photoAlbumId) {
@@ -394,11 +394,11 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setExcludedPhotoAlbumIds(Set<String> photoAlbumIds) {
-        myExcludedPhotoAlbumIds = new HashSet<String>(photoAlbumIds);
+        myExcludedPhotoAlbumIds = new HashSet<>(photoAlbumIds);
     }
 
     public List<String> getExcludedDataSourceIds() {
-        return getParent() != null ? getParent().getExcludedDataSourceIds() : new ArrayList<String>(myExcludedDataSourceIds);
+        return getParent() != null ? getParent().getExcludedDataSourceIds() : new ArrayList<>(myExcludedDataSourceIds);
     }
 
     public void addExcludedDataSourceId(String dataSourceId) {
@@ -410,7 +410,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public void setExcludedDataSourceIds(Set<String> dataSourceIds) {
-        myExcludedDataSourceIds = new HashSet<String>(dataSourceIds);
+        myExcludedDataSourceIds = new HashSet<>(dataSourceIds);
     }
 
     public boolean isSharedUser() {
@@ -498,7 +498,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     public Set<String> getForceTranscoders() {
-        return getParent() != null ? getParent().getForceTranscoders() : new HashSet<String>(myForceTranscoders);
+        return getParent() != null ? getParent().getForceTranscoders() : new HashSet<>(myForceTranscoders);
     }
 
     public void clearForceTranscoders() {
@@ -721,7 +721,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setExternalSites(JXPathUtils.getBooleanValue(settings, "externalSites", myExternalSites));
         setChangeEmail(JXPathUtils.getBooleanValue(settings, "changeEmail", myChangeEmail));
         setSearchFuzziness(JXPathUtils.getIntValue(settings, "searchFuzziness", mySearchFuzziness));
-        Set<String> availableTranscoders = new HashSet<String>();
+        Set<String> availableTranscoders = new HashSet<>();
         for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
             availableTranscoders.add(config.getName());
         }

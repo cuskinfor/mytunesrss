@@ -50,7 +50,7 @@ public class WebConfig {
     private static final String CFG_PHOTO_SIZE = "photoSize";
     private static final String CFG_MAX_SEARCH_RESULTS = "maxSearchResults";
     private static final String CFG_PHOTO_JPEG_QUALITY = "pjq";
-    private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<String, String>();
+    private static Map<String, String> FEED_FILE_SUFFIXES = new HashMap<>();
 
     private static final String[] VALID_NAMES = {CFG_FEED_TYPE_RSS, CFG_FEED_TYPE_PLAYLIST, CFG_PAGE_SIZE, CFG_PHOTO_PAGE_SIZE,
             CFG_SHOW_DOWNLOAD, CFG_SHOW_PLAYER, CFG_PLAYLIST_TYPE, CFG_THEME,
@@ -94,7 +94,7 @@ public class WebConfig {
         }
     }
 
-    private Map<String, String> myConfigValues = new HashMap<String, String>();
+    private Map<String, String> myConfigValues = new HashMap<>();
 
     public void clear() {
         myConfigValues.clear();

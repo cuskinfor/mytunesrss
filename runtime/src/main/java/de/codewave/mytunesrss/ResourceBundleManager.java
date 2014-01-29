@@ -19,7 +19,7 @@ public class ResourceBundleManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBundleManager.class);
 
-    private ConcurrentHashMap<String, ResourceBundle> myCache = new ConcurrentHashMap<String, ResourceBundle>();
+    private ConcurrentHashMap<String, ResourceBundle> myCache = new ConcurrentHashMap<>();
 
     private ClassLoader myLoader;
 
@@ -65,7 +65,7 @@ public class ResourceBundleManager {
     private List<String> getBundlePaths(Locale locale, String bundleName) {
         String[] codes = locale.toString().split("_");
         String bundlePath = StringUtils.replaceChars(bundleName, '.', '/');
-        List<String> bundlePaths = new ArrayList<String>();
+        List<String> bundlePaths = new ArrayList<>();
         if (codes.length == 3) {
             bundlePaths.add(bundlePath + "_" + codes[0] + "_" + codes[1] + "_" + codes[2] + ".properties");
         }

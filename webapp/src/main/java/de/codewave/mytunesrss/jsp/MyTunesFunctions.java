@@ -211,7 +211,7 @@ public class MyTunesFunctions {
     }
 
     public static List<String[]> availableLanguages(Locale displayLocale) {
-        Set<String> codes = new HashSet<String>();
+        Set<String> codes = new HashSet<>();
         for (LanguageDefinition definition : AddonsUtils.getLanguages(true)) {
             try {
                 if (AddonsUtils.getUserLanguageFile(definition.getLocale()) == null || AddonsUtils.isComplete(definition)) {
@@ -222,7 +222,7 @@ public class MyTunesFunctions {
                 LOGGER.warn("Could not add language.", e);
             }
         }
-        List<String[]> langs = new ArrayList<String[]>(codes.size());
+        List<String[]> langs = new ArrayList<>(codes.size());
         for (String code : codes) {
             langs.add(new String[]{code, LanguageDefinition.getLocaleFromCode(code).getDisplayName(displayLocale)});
         }
@@ -342,7 +342,7 @@ public class MyTunesFunctions {
     }
 
     public static Map<String, String> getExternalSiteDefinitions(String type) {
-        Map<String, String> result = new TreeMap<String, String>();
+        Map<String, String> result = new TreeMap<>();
         for (ExternalSiteDefinition def : MyTunesRss.CONFIG.getExternalSites(type)) {
             result.put(def.getName(), def.getUrl());
         }
@@ -387,7 +387,7 @@ public class MyTunesFunctions {
     }
 
     public static List<FlashPlayerConfig> flashPlayerConfigs() {
-        List<FlashPlayerConfig> flashPlayerConfigs = new ArrayList<FlashPlayerConfig>(MyTunesRss.CONFIG.getFlashPlayers());
+        List<FlashPlayerConfig> flashPlayerConfigs = new ArrayList<>(MyTunesRss.CONFIG.getFlashPlayers());
         Collections.sort(flashPlayerConfigs);
         return flashPlayerConfigs;
     }
@@ -400,7 +400,7 @@ public class MyTunesFunctions {
     public static String escapeJson(String json) {
         return new String(JsonStringEncoder.getInstance().quoteAsString(json));
     }
-    
+
     public static String escapeEcmaScript(String in) {
         return StringEscapeUtils.escapeHtml4(StringEscapeUtils.escapeEcmaScript(in));
     }

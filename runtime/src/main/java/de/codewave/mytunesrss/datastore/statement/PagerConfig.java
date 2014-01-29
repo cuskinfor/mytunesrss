@@ -19,7 +19,7 @@ public class PagerConfig {
                     "first_char >= 'm' AND first_char < 'p'", "first_char >= 'p' AND first_char < 't'",
                     "first_char >= 't' AND first_char < 'w'", "first_char >= 'w' AND first_char <= 'z'"};
 
-    public static final List<Pager.Page> PAGES = new ArrayList<Pager.Page>();
+    public static final List<Pager.Page> PAGES = new ArrayList<>();
 
     static {
         PAGES.add(new Pager.Page("0", "0 - 9"));

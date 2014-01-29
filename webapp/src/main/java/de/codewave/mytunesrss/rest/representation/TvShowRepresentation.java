@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest.representation;
 
-import de.codewave.mytunesrss.datastore.statement.Genre;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
