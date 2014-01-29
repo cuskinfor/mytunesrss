@@ -2,9 +2,8 @@
 
 VERSION=$(find . -wholename ./target/mytunesrss-*-macosx/mytunesrss-*/MyTunesRSS.app | sed -e 's/.*\/mytunesrss-\(.*\)-macosx\/mytunesrss-.*/\1/')
 
-codesign -s "Mac Developer: Michael Descher (KA3C22NAMD)" -f --signature-size 16384 --deep ./target/mytunesrss-${VERSION}-macosx/mytunesrss-${VERSION}/MyTunesRSS.app
+APP=./target/mytunesrss-${VERSION}-macosx/mytunesrss-${VERSION}/MyTunesRSS.app
 
-pushd ./target/mytunesrss-${VERSION}-macosx
-rm ../mytunesrss-${VERSION}-macosx.zip
-zip -r ../mytunesrss-${VERSION}-macosx.zip mytunesrss-${VERSION}
-popd
+codesign -s "3rd Party Mac Developer Application: Michael Descher" -f --signature-size 16384 --deep $APP
+
+productbuild --component $APP /Applications/ --sign "3rd Party Mac Developer Installer: Michael Descher" --product $APP/Contents/Info.plist ./target/MyTunesRSS-${VERSION}.pkg
