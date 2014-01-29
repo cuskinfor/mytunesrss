@@ -210,14 +210,25 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>macosx-codesign</id>
+                                <id>macosx-package</id>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>exec</goal>
                                 </goals>
                                 <configuration>
                                     <executable>sh</executable>
-                                    <commandlineArgs>etc/macosx-codesign.sh</commandlineArgs>
+                                    <commandlineArgs>etc/macosx-package.sh</commandlineArgs>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>macosx-verify-package</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>exec</goal>
+                                </goals>
+                                <configuration>
+                                    <executable>sh</executable>
+                                    <commandlineArgs>etc/macosx-verify-package.sh</commandlineArgs>
                                 </configuration>
                             </execution>
                         </executions>

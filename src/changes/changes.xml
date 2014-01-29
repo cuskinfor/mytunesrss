@@ -7,7 +7,14 @@
 
     <body>
 
-        <release version="5.0.2" date="___D___">
+        <release version="6.0.0" date="___D___">
+            <action dev="mdescher" type="add">
+                MacOSX version now requires MacOSX 10.7.3 and comes in a PKG installer
+                with a bundled Oracle JRE 7u51. Version 6.0.0 will also be available in the AppStore.
+            </action>
+            <action dev="mdescher" type="update">
+                Updated bundled Windows JRE to 7u51.
+            </action>
             <action dev="mdescher" type="fix">
                 Fixed possible NullPointerException when parsing images (when ImageIO did not
                 return an image but NULL). Not critical since it is logged as WARN only.
