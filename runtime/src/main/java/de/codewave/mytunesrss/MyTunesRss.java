@@ -565,23 +565,20 @@ public class MyTunesRss {
             File prefsDataPath = new File(MyTunesRss.PREFERENCES_DATA_PATH);
             String[] prefsDataPathContents = prefsDataPath.list();
             if (prefsDataPathContents == null || prefsDataPathContents.length == 0) {
+                LOGGER.info("Preferences are empty, looking for old version.");
                 for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
                     File oldPrefsDir = new File(PrefsUtils.getPreferencesDataPathNoCreate(prevVersionAppIdentifier));
                     String[] oldPrefsDirFileNames = oldPrefsDir.list();
                     if (oldPrefsDir.isDirectory() && oldPrefsDirFileNames != null && oldPrefsDirFileNames.length > 0) {
+                        LOGGER.info("Copying old preferences from \"" + oldPrefsDir.getAbsolutePath() + "\".");
                         FileUtils.copyDirectory(oldPrefsDir, prefsDataPath);
+                        File oldCacheDir = new File(PrefsUtils.getCacheDataPathNoCreate(prevVersionAppIdentifier));
+                        String[] oldCacheDirFileNames = oldCacheDir.list();
+                        if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
+                            LOGGER.info("Copying old caches from \"" + oldCacheDir.getAbsolutePath() + "\".");
+                            FileUtils.copyDirectory(oldCacheDir, new File(MyTunesRss.CACHE_DATA_PATH));
+                        }
                         break;
-                    }
-                }
-            }
-            File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
-            String[] cacheDataPathContents = cacheDataPath.list();
-            if (cacheDataPathContents == null || cacheDataPathContents.length == 0) {
-                for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
-                    File oldCacheDir = new File(PrefsUtils.getCacheDataPathNoCreate(prevVersionAppIdentifier));
-                    String[] oldCacheDirFileNames = oldCacheDir.list();
-                    if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
-                        FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
                     }
                 }
             }
