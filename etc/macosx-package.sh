@@ -4,11 +4,7 @@ VERSION=$(find . -wholename ./target/mytunesrss-*-macosx/mytunesrss-*/MyTunesRSS
 APP=./target/mytunesrss-${VERSION}-macosx/mytunesrss-${VERSION}/MyTunesRSS.app
 
 # signining and packaging
-codesign -s "3rd Party Mac Developer Application: Michael Descher" -f --signature-size 16384 $APP
-for LIB in $(find $APP -name "*.jar" -or -name "*.dylib"
-do
-    codesign -s "3rd Party Mac Developer Application: Michael Descher" -f --signature-size 16384 $LIB
-done
+codesign -s "3rd Party Mac Developer Application: Michael Descher" -f --deep --signature-size 16384 $APP
 productbuild --component $APP /Applications/ --sign "3rd Party Mac Developer Installer: Michael Descher" --product $APP/Contents/Info.plist ./target/MyTunesRSS-${VERSION}.pkg
 
 # verification
