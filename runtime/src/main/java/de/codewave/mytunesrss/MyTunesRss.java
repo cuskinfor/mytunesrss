@@ -59,10 +59,7 @@ import javax.management.MBeanServer;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.lang.reflect.Method;
@@ -576,7 +573,17 @@ public class MyTunesRss {
                         String[] oldCacheDirFileNames = oldCacheDir.list();
                         if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
                             LOGGER.info("Copying old caches from \"" + oldCacheDir.getAbsolutePath() + "\".");
-                            FileUtils.copyDirectory(oldCacheDir, new File(MyTunesRss.CACHE_DATA_PATH));
+                            FileUtils.copyDirectory(oldCacheDir, new File(MyTunesRss.CACHE_DATA_PATH), new FileFilter() {
+                                @Override
+                                public boolean accept(File file) {
+                                    if (file.getName().startsWith("MyTunesRSS.log") || file.getName().startsWith("VLC.log") || file.getName().startsWith("GM.log")) {
+                                        return false;
+                                    } else if ("accesslogs".equals(file.getParentFile().getName())) {
+                                        return false;
+                                    }
+                                    return true;
+                                }
+                            });
                         }
                         break;
                     }

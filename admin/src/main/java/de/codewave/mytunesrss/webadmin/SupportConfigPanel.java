@@ -48,7 +48,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
 
     public void attach() {
         super.attach();
-        init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, MyTunesRssUtils.isAppStoreVersion() ? 3 : 4, true, true));
+        init(getBundleString(MyTunesRssUtils.isAppStoreVersion() ? "supportConfigPanel.caption.appStore" : "supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, MyTunesRssUtils.isAppStoreVersion() ? 3 : 4, true, true));
         mySupportForm = getComponentFactory().createForm(null, true);
         myName = getComponentFactory().createTextField("supportConfigPanel.name");
         myEmail = getComponentFactory().createTextField("supportConfigPanel.email");
@@ -93,7 +93,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySysInfoForm.addField("showLog", myShowLog);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, MyTunesRssUtils.isAppStoreVersion() ? 2 : 3, 0, MyTunesRssUtils.isAppStoreVersion() ? 2 : 3, false);
 
         initFromConfig();
     }

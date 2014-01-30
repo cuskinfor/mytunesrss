@@ -187,7 +187,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myMiscConfig = getApplication().getComponentFactory().createButton("statusPanel.config.misc", StatusPanel.this);
         myStreamingConfig = getApplication().getComponentFactory().createButton("statusPanel.config.streaming", StatusPanel.this);
         myAddonsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.addons", StatusPanel.this);
-        mySupportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.support", StatusPanel.this);
+        mySupportConfig = getApplication().getComponentFactory().createButton(MyTunesRssUtils.isAppStoreVersion() ? "statusPanel.config.support.appStore" : "statusPanel.config.support", StatusPanel.this);
         configButtons.addComponent(myServerConfig);
         configButtons.addComponent(myDatabaseConfig);
         configButtons.addComponent(myDatasourcesConfig);
