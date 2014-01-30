@@ -53,7 +53,8 @@
         </array>
         <key>JVMArguments</key>
         <array>
-            <string>-license $APP_ROOT/Contents/MyTunesRSS.key</string>
+            <string>-license</string>
+            <string>$APP_ROOT/Contents/MyTunesRSS.key</string>
         </array>
         <key>WorkingDirectory</key>
         <string>$APP_ROOT/Contents/Java</string>
