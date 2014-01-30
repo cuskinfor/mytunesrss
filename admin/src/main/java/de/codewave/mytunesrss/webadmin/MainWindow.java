@@ -107,7 +107,7 @@ public class MainWindow extends Window {
 
     public void checkUnhandledException() {
         if (MyTunesRss.UNHANDLED_EXCEPTION.getAndSet(false)) {
-            new MessageWindow(50, Sizeable.UNITS_EM, null, getBundleString("unhandledException.header"), getBundleString(MyTunesRssUtils.isAppStoreVersion() ? "unhandledException.detail.appStore" : "unhandledException.detail"), new Button(getBundleString("button.ok"))) {
+            new MessageWindow(50, Sizeable.UNITS_EM, null, getBundleString("unhandledException.header"), getBundleString("unhandledException.detail"), new Button(getBundleString("button.ok"))) {
                 @Override
                 protected void onClick(Button button) {
                     // intentionally left blank

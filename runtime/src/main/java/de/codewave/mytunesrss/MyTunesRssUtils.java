@@ -1134,9 +1134,7 @@ public class MyTunesRssUtils {
                 try {
                     MyTunesRss.STORE.executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
                     MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.ON_PLAY));
-                } catch (SQLException e) {
-                    LOGGER.info("Could not update play count and/or refresh smart playlists.", e);
-                } catch (RuntimeException e) {
+                } catch (SQLException | RuntimeException e) {
                     LOGGER.info("Could not update play count and/or refresh smart playlists.", e);
                 } finally {
                     StopWatch.stop();
@@ -1145,8 +1143,4 @@ public class MyTunesRssUtils {
         });
     }
 
-
-    public static boolean isAppStoreVersion() {
-        return "apple-appstore".equals(MyTunesRss.REGISTRATION.getName());
-    }
 }

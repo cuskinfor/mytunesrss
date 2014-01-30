@@ -282,11 +282,7 @@ public class MyTunesRss {
 
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-            if (!MyTunesRssUtils.isAppStoreVersion()) {
-                EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-            } else {
-                LOGGER.info("Update check has been disabled for AppStore license.");
-            }
+            EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {

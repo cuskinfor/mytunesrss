@@ -171,7 +171,6 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/assembly/macosx.xml</descriptor>
-                                        <descriptor>src/assembly/macosx-appstore.xml</descriptor>
                                         <descriptor>src/assembly/system-independent.xml</descriptor>
                                         <descriptor>src/assembly/windows.xml</descriptor>
                                     </descriptors>
@@ -218,17 +217,6 @@
                                 <configuration>
                                     <executable>sh</executable>
                                     <commandlineArgs>etc/macosx-package.sh</commandlineArgs>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>macosx-verify-package</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>sh</executable>
-                                    <commandlineArgs>etc/macosx-verify-package.sh</commandlineArgs>
                                 </configuration>
                             </execution>
                         </executions>
