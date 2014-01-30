@@ -113,8 +113,8 @@ public class MyTunesRss {
     public static final String CACHEDIR_TRANSCODER = "transcoder";
     public static final String CACHEDIR_HTTP_LIVE_STREAMING = "http_live_streaming";
 
-    public static final String APPLICATION_IDENTIFIER = "MyTunesRSS5";
-    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS4", "MyTunesRSS3"};
+    public static final String APPLICATION_IDENTIFIER = System.getProperty("codewaveAppId", "MyTunesRSS-55");
+    public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS5", "MyTunesRSS4", "MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
     public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
@@ -191,6 +191,8 @@ public class MyTunesRss {
     public static File INTERNAL_MYSQL_SERVER_PATH;
 
     public static void main(final String[] args) throws Exception {
+        PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
+        PrefsUtils.MAC_PREFS_BASE = System.getProperty("ApplicationSupportDirectory");
         processArguments(args);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();
@@ -286,7 +288,7 @@ public class MyTunesRss {
             if (!MyTunesRssUtils.isAppStoreVersion()) {
                 EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
             } else {
-                LOGGER.warn("Update check has been disabled for AppStore license.");
+                LOGGER.info("Update check has been disabled for AppStore license.");
             }
             EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
         }
@@ -560,7 +562,6 @@ public class MyTunesRss {
         ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.copyOldPrefsAndCaches"));
         info.show(2000L);
         try {
-            File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
             File prefsDataPath = new File(MyTunesRss.PREFERENCES_DATA_PATH);
             String[] prefsDataPathContents = prefsDataPath.list();
             if (prefsDataPathContents == null || prefsDataPathContents.length == 0) {
@@ -569,12 +570,18 @@ public class MyTunesRss {
                     String[] oldPrefsDirFileNames = oldPrefsDir.list();
                     if (oldPrefsDir.isDirectory() && oldPrefsDirFileNames != null && oldPrefsDirFileNames.length > 0) {
                         FileUtils.copyDirectory(oldPrefsDir, prefsDataPath);
-                        File oldCacheDir = new File(PrefsUtils.getCacheDataPathNoCreate(prevVersionAppIdentifier));
-                        String[] oldCacheDirFileNames = oldCacheDir.list();
-                        if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
-                            FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
-                        }
                         break;
+                    }
+                }
+            }
+            File cacheDataPath = new File(MyTunesRss.CACHE_DATA_PATH);
+            String[] cacheDataPathContents = cacheDataPath.list();
+            if (cacheDataPathContents == null || cacheDataPathContents.length == 0) {
+                for (String prevVersionAppIdentifier : APPLICATION_IDENTIFIER_PREV_VERSIONS) {
+                    File oldCacheDir = new File(PrefsUtils.getCacheDataPathNoCreate(prevVersionAppIdentifier));
+                    String[] oldCacheDirFileNames = oldCacheDir.list();
+                    if (oldCacheDir.isDirectory() && oldCacheDirFileNames != null && oldCacheDirFileNames.length > 0) {
+                        FileUtils.copyDirectory(oldCacheDir, cacheDataPath);
                     }
                 }
             }
