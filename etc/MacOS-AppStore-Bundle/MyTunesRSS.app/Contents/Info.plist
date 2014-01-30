@@ -9,7 +9,7 @@
         <key>CFBundleIconFile</key>
         <string>MyTunesRSS.icns</string>
         <key>CFBundleIdentifier</key>
-        <string>de.codewave.mytunesrss</string>
+        <string>de.codewave.mytunesrss-server</string>
         <key>CFBundleDisplayName</key>
         <string>MyTunesRSS Media Server</string>
         <key>CFBundleInfoDictionaryVersion</key>

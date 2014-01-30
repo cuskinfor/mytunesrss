@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (c) 2014. Codewave Software Michael Descher.
-  ~ All rights reserved.
-  -->
-
 <assembly>
     <id>macosx-appstore</id>
     <formats>
@@ -71,15 +66,15 @@
                 <include>**</include>
             </includes>
             <excludes>
-                <exclude>**/MacOS/MyTunesRSS</exclude>
-                <exclude>**/Info.plist*</exclude>
+                <exclude>MyTunesRSS.app/Contents/MacOS/MyTunesRSS</exclude>
+                <exclude>MyTunesRSS.app/Contents/Info.plist</exclude>
             </excludes>
         </fileSet>
         <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>etc/MacOS-AppStore-Bundle</directory>
             <includes>
-                <include>**/Info.plist*</include>
+                <include>MyTunesRSS.app/Contents/Info.plist</include>
             </includes>
             <filtered>true</filtered>
         </fileSet>
@@ -87,19 +82,19 @@
             <outputDirectory>.</outputDirectory>
             <directory>etc/MacOS-AppStore-Bundle</directory>
             <includes>
-                <include>**/MyTunesRSS.key</include>
+                <include>MyTunesRSS.app/Contents/MyTunesRSS.key</include>
             </includes>
         </fileSet>
         <fileSet>
             <outputDirectory>.</outputDirectory>
             <directory>etc/MacOS-Bundle</directory>
             <includes>
-                <include>**/MacOS/MyTunesRSS</include>
+                <include>MyTunesRSS.app/Contents/MacOS/MyTunesRSS</include>
             </includes>
             <fileMode>755</fileMode>
         </fileSet>
         <fileSet>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory>MyTunesRSS.app/Contents/Resources</outputDirectory>
             <directory>etc</directory>
             <includes>
                 <include>readme.*</include>
