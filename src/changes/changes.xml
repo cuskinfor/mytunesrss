@@ -7,6 +7,17 @@
 
     <body>
 
+        <release version="5.0.2" date="___D___">
+            <action dev="mdescher" type="fix">
+                Allow smart playlist criteria patterns with up to 255 character. Added
+                proper error message in case user enters longer values.
+            </action>
+            <action dev="mdescher" type="fix">
+                Fixed possible NullPointerException when parsing images (when ImageIO did not
+                return an image but NULL). Not critical since it is logged as WARN only.
+            </action>
+        </release>
+        
         <release version="5.0.1" date="2014-01-24">
             <action dev="mdescher" type="add">
                 Fixed java script string escaping.

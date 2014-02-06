@@ -297,6 +297,13 @@ public class MigrationStatement implements DataStoreStatement {
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                         MyTunesRss.REBUILD_LUCENE_INDEX_ON_STARTUP = true;
                     }
+                    // migration for 5.0.2
+                    if (databaseVersion.compareTo(new Version("5.0.2")) < 0) {
+                        LOG.info("Migrating database to 5.0.2.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_5.0.2").execute();
+                        databaseVersion = new Version("5.0.2");
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
                 } finally {
                     connection.setAutoCommit(autoCommit);
                 }

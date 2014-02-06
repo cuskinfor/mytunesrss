@@ -16,6 +16,8 @@ import java.util.*;
  */
 public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
 
+    private static final int MAX_PATTERN_LENGTH = 255;
+
     @Override
     public void executeAuthorized() throws Exception {
         if (StringUtils.isBlank(getRequestParameter("smartPlaylist.playlist.name", null))) {
@@ -59,6 +61,13 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                                     throw new IllegalStateException("Logic error validating values!");
                             }
                         }
+                    }
+                    if (pattern.length() > MAX_PATTERN_LENGTH) {
+                        String typeBundleKey = "smartPlaylist.smartInfo." + type.name();
+                        if (invert) {
+                            typeBundleKey += ".not";
+                        }
+                        addError(new BundleError("error.smartPlaylistTextTooLong", getBundleString(typeBundleKey), MAX_PATTERN_LENGTH));
                     }
                     smartInfos.add(new SmartInfo(type, pattern, invert));
                 }
