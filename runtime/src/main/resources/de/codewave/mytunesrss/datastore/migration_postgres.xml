@@ -22,7 +22,7 @@
     </statement>
 
     <statement name="migrate_5.0.2">
-        <sql>ALTER TABLE track ALTER COLUMN pattern TYPE VARCHAR(255)</sql>
+        <sql>ALTER TABLE smart_info ALTER COLUMN pattern TYPE VARCHAR(255)</sql>
     </statement>
 
 </statements>

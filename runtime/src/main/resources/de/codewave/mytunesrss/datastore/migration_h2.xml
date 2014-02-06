@@ -22,7 +22,7 @@
     </statement>
 
     <statement name="migrate_5.0.2">
-        <sql>ALTER TABLE track ALTER COLUMN pattern VARCHAR(255) NOT NULL</sql>
+        <sql>ALTER TABLE smart_info ALTER COLUMN pattern VARCHAR(255) NOT NULL</sql>
     </statement>
 
 </statements>
