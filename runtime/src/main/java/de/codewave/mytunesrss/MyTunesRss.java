@@ -21,6 +21,7 @@ import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.lucene.AddLuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrackService;
+import de.codewave.mytunesrss.mediaserver.MyTunesRssContentDirectoryService;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
@@ -48,6 +49,16 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
+import org.fourthline.cling.UpnpService;
+import org.fourthline.cling.UpnpServiceImpl;
+import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
+import org.fourthline.cling.model.DefaultServiceManager;
+import org.fourthline.cling.model.ValidationException;
+import org.fourthline.cling.model.meta.*;
+import org.fourthline.cling.model.types.DeviceType;
+import org.fourthline.cling.model.types.UDADeviceType;
+import org.fourthline.cling.model.types.UDN;
+import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -58,6 +69,7 @@ import javax.jmdns.JmDNS;
 import javax.management.MBeanServer;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
+import javax.swing.Icon;
 import java.awt.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -186,8 +198,9 @@ public class MyTunesRss {
     public static String HEAPDUMP_FILENAME;
     public static ClassLoader EXTRA_CLASSLOADER;
     public static File INTERNAL_MYSQL_SERVER_PATH;
+    private static UpnpService UPNP_SERVICE;
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(final String[] args) throws IOException, AWTException, SchedulerException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, DatabaseJobRunningException, ValidationException {
         PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
         PrefsUtils.MAC_PREFS_BASE = System.getProperty("ApplicationSupportDirectory");
         processArguments(args);
@@ -229,6 +242,8 @@ public class MyTunesRss {
             @Override
             public void run() {
                 LOGGER.info("Running shutdown hook.");
+                LOGGER.info("Shutting down UPnP service.");
+                UPNP_SERVICE.shutdown();
                 // try to kill all still running processes
                 LOGGER.info("Trying to kill " + SPAWNED_PROCESSES.size() + " previously spawned processes.");
                 for (Process process : SPAWNED_PROCESSES) {
@@ -252,6 +267,7 @@ public class MyTunesRss {
 
             }
         });
+        UPNP_SERVICE = new UpnpServiceImpl();
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
@@ -339,6 +355,7 @@ public class MyTunesRss {
                 }
             });
         }
+        createUpnpMediaServer();
         startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
@@ -386,9 +403,7 @@ public class MyTunesRss {
                         MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
                         dataStoreSession.rollback();
                     }
-                } catch (IOException e) {
-                    LOGGER.error("Could not recreate lucene index.", e);
-                } catch (SQLException e) {
+                } catch (IOException | SQLException e) {
                     LOGGER.error("Could not recreate lucene index.", e);
                 } finally {
                     StopWatch.stop();
@@ -1014,5 +1029,21 @@ public class MyTunesRss {
         }
     }
 
+    public static void createUpnpMediaServer() throws ValidationException, IOException {
+        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
+        if (feedback == null || feedback.isValid()) {
+            DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("MyTunesRSS"));
+            DeviceType type = new UDADeviceType("MediaServer", 1);
+            DeviceDetails details = new DeviceDetails("MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
+            org.fourthline.cling.model.meta.Icon icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, MyTunesRss.class.getResource("/de/codewave/mytunesrss/mediaserver48.png"));
+            LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
+            directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class));
+            LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
+            connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
+            MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
+        } else {
+            LOGGER.warn("Invalid/expired license, not starting UPnP DLNA Media Server.");
+        }
+    }
 
 }

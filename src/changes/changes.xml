@@ -7,7 +7,10 @@
 
     <body>
 
-        <release version="5.5.0" date="___D___">
+        <release version="6.0.0" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-1] UPnP Media Server
+            </action>
             <action dev="mdescher" type="add">
                 MacOSX version now requires MacOSX 10.7.3 and comes in a PKG installer
                 with a bundled Oracle JRE 7u51.
@@ -27,7 +30,7 @@
                 return an image but NULL). Not critical since it is logged as WARN only.
             </action>
         </release>
-        
+
         <release version="5.0.1" date="2014-01-24">
             <action dev="mdescher" type="add">
                 Fixed java script string escaping.

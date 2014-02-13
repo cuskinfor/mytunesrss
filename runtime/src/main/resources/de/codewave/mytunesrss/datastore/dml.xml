@@ -755,6 +755,10 @@
         </sql>
     </statement>
 
+    <statement name="getAllCountsForMediaServer">
+        <sql>SELECT COUNT(ID) FROM playlist</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
