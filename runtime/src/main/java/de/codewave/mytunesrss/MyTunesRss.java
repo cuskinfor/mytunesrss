@@ -242,8 +242,6 @@ public class MyTunesRss {
             @Override
             public void run() {
                 LOGGER.info("Running shutdown hook.");
-                LOGGER.info("Shutting down UPnP service.");
-                UPNP_SERVICE.shutdown();
                 // try to kill all still running processes
                 LOGGER.info("Trying to kill " + SPAWNED_PROCESSES.size() + " previously spawned processes.");
                 for (Process process : SPAWNED_PROCESSES) {
@@ -267,7 +265,6 @@ public class MyTunesRss {
 
             }
         });
-        UPNP_SERVICE = new UpnpServiceImpl();
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
@@ -1032,17 +1029,41 @@ public class MyTunesRss {
     public static void createUpnpMediaServer() throws ValidationException, IOException {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback == null || feedback.isValid()) {
-            DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("MyTunesRSS"));
-            DeviceType type = new UDADeviceType("MediaServer", 1);
-            DeviceDetails details = new DeviceDetails("MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
-            org.fourthline.cling.model.meta.Icon icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, MyTunesRss.class.getResource("/de/codewave/mytunesrss/mediaserver48.png"));
-            LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
-            directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class));
-            LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
-            connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
-            MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
+            Thread t = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    UPNP_SERVICE = new UpnpServiceImpl();
+                    Runtime.getRuntime().addShutdownHook(new Thread() {
+                        @Override
+                        public void run() {
+                            LOGGER.info("Shutting down UPnP Media Server.");
+                            UPNP_SERVICE.shutdown();
+                        }
+                    });
+                    DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("MyTunesRSS"));
+                    DeviceType type = new UDADeviceType("MediaServer", 1);
+                    DeviceDetails details = new DeviceDetails("MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
+                    org.fourthline.cling.model.meta.Icon icon = null;
+                    try {
+                        icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, MyTunesRss.class.getResource("/de/codewave/mytunesrss/mediaserver48.png"));
+                    } catch (IOException e) {
+                        LOGGER.warn("Could not create icon for UPnP Media Server.", e);
+                    }
+                    LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
+                    directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class));
+                    LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
+                    connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
+                    try {
+                        MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
+                    } catch (ValidationException e) {
+                        LOGGER.warn("Could not add UPnP Media Server device.");
+                    }
+                }
+            }, "UPnPService");
+            t.setDaemon(true);
+            t.start();
         } else {
-            LOGGER.warn("Invalid/expired license, not starting UPnP DLNA Media Server.");
+            LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
         }
     }
 

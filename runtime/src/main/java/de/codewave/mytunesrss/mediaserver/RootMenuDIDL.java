@@ -23,40 +23,31 @@ import java.sql.SQLException;
 public class RootMenuDIDL extends MyTunesRssDIDLContent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RootMenuDIDL.class);
-    
-    static final String ID_PLAYLISTS = "PL";
-    static final String ID_ALBUMS = "AL";
-    static final String ID_ARTISTS = "AR";
-    static final String ID_GENRES = "GE";
-    static final String ID_MOVIES = "MO";
-    static final String ID_TVSHOWS = "TV";
-    static final String ID_PHOTOS = "PH";
 
     @Override
-    void createDirectChildren(User user, DataStoreSession tx, String objectID, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, null, null, null, false, false); // TODO: new query for count
         int playlistCount = tx.executeQuery(findPlaylistQuery).getResultSize();
         FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery(); // TODO: new query for count
         int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
-        
+
         LOGGER.debug("Adding root menu containers.");
-        addContainer(new StorageFolder(ID_PLAYLISTS, "0", "Playlists", "MyTunesRSS", playlistCount, 0L));
-        addContainer(new StorageFolder(ID_ALBUMS, "0", "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
-        addContainer(new StorageFolder(ID_ARTISTS, "0", "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
-        addContainer(new StorageFolder(ID_GENRES, "0", "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));
-        addContainer(new StorageFolder(ID_MOVIES, "0", "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
-        addContainer(new StorageFolder(ID_TVSHOWS, "0", "TV Shows", "MyTunesRSS", systemInformation.getTvShowCount(), 0L));
-        addContainer(new StorageFolder(ID_PHOTOS, "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
+        addContainer(new StorageFolder(ObjectID.Playlists.name(), "0", "Playlists", "MyTunesRSS", playlistCount, 0L));
+        addContainer(new StorageFolder(ObjectID.Albums.name(), "0", "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
+        addContainer(new StorageFolder(ObjectID.Artists.name(), "0", "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
+        addContainer(new StorageFolder(ObjectID.Genres.name(), "0", "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));
+        addContainer(new StorageFolder(ObjectID.Movies.name(), "0", "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
+        addContainer(new StorageFolder(ObjectID.TvShows.name(), "0", "TV Shows", "MyTunesRSS", systemInformation.getTvShowCount(), 0L));
+        addContainer(new StorageFolder(ObjectID.Photos.name(), "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String objectID) throws Exception {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
         throw new UnsupportedOperationException("Not yet implemented!");
     }
 
     long getTotalMatches() {
-        LOGGER.debug("Root menu DIDL has " + getCount() + " total matches.");
         return getCount();
     }
 

@@ -18,27 +18,30 @@ import java.util.Map;
 
 public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryService {
 
-    private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOid = new HashMap<>();
-    private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOidPrefix = new HashMap<>();
+    private Map<ObjectID, Class<? extends MyTunesRssDIDLContent>> contentForOid = new HashMap<>();
+    private Map<ObjectID, Class<? extends MyTunesRssDIDLContent>> contentForOidPrefix = new HashMap<>();
 
     public MyTunesRssContentDirectoryService() {
         // complete OIDs
-        contentForOid.put(RootMenuDIDL.ID_PLAYLISTS, PlaylistsDIDL.class);
-        contentForOid.put(RootMenuDIDL.ID_ALBUMS, AlbumsDIDL.class);
-        contentForOid.put(RootMenuDIDL.ID_ARTISTS, ArtistsDIDL.class);
-        contentForOid.put(RootMenuDIDL.ID_GENRES, GenresDIDL.class);
-        contentForOid.put(RootMenuDIDL.ID_MOVIES, MoviesDIDL.class);
-        contentForOid.put(RootMenuDIDL.ID_TVSHOWS, TvShowsDIDL.class);
-        contentForOid.put(RootMenuDIDL.ID_PHOTOS, PhotoAlbumsDIDL.class);
+        contentForOid.put(ObjectID.Playlists, PlaylistsDIDL.class);
+        contentForOid.put(ObjectID.Albums, AlbumsDIDL.class);
+        contentForOid.put(ObjectID.Artists, ArtistsDIDL.class);
+        contentForOid.put(ObjectID.Genres, GenresDIDL.class);
+        contentForOid.put(ObjectID.Movies, MoviesDIDL.class);
+        contentForOid.put(ObjectID.TvShows, TvShowsDIDL.class);
+        contentForOid.put(ObjectID.Photos, PhotoAlbumsDIDL.class);
         // OID prefixes
+        contentForOidPrefix.put(ObjectID.ArtistAlbums, ArtistAlbumsDIDL.class);
     }
 
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
-        Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(objectID);
-        if (contentClass == null) {
-            for (Map.Entry<String, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
-                if (objectID.startsWith(entry.getKey())) {
+        Class<? extends MyTunesRssDIDLContent> contentClass = null;
+        try {
+            contentClass = contentForOid.get(ObjectID.valueOf(objectID));
+        } catch (IllegalArgumentException e) {
+            for (Map.Entry<ObjectID, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
+                if (objectID.startsWith(entry.getKey().name())) {
                     contentClass = entry.getValue();
                     break;
                 }
@@ -49,10 +52,12 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         }
         try {
             MyTunesRssDIDLContent content = contentClass.newInstance();
+            int separatorIndex = objectID.indexOf(';');
+            String oidParams = separatorIndex > 0 && separatorIndex < objectID.length() - 1 ? objectID.substring(separatorIndex + 1) : null;
             if (browseFlag == BrowseFlag.DIRECT_CHILDREN) {
-                content.initDirectChildren(objectID, filter, firstResult, maxResults, orderby);
+                content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderby);
             } else if (browseFlag == BrowseFlag.METADATA) {
-                content.initMetaData(objectID);
+                content.initMetaData(oidParams);
             }
             return new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
         } catch (Exception e) {
