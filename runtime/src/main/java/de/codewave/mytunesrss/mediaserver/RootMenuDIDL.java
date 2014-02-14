@@ -12,29 +12,35 @@ import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
+import org.fourthline.cling.support.model.BrowseFlag;
+import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.StorageFolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
-public class RootMenu extends MyTunesRssDIDLContent {
+public class RootMenuDIDL extends MyTunesRssDIDLContent {
 
-    static final String ID_PLAYLISTS = "#PL";
-    static final String ID_ALBUMS = "#AL";
-    static final String ID_ARTISTS = "#AR";
-    static final String ID_GENRES = "#GE";
-    static final String ID_MOVIES = "#MO";
-    static final String ID_TVSHOWS = "#TV";
-    static final String ID_PHOTOS = "#PH";
+    private static final Logger LOGGER = LoggerFactory.getLogger(RootMenuDIDL.class);
+    
+    static final String ID_PLAYLISTS = "PL";
+    static final String ID_ALBUMS = "AL";
+    static final String ID_ARTISTS = "AR";
+    static final String ID_GENRES = "GE";
+    static final String ID_MOVIES = "MO";
+    static final String ID_TVSHOWS = "TV";
+    static final String ID_PHOTOS = "PH";
 
-    void create(User user, DataStoreSession tx) throws SQLException {
+    @Override
+    void createDirectChildren(User user, DataStoreSession tx, String objectID, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, null, null, null, false, false); // TODO: new query for count
-        findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         int playlistCount = tx.executeQuery(findPlaylistQuery).getResultSize();
         FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery(); // TODO: new query for count
-        findPhotoAlbumIdsQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
-
+        
+        LOGGER.debug("Adding root menu containers.");
         addContainer(new StorageFolder(ID_PLAYLISTS, "0", "Playlists", "MyTunesRSS", playlistCount, 0L));
         addContainer(new StorageFolder(ID_ALBUMS, "0", "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
         addContainer(new StorageFolder(ID_ARTISTS, "0", "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
@@ -44,7 +50,13 @@ public class RootMenu extends MyTunesRssDIDLContent {
         addContainer(new StorageFolder(ID_PHOTOS, "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
     }
 
+    @Override
+    void createMetaData(User user, DataStoreSession tx, String objectID) throws Exception {
+        throw new UnsupportedOperationException("Not yet implemented!");
+    }
+
     long getTotalMatches() {
+        LOGGER.debug("Root menu DIDL has " + getCount() + " total matches.");
         return getCount();
     }
 
