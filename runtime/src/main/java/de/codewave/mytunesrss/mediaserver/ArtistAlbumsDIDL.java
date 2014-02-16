@@ -25,10 +25,10 @@ public class ArtistAlbumsDIDL extends MyTunesRssDIDLContent {
         String artist = decode(oidParams).get(0);
         myTotalMatches = executeAndProcess(
                 tx,
-                new FindAlbumQuery(user, null, artist, false, null, -1, 0, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
+                new FindAlbumQuery(user, null, artist, false, null, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
                 new DataStoreQuery.ResultProcessor<Album>() {
                     public void process(Album album) {
-                        addContainer(new MusicAlbum(ObjectID.Album.name() + ";" + encode(album.getName(), album.getArtist()), ObjectID.Artist.name() + ";" + oidParams, album.getName(), album.getArtist(), album.getTrackCount()));
+                        addContainer(new MusicAlbum(ObjectID.ArtistAlbum.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.ArtistAlbums.getValue() + ";" + oidParams, album.getName(), album.getArtist(), album.getTrackCount()));
                     }
                 },
                 firstResult,

@@ -20,10 +20,10 @@ public class AlbumsDIDL extends MyTunesRssDIDLContent {
     void createDirectChildren(User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
         myTotalMatches = executeAndProcess(
                 tx,
-                new FindAlbumQuery(user, null, null, false, null, -1, 0, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
+                new FindAlbumQuery(user, null, null, false, null, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
                 new DataStoreQuery.ResultProcessor<Album>() {
                     public void process(Album album) {
-                        addContainer(new MusicAlbum(ObjectID.Album.name()+ ";" + encode(album.getName(), album.getArtist()), ObjectID.Albums.name(), album.getName(), album.getArtist(), album.getTrackCount()));
+                        addContainer(new MusicAlbum(ObjectID.Album.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.Albums.getValue(), album.getName(), album.getArtist(), album.getTrackCount()));
                     }
                 },
                 firstResult,

@@ -14,12 +14,16 @@ import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.DIDLContent;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MyTunesRssDIDLContent extends DIDLContent {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssDIDLContent.class);
 
     final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
@@ -62,6 +66,7 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
     }
 
     protected <T> long executeAndProcess(DataStoreSession tx, DataStoreQuery<DataStoreQuery.QueryResult<T>> query, final DataStoreQuery.ResultProcessor<T> processor, long first, int count) throws java.sql.SQLException {
+        int effectiveCount = count > 0 ? count : Integer.MAX_VALUE;
         query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
         DataStoreQuery.QueryResult<T> queryResult = tx.executeQuery(query);
         final AtomicLong total = new AtomicLong();
@@ -88,7 +93,20 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
                 total.incrementAndGet();
             }
         });
+        LOGGER.debug("Processed {} items from query result.", total.get());
         return total.get();
     }
 
+    protected String toHumanReadableTime(int time) {
+        int seconds = time % 60;
+        int minutes = (time / 60) % 60;
+        int hours = time / 3600;
+        StringBuilder builder = new StringBuilder();
+        if (hours > 0) {
+            builder.append(Integer.toString(hours)).append(":");
+        }
+        builder.append(StringUtils.leftPad(Integer.toString(minutes), hours > 0 ? 2 : 1, '0')).append(":");
+        builder.append(StringUtils.leftPad(Integer.toString(seconds), 2, '0'));
+        return builder.toString();
+    }
 }

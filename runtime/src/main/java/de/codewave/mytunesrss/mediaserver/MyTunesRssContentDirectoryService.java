@@ -29,19 +29,19 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOid.put(ObjectID.Genres, GenresDIDL.class);
         contentForOid.put(ObjectID.Movies, MoviesDIDL.class);
         contentForOid.put(ObjectID.TvShows, TvShowsDIDL.class);
-        contentForOid.put(ObjectID.Photos, PhotoAlbumsDIDL.class);
+        contentForOid.put(ObjectID.Photoalbums, PhotoAlbumsDIDL.class);
         // OID prefixes
         contentForOidPrefix.put(ObjectID.ArtistAlbums, ArtistAlbumsDIDL.class);
+        contentForOidPrefix.put(ObjectID.GenreAlbums, GenreAlbumsDIDL.class);
+        contentForOidPrefix.put(ObjectID.Album, AlbumDIDL.class);
     }
 
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
-        Class<? extends MyTunesRssDIDLContent> contentClass = null;
-        try {
-            contentClass = contentForOid.get(ObjectID.valueOf(objectID));
-        } catch (IllegalArgumentException e) {
+        Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(ObjectID.fromValue(objectID));
+        if (contentClass == null) {
             for (Map.Entry<ObjectID, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
-                if (objectID.startsWith(entry.getKey().name())) {
+                if (objectID.startsWith(entry.getKey().getValue())) {
                     contentClass = entry.getValue();
                     break;
                 }

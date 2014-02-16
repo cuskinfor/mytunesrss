@@ -19,7 +19,7 @@ public class ArtistsDIDL extends MyTunesRssDIDLContent {
                 new FindArtistQuery(user, null, null, null, -1),
                 new DataStoreQuery.ResultProcessor<Artist>() {
                     public void process(Artist artist) {
-                        addContainer(new MusicArtist(ObjectID.ArtistAlbums.name() + ";" + encode(artist.getName()), ObjectID.Artists.name(), artist.getName(), "MyTunesRSS", artist.getAlbumCount()));
+                        addContainer(new MusicArtist(ObjectID.ArtistAlbums.getValue() + ";" + encode(artist.getName()), ObjectID.Artists.getValue(), artist.getName(), "MyTunesRSS", artist.getAlbumCount()));
                     }
                 },
                 firstResult,
