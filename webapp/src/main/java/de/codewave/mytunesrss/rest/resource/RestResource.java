@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
@@ -52,17 +53,17 @@ public class RestResource {
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
             if (IncludeExcludeInterceptor.isAttr("m3uUri")) {
-                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=M3u"), enc(request, "_cdi=" + ue(artist.getName()) + ".m3u")));
+                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), enc("_cdi=" + ue(artist.getName()) + ".m3u")));
             }
             if (IncludeExcludeInterceptor.isAttr("xspfUri")) {
-                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "artist=" + b64(artist.getName())), enc(request, "type=Xspf"), enc(request, "_cdi=" + ue(artist.getName()) + ".xspf")));
+                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), enc("_cdi=" + ue(artist.getName()) + ".xspf")));
             }
         }
         if (IncludeExcludeInterceptor.isAttr("rssUri") && user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "artist=" + b64(artist.getName())), enc(request, "_cdi=" + ue(artist.getName()) + ".xml")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("artist=" + b64(artist.getName())), enc("_cdi=" + ue(artist.getName()) + ".xml")));
         }
         if (IncludeExcludeInterceptor.isAttr("downloadUri") && user.isDownload()) {
-            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "artist=" + b64(artist.getName())), enc(request, "_cda=" + ue(artist.getName()) + ".zip")));
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("artist=" + b64(artist.getName())), enc("_cda=" + ue(artist.getName()) + ".zip")));
         }
         return representation;
     }
@@ -84,22 +85,22 @@ public class RestResource {
             representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist())));
         }
         if (IncludeExcludeInterceptor.isAttr("imageUri") && StringUtils.isNotBlank(album.getImageHash())) {
-            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + album.getImageHash())));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
             if (IncludeExcludeInterceptor.isAttr("m3uUri")) {
-                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=M3u"), enc(request, "_cdi=" + ue(album.getName()) + ".m3u")));
+                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=M3u"), enc("_cdi=" + ue(album.getName()) + ".m3u")));
             }
             if (IncludeExcludeInterceptor.isAttr("xspfUri")) {
-                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "album=" + b64(album.getName())), enc(request, "type=Xspf"), enc(request, "_cdi=" + ue(album.getName()) + ".xspf")));
+                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=Xspf"), enc("_cdi=" + ue(album.getName()) + ".xspf")));
             }
         }
         if (IncludeExcludeInterceptor.isAttr("rssUri") && user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "album=" + b64(album.getName())), enc(request, "_cdi=" + ue(album.getName()) + ".xml")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("album=" + b64(album.getName())), enc("_cdi=" + ue(album.getName()) + ".xml")));
         }
         if (IncludeExcludeInterceptor.isAttr("downloadUri") && user.isDownload()) {
-            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "album=" + b64(album.getName())), enc(request, "albumartist=" + b64(album.getArtist())), enc(request, "_cda=" + ue(album.getName()) + ".zip")));
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("album=" + b64(album.getName())), enc("albumartist=" + b64(album.getArtist())), enc("_cda=" + ue(album.getName()) + ".zip")));
         }
         return representation;
     }
@@ -153,7 +154,7 @@ public class RestResource {
                 representation.setParentUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
             }
             if (IncludeExcludeInterceptor.isAttr("downloadUri") && MyTunesRssWebUtils.getAuthUser(request).isDownload()) {
-                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc(request, "playlist=" + playlist.getId()), enc(request, "_cda=" + ue(playlist.getName()) + ".zip")));
+                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("playlist=" + playlist.getId()), enc("_cda=" + ue(playlist.getName()) + ".zip")));
             }
         }
         return representation;
@@ -170,19 +171,19 @@ public class RestResource {
     protected TrackRepresentation toTrackRepresentation(UriInfo uriInfo, HttpServletRequest request, Track track) {
         TrackRepresentation representation = new TrackRepresentation(track);
         if (IncludeExcludeInterceptor.isAttr("imageUri") && StringUtils.isNotBlank(track.getImageHash())) {
-            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + track.getImageHash())));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + track.getImageHash())));
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
             if (IncludeExcludeInterceptor.isAttr("m3uUri")) {
-                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=M3u"), enc(request, "_cdi=" + ue(track.getName()) + ".m3u")));
+                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("track=" + track.getId()), enc("type=M3u"), enc("_cdi=" + ue(track.getName()) + ".m3u")));
             }
             if (IncludeExcludeInterceptor.isAttr("xspfUri")) {
-                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc(request, "track=" + track.getId()), enc(request, "type=Xspf"), enc(request, "_cdi=" + ue(track.getName()) + ".xspf")));
+                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("track=" + track.getId()), enc("type=Xspf"), enc("_cdi=" + ue(track.getName()) + ".xspf")));
             }
         }
         if (IncludeExcludeInterceptor.isAttr("rssUri") && user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc(request, "track=" + track.getId()), enc(request, "_cdi=" + ue(track.getName()) + ".xml")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("track=" + track.getId()), enc("_cdi=" + ue(track.getName()) + ".xml")));
         }
         request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(request)); // prepare MyTunesFunctions
         if (IncludeExcludeInterceptor.isAttr("downloadUri") && user.isDownload()) {
@@ -207,7 +208,7 @@ public class RestResource {
         UriBuilder uriBuilder = UriBuilder.fromUri(MyTunesRssWebUtils.getCommandCall(request, command));
         User authUser = MyTunesRssWebUtils.getAuthUser(request);
         if (authUser != null) {
-            uriBuilder.path(MyTunesRssWebUtils.encryptPathInfo(request, "auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
+            uriBuilder.path(MyTunesRssUtils.encryptPathInfo("auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
         }
         for (String path : paths) {
             uriBuilder.path(path);
@@ -215,8 +216,8 @@ public class RestResource {
         return uriBuilder.build();
     }
 
-    protected String enc(HttpServletRequest request, String s) {
-        return MyTunesRssWebUtils.encryptPathInfo(request, s);
+    protected String enc(String s) {
+        return MyTunesRssUtils.encryptPathInfo(s);
     }
 
     protected String b64(String s) {

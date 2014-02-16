@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
@@ -22,8 +22,7 @@ public class EncryptTag extends BodyTagSupport {
     @Override
     public int doEndTag() throws JspException {
         try {
-            pageContext.getOut().write(MyTunesRssWebUtils.encryptPathInfo((HttpServletRequest) pageContext.getRequest(),
-                    getBodyContent().getString()));
+            pageContext.getOut().write(MyTunesRssUtils.encryptPathInfo(getBodyContent().getString()));
         } catch (IOException e) {
             throw new JspException(e);
         }

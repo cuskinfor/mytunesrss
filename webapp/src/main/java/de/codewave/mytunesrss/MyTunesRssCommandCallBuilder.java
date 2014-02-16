@@ -66,7 +66,7 @@ public class MyTunesRssCommandCallBuilder {
             pathInfo.append("/").append(segment);
         }
         if (pathInfo.length() > 1) {
-            builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.substring(1)));
+            builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.substring(1)));
         }
         if (StringUtils.isNotBlank(myFileName)) {
             builder.append("/").append(myFileName);

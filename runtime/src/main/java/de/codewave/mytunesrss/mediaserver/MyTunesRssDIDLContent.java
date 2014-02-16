@@ -7,13 +7,18 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.DIDLContent;
+import org.fourthline.cling.support.model.Res;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.transport.impl.HttpExchangeUpnpStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +49,28 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
     }
 
     abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception;
+
+    protected Res createTrackResource(Track track, User user) {
+        StringBuilder builder = new StringBuilder("http://");
+        builder.append(HttpExchangeUpnpStream.REQUEST_LOCAL_ADDRESS.get()).append(":").append(MyTunesRss.CONFIG.getPort());
+        String context = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
+        if (!context.startsWith("/")) {
+            builder.append("/");
+        }
+        builder.append(context);
+        if (context.length() > 0 && !context.endsWith("/")) {
+            builder.append("/");
+        }
+        builder.append("mytunesrss/playTrack/").append(MyTunesRssUtils.createAuthToken(user));
+        StringBuilder pathInfo = new StringBuilder("track=");
+        pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
+        String tcParam = null;
+        if (StringUtils.isNotBlank(tcParam)) {
+            pathInfo.append("/tc=").append(tcParam);
+        }
+        builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
+        return new Res(track.getContentType(), track.getContentLength(), toHumanReadableTime(track.getTime()), 0L, builder.toString());
+    }
 
     abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception;
 

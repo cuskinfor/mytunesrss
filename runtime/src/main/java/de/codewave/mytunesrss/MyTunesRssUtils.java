@@ -37,6 +37,7 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Cipher;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -1143,4 +1144,34 @@ public class MyTunesRssUtils {
         });
     }
 
+    /**
+     * Encrypt the path info. The parts of the path info are expected to be url encoded already.
+     * Any %2F and %5C will be replaced by %01 and %02 since tomcat does not like those characters in the path info.
+     * So the path info decoder will have to replace %01 and %02 with %2F and %5C.
+     *
+     * @param pathInfo
+     *
+     * @return
+     */
+    public static String encryptPathInfo(String pathInfo) {
+        String result = pathInfo;
+        try {
+            if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
+                Cipher cipher = Cipher.getInstance(MyTunesRss.CONFIG.getPathInfoKey().getAlgorithm());
+                cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
+                result = "%7B" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "%7D";
+            }
+        } catch (Exception e) {
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Could not encrypt path info.", e);
+            }
+        }
+        // replace %2F and %5C with %01 and %02 for the reason specified in the java doc
+        return result.replace("%2F", "%01").replace("%2f", "%01").replace("%5C", "%02").replace("%5c", "%02");
+    }
+
+    public static String createAuthToken(User user) {
+        return encryptPathInfo("auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
+                        MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+    }
 }

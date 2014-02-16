@@ -75,7 +75,7 @@ public class TvShowResource extends RestResource {
             representation.setEpisodesUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getEpisodes").build(show, entry.getKey()));
             if (imageHashPerEpisode.containsKey(entry.getKey())) {
                 representation.setImageHash(StringUtils.trimToNull(imageHashPerEpisode.get(entry.getKey())));
-                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + imageHashPerEpisode.get(entry.getKey()))));
+                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + imageHashPerEpisode.get(entry.getKey()))));
             }
             seasons.add(representation);
         }

@@ -68,16 +68,16 @@ public class PhotoAlbumResource extends RestResource {
                 PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
                 if (IncludeExcludeInterceptor.isAttr("thumbnailImageUri")) {
                     if (StringUtils.isNotBlank(photo.getImageHash())) {
-                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + photo.getImageHash())));
+                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + photo.getImageHash())));
                     } else {
-                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
                     }
                 }
                 if (IncludeExcludeInterceptor.isAttr("originalImageUri")) {
                     if (photoSize != null) {
-                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc(request, "size=" + photoSize)));
+                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc("photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc("size=" + photoSize)));
                     } else {
-                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc(request, "photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc("photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
                     }
                 }
                 if (IncludeExcludeInterceptor.isAttr("exifDataUri")) {

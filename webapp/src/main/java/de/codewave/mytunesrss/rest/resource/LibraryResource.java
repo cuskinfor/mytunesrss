@@ -298,7 +298,7 @@ public class LibraryResource extends RestResource {
                     representation.setImageHash(StringUtils.trimToNull(imageHashPerShow.get(name)));
                 }
                 if (IncludeExcludeInterceptor.isAttr("imageUri")) {
-                    representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc(request, "hash=" + imageHashPerShow.get(name))));
+                    representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + imageHashPerShow.get(name))));
                 }
             }
             shows.add(representation);

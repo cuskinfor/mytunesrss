@@ -262,7 +262,7 @@ public class MyTunesFunctions {
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
-        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
         return builder.toString();
     }
 
@@ -284,7 +284,7 @@ public class MyTunesFunctions {
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
-        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
         return builder.toString();
     }
 
@@ -325,7 +325,7 @@ public class MyTunesFunctions {
         if (StringUtils.isNotBlank(extraPathInfo)) {
             pathInfo.append("/").append(extraPathInfo);
         }
-        builder.append("/").append(MyTunesRssWebUtils.encryptPathInfo(request, pathInfo.toString()));
+        builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
         return builder.toString();
     }
 
