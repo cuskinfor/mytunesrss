@@ -129,11 +129,10 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         int minutes = (time / 60) % 60;
         int hours = time / 3600;
         StringBuilder builder = new StringBuilder();
-        if (hours > 0) {
-            builder.append(Integer.toString(hours)).append(":");
-        }
-        builder.append(StringUtils.leftPad(Integer.toString(minutes), hours > 0 ? 2 : 1, '0')).append(":");
+        builder.append(StringUtils.leftPad(Integer.toString(hours), 2, '0')).append(":");
+        builder.append(StringUtils.leftPad(Integer.toString(minutes), 2, '0')).append(":");
         builder.append(StringUtils.leftPad(Integer.toString(seconds), 2, '0'));
+        LOGGER.debug("Human readable of \"" + time + "\" is \"" + builder.toString() + "\".");
         return builder.toString();
     }
 }
