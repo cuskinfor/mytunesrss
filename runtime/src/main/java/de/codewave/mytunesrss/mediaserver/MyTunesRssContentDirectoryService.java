@@ -39,11 +39,12 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOidPrefix.put(ObjectID.ArtistAlbums.getValue(), ArtistAlbumsDIDL.class);
         contentForOidPrefix.put(ObjectID.GenreAlbums.getValue(), GenreAlbumsDIDL.class);
         contentForOidPrefix.put(ObjectID.Album.getValue(), AlbumDIDL.class);
+        contentForOidPrefix.put(ObjectID.AlbumTrack.getValue(), AlbumTrackDIDL.class);
     }
 
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
-        LOGGER.debug("Received browse request [objectID=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {objectID, filter, firstResult, maxResults, orderBy});
+        LOGGER.debug("Received browse request [objectID=\"{}\", browseFlag=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {objectID, browseFlag, filter, firstResult, maxResults, orderBy});
         Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(objectID);
         if (contentClass == null) {
             for (Map.Entry<String, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
