@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
@@ -33,7 +34,7 @@ public class AlbumsDIDL extends MyTunesRssDIDLContent {
 
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        throw new NotYetImplementedException();
     }
 
     @Override

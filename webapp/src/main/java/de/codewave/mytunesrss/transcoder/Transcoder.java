@@ -1,7 +1,7 @@
 package de.codewave.mytunesrss.transcoder;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.command.StatusCodeSender;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
@@ -24,8 +24,8 @@ public class Transcoder {
         TranscoderConfig transcoderConfig = user != null ? user.getForceTranscoder(track) : null;
         Transcoder transcoder = transcoderConfig != null ? new Transcoder(transcoderConfig, track) : null;
         if (transcoder == null) {
-            transcoderConfig = MyTunesRssWebUtils.getTranscoder(activeTranscoders, track);
-            transcoder = transcoderConfig != null && MyTunesRssWebUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track) : null;
+            transcoderConfig = MyTunesRssUtils.getTranscoder(activeTranscoders, track);
+            transcoder = transcoderConfig != null && MyTunesRssUtils.isActiveTranscoder(activeTranscoders, transcoderConfig.getName()) ? new Transcoder(transcoderConfig, track) : null;
         }
         return transcoder;
     }

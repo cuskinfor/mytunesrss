@@ -22,6 +22,19 @@ public class TranscoderConfig implements Cloneable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderConfig.class);
     private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<>();
+    public static final TranscoderConfig MEDIA_SERVER_AUDIO_TRANSCODER;
+
+    static {
+        MEDIA_SERVER_AUDIO_TRANSCODER = new TranscoderConfig();
+        MEDIA_SERVER_AUDIO_TRANSCODER.setName("_MSA");
+        MEDIA_SERVER_AUDIO_TRANSCODER.setTranscoderActivations(Arrays.asList(
+                new FilenameTranscoderActivation("^.+\\.mp3$", true),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+        MEDIA_SERVER_AUDIO_TRANSCODER.setTargetSuffix("mp3");
+        MEDIA_SERVER_AUDIO_TRANSCODER.setTargetContentType("audio/mpeg");
+        MEDIA_SERVER_AUDIO_TRANSCODER.setTargetMux(null);
+        MEDIA_SERVER_AUDIO_TRANSCODER.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
+    }
 
     static {
         TranscoderConfig mp3Audio = new TranscoderConfig();
@@ -90,11 +103,7 @@ public class TranscoderConfig implements Cloneable {
                 TranscoderActivation activation = Activation.valueOf(type).newActivationInstance();
                 activation.readFrom(activationContext);
                 activations.add(activation);
-            } catch (IllegalArgumentException e) {
-                LOGGER.error("Ignoring activation type \"" + type + "\".", e);
-            } catch (IllegalAccessException e) {
-                LOGGER.error("Ignoring activation type \"" + type + "\".", e);
-            } catch (InstantiationException e) {
+            } catch (IllegalArgumentException | InstantiationException | IllegalAccessException e) {
                 LOGGER.error("Ignoring activation type \"" + type + "\".", e);
             }
         }

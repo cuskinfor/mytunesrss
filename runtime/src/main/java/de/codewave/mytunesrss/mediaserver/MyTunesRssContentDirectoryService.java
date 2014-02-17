@@ -21,7 +21,7 @@ import java.util.Map;
 public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssContentDirectoryService.class);
-    
+
     private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOid = new HashMap<>();
     private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOidPrefix = new HashMap<>();
 
@@ -37,7 +37,11 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOid.put(ObjectID.Photoalbums.getValue(), PhotoAlbumsDIDL.class);
         // OID prefixes
         contentForOidPrefix.put(ObjectID.ArtistAlbums.getValue(), ArtistAlbumsDIDL.class);
+        contentForOidPrefix.put(ObjectID.ArtistAlbum.getValue(), ArtistAlbumDIDL.class);
+        contentForOidPrefix.put(ObjectID.ArtistAlbumTrack.getValue(), ArtistAlbumTrackDIDL.class);
         contentForOidPrefix.put(ObjectID.GenreAlbums.getValue(), GenreAlbumsDIDL.class);
+        contentForOidPrefix.put(ObjectID.GenreAlbum.getValue(), GenreAlbumDIDL.class);
+        contentForOidPrefix.put(ObjectID.GenreAlbumTrack.getValue(), GenreAlbumTrackDIDL.class);
         contentForOidPrefix.put(ObjectID.Album.getValue(), AlbumDIDL.class);
         contentForOidPrefix.put(ObjectID.AlbumTrack.getValue(), AlbumTrackDIDL.class);
     }
@@ -48,7 +52,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(objectID);
         if (contentClass == null) {
             for (Map.Entry<String, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
-                if (objectID.startsWith(entry.getKey())) {
+                if (objectID.startsWith(entry.getKey() + ";")) {
                     contentClass = entry.getValue();
                     break;
                 }

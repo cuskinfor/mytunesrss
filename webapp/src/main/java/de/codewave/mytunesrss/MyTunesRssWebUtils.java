@@ -18,6 +18,7 @@ import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -391,21 +392,6 @@ public class MyTunesRssWebUtils {
             }
         }
         return null;
-    }
-
-    public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
-        if (MyTunesRss.CONFIG.isValidVlcConfig()) {
-            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-                if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track)) {
-                    return config;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static boolean isActiveTranscoder(String activeTranscoders, String transcoder) {
-        return ArrayUtils.contains(StringUtils.split(activeTranscoders, ','), transcoder);
     }
 
     public static boolean isAuthorized(String userName, String password, byte[] passwordHash) {

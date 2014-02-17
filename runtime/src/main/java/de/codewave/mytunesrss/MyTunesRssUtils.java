@@ -4,6 +4,7 @@ import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.LdapConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -24,6 +25,7 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -1173,5 +1175,23 @@ public class MyTunesRssUtils {
     public static String createAuthToken(User user) {
         return encryptPathInfo("auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
                         MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+    }
+
+    public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
+        if (MyTunesRss.CONFIG.isValidVlcConfig()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+                if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track)) {
+                    return config;
+                }
+            }
+        }
+        if (isActiveTranscoder(activeTranscoders, TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER.getName()) && TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER.isValidFor(track)) {
+            return TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER;
+        }
+        return null;
+    }
+
+    public static boolean isActiveTranscoder(String activeTranscoders, String transcoder) {
+        return ArrayUtils.contains(StringUtils.split(activeTranscoders, ','), transcoder);
     }
 }

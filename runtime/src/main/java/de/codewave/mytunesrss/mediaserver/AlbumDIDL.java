@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
@@ -28,14 +29,14 @@ public class AlbumDIDL extends MyTunesRssDIDLContent {
     void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
         final String album = decode(oidParams).get(0);
         final String artist = decode(oidParams).get(1);
-        final String parentID = ObjectID.Album.getValue() + ";" + encode(album, artist);
+        final String parentID = getParentId(album, artist);
         myTotalMatches = executeAndProcess(
                 tx,
                 FindTrackQuery.getForAlbum(user, new String[]{album}, new String[]{artist}, SortOrder.Album),
                 new DataStoreQuery.ResultProcessor<Track>() {
                     public void process(Track track) {
-                        String id = ObjectID.AlbumTrack.getValue() + ";" + encode(track.getId());
-                        addItem(new MusicTrack(id, parentID, track.getName(), "MyTunesRSS", track.getAlbum(), track.getArtist(), createTrackResource(track, user)));
+                        String id = getObjectId(track);
+                        addItem(new MusicTrack(id, parentID, track.getName(), track.getArtist(), track.getAlbum(), track.getArtist(), createTrackResource(track, user)));
                     }
                 },
                 firstResult,
@@ -43,9 +44,17 @@ public class AlbumDIDL extends MyTunesRssDIDLContent {
         );
     }
 
+    protected String getParentId(String album, String artist) {
+        return ObjectID.Album.getValue() + ";" + encode(album, artist);
+    }
+
+    protected String getObjectId(Track track) {
+        return ObjectID.AlbumTrack.getValue() + ";" + encode(track.getId());
+    }
+
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
-        throw new UnsupportedOperationException("Not yet implemented!");
+        throw new NotYetImplementedException();
     }
 
     @Override

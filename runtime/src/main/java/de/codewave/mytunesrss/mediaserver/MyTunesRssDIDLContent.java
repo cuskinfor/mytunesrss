@@ -5,10 +5,16 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.camel.mp3.Mp3Info;
+import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.transcoder.FilenameTranscoderActivation;
+import de.codewave.mytunesrss.config.transcoder.Mp4CodecTranscoderActivation;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -16,13 +22,17 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.DIDLContent;
+import org.fourthline.cling.support.model.ProtocolInfo;
 import org.fourthline.cling.support.model.Res;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.transport.impl.HttpExchangeUpnpStream;
+import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.FileInputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -64,12 +74,23 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         builder.append("mytunesrss/playTrack/").append(MyTunesRssUtils.createAuthToken(user));
         StringBuilder pathInfo = new StringBuilder("track=");
         pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
-        String tcParam = null;
-        if (StringUtils.isNotBlank(tcParam)) {
-            pathInfo.append("/tc=").append(tcParam);
+        TranscoderConfig transcoder = null;
+        if (track.getMediaType() == MediaType.Audio) {
+            transcoder = MyTunesRssUtils.getTranscoder(TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER.getName(), track);
+            if (transcoder != null) {
+                pathInfo.append("/tc=").append(transcoder.getName());
+            }
         }
         builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
-        return new Res(track.getContentType(), track.getContentLength(), toHumanReadableTime(track.getTime()), 0L, builder.toString());
+        Res res = new Res();
+        MimeType mimeType = MimeType.valueOf(transcoder != null ? transcoder.getTargetContentType() : track.getContentType());
+        res.setProtocolInfo(new ProtocolInfo(mimeType));
+        if (transcoder == null) {
+            res.setSize(track.getContentLength());
+        }
+        res.setDuration(toHumanReadableTime(track.getTime()));
+        res.setValue(builder.toString());
+        return res;
     }
 
     abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception;
@@ -129,9 +150,9 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         int minutes = (time / 60) % 60;
         int hours = time / 3600;
         StringBuilder builder = new StringBuilder();
-        builder.append(StringUtils.leftPad(Integer.toString(hours), 2, '0')).append(":");
+        builder.append(hours).append(":");
         builder.append(StringUtils.leftPad(Integer.toString(minutes), 2, '0')).append(":");
-        builder.append(StringUtils.leftPad(Integer.toString(seconds), 2, '0'));
+        builder.append(StringUtils.leftPad(Integer.toString(seconds), 2, '0')).append(".000");
         LOGGER.debug("Human readable of \"" + time + "\" is \"" + builder.toString() + "\".");
         return builder.toString();
     }
