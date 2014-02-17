@@ -2,7 +2,6 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreSession;
-import org.fourthline.cling.support.model.DescMeta;
 import org.fourthline.cling.support.model.SortCriterion;
 
 public class AlbumTrackDIDL extends MyTunesRssDIDLContent {
