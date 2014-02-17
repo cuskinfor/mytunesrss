@@ -85,7 +85,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         }
         addComponent(registrationPanel);
         mySysInfoForm = getComponentFactory().createForm(null, true);
-        myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG));
+        myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG, Level.TRACE));
         myShowLog = getComponentFactory().createButton("supportConfigPanel.showLog", this);
         mySysInfoForm.addField("logLevel", myLogLevel);
         mySysInfoForm.addField("showLog", myShowLog);

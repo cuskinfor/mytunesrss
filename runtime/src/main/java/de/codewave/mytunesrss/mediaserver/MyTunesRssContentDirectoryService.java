@@ -12,36 +12,42 @@ import org.fourthline.cling.support.contentdirectory.DIDLParser;
 import org.fourthline.cling.support.model.BrowseFlag;
 import org.fourthline.cling.support.model.BrowseResult;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryService {
 
-    private Map<ObjectID, Class<? extends MyTunesRssDIDLContent>> contentForOid = new HashMap<>();
-    private Map<ObjectID, Class<? extends MyTunesRssDIDLContent>> contentForOidPrefix = new HashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssContentDirectoryService.class);
+    
+    private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOid = new HashMap<>();
+    private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOidPrefix = new HashMap<>();
 
     public MyTunesRssContentDirectoryService() {
         // complete OIDs
-        contentForOid.put(ObjectID.Playlists, PlaylistsDIDL.class);
-        contentForOid.put(ObjectID.Albums, AlbumsDIDL.class);
-        contentForOid.put(ObjectID.Artists, ArtistsDIDL.class);
-        contentForOid.put(ObjectID.Genres, GenresDIDL.class);
-        contentForOid.put(ObjectID.Movies, MoviesDIDL.class);
-        contentForOid.put(ObjectID.TvShows, TvShowsDIDL.class);
-        contentForOid.put(ObjectID.Photoalbums, PhotoAlbumsDIDL.class);
+        contentForOid.put("0", RootMenuDIDL.class);
+        contentForOid.put(ObjectID.Playlists.getValue(), PlaylistsDIDL.class);
+        contentForOid.put(ObjectID.Albums.getValue(), AlbumsDIDL.class);
+        contentForOid.put(ObjectID.Artists.getValue(), ArtistsDIDL.class);
+        contentForOid.put(ObjectID.Genres.getValue(), GenresDIDL.class);
+        contentForOid.put(ObjectID.Movies.getValue(), MoviesDIDL.class);
+        contentForOid.put(ObjectID.TvShows.getValue(), TvShowsDIDL.class);
+        contentForOid.put(ObjectID.Photoalbums.getValue(), PhotoAlbumsDIDL.class);
         // OID prefixes
-        contentForOidPrefix.put(ObjectID.ArtistAlbums, ArtistAlbumsDIDL.class);
-        contentForOidPrefix.put(ObjectID.GenreAlbums, GenreAlbumsDIDL.class);
-        contentForOidPrefix.put(ObjectID.Album, AlbumDIDL.class);
+        contentForOidPrefix.put(ObjectID.ArtistAlbums.getValue(), ArtistAlbumsDIDL.class);
+        contentForOidPrefix.put(ObjectID.GenreAlbums.getValue(), GenreAlbumsDIDL.class);
+        contentForOidPrefix.put(ObjectID.Album.getValue(), AlbumDIDL.class);
     }
 
     @Override
-    public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws ContentDirectoryException {
-        Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(ObjectID.fromValue(objectID));
+    public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
+        LOGGER.debug("Received browse request [objectID=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {objectID, filter, firstResult, maxResults, orderBy});
+        Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(objectID);
         if (contentClass == null) {
-            for (Map.Entry<ObjectID, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
-                if (objectID.startsWith(entry.getKey().getValue())) {
+            for (Map.Entry<String, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
+                if (objectID.startsWith(entry.getKey())) {
                     contentClass = entry.getValue();
                     break;
                 }
@@ -55,7 +61,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             int separatorIndex = objectID.indexOf(';');
             String oidParams = separatorIndex > 0 && separatorIndex < objectID.length() - 1 ? objectID.substring(separatorIndex + 1) : null;
             if (browseFlag == BrowseFlag.DIRECT_CHILDREN) {
-                content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderby);
+                content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderBy);
             } else if (browseFlag == BrowseFlag.METADATA) {
                 content.initMetaData(oidParams);
             }
@@ -67,6 +73,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     @Override
     public BrowseResult search(String containerId, String searchCriteria, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
+        LOGGER.debug("Received search request [containerID=\"{}\", searchCriteria=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {containerId, searchCriteria, filter, firstResult, maxResults, orderBy});
         return super.search(containerId, searchCriteria, filter, firstResult, maxResults, orderBy);
     }
 

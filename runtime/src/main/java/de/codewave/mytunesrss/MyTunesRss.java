@@ -13,8 +13,9 @@ import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -53,25 +54,23 @@ import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.fourthline.cling.model.DefaultServiceManager;
-import org.fourthline.cling.model.NetworkAddress;
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.UDADeviceType;
 import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
-import org.fourthline.cling.transport.RouterException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.jmdns.JmDNS;
 import javax.management.MBeanServer;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
-import javax.swing.Icon;
 import java.awt.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -80,11 +79,15 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
+import java.sql.Driver;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.MessageFormat;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -563,6 +566,9 @@ public class MyTunesRss {
         };
         org.apache.log4j.Logger.getRootLogger().addAppender(appender);
         org.apache.log4j.Logger.getLogger("de.codewave").addAppender(appender);
+        java.util.logging.LogManager.getLogManager().reset();
+        SLF4JBridgeHandler.install();
+        java.util.logging.Logger.getLogger("global").setLevel(java.util.logging.Level.FINEST);
     }
 
     private static void copyOldPrefsAndCache() {

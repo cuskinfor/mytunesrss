@@ -105,14 +105,14 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
                 }
             }, (int) first, true);
         }
-        if (count > 0) {
+        if (effectiveCount > 0) {
             queryResult.processNextResults(new DataStoreQuery.ResultProcessor<T>() {
                 @Override
                 public void process(T result) {
                     total.incrementAndGet();
                     processor.process(result);
                 }
-            }, count, true);
+            }, effectiveCount, true);
         }
         queryResult.processRemainingResults(new DataStoreQuery.ResultProcessor<T>() {
             @Override
