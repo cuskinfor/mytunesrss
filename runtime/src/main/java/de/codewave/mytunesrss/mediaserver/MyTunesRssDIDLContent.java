@@ -5,15 +5,11 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.camel.mp3.Mp3Info;
-import de.codewave.camel.mp3.Mp3Utils;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.transcoder.FilenameTranscoderActivation;
-import de.codewave.mytunesrss.config.transcoder.Mp4CodecTranscoderActivation;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.MiscUtils;
@@ -30,9 +26,7 @@ import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 

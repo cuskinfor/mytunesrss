@@ -4,14 +4,10 @@ import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
-import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultSetType;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.MusicAlbum;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AlbumsDIDL extends MyTunesRssDIDLContent {
 

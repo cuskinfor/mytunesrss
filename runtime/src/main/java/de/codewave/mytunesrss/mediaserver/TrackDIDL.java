@@ -13,9 +13,6 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.Item;
 
-/**
- * Created by mdescher on 17.02.14.
- */
 public abstract class TrackDIDL extends MyTunesRssDIDLContent {
     @Override
     void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
@@ -30,9 +27,7 @@ public abstract class TrackDIDL extends MyTunesRssDIDLContent {
                 FindTrackQuery.getForIds(new String[]{track}),
                 new DataStoreQuery.ResultProcessor<Track>() {
                     public void process(Track track) {
-                        String id = getObjectId(track);
-                        String parentID = getParentId(track);
-                        addItem(createTrackItem(track, id, parentID, user));
+                        addItem(createTrackItem(track, user));
                     }
                 },
                 0,
@@ -40,7 +35,7 @@ public abstract class TrackDIDL extends MyTunesRssDIDLContent {
         );
     }
 
-    protected abstract Item createTrackItem(Track track, String id, String parentID, User user);
+    protected abstract Item createTrackItem(Track track, User user);
 
     protected abstract String getParentId(Track track);
 

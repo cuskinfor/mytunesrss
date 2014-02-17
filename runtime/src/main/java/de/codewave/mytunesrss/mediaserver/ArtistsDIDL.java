@@ -2,10 +2,10 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.Artist;
+import de.codewave.mytunesrss.datastore.statement.FindArtistQuery;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultSetType;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.MusicArtist;
 

@@ -44,6 +44,10 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOidPrefix.put(ObjectID.GenreAlbumTrack.getValue(), GenreAlbumTrackDIDL.class);
         contentForOidPrefix.put(ObjectID.Album.getValue(), AlbumDIDL.class);
         contentForOidPrefix.put(ObjectID.AlbumTrack.getValue(), AlbumTrackDIDL.class);
+        contentForOidPrefix.put(ObjectID.Movie.getValue(), MovieDIDL.class);
+        contentForOidPrefix.put(ObjectID.TvShow.getValue(), TvShowDIDL.class);
+        contentForOidPrefix.put(ObjectID.TvShowSeason.getValue(), TvShowSeasonDIDL.class);
+        contentForOidPrefix.put(ObjectID.TvShowEpisode.getValue(), TvShowEpisodeDIDL.class);
     }
 
     @Override
@@ -72,6 +76,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             }
             return new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
         } catch (Exception e) {
+            LOGGER.error("Could not create browse result.", e);
             throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create browse result: " + e.getMessage());
         }
     }

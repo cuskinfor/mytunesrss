@@ -255,12 +255,80 @@
         <lucenesort>ORDER BY tluc.pos</lucenesort>
         <lucensortAlbum>ORDER BY tluc.pos, LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</lucensortAlbum>
         <lucensortArtist>ORDER BY tluc.pos, LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</lucensortArtist>
-        <albumsort>ORDER BY LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</albumsort>
+        <albumsort>ORDER BY LOWER(t.album), t.pos_number, t.track_number, L{trackColumns}OWER(t.name)</albumsort>
         <artistsort>ORDER BY LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</artistsort>
         <moviesort>ORDER BY LOWER(t.name)</moviesort>
         <tvshowsort>ORDER BY LOWER(t.series), t.season, t.episode, LOWER(t.name)</tvshowsort>
         ]]>
       </sql>
+    </statement>
+
+    <statement name="findTvShows">
+        <sql>
+        <![CDATA[
+            SELECT t.series AS series, COUNT(DISTINCT(t.season)) AS season_count, COUNT(t.series) AS episode_count
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE mediatype = 'Video' AND videotype = 'TvShow'
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND rltp.track_id = t.id
+            </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
+            <datasource>AND t.source_id IN (:datasources[])</datasource>
+            GROUP by series
+            ORDER by series
+        ]]>
+        </sql>
+    </statement>
+
+    <statement name="findTvShowSeasons">
+        <sql>
+        <![CDATA[
+            SELECT t.season AS season, COUNT(t.series) AS episode_count
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE mediatype = 'Video' AND videotype = 'TvShow' AND series = :series
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND rltp.track_id = t.id
+            </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
+            <datasource>AND t.source_id IN (:datasources[])</datasource>
+            GROUP by season
+            ORDER by season
+        ]]>
+        </sql>
+    </statement>
+
+    <statement name="findTvShowSeasonEpisodes">
+        <sql>
+        <![CDATA[
+            SELECT {trackColumns}
+            FROM track t<restricted>, link_track_playlist rltp</restricted>
+            WHERE mediatype = 'Video' AND videotype = 'TvShow' AND series = :series AND season = :season
+            <restricted>
+                AND rltp.playlist_id IN (:restrictedPlaylistIds[])
+                AND rltp.track_id = t.id
+            </restricted>
+            <excluded>
+                AND t.id NOT IN (
+                    SELECT eltp.track_id FROM link_track_playlist eltp
+                    WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
+                )
+            </excluded>
+            <datasource>AND t.source_id IN (:datasources[])</datasource>
+            ORDER by episode
+        ]]>
+        </sql>
     </statement>
 
     <statement name="deletePlaylistById">

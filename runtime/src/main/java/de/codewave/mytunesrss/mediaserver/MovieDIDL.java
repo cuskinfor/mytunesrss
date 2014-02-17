@@ -8,22 +8,22 @@ package de.codewave.mytunesrss.mediaserver;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.fourthline.cling.support.model.item.Item;
+import org.fourthline.cling.support.model.item.Movie;
 
-public class ArtistAlbumTrackDIDL extends MusicTrackDIDL {
+public class MovieDIDL extends TrackDIDL {
 
     @Override
     protected Item createTrackItem(Track track, User user) {
-        return createMusicTrackItem(track, user);
+        return new Movie(getObjectId(track), getParentId(track), track.getName(), "MyTunesRSS", createTrackResource(track, user));
     }
 
     @Override
     protected String getParentId(Track track) {
-        return ObjectID.ArtistAlbum.getValue() + ";" + encode(track.getAlbum(), track.getAlbumArtist());
+        return ObjectID.Movies.getValue();
     }
 
     @Override
     protected String getObjectId(Track track) {
-        return ObjectID.ArtistAlbumTrack.getValue() + ";" + encode(track.getId());
+        return ObjectID.Movie.getValue() + ";" + encode(track.getId());
     }
-
 }

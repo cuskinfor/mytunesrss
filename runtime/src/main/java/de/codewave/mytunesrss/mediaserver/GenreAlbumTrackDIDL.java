@@ -12,8 +12,8 @@ import org.fourthline.cling.support.model.item.Item;
 public class GenreAlbumTrackDIDL extends MusicTrackDIDL {
 
     @Override
-    protected Item createTrackItem(Track track, String id, String parentID, User user) {
-        return createMusicTrackItem(track, id, parentID, user);
+    protected Item createTrackItem(Track track, User user) {
+        return createMusicTrackItem(track, user);
     }
 
     @Override

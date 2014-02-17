@@ -5,22 +5,15 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.lang3.StringUtils;
-import org.fourthline.cling.protocol.sync.ReceivingAction;
-import org.fourthline.cling.support.model.Res;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.MusicTrack;
-import org.fourthline.cling.transport.impl.HttpExchangeUpnpStream;
 
 public class AlbumDIDL extends MyTunesRssDIDLContent {
     private long myTotalMatches;
