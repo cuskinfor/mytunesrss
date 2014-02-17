@@ -1047,8 +1047,12 @@ public class MyTunesRss {
                     DeviceDetails details = new DeviceDetails("MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
                     org.fourthline.cling.model.meta.Icon icon = null;
                     try {
-                        icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, MyTunesRss.class.getResource("/de/codewave/mytunesrss/mediaserver48.png"));
-                    } catch (IOException e) {
+                        File tempFile = File.createTempFile("mytunesrss-mediaserver-", ".png");
+                        try (InputStream is = MyTunesRss.class.getResourceAsStream("/de/codewave/mytunesrss/mediaserver48.png"); OutputStream os = new FileOutputStream(tempFile)) {
+                            IOUtils.copyLarge(is, os);
+                        }
+                        icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, tempFile);
+                    } catch (Exception e) {
                         LOGGER.warn("Could not create icon for UPnP Media Server.", e);
                     }
                     LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
