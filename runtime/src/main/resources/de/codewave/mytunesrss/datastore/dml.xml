@@ -255,7 +255,7 @@
         <lucenesort>ORDER BY tluc.pos</lucenesort>
         <lucensortAlbum>ORDER BY tluc.pos, LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</lucensortAlbum>
         <lucensortArtist>ORDER BY tluc.pos, LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</lucensortArtist>
-        <albumsort>ORDER BY LOWER(t.album), t.pos_number, t.track_number, L{trackColumns}OWER(t.name)</albumsort>
+        <albumsort>ORDER BY LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</albumsort>
         <artistsort>ORDER BY LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</artistsort>
         <moviesort>ORDER BY LOWER(t.name)</moviesort>
         <tvshowsort>ORDER BY LOWER(t.series), t.season, t.episode, LOWER(t.name)</tvshowsort>
