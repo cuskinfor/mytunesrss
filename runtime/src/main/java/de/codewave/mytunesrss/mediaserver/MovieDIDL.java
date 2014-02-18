@@ -10,20 +10,16 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import org.fourthline.cling.support.model.item.Item;
 import org.fourthline.cling.support.model.item.Movie;
 
-public class MovieDIDL extends TrackDIDL {
+public class MovieDIDL extends MyTunesRssItemDIDL {
 
     @Override
-    protected Item createTrackItem(Track track, User user) {
-        return new Movie(getObjectId(track), getParentId(track), track.getName(), "MyTunesRSS", createTrackResource(track, user));
+    protected Item createItem(Track track, User user) {
+        return new Movie(
+                ObjectID.Movie.getValue() + ";" + encode(track.getId()),
+                ObjectID.Movies.getValue(),
+                track.getName(),
+                "MyTunesRSS", 
+                createTrackResource(track, user));
     }
 
-    @Override
-    protected String getParentId(Track track) {
-        return ObjectID.Movies.getValue();
-    }
-
-    @Override
-    protected String getObjectId(Track track) {
-        return ObjectID.Movie.getValue() + ";" + encode(track.getId());
-    }
 }

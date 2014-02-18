@@ -5,25 +5,23 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.FindTvShowEpisodesQuery;
-import de.codewave.mytunesrss.datastore.statement.FindTvShowSeasonsQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.Movie;
 
-public class TvShowSeasonDIDL extends MyTunesRssDIDLContent {
+import java.sql.SQLException;
 
-    private long myTotalMatches;
+public class TvShowSeasonDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
-        final String show = decode(oidParams).get(0);
+    void createDirectChildren(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {        final String show = decode(oidParams).get(0);
         final int season = Integer.parseInt(decode(oidParams).get(1));
-        myTotalMatches = executeAndProcess(
+        executeAndProcess(
                 tx,
                 new FindTvShowEpisodesQuery(user, show, season),
                 new DataStoreQuery.ResultProcessor<Track>() {
@@ -36,13 +34,4 @@ public class TvShowSeasonDIDL extends MyTunesRssDIDLContent {
         );
     }
 
-    @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
-
-    }
-
-    @Override
-    long getTotalMatches() {
-        return myTotalMatches;
-    }
 }

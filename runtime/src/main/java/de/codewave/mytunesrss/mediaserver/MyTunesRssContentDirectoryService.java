@@ -5,8 +5,6 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.support.contentdirectory.ContentDirectoryException;
 import org.fourthline.cling.support.contentdirectory.DIDLParser;
@@ -16,6 +14,7 @@ import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +22,8 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssContentDirectoryService.class);
 
-    private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOid = new HashMap<>();
-    private Map<String, Class<? extends MyTunesRssDIDLContent>> contentForOidPrefix = new HashMap<>();
+    private Map<String, Class<? extends MyTunesRssDIDL>> contentForOid = new HashMap<>();
+    private Map<String, Class<? extends MyTunesRssDIDL>> contentForOidPrefix = new HashMap<>();
 
     public MyTunesRssContentDirectoryService() {
         // complete OIDs
@@ -54,9 +53,9 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
         LOGGER.debug("Received browse request [objectID=\"{}\", browseFlag=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {objectID, browseFlag, filter, firstResult, maxResults, orderBy});
-        Class<? extends MyTunesRssDIDLContent> contentClass = contentForOid.get(objectID);
+        Class<? extends MyTunesRssDIDL> contentClass = contentForOid.get(objectID);
         if (contentClass == null) {
-            for (Map.Entry<String, Class<? extends MyTunesRssDIDLContent>> entry : contentForOidPrefix.entrySet()) {
+            for (Map.Entry<String, Class<? extends MyTunesRssDIDL>> entry : contentForOidPrefix.entrySet()) {
                 if (objectID.startsWith(entry.getKey() + ";")) {
                     contentClass = entry.getValue();
                     break;
@@ -67,21 +66,24 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             }
         }
         try {
-            MyTunesRssDIDLContent content = contentClass.newInstance();
+            MyTunesRssDIDL content = contentClass.newInstance();
             int separatorIndex = objectID.indexOf(';');
             String oidParams = separatorIndex > 0 && separatorIndex < objectID.length() - 1 ? objectID.substring(separatorIndex + 1) : null;
-            BrowseResult browseResult = null;
             if (browseFlag == BrowseFlag.DIRECT_CHILDREN) {
                 content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderBy);
-                browseResult = new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
             } else if (browseFlag == BrowseFlag.METADATA) {
                 content.initMetaData(oidParams);
-                browseResult = new BrowseResult(new DIDLParser().generate(content), 1, 1);
             } else {
-                browseResult = new BrowseResult(new DIDLParser().generate(content), 0, 0);
+                LOGGER.warn("Unexpected browse flag \"" + browseFlag.name() + "\".");
+                throw new ContentDirectoryException(ErrorCode.ARGUMENT_VALUE_INVALID, "Unexpected browse flag \"" + browseFlag.name() + "\".");
             }
-            return browseResult;
-        } catch (Exception e) {
+            try {
+                return new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
+            } catch (Exception e) {
+                LOGGER.error("Could not create browse result.", e);
+                throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create browse result: " + e.getMessage());
+            }
+        } catch (RuntimeException | InstantiationException | IllegalAccessException | SQLException e) {
             LOGGER.error("Could not create browse result.", e);
             throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create browse result: " + e.getMessage());
         }

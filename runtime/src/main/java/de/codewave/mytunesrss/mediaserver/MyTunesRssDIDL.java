@@ -18,27 +18,26 @@ import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.fourthline.cling.support.model.DIDLContent;
-import org.fourthline.cling.support.model.ProtocolInfo;
-import org.fourthline.cling.support.model.Res;
-import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.support.model.*;
+import org.fourthline.cling.support.model.item.MusicTrack;
 import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.UnsupportedEncodingException;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
+import java.net.URLConnection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
-public abstract class MyTunesRssDIDLContent extends DIDLContent {
+public abstract class MyTunesRssDIDL extends DIDLContent {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssDIDLContent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssDIDL.class);
 
-    final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
+    final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
             createDirectChildren(MyTunesRss.CONFIG.getUser("cling"), tx, oidParams, filter, firstResult, maxResults, orderby);
@@ -47,7 +46,7 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         }
     }
 
-    final void initMetaData(String oidParams) throws Exception {
+    final void initMetaData(String oidParams) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
             createMetaData(MyTunesRss.CONFIG.getUser("cling"), tx, oidParams);
@@ -56,7 +55,7 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         }
     }
 
-    abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception;
+    abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException;
 
     protected Res createTrackResource(Track track, User user) {
         StringBuilder builder = createWebAppCall(user, "playTrack"); // TODO hard-coded command name is not nice
@@ -90,7 +89,8 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
 
     private StringBuilder createWebAppCall(User user, String command) {
         StringBuilder builder = new StringBuilder("http://");
-        builder.append(AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getLocalAddress().getHostAddress()).
+        String hostAddress = StringUtils.defaultIfBlank(MyTunesRss.CONFIG.getHost(), AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getLocalAddress().getHostAddress());
+        builder.append(hostAddress).
                 append(":").append(MyTunesRss.CONFIG.getPort());
         String context = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
         if (!context.startsWith("/")) {
@@ -121,8 +121,15 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         }
         return uris.toArray(new URI[uris.size()]);
     }
+    
+    protected void addImageResource(List<Res> resources, User user, String imageHash, int size) {
+        File image = MyTunesRssUtils.getImage(imageHash, size);
+        if (image != null && image.isFile()) {
+            resources.add(new Res(MimeType.valueOf(URLConnection.guessContentTypeFromName(image.getName())), image.length(), getImageUris(user, size, imageHash)[0].toASCIIString()));
+        }
+    }
 
-    abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception;
+    abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException;
 
     abstract long getTotalMatches();
 
@@ -142,38 +149,6 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         return decoded;
     }
 
-    protected <T> long executeAndProcess(DataStoreSession tx, DataStoreQuery<DataStoreQuery.QueryResult<T>> query, final DataStoreQuery.ResultProcessor<T> processor, long first, int count) throws java.sql.SQLException {
-        int effectiveCount = count > 0 ? count : Integer.MAX_VALUE;
-        query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<T> queryResult = tx.executeQuery(query);
-        final AtomicLong total = new AtomicLong();
-        if (first > 0) {
-            queryResult.processNextResults(new DataStoreQuery.ResultProcessor<T>() {
-                @Override
-                public void process(T result) {
-                    total.incrementAndGet();
-                }
-            }, (int) first, true);
-        }
-        if (effectiveCount > 0) {
-            queryResult.processNextResults(new DataStoreQuery.ResultProcessor<T>() {
-                @Override
-                public void process(T result) {
-                    total.incrementAndGet();
-                    processor.process(result);
-                }
-            }, effectiveCount, true);
-        }
-        queryResult.processRemainingResults(new DataStoreQuery.ResultProcessor<T>() {
-            @Override
-            public void process(T result) {
-                total.incrementAndGet();
-            }
-        });
-        LOGGER.debug("Processed {} items from query result.", total.get());
-        return total.get();
-    }
-
     protected String toHumanReadableTime(int time) {
         int seconds = time % 60;
         int minutes = (time / 60) % 60;
@@ -184,5 +159,23 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         builder.append(StringUtils.leftPad(Integer.toString(seconds), 2, '0')).append(".000");
         LOGGER.debug("Human readable of \"" + time + "\" is \"" + builder.toString() + "\".");
         return builder.toString();
+    }
+
+    protected MusicTrack createMusicTrack(User user, Track track, String objectId, String parentId) {
+        MusicTrack item = new MusicTrack();
+        item.setId(objectId);
+        item.setParentID(parentId);
+        item.setTitle(track.getName());
+        item.setArtists(new PersonWithRole[]{new PersonWithRole(track.getArtist(), "Performer")});
+        item.setAlbum(track.getAlbum());
+        item.setCreator("MyTunesRSS");
+        item.setDescription(track.getName());
+        item.setOriginalTrackNumber(track.getTrackNumber());
+        item.setGenres(new String[]{track.getGenre()});
+        List<Res> resources = new ArrayList<>();
+        resources.add(createTrackResource(track, user));
+        addImageResource(resources, user, track.getImageHash(), 256);
+        item.setResources(resources);
+        return item;
     }
 }

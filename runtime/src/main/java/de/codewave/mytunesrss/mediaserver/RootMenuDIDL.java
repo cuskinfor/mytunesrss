@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
-public class RootMenuDIDL extends MyTunesRssDIDLContent {
+public class RootMenuDIDL extends MyTunesRssContainerDIDL {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RootMenuDIDL.class);
 
@@ -31,6 +31,8 @@ public class RootMenuDIDL extends MyTunesRssDIDLContent {
         int tvShowCount = tx.executeQuery(findTvShowsQuery).getResultSize();
 
         LOGGER.debug("Adding root menu containers.");
+        
+        // TODO honor first and max results
         addContainer(new StorageFolder(ObjectID.Playlists.getValue(), "0", "Playlists", "MyTunesRSS", playlistCount, 0L));
         addContainer(new StorageFolder(ObjectID.Albums.getValue(), "0", "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
         addContainer(new StorageFolder(ObjectID.Artists.getValue(), "0", "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
@@ -38,15 +40,7 @@ public class RootMenuDIDL extends MyTunesRssDIDLContent {
         addContainer(new StorageFolder(ObjectID.Movies.getValue(), "0", "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
         addContainer(new StorageFolder(ObjectID.TvShows.getValue(), "0", "TV Shows", "MyTunesRSS", tvShowCount, 0L));
         addContainer(new StorageFolder(ObjectID.Photoalbums.getValue(), "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
-    }
-
-    @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
-        throw new NotYetImplementedException();
-    }
-
-    long getTotalMatches() {
-        return getCount();
+        myTotalMatches = getCount();
     }
 
 }

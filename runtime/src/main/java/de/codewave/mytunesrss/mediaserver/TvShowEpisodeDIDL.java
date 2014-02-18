@@ -5,18 +5,21 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import org.fourthline.cling.support.model.item.Item;
+import org.fourthline.cling.support.model.item.Movie;
 
-public class TvShowEpisodeDIDL extends MovieDIDL {
-
-    @Override
-    protected String getParentId(Track track) {
-        return ObjectID.TvShowSeason.getValue() + ";" + encode(track.getSeries(), Integer.toString(track.getSeason()));
-    }
+public class TvShowEpisodeDIDL extends MyTunesRssItemDIDL {
 
     @Override
-    protected String getObjectId(Track track) {
-        return ObjectID.TvShowEpisode.getValue() + ";" + encode(track.getId());
+    protected Item createItem(Track track, User user) {
+        return new Movie(
+                ObjectID.TvShowEpisode.getValue() + ";" + encode(track.getId()),
+                ObjectID.TvShowSeason.getValue() + ";" + encode(track.getSeries(), Integer.toString(track.getSeason())),
+                track.getName(),
+                "MyTunesRSS",
+                createTrackResource(track, user));
     }
 
 }

@@ -10,14 +10,13 @@ import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.MusicAlbum;
 
 import java.net.URI;
+import java.sql.SQLException;
 
-public class AlbumsDIDL extends MyTunesRssDIDLContent {
-
-    private long myTotalMatches;
+public class AlbumsDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, final long maxResults, SortCriterion[] orderby) throws Exception {
-        myTotalMatches = executeAndProcess(
+    void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, final long maxResults, SortCriterion[] orderby) throws SQLException {
+        executeAndProcess(
                 tx,
                 new FindAlbumQuery(user, null, null, false, null, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
                 new DataStoreQuery.ResultProcessor<Album>() {
@@ -33,16 +32,6 @@ public class AlbumsDIDL extends MyTunesRssDIDLContent {
                 firstResult,
                 (int) maxResults
         );
-    }
-
-    @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
-        throw new NotYetImplementedException();
-    }
-
-    @Override
-    long getTotalMatches() {
-        return myTotalMatches;
     }
 
 }

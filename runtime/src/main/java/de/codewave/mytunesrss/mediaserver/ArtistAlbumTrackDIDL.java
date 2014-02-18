@@ -9,21 +9,16 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.fourthline.cling.support.model.item.Item;
 
-public class ArtistAlbumTrackDIDL extends MusicTrackDIDL {
+public class ArtistAlbumTrackDIDL extends MyTunesRssItemDIDL {
 
     @Override
-    protected Item createTrackItem(Track track, User user) {
-        return createMusicTrackItem(track, user);
-    }
-
-    @Override
-    protected String getParentId(Track track) {
-        return ObjectID.ArtistAlbum.getValue() + ";" + encode(track.getAlbum(), track.getAlbumArtist());
-    }
-
-    @Override
-    protected String getObjectId(Track track) {
-        return ObjectID.ArtistAlbumTrack.getValue() + ";" + encode(track.getId());
+    protected Item createItem(Track track, User user) {
+        return createMusicTrack(
+                user,
+                track,
+                ObjectID.ArtistAlbumTrack.getValue() + ";" + encode(track.getId()),
+                ObjectID.ArtistAlbum.getValue() + ";" + encode(track.getAlbum(), track.getAlbumArtist())
+        );
     }
 
 }

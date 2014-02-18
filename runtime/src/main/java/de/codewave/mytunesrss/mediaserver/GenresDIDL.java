@@ -9,13 +9,13 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.MusicArtist;
 
-public class GenresDIDL extends MyTunesRssDIDLContent {
+import java.sql.SQLException;
 
-    private long myTotalMatches;
+public class GenresDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
-        myTotalMatches = executeAndProcess(
+    void createDirectChildren(User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        executeAndProcess(
                 tx,
                 new FindGenreQuery(user, false, -1),
                 new DataStoreQuery.ResultProcessor<Genre>() {
@@ -28,13 +28,4 @@ public class GenresDIDL extends MyTunesRssDIDLContent {
         );
     }
 
-    @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception {
-        throw new NotYetImplementedException();
-    }
-
-    @Override
-    long getTotalMatches() {
-        return myTotalMatches;
-    }
 }
