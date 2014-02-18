@@ -14,19 +14,26 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.MusicAlbum;
 
+import java.net.URI;
+
 public class GenreAlbumsDIDL extends MyTunesRssDIDLContent {
 
     private long myTotalMatches;
 
     @Override
-    void createDirectChildren(User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
+    void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
         String genre = decode(oidParams).get(0);
         myTotalMatches = executeAndProcess(
                 tx,
                 new FindAlbumQuery(user, null, null, false, new String[] {genre}, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
                 new DataStoreQuery.ResultProcessor<Album>() {
                     public void process(Album album) {
-                        addContainer(new MusicAlbum(ObjectID.GenreAlbum.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.GenreAlbums.getValue() + ";" + oidParams, album.getName(), album.getArtist(), album.getTrackCount()));
+                        MusicAlbum musicAlbum = new MusicAlbum(ObjectID.GenreAlbum.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.GenreAlbums.getValue() + ";" + oidParams, album.getName(), album.getArtist(), album.getTrackCount());
+                        URI[] imageUris = getImageUris(user, 256, album.getImageHash());
+                        if (imageUris.length > 0) {
+                            musicAlbum.setAlbumArtURIs(imageUris);
+                        }
+                        addContainer(musicAlbum);
                     }
                 },
                 firstResult,

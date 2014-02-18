@@ -7,12 +7,11 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.support.model.container.MusicAlbum;
 import org.fourthline.cling.support.model.item.MusicTrack;
 
 public class AlbumDIDL extends MyTunesRssDIDLContent {
@@ -22,14 +21,13 @@ public class AlbumDIDL extends MyTunesRssDIDLContent {
     void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception {
         final String album = decode(oidParams).get(0);
         final String artist = decode(oidParams).get(1);
-        final String parentID = getParentId(album, artist);
         myTotalMatches = executeAndProcess(
                 tx,
                 FindTrackQuery.getForAlbum(user, new String[]{album}, new String[]{artist}, SortOrder.Album),
                 new DataStoreQuery.ResultProcessor<Track>() {
                     public void process(Track track) {
                         String id = getObjectId(track);
-                        addItem(new MusicTrack(id, parentID, track.getName(), track.getArtist(), track.getAlbum(), track.getArtist(), createTrackResource(track, user)));
+                        addItem(new MusicTrack(id, getParentId(album, artist), track.getName(), track.getArtist(), track.getAlbum(), track.getArtist(), createTrackResource(track, user)));
                     }
                 },
                 firstResult,

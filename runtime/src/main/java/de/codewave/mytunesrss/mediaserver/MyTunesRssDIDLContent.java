@@ -27,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,19 +59,7 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
     abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws Exception;
 
     protected Res createTrackResource(Track track, User user) {
-        StringBuilder builder = new StringBuilder("http://");
-        builder.append(AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getLocalAddress().getHostAddress()).
-                append(":").append(MyTunesRss.CONFIG.getPort());
-        String context = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
-        if (!context.startsWith("/")) {
-            builder.append("/");
-        }
-        builder.append(context);
-        if (context.length() > 0 && !context.endsWith("/")) {
-            builder.append("/");
-        }
-        builder.append("mytunesrss/playTrack/").
-                append(MyTunesRssUtils.createAuthToken(user));
+        StringBuilder builder = createWebAppCall(user, "playTrack"); // TODO hard-coded command name is not nice
         StringBuilder pathInfo = new StringBuilder("track=");
         pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         TranscoderConfig transcoder = null;
@@ -96,6 +86,40 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         res.setValue(builder.toString());
         LOGGER.debug("Resource value is \"" + res.getValue() + "\".");
         return res;
+    }
+
+    private StringBuilder createWebAppCall(User user, String command) {
+        StringBuilder builder = new StringBuilder("http://");
+        builder.append(AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getLocalAddress().getHostAddress()).
+                append(":").append(MyTunesRss.CONFIG.getPort());
+        String context = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
+        if (!context.startsWith("/")) {
+            builder.append("/");
+        }
+        builder.append(context);
+        if (context.length() > 0 && !context.endsWith("/")) {
+            builder.append("/");
+        }
+        builder.append("mytunesrss/").
+                append(command).
+                append("/").
+                append(MyTunesRssUtils.createAuthToken(user));
+        return builder;
+    }
+
+    protected URI[] getImageUris(User user, int size, String... imageHashes) {
+        List<URI> uris = new ArrayList<>();
+        for (String imageHash : imageHashes) {
+            StringBuilder builder = createWebAppCall(user, "showImage"); // TODO hard-coded command name is not nice
+            builder.append("/").
+                    append(MyTunesRssUtils.encryptPathInfo("hash=" + MiscUtils.getUtf8UrlEncoded(imageHash) + "/size=" + Integer.toString(size)));
+            try {
+                uris.add(new URI(builder.toString()));
+            } catch (URISyntaxException e) {
+                LOGGER.warn("Could not create URI for image.", e);
+            }
+        }
+        return uris.toArray(new URI[uris.size()]);
     }
 
     abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws Exception;
