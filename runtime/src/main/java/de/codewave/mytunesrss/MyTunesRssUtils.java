@@ -1194,4 +1194,33 @@ public class MyTunesRssUtils {
     public static boolean isActiveTranscoder(String activeTranscoders, String transcoder) {
         return ArrayUtils.contains(StringUtils.split(activeTranscoders, ','), transcoder);
     }
+
+    public static boolean unknown(String trackAlbumOrArtist) {
+        return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
+    }
+
+    public static String virtualTrackName(Track track) {
+        if (unknown(track.getArtist())) {
+            return track.getName();
+        }
+        return track.getArtist() + " - " + track.getName();
+    }
+
+    private static final String DEFAULT_NAME = "MyTunesRSS";
+
+    public static String virtualAlbumName(Album album) {
+        if (unknown(album.getArtist()) && unknown(album.getName())) {
+            return DEFAULT_NAME;
+        } else if (unknown(album.getArtist()) || album.getArtistCount() > 1) {
+            return album.getName();
+        }
+        return album.getArtist() + " - " + album.getName();
+    }
+
+    public static String virtualArtistName(Artist artist) {
+        if (unknown(artist.getName())) {
+            return DEFAULT_NAME;
+        }
+        return artist.getName();
+    }
 }

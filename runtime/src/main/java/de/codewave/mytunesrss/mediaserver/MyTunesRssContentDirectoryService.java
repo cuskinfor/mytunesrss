@@ -5,8 +5,9 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.mytunesrss.config.User;
+import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.model.types.ErrorCode;
-import org.fourthline.cling.support.contentdirectory.AbstractContentDirectoryService;
 import org.fourthline.cling.support.contentdirectory.ContentDirectoryException;
 import org.fourthline.cling.support.contentdirectory.DIDLParser;
 import org.fourthline.cling.support.model.BrowseFlag;
@@ -69,12 +70,17 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             MyTunesRssDIDLContent content = contentClass.newInstance();
             int separatorIndex = objectID.indexOf(';');
             String oidParams = separatorIndex > 0 && separatorIndex < objectID.length() - 1 ? objectID.substring(separatorIndex + 1) : null;
+            BrowseResult browseResult = null;
             if (browseFlag == BrowseFlag.DIRECT_CHILDREN) {
                 content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderBy);
+                browseResult = new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
             } else if (browseFlag == BrowseFlag.METADATA) {
                 content.initMetaData(oidParams);
+                browseResult = new BrowseResult(new DIDLParser().generate(content), 1, 1);
+            } else {
+                browseResult = new BrowseResult(new DIDLParser().generate(content), 0, 0);
             }
-            return new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
+            return browseResult;
         } catch (Exception e) {
             LOGGER.error("Could not create browse result.", e);
             throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create browse result: " + e.getMessage());

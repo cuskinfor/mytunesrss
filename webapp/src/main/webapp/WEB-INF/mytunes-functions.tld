@@ -16,7 +16,7 @@
             Create a virtual name from a track.
         </description>
         <name>virtualTrackName</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
         <function-signature>java.lang.String virtualTrackName(de.codewave.mytunesrss.datastore.statement.Track)
         </function-signature>
         <example>
@@ -29,7 +29,7 @@
             Check if the specified string represents an unknown album, artist or track name.
         </description>
         <name>unknown</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
         <function-signature>boolean unknown(java.lang.String)</function-signature>
         <example>
             &lt;c:if test="${mtfn:unknown(album.name)}"&gt;...&lt;/c:if&gt;
@@ -41,7 +41,7 @@
             Create a virtual filename from an album.
         </description>
         <name>virtualAlbumName</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
         <function-signature>java.lang.String virtualAlbumName(de.codewave.mytunesrss.datastore.statement.Album)
         </function-signature>
         <example>
@@ -54,7 +54,7 @@
             Create a virtual name from an artist.
         </description>
         <name>virtualArtistName</name>
-        <function-class>de.codewave.mytunesrss.jsp.MyTunesFunctions</function-class>
+        <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
         <function-signature>java.lang.String virtualArtistName(de.codewave.mytunesrss.datastore.statement.Artist)
         </function-signature>
         <example>

@@ -37,41 +37,12 @@ import java.util.*;
 public class MyTunesFunctions {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesFunctions.class);
 
-    private static final String DEFAULT_NAME = "MyTunesRSS";
-
     private static final ThreadLocal<SimpleDateFormat> PUBLISH_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
             return new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss Z", Locale.US);
         }
     };
-
-    public static boolean unknown(String trackAlbumOrArtist) {
-        return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
-    }
-
-    public static String virtualTrackName(Track track) {
-        if (unknown(track.getArtist())) {
-            return track.getName();
-        }
-        return track.getArtist() + " - " + track.getName();
-    }
-
-    public static String virtualAlbumName(Album album) {
-        if (unknown(album.getArtist()) && unknown(album.getName())) {
-            return DEFAULT_NAME;
-        } else if (unknown(album.getArtist()) || album.getArtistCount() > 1) {
-            return album.getName();
-        }
-        return album.getArtist() + " - " + album.getName();
-    }
-
-    public static String virtualArtistName(Artist artist) {
-        if (unknown(artist.getName())) {
-            return DEFAULT_NAME;
-        }
-        return artist.getName();
-    }
 
     public static String lowerSuffix(WebConfig config, User user, Track track) {
         String suffix = suffix(config, user, track);

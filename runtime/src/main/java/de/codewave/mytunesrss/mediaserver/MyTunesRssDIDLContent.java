@@ -16,16 +16,18 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.DIDLContent;
 import org.fourthline.cling.support.model.ProtocolInfo;
 import org.fourthline.cling.support.model.Res;
 import org.fourthline.cling.support.model.SortCriterion;
-import org.fourthline.cling.transport.impl.HttpExchangeUpnpStream;
 import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
@@ -56,7 +58,8 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
 
     protected Res createTrackResource(Track track, User user) {
         StringBuilder builder = new StringBuilder("http://");
-        builder.append(HttpExchangeUpnpStream.REQUEST_LOCAL_ADDRESS.get()).append(":").append(MyTunesRss.CONFIG.getPort());
+        builder.append(AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getLocalAddress().getHostAddress()).
+                append(":").append(MyTunesRss.CONFIG.getPort());
         String context = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());
         if (!context.startsWith("/")) {
             builder.append("/");
@@ -65,17 +68,24 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         if (context.length() > 0 && !context.endsWith("/")) {
             builder.append("/");
         }
-        builder.append("mytunesrss/playTrack/").append(MyTunesRssUtils.createAuthToken(user));
+        builder.append("mytunesrss/playTrack/").
+                append(MyTunesRssUtils.createAuthToken(user));
         StringBuilder pathInfo = new StringBuilder("track=");
         pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         TranscoderConfig transcoder = null;
         if (track.getMediaType() == MediaType.Audio) {
             transcoder = MyTunesRssUtils.getTranscoder(TranscoderConfig.MEDIA_SERVER_MP3_128.getName(), track);
             if (transcoder != null) {
-                pathInfo.append("/tc=").append(transcoder.getName());
+                pathInfo.append("/tc=").
+                         append(transcoder.getName());
             }
         }
-        builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
+        builder.append("/").
+                append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
+        builder.append("/").
+                append(MiscUtils.getUtf8UrlEncoded(MyTunesRssUtils.virtualTrackName(track))).
+                append(".").
+                append(MiscUtils.getUtf8UrlEncoded(transcoder != null ? transcoder.getTargetSuffix() : FilenameUtils.getExtension(track.getFilename())));
         Res res = new Res();
         MimeType mimeType = MimeType.valueOf(transcoder != null ? transcoder.getTargetContentType() : track.getContentType());
         res.setProtocolInfo(new ProtocolInfo(mimeType));
@@ -84,6 +94,7 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         }
         res.setDuration(toHumanReadableTime(track.getTime()));
         res.setValue(builder.toString());
+        LOGGER.debug("Resource value is \"" + res.getValue() + "\".");
         return res;
     }
 
