@@ -251,10 +251,10 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
 
     public List<FileType> getDefaultFileTypes() {
         List<FileType> types = new ArrayList<>();
-        types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
-        types.add(new FileType(true, "m4p", "audio/x-m4p", MediaType.Audio, true));
+        types.add(new FileType(true, "m4a", "audio/mp4", MediaType.Audio, false));
+        types.add(new FileType(true, "m4p", "audio/mp4", MediaType.Audio, true));
         types.add(new FileType(true, "wav", "audio/wav", MediaType.Audio, false));
-        types.add(new FileType(true, "mp4", "video/x-mp4", MediaType.Video, false));
+        types.add(new FileType(true, "mp4", "video/mp4", MediaType.Video, false));
         types.add(new FileType(true, "avi", "video/x-msvideo", MediaType.Video, false));
         types.add(new FileType(true, "mov", "video/quicktime", MediaType.Video, false));
         types.add(new FileType(true, "wmv", "video/x-ms-wmv", MediaType.Video, false));
@@ -263,9 +263,9 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         types.add(new FileType(true, "mpeg", "audio/mpeg", MediaType.Audio, false));
         types.add(new FileType(true, "flac", "application/flac", MediaType.Audio, false));
         types.add(new FileType(true, "ogg", "application/ogg", MediaType.Audio, false));
-        types.add(new FileType(true, "m4v", "video/x-m4v", MediaType.Video, false));
-        types.add(new FileType(true, "m4b", "audio/x-m4b", MediaType.Audio, false));
-        types.add(new FileType(true, "mp3", "audio/mp3", MediaType.Audio, false));
+        types.add(new FileType(true, "m4v", "video/mp4", MediaType.Video, false));
+        types.add(new FileType(true, "m4b", "audio/mp4", MediaType.Audio, false));
+        types.add(new FileType(true, "mp3", "audio/mpeg", MediaType.Audio, false));
         types.add(new FileType(true, "jpg", "image/jpeg", MediaType.Image, false));
         types.add(new FileType(true, "jpeg", "image/jpeg", MediaType.Image, false));
         types.add(new FileType(true, "gif", "image/gif", MediaType.Image, false));

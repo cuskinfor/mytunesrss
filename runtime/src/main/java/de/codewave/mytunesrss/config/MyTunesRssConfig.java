@@ -1454,7 +1454,7 @@ public class MyTunesRssConfig {
         while (fileTypes != null && fileTypes.hasNext()) {
             JXPathContext fileTypeContext = fileTypes.next();
             FileType fileType = new FileType();
-            fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mp3"));
+            fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mpeg"));
             fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
             fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", MediaType.Other.name())));
             fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));

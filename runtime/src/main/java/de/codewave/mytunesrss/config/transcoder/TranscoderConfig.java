@@ -22,18 +22,43 @@ public class TranscoderConfig implements Cloneable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderConfig.class);
     private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<>();
-    public static final TranscoderConfig MEDIA_SERVER_AUDIO_TRANSCODER;
+    public static final TranscoderConfig MEDIA_SERVER_MP3_128;
+    public static final TranscoderConfig MEDIA_SERVER_MP3_192;
+    public static final TranscoderConfig MEDIA_SERVER_MP3_320;
 
     static {
-        MEDIA_SERVER_AUDIO_TRANSCODER = new TranscoderConfig();
-        MEDIA_SERVER_AUDIO_TRANSCODER.setName("_MSA");
-        MEDIA_SERVER_AUDIO_TRANSCODER.setTranscoderActivations(Arrays.asList(
+        MEDIA_SERVER_MP3_128 = new TranscoderConfig();
+        MEDIA_SERVER_MP3_128.setName("_MSA128");
+        MEDIA_SERVER_MP3_128.setTranscoderActivations(Arrays.asList(
                 new FilenameTranscoderActivation("^.+\\.mp3$", true),
+                new Mp3BitRateTranscoderActivation(0, 131072, true),
+                new Mp3BitRateTranscoderActivation(196608, Integer.MAX_VALUE, true),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
-        MEDIA_SERVER_AUDIO_TRANSCODER.setTargetSuffix("mp3");
-        MEDIA_SERVER_AUDIO_TRANSCODER.setTargetContentType("audio/mpeg");
-        MEDIA_SERVER_AUDIO_TRANSCODER.setTargetMux(null);
-        MEDIA_SERVER_AUDIO_TRANSCODER.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
+        MEDIA_SERVER_MP3_128.setTargetSuffix("mp3");
+        MEDIA_SERVER_MP3_128.setTargetContentType("audio/mpeg");
+        MEDIA_SERVER_MP3_128.setTargetMux(null);
+        MEDIA_SERVER_MP3_128.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
+        MEDIA_SERVER_MP3_192 = new TranscoderConfig();
+        MEDIA_SERVER_MP3_192.setName("_MSA192");
+        MEDIA_SERVER_MP3_192.setTranscoderActivations(Arrays.asList(
+                new FilenameTranscoderActivation("^.+\\.mp3$", true),
+                new Mp3BitRateTranscoderActivation(0, 196608, true),
+                new Mp3BitRateTranscoderActivation(327680, Integer.MAX_VALUE, true),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+        MEDIA_SERVER_MP3_192.setTargetSuffix("mp3");
+        MEDIA_SERVER_MP3_192.setTargetContentType("audio/mpeg");
+        MEDIA_SERVER_MP3_192.setTargetMux(null);
+        MEDIA_SERVER_MP3_192.setOptions("acodec=mp3,ab=192,samplerate=44100,channels=2");
+        MEDIA_SERVER_MP3_320 = new TranscoderConfig();
+        MEDIA_SERVER_MP3_320.setName("_MSA256");
+        MEDIA_SERVER_MP3_320.setTranscoderActivations(Arrays.asList(
+                new FilenameTranscoderActivation("^.+\\.mp3$", true),
+                new Mp3BitRateTranscoderActivation(0, 327680, true),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+        MEDIA_SERVER_MP3_320.setTargetSuffix("mp3");
+        MEDIA_SERVER_MP3_320.setTargetContentType("audio/mpeg");
+        MEDIA_SERVER_MP3_320.setTargetMux(null);
+        MEDIA_SERVER_MP3_320.setOptions("acodec=mp3,ab=320,samplerate=44100,channels=2");
     }
 
     static {
@@ -43,7 +68,7 @@ public class TranscoderConfig implements Cloneable {
                 new FilenameTranscoderActivation("^.+\\.(mp4|m4a|m4b|wav)$", false),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
         mp3Audio.setTargetSuffix("mp3");
-        mp3Audio.setTargetContentType("audio/mp3");
+        mp3Audio.setTargetContentType("audio/mpeg");
         mp3Audio.setTargetMux(null);
         mp3Audio.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
         DEFAULT_TRANSCODERS.add(mp3Audio);
@@ -51,10 +76,10 @@ public class TranscoderConfig implements Cloneable {
         mp3Audio128.setName("MP3 Audio max128");
         mp3Audio128.setTranscoderActivations(Arrays.asList(
                 new FilenameTranscoderActivation("^.+\\.(mp3|mp4|m4a|m4b|wav)$", false),
-                new Mp3BitRateTranscoderActivation(0, 128000, true),
+                new Mp3BitRateTranscoderActivation(0, 131072, true),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
         mp3Audio128.setTargetSuffix("mp3");
-        mp3Audio128.setTargetContentType("audio/mp3");
+        mp3Audio128.setTargetContentType("audio/mpeg");
         mp3Audio128.setTargetMux(null);
         mp3Audio128.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
         DEFAULT_TRANSCODERS.add(mp3Audio128);

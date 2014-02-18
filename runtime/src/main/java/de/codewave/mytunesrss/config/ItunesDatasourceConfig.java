@@ -181,15 +181,15 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
 
     public List<FileType> getDefaultFileTypes() {
         List<FileType> types = new ArrayList<>();
-        types.add(new FileType(true, "m4a", "audio/x-m4a", MediaType.Audio, false));
-        types.add(new FileType(true, "m4p", "audio/x-m4p", MediaType.Audio, true));
-        types.add(new FileType(true, "mp4", "video/x-mp4", MediaType.Video, false));
+        types.add(new FileType(true, "m4a", "audio/mp4", MediaType.Audio, false));
+        types.add(new FileType(true, "m4p", "audio/mp4", MediaType.Audio, true));
+        types.add(new FileType(true, "mp4", "video/mp4", MediaType.Video, false));
         types.add(new FileType(true, "mov", "video/quicktime", MediaType.Video, false));
         types.add(new FileType(true, "mpg", "audio/mpeg", MediaType.Audio, false));
         types.add(new FileType(true, "mpeg", "audio/mpeg", MediaType.Audio, false));
-        types.add(new FileType(true, "m4v", "video/x-m4v", MediaType.Video, false));
-        types.add(new FileType(true, "m4b", "audio/x-m4b", MediaType.Audio, false));
-        types.add(new FileType(true, "mp3", "audio/mp3", MediaType.Audio, false));
+        types.add(new FileType(true, "m4v", "video/mp4", MediaType.Video, false));
+        types.add(new FileType(true, "m4b", "audio/mp4", MediaType.Audio, false));
+        types.add(new FileType(true, "mp3", "audio/mpeg", MediaType.Audio, false));
         Collections.sort(types, new Comparator<FileType>() {
             public int compare(FileType o1, FileType o2) {
                 return o1.getSuffix().compareTo(o2.getSuffix());

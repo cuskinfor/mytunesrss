@@ -70,7 +70,7 @@ public abstract class MyTunesRssDIDLContent extends DIDLContent {
         pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         TranscoderConfig transcoder = null;
         if (track.getMediaType() == MediaType.Audio) {
-            transcoder = MyTunesRssUtils.getTranscoder(TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER.getName(), track);
+            transcoder = MyTunesRssUtils.getTranscoder(TranscoderConfig.MEDIA_SERVER_MP3_128.getName(), track);
             if (transcoder != null) {
                 pathInfo.append("/tc=").append(transcoder.getName());
             }

@@ -1185,8 +1185,8 @@ public class MyTunesRssUtils {
                 }
             }
         }
-        if (isActiveTranscoder(activeTranscoders, TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER.getName()) && TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER.isValidFor(track)) {
-            return TranscoderConfig.MEDIA_SERVER_AUDIO_TRANSCODER;
+        if (isActiveTranscoder(activeTranscoders, TranscoderConfig.MEDIA_SERVER_MP3_128.getName()) && TranscoderConfig.MEDIA_SERVER_MP3_128.isValidFor(track)) {
+            return TranscoderConfig.MEDIA_SERVER_MP3_128;
         }
         return null;
     }
