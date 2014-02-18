@@ -19,14 +19,19 @@ import java.sql.SQLException;
 public class TvShowSeasonDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {        final String show = decode(oidParams).get(0);
-        final int season = Integer.parseInt(decode(oidParams).get(1));
+    void createDirectChildren(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         executeAndProcess(
                 tx,
-                new FindTvShowEpisodesQuery(user, show, season),
+                new FindTvShowEpisodesQuery(user, decode(oidParams).get(0), Integer.parseInt(decode(oidParams).get(1))),
                 new DataStoreQuery.ResultProcessor<Track>() {
                     public void process(Track track) {
-                        addItem(new Movie(ObjectID.TvShowEpisode.getValue() + ";" + encode(track.getId()), ObjectID.TvShowSeason.getValue() + ";" + encode(track.getSeries(), Integer.toString(track.getSeason())), track.getName(), "MyTunesRSS", createTrackResource(track, user)));
+                        addItem(createMovieTrack(
+                                user,
+                                track,
+                                ObjectID.TvShowEpisode.getValue() + ";" + encode(track.getId()),
+                                ObjectID.TvShowSeason.getValue() + ";" + encode(track.getSeries(), Integer.toString(track.getSeason()))
+
+                        ));
                     }
                 },
                 firstResult,

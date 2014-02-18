@@ -19,6 +19,7 @@ import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.*;
+import org.fourthline.cling.support.model.item.Movie;
 import org.fourthline.cling.support.model.item.MusicTrack;
 import org.seamless.util.MimeType;
 import org.slf4j.Logger;
@@ -110,22 +111,26 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     protected URI[] getImageUris(User user, int size, String... imageHashes) {
         List<URI> uris = new ArrayList<>();
         for (String imageHash : imageHashes) {
-            StringBuilder builder = createWebAppCall(user, "showImage"); // TODO hard-coded command name is not nice
-            builder.append("/").
-                    append(MyTunesRssUtils.encryptPathInfo("hash=" + MiscUtils.getUtf8UrlEncoded(imageHash) + "/size=" + Integer.toString(size)));
-            try {
-                uris.add(new URI(builder.toString()));
-            } catch (URISyntaxException e) {
-                LOGGER.warn("Could not create URI for image.", e);
+            if (StringUtils.isNotBlank(imageHash)) {
+                StringBuilder builder = createWebAppCall(user, "showImage"); // TODO hard-coded command name is not nice
+                builder.append("/").
+                        append(MyTunesRssUtils.encryptPathInfo("hash=" + MiscUtils.getUtf8UrlEncoded(imageHash) + "/size=" + Integer.toString(size)));
+                try {
+                    uris.add(new URI(builder.toString()));
+                } catch (URISyntaxException e) {
+                    LOGGER.warn("Could not create URI for image.", e);
+                }
             }
         }
         return uris.toArray(new URI[uris.size()]);
     }
-    
+
     protected void addImageResource(List<Res> resources, User user, String imageHash, int size) {
-        File image = MyTunesRssUtils.getImage(imageHash, size);
-        if (image != null && image.isFile()) {
-            resources.add(new Res(MimeType.valueOf(URLConnection.guessContentTypeFromName(image.getName())), image.length(), getImageUris(user, size, imageHash)[0].toASCIIString()));
+        if (StringUtils.isNotBlank(imageHash)) {
+            File image = MyTunesRssUtils.getImage(imageHash, size);
+            if (image != null && image.isFile()) {
+                resources.add(new Res(MimeType.valueOf(URLConnection.guessContentTypeFromName(image.getName())), image.length(), getImageUris(user, size, imageHash)[0].toASCIIString()));
+            }
         }
     }
 
@@ -177,5 +182,18 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         addImageResource(resources, user, track.getImageHash(), 256);
         item.setResources(resources);
         return item;
+    }
+
+    protected Movie createMovieTrack(User user, Track track, String objectId, String parentId) {
+        Movie movie = new Movie();
+        movie.setId(objectId);
+        movie.setParentID(parentId);
+        movie.setTitle(track.getName());
+        movie.setCreator("MyTunesRSS");
+        List<Res> resources = new ArrayList<>();
+        resources.add(createTrackResource(track, user));
+        addImageResource(resources, user, track.getImageHash(), 256);
+        movie.setResources(resources);
+        return movie;
     }
 }
