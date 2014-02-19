@@ -152,6 +152,10 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 image.deleteImageFile();
             }
             try {
+                if (MyTunesRssUtils.getImageSizes(imageHash).size() == 0) {
+                    // We actually have no images, e.g. all resizings and even storing the original failed
+                    imageHash = "";
+                }
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
             } catch (SQLException e) {
                 LOGGER.error("Could not mark track \"" + myTrackId + "\". for having no image.", e);
