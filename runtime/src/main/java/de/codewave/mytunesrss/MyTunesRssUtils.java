@@ -1039,6 +1039,9 @@ public class MyTunesRssUtils {
     }
 
     public static File getImageDir(String imageHash) {
+        if (StringUtils.isBlank(imageHash)) {
+            return null;
+        }
         File file = new File(MyTunesRss.CACHE_DATA_PATH, "thumbs");
         file.mkdirs();
         while (imageHash.length() > 0) {
@@ -1051,23 +1054,27 @@ public class MyTunesRssUtils {
 
     public static Collection<Integer> getImageSizes(String imageHash) {
         Collection<Integer> sizes = new LinkedHashSet<>();
-        for (String filename : getImageDir(imageHash).list()) {
-            String basename = FilenameUtils.getBaseName(filename);
-            if (basename.startsWith("img")) {
-                sizes.add(Integer.parseInt(basename.substring(3)));
+        if (StringUtils.isNotBlank(imageHash)) {
+            for (String filename : getImageDir(imageHash).list()) {
+                String basename = FilenameUtils.getBaseName(filename);
+                if (basename.startsWith("img")) {
+                    sizes.add(Integer.parseInt(basename.substring(3)));
+                }
             }
         }
         return sizes;
     }
-    
+
     public static int getMaxSizedImageSize(String imageHash) {
         int maxSize = 0;
-        for (File file : getImageDir(imageHash).listFiles()) {
-            String basename = FilenameUtils.getBaseName(file.getName());
-            if (basename.startsWith("img")) {
-                int imgSize = Integer.parseInt(basename.substring(3));
-                if (imgSize > maxSize) {
-                    maxSize = imgSize;
+        if (StringUtils.isNotBlank(imageHash)) {
+            for (File file : getImageDir(imageHash).listFiles()) {
+                String basename = FilenameUtils.getBaseName(file.getName());
+                if (basename.startsWith("img")) {
+                    int imgSize = Integer.parseInt(basename.substring(3));
+                    if (imgSize > maxSize) {
+                        maxSize = imgSize;
+                    }
                 }
             }
         }
@@ -1089,29 +1096,35 @@ public class MyTunesRssUtils {
         }
         return StringUtils.trim(StringUtils.defaultIfBlank(guess, "application/octet-stream").toLowerCase(Locale.US));
     }
-    
+
     public static File getImage(String imageHash, int size) {
-        if (size > 0) {
-            for (File file : getImageDir(imageHash).listFiles()) {
-                String basename = FilenameUtils.getBaseName(file.getName());
-                if (basename.startsWith("img")) {
-                    if (Integer.parseInt(basename.substring(3)) == size) {
-                        return file;
+        if (StringUtils.isNotBlank(imageHash)) {
+            if (size > 0) {
+                for (File file : getImageDir(imageHash).listFiles()) {
+                    String basename = FilenameUtils.getBaseName(file.getName());
+                    if (basename.startsWith("img")) {
+                        if (Integer.parseInt(basename.substring(3)) == size) {
+                            return file;
+                        }
                     }
                 }
+            } else {
+                return getMaxSizedImage(imageHash);
             }
-        } else {
-            return getMaxSizedImage(imageHash);
         }
         return null;
     }
 
     public static File getSaveImageFile(String imageHash, int size, String mimeType) {
-        File file = getImage(imageHash, size);
-        if (file != null) {
-            file.delete();
+        if (StringUtils.isNotBlank(imageHash)) {
+            File file = getImage(imageHash, size);
+            if (file != null) {
+                file.delete();
+            }
+            return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType.toLowerCase()));
+        } else {
+            return null;
         }
-        return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType.toLowerCase()));
     }
 
     public static void saveImage(String imageHash, int size, String mimeType, byte[] data) throws IOException {

@@ -147,12 +147,17 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 image.deleteImageFile();
             }
             try {
-                if (MyTunesRssUtils.getImageSizes(imageHash).size() == 0) {
+                if (StringUtils.isNotBlank(imageHash) && MyTunesRssUtils.getImageSizes(imageHash).size() == 0) {
                     // We actually have no images, e.g. all resizings and even storing the original failed. So we
                     // delete empty directories we created and set the image hash to a blank string for the database.
                     try {
-                        File dir = MyTunesRssUtils.getImageDir(imageHash);
-                        for (boolean deleted = dir.delete(); deleted; dir = dir.getParentFile());
+                        ;
+                        for (File dir = MyTunesRssUtils.getImageDir(imageHash); dir != null; dir = dir.getParentFile()) {
+                            if (!dir.delete()) {
+                                // directory probably not empty, break loop
+                                break;
+                            }
+                        }
                     } catch (RuntimeException e) {
                         LOGGER.warn("Could not delete empty image thumbnail directories.", e);
                     }
