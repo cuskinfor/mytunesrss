@@ -14,11 +14,6 @@ public class DatabaseImage extends Image {
         myLastUpdate = lastUpdate;
     }
 
-    public DatabaseImage(String mimeType, byte[] data, long lastUpdate) {
-        super(mimeType, data);
-        myLastUpdate = lastUpdate;
-    }
-
     public long getLastUpdate() {
         return myLastUpdate;
     }

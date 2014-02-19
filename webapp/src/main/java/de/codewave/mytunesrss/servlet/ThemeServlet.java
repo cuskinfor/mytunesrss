@@ -90,7 +90,7 @@ public class ThemeServlet extends HttpServlet {
         } else {
             httpServletResponse.setDateHeader("Last-Modified", image.lastModified());
             httpServletResponse.setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(0));
-            httpServletResponse.setContentType(URLConnection.guessContentTypeFromName(image.getName()));
+            httpServletResponse.setContentType(MyTunesRssUtils.guessContentType(image));
             httpServletResponse.setContentLength((int) image.length());
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending image \"" + image.getAbsolutePath() + "\" with content type \"" + httpServletResponse.getContentType() + "\".");

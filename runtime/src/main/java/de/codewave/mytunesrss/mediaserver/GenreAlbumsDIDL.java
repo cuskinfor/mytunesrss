@@ -27,12 +27,7 @@ public class GenreAlbumsDIDL extends MyTunesRssContainerDIDL {
                 new FindAlbumQuery(user, null, null, false, new String[] {genre}, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
                 new DataStoreQuery.ResultProcessor<Album>() {
                     public void process(Album album) {
-                        MusicAlbum musicAlbum = new MusicAlbum(ObjectID.GenreAlbum.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.GenreAlbums.getValue() + ";" + oidParams, album.getName(), album.getArtist(), album.getTrackCount());
-                        URI[] imageUris = getImageUris(user, 256, album.getImageHash());
-                        if (imageUris.length > 0) {
-                            musicAlbum.setAlbumArtURIs(imageUris);
-                        }
-                        addContainer(musicAlbum);
+                        addContainer(createMusicAlbum(user, album, ObjectID.GenreAlbum.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.GenreAlbums.getValue() + ";" + oidParams));
                     }
                 },
                 firstResult,

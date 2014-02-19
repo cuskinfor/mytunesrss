@@ -43,11 +43,6 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
 
         private boolean myFolderImage;
 
-        public ExtendedImage(String mimeType, InputStream is, boolean folderImage) throws IOException {
-            super(mimeType, is);
-            myFolderImage = folderImage;
-        }
-
         public ExtendedImage(String mimeType, byte[] data, boolean folderImage) {
             super(mimeType, data);
             myFolderImage = folderImage;
@@ -224,7 +219,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Reading image information from file \"" + imageFile.getAbsolutePath() + "\".");
         }
-        return new ExtendedImage(IMAGE_TO_MIME.get(FilenameUtils.getExtension(imageFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(imageFile), true);
+        return new ExtendedImage(MyTunesRssUtils.guessContentType(imageFile), FileUtils.readFileToByteArray(imageFile), true);
     }
 
     private File findImageFile(File file) {

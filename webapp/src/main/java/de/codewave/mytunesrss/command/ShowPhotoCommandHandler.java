@@ -66,7 +66,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
             } else {
                 if (!getAuthUser().isQuotaExceeded()) {
                     if (StringUtils.isNotBlank(photo.myFile) && photoFile.isFile()) {
-                        String mimeType = MyTunesRssUtils.IMAGE_TO_MIME.get(FilenameUtils.getExtension(photoFile.getName()).toLowerCase());
+                        String mimeType = MyTunesRssUtils.guessContentType(photoFile);
                         StreamSender sender = null;
                         if (mimeType != null) {
                             File tempFile = MyTunesRssUtils.createTempFile("jpg");

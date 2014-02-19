@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.servlet;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -59,7 +60,7 @@ public class FlashPlayerServlet extends HttpServlet {
                 LOG.debug("Flash player file \"" + httpServletRequest.getPathInfo() + "\" requested.");
             }
             File file = getFile(resourcePath);
-            String contentType = URLConnection.guessContentTypeFromName(file.getName());
+            String contentType = MyTunesRssUtils.guessContentType(file);
             if (StringUtils.isBlank(contentType) && StringUtils.endsWithIgnoreCase(file.getName(), ".swf")) {
                 contentType = "application/x-shockwave-flash"; // special handling
             }

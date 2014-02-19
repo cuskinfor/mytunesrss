@@ -110,7 +110,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isNotBlank(hash)) {
                 File file = MyTunesRssUtils.getImage(hash, size);
                 if (file != null) {
-                    image = new DatabaseImage(URLConnection.guessContentTypeFromName(file.getName()), new FileInputStream(file), file.lastModified());
+                    image = new DatabaseImage(MyTunesRssUtils.guessContentType(file), new FileInputStream(file), file.lastModified());
                 }
             } else if (StringUtils.isNotBlank(photoId)) {
                 image = getImageForPhotoId(photoId, size);
@@ -151,7 +151,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 if (StringUtils.isNotBlank(imageHash)) {
                     File file = MyTunesRssUtils.getImage(imageHash, size);
                     if (file != null) {
-                        return new DatabaseImage(URLConnection.guessContentTypeFromName(file.getName()), new FileInputStream(file), file.lastModified());
+                        return new DatabaseImage(MyTunesRssUtils.guessContentType(file), new FileInputStream(file), file.lastModified());
                     }
                 }
             } catch (InterruptedException e) {

@@ -78,7 +78,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Reading image information from file \"" + myFile.getAbsolutePath() + "\".");
             }
-            return new Image(IMAGE_TO_MIME.get(FilenameUtils.getExtension(myFile.getName()).toLowerCase()), FileUtils.readFileToByteArray(myFile));
+            return new Image(MyTunesRssUtils.guessContentType(myFile), FileUtils.readFileToByteArray(myFile));
         } else {
             return null;
         }

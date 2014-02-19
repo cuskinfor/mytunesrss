@@ -11,14 +11,14 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
+import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.MiscUtils;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.*;
+import org.fourthline.cling.support.model.container.MusicAlbum;
 import org.fourthline.cling.support.model.item.Movie;
 import org.fourthline.cling.support.model.item.MusicTrack;
 import org.seamless.util.MimeType;
@@ -31,8 +31,8 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MyTunesRssDIDL extends DIDLContent {
 
@@ -108,30 +108,18 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return builder;
     }
 
-    protected URI[] getImageUris(User user, int size, String... imageHashes) {
-        List<URI> uris = new ArrayList<>();
-        for (String imageHash : imageHashes) {
-            if (StringUtils.isNotBlank(imageHash)) {
-                StringBuilder builder = createWebAppCall(user, "showImage"); // TODO hard-coded command name is not nice
-                builder.append("/").
-                        append(MyTunesRssUtils.encryptPathInfo("hash=" + MiscUtils.getUtf8UrlEncoded(imageHash) + "/size=" + Integer.toString(size)));
-                try {
-                    uris.add(new URI(builder.toString()));
-                } catch (URISyntaxException e) {
-                    LOGGER.warn("Could not create URI for image.", e);
-                }
-            }
-        }
-        return uris.toArray(new URI[uris.size()]);
-    }
-
-    protected void addImageResource(List<Res> resources, User user, String imageHash, int size) {
+    protected URI getImageUri(User user, int size, String imageHash) {
         if (StringUtils.isNotBlank(imageHash)) {
-            File image = MyTunesRssUtils.getImage(imageHash, size);
-            if (image != null && image.isFile()) {
-                resources.add(new Res(MimeType.valueOf(URLConnection.guessContentTypeFromName(image.getName())), image.length(), getImageUris(user, size, imageHash)[0].toASCIIString()));
+            StringBuilder builder = createWebAppCall(user, "showImage"); // TODO hard-coded command name is not nice
+            builder.append("/").
+                    append(MyTunesRssUtils.encryptPathInfo("hash=" + MiscUtils.getUtf8UrlEncoded(imageHash) + "/size=" + Integer.toString(size)));
+            try {
+                return new URI(builder.toString());
+            } catch (URISyntaxException e) {
+                LOGGER.warn("Could not create URI for image.", e);
             }
         }
+        return null;
     }
 
     abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException;
@@ -167,21 +155,21 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     }
 
     protected MusicTrack createMusicTrack(User user, Track track, String objectId, String parentId) {
-        MusicTrack item = new MusicTrack();
-        item.setId(objectId);
-        item.setParentID(parentId);
-        item.setTitle(track.getName());
-        item.setArtists(new PersonWithRole[]{new PersonWithRole(track.getArtist(), "Performer")});
-        item.setAlbum(track.getAlbum());
-        item.setCreator("MyTunesRSS");
-        item.setDescription(track.getName());
-        item.setOriginalTrackNumber(track.getTrackNumber());
-        item.setGenres(new String[]{track.getGenre()});
+        MusicTrack musicTrack = new MusicTrack();
+        musicTrack.setId(objectId);
+        musicTrack.setParentID(parentId);
+        musicTrack.setTitle(track.getName());
+        musicTrack.setArtists(new PersonWithRole[]{new PersonWithRole(track.getArtist(), "Performer")});
+        musicTrack.setAlbum(track.getAlbum());
+        musicTrack.setCreator("MyTunesRSS");
+        musicTrack.setDescription(track.getName());
+        musicTrack.setOriginalTrackNumber(track.getTrackNumber());
+        musicTrack.setGenres(new String[]{track.getGenre()});
         List<Res> resources = new ArrayList<>();
         resources.add(createTrackResource(track, user));
-        addImageResource(resources, user, track.getImageHash(), 256);
-        item.setResources(resources);
-        return item;
+        musicTrack.setResources(resources);
+        addTrackImageUris(user, track.getImageHash(), musicTrack);
+        return musicTrack;
     }
 
     protected Movie createMovieTrack(User user, Track track, String objectId, String parentId) {
@@ -190,10 +178,38 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         movie.setParentID(parentId);
         movie.setTitle(track.getName());
         movie.setCreator("MyTunesRSS");
-        List<Res> resources = new ArrayList<>();
-        resources.add(createTrackResource(track, user));
-        addImageResource(resources, user, track.getImageHash(), 256);
-        movie.setResources(resources);
+        movie.setResources(Collections.singletonList(createTrackResource(track, user)));
+        addTrackImageUris(user, track.getImageHash(), movie);
         return movie;
+    }
+
+    private void addTrackImageUris(User user, String imageHash, DIDLObject movie) {
+        URI thumbnailImage = getImageUri(user, 128, imageHash);
+        if (thumbnailImage != null) {
+            DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, "dlna", "JPEG_TN"));
+            List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
+            movie.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(thumbnailImage, props));
+        }
+        URI smallImage = getImageUri(user, 256, imageHash);
+        if (smallImage != null) {
+            DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, "dlna", "JPEG_SM"));
+            List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
+            movie.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(smallImage, props));
+        }
+        int maxSize = MyTunesRssUtils.getMaxSizedImageSize(imageHash);
+        if (maxSize > 256 && maxSize < 768 && "image/jpeg".equalsIgnoreCase(MyTunesRssUtils.guessContentType(MyTunesRssUtils.getMaxSizedImage(imageHash)))) {
+            URI mediumImage = getImageUri(user, maxSize, imageHash);
+            if (mediumImage != null) {
+                DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, "dlna", "JPEG_MED"));
+                List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
+                movie.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(mediumImage, props));
+            }
+        }
+    }
+
+    protected MusicAlbum createMusicAlbum(User user, Album album, String objectId, String parentId) {
+        MusicAlbum musicAlbum = new MusicAlbum(objectId, parentId, album.getName(), album.getArtist(), album.getTrackCount());
+        addTrackImageUris(user, album.getImageHash(), musicAlbum);
+        return musicAlbum;
     }
 }

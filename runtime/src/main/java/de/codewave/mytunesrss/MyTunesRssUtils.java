@@ -63,6 +63,7 @@ import java.lang.reflect.Proxy;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -78,14 +79,7 @@ import java.util.List;
 @SuppressWarnings({"OverlyComplexClass", "OverlyCoupledClass"})
 public class MyTunesRssUtils {
 
-    public static Map<String, String> IMAGE_TO_MIME = new HashMap<>();
-    public static Map<String, String> MIME_TO_SUFFIX = new HashMap<>();
-
-    static {
-        IMAGE_TO_MIME.put("jpg", "image/jpeg");
-        IMAGE_TO_MIME.put("gif", "image/gif");
-        IMAGE_TO_MIME.put("png", "image/png");
-    }
+    private static Map<String, String> MIME_TO_SUFFIX = new HashMap<>();
 
     static {
         MIME_TO_SUFFIX.put("image/gif", "gif");
@@ -575,8 +569,7 @@ public class MyTunesRssUtils {
         if (isExecutableGraphicsMagick()) {
             return getMaxImageSizeExternalProcess(source);
         } else {
-            String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
-            de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(mimeType, FileUtils.readFileToByteArray(source));
+            de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
             return getMaxImageSizeJava(image);
         }
     }
@@ -646,8 +639,7 @@ public class MyTunesRssUtils {
         if (isExecutableGraphicsMagick()) {
             resizeImageWithMaxSizeExternalProcess(source, target, maxSize, jpegQuality, debugInfo);
         } else {
-            String mimeType = IMAGE_TO_MIME.get(FilenameUtils.getExtension(source.getName()).toLowerCase());
-            de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(mimeType, FileUtils.readFileToByteArray(source));
+            de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
             resizeImageWithMaxSizeJava(image, target, maxSize, jpegQuality, debugInfo);
         }
     }
@@ -1067,23 +1059,37 @@ public class MyTunesRssUtils {
         }
         return sizes;
     }
-
-    public static File getMaxSizedImage(String imageHash) {
-        File maxSizedFile = null;
+    
+    public static int getMaxSizedImageSize(String imageHash) {
         int maxSize = 0;
         for (File file : getImageDir(imageHash).listFiles()) {
             String basename = FilenameUtils.getBaseName(file.getName());
             if (basename.startsWith("img")) {
                 int imgSize = Integer.parseInt(basename.substring(3));
                 if (imgSize > maxSize) {
-                    maxSizedFile = file;
                     maxSize = imgSize;
                 }
             }
         }
-        return maxSizedFile;
+        return maxSize;
     }
 
+    public static File getMaxSizedImage(String imageHash) {
+        return getImage(imageHash, getMaxSizedImageSize(imageHash));
+    }
+
+    public static String guessContentType(File file) {
+        String guess = URLConnection.guessContentTypeFromName(file.getName());
+        if (StringUtils.isBlank(guess) && file.isFile() && file.canRead()) {
+            try (InputStream is = new FileInputStream(file)) {
+                guess = URLConnection.guessContentTypeFromStream(is);
+            } catch (IOException e) {
+                LOGGER.warn("Could not guess content type from file.", e);
+            }
+        }
+        return StringUtils.trim(StringUtils.defaultIfBlank(guess, "application/octet-stream").toLowerCase(Locale.US));
+    }
+    
     public static File getImage(String imageHash, int size) {
         if (size > 0) {
             for (File file : getImageDir(imageHash).listFiles()) {
@@ -1105,16 +1111,13 @@ public class MyTunesRssUtils {
         if (file != null) {
             file.delete();
         }
-        return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType));
+        return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType.toLowerCase()));
     }
 
     public static void saveImage(String imageHash, int size, String mimeType, byte[] data) throws IOException {
         File file = getSaveImageFile(imageHash, size, mimeType);
-        FileOutputStream fileOutputStream = new FileOutputStream(file);
-        try {
+        try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             IOUtils.write(data, fileOutputStream);
-        } finally {
-            fileOutputStream.close();
         }
     }
 
