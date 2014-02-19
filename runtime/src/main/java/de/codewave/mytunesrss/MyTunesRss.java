@@ -127,7 +127,7 @@ public class MyTunesRss {
     public static final String CACHEDIR_TRANSCODER = "transcoder";
     public static final String CACHEDIR_HTTP_LIVE_STREAMING = "http_live_streaming";
 
-    public static final String APPLICATION_IDENTIFIER = System.getProperty("codewaveAppId", "MyTunesRSS-55");
+    public static final String APPLICATION_IDENTIFIER = System.getProperty("codewaveAppId", "MyTunesRSS-6");
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS5", "MyTunesRSS4", "MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
