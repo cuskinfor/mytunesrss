@@ -39,7 +39,10 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -64,6 +67,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.net.URLConnection;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -89,7 +94,6 @@ public class MyTunesRssUtils {
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
-    private static RandomAccessFile LOCK_FILE;
     private static final int IMAGE_PATH_SPLIT_SIZE = 6;
 
     public static boolean equals(Object o1, Object o2) {
@@ -238,9 +242,7 @@ public class MyTunesRssUtils {
                 }
             }
             MyTunesRssUtils.removeMvStoreData();
-        } catch (IOException e) {
-            LOGGER.error("Exception during shutdown.", e);
-        } catch (InterruptedException e) {
+        } catch (IOException | InterruptedException e) {
             LOGGER.error("Exception during shutdown.", e);
         } finally {
             LOGGER.info("Very last log message before shutdown.");
@@ -330,26 +332,24 @@ public class MyTunesRssUtils {
     public static boolean lockInstance(long timeoutMillis) {
         try {
             File file = new File(MyTunesRss.CACHE_DATA_PATH + "/MyTunesRSS.lck");
+            RandomAccessFile LOCK_FILE = new RandomAccessFile(file, "rw");
             file.deleteOnExit();
-            LOCK_FILE = new RandomAccessFile(file, "rw");
+            long endTime = System.currentTimeMillis() + timeoutMillis;
+            do {
+                try {
+                    if (LOCK_FILE.getChannel().tryLock() != null) {
+                        return false;
+                    }
+                    Thread.sleep(500);
+                } catch (IOException | InterruptedException e) {
+                    LOGGER.debug("Ignoring exception.", e);
+                }
+            } while (System.currentTimeMillis() < endTime);
+            return true;
         } catch (FileNotFoundException e) {
             LOGGER.debug("File not found, not locking instance.", e);
-            return false;
         }
-        long endTime = System.currentTimeMillis() + timeoutMillis;
-        do {
-            try {
-                if (LOCK_FILE.getChannel().tryLock() != null) {
-                    return false;
-                }
-                Thread.sleep(500);
-            } catch (IOException e) {
-                LOGGER.debug("Ignoring exception.", e);
-            } catch (InterruptedException e) {
-                LOGGER.debug("Ignoring exception.", e);
-            }
-        } while (System.currentTimeMillis() < endTime);
-        return true;
+        return false;
     }
 
     /**
@@ -408,9 +408,7 @@ public class MyTunesRssUtils {
                 return !user.isGroup() && user.isActive();
             } catch (AuthenticationException e) {
                 LOGGER.info("LDAP login failed for \"" + userName + "\".", e);
-            } catch (NamingException e) {
-                LOGGER.error("Could not validate username/password with LDAP server.", e);
-            } catch (UnsupportedEncodingException e) {
+            } catch (NamingException | UnsupportedEncodingException e) {
                 LOGGER.error("Could not validate username/password with LDAP server.", e);
             }
         }
@@ -506,12 +504,9 @@ public class MyTunesRssUtils {
         LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
         MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
             public void execute(Connection connection) throws SQLException {
-                PreparedStatement preparedStatement = connection.prepareStatement("BACKUP TO ?");
-                try {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("BACKUP TO ?")) {
                     preparedStatement.setString(1, backupFile.getAbsolutePath());
                     preparedStatement.execute();
-                } finally {
-                    preparedStatement.close();
                 }
             }
         });
@@ -559,7 +554,16 @@ public class MyTunesRssUtils {
 
     public static int getMaxImageSize(de.codewave.mytunesrss.meta.Image source) throws IOException {
         if (isExecutableGraphicsMagick() && source.getImageFile() != null) {
-            return getMaxImageSizeExternalProcess(source.getImageFile());
+            try {
+                return getMaxImageSizeExternalProcess(source.getImageFile());
+            } catch (IOException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not get max image size using external process, fallback to pure java image processing.", e);
+                } else {
+                    LOGGER.info("Could not get max image size using external process, fallback to pure java image processing.");
+                }
+                return getMaxImageSizeJava(source);
+            }
         } else {
             return getMaxImageSizeJava(source);
         }
@@ -567,7 +571,17 @@ public class MyTunesRssUtils {
 
     public static int getMaxImageSize(File source) throws IOException {
         if (isExecutableGraphicsMagick()) {
-            return getMaxImageSizeExternalProcess(source);
+            try {
+                return getMaxImageSizeExternalProcess(source);
+            } catch (IOException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not get max image size using external process, fallback to pure java image processing.", e);
+                } else {
+                    LOGGER.info("Could not get max image size using external process, fallback to pure java image processing.");
+                }
+                de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
+                return getMaxImageSizeJava(image);
+            }
         } else {
             de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
             return getMaxImageSizeJava(image);
@@ -575,14 +589,11 @@ public class MyTunesRssUtils {
     }
 
     private static int getMaxImageSizeJava(de.codewave.mytunesrss.meta.Image source) throws IOException {
-        ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
-        try {
+        try (ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData())) {
             BufferedImage original = ImageIO.read(imageInputStream);
             int width = original.getWidth();
             int height = original.getHeight();
             return Math.max(width, height);
-        } finally {
-            imageInputStream.close();
         }
     }
 
@@ -629,7 +640,16 @@ public class MyTunesRssUtils {
 
     public static void resizeImageWithMaxSize(de.codewave.mytunesrss.meta.Image source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         if (isExecutableGraphicsMagick() && source.getImageFile() != null) {
-            resizeImageWithMaxSizeExternalProcess(source.getImageFile(), target, maxSize, jpegQuality, debugInfo);
+            try {
+                resizeImageWithMaxSizeExternalProcess(source.getImageFile(), target, maxSize, jpegQuality, debugInfo);
+            } catch (IOException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not resize image using external process, fallback to pure java image processing.", e);
+                } else {
+                    LOGGER.info("Could not resize image using external process, fallback to pure java image processing.");
+                }
+                resizeImageWithMaxSizeJava(source, target, maxSize, jpegQuality, debugInfo);
+            }
         } else {
             resizeImageWithMaxSizeJava(source, target, maxSize, jpegQuality, debugInfo);
         }
@@ -637,7 +657,17 @@ public class MyTunesRssUtils {
 
     public static void resizeImageWithMaxSize(File source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         if (isExecutableGraphicsMagick()) {
-            resizeImageWithMaxSizeExternalProcess(source, target, maxSize, jpegQuality, debugInfo);
+            try {
+                resizeImageWithMaxSizeExternalProcess(source, target, maxSize, jpegQuality, debugInfo);
+            } catch (IOException e) {
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("Could not resize image using external process, fallback to pure java image processing.", e);
+                } else {
+                    LOGGER.info("Could not resize image using external process, fallback to pure java image processing.");
+                }
+                de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
+                resizeImageWithMaxSizeJava(image, target, maxSize, jpegQuality, debugInfo);
+            }
         } else {
             de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
             resizeImageWithMaxSizeJava(image, target, maxSize, jpegQuality, debugInfo);
@@ -693,18 +723,14 @@ public class MyTunesRssUtils {
 
     private static void resizeImageWithMaxSizeJava(de.codewave.mytunesrss.meta.Image source, File target, int maxSize, float jpegQuality, String debugInfo) throws IOException {
         long start = System.currentTimeMillis();
-        ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData());
-        try {
+        try (ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData())) {
             BufferedImage original = ImageIO.read(imageInputStream);
             if (original != null) {
                 int width = original.getWidth();
                 int height = original.getHeight();
                 if (Math.max(width, height) <= maxSize) {
-                    FileOutputStream fileOutputStream = new FileOutputStream(target);
-                    try {
+                    try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
                         IOUtils.write(source.getData(), fileOutputStream);
-                    } finally {
-                        fileOutputStream.close();
                     }
                 }
                 if (width > height) {
@@ -717,26 +743,20 @@ public class MyTunesRssUtils {
                 Image scaledImage = original.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 BufferedImage targetImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
                 targetImage.getGraphics().drawImage(scaledImage, 0, 0, null);
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
                 try {
-                    ImageWriter writer = ImageIO.getImageWritersByFormatName("jpeg").next();
-                    try {
-                        writer.setOutput(new FileImageOutputStream(target));
-                        ImageWriteParam param = writer.getDefaultWriteParam();
-                        param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                        param.setCompressionQuality(jpegQuality / 100f);
-                        param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
-                        writer.write(null, new IIOImage(targetImage, null, null), param);
-                    } finally {
-                        writer.dispose();
-                    }
+                    writer.setOutput(new FileImageOutputStream(target));
+                    ImageWriteParam param = writer.getDefaultWriteParam();
+                    param.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                    param.setCompressionQuality(jpegQuality / 100f);
+                    param.setProgressiveMode(ImageWriteParam.MODE_DISABLED);
+                    writer.write(null, new IIOImage(targetImage, null, null), param);
                 } finally {
-                    byteArrayOutputStream.close();
+                    writer.dispose();
                 }
             }
         } finally {
-            imageInputStream.close();
-            LOGGER.debug("Resizing (java) [" + debugInfo  + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
+            LOGGER.debug("Resizing (java) [" + debugInfo + "] to max " + maxSize + " with jpegQuality " + jpegQuality + " took " + (System.currentTimeMillis() - start) + " ms.");
         }
     }
 
@@ -1046,7 +1066,6 @@ public class MyTunesRssUtils {
         file.mkdirs();
         while (imageHash.length() > 0) {
             file = new File(file, imageHash.substring(0, Math.min(imageHash.length(), IMAGE_PATH_SPLIT_SIZE)));
-            file.mkdirs();
             imageHash = imageHash.substring(Math.min(imageHash.length(), IMAGE_PATH_SPLIT_SIZE));
         }
         return file;
@@ -1055,25 +1074,32 @@ public class MyTunesRssUtils {
     public static Collection<Integer> getImageSizes(String imageHash) {
         Collection<Integer> sizes = new LinkedHashSet<>();
         if (StringUtils.isNotBlank(imageHash)) {
-            for (String filename : getImageDir(imageHash).list()) {
-                String basename = FilenameUtils.getBaseName(filename);
-                if (basename.startsWith("img")) {
-                    sizes.add(Integer.parseInt(basename.substring(3)));
+            File imageDir = getImageDir(imageHash);
+            if (imageDir.isDirectory()) {
+                for (String filename : imageDir.list()) {
+                    String basename = FilenameUtils.getBaseName(filename);
+                    if (basename.startsWith("img")) {
+                        sizes.add(Integer.parseInt(basename.substring(3)));
+                    }
                 }
             }
         }
+        LOGGER.debug("Found " + sizes.size() + " images for image hash \"" + imageHash + "\".");
         return sizes;
     }
 
     public static int getMaxSizedImageSize(String imageHash) {
         int maxSize = 0;
         if (StringUtils.isNotBlank(imageHash)) {
-            for (File file : getImageDir(imageHash).listFiles()) {
-                String basename = FilenameUtils.getBaseName(file.getName());
-                if (basename.startsWith("img")) {
-                    int imgSize = Integer.parseInt(basename.substring(3));
-                    if (imgSize > maxSize) {
-                        maxSize = imgSize;
+            File imageDir = getImageDir(imageHash);
+            if (imageDir.isDirectory()) {
+                for (File file : imageDir.listFiles()) {
+                    String basename = FilenameUtils.getBaseName(file.getName());
+                    if (basename.startsWith("img")) {
+                        int imgSize = Integer.parseInt(basename.substring(3));
+                        if (imgSize > maxSize) {
+                            maxSize = imgSize;
+                        }
                     }
                 }
             }
@@ -1100,11 +1126,14 @@ public class MyTunesRssUtils {
     public static File getImage(String imageHash, int size) {
         if (StringUtils.isNotBlank(imageHash)) {
             if (size > 0) {
-                for (File file : getImageDir(imageHash).listFiles()) {
-                    String basename = FilenameUtils.getBaseName(file.getName());
-                    if (basename.startsWith("img")) {
-                        if (Integer.parseInt(basename.substring(3)) == size) {
-                            return file;
+                File imageDir = getImageDir(imageHash);
+                if (imageDir.isDirectory()) {
+                    for (File file : imageDir.listFiles()) {
+                        String basename = FilenameUtils.getBaseName(file.getName());
+                        if (basename.startsWith("img")) {
+                            if (Integer.parseInt(basename.substring(3)) == size) {
+                                return file;
+                            }
                         }
                     }
                 }
@@ -1121,7 +1150,11 @@ public class MyTunesRssUtils {
             if (file != null) {
                 file.delete();
             }
-            return new File(getImageDir(imageHash), "img" + size + "." + MIME_TO_SUFFIX.get(mimeType.toLowerCase()));
+            File imageDir = getImageDir(imageHash);
+            if (!imageDir.exists()) {
+                imageDir.mkdirs();
+            }
+            return new File(imageDir, "img" + size + "." + MIME_TO_SUFFIX.get(mimeType.toLowerCase()));
         } else {
             return null;
         }
@@ -1167,9 +1200,9 @@ public class MyTunesRssUtils {
      * Any %2F and %5C will be replaced by %01 and %02 since tomcat does not like those characters in the path info.
      * So the path info decoder will have to replace %01 and %02 with %2F and %5C.
      *
-     * @param pathInfo
+     * @param pathInfo Path info to encrypt.
      *
-     * @return
+     * @return Encrypted path info or non-encrypted if encryption fails.
      */
     public static String encryptPathInfo(String pathInfo) {
         String result = pathInfo;
@@ -1179,7 +1212,7 @@ public class MyTunesRssUtils {
                 cipher.init(Cipher.ENCRYPT_MODE, MyTunesRss.CONFIG.getPathInfoKey());
                 result = "%7B" + MyTunesRssBase64Utils.encode(cipher.doFinal(pathInfo.getBytes("UTF-8"))) + "%7D";
             }
-        } catch (Exception e) {
+        } catch (BadPaddingException | RuntimeException | UnsupportedEncodingException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidKeyException | IllegalBlockSizeException e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not encrypt path info.", e);
             }

@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.meta.Image;
 import de.codewave.utils.sql.DataStoreStatement;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,21 +19,12 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.HandlePhotoImagesStatement
  */
 public class HandlePhotoImagesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(HandlePhotoImagesStatement.class);
-    private static Map<String, String> IMAGE_TO_MIME = new HashMap<>();
-
-    static {
-        IMAGE_TO_MIME.put("jpg", "image/jpeg");
-        IMAGE_TO_MIME.put("gif", "image/gif");
-        IMAGE_TO_MIME.put("png", "image/png");
-    }
 
     private File myFile;
     private String myPhotoId;
@@ -62,7 +52,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                 }
                 myImageHash = imageHash;
             }
-        } catch (Exception e) {
+        } catch (IOException | RuntimeException e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not extract image from file \"" + myFile.getAbsolutePath() + "\".", e);
             }

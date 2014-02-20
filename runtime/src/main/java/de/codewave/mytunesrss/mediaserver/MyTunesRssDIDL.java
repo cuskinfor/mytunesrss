@@ -17,18 +17,18 @@ import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.fourthline.cling.binding.xml.Descriptor;
 import org.fourthline.cling.support.model.*;
 import org.fourthline.cling.support.model.container.MusicAlbum;
+import org.fourthline.cling.support.model.dlna.DLNAProfiles;
 import org.fourthline.cling.support.model.item.Movie;
 import org.fourthline.cling.support.model.item.MusicTrack;
 import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLConnection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,6 +37,8 @@ import java.util.List;
 public abstract class MyTunesRssDIDL extends DIDLContent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssDIDL.class);
+    public static final DLNAProfiles[] DLNA_JPEG_PROFILES = new DLNAProfiles[]{DLNAProfiles.JPEG_MED, DLNAProfiles.JPEG_SM, DLNAProfiles.JPEG_TN};
+    public static final DLNAProfiles[] DLNA_PNG_PROFILES = new DLNAProfiles[]{DLNAProfiles.PNG_LRG, DLNAProfiles.PNG_LRG, DLNAProfiles.PNG_TN};
 
     final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
@@ -168,7 +170,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         List<Res> resources = new ArrayList<>();
         resources.add(createTrackResource(track, user));
         musicTrack.setResources(resources);
-        addTrackImageUris(user, track.getImageHash(), musicTrack);
+        addUpnpAlbumArtUri(user, track.getImageHash(), musicTrack);
         return musicTrack;
     }
 
@@ -179,37 +181,61 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         movie.setTitle(track.getName());
         movie.setCreator("MyTunesRSS");
         movie.setResources(Collections.singletonList(createTrackResource(track, user)));
-        addTrackImageUris(user, track.getImageHash(), movie);
+        addUpnpAlbumArtUri(user, track.getImageHash(), movie);
         return movie;
     }
 
-    private void addTrackImageUris(User user, String imageHash, DIDLObject movie) {
-        URI thumbnailImage = getImageUri(user, 128, imageHash);
-        if (thumbnailImage != null) {
-            DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, "dlna", "JPEG_TN"));
-            List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
-            movie.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(thumbnailImage, props));
-        }
-        URI smallImage = getImageUri(user, 256, imageHash);
-        if (smallImage != null) {
-            DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, "dlna", "JPEG_SM"));
-            List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
-            movie.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(smallImage, props));
-        }
+    private void addUpnpAlbumArtUri(User user, String imageHash, DIDLObject target) {
+        DIDLObject.Property imageProperty = null;
         int maxSize = MyTunesRssUtils.getMaxSizedImageSize(imageHash);
-        if (maxSize > 256 && maxSize < 768 && "image/jpeg".equalsIgnoreCase(MyTunesRssUtils.guessContentType(MyTunesRssUtils.getMaxSizedImage(imageHash)))) {
+        String originalImageContentType = MyTunesRssUtils.guessContentType(MyTunesRssUtils.getMaxSizedImage(imageHash));
+        boolean jpeg = "image/jpeg".equalsIgnoreCase(originalImageContentType);
+        boolean png = "image/png".equalsIgnoreCase(originalImageContentType);
+        if (maxSize <= 768 && jpeg || png) {
+            DLNAProfiles[] profiles = jpeg ? DLNA_JPEG_PROFILES : DLNA_PNG_PROFILES;
             URI mediumImage = getImageUri(user, maxSize, imageHash);
             if (mediumImage != null) {
-                DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, "dlna", "JPEG_MED"));
+                String type = profiles[0].getCode();
+                if (maxSize <= 160) {
+                    type = profiles[1].getCode();
+                } else if (maxSize <= 480) {
+                    type = profiles[2].getCode();
+                }
+                DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(
+                        new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, Descriptor.Device.DLNA_PREFIX, type)
+                );
                 List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
-                movie.addProperty(new DIDLObject.Property.UPNP.ALBUM_ART_URI(mediumImage, props));
+                imageProperty = new DIDLObject.Property.UPNP.ALBUM_ART_URI(mediumImage, props);
             }
+        }
+        if (imageProperty == null) {
+            URI smallImage = getImageUri(user, 256, imageHash);
+            if (smallImage != null) {
+                DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(
+                        new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, Descriptor.Device.DLNA_PREFIX, DLNAProfiles.JPEG_SM.getCode())
+                );
+                List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
+                imageProperty = new DIDLObject.Property.UPNP.ALBUM_ART_URI(smallImage, props);
+            }
+        }
+        if (imageProperty == null) {
+            URI thumbnailImage = getImageUri(user, 128, imageHash);
+            if (thumbnailImage != null) {
+                DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(
+                        new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, Descriptor.Device.DLNA_PREFIX, DLNAProfiles.JPEG_TN.getCode())
+                );
+                List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
+                imageProperty = new DIDLObject.Property.UPNP.ALBUM_ART_URI(thumbnailImage, props);
+            }
+        }
+        if (imageProperty != null) {
+            target.addProperty(imageProperty);
         }
     }
 
     protected MusicAlbum createMusicAlbum(User user, Album album, String objectId, String parentId) {
         MusicAlbum musicAlbum = new MusicAlbum(objectId, parentId, album.getName(), album.getArtist(), album.getTrackCount());
-        addTrackImageUris(user, album.getImageHash(), musicAlbum);
+        addUpnpAlbumArtUri(user, album.getImageHash(), musicAlbum);
         return musicAlbum;
     }
 }
