@@ -27,7 +27,7 @@
     </statement>
 
     <statement name="shutdown" />
-    
+
     <!-- reusable sql fragments -->
 
     <fragment name="smartPlaylistOrderAndLimitHead">
@@ -38,6 +38,14 @@
         <![CDATA[
             <order_random>ORDER BY random()</order_random>
             <limit>LIMIT :maxCount OFFSET 0</limit>
+        ]]>
+    </fragment>
+
+    <fragment name="rangePrefix" />
+
+    <fragment name="rangeSuffix">
+        <![CDATA[
+        <range> LIMIT :rangeCount OFFSET :rangeOffset </range>
         ]]>
     </fragment>
 

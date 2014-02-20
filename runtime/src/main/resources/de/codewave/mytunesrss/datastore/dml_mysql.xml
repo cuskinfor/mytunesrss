@@ -45,4 +45,12 @@
         ]]>
     </fragment>
 
+    <fragment name="rangePrefix" />
+
+    <fragment name="rangeSuffix">
+        <![CDATA[
+        <range> LIMIT :rangeCount OFFSET :rangeOffset </range>
+        ]]>
+    </fragment>
+
 </statements>

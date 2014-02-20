@@ -183,6 +183,7 @@
             <indexorder>ORDER BY idx</indexorder>
             <albumorder>ORDER BY LOWER(album), pos_number, track_number, LOWER(name)</albumorder>
             <artistorder>ORDER BY LOWER(artist), album, pos_number, track_number, LOWER(name)</artistorder>
+            {rangeSuffix}
             ]]>
         </sql>
     </statement>

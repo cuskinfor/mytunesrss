@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Album;
+import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -21,12 +22,14 @@ import org.fourthline.cling.binding.xml.Descriptor;
 import org.fourthline.cling.support.model.*;
 import org.fourthline.cling.support.model.container.MusicAlbum;
 import org.fourthline.cling.support.model.dlna.DLNAProfiles;
+import org.fourthline.cling.support.model.item.ImageItem;
 import org.fourthline.cling.support.model.item.Movie;
 import org.fourthline.cling.support.model.item.MusicTrack;
 import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -69,7 +72,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
             transcoder = MyTunesRssUtils.getTranscoder(TranscoderConfig.MEDIA_SERVER_MP3_128.getName(), track);
             if (transcoder != null) {
                 pathInfo.append("/tc=").
-                         append(transcoder.getName());
+                        append(transcoder.getName());
             }
         }
         builder.append("/").
@@ -85,6 +88,19 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
             res.setSize(track.getContentLength());
         }
         res.setDuration(toHumanReadableTime(track.getTime()));
+        res.setValue(builder.toString());
+        LOGGER.debug("Resource value is \"" + res.getValue() + "\".");
+        return res;
+    }
+
+    protected Res createPlaylistResource(Playlist playlist, User user) {
+        StringBuilder builder = createWebAppCall(user, "createPlaylist"); // TODO hard-coded command name is not nice
+        builder.append("/").
+                append(MyTunesRssUtils.encryptPathInfo("playlist=" + MiscUtils.getUtf8UrlEncoded(playlist.getId()) + "/type=M3u")).
+                append("/playlist.m3u");
+        Res res = new Res();
+        MimeType mimeType = MimeType.valueOf("application/x-mpegurl");
+        res.setProtocolInfo(new ProtocolInfo(mimeType));
         res.setValue(builder.toString());
         LOGGER.debug("Resource value is \"" + res.getValue() + "\".");
         return res;
@@ -111,10 +127,15 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     }
 
     protected URI getImageUri(User user, int size, String imageHash) {
-        if (StringUtils.isNotBlank(imageHash)) {
+        File image = MyTunesRssUtils.getImage(imageHash, size);
+        if (StringUtils.isNotBlank(imageHash) && image != null && image.isFile() && image.canRead()) {
             StringBuilder builder = createWebAppCall(user, "showImage"); // TODO hard-coded command name is not nice
-            builder.append("/").
-                    append(MyTunesRssUtils.encryptPathInfo("hash=" + MiscUtils.getUtf8UrlEncoded(imageHash) + "/size=" + Integer.toString(size)));
+            StringBuilder pathInfo = new StringBuilder();
+            pathInfo.append("hash=").append(MiscUtils.getUtf8UrlEncoded(imageHash));
+            if (size > 0) {
+                pathInfo.append("/size=").append(Integer.toString(size));
+            }
+            builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString()));
             try {
                 return new URI(builder.toString());
             } catch (URISyntaxException e) {
@@ -185,27 +206,35 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return movie;
     }
 
+    protected ImageItem createImageItem(User user, String imageHash, String objectId, String parentId) {
+        File image = MyTunesRssUtils.getMaxSizedImage(imageHash);
+        return new ImageItem(objectId, parentId, null, "MyTunesRSS", new Res(MimeType.valueOf(MyTunesRssUtils.guessContentType(image)), (long)image.length(), getImageUri(user, -1, imageHash).toASCIIString()));
+    }
+
     private void addUpnpAlbumArtUri(User user, String imageHash, DIDLObject target) {
         DIDLObject.Property imageProperty = null;
         int maxSize = MyTunesRssUtils.getMaxSizedImageSize(imageHash);
-        String originalImageContentType = MyTunesRssUtils.guessContentType(MyTunesRssUtils.getMaxSizedImage(imageHash));
-        boolean jpeg = "image/jpeg".equalsIgnoreCase(originalImageContentType);
-        boolean png = "image/png".equalsIgnoreCase(originalImageContentType);
-        if (maxSize <= 768 && jpeg || png) {
-            DLNAProfiles[] profiles = jpeg ? DLNA_JPEG_PROFILES : DLNA_PNG_PROFILES;
-            URI mediumImage = getImageUri(user, maxSize, imageHash);
-            if (mediumImage != null) {
-                String type = profiles[0].getCode();
-                if (maxSize <= 160) {
-                    type = profiles[1].getCode();
-                } else if (maxSize <= 480) {
-                    type = profiles[2].getCode();
+        File maxSizedImage = MyTunesRssUtils.getMaxSizedImage(imageHash);
+        if (maxSizedImage != null && maxSizedImage.isFile() && maxSizedImage.canRead()) {
+            String originalImageContentType = MyTunesRssUtils.guessContentType(maxSizedImage);
+            boolean jpeg = "image/jpeg".equalsIgnoreCase(originalImageContentType);
+            boolean png = "image/png".equalsIgnoreCase(originalImageContentType);
+            if (maxSize <= 768 && jpeg || png) {
+                DLNAProfiles[] profiles = jpeg ? DLNA_JPEG_PROFILES : DLNA_PNG_PROFILES;
+                URI mediumImage = getImageUri(user, maxSize, imageHash);
+                if (mediumImage != null) {
+                    String type = profiles[0].getCode();
+                    if (maxSize <= 160) {
+                        type = profiles[1].getCode();
+                    } else if (maxSize <= 480) {
+                        type = profiles[2].getCode();
+                    }
+                    DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(
+                            new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, Descriptor.Device.DLNA_PREFIX, type)
+                    );
+                    List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
+                    imageProperty = new DIDLObject.Property.UPNP.ALBUM_ART_URI(mediumImage, props);
                 }
-                DIDLObject.Property<DIDLAttribute> profileId = new DIDLObject.Property.DLNA.PROFILE_ID(
-                        new DIDLAttribute(DIDLObject.Property.DLNA.NAMESPACE.URI, Descriptor.Device.DLNA_PREFIX, type)
-                );
-                List<DIDLObject.Property<DIDLAttribute>> props = Collections.singletonList(profileId);
-                imageProperty = new DIDLObject.Property.UPNP.ALBUM_ART_URI(mediumImage, props);
             }
         }
         if (imageProperty == null) {

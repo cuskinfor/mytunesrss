@@ -9,7 +9,7 @@ public class PhotoAlbumsDIDL extends MyTunesRssContainerDIDL {
 
     @Override
     void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) {
-        throw new NotYetImplementedException();
+        // TODO
     }
 
 }

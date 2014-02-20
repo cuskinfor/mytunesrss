@@ -12,7 +12,7 @@ public class OffHeapSessionStoreFilter implements Filter {
     }
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        if (request instanceof HttpServletRequest) {
+        if (request instanceof HttpServletRequest && ((HttpServletRequest)request).getSession(false) != null) {
             String currentListId = request.getParameter(OffHeapSessionStore.CURRENT_LIST_ID);
             if (StringUtils.isBlank(currentListId)) {
                 OffHeapSessionStore.get((HttpServletRequest) request).removeCurrentList();

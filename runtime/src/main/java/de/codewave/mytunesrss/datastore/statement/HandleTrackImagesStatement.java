@@ -168,7 +168,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 File imageDir = MyTunesRssUtils.getImageDir(imageHash);
                 int imageCount = MyTunesRssUtils.getImageSizes(imageHash).size();
                 if (imageDir != null && imageDir.isDirectory()) {
-                    LOGGER.info("Image directory \"" + imageDir.getAbsolutePath() + "\" contains " + imageCount + " images.");
+                    LOGGER.debug("Image directory \"" + imageDir.getAbsolutePath() + "\" contains " + imageCount + " images.");
                 }
                 if (StringUtils.isNotBlank(imageHash) && imageCount == 0) {
                     // We actually have no images, e.g. all resizings and even storing the original failed. So we
@@ -320,7 +320,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                                     Collections.sort(itemAtoms, new Comparator<Mp4Atom>() {
                                         @Override
                                         public int compare(Mp4Atom o1, Mp4Atom o2) {
-                                            // sort by body size descending, i.e. the (most likely) largest (i.e. best) image first 
+                                            // sort by body size descending, i.e. the (most likely) largest (i.e. best) image first
                                             return o2.getBodySize() - o1.getBodySize();
                                         }
                                     });

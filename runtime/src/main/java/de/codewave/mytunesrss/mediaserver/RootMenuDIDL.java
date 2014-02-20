@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
@@ -23,7 +22,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
     @Override
     void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
-        FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, null, null, null, false, false); // TODO: new query for count
+        FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, PlaylistFolderDIDL.PLAYLIST_TYPES, null, "ROOT", false, false); // TODO: new query for count
         int playlistCount = tx.executeQuery(findPlaylistQuery).getResultSize();
         FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery(); // TODO: new query for count
         int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
@@ -31,9 +30,9 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
         int tvShowCount = tx.executeQuery(findTvShowsQuery).getResultSize();
 
         LOGGER.debug("Adding root menu containers.");
-        
+
         // TODO honor first and max results
-        addContainer(new StorageFolder(ObjectID.Playlists.getValue(), "0", "Playlists", "MyTunesRSS", playlistCount, 0L));
+        addContainer(new StorageFolder(ObjectID.PlaylistFolder.getValue(), "0", "Playlists", "MyTunesRSS", playlistCount, 0L));
         addContainer(new StorageFolder(ObjectID.Albums.getValue(), "0", "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
         addContainer(new StorageFolder(ObjectID.Artists.getValue(), "0", "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
         addContainer(new StorageFolder(ObjectID.Genres.getValue(), "0", "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));

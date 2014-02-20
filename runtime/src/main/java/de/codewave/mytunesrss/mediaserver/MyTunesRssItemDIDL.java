@@ -17,9 +17,9 @@ import org.fourthline.cling.support.model.item.Item;
 import java.sql.SQLException;
 
 public abstract class MyTunesRssItemDIDL extends MyTunesRssDIDL {
-    
+
     private long myTotalMatches;
-    
+
     @Override
     void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) {
         // no children available, it is not a container
@@ -30,8 +30,13 @@ public abstract class MyTunesRssItemDIDL extends MyTunesRssDIDL {
     void createMetaData(final User user, DataStoreSession tx, String oidParams) throws SQLException {
         FindTrackQuery query = FindTrackQuery.getForIds(new String[]{ decode(oidParams).get(0) });
         query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
-        addItem(createItem(tx.executeQuery(query).nextResult(), user));
-        myTotalMatches = 1;
+        Item item = createItem(tx.executeQuery(query).nextResult(), user);
+        if (item != null) {
+            addItem(item);
+            myTotalMatches = 1;
+        } else {
+            myTotalMatches = 0;
+        }
     }
 
     protected abstract Item createItem(Track track, User user);

@@ -18,16 +18,16 @@ import java.net.URI;
 import java.sql.SQLException;
 
 public class ArtistAlbumsDIDL extends MyTunesRssContainerDIDL {
-    
+
     @Override
     void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        String artist = decode(oidParams).get(0);
+        final String artist = decode(oidParams).get(0);
         executeAndProcess(
                 tx,
                 new FindAlbumQuery(user, null, artist, false, null, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL),
                 new DataStoreQuery.ResultProcessor<Album>() {
                     public void process(Album album) {
-                        addContainer(createMusicAlbum(user, album, ObjectID.ArtistAlbum.getValue() + ";" + encode(album.getName()), ObjectID.ArtistAlbums.getValue() + ";" + oidParams));
+                        addContainer(createMusicAlbum(user, album, ObjectID.ArtistAlbum.getValue() + ";" + encode(album.getName(), album.getArtist()), ObjectID.ArtistAlbums.getValue() + ";" + artist));
                     }
                 },
                 firstResult,

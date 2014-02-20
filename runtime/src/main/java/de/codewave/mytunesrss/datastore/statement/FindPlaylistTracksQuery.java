@@ -31,6 +31,8 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
+    private Integer myOffset;
+    private Integer myCount;
 
     public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
         myId = id;
@@ -45,6 +47,16 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
+    public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder, int offset, int count) {
+        this(id, sortOrder);
+        myOffset = offset;
+        myCount = count;
+        myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
+        myExcludedPlaylistIds = user.getExcludedPlaylistIds();
+        myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
+        myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
+    }
+
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<>();
@@ -52,6 +64,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
+        conditionals.put("range", myOffset != null || myCount != null);
         if (PSEUDO_ID_ALL_BY_ALBUM.equals(myId) || PSEUDO_ID_ALL_BY_ARTIST.equals(myId)) {
             statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals);
             conditionals.put("albumorder", PSEUDO_ID_ALL_BY_ALBUM.equals(myId));
@@ -74,6 +87,10 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<DataStoreQuery.Query
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
+        if (myOffset != null || myCount != null) {
+            statement.setInt("rangeOffset", myOffset != null ? myOffset : 0);
+            statement.setInt("rangeCount", myCount != null ? myCount : Integer.MAX_VALUE);
+        }
         FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
         return execute(statement, new TrackResultBuilder());
     }

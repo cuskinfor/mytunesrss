@@ -1050,7 +1050,13 @@ public class MyTunesRss {
                     });
                     DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("MyTunesRSS"));
                     DeviceType type = new UDADeviceType("MediaServer", 1);
-                    DeviceDetails details = new DeviceDetails("MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
+                    String hostName = null;
+                    try {
+                        hostName = InetAddress.getLocalHost().getHostName();
+                    } catch (UnknownHostException e) {
+                        LOGGER.debug("Could not get hostname.", e);
+                    }
+                    DeviceDetails details = new DeviceDetails(StringUtils.isNotBlank(hostName) ? "MyTunesRSS: " + hostName : "MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
                     org.fourthline.cling.model.meta.Icon icon = null;
                     try {
                         File tempFile = File.createTempFile("mytunesrss-mediaserver-", ".png");
@@ -1062,7 +1068,12 @@ public class MyTunesRss {
                         LOGGER.warn("Could not create icon for UPnP Media Server.", e);
                     }
                     LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
-                    directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class));
+                    directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class) {
+                        @Override
+                        protected int getLockTimeoutMillis() {
+                            return 10000; // TODO configuration
+                        }
+                    });
                     LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
                     connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
                     try {

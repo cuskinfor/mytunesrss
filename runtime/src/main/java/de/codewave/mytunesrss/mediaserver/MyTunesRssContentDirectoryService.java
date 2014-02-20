@@ -28,7 +28,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
     public MyTunesRssContentDirectoryService() {
         // complete OIDs
         contentForOid.put("0", RootMenuDIDL.class);
-        contentForOid.put(ObjectID.Playlists.getValue(), PlaylistsDIDL.class);
+        contentForOid.put(ObjectID.PlaylistFolder.getValue(), PlaylistFolderDIDL.class);
         contentForOid.put(ObjectID.Albums.getValue(), AlbumsDIDL.class);
         contentForOid.put(ObjectID.Artists.getValue(), ArtistsDIDL.class);
         contentForOid.put(ObjectID.Genres.getValue(), GenresDIDL.class);
@@ -48,6 +48,9 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOidPrefix.put(ObjectID.TvShow.getValue(), TvShowDIDL.class);
         contentForOidPrefix.put(ObjectID.TvShowSeason.getValue(), TvShowSeasonDIDL.class);
         contentForOidPrefix.put(ObjectID.TvShowEpisode.getValue(), TvShowEpisodeDIDL.class);
+        contentForOidPrefix.put(ObjectID.PlaylistFolder.getValue(), PlaylistFolderDIDL.class);
+        contentForOidPrefix.put(ObjectID.Playlist.getValue(), PlaylistDIDL.class);
+        contentForOidPrefix.put(ObjectID.PlaylistTrack.getValue(), PlaylistTrackDIDL.class);
     }
 
     @Override
