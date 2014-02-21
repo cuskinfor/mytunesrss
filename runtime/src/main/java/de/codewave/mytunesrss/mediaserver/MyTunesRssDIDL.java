@@ -11,9 +11,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.datastore.statement.Album;
-import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
@@ -33,8 +31,10 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public abstract class MyTunesRssDIDL extends DIDLContent {
@@ -206,11 +206,16 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return movie;
     }
 
-    protected ImageItem createImageItem(User user, String imageHash, String objectId, String parentId) {
-        File image = MyTunesRssUtils.getMaxSizedImage(imageHash);
-        return new ImageItem(objectId, parentId, null, "MyTunesRSS", new Res(MimeType.valueOf(MyTunesRssUtils.guessContentType(image)), (long)image.length(), getImageUri(user, -1, imageHash).toASCIIString()));
+    protected Res createPhotoResource(User user, Photo photo, int size) {
+        File file = new File(photo.getFile());
+        String filename = FilenameUtils.getBaseName(file.getName()) + ".jpg";
+        StringBuilder builder = createWebAppCall(user, "showPhoto");
+        StringBuilder pathInfo = new StringBuilder("photo=").append(photo.getId());
+        pathInfo.append("/size=").append(size);
+        builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString())).append("/").append(MiscUtils.getUtf8UrlEncoded(filename));
+        return new Res(MimeType.valueOf("image/jpeg"), file.length(), builder.toString());
     }
-
+    
     private void addUpnpAlbumArtUri(User user, String imageHash, DIDLObject target) {
         DIDLObject.Property imageProperty = null;
         int maxSize = MyTunesRssUtils.getMaxSizedImageSize(imageHash);
@@ -266,5 +271,16 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         MusicAlbum musicAlbum = new MusicAlbum(objectId, parentId, album.getName(), album.getArtist(), album.getTrackCount());
         addUpnpAlbumArtUri(user, album.getImageHash(), musicAlbum);
         return musicAlbum;
+    }
+
+    protected org.fourthline.cling.support.model.item.Photo createPhotoItem(Photo photo, PhotoAlbum photoAlbum, DateFormat dateFormat, User user, int size) {
+        org.fourthline.cling.support.model.item.Photo photoItem = new org.fourthline.cling.support.model.item.Photo();
+        photoItem.setId(ObjectID.Photo.getValue() + ";" + encode(photoAlbum.getId(), photo.getId()));
+        photoItem.setParentID(ObjectID.PhotoAlbum.getValue() + ";" + encode(photoAlbum.getId()));
+        photoItem.setTitle(photo.getName());
+        photoItem.setAlbum(photoAlbum.getName());
+        photoItem.setDate(dateFormat.format(new Date(photo.getDate())));
+        photoItem.addResource(createPhotoResource(user, photo, size));
+        return photoItem;
     }
 }

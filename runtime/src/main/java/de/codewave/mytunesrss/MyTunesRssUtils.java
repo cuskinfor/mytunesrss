@@ -1154,10 +1154,14 @@ public class MyTunesRssUtils {
             if (!imageDir.exists()) {
                 imageDir.mkdirs();
             }
-            return new File(imageDir, "img" + size + "." + MIME_TO_SUFFIX.get(mimeType.toLowerCase()));
+            return new File(imageDir, "img" + size + "." + getSuffixForMimeType(mimeType));
         } else {
             return null;
         }
+    }
+
+    public static String getSuffixForMimeType(String mimeType) {
+        return StringUtils.defaultIfBlank(MIME_TO_SUFFIX.get(mimeType.toLowerCase()), "bin");
     }
 
     public static void saveImage(String imageHash, int size, String mimeType, byte[] data) throws IOException {

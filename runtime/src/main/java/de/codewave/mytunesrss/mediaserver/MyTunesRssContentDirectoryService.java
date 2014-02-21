@@ -34,7 +34,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOid.put(ObjectID.Genres.getValue(), GenresDIDL.class);
         contentForOid.put(ObjectID.Movies.getValue(), MoviesDIDL.class);
         contentForOid.put(ObjectID.TvShows.getValue(), TvShowsDIDL.class);
-        contentForOid.put(ObjectID.Photoalbums.getValue(), PhotoAlbumsDIDL.class);
+        contentForOid.put(ObjectID.PhotoAlbums.getValue(), PhotoAlbumsDIDL.class);
         // OID prefixes
         contentForOidPrefix.put(ObjectID.ArtistAlbums.getValue(), ArtistAlbumsDIDL.class);
         contentForOidPrefix.put(ObjectID.ArtistAlbum.getValue(), ArtistAlbumDIDL.class);
@@ -51,6 +51,8 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         contentForOidPrefix.put(ObjectID.PlaylistFolder.getValue(), PlaylistFolderDIDL.class);
         contentForOidPrefix.put(ObjectID.Playlist.getValue(), PlaylistDIDL.class);
         contentForOidPrefix.put(ObjectID.PlaylistTrack.getValue(), PlaylistTrackDIDL.class);
+        contentForOidPrefix.put(ObjectID.PhotoAlbum.getValue(), PhotoAlbumDIDL.class);
+        contentForOidPrefix.put(ObjectID.Photo.getValue(), PhotoDIDL.class);
     }
 
     @Override

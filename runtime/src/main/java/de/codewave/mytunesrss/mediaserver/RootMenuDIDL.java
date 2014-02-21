@@ -38,7 +38,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
         addContainer(new StorageFolder(ObjectID.Genres.getValue(), "0", "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));
         addContainer(new StorageFolder(ObjectID.Movies.getValue(), "0", "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
         addContainer(new StorageFolder(ObjectID.TvShows.getValue(), "0", "TV Shows", "MyTunesRSS", tvShowCount, 0L));
-        addContainer(new StorageFolder(ObjectID.Photoalbums.getValue(), "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
+        addContainer(new StorageFolder(ObjectID.PhotoAlbums.getValue(), "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
         myTotalMatches = getCount();
     }
 

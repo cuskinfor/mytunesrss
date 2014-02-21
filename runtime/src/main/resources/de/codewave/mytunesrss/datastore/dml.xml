@@ -797,6 +797,14 @@
             ]]>
         </sql>
     </statement>
+    
+    <statement name="getPhotoAlbum">
+        <sql>
+            SELECT id AS id, name AS name, first_date AS first_date, last_date AS last_date, photo_count AS photo_count
+            FROM photoalbum
+            WHERE id = :id
+        </sql>
+    </statement>
 
     <statement name="getPhotosWithMissingThumbnails">
         <sql>SELECT id, file FROM photo WHERE image_hash IS NULL AND source_id IN (:sourceIds[])</sql>

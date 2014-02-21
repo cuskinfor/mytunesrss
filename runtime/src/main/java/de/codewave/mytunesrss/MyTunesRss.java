@@ -1044,8 +1044,12 @@ public class MyTunesRss {
                     Runtime.getRuntime().addShutdownHook(new Thread() {
                         @Override
                         public void run() {
-                            LOGGER.info("Shutting down UPnP Media Server.");
-                            UPNP_SERVICE.shutdown();
+                            try {
+                                LOGGER.info("Shutting down UPnP Media Server.");
+                                UPNP_SERVICE.shutdown();
+                            } catch (RuntimeException e) {
+                                LOGGER.warn("Could not complete shutdown hook for media server.", e);
+                            }
                         }
                     });
                     DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("MyTunesRSS"));
