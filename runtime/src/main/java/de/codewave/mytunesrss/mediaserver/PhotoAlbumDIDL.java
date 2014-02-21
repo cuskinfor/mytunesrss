@@ -20,14 +20,14 @@ public class PhotoAlbumDIDL extends MyTunesRssContainerDIDL {
         String photoAlbumId = decode(oidParams).get(0);
         FindPhotoQuery findPhotoQuery = FindPhotoQuery.getForAlbum(user, photoAlbumId);
         final PhotoAlbum photoAlbum = tx.executeQuery(new GetPhotoAlbumQuery(photoAlbumId)).nextResult();
-        final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd"); 
+        final DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
         executeAndProcess(
                 tx,
                 findPhotoQuery,
                 new DataStoreQuery.ResultProcessor<Photo>() {
                     @Override
                     public void process(Photo photo) {
-                        addItem(createPhotoItem(photo, photoAlbum, dateFormat, user, 256));
+                        addItem(createPhotoItem(photo, photoAlbum, dateFormat, user, PhotoDIDL.PHOTO_SIZE));
                     }
                 },
                 firstResult,

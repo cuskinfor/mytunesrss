@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
@@ -208,14 +209,26 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
 
     protected Res createPhotoResource(User user, Photo photo, int size) {
         File file = new File(photo.getFile());
-        String filename = FilenameUtils.getBaseName(file.getName()) + ".jpg";
+        String filename = file.getName();
+        MimeType mimeType = MimeType.valueOf(MyTunesRssUtils.guessContentType(file));
+        try {
+            int maxSize = MyTunesRssUtils.getMaxImageSize(file);
+            if (size > 0 && size < maxSize) {
+                filename = FilenameUtils.getBaseName(file.getName()) + ".jpg";
+                mimeType = MimeType.valueOf("image/jpeg");
+            }
+        } catch (IOException e) {
+            size = 0;
+        }
         StringBuilder builder = createWebAppCall(user, "showPhoto");
-        StringBuilder pathInfo = new StringBuilder("photo=").append(photo.getId());
-        pathInfo.append("/size=").append(size);
+        StringBuilder pathInfo = new StringBuilder("photo=").append(MiscUtils.getUtf8UrlEncoded(photo.getId()));
+        if (size > 0) {
+            pathInfo.append("/size=").append(size);
+        }
         builder.append("/").append(MyTunesRssUtils.encryptPathInfo(pathInfo.toString())).append("/").append(MiscUtils.getUtf8UrlEncoded(filename));
-        return new Res(MimeType.valueOf("image/jpeg"), file.length(), builder.toString());
+        return new Res(mimeType, file.length(), builder.toString());
     }
-    
+
     private void addUpnpAlbumArtUri(User user, String imageHash, DIDLObject target) {
         DIDLObject.Property imageProperty = null;
         int maxSize = MyTunesRssUtils.getMaxSizedImageSize(imageHash);

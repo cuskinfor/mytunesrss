@@ -66,26 +66,36 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
             } else {
                 if (!getAuthUser().isQuotaExceeded()) {
                     if (StringUtils.isNotBlank(photo.myFile) && photoFile.isFile()) {
-                        String mimeType = MyTunesRssUtils.guessContentType(photoFile);
                         StreamSender sender = null;
-                        if (mimeType != null) {
+                        int requestedImageSize;
+                        int maxImageSize = 0;
+                        try {
+                            maxImageSize = MyTunesRssUtils.getMaxImageSize(photoFile);
+                            requestedImageSize = getIntegerRequestParameter("size", Integer.MAX_VALUE);
+                        } catch (IOException e) {
+                            requestedImageSize = 0;
+                        }
+                        String mimeType;
+                        if (requestedImageSize > 0 && maxImageSize > requestedImageSize) {
                             File tempFile = MyTunesRssUtils.createTempFile("jpg");
                             byte[] image;
                             try {
-                                MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, getIntegerRequestParameter("size", Integer.MAX_VALUE), (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
+                                MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, requestedImageSize, (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
                                 image = FileUtils.readFileToByteArray(tempFile);
                             } finally {
                                 tempFile.delete();
                             }
-                            sender = new StreamSender(new ByteArrayInputStream(image), "image/jpg", tempFile.length());
+                            mimeType = "image/jpg";
+                            sender = new StreamSender(new ByteArrayInputStream(image), mimeType, tempFile.length());
                             // no need to close the byte array input stream later
                         } else {
-                            sender = new FileSender(photoFile, "image/" + StringUtils.lowerCase(FilenameUtils.getExtension(photo.myFile), Locale.ENGLISH), photoFile.length());
+                            mimeType = MyTunesRssUtils.guessContentType(photoFile);
+                            sender = new FileSender(photoFile, mimeType, photoFile.length());
                         }
                         sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
                         getResponse().setDateHeader("Last-Modified", photo.myLastImageUpdate);
                         getResponse().setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(0));
-                        sendResponse(sender, MyTunesRssUtils.getLegalFileName(photoFile.getName()));
+                        sendResponse(sender, MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(photoFile.getName()) + "." + MyTunesRssUtils.getSuffixForMimeType(mimeType)));
                     } else {
                         LOGGER.warn("Photo file \"" + photoFile + "\" not found.");
                         getResponse().sendError(HttpServletResponse.SC_NOT_FOUND);
