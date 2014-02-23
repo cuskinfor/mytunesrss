@@ -4,6 +4,9 @@
  */
 package de.codewave.mytunesrss.config.transcoder;
 
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableSet;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
@@ -22,14 +25,17 @@ public class TranscoderConfig implements Cloneable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderConfig.class);
     private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<>();
-    public static final TranscoderConfig MEDIA_SERVER_MP3_128;
-    public static final TranscoderConfig MEDIA_SERVER_MP3_192;
-    public static final TranscoderConfig MEDIA_SERVER_MP3_320;
+    private static final Collection<TranscoderConfig> MEDIA_SERVER_TRANSCODERS = new HashSet<>();
+    private static final TranscoderConfig MEDIA_SERVER_MP3_128;
+    private static final TranscoderConfig MEDIA_SERVER_MP3_192;
+    private static final TranscoderConfig MEDIA_SERVER_MP3_320;
+    private static final TranscoderConfig MEDIA_SERVER_MPEG2_VIDEO;
 
     static {
         MEDIA_SERVER_MP3_128 = new TranscoderConfig();
         MEDIA_SERVER_MP3_128.setName("_MSA128");
         MEDIA_SERVER_MP3_128.setTranscoderActivations(Arrays.asList(
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
                 new FilenameTranscoderActivation("^.+\\.mp3$", true),
                 new Mp3BitRateTranscoderActivation(0, 131072, true),
                 new Mp3BitRateTranscoderActivation(196608, Integer.MAX_VALUE, true),
@@ -41,6 +47,7 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MP3_192 = new TranscoderConfig();
         MEDIA_SERVER_MP3_192.setName("_MSA192");
         MEDIA_SERVER_MP3_192.setTranscoderActivations(Arrays.asList(
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
                 new FilenameTranscoderActivation("^.+\\.mp3$", true),
                 new Mp3BitRateTranscoderActivation(0, 196608, true),
                 new Mp3BitRateTranscoderActivation(327680, Integer.MAX_VALUE, true),
@@ -52,6 +59,7 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MP3_320 = new TranscoderConfig();
         MEDIA_SERVER_MP3_320.setName("_MSA256");
         MEDIA_SERVER_MP3_320.setTranscoderActivations(Arrays.asList(
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
                 new FilenameTranscoderActivation("^.+\\.mp3$", true),
                 new Mp3BitRateTranscoderActivation(0, 327680, true),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
@@ -59,6 +67,15 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MP3_320.setTargetContentType("audio/mpeg");
         MEDIA_SERVER_MP3_320.setTargetMux(null);
         MEDIA_SERVER_MP3_320.setOptions("acodec=mp3,ab=320,samplerate=44100,channels=2");
+        MEDIA_SERVER_MPEG2_VIDEO = new TranscoderConfig();
+        MEDIA_SERVER_MPEG2_VIDEO.setName("_MSVMPG2");
+        MEDIA_SERVER_MPEG2_VIDEO.setTranscoderActivations(Collections.singletonList(new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Video), false)));
+        MEDIA_SERVER_MPEG2_VIDEO.setTargetSuffix("m2v");
+        MEDIA_SERVER_MPEG2_VIDEO.setTargetContentType("video/mp2v");
+        MEDIA_SERVER_MPEG2_VIDEO.setTargetMux("ts{use-key-frames}");
+        MEDIA_SERVER_MPEG2_VIDEO.setOptions("venc=ffmpeg,vcodec=mp2v,vb=4096,acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync");
+        MEDIA_SERVER_TRANSCODERS.add(MEDIA_SERVER_MP3_128);
+        MEDIA_SERVER_TRANSCODERS.add(MEDIA_SERVER_MPEG2_VIDEO);
     }
 
     static {
@@ -95,6 +112,10 @@ public class TranscoderConfig implements Cloneable {
             }
         }
         return deepClone;
+    }
+
+    public static ImmutableCollection<TranscoderConfig> getMediaServerTranscoders() {
+        return ImmutableSet.copyOf(MEDIA_SERVER_TRANSCODERS);
     }
 
     private String myName;
@@ -201,7 +222,7 @@ public class TranscoderConfig implements Cloneable {
         return new ArrayList<>(myTranscoderActivations);
     }
 
-    public void setTranscoderActivations(List<TranscoderActivation> transcoderActivations) {
+    public void setTranscoderActivations(List<? extends TranscoderActivation> transcoderActivations) {
         myTranscoderActivations = new ArrayList<>(transcoderActivations);
     }
 

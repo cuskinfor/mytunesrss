@@ -16,8 +16,6 @@ public class ProtectionTranscoderActivation extends TranscoderActivation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProtectionTranscoderActivation.class);
 
-    private String[] myCodecs;
-
     public ProtectionTranscoderActivation() {
         super(false);
     }

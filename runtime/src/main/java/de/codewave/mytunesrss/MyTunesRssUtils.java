@@ -1238,8 +1238,11 @@ public class MyTunesRssUtils {
                 }
             }
         }
-        if (isActiveTranscoder(activeTranscoders, TranscoderConfig.MEDIA_SERVER_MP3_128.getName()) && TranscoderConfig.MEDIA_SERVER_MP3_128.isValidFor(track)) {
-            return TranscoderConfig.MEDIA_SERVER_MP3_128;
+        // special (hidden) media server transcoders
+        for (TranscoderConfig config : TranscoderConfig.getMediaServerTranscoders()) {
+            if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track)) {
+                return config;
+            }
         }
         return null;
     }
