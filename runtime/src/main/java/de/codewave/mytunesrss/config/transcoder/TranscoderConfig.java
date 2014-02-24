@@ -71,7 +71,7 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MPEG2_VIDEO.setName("_MSVMPG2");
         MEDIA_SERVER_MPEG2_VIDEO.setTranscoderActivations(Collections.singletonList(new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Video), false)));
         MEDIA_SERVER_MPEG2_VIDEO.setTargetSuffix("m2v");
-        MEDIA_SERVER_MPEG2_VIDEO.setTargetContentType("video/mp2v");
+        MEDIA_SERVER_MPEG2_VIDEO.setTargetContentType("video/mpeg");
         MEDIA_SERVER_MPEG2_VIDEO.setTargetMux("ts{use-key-frames}");
         MEDIA_SERVER_MPEG2_VIDEO.setOptions("venc=ffmpeg,vcodec=mp2v,vb=4096,acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync");
         MEDIA_SERVER_TRANSCODERS.add(MEDIA_SERVER_MP3_128);
