@@ -2,7 +2,7 @@
 
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="true">
     <appender name="file" class="org.apache.log4j.ConsoleAppender">
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
@@ -55,6 +55,10 @@
         <appender-ref ref="file"/>
     </logger>
     <logger name="org.jboss" additivity="false">
+        <level value="trace"/>
+        <appender-ref ref="file"/>
+    </logger>
+    <logger name="de.codewave.utils.sql.SmartStatement" additivity="false">
         <level value="trace"/>
         <appender-ref ref="file"/>
     </logger>

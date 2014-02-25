@@ -29,8 +29,11 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
+import org.apache.log4j.spi.LoggingEvent;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.h2.mvstore.FileStore;
@@ -38,6 +41,7 @@ import org.h2.mvstore.MVStore;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -221,7 +225,8 @@ public class MyTunesRssUtils {
                 } catch (SQLException e) {
                     LOGGER.error("Could not remove old temporary playlists.", e);
                 } finally {
-                    session.rollback();                    }
+                    session.rollback();
+                }
                 try {
                     LOGGER.debug("Removing old statistic events.");
                     session.executeStatement(new RemoveOldEventsStatement());
@@ -229,7 +234,8 @@ public class MyTunesRssUtils {
                 } catch (SQLException e) {
                     LOGGER.error("Could not remove old statistic events.", e);
                 } finally {
-                    session.rollback();                    }
+                    session.rollback();
+                }
                 LOGGER.debug("Destroying store.");
                 MyTunesRss.STORE.destroy();
             }
@@ -316,7 +322,7 @@ public class MyTunesRssUtils {
         LoggerRepository repository = org.apache.log4j.Logger.getRootLogger().getLoggerRepository();
         for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
             org.apache.log4j.Logger logger = (org.apache.log4j.Logger) loggerEnum.nextElement();
-            if (logger.getName().startsWith("de.codewave.")) {
+            if (logger.getName().startsWith("de.codewave.") && !logger.getName().equals("de.codewave.utils.sql.SmartStatement")) { // TODO should be removed for release!!!
                 logger.setLevel(level);
             }
         }
@@ -479,10 +485,9 @@ public class MyTunesRssUtils {
      * Get a sub list.
      *
      * @param fullList The full list.
-     * @param first The first item to return.
-     * @param count Number of items to return. If count is less than 1, the rest of the list is returned.
-     * @param <T> List element type.
-     *
+     * @param first    The first item to return.
+     * @param count    Number of items to return. If count is less than 1, the rest of the list is returned.
+     * @param <T>      List element type.
      * @return Sublist starting with the "first" element and with "count" elements.
      */
     public static <T> List<T> getSubList(List<T> fullList, int first, int count) {
@@ -598,7 +603,7 @@ public class MyTunesRssUtils {
     }
 
     private static int getMaxImageSizeExternalProcess(File source) throws IOException {
-        List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "identify", "-format",  "%w %h", source.getAbsolutePath());
+        List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "identify", "-format", "%w %h", source.getAbsolutePath());
         String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
         LOGGER.debug(msg);
         Process process = new ProcessBuilder(resizeCommand).start();
@@ -766,7 +771,6 @@ public class MyTunesRssUtils {
      * either, the original name is used. This file is returned no matter whether or not it exists.
      *
      * @param filename A filename.
-     *
      * @return The best file for the specified name.
      */
     public static File searchFile(String filename) {
@@ -797,7 +801,7 @@ public class MyTunesRssUtils {
                 File[] files = parent.listFiles();
                 if (files != null) {
                     for (File each : files) {
-                        LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) +  ".");
+                        LOGGER.debug("Comparing " + MiscUtils.getUtf8UrlEncoded(file.getName()) + " to " + MiscUtils.getUtf8UrlEncoded(each.getName()) + ".");
                         if (Normalizer.compare(file.getName(), each.getName(), Normalizer.FOLD_CASE_DEFAULT) == 0) {
                             LOGGER.debug("Match.");
                             return each;
@@ -842,16 +846,16 @@ public class MyTunesRssUtils {
     public static String findVlcExecutable() {
         File[] files;
         if (SystemUtils.IS_OS_MAC_OSX) {
-            files = new File[] {
+            files = new File[]{
                     new File("/Applications/VLC.app/Contents/MacOS/VLC")
             };
         } else if (SystemUtils.IS_OS_WINDOWS) {
-            files = new File[] {
+            files = new File[]{
                     new File(System.getenv("ProgramFiles") + "/VideoLAN/VLC/vlc.exe"),
                     new File(System.getenv("ProgramFiles") + " (x86)/VideoLAN/VLC/vlc.exe")
             };
         } else {
-            files = new File[] {
+            files = new File[]{
                     new File("/usr/bin/vlc")
             };
         }
@@ -877,12 +881,12 @@ public class MyTunesRssUtils {
     public static String findGraphicsMagickExecutable() {
         File[] files;
         if (SystemUtils.IS_OS_WINDOWS) {
-            files = new File[] {
+            files = new File[]{
                     /*new File(System.getenv("ProgramFiles") + "/gm.exe"),
                     new File(System.getenv("ProgramFiles") + " (x86)/gm.exe")*/
             };
         } else {
-            files = new File[] {
+            files = new File[]{
                     new File("/usr/bin/gm"),
                     new File("/opt/local/bin/gm")
             };
@@ -1205,7 +1209,6 @@ public class MyTunesRssUtils {
      * So the path info decoder will have to replace %01 and %02 with %2F and %5C.
      *
      * @param pathInfo Path info to encrypt.
-     *
      * @return Encrypted path info or non-encrypted if encryption fails.
      */
     public static String encryptPathInfo(String pathInfo) {
@@ -1227,7 +1230,7 @@ public class MyTunesRssUtils {
 
     public static String createAuthToken(User user) {
         return encryptPathInfo("auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(user.getName()) + " " +
-                        MyTunesRssBase64Utils.encode(user.getPasswordHash())));
+                MyTunesRssBase64Utils.encode(user.getPasswordHash())));
     }
 
     public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
