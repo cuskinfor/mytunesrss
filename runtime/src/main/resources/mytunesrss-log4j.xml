@@ -54,10 +54,6 @@
         <level value="error"/>
         <appender-ref ref="file"/>
     </logger>
-    <logger name="de.codewave.mytunesrss.servlet.resteasyfix" additivity="false">
-        <level value="error"/>
-        <appender-ref ref="file"/>
-    </logger>
     <root>
         <level value="info"/>
         <appender-ref ref="file"/>

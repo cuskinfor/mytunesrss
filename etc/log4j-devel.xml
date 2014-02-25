@@ -54,10 +54,6 @@
         <level value="trace"/>
         <appender-ref ref="file"/>
     </logger>
-    <logger name="codewave-sql-statements" additivity="false">
-        <level value="trace"/>
-        <appender-ref ref="file"/>
-    </logger>
     <root>
         <level value="info"/>
         <appender-ref ref="file"/>
