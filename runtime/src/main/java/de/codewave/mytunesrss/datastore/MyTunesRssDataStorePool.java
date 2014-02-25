@@ -66,7 +66,8 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
     public void invalidateObject(Object obj) throws Exception {
         check();
         BorrowInformation borrowInformation = myActiveObjects.remove(obj);
-        LOGGER.trace("Return (" + borrowInformation + ").", borrowInformation.getThreadInfo());
+        LOGGER.trace("Return (" + borrowInformation + ").");
+        //LOGGER.trace("Return (" + borrowInformation + ").", borrowInformation.getThreadInfo());
         super.invalidateObject(obj);
     }
 

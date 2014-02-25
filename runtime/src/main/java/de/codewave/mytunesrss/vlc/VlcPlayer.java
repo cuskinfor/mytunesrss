@@ -362,7 +362,7 @@ public class VlcPlayer {
         stop();
         myTracks = Collections.emptyList();
         myCurrent = -1;
-        sendXml("/status.xml?command=pl_empty", HttpResponseStatus.class);
+        logAndSendXml("/status.xml?command=pl_empty", HttpResponseStatus.class);
     }
 
     public synchronized void setTracks(Track... tracks) throws VlcPlayerException {
@@ -404,12 +404,16 @@ public class VlcPlayer {
         }
         LOGGER.debug("Setting volume to " + volume + "%.");
         int newVolumeValue = (volume * 512) / 100;
-        sendXml("/status.xml?command=volume&val=" + newVolumeValue, HttpResponseStatus.class);
+        logAndSendXml("/status.xml?command=volume&val=" + newVolumeValue, HttpResponseStatus.class);
         myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
-    private synchronized <T> T sendXml(String command, Class<T> responseType) throws VlcPlayerException {
+    private synchronized <T> T logAndSendXml(String command, Class<T> responseType) throws VlcPlayerException {
         LOGGER.trace("Sending command: " + command);
+        return sendXml(command, responseType);
+    }
+
+    private synchronized <T> T sendXml(String command, Class<T> responseType) throws VlcPlayerException {
         GetMethod getMethod = new GetMethod("http://" + myVlcHost + ":" + myVlcPort + "/requests" + command);
         try {
             getMethod.getParams().setSoTimeout(MyTunesRss.CONFIG.getVlcSocketTimeout());
@@ -437,14 +441,14 @@ public class VlcPlayer {
         LOGGER.debug("Stopping playback.");
         myStatusUpdater.stopAdvanceListener();
         setFullScreen(false);
-        sendXml("/status.xml?command=pl_stop", HttpResponseStatus.class);
+        logAndSendXml("/status.xml?command=pl_stop", HttpResponseStatus.class);
         myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
     public synchronized void pause() throws VlcPlayerException {
         LOGGER.debug("Pausing playback.");
         myStatusUpdater.stopAdvanceListener();
-        sendXml("/status.xml?command=pl_forcepause", HttpResponseStatus.class);
+        logAndSendXml("/status.xml?command=pl_forcepause", HttpResponseStatus.class);
         myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
@@ -453,7 +457,7 @@ public class VlcPlayer {
             throw new IllegalArgumentException("Percentage must be a value from 0 to 100 and was " + percentage);
         }
         LOGGER.debug("Seeking to " + percentage + "% of current track.");
-        sendXml("/status.xml?command=seek&val=" + MiscUtils.getUtf8UrlEncoded(percentage + "%"), HttpResponseStatus.class);
+        logAndSendXml("/status.xml?command=seek&val=" + MiscUtils.getUtf8UrlEncoded(percentage + "%"), HttpResponseStatus.class);
         myStatusUpdater.interrupt(); // trigger an immediate update
     }
 
@@ -470,13 +474,13 @@ public class VlcPlayer {
     }
 
     public synchronized boolean setFullScreen(boolean fullScreen) throws VlcPlayerException {
-        HttpResponseStatus status = sendXml("/status.xml", HttpResponseStatus.class);
+        HttpResponseStatus status = logAndSendXml("/status.xml", HttpResponseStatus.class);
         if (status != null && !status.isFullscreen() && fullScreen) {
             LOGGER.debug("Switching to fullscreen mode.");
-            sendXml("/status.xml?command=fullscreen", HttpResponseStatus.class);
+            logAndSendXml("/status.xml?command=fullscreen", HttpResponseStatus.class);
         } else if (status != null && status.isFullscreen() && !fullScreen) {
             LOGGER.debug("Switching to window mode.");
-            sendXml("/status.xml?command=fullscreen", HttpResponseStatus.class);
+            logAndSendXml("/status.xml?command=fullscreen", HttpResponseStatus.class);
         }
         myStatusUpdater.interrupt(); // trigger an immediate update
         return fullScreen;
@@ -489,15 +493,15 @@ public class VlcPlayer {
         LOGGER.debug("Playback of track " + index + " requested.");
         if (index == -1) {
             if (getStatus().isPaused()) {
-                sendXml("/status.xml?command=pl_forceresume", HttpResponseStatus.class);
+                logAndSendXml("/status.xml?command=pl_forceresume", HttpResponseStatus.class);
             } else {
                 play(myCurrent);
             }
         } else {
             myStatusUpdater.stopAdvanceListener();
             myCurrent = index;
-            sendXml("/status.xml?command=pl_empty", HttpResponseStatus.class);
-            sendXml("/status.xml?command=in_play&input=" + MiscUtils.getUtf8UrlEncoded(myTracks.get(index).getFile().getAbsolutePath()), HttpResponseStatus.class);
+            logAndSendXml("/status.xml?command=pl_empty", HttpResponseStatus.class);
+            logAndSendXml("/status.xml?command=in_play&input=" + MiscUtils.getUtf8UrlEncoded(myTracks.get(index).getFile().getAbsolutePath()), HttpResponseStatus.class);
         }
         myStatusUpdater.startAdvanceListener();
         myStatusUpdater.interrupt();
