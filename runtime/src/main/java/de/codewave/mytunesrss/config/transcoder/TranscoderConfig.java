@@ -36,10 +36,7 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MP3_128.setName("_MSA128");
         MEDIA_SERVER_MP3_128.setTranscoderActivations(Arrays.asList(
                 new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
-                new FilenameTranscoderActivation("^.+\\.mp3$", true),
-                new Mp3BitRateTranscoderActivation(0, 131072, true),
-                new Mp3BitRateTranscoderActivation(196608, Integer.MAX_VALUE, true),
-                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+                new Mp3BitRateTranscoderActivation(0, 128 * 1024, true)));
         MEDIA_SERVER_MP3_128.setTargetSuffix("mp3");
         MEDIA_SERVER_MP3_128.setTargetContentType("audio/mpeg");
         MEDIA_SERVER_MP3_128.setTargetMux(null);
@@ -48,10 +45,7 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MP3_192.setName("_MSA192");
         MEDIA_SERVER_MP3_192.setTranscoderActivations(Arrays.asList(
                 new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
-                new FilenameTranscoderActivation("^.+\\.mp3$", true),
-                new Mp3BitRateTranscoderActivation(0, 196608, true),
-                new Mp3BitRateTranscoderActivation(327680, Integer.MAX_VALUE, true),
-                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+                new Mp3BitRateTranscoderActivation(0, 192 * 1024, true)));
         MEDIA_SERVER_MP3_192.setTargetSuffix("mp3");
         MEDIA_SERVER_MP3_192.setTargetContentType("audio/mpeg");
         MEDIA_SERVER_MP3_192.setTargetMux(null);
@@ -60,9 +54,7 @@ public class TranscoderConfig implements Cloneable {
         MEDIA_SERVER_MP3_320.setName("_MSA256");
         MEDIA_SERVER_MP3_320.setTranscoderActivations(Arrays.asList(
                 new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
-                new FilenameTranscoderActivation("^.+\\.mp3$", true),
-                new Mp3BitRateTranscoderActivation(0, 327680, true),
-                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+                new Mp3BitRateTranscoderActivation(0, 320 * 1024, true)));
         MEDIA_SERVER_MP3_320.setTargetSuffix("mp3");
         MEDIA_SERVER_MP3_320.setTargetContentType("audio/mpeg");
         MEDIA_SERVER_MP3_320.setTargetMux(null);
