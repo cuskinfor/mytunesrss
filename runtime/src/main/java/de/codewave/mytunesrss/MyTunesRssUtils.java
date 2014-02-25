@@ -322,7 +322,7 @@ public class MyTunesRssUtils {
         LoggerRepository repository = org.apache.log4j.Logger.getRootLogger().getLoggerRepository();
         for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
             org.apache.log4j.Logger logger = (org.apache.log4j.Logger) loggerEnum.nextElement();
-            if (logger.getName().startsWith("de.codewave.") && !logger.getName().equals("de.codewave.utils.sql.SmartStatement")) { // TODO should be removed for release!!!
+            if (logger.getName().startsWith("de.codewave.")) {
                 logger.setLevel(level);
             }
         }
