@@ -48,7 +48,8 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
         Object o = super.borrowObject();
         BorrowInformation borrowInformation = new BorrowInformation(o.toString(), new Throwable());
         myActiveObjects.put(o, borrowInformation);
-        LOGGER.trace("Borrow (" + borrowInformation + ").", borrowInformation.getThreadInfo());
+        LOGGER.trace("Borrow (" + borrowInformation + ").");
+        //LOGGER.trace("Borrow (" + borrowInformation + ").", borrowInformation.getThreadInfo());
         return o;
     }
 
@@ -56,7 +57,8 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
     public void returnObject(Object obj) throws Exception {
         check();
         BorrowInformation borrowInformation = myActiveObjects.remove(obj);
-        LOGGER.trace("Return (" + borrowInformation + ").", borrowInformation.getThreadInfo());
+        LOGGER.trace("Return (" + borrowInformation + ").");
+        //LOGGER.trace("Return (" + borrowInformation + ").", borrowInformation.getThreadInfo());
         super.returnObject(obj);
     }
 
