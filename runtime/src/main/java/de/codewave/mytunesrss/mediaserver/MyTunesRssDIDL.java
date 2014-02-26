@@ -18,6 +18,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.binding.xml.Descriptor;
 import org.fourthline.cling.support.model.*;
+import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.MusicAlbum;
 import org.fourthline.cling.support.model.dlna.DLNAProfiles;
 import org.fourthline.cling.support.model.item.ImageItem;
@@ -53,16 +54,25 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         }
     }
 
-    final void initMetaData(String oidParams) throws SQLException {
+    final void initMetaData(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createMetaData(MyTunesRss.CONFIG.getUser("cling"), tx, oidParams);
+            createMetaData(MyTunesRss.CONFIG.getUser("cling"), tx, oidParams, filter, firstResult, maxResults, orderby);
         } finally {
             tx.rollback();
         }
     }
 
     abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException;
+
+    protected Container createSimpleContainer(String id , String parentId, int childCount) {
+        Container container = new Container();
+        container.setId(id);
+        container.setParentID(parentId);
+        container.setChildCount(childCount);
+        container.setClazz(new DIDLObject.Class("object.container"));
+        return container;
+    }
 
     protected Res createTrackResource(Track track, User user) {
         StringBuilder builder = createWebAppCall(user, "playTrack"); // TODO hard-coded command name is not nice
@@ -145,7 +155,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return null;
     }
 
-    abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException;
+    abstract void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException;
 
     abstract long getTotalMatches();
 
@@ -228,7 +238,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return new Res(mimeType, file.length(), builder.toString());
     }
 
-    private void addUpnpAlbumArtUri(User user, String imageHash, DIDLObject target) {
+    protected void addUpnpAlbumArtUri(User user, String imageHash, DIDLObject target) {
         DIDLObject.Property imageProperty = null;
         int maxSize = MyTunesRssUtils.getMaxSizedImageSize(imageHash);
         File maxSizedImage = MyTunesRssUtils.getMaxSizedImage(imageHash);

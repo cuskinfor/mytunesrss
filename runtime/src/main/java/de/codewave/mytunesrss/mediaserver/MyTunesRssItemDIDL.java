@@ -27,10 +27,10 @@ public abstract class MyTunesRssItemDIDL extends MyTunesRssDIDL {
     }
 
     @Override
-    void createMetaData(final User user, DataStoreSession tx, String oidParams) throws SQLException {
+    void createMetaData(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         FindTrackQuery query = FindTrackQuery.getForIds(new String[]{ decode(oidParams).get(0) });
         query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
-        Item item = createItem(tx.executeQuery(query).nextResult(), user);
+        Item item = createItem(tx.executeQuery(query).nextResult(), user, oidParams);
         if (item != null) {
             addItem(item);
             myTotalMatches = 1;
@@ -39,7 +39,7 @@ public abstract class MyTunesRssItemDIDL extends MyTunesRssDIDL {
         }
     }
 
-    protected abstract Item createItem(Track track, User user);
+    protected abstract Item createItem(Track track, User user, String oidParams);
 
     @Override
     long getTotalMatches() {

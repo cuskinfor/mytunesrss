@@ -12,7 +12,7 @@ import org.fourthline.cling.support.model.item.Item;
 public class ArtistAlbumTrackDIDL extends MyTunesRssItemDIDL {
 
     @Override
-    protected Item createItem(Track track, User user) {
+    protected Item createItem(Track track, User user, String oidParams) {
         return createMusicTrack(
                 user,
                 track,

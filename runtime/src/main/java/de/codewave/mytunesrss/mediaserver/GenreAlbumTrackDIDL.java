@@ -12,8 +12,8 @@ import org.fourthline.cling.support.model.item.Item;
 public class GenreAlbumTrackDIDL extends MyTunesRssItemDIDL {
 
     @Override
-    protected Item createItem(Track track, User user) {
-        return createMusicTrack(user, 
+    protected Item createItem(Track track, User user, String oidParams) {
+        return createMusicTrack(user,
                 track,
                 ObjectID.GenreAlbumTrack.getValue() + ";" + encode(track.getId()),
                 ObjectID.GenreAlbum.getValue() + ";" + encode(track.getAlbum(), track.getAlbumArtist())

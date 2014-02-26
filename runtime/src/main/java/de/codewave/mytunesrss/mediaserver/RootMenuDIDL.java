@@ -8,7 +8,10 @@ package de.codewave.mytunesrss.mediaserver;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
+import org.fourthline.cling.support.model.DIDLObject;
+import org.fourthline.cling.support.model.DescMeta;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.StorageFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,12 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
         addContainer(new StorageFolder(ObjectID.TvShows.getValue(), "0", "TV Shows", "MyTunesRSS", tvShowCount, 0L));
         addContainer(new StorageFolder(ObjectID.PhotoAlbums.getValue(), "0", "Photos", "MyTunesRSS", photoAlbumCount, 0L));
         myTotalMatches = getCount();
+    }
+
+    @Override
+    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        addContainer(createSimpleContainer("0", "", 7));
+        myTotalMatches = 1;
     }
 
 }

@@ -30,7 +30,7 @@ public class PhotoDIDL extends MyTunesRssDIDL {
     }
 
     @Override
-    void createMetaData(final User user, DataStoreSession tx, final String oidParams) throws SQLException {
+    void createMetaData(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         Photo photo = tx.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Photo>>() {
             @Override
             public QueryResult<Photo> execute(Connection connection) throws SQLException {

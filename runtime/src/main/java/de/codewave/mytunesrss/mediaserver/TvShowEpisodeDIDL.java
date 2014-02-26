@@ -17,7 +17,7 @@ import java.util.List;
 public class TvShowEpisodeDIDL extends MyTunesRssItemDIDL {
 
     @Override
-    protected Item createItem(Track track, User user) {
+    protected Item createItem(Track track, User user, String oidParams) {
         return createMovieTrack(
                 user,
                 track,

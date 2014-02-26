@@ -77,7 +77,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             if (browseFlag == BrowseFlag.DIRECT_CHILDREN) {
                 content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderBy);
             } else if (browseFlag == BrowseFlag.METADATA) {
-                content.initMetaData(oidParams);
+                content.initMetaData(oidParams, filter, firstResult, maxResults, orderBy);
             } else {
                 LOGGER.warn("Unexpected browse flag \"" + browseFlag.name() + "\".");
                 throw new ContentDirectoryException(ErrorCode.ARGUMENT_VALUE_INVALID, "Unexpected browse flag \"" + browseFlag.name() + "\".");
