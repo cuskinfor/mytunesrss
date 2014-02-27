@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 
 public class PhotoDIDL extends MyTunesRssDIDL {
 
+    static final int DEFAULT_PHOTO_SIZE = 1024;
     private long myTotalMatches;
 
     @Override
@@ -54,7 +55,7 @@ public class PhotoDIDL extends MyTunesRssDIDL {
             }
         }).getResult(0);
         PhotoAlbum photoAlbum = tx.executeQuery(new GetPhotoAlbumQuery(decode(oidParams).get(0))).nextResult();
-        Item item = createPhotoItem(photo, photoAlbum, new SimpleDateFormat("yyyy-dd-mm"), user, PrefsPhotoSizeDIDL.selectedPhotoSize.get());
+        Item item = createPhotoItem(photo, photoAlbum, new SimpleDateFormat("yyyy-dd-mm"), user, getInt(decode(oidParams).get(0), DEFAULT_PHOTO_SIZE));
         if (item != null) {
             addItem(item);
             myTotalMatches = 1;

@@ -43,9 +43,20 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
         storageFolderList.add(new StorageFolder(ObjectID.Genres.getValue(), ObjectID.Root.getValue(), "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));
         storageFolderList.add(new StorageFolder(ObjectID.Movies.getValue(), ObjectID.Root.getValue(), "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
         storageFolderList.add(new StorageFolder(ObjectID.TvShows.getValue(), ObjectID.Root.getValue(), "TV Shows", "MyTunesRSS", tvShowCount, 0L));
-        storageFolderList.add(new StorageFolder(ObjectID.PhotoAlbums.getValue(), ObjectID.Root.getValue(), "Photos", "MyTunesRSS", photoAlbumCount, 0L));
-        storageFolderList.add(createSimpleContainer(ObjectID.Preferences.getValue(), ObjectID.Root.getValue(), "Preferences", 1));
-        for (Container storageFolder : MyTunesRssUtils.getSubList(storageFolderList, (int)firstResult, (int)maxResults)) {
+        List<Integer> photoSizes = getClientProfile().getPhotoSizes();
+        if (photoSizes.size() > 0) {
+            storageFolderList.add(
+                    new StorageFolder(
+                            photoSizes.size() > 1 ? ObjectID.PhotoAlbums.getValue() : ObjectID.PhotoAlbums.getValue() + ";" + encode(Integer.toString(photoSizes.get(0))),
+                            ObjectID.Root.getValue(),
+                            "Photos",
+                            "MyTunesRSS",
+                            photoSizes.size() > 1 ? photoSizes.size() : photoAlbumCount,
+                            0L
+                    )
+            );
+        }
+        for (Container storageFolder : MyTunesRssUtils.getSubList(storageFolderList, (int) firstResult, (int) maxResults)) {
             addContainer(storageFolder);
         }
         myTotalMatches = storageFolderList.size();
@@ -53,7 +64,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
 
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        addContainer(createSimpleContainer("0", "", 8));
+        addContainer(createSimpleContainer("0", "", 7));
         myTotalMatches = 1;
     }
 

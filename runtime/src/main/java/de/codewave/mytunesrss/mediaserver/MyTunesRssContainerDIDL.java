@@ -47,4 +47,5 @@ public abstract class MyTunesRssContainerDIDL extends MyTunesRssDIDL {
         });
         LOGGER.debug("Processed {} items from query result.", myTotalMatches);
     }
+
 }

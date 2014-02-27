@@ -10,16 +10,7 @@ public enum ObjectID {
     PlaylistFolder("pf"), Playlist("p"), PlaylistTrack("pt"), Albums("as"), Album("a"), AlbumTrack("at"), Artists("ars"), ArtistAlbums("aras"),
     ArtistAlbum("ara"), ArtistAlbumTrack("aat"), Genres("gs"), GenreAlbums("gas"), GenreAlbum("ga"), GenreAlbumTrack("gat"),
     Movies("ms"), Movie("m"), TvShows("vs"), TvShow("v"), TvShowSeason("vv"), TvShowEpisode("vvv"), PhotoAlbums("pas"), PhotoAlbum("pa"), Photo("ph"),
-    Root("0"), Preferences("prefs"), PrefsPhotoSize("prefs-ps");
-
-    public static ObjectID fromValue(String value) {
-        for (ObjectID objectID : ObjectID.values()) {
-            if (objectID.getValue().equals(value)) {
-                return objectID;
-            }
-        }
-        return null;
-    }
+    Root("0");
 
     private String myValue;
 

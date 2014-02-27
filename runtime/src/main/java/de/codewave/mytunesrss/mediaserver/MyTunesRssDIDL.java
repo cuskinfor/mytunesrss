@@ -309,4 +309,18 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         photoItem.addResource(createPhotoResource(user, photo, size));
         return photoItem;
     }
+
+    protected MediaServerClientProfile getClientProfile() {
+        String userAgent = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRequestUserAgent();
+        return MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfile(userAgent);
+    }
+
+    protected int getInt(String s, int defaultValue) {
+        try {
+            return Integer.parseInt(s);
+        } catch (NumberFormatException e) {
+            LOGGER.warn("Could not parse int value.", e);
+        }
+        return defaultValue;
+    }
 }

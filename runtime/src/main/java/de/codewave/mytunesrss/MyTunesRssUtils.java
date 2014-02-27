@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
@@ -176,6 +177,11 @@ public class MyTunesRssUtils {
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
         LOGGER.debug("Shutting down gracefully.");
         MyTunesRss.CONFIG.save();
+        try {
+            MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);
+        } catch (IOException e) {
+            LOGGER.warn("Could not save media player configuration.", e);
+        }
         try {
             if (MyTunesRss.VLC_PLAYER != null) {
                 MyTunesRss.VLC_PLAYER.destroy();

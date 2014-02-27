@@ -23,6 +23,7 @@ import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.lucene.AddLuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrackService;
+import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.mediaserver.MyTunesRssContentDirectoryService;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
@@ -204,6 +205,7 @@ public class MyTunesRss {
     public static ClassLoader EXTRA_CLASSLOADER;
     public static File INTERNAL_MYSQL_SERVER_PATH;
     private static UpnpService UPNP_SERVICE;
+    public static MediaServerConfig MEDIA_SERVER_CONFIG;
 
     public static void main(final String[] args) throws IOException, AWTException, SchedulerException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, DatabaseJobRunningException, ValidationException {
         PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
@@ -795,9 +797,10 @@ public class MyTunesRss {
         }
     }
 
-    private static void loadConfig() {
+    private static void loadConfig() throws IOException {
         CONFIG = new MyTunesRssConfig();
         CONFIG.load();
+        MEDIA_SERVER_CONFIG = MediaServerConfig.load();
     }
 
     private static void readVersion() throws IOException {
