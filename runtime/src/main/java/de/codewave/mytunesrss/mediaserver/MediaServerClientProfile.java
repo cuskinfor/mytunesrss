@@ -5,6 +5,8 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.utils.WildcardMatcher;
+
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.Arrays;
 import java.util.List;
@@ -12,6 +14,7 @@ import java.util.List;
 public class MediaServerClientProfile {
 
     private String myUserAgentPattern;
+    private WildcardMatcher myWildcardMatcher;
     private List<Integer> myPhotoSizes = Arrays.asList(1024, 2048, 4096, 0);
 
     public String getUserAgentPattern() {
@@ -20,6 +23,7 @@ public class MediaServerClientProfile {
 
     public void setUserAgentPattern(String userAgentPattern) {
         myUserAgentPattern = userAgentPattern;
+        myWildcardMatcher = new WildcardMatcher(userAgentPattern);
     }
 
     public List<Integer> getPhotoSizes() {
@@ -32,6 +36,6 @@ public class MediaServerClientProfile {
 
     @XmlTransient
     public boolean matches(String userAgent) {
-        return userAgent.toLowerCase().contains(myUserAgentPattern);
+        return myWildcardMatcher.matches(userAgent);
     }
 }
