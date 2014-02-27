@@ -20,6 +20,7 @@ import de.codewave.mytunesrss.datastore.statement.RemovePhotoStatement;
 import de.codewave.mytunesrss.datastore.statement.RemoveTrackStatement;
 import de.codewave.mytunesrss.datastore.updatequeue.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.*;
 import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
@@ -136,6 +137,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         Statement statement = connection.createStatement();
                         try {
                             statement.execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
+                            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_CHANGED));
                         } finally {
                             statement.close();
                         }

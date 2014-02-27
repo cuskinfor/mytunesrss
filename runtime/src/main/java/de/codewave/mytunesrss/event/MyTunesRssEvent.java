@@ -10,7 +10,7 @@ package de.codewave.mytunesrss.event;
 public class MyTunesRssEvent {
 
     public enum EventType {
-        SERVER_STOPPED, SERVER_STARTED, DATABASE_UPDATE_FINISHED, DATABASE_UPDATE_STATE_CHANGED, MYTUNESRSS_COM_UPDATED;
+        SERVER_STOPPED, SERVER_STARTED, DATABASE_UPDATE_FINISHED, DATABASE_UPDATE_STATE_CHANGED, MYTUNESRSS_COM_UPDATED, DATABASE_CHANGED;
     }
 
     public static MyTunesRssEvent create(EventType type) {

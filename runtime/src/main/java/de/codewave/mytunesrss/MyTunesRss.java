@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventListener;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.lucene.AddLuceneTrack;
@@ -1036,11 +1037,21 @@ public class MyTunesRss {
                 @Override
                 public void run() {
                     UPNP_SERVICE = new UpnpServiceImpl();
+                    final LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
+                    final MyTunesRssEventListener databaseUpdateListener = new MyTunesRssEventListener() {
+                        @Override
+                        public void handleEvent(MyTunesRssEvent event) {
+                            if (event.getType() == MyTunesRssEvent.EventType.DATABASE_CHANGED) {
+                                directoryService.getManager().getImplementation().changeSystemUpdateID();
+                            }
+                        }
+                    };
                     Runtime.getRuntime().addShutdownHook(new Thread() {
                         @Override
                         public void run() {
                             try {
                                 LOGGER.info("Shutting down UPnP Media Server.");
+                                MyTunesRssEventManager.getInstance().removeListener(databaseUpdateListener);
                                 UPNP_SERVICE.shutdown();
                             } catch (RuntimeException e) {
                                 LOGGER.warn("Could not complete shutdown hook for media server.", e);
@@ -1066,7 +1077,6 @@ public class MyTunesRss {
                     } catch (RuntimeException | IOException e) {
                         LOGGER.warn("Could not create icon for UPnP Media Server.", e);
                     }
-                    LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
                     directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class) {
                         @Override
                         protected int getLockTimeoutMillis() {
@@ -1077,6 +1087,7 @@ public class MyTunesRss {
                     connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
                     try {
                         MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
+                        MyTunesRssEventManager.getInstance().addListener(databaseUpdateListener);
                     } catch (ValidationException e) {
                         LOGGER.warn("Could not add UPnP Media Server device.");
                     }

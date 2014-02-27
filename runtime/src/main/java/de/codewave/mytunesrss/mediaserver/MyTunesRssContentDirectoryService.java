@@ -56,6 +56,11 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
     }
 
     @Override
+    public void changeSystemUpdateID() {
+        super.changeSystemUpdateID();
+    }
+
+    @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
         LOGGER.debug("Received browse request [objectID=\"{}\", browseFlag=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {objectID, browseFlag, filter, firstResult, maxResults, orderBy});
         Class<? extends MyTunesRssDIDL> contentClass = contentForOid.get(objectID);
