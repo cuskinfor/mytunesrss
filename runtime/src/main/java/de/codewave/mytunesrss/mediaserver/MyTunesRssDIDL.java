@@ -63,6 +63,12 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
 
     abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException;
 
+    protected Container createSimpleContainer(String id , String parentId, String title, int childCount) {
+        Container container = createSimpleContainer(id, parentId, childCount);
+        container.setTitle(title);
+        return container;
+    }
+
     protected Container createSimpleContainer(String id , String parentId, int childCount) {
         Container container = new Container();
         container.setId(id);

@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.collections.CollectionUtils;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.StorageFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
 
         LOGGER.debug("Adding root menu containers.");
 
-        List<StorageFolder> storageFolderList = new ArrayList<>(); 
+        List<Container> storageFolderList = new ArrayList<>();
         storageFolderList.add(new StorageFolder(ObjectID.PlaylistFolder.getValue(), ObjectID.Root.getValue(), "Playlists", "MyTunesRSS", playlistCount, 0L));
         storageFolderList.add(new StorageFolder(ObjectID.Albums.getValue(), ObjectID.Root.getValue(), "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
         storageFolderList.add(new StorageFolder(ObjectID.Artists.getValue(), ObjectID.Root.getValue(), "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
@@ -43,7 +44,8 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
         storageFolderList.add(new StorageFolder(ObjectID.Movies.getValue(), ObjectID.Root.getValue(), "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
         storageFolderList.add(new StorageFolder(ObjectID.TvShows.getValue(), ObjectID.Root.getValue(), "TV Shows", "MyTunesRSS", tvShowCount, 0L));
         storageFolderList.add(new StorageFolder(ObjectID.PhotoAlbums.getValue(), ObjectID.Root.getValue(), "Photos", "MyTunesRSS", photoAlbumCount, 0L));
-        for (StorageFolder storageFolder : MyTunesRssUtils.getSubList(storageFolderList, (int)firstResult, (int)maxResults)) {
+        storageFolderList.add(createSimpleContainer(ObjectID.Preferences.getValue(), ObjectID.Root.getValue(), "Preferences", 1));
+        for (Container storageFolder : MyTunesRssUtils.getSubList(storageFolderList, (int)firstResult, (int)maxResults)) {
             addContainer(storageFolder);
         }
         myTotalMatches = storageFolderList.size();
@@ -51,7 +53,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
 
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        addContainer(createSimpleContainer("0", "", 7));
+        addContainer(createSimpleContainer("0", "", 8));
         myTotalMatches = 1;
     }
 

@@ -27,7 +27,7 @@ public class PhotoAlbumDIDL extends MyTunesRssContainerDIDL {
                 new DataStoreQuery.ResultProcessor<Photo>() {
                     @Override
                     public void process(Photo photo) {
-                        addItem(createPhotoItem(photo, photoAlbum, dateFormat, user, PhotoDIDL.PHOTO_SIZE));
+                        addItem(createPhotoItem(photo, photoAlbum, dateFormat, user, PrefsPhotoSizeDIDL.selectedPhotoSize.get()));
                     }
                 },
                 firstResult,
