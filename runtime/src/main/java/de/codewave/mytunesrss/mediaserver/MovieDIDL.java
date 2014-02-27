@@ -7,12 +7,7 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import org.fourthline.cling.support.model.Res;
 import org.fourthline.cling.support.model.item.Item;
-import org.fourthline.cling.support.model.item.Movie;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MovieDIDL extends MyTunesRssItemDIDL {
 

@@ -1,9 +1,10 @@
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.datastore.statement.FindGenreQuery;
+import de.codewave.mytunesrss.datastore.statement.FindGenresQuery;
 import de.codewave.mytunesrss.datastore.statement.Genre;
+import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
+import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
@@ -17,7 +18,7 @@ public class GenresDIDL extends MyTunesRssContainerDIDL {
     void createDirectChildren(User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         executeAndProcess(
                 tx,
-                new FindGenreQuery(user, false, -1),
+                new FindGenresQuery(user, false, -1),
                 new DataStoreQuery.ResultProcessor<Genre>() {
                     public void process(Genre genre) {
                         addContainer(new MusicArtist(ObjectID.GenreAlbums.getValue() + ";" + encode(genre.getName()), ObjectID.Genres.getValue(), genre.getName(), "MyTunesRSS", genre.getAlbumCount()));
@@ -28,4 +29,11 @@ public class GenresDIDL extends MyTunesRssContainerDIDL {
         );
     }
 
+    @Override
+    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
+        addContainer(createSimpleContainer(ObjectID.Genres.getValue(), ObjectID.Root.getValue(), systemInformation.getGenreCount()));
+        myTotalMatches = 1;
+    }
+    
 }

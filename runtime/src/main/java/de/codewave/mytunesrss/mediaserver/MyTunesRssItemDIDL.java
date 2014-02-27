@@ -8,7 +8,6 @@ package de.codewave.mytunesrss.mediaserver;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import org.fourthline.cling.support.model.SortCriterion;

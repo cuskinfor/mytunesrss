@@ -186,9 +186,9 @@ public class LibraryResource extends RestResource {
             @QueryParam("hidden") @DefaultValue("false") boolean includeHidden,
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
-        FindGenreQuery findGenreQuery = new FindGenreQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index);
-        findGenreQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(findGenreQuery);
+        FindGenresQuery findGenresQuery = new FindGenresQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index);
+        findGenresQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(findGenresQuery);
         return toGenreRepresentations(uriInfo, queryResult);
     }
 

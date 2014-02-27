@@ -34,11 +34,11 @@ public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
 
             if (cachedGenres == null)
             {
-                FindGenreQuery query;
+                FindGenresQuery query;
                 if (StringUtils.isNotEmpty(page)) {
-                    query = new FindGenreQuery(getAuthUser(), false, Integer.parseInt(page));
+                    query = new FindGenresQuery(getAuthUser(), false, Integer.parseInt(page));
                 } else {
-                    query = new FindGenreQuery(getAuthUser(), false, -1);
+                    query = new FindGenresQuery(getAuthUser(), false, -1);
                 }
                 query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                 currentListId = offHeapSessionStore.newCurrentList();

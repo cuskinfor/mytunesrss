@@ -34,9 +34,9 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isEmpty(artist)) {
                 artist = null;
             }
-            String genre = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
-            if (StringUtils.isEmpty(genre)) {
-                genre = null;
+            String genreName = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("genre"));
+            if (StringUtils.isEmpty(genreName)) {
+                genreName = null;
             }
             getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
             OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
@@ -47,7 +47,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                                                                    getDisplayFilter().getTextFilter(),
                                                                    artist,
                                                                    false,
-                                                                   genre != null ? new String[] {genre} : null,
+                                                                   genreName != null ? new String[] {genreName} : null,
                                                                    getIntegerRequestParameter("page", -1),
                                                                    getDisplayFilter().getMinYear(),
                                                                    getDisplayFilter().getMaxYear(),
@@ -77,7 +77,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 i++;
             }
             getRequest().setAttribute("albums", albums);
-            Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genre));
+            Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genreName));
             Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
             getRequest().setAttribute("singleGenre", singleGenre);
             getRequest().setAttribute("singleArtist", singleArtist);
@@ -97,18 +97,9 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                         }
                     }));
                 } else {
-                    final String finalGenre = genre;
-                    getRequest().setAttribute("allArtistGenreTrackCount", getTransaction().executeQuery(new DataStoreQuery<Object>() {
-                        public Object execute(Connection connection) throws SQLException {
-                            SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenreTrackCount");
-                            statement.setString("name", finalGenre);
-                            ResultSet rs = statement.executeQuery();
-                            if (rs.next()) {
-                                return rs.getInt("TRACK_COUNT");
-                            }
-                            return Long.valueOf(0);
-                        }
-                    }));
+                    FindGenreQuery findGenreQuery = new FindGenreQuery(getAuthUser(), genreName);
+                    Genre genre = getTransaction().executeQuery(findGenreQuery);
+                    getRequest().setAttribute("allArtistGenreTrackCount", genre != null ? genre.getTrackCount() : 0);
                 }
             }
             DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),

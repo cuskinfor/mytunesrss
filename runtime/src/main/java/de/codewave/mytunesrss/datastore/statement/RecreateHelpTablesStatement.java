@@ -52,7 +52,7 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
         if (myRecreateGenres) {
             StopWatch.start("Recreating genres help table");
             try {
-                List<Genre> genres = new FindGenreQuery(null, true, -1).execute(connection).getResults();
+                List<Genre> genres = new FindGenresQuery(null, true, -1).execute(connection).getResults();
                 List<String> hiddenGenres = new ArrayList<>();
                 List<String> genreNames = new ArrayList<>();
                 for (Genre genre : genres) {

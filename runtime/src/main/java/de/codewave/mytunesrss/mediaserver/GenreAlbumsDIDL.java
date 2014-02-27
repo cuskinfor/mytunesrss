@@ -5,16 +5,15 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Album;
 import de.codewave.mytunesrss.datastore.statement.FindAlbumQuery;
+import de.codewave.mytunesrss.datastore.statement.FindGenreQuery;
+import de.codewave.mytunesrss.datastore.statement.Genre;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
-import org.fourthline.cling.support.model.container.MusicAlbum;
 
-import java.net.URI;
 import java.sql.SQLException;
 
 public class GenreAlbumsDIDL extends MyTunesRssContainerDIDL {
@@ -33,6 +32,14 @@ public class GenreAlbumsDIDL extends MyTunesRssContainerDIDL {
                 firstResult,
                 (int) maxResults
         );
+    }
+
+    @Override
+    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        String genreName = decode(oidParams).get(0);
+        Genre genre = tx.executeQuery(new FindGenreQuery(user, genreName));
+        addContainer(createSimpleContainer(ObjectID.GenreAlbums.getValue() + ";" + oidParams, ObjectID.Genres.getValue(), genre.getAlbumCount()));
+        myTotalMatches = 1;
     }
 
 }

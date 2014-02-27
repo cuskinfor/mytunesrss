@@ -27,7 +27,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     public MyTunesRssContentDirectoryService() {
         // complete OIDs
-        contentForOid.put("0", RootMenuDIDL.class);
+        contentForOid.put(ObjectID.Root.getValue(), RootMenuDIDL.class);
         contentForOid.put(ObjectID.PlaylistFolder.getValue(), PlaylistFolderDIDL.class);
         contentForOid.put(ObjectID.Albums.getValue(), AlbumsDIDL.class);
         contentForOid.put(ObjectID.Artists.getValue(), ArtistsDIDL.class);

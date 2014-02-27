@@ -1,27 +1,16 @@
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
-import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.sql.SQLException;
-import java.util.concurrent.atomic.AtomicLong;
 
 public abstract class MyTunesRssContainerDIDL extends MyTunesRssDIDL {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssContainerDIDL.class);
 
     protected long myTotalMatches;
-
-    @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        throw new NotYetImplementedException();
-    }
 
     @Override
     long getTotalMatches() {

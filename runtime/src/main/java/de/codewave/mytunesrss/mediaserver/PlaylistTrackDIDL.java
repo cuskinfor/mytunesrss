@@ -5,14 +5,9 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.utils.sql.DataStoreSession;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.Item;
-
-import java.sql.SQLException;
 
 public class PlaylistTrackDIDL extends MyTunesRssItemDIDL {
 

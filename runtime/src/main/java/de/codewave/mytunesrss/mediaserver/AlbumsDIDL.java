@@ -8,10 +8,7 @@ import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
-import org.fourthline.cling.support.model.container.Container;
-import org.fourthline.cling.support.model.container.MusicAlbum;
 
-import java.net.URI;
 import java.sql.SQLException;
 
 public class AlbumsDIDL extends MyTunesRssContainerDIDL {
@@ -34,7 +31,7 @@ public class AlbumsDIDL extends MyTunesRssContainerDIDL {
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
-        addContainer(createSimpleContainer(ObjectID.Albums.getValue(), "0", systemInformation.getAlbumCount()));
+        addContainer(createSimpleContainer(ObjectID.Albums.getValue(), ObjectID.Root.getValue(), systemInformation.getAlbumCount()));
         myTotalMatches = 1;
     }
 }

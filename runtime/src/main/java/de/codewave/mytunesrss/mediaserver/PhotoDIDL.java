@@ -7,10 +7,14 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.datastore.statement.*;
-import de.codewave.utils.sql.*;
+import de.codewave.mytunesrss.datastore.statement.GetPhotoAlbumQuery;
+import de.codewave.mytunesrss.datastore.statement.Photo;
+import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.SmartStatement;
 import org.fourthline.cling.support.model.SortCriterion;
-import org.fourthline.cling.support.model.container.PlaylistContainer;
 import org.fourthline.cling.support.model.item.Item;
 
 import java.sql.Connection;

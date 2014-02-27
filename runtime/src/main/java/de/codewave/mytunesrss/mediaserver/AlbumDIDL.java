@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -47,7 +46,7 @@ public class AlbumDIDL extends MyTunesRssContainerDIDL {
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         FindAlbumQuery findAlbumQuery = new FindAlbumQuery(
-                user, decode(oidParams).get(0), decode(oidParams).get(1), true, null, 0, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL
+                user, decode(oidParams).get(0), decode(oidParams).get(1), true, null, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL
         );
         findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         Album album = tx.executeQuery(findAlbumQuery).nextResult();

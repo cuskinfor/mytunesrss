@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTvShowsQuery;
 import de.codewave.mytunesrss.datastore.statement.TvShow;
@@ -26,6 +25,14 @@ public class TvShowsDIDL extends MyTunesRssContainerDIDL {
                 firstResult,
                 (int)maxResults
         );
+    }
+
+    @Override
+    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        FindTvShowsQuery findTvShowsQuery = new FindTvShowsQuery(user);
+        int tvShowCount = tx.executeQuery(findTvShowsQuery).getResultSize();
+        addContainer(createSimpleContainer(ObjectID.TvShows.getValue(), ObjectID.Root.getValue(), tvShowCount));
+        myTotalMatches = 1;
     }
 
 }

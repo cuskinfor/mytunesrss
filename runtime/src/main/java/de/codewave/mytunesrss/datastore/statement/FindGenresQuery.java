@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 
 import java.sql.Connection;
@@ -23,15 +22,17 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
-public class FindGenreQuery extends DataStoreQuery<Genre> {
-    private String myName;
+public class FindGenresQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Genre>> {
+    private int myIndex;
+    private boolean myIncludeHidden;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
 
-    public FindGenreQuery(User user, String name) {
-        myName = name;
+    public FindGenresQuery(User user, boolean includeHidden, int index) {
+        myIndex = index;
+        myIncludeHidden = includeHidden;
         if (user != null) {
             myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
             myExcludedPlaylistIds = user.getExcludedPlaylistIds();
@@ -40,23 +41,23 @@ public class FindGenreQuery extends DataStoreQuery<Genre> {
         }
     }
 
-    public Genre execute(Connection connection) throws SQLException {
+    public QueryResult<Genre> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
+        conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
         conditionals.put("track", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
+        conditionals.put("nohidden", !myIncludeHidden);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
         conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || !myRestrictedPlaylistIds.isEmpty());
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenre", conditionals);
-        statement.setString("name", myName);
+        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);
+        statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
         FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
-        setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
-        QueryResult<Genre> genres = execute(statement, new GenreResultBuilder());
-        return genres.nextResult(); 
+        return execute(statement, new GenreResultBuilder());
     }
 
     public static class GenreResultBuilder implements ResultBuilder<Genre> {

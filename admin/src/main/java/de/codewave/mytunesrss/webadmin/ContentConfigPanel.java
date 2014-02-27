@@ -109,7 +109,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                 }
                 myPlaylists.addItem(new Object[]{visible, playlist.getName()}, playlist);
             }
-            genres = session.executeQuery(new FindGenreQuery(null, true, -1)).getResults();
+            genres = session.executeQuery(new FindGenresQuery(null, true, -1)).getResults();
             oldHiddenGenres.clear();
             for (Genre genre : genres) {
                 CheckBox visible = new CheckBox();

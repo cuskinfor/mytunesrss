@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.NotYetImplementedException;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTvShowSeasonsQuery;
 import de.codewave.mytunesrss.datastore.statement.TvShowSeason;
@@ -36,6 +35,14 @@ public class TvShowDIDL extends MyTunesRssContainerDIDL {
 
     private String getSeasonName(int season) {
         return "Season " + season; // TODO i18n?
+    }
+
+    @Override
+    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        FindTvShowSeasonsQuery seasonsQuery = new FindTvShowSeasonsQuery(user, decode(oidParams).get(0));
+        int seasonsCount = tx.executeQuery(seasonsQuery).getResultSize();
+        addContainer(createSimpleContainer(ObjectID.TvShow.getValue() + ";" + oidParams, ObjectID.TvShows.getValue(), seasonsCount));
+        myTotalMatches = 1;
     }
 
 }
