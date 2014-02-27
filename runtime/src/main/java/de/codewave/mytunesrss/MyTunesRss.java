@@ -42,7 +42,6 @@ import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.AppenderSkeleton;
@@ -934,7 +933,7 @@ public class MyTunesRss {
         if (EXTRA_CLASSLOADER != null) {
             try {
                 final Class<Driver> driverClass = (Class<Driver>) Class.forName(driverClassName, true, EXTRA_CLASSLOADER);
-                DriverManager.registerDriver(SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_6) ? new Java6SqlDriver(driverClass) : new Java5SqlDriver(driverClass));
+                DriverManager.registerDriver(new Java6SqlDriver(driverClass));
             } catch (SQLException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error(null, e);

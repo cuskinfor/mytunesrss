@@ -26,14 +26,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.JavaVersion;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
-import org.apache.log4j.spi.LoggingEvent;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.h2.mvstore.FileStore;
@@ -41,7 +37,6 @@ import org.h2.mvstore.MVStore;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -972,9 +967,6 @@ public class MyTunesRssUtils {
     }
 
     public static boolean canExecute(File file) {
-        if (!SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_1_6)) {
-            return file != null && file.exists() && file.isFile(); // the best we can check for if we don't have Java 6 or better
-        }
         return file != null && file.exists() && file.isFile() && file.canExecute();
     }
 
