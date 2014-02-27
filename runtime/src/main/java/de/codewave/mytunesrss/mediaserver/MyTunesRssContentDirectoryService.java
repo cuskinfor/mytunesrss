@@ -63,7 +63,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
-        LOGGER.debug("Received browse request [objectID=\"{}\", browseFlag=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {objectID, browseFlag, filter, firstResult, maxResults, orderBy});
+        LOGGER.debug("Received browse request [objectID=\"{}\", browseFlag=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\", userAgent=\"{}\"].", new Object[] {objectID, browseFlag, filter, firstResult, maxResults, orderBy, REMOTE_CLIENT_INFO.get().getRequestUserAgent()});
         Class<? extends MyTunesRssDIDL> contentClass = contentForOid.get(objectID);
         if (contentClass == null) {
             for (Map.Entry<String, Class<? extends MyTunesRssDIDL>> entry : contentForOidPrefix.entrySet()) {
