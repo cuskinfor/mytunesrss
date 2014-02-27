@@ -41,7 +41,7 @@ public class PhotoAlbumsDIDL extends MyTunesRssContainerDIDL {
 
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery(); // TODO: new query for count
+        FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery();
         int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
         addContainer(createSimpleContainer(ObjectID.PhotoAlbums.getValue(), ObjectID.Root.getValue(), photoAlbumCount));
         myTotalMatches = 1;

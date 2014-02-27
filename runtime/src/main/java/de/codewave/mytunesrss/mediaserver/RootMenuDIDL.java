@@ -5,15 +5,19 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
+import org.apache.commons.collections.CollectionUtils;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.StorageFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RootMenuDIDL extends MyTunesRssContainerDIDL {
 
@@ -22,24 +26,27 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
     @Override
     void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
-        FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, PlaylistFolderDIDL.PLAYLIST_TYPES, null, "ROOT", false, false); // TODO: new query for count
-        int playlistCount = tx.executeQuery(findPlaylistQuery).getResultSize();
-        FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery(); // TODO: new query for count
+        GetPlaylistCountQuery getPlaylistCountQuery = new GetPlaylistCountQuery(user, PlaylistFolderDIDL.PLAYLIST_TYPES, null, "ROOT", false, false);
+        int playlistCount = tx.executeQuery(getPlaylistCountQuery);
+        FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery();
         int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
         FindTvShowsQuery findTvShowsQuery = new FindTvShowsQuery(user);
         int tvShowCount = tx.executeQuery(findTvShowsQuery).getResultSize();
 
         LOGGER.debug("Adding root menu containers.");
 
-        // TODO honor first and max results
-        addContainer(new StorageFolder(ObjectID.PlaylistFolder.getValue(), ObjectID.Root.getValue(), "Playlists", "MyTunesRSS", playlistCount, 0L));
-        addContainer(new StorageFolder(ObjectID.Albums.getValue(), ObjectID.Root.getValue(), "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
-        addContainer(new StorageFolder(ObjectID.Artists.getValue(), ObjectID.Root.getValue(), "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
-        addContainer(new StorageFolder(ObjectID.Genres.getValue(), ObjectID.Root.getValue(), "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));
-        addContainer(new StorageFolder(ObjectID.Movies.getValue(), ObjectID.Root.getValue(), "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
-        addContainer(new StorageFolder(ObjectID.TvShows.getValue(), ObjectID.Root.getValue(), "TV Shows", "MyTunesRSS", tvShowCount, 0L));
-        addContainer(new StorageFolder(ObjectID.PhotoAlbums.getValue(), ObjectID.Root.getValue(), "Photos", "MyTunesRSS", photoAlbumCount, 0L));
-        myTotalMatches = getCount();
+        List<StorageFolder> storageFolderList = new ArrayList<>(); 
+        storageFolderList.add(new StorageFolder(ObjectID.PlaylistFolder.getValue(), ObjectID.Root.getValue(), "Playlists", "MyTunesRSS", playlistCount, 0L));
+        storageFolderList.add(new StorageFolder(ObjectID.Albums.getValue(), ObjectID.Root.getValue(), "Albums", "MyTunesRSS", systemInformation.getAlbumCount(), 0L));
+        storageFolderList.add(new StorageFolder(ObjectID.Artists.getValue(), ObjectID.Root.getValue(), "Artists", "MyTunesRSS", systemInformation.getArtistCount(), 0L));
+        storageFolderList.add(new StorageFolder(ObjectID.Genres.getValue(), ObjectID.Root.getValue(), "Genres", "MyTunesRSS", systemInformation.getGenreCount(), 0L));
+        storageFolderList.add(new StorageFolder(ObjectID.Movies.getValue(), ObjectID.Root.getValue(), "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
+        storageFolderList.add(new StorageFolder(ObjectID.TvShows.getValue(), ObjectID.Root.getValue(), "TV Shows", "MyTunesRSS", tvShowCount, 0L));
+        storageFolderList.add(new StorageFolder(ObjectID.PhotoAlbums.getValue(), ObjectID.Root.getValue(), "Photos", "MyTunesRSS", photoAlbumCount, 0L));
+        for (StorageFolder storageFolder : MyTunesRssUtils.getSubList(storageFolderList, (int)firstResult, (int)maxResults)) {
+            addContainer(storageFolder);
+        }
+        myTotalMatches = storageFolderList.size();
     }
 
     @Override
