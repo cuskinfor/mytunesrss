@@ -323,6 +323,7 @@ public class MyTunesRss {
                 int port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0]);
                 startShutdownListener(port);
             } catch (NumberFormatException e) {
+                LOGGER.warn("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0] + "\" specified.", e);
                 MyTunesRssUtils.showErrorMessage("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0] + "\" specified.");
             }
         }
@@ -536,9 +537,7 @@ public class MyTunesRss {
                 }
             }
         } catch (IOException e) {
-            if (LOGGER.isWarnEnabled()) {
-                LOGGER.warn("Could not load user system properties: " + e.getMessage());
-            }
+            LOGGER.warn("Could not load user system properties. ", e);
         }
     }
 
@@ -606,7 +605,7 @@ public class MyTunesRss {
             }
         } catch (IOException e) {
             if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not copy old preferences/caches.");
+                LOGGER.error("Could not copy old preferences/caches.", e);
             }
         } finally {
             info.destroy();
@@ -618,7 +617,7 @@ public class MyTunesRss {
         while (true) {
             try {
                 registerDatabaseDriver();
-            } catch (Exception e) {
+            } catch (ClassNotFoundException | IllegalAccessException  | InstantiationException | RuntimeException e) {
                 if (!CONFIG.isDefaultDatabase()) {
                     int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
@@ -658,7 +657,7 @@ public class MyTunesRss {
                                     LOGGER.info("Starting retry.");
                                     continue; // retry
                                 } catch (IOException e) {
-                                    LOGGER.error("Could not restore database backup.");
+                                    LOGGER.error("Could not restore database backup.", e);
                                 }
                             }
                         }
@@ -711,7 +710,7 @@ public class MyTunesRss {
             new DeleteDatabaseFilesCallable().call();
             LOGGER.info("Starting retry.");
         } catch (IOException e) {
-            LOGGER.error("Could not delete database files.");
+            LOGGER.error("Could not delete database files.", e);
             CONFIG.setDeleteDatabaseOnExit(true);
         }
     }
@@ -807,11 +806,8 @@ public class MyTunesRss {
             String versionFileURI = System.getProperty("MyTunesRSS.versionFileURI");
             if (versionFileURI != null) {
                 LOGGER.info("Trying to get version from \"" + versionFileURI + "\".");
-                InputStream is = new URL(versionFileURI).openStream();
-                try {
+                try (InputStream is = new URL(versionFileURI).openStream()) {
                     VERSION = IOUtils.toString(is).trim();
-                } finally {
-                    is.close();
                 }
             } else {
                 LOGGER.info("Trying to get version from system property \"MyTunesRSS.version\".");
@@ -887,9 +883,7 @@ public class MyTunesRss {
             try {
                 adminPort = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT)[0].toString());
             } catch (NumberFormatException e) {
-                if (LOGGER.isErrorEnabled()) {
-                    LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT) + " specified on commmand line.");
-                }
+                LOGGER.error("Invalid admin port " + COMMAND_LINE_ARGS.get(CMD_ADMIN_PORT)[0] + " specified on commmand line.", e);
             }
         }
         return adminPort;
@@ -1003,6 +997,7 @@ public class MyTunesRss {
         try {
             return IMPORTANT_ADMIN_MESSAGE.remove();
         } catch (NoSuchElementException e) {
+            LOGGER.debug("Ignoring exception.", e);
             return null;
         }
     }
@@ -1012,12 +1007,13 @@ public class MyTunesRss {
         try {
             IMPORTANT_ADMIN_MESSAGE.offer(messageWithParameters, 100, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
+            LOGGER.debug("Ignoring exception.", e);
             // remove oldest message to add a new one
             IMPORTANT_ADMIN_MESSAGE.remove();
             try {
                 IMPORTANT_ADMIN_MESSAGE.offer(messageWithParameters, 100, TimeUnit.MILLISECONDS);
             } catch (InterruptedException e1) {
-                // ignore
+                LOGGER.debug("Ignoring exception.", e1);
             }
         }
     }
@@ -1067,7 +1063,7 @@ public class MyTunesRss {
                             IOUtils.copyLarge(is, os);
                         }
                         icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, tempFile);
-                    } catch (Exception e) {
+                    } catch (RuntimeException | IOException e) {
                         LOGGER.warn("Could not create icon for UPnP Media Server.", e);
                     }
                     LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
