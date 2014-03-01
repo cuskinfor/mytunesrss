@@ -1239,12 +1239,6 @@ public class MyTunesRssUtils {
                 }
             }
         }
-        // special (hidden) media server transcoders
-        for (TranscoderConfig config : TranscoderConfig.getMediaServerTranscoders()) {
-            if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track)) {
-                return config;
-            }
-        }
         return null;
     }
 

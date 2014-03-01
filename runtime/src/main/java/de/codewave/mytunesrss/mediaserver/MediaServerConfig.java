@@ -10,6 +10,7 @@ import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.io.File;
@@ -40,6 +41,7 @@ public class MediaServerConfig {
         mapper.writeValue(new File(MyTunesRss.PREFERENCES_DATA_PATH, "media_server.json"), mediaServerConfig);
     }
 
+    @XmlElement
     private List<MediaServerClientProfile> myClientProfiles = new ArrayList<>();
 
     public List<MediaServerClientProfile> getClientProfiles() {
@@ -50,7 +52,6 @@ public class MediaServerConfig {
         myClientProfiles = clientProfiles;
     }
 
-    @XmlTransient
     public MediaServerClientProfile getClientProfile(String userAgent) {
         for (MediaServerClientProfile clientProfile : getClientProfiles()) {
             if (clientProfile.matches(userAgent)) {

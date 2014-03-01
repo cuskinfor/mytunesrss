@@ -83,7 +83,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         StringBuilder pathInfo = new StringBuilder("track=");
         pathInfo.append(MiscUtils.getUtf8UrlEncoded(track.getId()));
         TranscoderConfig transcoder = null;
-        for (TranscoderConfig config : TranscoderConfig.getMediaServerTranscoders()) {
+        for (TranscoderConfig config : getClientProfile().getTranscodersConfigs()) {
             transcoder = MyTunesRssUtils.getTranscoder(config.getName(), track);
             if (transcoder != null) {
                 pathInfo.append("/tc=").append(transcoder.getName());

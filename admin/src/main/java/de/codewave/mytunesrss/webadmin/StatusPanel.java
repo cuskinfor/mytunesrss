@@ -71,6 +71,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Button myStatisticsConfig;
     private Button myMiscConfig;
     private Button myStreamingConfig;
+    private Button myUpnpServerConfig;
     private Button myAddonsConfig;
     private Button mySupportConfig;
     private Button myHelp;
@@ -186,6 +187,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myStatisticsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.statistics", StatusPanel.this);
         myMiscConfig = getApplication().getComponentFactory().createButton("statusPanel.config.misc", StatusPanel.this);
         myStreamingConfig = getApplication().getComponentFactory().createButton("statusPanel.config.streaming", StatusPanel.this);
+        myUpnpServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.upnpserver", StatusPanel.this);
         myAddonsConfig = getApplication().getComponentFactory().createButton("statusPanel.config.addons", StatusPanel.this);
         mySupportConfig = getApplication().getComponentFactory().createButton("statusPanel.config.support", StatusPanel.this);
         configButtons.addComponent(myServerConfig);
@@ -197,6 +199,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         configButtons.addComponent(myStatisticsConfig);
         configButtons.addComponent(myMiscConfig);
         configButtons.addComponent(myStreamingConfig);
+        configButtons.addComponent(myUpnpServerConfig);
         configButtons.addComponent(myAddonsConfig);
         configButtons.addComponent(mySupportConfig);
         Panel buttons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
@@ -262,6 +265,8 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new MiscConfigPanel());
         } else if (clickEvent.getButton() == myStreamingConfig) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new StreamingConfigPanel());
+        } else if (clickEvent.getButton() == myUpnpServerConfig) {
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new UpnpServerConfigPanel());
         } else if (clickEvent.getButton() == myAddonsConfig) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new AddonsConfigPanel());
         } else if (clickEvent.getButton() == mySupportConfig) {

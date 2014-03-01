@@ -4,8 +4,6 @@
  */
 package de.codewave.mytunesrss.config.transcoder;
 
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableSet;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.xml.DOMUtils;
@@ -25,56 +23,13 @@ public class TranscoderConfig implements Cloneable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderConfig.class);
     private static final Collection<TranscoderConfig> DEFAULT_TRANSCODERS = new HashSet<>();
-    private static final Collection<TranscoderConfig> MEDIA_SERVER_TRANSCODERS = new HashSet<>();
-    private static final TranscoderConfig MEDIA_SERVER_MP3_128;
-    private static final TranscoderConfig MEDIA_SERVER_MP3_192;
-    private static final TranscoderConfig MEDIA_SERVER_MP3_320;
-    private static final TranscoderConfig MEDIA_SERVER_MPEG2_VIDEO;
-
-    static {
-        MEDIA_SERVER_MP3_128 = new TranscoderConfig();
-        MEDIA_SERVER_MP3_128.setName("_MSA128");
-        MEDIA_SERVER_MP3_128.setTranscoderActivations(Arrays.asList(
-                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
-                new Mp3BitRateTranscoderActivation(0, 128 * 1024, true)));
-        MEDIA_SERVER_MP3_128.setTargetSuffix("mp3");
-        MEDIA_SERVER_MP3_128.setTargetContentType("audio/mpeg");
-        MEDIA_SERVER_MP3_128.setTargetMux(null);
-        MEDIA_SERVER_MP3_128.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
-        MEDIA_SERVER_MP3_192 = new TranscoderConfig();
-        MEDIA_SERVER_MP3_192.setName("_MSA192");
-        MEDIA_SERVER_MP3_192.setTranscoderActivations(Arrays.asList(
-                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
-                new Mp3BitRateTranscoderActivation(0, 192 * 1024, true)));
-        MEDIA_SERVER_MP3_192.setTargetSuffix("mp3");
-        MEDIA_SERVER_MP3_192.setTargetContentType("audio/mpeg");
-        MEDIA_SERVER_MP3_192.setTargetMux(null);
-        MEDIA_SERVER_MP3_192.setOptions("acodec=mp3,ab=192,samplerate=44100,channels=2");
-        MEDIA_SERVER_MP3_320 = new TranscoderConfig();
-        MEDIA_SERVER_MP3_320.setName("_MSA256");
-        MEDIA_SERVER_MP3_320.setTranscoderActivations(Arrays.asList(
-                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
-                new Mp3BitRateTranscoderActivation(0, 320 * 1024, true)));
-        MEDIA_SERVER_MP3_320.setTargetSuffix("mp3");
-        MEDIA_SERVER_MP3_320.setTargetContentType("audio/mpeg");
-        MEDIA_SERVER_MP3_320.setTargetMux(null);
-        MEDIA_SERVER_MP3_320.setOptions("acodec=mp3,ab=320,samplerate=44100,channels=2");
-        MEDIA_SERVER_MPEG2_VIDEO = new TranscoderConfig();
-        MEDIA_SERVER_MPEG2_VIDEO.setName("_MSVMPG2");
-        MEDIA_SERVER_MPEG2_VIDEO.setTranscoderActivations(Collections.singletonList(new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Video), false)));
-        MEDIA_SERVER_MPEG2_VIDEO.setTargetSuffix("m2v");
-        MEDIA_SERVER_MPEG2_VIDEO.setTargetContentType("video/mpeg");
-        MEDIA_SERVER_MPEG2_VIDEO.setTargetMux("ts{use-key-frames}");
-        MEDIA_SERVER_MPEG2_VIDEO.setOptions("venc=ffmpeg,vcodec=mp2v,vb=4096,acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync");
-        MEDIA_SERVER_TRANSCODERS.add(MEDIA_SERVER_MP3_128);
-        MEDIA_SERVER_TRANSCODERS.add(MEDIA_SERVER_MPEG2_VIDEO);
-    }
 
     static {
         TranscoderConfig mp3Audio = new TranscoderConfig();
         mp3Audio.setName("MP3 Audio 128");
         mp3Audio.setTranscoderActivations(Arrays.asList(
-                new FilenameTranscoderActivation("^.+\\.(mp4|m4a|m4b|wav)$", false),
+                new FilenameTranscoderActivation("^.+\\.mp3$", true),
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
                 new Mp4CodecTranscoderActivation("alac,mp4a", false)));
         mp3Audio.setTargetSuffix("mp3");
         mp3Audio.setTargetContentType("audio/mpeg");
@@ -84,14 +39,44 @@ public class TranscoderConfig implements Cloneable {
         TranscoderConfig mp3Audio128 = new TranscoderConfig();
         mp3Audio128.setName("MP3 Audio max128");
         mp3Audio128.setTranscoderActivations(Arrays.asList(
-                new FilenameTranscoderActivation("^.+\\.(mp3|mp4|m4a|m4b|wav)$", false),
-                new Mp3BitRateTranscoderActivation(0, 131072, true),
-                new Mp4CodecTranscoderActivation("alac,mp4a", false)));
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false),
+                new Mp3BitRateTranscoderActivation(0, 128 * 1024, true)));
         mp3Audio128.setTargetSuffix("mp3");
         mp3Audio128.setTargetContentType("audio/mpeg");
         mp3Audio128.setTargetMux(null);
         mp3Audio128.setOptions("acodec=mp3,ab=128,samplerate=44100,channels=2");
         DEFAULT_TRANSCODERS.add(mp3Audio128);
+        TranscoderConfig mp3Audio192 = new TranscoderConfig();
+        mp3Audio192.setName("MP3 Audio max192");
+        mp3Audio192.setTranscoderActivations(Arrays.asList(
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false),
+                new Mp3BitRateTranscoderActivation(0, 192 * 1024, true)));
+        mp3Audio192.setTargetSuffix("mp3");
+        mp3Audio192.setTargetContentType("audio/mpeg");
+        mp3Audio192.setTargetMux(null);
+        mp3Audio192.setOptions("acodec=mp3,ab=192,samplerate=44100,channels=2");
+        DEFAULT_TRANSCODERS.add(mp3Audio192);
+        TranscoderConfig mp3Audio320 = new TranscoderConfig();
+        mp3Audio320.setName("MP3 Audio max320");
+        mp3Audio320.setTranscoderActivations(Arrays.asList(
+                new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Audio), false),
+                new Mp4CodecTranscoderActivation("alac,mp4a", false),
+                new Mp3BitRateTranscoderActivation(0, 320 * 1024, true)));
+        mp3Audio320.setTargetSuffix("mp3");
+        mp3Audio320.setTargetContentType("audio/mpeg");
+        mp3Audio320.setTargetMux(null);
+        mp3Audio320.setOptions("acodec=mp3,ab=320,samplerate=44100,channels=2");
+        DEFAULT_TRANSCODERS.add(mp3Audio320);
+        TranscoderConfig mpeg2Video = new TranscoderConfig();
+        mpeg2Video.setName("MPEG2 Video");
+        mpeg2Video.setTranscoderActivations(Arrays.asList(new MediaTypeTranscoderActivation(Arrays.asList(MediaType.Video), false)));
+        mpeg2Video.setTargetSuffix("m2v");
+        mpeg2Video.setTargetContentType("video/mpeg");
+        mpeg2Video.setTargetMux("ts{use-key-frames}");
+        mpeg2Video.setOptions("venc=ffmpeg,vcodec=mp2v,vb=4096,acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync");
+        DEFAULT_TRANSCODERS.add(mpeg2Video);
     }
 
     public static Collection<TranscoderConfig> getDefaultTranscoders() {
@@ -104,10 +89,6 @@ public class TranscoderConfig implements Cloneable {
             }
         }
         return deepClone;
-    }
-
-    public static ImmutableCollection<TranscoderConfig> getMediaServerTranscoders() {
-        return ImmutableSet.copyOf(MEDIA_SERVER_TRANSCODERS);
     }
 
     private String myName;
