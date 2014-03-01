@@ -151,6 +151,7 @@ public class MyTunesRssConfig {
     private String myAccessLogTz;
     private Map<String, String> myGenreMappings = new HashMap<>();
     private boolean myUpnpMediaServerActive;
+    private String myUpnpMediaServerName;
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -1089,6 +1090,14 @@ public class MyTunesRssConfig {
         myUpnpMediaServerActive = upnpMediaServerActive;
     }
 
+    public String getUpnpMediaServerName() {
+        return myUpnpMediaServerName;
+    }
+
+    public void setUpnpMediaServerName(String upnpMediaServerName) {
+        myUpnpMediaServerName = upnpMediaServerName;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1312,6 +1321,7 @@ public class MyTunesRssConfig {
         }
         myGenreMappings.remove(""); // if the default was used for any 'from' key
         setUpnpMediaServerActive(JXPathUtils.getBooleanValue(settings, "upnp-server-active", true));
+        setUpnpMediaServerName(JXPathUtils.getStringValue(settings, "upnp-server-name", null));
     }
 
     /**
@@ -1750,6 +1760,9 @@ public class MyTunesRssConfig {
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-server-active", isUpnpMediaServerActive()));
+            if (StringUtils.isNotBlank(getUpnpMediaServerName())) {
+                root.appendChild(DOMUtils.createTextElement(settings, "upnp-server-name", getUpnpMediaServerName()));
+            }
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

@@ -137,6 +137,7 @@ public class MyTunesRss {
     public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
     public static final long STARTUP_TIME = System.currentTimeMillis();
     private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<>(10);
+    private static final UDN UDN_MEDIASERVER = UDN.uniqueSystemIdentifier("MyTunesRSS-MediaServer");
     public static String VERSION;
     public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -205,6 +206,7 @@ public class MyTunesRss {
     public static ClassLoader EXTRA_CLASSLOADER;
     public static File INTERNAL_MYSQL_SERVER_PATH;
     private static UpnpService UPNP_SERVICE;
+    private static MyTunesRssEventListener UPNP_DATABASE_UPDATE_LISTENER;
     public static MediaServerConfig MEDIA_SERVER_CONFIG;
 
     public static void main(final String[] args) throws IOException, AWTException, SchedulerException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, DatabaseJobRunningException, ValidationException {
@@ -360,7 +362,8 @@ public class MyTunesRss {
                 }
             });
         }
-        createUpnpMediaServer();
+        startUpnpService();
+        startUpnpMediaServer();
         startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
@@ -1001,7 +1004,7 @@ public class MyTunesRss {
         try {
             return IMPORTANT_ADMIN_MESSAGE.remove();
         } catch (NoSuchElementException e) {
-            LOGGER.debug("Ignoring exception.", e);
+            //LOGGER.debug("Ignoring exception.", e);
             return null;
         }
     }
@@ -1033,67 +1036,24 @@ public class MyTunesRss {
         }
     }
 
-    public static void createUpnpMediaServer() throws ValidationException, IOException {
+    private static void startUpnpService() throws ValidationException, IOException {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback == null || feedback.isValid()) {
             Thread t = new Thread(new Runnable() {
                 @Override
                 public void run() {
                     UPNP_SERVICE = new UpnpServiceImpl();
-                    final LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
-                    final MyTunesRssEventListener databaseUpdateListener = new MyTunesRssEventListener() {
-                        @Override
-                        public void handleEvent(MyTunesRssEvent event) {
-                            if (event.getType() == MyTunesRssEvent.EventType.DATABASE_CHANGED) {
-                                directoryService.getManager().getImplementation().changeSystemUpdateID();
-                            }
-                        }
-                    };
                     Runtime.getRuntime().addShutdownHook(new Thread() {
                         @Override
                         public void run() {
                             try {
-                                LOGGER.info("Shutting down UPnP Media Server.");
-                                MyTunesRssEventManager.getInstance().removeListener(databaseUpdateListener);
+                                LOGGER.info("Shutting down UPnP service.");
                                 UPNP_SERVICE.shutdown();
                             } catch (RuntimeException e) {
-                                LOGGER.warn("Could not complete shutdown hook for media server.", e);
+                                LOGGER.warn("Could not complete shutdown hook for UPnP service.", e);
                             }
                         }
                     });
-                    DeviceIdentity identity = new DeviceIdentity(UDN.uniqueSystemIdentifier("MyTunesRSS"));
-                    DeviceType type = new UDADeviceType("MediaServer", 1);
-                    String hostName = null;
-                    try {
-                        hostName = InetAddress.getLocalHost().getHostName();
-                    } catch (UnknownHostException e) {
-                        LOGGER.debug("Could not get hostname.", e);
-                    }
-                    DeviceDetails details = new DeviceDetails(StringUtils.isNotBlank(hostName) ? "MyTunesRSS: " + hostName : "MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
-                    org.fourthline.cling.model.meta.Icon icon = null;
-                    try {
-                        File tempFile = File.createTempFile("mytunesrss-mediaserver-", ".png");
-                        try (InputStream is = MyTunesRss.class.getResourceAsStream("/de/codewave/mytunesrss/mediaserver48.png"); OutputStream os = new FileOutputStream(tempFile)) {
-                            IOUtils.copyLarge(is, os);
-                        }
-                        icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, tempFile);
-                    } catch (RuntimeException | IOException e) {
-                        LOGGER.warn("Could not create icon for UPnP Media Server.", e);
-                    }
-                    directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class) {
-                        @Override
-                        protected int getLockTimeoutMillis() {
-                            return 10000; // TODO configuration
-                        }
-                    });
-                    LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
-                    connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
-                    try {
-                        MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
-                        MyTunesRssEventManager.getInstance().addListener(databaseUpdateListener);
-                    } catch (ValidationException e) {
-                        LOGGER.warn("Could not add UPnP Media Server device.");
-                    }
                 }
             }, "UPnPService");
             t.setDaemon(true);
@@ -1101,6 +1061,63 @@ public class MyTunesRss {
         } else {
             LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
         }
+    }
+
+    public static void startUpnpMediaServer() {
+        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
+        if ((feedback == null || feedback.isValid()) && MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
+            final LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
+            UPNP_DATABASE_UPDATE_LISTENER = new MyTunesRssEventListener() {
+                @Override
+                public void handleEvent(MyTunesRssEvent event) {
+                    if (event.getType() == MyTunesRssEvent.EventType.DATABASE_CHANGED) {
+                        directoryService.getManager().getImplementation().changeSystemUpdateID();
+                    }
+                }
+            };
+            DeviceIdentity identity = new DeviceIdentity(UDN_MEDIASERVER);
+            DeviceType type = new UDADeviceType("MediaServer", 1);
+            String mediaServerName = MyTunesRss.CONFIG.getUpnpMediaServerName();
+            if (StringUtils.isBlank(mediaServerName)) {
+                try {
+                    mediaServerName = InetAddress.getLocalHost().getHostName();
+                } catch (UnknownHostException e) {
+                    LOGGER.debug("Could not get hostname.", e);
+                }
+            }
+            DeviceDetails details = new DeviceDetails(StringUtils.isNotBlank(mediaServerName) ? "MyTunesRSS: " + mediaServerName : "MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
+            org.fourthline.cling.model.meta.Icon icon = null;
+            try {
+                File tempFile = File.createTempFile("mytunesrss-mediaserver-", ".png");
+                try (InputStream is = MyTunesRss.class.getResourceAsStream("/de/codewave/mytunesrss/mediaserver48.png"); OutputStream os = new FileOutputStream(tempFile)) {
+                    IOUtils.copyLarge(is, os);
+                }
+                icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, tempFile);
+            } catch (RuntimeException | IOException e) {
+                LOGGER.warn("Could not create icon for UPnP Media Server.", e);
+            }
+            directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class) {
+                @Override
+                protected int getLockTimeoutMillis() {
+                    return 10000; // TODO configuration
+                }
+            });
+            LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
+            connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
+            try {
+                MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
+                MyTunesRssEventManager.getInstance().addListener(UPNP_DATABASE_UPDATE_LISTENER);
+            } catch (ValidationException e) {
+                LOGGER.warn("Could not add UPnP Media Server device.");
+            }
+        }
+    }
+
+    public static void stopUpnpMediaServer() {
+        LOGGER.info("Shutting down UPnP Media Server.");
+        MyTunesRssEventManager.getInstance().removeListener(UPNP_DATABASE_UPDATE_LISTENER);
+        UPNP_DATABASE_UPDATE_LISTENER = null;
+        MyTunesRss.UPNP_SERVICE.getRegistry().removeDevice(UDN_MEDIASERVER);
     }
 
 }
