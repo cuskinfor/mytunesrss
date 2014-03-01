@@ -13,8 +13,6 @@ import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
-
 public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
 
     private Form myServerForm;
