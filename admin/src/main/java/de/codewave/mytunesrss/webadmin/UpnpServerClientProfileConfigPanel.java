@@ -21,7 +21,7 @@ import java.util.*;
 public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UpnpServerClientProfileConfigPanel.class);
-    
+
     private UpnpServerConfigPanel myUpnpServerConfigPanel;
     private Set<String> myUsedProfileNames;
     private Runnable mySaveRunnable;
@@ -78,7 +78,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
             }
         });
         for (TranscoderConfig transcoderConfig : transcoderConfigs) {
-            CheckBox checkbox = getComponentFactory().createCheckBox(transcoderConfig.getName());
+            CheckBox checkbox = new CheckBox(transcoderConfig.getName());
             myTranscoderCheckboxes.put(transcoderConfig.getName(), checkbox);
             myTranscodersForm.addField(checkbox, checkbox);
         }
@@ -89,7 +89,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myGeneralForm);
+        boolean valid = VaadinUtils.isValid(myGeneralForm, myPhotosForm, myTranscodersForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else if (myUsedProfileNames.contains(myNameField.getStringValue(null))) {

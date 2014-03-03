@@ -30,6 +30,10 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     private Table myProfilesTable;
     private List<MediaServerClientProfile> myProfiles;
 
+    public UpnpServerConfigPanel() {
+        initProfiles();
+    }
+
     public void attach() {
         super.attach();
         init(getBundleString("upnpServerConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -94,16 +98,19 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected void initFromConfig() {
-        myProfiles = new ArrayList<>();
-        for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
-            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
-        }
         myServerActiveCheckbox.setValue(MyTunesRss.CONFIG.isUpnpMediaServerActive());
         myServerName.setValue(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()));
         for (final MediaServerClientProfile mediaServerClientProfile : myProfiles) {
             addClientProfileTableItem(mediaServerClientProfile);
         }
         setTablePageLengths();
+    }
+
+    private void initProfiles() {
+        myProfiles = new ArrayList<>();
+        for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
+            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
+        }
     }
 
     private void addClientProfileTableItem(final MediaServerClientProfile mediaServerClientProfile) {
@@ -144,8 +151,6 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             @Override
             public void run() {
                 myProfiles.add(clientProfile);
-                addClientProfileTableItem(clientProfile);
-                setTablePageLengths();
             }
         });
     }
@@ -154,7 +159,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         UpnpServerClientProfileConfigPanel upnpServerClientProfileConfigPanel = new UpnpServerClientProfileConfigPanel(this, usedProfileNames, saveRunnable, clientProfile);
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(upnpServerClientProfileConfigPanel);
     }
-    
+
     private Set<String> getProfileNames() {
         Set<String> names = new HashSet<>();
         for (MediaServerClientProfile mediaServerClientProfile : myProfiles) {
@@ -163,4 +168,9 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         return names;
     }
 
+    @Override
+    protected boolean beforeReset() {
+        initProfiles();
+        return true;
+    }
 }
