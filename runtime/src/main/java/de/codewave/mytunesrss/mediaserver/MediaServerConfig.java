@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
@@ -41,15 +42,15 @@ public class MediaServerConfig {
         mapper.writeValue(new File(MyTunesRss.PREFERENCES_DATA_PATH, "media_server.json"), mediaServerConfig);
     }
 
-    @XmlElement
     private List<MediaServerClientProfile> myClientProfiles = new ArrayList<>();
 
+    @XmlElement
     public List<MediaServerClientProfile> getClientProfiles() {
-        return myClientProfiles;
+        return new ArrayList<>(myClientProfiles);
     }
 
     public void setClientProfiles(List<MediaServerClientProfile> clientProfiles) {
-        myClientProfiles = clientProfiles;
+        myClientProfiles = new ArrayList<>(clientProfiles);
     }
 
     public MediaServerClientProfile getClientProfile(String userAgent) {
