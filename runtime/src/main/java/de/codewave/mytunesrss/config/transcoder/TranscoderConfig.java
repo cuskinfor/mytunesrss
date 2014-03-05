@@ -10,6 +10,8 @@ import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -232,4 +234,18 @@ public class TranscoderConfig implements Cloneable {
     public String getCacheFilePrefix() {
         return StringUtils.replaceChars(myName, ' ', '_');
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj != null && obj.getClass().equals(getClass())) {
+            return new EqualsBuilder().append(getName(), ((TranscoderConfig)obj).getName()).build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(getName()).build();
+    }
+
 }

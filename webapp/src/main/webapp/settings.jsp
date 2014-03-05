@@ -323,8 +323,8 @@
                                 </td>
                             </tr>
                         </c:if>
-                        <c:if test="${authUser.transcoder && !empty globalConfig.transcoderConfigs && !authUser.forceTranscoders && globalConfig.validVlcConfig}">
-                            <c:forEach var="tc" items="${globalConfig.transcoderConfigs}">
+                        <c:if test="${authUser.transcoder && !empty globalConfig.effectiveTranscoderConfigs && !authUser.forceTranscoders && globalConfig.validVlcConfig}">
+                            <c:forEach var="tc" items="${globalConfig.effectiveTranscoderConfigs}">
                                 <tr <mt:flipFlop/>>
                                     <td class="label"><fmt:message key="settings.transcoder" />: <c:out value="${tc.name}" /></td>
                                     <td>

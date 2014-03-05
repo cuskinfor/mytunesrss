@@ -701,6 +701,13 @@ public class MyTunesRssConfig {
         return myTranscoderConfigs != null ? new ArrayList<>(myTranscoderConfigs) : new ArrayList<TranscoderConfig>();
     }
 
+    public Collection<TranscoderConfig> getEffectiveTranscoderConfigs() {
+        Set<TranscoderConfig> mergedConfigs = new HashSet<>();
+        mergedConfigs.addAll(getTranscoderConfigs());
+        mergedConfigs.addAll(TranscoderConfig.getDefaultTranscoders());
+        return mergedConfigs;
+    }
+
     public synchronized void setTranscoderConfigs(Collection<TranscoderConfig> configs) {
         myTranscoderConfigs = configs != null ? new ArrayList<>(configs) : new ArrayList<TranscoderConfig>();
     }

@@ -12,6 +12,7 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -358,13 +359,13 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             myDatasourceExclusions.sort();
             myDatasourceExclusions.setPageLength(Math.min(datasourceConfigs.size(), 10));
             myForceTranscoders.removeAllItems();
-            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
                 CheckBox active = new CheckBox();
                 active.setValue(myUser.getForceTranscoders().contains(config.getName()));
                 myForceTranscoders.addItem(new Object[]{active, config.getName()}, config.getName());
             }
             myForceTranscoders.sort();
-            myForceTranscoders.setPageLength(Math.min(MyTunesRss.CONFIG.getTranscoderConfigs().size(), 10));
+            myForceTranscoders.setPageLength(Math.min(MyTunesRss.CONFIG.getEffectiveTranscoderConfigs().size(), 10));
             if (myUser.getExpiration() > 0) {
                 myExpire.setValue(true);
                 myExpiration.setVisible(true);

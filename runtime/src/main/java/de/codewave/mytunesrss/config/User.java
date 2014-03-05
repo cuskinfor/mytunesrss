@@ -915,7 +915,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public TranscoderConfig getForceTranscoder(Track track) {
         if (isForceTranscoders()) {
-            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
                 if (getForceTranscoders().contains(config.getName()) && config.isValidFor(track)) {
                     return config;
                 }

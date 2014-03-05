@@ -28,7 +28,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myServerActiveCheckbox;
     private SmartTextField myServerName;
     private Table myProfilesTable;
-    private List<MediaServerClientProfile> myProfiles;
+    private Set<MediaServerClientProfile> myProfiles;
 
     public UpnpServerConfigPanel() {
         initProfiles();
@@ -83,7 +83,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         boolean oldServerState = MyTunesRss.CONFIG.isUpnpMediaServerActive();
         MyTunesRss.CONFIG.setUpnpMediaServerActive(myServerActiveCheckbox.booleanValue());
         MyTunesRss.CONFIG.setUpnpMediaServerName(StringUtils.trimToNull(myServerName.getStringValue(null)));
-        MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(myProfiles);
+        MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(new ArrayList<>(myProfiles));
         if (MyTunesRss.CONFIG.isUpnpMediaServerActive() != oldServerState || !StringUtils.equals(oldServerName, StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()))) {
             MyTunesRss.stopUpnpMediaServer();
             MyTunesRss.startUpnpMediaServer();
@@ -107,9 +107,9 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     }
 
     private void initProfiles() {
-        myProfiles = new ArrayList<>();
+        myProfiles = new TreeSet<>();
         for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
-            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
+            myProfiles.add(mediaServerClientProfile);
         }
     }
 
@@ -151,6 +151,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             @Override
             public void run() {
                 myProfiles.add(clientProfile);
+                MyTunesRss.MEDIA_SERVER_CONFIG.addClientProfile(clientProfile);
             }
         });
     }

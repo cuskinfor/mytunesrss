@@ -3,6 +3,7 @@ package de.codewave.mytunesrss;
 import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.LdapConfig;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
@@ -1233,7 +1234,7 @@ public class MyTunesRssUtils {
 
     public static TranscoderConfig getTranscoder(String activeTranscoders, Track track) {
         if (MyTunesRss.CONFIG.isValidVlcConfig()) {
-            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
                 if (isActiveTranscoder(activeTranscoders, config.getName()) && config.isValidFor(track)) {
                     return config;
                 }
@@ -1274,4 +1275,5 @@ public class MyTunesRssUtils {
         }
         return artist.getName();
     }
+
 }

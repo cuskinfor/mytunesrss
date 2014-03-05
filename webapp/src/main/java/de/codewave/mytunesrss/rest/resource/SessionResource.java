@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.command.WebAppScope;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
@@ -80,7 +81,7 @@ public class SessionResource extends RestResource {
     public List<String> getTranscoders(User user) {
         List<String> transcoderNames = new ArrayList<>();
         if (user.isTranscoder() && MyTunesRss.CONFIG.isValidVlcConfig()) {
-            for (TranscoderConfig config : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            for (TranscoderConfig config : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
                 transcoderNames.add(config.getName());
             }
             Collections.sort(transcoderNames);

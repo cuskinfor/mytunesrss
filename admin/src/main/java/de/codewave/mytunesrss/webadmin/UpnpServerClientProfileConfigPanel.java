@@ -6,6 +6,7 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Form;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
@@ -70,14 +71,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
         myPhotosForm.addField(myPhotoSizesField, myPhotoSizesField);
         addComponent(getComponentFactory().surroundWithPanel(myPhotosForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.photos.caption")));
         myTranscodersForm = getComponentFactory().createForm(null, false);
-        List<TranscoderConfig> transcoderConfigs = new ArrayList<>(MyTunesRss.CONFIG.getTranscoderConfigs());
-        Collections.sort(transcoderConfigs, new Comparator<TranscoderConfig>() {
-            @Override
-            public int compare(TranscoderConfig o1, TranscoderConfig o2) {
-                return o1.getName().compareTo(o2.getName());
-            }
-        });
-        for (TranscoderConfig transcoderConfig : transcoderConfigs) {
+        for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
             CheckBox checkbox = new CheckBox(transcoderConfig.getName());
             myTranscoderCheckboxes.put(transcoderConfig.getName(), checkbox);
             myTranscodersForm.addField(checkbox, checkbox);

@@ -49,6 +49,16 @@ public class MediaServerConfig {
         return new ArrayList<>(myClientProfiles);
     }
 
+    @XmlTransient
+    public void addClientProfile(MediaServerClientProfile mediaServerClientProfile) {
+        for (MediaServerClientProfile existingProfile : myClientProfiles) {
+            if (existingProfile.getName().equals(mediaServerClientProfile.getName())) {
+                throw new IllegalArgumentException("Client profile with name \"" + mediaServerClientProfile.getName() + "\" already exists.");
+            }
+        }
+        myClientProfiles.add(mediaServerClientProfile);
+    }
+
     public void setClientProfiles(List<MediaServerClientProfile> clientProfiles) {
         myClientProfiles = new ArrayList<>(clientProfiles);
     }

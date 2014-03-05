@@ -6,8 +6,12 @@
 package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.utils.WildcardMatcher;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.xml.bind.annotation.XmlElement;
 import java.util.ArrayList;
@@ -15,7 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class MediaServerClientProfile implements Cloneable {
+public class MediaServerClientProfile implements Cloneable, Comparable<MediaServerClientProfile> {
 
     private String myName;
     private String myUserAgentPattern;
@@ -66,7 +70,7 @@ public class MediaServerClientProfile implements Cloneable {
 
     public TranscoderConfig[] getTranscodersConfigs() {
         List<TranscoderConfig> configs = new ArrayList<>();
-        for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+        for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
             if (getTranscoders().contains(transcoderConfig.getName())) {
                 configs.add(transcoderConfig);
             }
@@ -82,5 +86,23 @@ public class MediaServerClientProfile implements Cloneable {
         clone.setPhotoSizes(new ArrayList<Integer>(getPhotoSizes()));
         clone.setTranscoders(new ArrayList<String>(getTranscoders()));
         return clone;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass().equals(getClass())) {
+            return new EqualsBuilder().append(StringUtils.trimToEmpty(getName()), StringUtils.trimToEmpty(((MediaServerClientProfile) o).getName())).build();
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return new HashCodeBuilder().append(StringUtils.trimToEmpty(getName())).build();
+    }
+
+    @Override
+    public int compareTo(MediaServerClientProfile o) {
+        return StringUtils.trimToEmpty(getName()).compareTo(StringUtils.trimToEmpty(o.getName()));
     }
 }
