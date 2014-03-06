@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.config.transcoder;
 
+import com.google.common.collect.ImmutableList;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.xml.DOMUtils;
@@ -25,7 +26,7 @@ public class MediaTypeTranscoderActivation extends TranscoderActivation {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaTypeTranscoderActivation.class);
 
-    private List<MediaType> myMediaTypes;
+    private List<MediaType> myMediaTypes = new ArrayList<>();
 
     public MediaTypeTranscoderActivation() {
         super(false);
@@ -69,4 +70,7 @@ public class MediaTypeTranscoderActivation extends TranscoderActivation {
         }
     }
 
+    public ImmutableList<MediaType> getMediaTypes() {
+        return ImmutableList.copyOf(myMediaTypes);
+    }
 }

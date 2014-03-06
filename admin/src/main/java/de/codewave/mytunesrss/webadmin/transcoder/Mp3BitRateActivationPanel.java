@@ -23,18 +23,18 @@ public class Mp3BitRateActivationPanel extends Panel implements Button.ClickList
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
-        myForm = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp3bitrate.caption"), true);
-        myMinBitRateTextField = componentFactory.createTextField("transcoderPanel.activation.mp3bitrate.min", new MinMaxIntegerValidator(application.getBundleString("transcoderPanel.activation.mp3bitrate.minError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
+        myForm = componentFactory.createForm(application.getBundleString("transcoderConfigPanel.activation.mp3bitrate.caption"), true);
+        myMinBitRateTextField = componentFactory.createTextField("transcoderConfigPanel.activation.mp3bitrate.min", new MinMaxIntegerValidator(application.getBundleString("transcoderConfigPanel.activation.mp3bitrate.minError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
         myMinBitRateTextField.setRequired(true);
         myForm.addField("minBitRate", myMinBitRateTextField);
-        myMaxBitRateTextField = componentFactory.createTextField("transcoderPanel.activation.mp3bitrate.max", new MinMaxIntegerValidator(application.getBundleString("transcoderPanel.activation.mp3bitrate.maxError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
+        myMaxBitRateTextField = componentFactory.createTextField("transcoderConfigPanel.activation.mp3bitrate.max", new MinMaxIntegerValidator(application.getBundleString("transcoderConfigPanel.activation.mp3bitrate.maxError", 0, Integer.MAX_VALUE), 0, Integer.MAX_VALUE));
         myMaxBitRateTextField.setRequired(true);
         myForm.addField("maxBitRate", myMaxBitRateTextField);
-        myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
+        myNegationCheckBox = componentFactory.createCheckBox("transcoderConfigPanel.activation.negation");
         myForm.addField("negation", myNegationCheckBox);
         addComponent(myForm);
 
-        Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
+        Button deleteButton = componentFactory.createButton("transcoderConfigPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
 
         initFromConfig(activation);

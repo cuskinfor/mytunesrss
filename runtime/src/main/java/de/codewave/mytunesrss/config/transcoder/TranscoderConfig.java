@@ -84,11 +84,7 @@ public class TranscoderConfig implements Cloneable {
     public static Collection<TranscoderConfig> getDefaultTranscoders() {
         Set<TranscoderConfig> deepClone = new HashSet<>(DEFAULT_TRANSCODERS.size());
         for (TranscoderConfig config : DEFAULT_TRANSCODERS) {
-            try {
-                deepClone.add((TranscoderConfig) config.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException("Could not clone transcoder configuration.", e);
-            }
+            deepClone.add((TranscoderConfig) config.clone());
         }
         return deepClone;
     }
@@ -222,11 +218,20 @@ public class TranscoderConfig implements Cloneable {
     }
 
     @Override
-    public Object clone() throws CloneNotSupportedException {
-        TranscoderConfig clone = (TranscoderConfig) super.clone();
+    public Object clone() {
+        TranscoderConfig clone = null;
+        try {
+            clone = (TranscoderConfig) super.clone();
+        } catch (CloneNotSupportedException e) {
+            clone = new TranscoderConfig();
+        }
         clone.myTranscoderActivations = new ArrayList<>();
         for (TranscoderActivation activation : myTranscoderActivations) {
-            clone.myTranscoderActivations.add((TranscoderActivation) activation.clone());
+            try {
+                clone.myTranscoderActivations.add((TranscoderActivation) activation.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not clone transcoder activation!", e);
+            }
         }
         return clone;
     }

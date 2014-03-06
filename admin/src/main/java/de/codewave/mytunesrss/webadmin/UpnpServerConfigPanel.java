@@ -30,10 +30,6 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     private Table myProfilesTable;
     private Set<MediaServerClientProfile> myProfiles;
 
-    public UpnpServerConfigPanel() {
-        initProfiles();
-    }
-
     public void attach() {
         super.attach();
         init(getBundleString("upnpServerConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -100,17 +96,12 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myServerActiveCheckbox.setValue(MyTunesRss.CONFIG.isUpnpMediaServerActive());
         myServerName.setValue(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()));
-        for (final MediaServerClientProfile mediaServerClientProfile : myProfiles) {
+        myProfiles = new TreeSet<>();
+        for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
+            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
             addClientProfileTableItem(mediaServerClientProfile);
         }
         setTablePageLengths();
-    }
-
-    private void initProfiles() {
-        myProfiles = new TreeSet<>();
-        for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
-            myProfiles.add(mediaServerClientProfile);
-        }
     }
 
     private void addClientProfileTableItem(final MediaServerClientProfile mediaServerClientProfile) {
@@ -151,7 +142,6 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             @Override
             public void run() {
                 myProfiles.add(clientProfile);
-                MyTunesRss.MEDIA_SERVER_CONFIG.addClientProfile(clientProfile);
             }
         });
     }
@@ -167,11 +157,5 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             names.add(mediaServerClientProfile.getName());
         }
         return names;
-    }
-
-    @Override
-    protected boolean beforeReset() {
-        initProfiles();
-        return true;
     }
 }

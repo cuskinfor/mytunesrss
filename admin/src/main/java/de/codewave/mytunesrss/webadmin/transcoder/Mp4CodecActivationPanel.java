@@ -23,15 +23,15 @@ public class Mp4CodecActivationPanel extends Panel implements Button.ClickListen
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
-        myForm = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.mp4codec.caption"), true);
-        myCodecsTextField = componentFactory.createTextField("transcoderPanel.activation.mp4codec.codecs", new ValidRegExpValidator(application.getBundleString("transcoderPanel.activation.mp4codec.error.codecs")));
+        myForm = componentFactory.createForm(application.getBundleString("transcoderConfigPanel.activation.mp4codec.caption"), true);
+        myCodecsTextField = componentFactory.createTextField("transcoderConfigPanel.activation.mp4codec.codecs", new ValidRegExpValidator(application.getBundleString("transcoderConfigPanel.activation.mp4codec.error.codecs")));
         myCodecsTextField.setRequired(true);
         myForm.addField("codecs", myCodecsTextField);
-        myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
+        myNegationCheckBox = componentFactory.createCheckBox("transcoderConfigPanel.activation.negation");
         myForm.addField("negation", myNegationCheckBox);
         addComponent(myForm);
 
-        Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
+        Button deleteButton = componentFactory.createButton("transcoderConfigPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
 
         initFromConfig(activation);

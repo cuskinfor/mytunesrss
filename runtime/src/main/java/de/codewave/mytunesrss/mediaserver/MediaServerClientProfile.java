@@ -80,7 +80,12 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
 
     @Override
     public Object clone() {
-        MediaServerClientProfile clone = new MediaServerClientProfile();
+        MediaServerClientProfile clone;
+        try {
+            clone = (MediaServerClientProfile) super.clone();
+        } catch (CloneNotSupportedException e) {
+            clone = new MediaServerClientProfile();
+        }
         clone.setName(getName());
         clone.setUserAgentPattern(getUserAgentPattern());
         clone.setPhotoSizes(new ArrayList<Integer>(getPhotoSizes()));

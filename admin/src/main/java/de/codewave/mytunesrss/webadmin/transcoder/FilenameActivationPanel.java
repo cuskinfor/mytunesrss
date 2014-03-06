@@ -22,15 +22,15 @@ public class FilenameActivationPanel extends Panel implements Button.ClickListen
         VerticalLayout verticalLayout = componentFactory.createVerticalLayout(true, false);
         setContent(verticalLayout);
 
-        myForm = componentFactory.createForm(application.getBundleString("transcoderPanel.activation.filename.caption"), true);
-        myPatternTextField = componentFactory.createTextField("transcoderPanel.activation.filename.pattern", new ValidRegExpValidator(application.getBundleString("transcoderPanel.activation.filename.error.invalidPattern")));
+        myForm = componentFactory.createForm(application.getBundleString("transcoderConfigPanel.activation.filename.caption"), true);
+        myPatternTextField = componentFactory.createTextField("transcoderConfigPanel.activation.filename.pattern", new ValidRegExpValidator(application.getBundleString("transcoderConfigPanel.activation.filename.error.invalidPattern")));
         myPatternTextField.setRequired(true);
         myForm.addField("pattern", myPatternTextField);
-        myNegationCheckBox = componentFactory.createCheckBox("transcoderPanel.activation.negation");
+        myNegationCheckBox = componentFactory.createCheckBox("transcoderConfigPanel.activation.negation");
         myForm.addField("negation", myNegationCheckBox);
         addComponent(myForm);
 
-        Button deleteButton = componentFactory.createButton("transcoderPanel.activation.delete", this);
+        Button deleteButton = componentFactory.createButton("transcoderConfigPanel.activation.delete", this);
         addComponent(new ButtonBar(componentFactory, deleteButton));
 
         initFromConfig(activation);
