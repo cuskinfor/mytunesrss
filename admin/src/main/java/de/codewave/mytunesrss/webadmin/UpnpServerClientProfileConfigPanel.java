@@ -112,12 +112,6 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
         if (mySaveRunnable != null) {
             mySaveRunnable.run();
         }
-        try {
-            MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);
-        } catch (IOException e) {
-            LOGGER.error("Could not save media server config!", e);
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("upnpServerConfigPanel.clientProfileConfigPanel.error.save");
-        }
     }
 
     @Override

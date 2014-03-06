@@ -104,6 +104,9 @@ public class TranscoderConfigPanel extends MyTunesRssConfigPanel {
                 case MP4_CODEC:
                     myActivationsPanel.addComponent(new Mp4CodecActivationPanel(getApplication(), getComponentFactory(), (Mp4CodecTranscoderActivation) activation));
                     break;
+                case MEDIA_TYPE:
+                    myActivationsPanel.addComponent(new MediaTypeActivationPanel(getApplication(), getComponentFactory(), (MediaTypeTranscoderActivation) activation));
+                    break;
                 default:
                     LOGGER.warn("Ignoring unknown transcoder activation of type \"" + type + "\".");
             }
@@ -132,20 +135,22 @@ public class TranscoderConfigPanel extends MyTunesRssConfigPanel {
 
     protected void writeToConfig() {
         fillConfigFromForm(myTranscoderConfig);
-        MyTunesRss.CONFIG.save();
-        myAfterWriteRunnable.run();
+        if (myAfterWriteRunnable != null) {
+            myAfterWriteRunnable.run();
+        }
     }
 
     @Override
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myForm);
         if (!valid) {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("streamingConfigPanel.error.duplicateName");
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else {
             for (TranscoderConfig transcoderConfig : myStreamingConfigPanel.getTranscoderConfigs()) {
                 if (transcoderConfig != myTranscoderConfig && StringUtils.equals(transcoderConfig.getName(), myNameTextField.getStringValue(""))) {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("streamingConfigPanel.error.duplicateName");
                     valid = false;
+                    break;
                 }
             }
         }

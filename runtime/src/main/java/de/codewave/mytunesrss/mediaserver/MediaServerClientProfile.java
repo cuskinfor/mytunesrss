@@ -95,7 +95,7 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
 
     @Override
     public boolean equals(Object o) {
-        if (o.getClass().equals(getClass())) {
+        if (o != null && o.getClass().equals(getClass())) {
             return new EqualsBuilder().append(StringUtils.trimToEmpty(getName()), StringUtils.trimToEmpty(((MediaServerClientProfile) o).getName())).build();
         }
         return false;

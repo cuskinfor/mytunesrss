@@ -30,6 +30,10 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     private Table myProfilesTable;
     private Set<MediaServerClientProfile> myProfiles;
 
+    public UpnpServerConfigPanel() {
+        beforeReset();
+    }
+
     public void attach() {
         super.attach();
         init(getBundleString("upnpServerConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -96,9 +100,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myServerActiveCheckbox.setValue(MyTunesRss.CONFIG.isUpnpMediaServerActive());
         myServerName.setValue(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()));
-        myProfiles = new TreeSet<>();
-        for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
-            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
+        for (MediaServerClientProfile mediaServerClientProfile : myProfiles) {
             addClientProfileTableItem(mediaServerClientProfile);
         }
         setTablePageLengths();
@@ -157,5 +159,14 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             names.add(mediaServerClientProfile.getName());
         }
         return names;
+    }
+
+    @Override
+    protected boolean beforeReset() {
+        myProfiles = new TreeSet<>();
+        for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
+            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
+        }
+        return true;
     }
 }

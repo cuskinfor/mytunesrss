@@ -70,6 +70,10 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Button myClearAllCachesButton;
     private Map<VlcVersion, VlcVersionRepresentation> myVlcVersionMap = new LinkedHashMap<>();
 
+    public StreamingConfigPanel() {
+        beforeReset();
+    }
+
     public void attach() {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
@@ -126,10 +130,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig() {
-        myTranscoderConfigs = new ArrayList<>();
-        for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            addTrandcoderConfig(transcoderConfig, false);
-            myTranscoderConfigs.add((TranscoderConfig) transcoderConfig.clone());
+        for (TranscoderConfig transcoderConfig : myTranscoderConfigs) {
+            addTranscoderConfigTableItem(transcoderConfig);
         }
         myTranscodingCacheMaxGiB.setValue(MyTunesRss.CONFIG.getTranscodingCacheMaxGiB(), 1, 1024, "1");
         myHttpLiveStreamCacheMaxGiB.setValue(MyTunesRss.CONFIG.getHttpLiveStreamCacheMaxGiB(), 1, 1024, "5");
@@ -141,33 +143,31 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         setTablePageLengths();
     }
 
-    private void addTrandcoderConfig(final TranscoderConfig transcoderConfig, boolean readonly) {
+    private void addTranscoderConfigTableItem(final TranscoderConfig transcoderConfig) {
         Button editButton = null;
-        if (!readonly) {
-            editButton = getComponentFactory().createButton("streamingConfigPanel.transcoder.edit", new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    editTranscoderConfig(transcoderConfig, null);
-                }
-            });
-        }
+        editButton = getComponentFactory().createButton("streamingConfigPanel.transcoder.edit", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                editTranscoderConfig(transcoderConfig, null);
+            }
+        });
         Button deleteButton = null;
-        if (!readonly) {
-            deleteButton = getComponentFactory().createButton("streamingConfigPanel.transcoder.delete", new Button.ClickListener() {
-                @Override
-                public void buttonClick(Button.ClickEvent event) {
-                    final Button yes = new Button(getBundleString("button.yes"));
-                    Button no = new Button(getBundleString("button.no"));
-                    new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.transcoder.deleteConfirmation.caption"), getBundleString("streamingConfigPanel.transcoder.deleteConfirmation.message", transcoderConfig.getName()), yes, no) {
-                        public void clicked(Button button) {
-                            if (button == yes) {
-                                myTranscoderConfigs.remove(transcoderConfig);
-                            }
+        deleteButton = getComponentFactory().createButton("streamingConfigPanel.transcoder.delete", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                final Button yes = new Button(getBundleString("button.yes"));
+                Button no = new Button(getBundleString("button.no"));
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.transcoder.deleteConfirmation.caption"), getBundleString("streamingConfigPanel.transcoder.deleteConfirmation.message", transcoderConfig.getName()), yes, no) {
+                    public void clicked(Button button) {
+                        if (button == yes) {
+                            myTranscoderConfigs.remove(transcoderConfig);
+                            myTranscoderTable.removeItem(transcoderConfig);
+                            setTablePageLengths();
                         }
-                    }.show(getWindow());
-                }
-            });
-        }
+                    }
+                }.show(getWindow());
+            }
+        });
         myTranscoderTable.addItem(new Object[] {transcoderConfig.getName(), editButton, deleteButton}, transcoderConfig);
     }
 
@@ -236,6 +236,10 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     @Override
     protected boolean beforeReset() {
         myTranscoderNumberGenerator.set(1);
+        myTranscoderConfigs = new ArrayList<>();
+        for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getTranscoderConfigs()) {
+            myTranscoderConfigs.add((TranscoderConfig) transcoderConfig.clone());
+        }
         return true;
     }
 
@@ -275,8 +279,6 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 @Override
                 public void run() {
                     myTranscoderConfigs.add(config);
-                    addTrandcoderConfig(config, false);
-                    setTablePageLengths();
                 }
             });
         } else if (clickEvent.getButton() == myClearAllCachesButton) {

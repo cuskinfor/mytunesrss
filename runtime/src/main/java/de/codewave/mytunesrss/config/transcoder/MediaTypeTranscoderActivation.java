@@ -11,9 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
 import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -73,4 +71,5 @@ public class MediaTypeTranscoderActivation extends TranscoderActivation {
     public ImmutableList<MediaType> getMediaTypes() {
         return ImmutableList.copyOf(myMediaTypes);
     }
+
 }
