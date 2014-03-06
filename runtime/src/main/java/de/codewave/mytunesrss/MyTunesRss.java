@@ -1039,25 +1039,18 @@ public class MyTunesRss {
     private static void startUpnpService() throws ValidationException, IOException {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback == null || feedback.isValid()) {
-            Thread t = new Thread(new Runnable() {
+            UPNP_SERVICE = new UpnpServiceImpl();
+            Runtime.getRuntime().addShutdownHook(new Thread() {
                 @Override
                 public void run() {
-                    UPNP_SERVICE = new UpnpServiceImpl();
-                    Runtime.getRuntime().addShutdownHook(new Thread() {
-                        @Override
-                        public void run() {
-                            try {
-                                LOGGER.info("Shutting down UPnP service.");
-                                UPNP_SERVICE.shutdown();
-                            } catch (RuntimeException e) {
-                                LOGGER.warn("Could not complete shutdown hook for UPnP service.", e);
-                            }
-                        }
-                    });
+                    try {
+                        LOGGER.info("Shutting down UPnP service.");
+                        UPNP_SERVICE.shutdown();
+                    } catch (RuntimeException e) {
+                        LOGGER.warn("Could not complete shutdown hook for UPnP service.", e);
+                    }
                 }
-            }, "UPnPService");
-            t.setDaemon(true);
-            t.start();
+            });
         } else {
             LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
         }
