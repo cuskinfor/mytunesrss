@@ -26,9 +26,8 @@ public class MediaServerConfig {
         ObjectMapper mapper = new ObjectMapper();
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
-        mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
         try {
-            return mapper.readValue(new File(MyTunesRss.PREFERENCES_DATA_PATH, "media_server.json"), MediaServerConfig.class);
+            return mapper.readValue(getConfigFile(), MediaServerConfig.class);
         } catch (IOException e) {
             return new MediaServerConfig();
         }
@@ -37,9 +36,12 @@ public class MediaServerConfig {
     public static void save(MediaServerConfig mediaServerConfig) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
-        mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
         mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
-        mapper.writeValue(new File(MyTunesRss.PREFERENCES_DATA_PATH, "media_server.json"), mediaServerConfig);
+        mapper.writeValue(getConfigFile(), mediaServerConfig);
+    }
+
+    private static File getConfigFile() {
+        return new File(MyTunesRss.PREFERENCES_DATA_PATH, "media_server.json");
     }
 
     private List<MediaServerClientProfile> myClientProfiles = new ArrayList<>();
@@ -49,7 +51,6 @@ public class MediaServerConfig {
         return new ArrayList<>(myClientProfiles);
     }
 
-    @XmlTransient
     public void addClientProfile(MediaServerClientProfile mediaServerClientProfile) {
         for (MediaServerClientProfile existingProfile : myClientProfiles) {
             if (existingProfile.getName().equals(mediaServerClientProfile.getName())) {

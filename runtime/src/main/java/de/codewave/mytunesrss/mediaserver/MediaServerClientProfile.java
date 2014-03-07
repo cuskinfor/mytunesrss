@@ -6,14 +6,15 @@
 package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.utils.WildcardMatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -68,6 +69,8 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
         myTranscoders = new ArrayList<>(transcoders);
     }
 
+    @XmlTransient
+    @JsonIgnore
     public TranscoderConfig[] getTranscodersConfigs() {
         List<TranscoderConfig> configs = new ArrayList<>();
         for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {

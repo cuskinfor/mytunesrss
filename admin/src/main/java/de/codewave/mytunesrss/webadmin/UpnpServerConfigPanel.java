@@ -100,6 +100,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myServerActiveCheckbox.setValue(MyTunesRss.CONFIG.isUpnpMediaServerActive());
         myServerName.setValue(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()));
+        myProfilesTable.removeAllItems();
         for (MediaServerClientProfile mediaServerClientProfile : myProfiles) {
             addClientProfileTableItem(mediaServerClientProfile);
         }

@@ -130,6 +130,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void initFromConfig() {
+        myTranscoderTable.removeAllItems();
         for (TranscoderConfig transcoderConfig : myTranscoderConfigs) {
             addTranscoderConfigTableItem(transcoderConfig);
         }
