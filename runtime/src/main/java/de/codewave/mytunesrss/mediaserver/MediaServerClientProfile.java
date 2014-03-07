@@ -25,6 +25,7 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
     private String myName;
     private String myUserAgentPattern;
     private WildcardMatcher myWildcardMatcher;
+    private String myNetwork;
     private List<Integer> myPhotoSizes = Arrays.asList(1024, 2048, 4096, 0);
     private List<String> myTranscoders = Collections.emptyList();
 
@@ -45,6 +46,15 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
     public void setUserAgentPattern(String userAgentPattern) {
         myUserAgentPattern = userAgentPattern;
         myWildcardMatcher = new WildcardMatcher(userAgentPattern);
+    }
+
+    @XmlElement
+    public String getNetwork() {
+        return myNetwork;
+    }
+
+    public void setNetwork(String network) {
+        myNetwork = network;
     }
 
     @XmlElement

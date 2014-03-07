@@ -6,17 +6,15 @@ import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Form;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
-import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.validation.NetworkValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
@@ -29,9 +27,11 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     private MediaServerClientProfile myMediaServerClientProfile;
     private SmartTextField myNameField;
     private SmartTextField myUserAgentPatternField;
+    private SmartTextField myNetworkField;
     private SmartTextField myPhotoSizesField;
     private LinkedHashMap<String, CheckBox> myTranscoderCheckboxes = new LinkedHashMap<>();
     private Form myGeneralForm;
+    private Form myActivationForm;
     private Form myPhotosForm;
     private Form myTranscodersForm;
 
@@ -44,14 +44,18 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
     public void attach() {
         super.attach();
-        init(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
 
         myGeneralForm = getComponentFactory().createForm(null, false);
         myNameField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.name", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.name", 1, 100), 1, 100, false));
-        myGeneralForm.addField(myNameField, myNameField);
-        myUserAgentPatternField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.userAgentPattern", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.userAgentPattern"), 1, 100, false));
-        myGeneralForm.addField(myUserAgentPatternField, myUserAgentPatternField);
+        myGeneralForm.addField("name", myNameField);
         addComponent(getComponentFactory().surroundWithPanel(myGeneralForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.general.caption")));
+        myActivationForm = getComponentFactory().createForm(null, false);
+        myUserAgentPatternField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.userAgentPattern", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.userAgentPattern"), 1, 100, false));
+        myActivationForm.addField("useragent", myUserAgentPatternField);
+        myNetworkField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.network", new NetworkValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.network")));
+        myActivationForm.addField("netmask", myNetworkField);
+        addComponent(getComponentFactory().surroundWithPanel(myActivationForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.activation.caption")));
         myPhotosForm = getComponentFactory().createForm(null, false);
         myPhotoSizesField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.photoSizes", new AbstractValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.photoSizes")) {
             @Override
@@ -77,13 +81,13 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
             myTranscodersForm.addField(checkbox, checkbox);
         }
         addComponent(getComponentFactory().surroundWithPanel(myTranscodersForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.transcoders.caption")));
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 4, 0, 4, false);
         initFromConfig();
     }
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myGeneralForm, myPhotosForm, myTranscodersForm);
+        boolean valid = VaadinUtils.isValid(myGeneralForm, myActivationForm, myPhotosForm, myTranscodersForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else if (myUsedProfileNames.contains(myNameField.getStringValue(null))) {
@@ -97,6 +101,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     protected void writeToConfig() {
         myMediaServerClientProfile.setName(myNameField.getStringValue(null));
         myMediaServerClientProfile.setUserAgentPattern(myUserAgentPatternField.getStringValue("*"));
+        myMediaServerClientProfile.setNetwork(StringUtils.trimToNull(myNetworkField.getStringValue(null)));
         List<Integer> photoSizes = new ArrayList<>();
         for (String size : StringUtils.split(myPhotoSizesField.getStringValue(""), ",")) {
             photoSizes.add(Integer.parseInt(size));
@@ -118,6 +123,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myNameField.setValue(myMediaServerClientProfile.getName(), "");
         myUserAgentPatternField.setValue(myMediaServerClientProfile.getUserAgentPattern(), "*");
+        myNetworkField.setValue(myMediaServerClientProfile.getNetwork(), "");
         myPhotoSizesField.setValue(StringUtils.join(myMediaServerClientProfile.getPhotoSizes(), ","), "1024,0");
         for (Map.Entry<String, CheckBox> transcoder : myTranscoderCheckboxes.entrySet()) {
             transcoder.getValue().setValue(myMediaServerClientProfile.getTranscoders().contains(transcoder.getKey()));
