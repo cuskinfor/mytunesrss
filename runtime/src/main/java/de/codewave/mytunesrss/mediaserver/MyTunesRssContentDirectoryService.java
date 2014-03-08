@@ -63,7 +63,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
-        if (MyTunesRssDIDL.getClientProfile() == null) {
+        if (MyTunesRssDIDL.getClientProfile() == null || MyTunesRssDIDL.getClientProfile().getUser() == null) {
             LOGGER.trace("No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
             throw new ContentDirectoryException(ErrorCode.ACTION_NOT_AUTHORIZED, "No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
         }
@@ -106,7 +106,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     @Override
     public BrowseResult search(String containerId, String searchCriteria, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
-        if (MyTunesRssDIDL.getClientProfile() == null) {
+        if (MyTunesRssDIDL.getClientProfile() == null || MyTunesRssDIDL.getClientProfile().getUser() == null) {
             LOGGER.trace("No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
             throw new ContentDirectoryException(ErrorCode.ACTION_NOT_AUTHORIZED, "No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
         }
