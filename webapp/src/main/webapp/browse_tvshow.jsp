@@ -182,10 +182,46 @@
                                            onclick="openPlayer('${servletUrl}/showJukebox/${auth}/<mt:encrypt>playlistParams=<mt:encode64>${linkFragment}/filename=${filename}.xspf</mt:encode64></mt:encrypt>/playerId='); return false;"
                                            title="<fmt:message key="tooltip.flashplayer"/>"><span>Flash Player</span></a>
                                     </c:if>
-                                    <a id="linkAddToPlaylist${loopStatus.index}" class="add"
-                                       onclick="addTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.id)}']))"
-                                       title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
-                                            key="playlist.addToPlaylist"/></span></a>
+                                    <c:choose>
+                                        <c:when test="${empty track.id && track.season == -1}">
+                                            <c:choose>
+                                                <c:when test="${empty track.seriesSectionPlaylistId}">
+                                                    <a id="linkAddToPlaylist${loopStatus.index}" class="add"
+                                                       onclick="addTracksToPlaylist(jQuery.makeArray(['${cwfn:replace(track.seriesSectionIds, ',', '\',\'')}']))"
+                                                       title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
+                                                            key="playlist.addToPlaylist"/></span></a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a id="linkAddToPlaylist${loopStatus.index}" class="add"
+                                                       onclick="addPlaylistTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.seriesSectionPlaylistId)}']))"
+                                                       title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
+                                                            key="playlist.addToPlaylist"/></span></a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:when test="${empty track.id}">
+                                            <c:choose>
+                                                <c:when test="${empty track.seasonSectionPlaylistId}">
+                                                    <a id="linkAddToPlaylist${loopStatus.index}" class="add"
+                                                       onclick="addTracksToPlaylist(jQuery.makeArray(['${cwfn:replace(track.seasonSectionIds, ',', '\',\'')}']))"
+                                                       title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
+                                                            key="playlist.addToPlaylist"/></span></a>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <a id="linkAddToPlaylist${loopStatus.index}" class="add"
+                                                       onclick="addPlaylistTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.seasonSectionPlaylistId)}']))"
+                                                       title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
+                                                            key="playlist.addToPlaylist"/></span></a>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <a id="linkAddToPlaylist${loopStatus.index}" class="add"
+                                               onclick="addTracksToPlaylist(jQuery.makeArray(['${mtfn:escapeJs(track.id)}']))"
+                                               title="<fmt:message key="playlist.addToPlaylist"/>"><span><fmt:message
+                                                    key="playlist.addToPlaylist"/></span></a>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </c:otherwise>
                             </c:choose>
                         </td>
