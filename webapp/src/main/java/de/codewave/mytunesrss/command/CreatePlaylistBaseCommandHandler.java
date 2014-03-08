@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,8 @@ import java.sql.SQLException;
  */
 public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreatePlaylistBaseCommandHandler.class);
-    
-    protected DataStoreQuery.QueryResult<Track> getTracks() throws SQLException, IOException, ServletException {
+
+    protected QueryResult<Track> getTracks() throws SQLException, IOException, ServletException {
         String[] trackIds = getNonEmptyParameterValues("track");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Track ids from 'track' parameter: " + StringUtils.join(trackIds, ", "));
@@ -36,7 +37,7 @@ public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Effective track ids: " + StringUtils.join(trackIds, ", "));
         }
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
+        DataStoreQuery<QueryResult<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
             query = FindTrackQuery.getForIds(trackIds);
         } else {

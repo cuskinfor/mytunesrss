@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2006, Codewave Software. All Rights Reserved.
+ * Copyright (c) 2014. Codewave Software Michael Descher.
+ * All rights reserved.
  */
 
 package de.codewave.mytunesrss.datastore.statement;
@@ -19,10 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
- */
-public class FindPlaylistTracksQuery extends DataStoreQuery<QueryResult<Track>> {
+public class FindAllTracksQuery extends DataStoreQuery<QueryResult<Track>> {
     private String myId;
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
@@ -32,21 +30,20 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<QueryResult<Track>> 
     private Integer myOffset;
     private Integer myCount;
 
-    public FindPlaylistTracksQuery(String id, SortOrder sortOrder) {
-        myId = id;
+    public FindAllTracksQuery(SortOrder sortOrder) {
         mySortOrder = sortOrder;
     }
 
-    public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder) {
-        this(id, sortOrder);
+    public FindAllTracksQuery(User user, SortOrder sortOrder) {
+        this(sortOrder);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
-    public FindPlaylistTracksQuery(User user, String id, SortOrder sortOrder, int offset, int count) {
-        this(id, sortOrder);
+    public FindAllTracksQuery(User user, SortOrder sortOrder, int offset, int count) {
+        this(sortOrder);
         myOffset = offset;
         myCount = count;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
@@ -70,7 +67,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<QueryResult<Track>> 
         if (parts.length == 3) {
             conditionals.put("index", parts.length == 3);
         }
-        statement = MyTunesRssUtils.createStatement(connection, "findPlaylistTracks", conditionals);
+        statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals);
         statement.setString("id", parts[0]);
         if (parts.length == 3) {
             statement.setInt("firstIndex", Integer.parseInt(parts[1]));

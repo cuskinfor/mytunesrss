@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.statement.FindAllTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
@@ -38,9 +39,7 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultSetType;
+import de.codewave.utils.sql.*;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -383,11 +382,11 @@ public class MyTunesRss {
                 StopWatch.start("Recreating lucene index from scratch");
                 try {
                     MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
-                    FindPlaylistTracksQuery query = new FindPlaylistTracksQuery(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, SortOrder.KeepOrder);
+                    FindAllTracksQuery query = new FindAllTracksQuery(SortOrder.KeepOrder);
                     query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                     DataStoreSession dataStoreSession = MyTunesRss.STORE.getTransaction();
                     try {
-                        DataStoreQuery.QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
+                       QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
                         for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
                             LuceneTrack luceneTrack = new AddLuceneTrack();
                             luceneTrack.setId(track.getId());

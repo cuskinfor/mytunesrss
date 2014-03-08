@@ -18,6 +18,7 @@ import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.Version;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -126,7 +127,7 @@ public class LibraryResource extends RestResource {
     ) throws SQLException {
         FindAlbumQuery findAlbumQuery = new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, index, minYear, maxYear, sortYear, groupByType, type);
         findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
+        QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
         return toAlbumRepresentations(uriInfo, request, queryResult);
     }
 
@@ -158,7 +159,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("index") @DefaultValue("-1") @Range(min = -1, max = 8, message = "Index must be a value from -1 to 8.") int index
     ) throws SQLException {
         FindArtistQuery findArtistQuery = new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), filter, album, genres, index);
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(findArtistQuery);
+        QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(findArtistQuery);
         findArtistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
         return toArtistRepresentations(uriInfo, request, queryResult);
     }
@@ -188,7 +189,7 @@ public class LibraryResource extends RestResource {
     ) throws SQLException {
         FindGenresQuery findGenresQuery = new FindGenresQuery(MyTunesRssWebUtils.getAuthUser(request), includeHidden, index);
         findGenresQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(findGenresQuery);
+        QueryResult<Genre> queryResult = TransactionFilter.getTransaction().executeQuery(findGenresQuery);
         return toGenreRepresentations(uriInfo, queryResult);
     }
 
@@ -219,7 +220,7 @@ public class LibraryResource extends RestResource {
     ) throws SQLException {
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, root ? "ROOT" : null, includeHidden, matchingOwner);
         findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistQuery);
+        QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistQuery);
         return toPlaylistRepresentations(uriInfo, request, queryResult);
     }
 
@@ -241,7 +242,7 @@ public class LibraryResource extends RestResource {
     ) throws SQLException {
         FindTrackQuery findTrackQuery = FindTrackQuery.getMovies(MyTunesRssWebUtils.getAuthUser(request));
         findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
@@ -261,7 +262,7 @@ public class LibraryResource extends RestResource {
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(MyTunesRssWebUtils.getAuthUser(request)));
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowEpisodes(MyTunesRssWebUtils.getAuthUser(request)));
         Map<String, Set<Integer>> seasonsPerShow = new HashMap<>();
         Map<String, MutableInt> episodeCountPerShow = new HashMap<>();
         Map<String, String> imageHashPerShow = new HashMap<>();
@@ -323,7 +324,7 @@ public class LibraryResource extends RestResource {
     ) throws SQLException {
         GetPhotoAlbumsQuery photoAlbumsQuery = new GetPhotoAlbumsQuery(MyTunesRssWebUtils.getAuthUser(request));
         photoAlbumsQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(photoAlbumsQuery);
+        QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(photoAlbumsQuery);
         return new QueryResultIterable<>(queryResult, new QueryResultIterable.ResultTransformer<PhotoAlbum, PhotoAlbumRepresentation>() {
             public PhotoAlbumRepresentation transform(PhotoAlbum photoAlbum) {
                 PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
@@ -366,7 +367,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("max") @DefaultValue("1000") @Range(min = 1, max = 1000, message = "Max must be a value from 1 to 1000.") int maxItems,
             @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
             ) throws IOException, ParseException, SQLException, LuceneQueryParserException {
-        DataStoreQuery.QueryResult<Track> queryResult = null;
+        QueryResult<Track> queryResult = null;
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (expert) {
             FindTrackQuery findTrackQuery = FindTrackQuery.getForExpertSearchTerm(user, term, sortOrder, maxItems);

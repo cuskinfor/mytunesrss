@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -21,7 +22,7 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
  */
-public class FindPhotoQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Photo>> {
+public class FindPhotoQuery extends DataStoreQuery<QueryResult<Photo>> {
 
     public static FindPhotoQuery getForAlbum(User user, String photoAlbumId) {
         FindPhotoQuery query = new FindPhotoQuery();

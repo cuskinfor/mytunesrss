@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.rest.representation.TvShowSeasonRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
@@ -54,7 +55,7 @@ public class TvShowResource extends RestResource {
             @Context HttpServletRequest request,
             @PathParam("show") String show
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowSeriesEpisodes(MyTunesRssWebUtils.getAuthUser(request), show));
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(FindTrackQuery.getTvShowSeriesEpisodes(MyTunesRssWebUtils.getAuthUser(request), show));
         Map<Integer, MutableInt> episodesPerSeason = new HashMap<>();
         Map<Integer, String> imageHashPerEpisode = new HashMap<>();
         for (Track track = queryResult.nextResult(); track != null; track = queryResult.nextResult()) {
@@ -105,7 +106,7 @@ public class TvShowResource extends RestResource {
     ) throws SQLException {
         FindTrackQuery findTrackQuery = FindTrackQuery.getTvShowSeriesSeasonEpisodes(MyTunesRssWebUtils.getAuthUser(request), show, season);
         findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         return toTrackRepresentations(uriInfo, request, queryResult);
     }
 

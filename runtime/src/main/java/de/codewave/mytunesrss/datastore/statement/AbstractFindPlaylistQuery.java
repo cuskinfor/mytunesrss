@@ -82,12 +82,13 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("hidden", !myHiddenPlaylistIds.isEmpty());
-        conditionals.put("restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
+        boolean track = (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null;
+        conditionals.put("track_or_restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty() || track);
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
+        conditionals.put("track", track);
         return conditionals;
     }
 

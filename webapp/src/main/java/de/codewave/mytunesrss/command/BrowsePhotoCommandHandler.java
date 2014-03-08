@@ -12,6 +12,7 @@ import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,7 @@ public class BrowsePhotoCommandHandler extends MyTunesRssCommandHandler {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\".");
             }
-            DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
+            QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
             int current = getSafeIntegerRequestParameter("index", 0);
             int pageSize = getWebConfig().getEffectivePhotoPageSize();
             if (StringUtils.isBlank(getRequestParameter("photoIndex", null)) && pageSize > 0 && photoResult.getResultSize() > pageSize) {

@@ -202,7 +202,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 }
             }
             Collection<String> tracks = new LinkedHashSet<>();
-            DataStoreQuery<DataStoreQuery.QueryResult<String>> dataStoreQuery = new DataStoreQuery<DataStoreQuery.QueryResult<String>>() {
+            DataStoreQuery<QueryResult<String>> dataStoreQuery = new DataStoreQuery<QueryResult<String>>() {
                 @Override
                 public QueryResult<String> execute(Connection connection) throws SQLException {
                     return execute(queryStatement, new ResultBuilder<String>() {

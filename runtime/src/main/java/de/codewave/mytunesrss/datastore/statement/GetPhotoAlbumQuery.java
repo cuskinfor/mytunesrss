@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 
@@ -14,7 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class GetPhotoAlbumQuery extends DataStoreQuery<DataStoreQuery.QueryResult<PhotoAlbum>> {
+public class GetPhotoAlbumQuery extends DataStoreQuery<QueryResult<PhotoAlbum>> {
 
     private String myId;
 

@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.statistics;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.codehaus.jackson.map.AnnotationIntrospector;
@@ -16,7 +17,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
 
-public class GetStatisticsEventsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<StatisticsEvent>> {
+public class GetStatisticsEventsQuery extends DataStoreQuery<QueryResult<StatisticsEvent>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GetStatisticsEventsQuery.class);
 

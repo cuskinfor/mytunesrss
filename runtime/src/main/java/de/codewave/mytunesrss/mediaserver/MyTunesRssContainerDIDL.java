@@ -2,6 +2,7 @@ package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,10 @@ public abstract class MyTunesRssContainerDIDL extends MyTunesRssDIDL {
         return myTotalMatches;
     }
 
-    protected <T> void executeAndProcess(DataStoreSession tx, DataStoreQuery<DataStoreQuery.QueryResult<T>> query, final DataStoreQuery.ResultProcessor<T> processor, long first, int count) throws java.sql.SQLException {
+    protected <T> void executeAndProcess(DataStoreSession tx, DataStoreQuery<QueryResult<T>> query, final DataStoreQuery.ResultProcessor<T> processor, long first, int count) throws java.sql.SQLException {
         int effectiveCount = count > 0 ? count : Integer.MAX_VALUE;
         query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<T> queryResult = tx.executeQuery(query);
+        QueryResult<T> queryResult = tx.executeQuery(query);
         myTotalMatches = 0;
         if (first > 0) {
             queryResult.processNextResults(new DataStoreQuery.ResultProcessor<T>() {

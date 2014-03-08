@@ -164,7 +164,7 @@ public class MyTunesRssDataStore extends DataStore {
         };
     }
 
-    public int getQueryResultSize(DataStoreQuery<? extends DataStoreQuery.QueryResult> query) throws SQLException {
+    public int getQueryResultSize(DataStoreQuery<? extends QueryResult> query) throws SQLException {
         DataStoreSession transaction = getTransaction();
         try {
             return transaction.executeQuery(query).getResultSize();

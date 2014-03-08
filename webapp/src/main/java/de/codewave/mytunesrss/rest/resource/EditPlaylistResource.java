@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.NotBlank;
 import org.jboss.resteasy.annotations.GZIP;
@@ -233,7 +234,7 @@ public class EditPlaylistResource extends RestResource {
         return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
-    private void addTracks(HttpServletRequest request, DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
+    private void addTracks(HttpServletRequest request, DataStoreQuery<QueryResult<Track>> query) throws SQLException {
         Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
         Collection<Track> playlistTracks = new LinkedHashSet<>((Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS));
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
@@ -242,7 +243,7 @@ public class EditPlaylistResource extends RestResource {
         playlist.setTrackCount(playlistTracks.size());
     }
 
-    private void removeTracks(HttpServletRequest request, DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException {
+    private void removeTracks(HttpServletRequest request, DataStoreQuery<QueryResult<Track>> query) throws SQLException {
         Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
         Collection<Track> playlistTracks = (Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         List<Track> tracks = query != null ? TransactionFilter.getTransaction().executeQuery(query).getResults() : Collections.<Track>emptyList();

@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
@@ -24,7 +25,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindTrackQuery
  */
-public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Track>> {
+public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>> {
 
     public static FindTrackQuery getForIds(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
@@ -92,6 +93,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Audio));
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isAudio());
         return query;
     }
 
@@ -106,6 +108,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Audio));
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isAudio());
         return query;
     }
 
@@ -120,6 +123,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Audio));
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isAudio());
         return query;
     }
 
@@ -131,6 +135,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Video));
         query.setVideoType(VideoType.Movie);
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isVideo());
         return query;
     }
 
@@ -142,6 +147,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.setMediaTypes(getQueryMediaTypes(user, MediaType.Video));
         query.setVideoType(VideoType.TvShow);
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isVideo());
         return query;
     }
 
@@ -154,6 +160,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.setVideoType(VideoType.TvShow);
         query.setSeries(series);
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isVideo());
         return query;
     }
 
@@ -167,6 +174,7 @@ public class FindTrackQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Tr
         query.setSeries(series);
         query.setSeason(season);
         query.myPermittedDataSources = getPermittedDataSources(user);
+        query.setForceEmptyResult(!user.isVideo());
         return query;
     }
 

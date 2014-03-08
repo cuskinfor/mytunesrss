@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -20,7 +21,7 @@ import java.util.*;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
  */
-public class FindPlaylistQuery extends AbstractFindPlaylistQuery<DataStoreQuery.QueryResult<Playlist>> {
+public class FindPlaylistQuery extends AbstractFindPlaylistQuery<QueryResult<Playlist>> {
 
     public FindPlaylistQuery(List<PlaylistType> types, String id, String containerId, boolean includeHidden) {
         super(types, id, containerId, includeHidden);

@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletResponse;
@@ -28,7 +29,7 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
     @Override
     public void executeAuthorized() throws Exception {
         if (isSessionAuthorized()) {
-            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = getQuery();
+            DataStoreQuery<QueryResult<Track>> query = getQuery();
             List<? extends Track> tracks = null;
             if (query != null) {
                 tracks = getEnhancedTracks(getTransaction().executeQuery(query).getResults());
@@ -49,7 +50,7 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
                     getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } else {
-                DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                                 Collections.singletonList(
                                                                                                                                         PlaylistType.MyTunes),
                                                                                                                                 null,
@@ -66,7 +67,7 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
 
     protected abstract List<? extends Track> getEnhancedTracks(List<Track> tracks);
 
-    protected abstract DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery();
+    protected abstract DataStoreQuery<QueryResult<Track>> getQuery();
 
     protected abstract MyTunesRssResource getResource(List<? extends Track> tracks);
 }

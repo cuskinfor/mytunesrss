@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 
@@ -22,7 +23,7 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
-public class FindGenresQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Genre>> {
+public class FindGenresQuery extends MyTunesRssDataStoreQuery<QueryResult<Genre>> {
     private int myIndex;
     private boolean myIncludeHidden;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
@@ -38,6 +39,7 @@ public class FindGenresQuery extends DataStoreQuery<DataStoreQuery.QueryResult<G
             myExcludedPlaylistIds = user.getExcludedPlaylistIds();
             myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
             myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
+            setForceEmptyResult(!user.isAudio());
         }
     }
 

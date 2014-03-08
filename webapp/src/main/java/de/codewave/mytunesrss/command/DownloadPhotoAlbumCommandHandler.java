@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
@@ -48,7 +49,7 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\" with size \"" + photoSize + "\".");
             }
-            DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
+            QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
             getResponse().setContentType("application/zip");
             getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(MyTunesRssBase64Utils.decodeToString(getRequestParameter("photoalbum", "cGhvdG9z")) + ".zip") + "\""); // cGhvdG9z => photos
             createZipArchive(getResponse().getOutputStream(), photoResult.getResults(), new MyTunesRssSendCounter(user, null, SessionManager.getSessionInfo(getRequest())), photoSize);

@@ -9,8 +9,8 @@ import de.codewave.mytunesrss.config.User;
 
 public enum UserPermission {
 
-    Audio(), Video(), Rss(), Playlist(), Download(), YahooPlayer(), SpecialPlaylists(), Player(), RemoteControl(), ExternalSites(),
-    Trascoder(), ChangePassword(), changeEmail(), EditLastFmAccount(), EditWebSettings(), CreatePlaylists(), CreatePublicPlaylists(), Photos(),
+    Audio(), Video(), Rss(), Playlist(), Download(), YahooPlayer(), Player(), RemoteControl(), ExternalSites(),
+    Transcoder(), ChangePassword(), changeEmail(), EditLastFmAccount(), EditWebSettings(), CreatePlaylists(), CreatePublicPlaylists(), Photos(),
     DownloadPhotoAlbum(), Share();
 
     public boolean isGranted(User user) {
@@ -27,15 +27,13 @@ public enum UserPermission {
                 return user.isDownload();
             case YahooPlayer:
                 return user.isYahooPlayer();
-            case SpecialPlaylists:
-                return user.isSpecialPlaylists();
             case Player:
                 return user.isPlayer();
             case RemoteControl:
                 return user.isRemoteControl();
             case ExternalSites:
                 return user.isExternalSites();
-            case Trascoder:
+            case Transcoder:
                 return user.isTranscoder();
             case ChangePassword:
                 return user.isChangePassword();

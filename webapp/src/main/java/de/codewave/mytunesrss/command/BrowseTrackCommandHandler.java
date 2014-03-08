@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,7 +37,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
             String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
             List<Track> cachedTracks = offHeapSessionStore.getCurrentList(currentListId);
 
-            DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
+            DataStoreQuery<QueryResult<Track>> query = null;
 
             if (StringUtils.isNotEmpty(searchTerm) && (cachedTracks == null || sortOrderValue != offHeapSessionStore.getCurrentSortOrder())) {
                 StopWatch.start("Lucene search and query preparation");
@@ -127,7 +128,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                     getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
                 }
             } else {
-                DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+                QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                                 Collections.singletonList(
                                                                                                                                         PlaylistType.MyTunes),
                                                                                                                                 null,

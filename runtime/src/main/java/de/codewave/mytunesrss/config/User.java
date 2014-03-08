@@ -85,7 +85,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private long myQuotaResetTime = System.currentTimeMillis();
     private int myMaximumZipEntries;
     private int mySessionTimeout = 20;
-    private boolean mySpecialPlaylists = true;
     private boolean myTranscoder = true;
     private Set<String> myRestrictedPlaylistIds = new HashSet<>();
     private Set<String> myExcludedPlaylistIds = new HashSet<>();
@@ -279,14 +278,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void setSessionTimeout(int sessionTimeout) {
         mySessionTimeout = sessionTimeout;
-    }
-
-    public boolean isSpecialPlaylists() {
-        return getParent() != null ? getParent().isSpecialPlaylists() : mySpecialPlaylists;
-    }
-
-    public void setSpecialPlaylists(boolean specialPlaylists) {
-        mySpecialPlaylists = specialPlaylists;
     }
 
     public boolean isTranscoder() {
@@ -670,7 +661,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         setPlayer(JXPathUtils.getBooleanValue(settings, "featurePlayer", myPlayer));
         setChangePassword(JXPathUtils.getBooleanValue(settings, "featureChangePassword", myChangePassword));
         setEditLastFmAccount(JXPathUtils.getBooleanValue(settings, "featureLastFmAccount", myEditLastFmAccount));
-        setSpecialPlaylists(JXPathUtils.getBooleanValue(settings, "featureSpecialPlaylists", mySpecialPlaylists));
         setCreatePlaylists(JXPathUtils.getBooleanValue(settings, "featureCreatePlaylists", myCreatePlaylists));
         setEditWebSettings(JXPathUtils.getBooleanValue(settings, "featureEditWebSettings", myEditWebSettings));
         setResetTime(JXPathUtils.getLongValue(settings, "resetTime", System.currentTimeMillis()));
@@ -762,7 +752,6 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         users.appendChild(DOMUtils.createBooleanElement(settings, "featurePlayer", isPlayer()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureChangePassword", isChangePassword()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureLastFmAccount", isEditLastFmAccount()));
-        users.appendChild(DOMUtils.createBooleanElement(settings, "featureSpecialPlaylists", isSpecialPlaylists()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureCreatePlaylists", isCreatePlaylists()));
         users.appendChild(DOMUtils.createBooleanElement(settings, "featureEditWebSettings", isEditWebSettings()));
         users.appendChild(DOMUtils.createLongElement(settings, "resetTime", getResetTime()));

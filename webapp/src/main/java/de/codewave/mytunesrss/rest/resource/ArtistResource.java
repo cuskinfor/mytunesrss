@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.ArtistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
@@ -49,7 +50,7 @@ public class ArtistResource extends RestResource {
     ) throws SQLException {
         FindArtistQuery query = new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), artist, null, null, -1);
         query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(query);
+        QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(query);
         for (Artist result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
             if (result.getName().equals(artist)) {
                 return toArtistRepresentation(uriInfo, request, result);
@@ -92,7 +93,7 @@ public class ArtistResource extends RestResource {
     ) throws SQLException {
         FindAlbumQuery findAlbumQuery = new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), filter, artist, false, genres, -1, minYear, maxYear, sortYear, groupByType, type);
         findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
+        QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
         return toAlbumRepresentations(uriInfo, request, queryResult);
     }
 
@@ -118,7 +119,7 @@ public class ArtistResource extends RestResource {
     ) throws SQLException {
         FindTrackQuery findTrackQuery = FindTrackQuery.getForArtist(MyTunesRssWebUtils.getAuthUser(request), new String[]{artist}, sortOrder);
         findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         return toTrackRepresentations(uriInfo, request, queryResult);
     }
 

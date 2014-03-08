@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class GetPhotoAlbumsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<PhotoAlbum>> {
+public class GetPhotoAlbumsQuery extends DataStoreQuery<QueryResult<PhotoAlbum>> {
 
     private List<String> myRestrictedPhotoAlbumIds = Collections.emptyList();
     private List<String> myExcludedPhotoAlbumIds = Collections.emptyList();

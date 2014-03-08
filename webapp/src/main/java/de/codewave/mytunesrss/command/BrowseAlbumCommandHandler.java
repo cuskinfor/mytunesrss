@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -102,7 +103,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                     getRequest().setAttribute("allArtistGenreTrackCount", genre != null ? genre.getTrackCount() : 0);
                 }
             }
-            DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+            QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                             Collections.singletonList(
                                                                                                                                     PlaylistType.MyTunes),
                                                                                                                             null,

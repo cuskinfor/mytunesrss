@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.vlc.HttpResponseStatus;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
@@ -23,42 +24,42 @@ import java.util.List;
 public class VlcPlayerRemoteController implements RemoteController {
 
     public void loadPlaylist(User user, String playlistId) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
+        DataStoreQuery<QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
         loadItems(query);
     }
 
-    private void loadItems(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query) throws SQLException, VlcPlayerException {
+    private void loadItems(DataStoreQuery<QueryResult<Track>> query) throws SQLException, VlcPlayerException {
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
         MyTunesRss.VLC_PLAYER.setTracks(tracks);
     }
 
-    private void addItems(DataStoreQuery<DataStoreQuery.QueryResult<Track>> query, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
+    private void addItems(DataStoreQuery<QueryResult<Track>> query, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
         MyTunesRss.VLC_PLAYER.addTracks(tracks, startPlaybackIfStopped);
     }
 
     public void loadAlbum(User user, String albumName, String albumArtistName) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForAlbum(user, new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForAlbum(user, new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
         loadItems(query);
     }
 
     public void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         loadItems(query);
     }
 
     public void loadGenre(User user, String genreName) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
         loadItems(query);
     }
 
     public void loadTracks(String[] trackIds) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         loadItems(query);
     }
 
     public void addTracks(String[] trackIds, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         addItems(query, startPlaybackIfStopped);
     }
 

@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.rest.representation;
 
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -12,16 +13,16 @@ public class QueryResultIterable<S, T> implements Iterable<T> {
         T transform(S input);
     }
 
-    private DataStoreQuery.QueryResult<S> myQueryResult;
+    private QueryResult<S> myQueryResult;
     private ResultTransformer<S, T> myResultTransformer;
     private AtomicReference<S> myNextResult = new AtomicReference<>();
     private int myRemainingCount;
 
-    public QueryResultIterable(DataStoreQuery.QueryResult<S> queryResult, ResultTransformer<S, T> resultTransformer) {
+    public QueryResultIterable(QueryResult<S> queryResult, ResultTransformer<S, T> resultTransformer) {
         this(queryResult, resultTransformer, Integer.MAX_VALUE);
     }
 
-    public QueryResultIterable(DataStoreQuery.QueryResult<S> queryResult, ResultTransformer<S, T> resultTransformer, int count) {
+    public QueryResultIterable(QueryResult<S> queryResult, ResultTransformer<S, T> resultTransformer, int count) {
         myQueryResult = queryResult;
         myResultTransformer = resultTransformer;
         myRemainingCount = count;

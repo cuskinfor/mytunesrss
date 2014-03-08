@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.ArtistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
@@ -52,7 +53,7 @@ public class GenreResource extends RestResource {
     ) throws SQLException {
         FindTrackQuery findTrackQuery = FindTrackQuery.getForGenre(MyTunesRssWebUtils.getAuthUser(request), new String[]{genre}, sortOrder);
         findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
@@ -90,7 +91,7 @@ public class GenreResource extends RestResource {
     ) throws SQLException {
         FindAlbumQuery findAlbumQuery = new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, false, new String[]{genre}, index, minYear, maxYear, sortYear, groupByType, type);
         findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
+        QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
         return toAlbumRepresentations(uriInfo, request, queryResult);
     }
 
@@ -118,7 +119,7 @@ public class GenreResource extends RestResource {
     ) throws SQLException {
         FindArtistQuery findArtistQuery = new FindArtistQuery(MyTunesRssWebUtils.getAuthUser(request), null, null, new String[]{genre}, index);
         findArtistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(findArtistQuery);
+        QueryResult<Artist> queryResult = TransactionFilter.getTransaction().executeQuery(findArtistQuery);
         return toArtistRepresentations(uriInfo, request, queryResult);
     }
 }

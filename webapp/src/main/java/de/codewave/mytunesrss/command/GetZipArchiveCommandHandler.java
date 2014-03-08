@@ -9,14 +9,12 @@ import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.SessionManager.SessionInfo;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreQuery.QueryResult;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.io.FilenameUtils;
@@ -46,7 +44,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
             String baseName = getRequestParameter("_cda", "MyTunesRSS");
             baseName = MyTunesRssUtils.getLegalFileName(baseName.substring(0, baseName.lastIndexOf(".")));
             String tracklist = getRequestParameter("tracklist", null);
-            DataStoreQuery.QueryResult<Track> tracks;
+            QueryResult<Track> tracks;
             if (StringUtils.isNotEmpty(tracklist)) {
                 tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(StringUtils.split(tracklist, ",")));
             } else {
@@ -115,7 +113,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         return Long.toString(StringUtils.join(trackIds, "").hashCode());
     }
 
-    private void createZipArchive(User user, OutputStream outputStream, DataStoreQuery.QueryResult<Track> tracks, String baseName,
+    private void createZipArchive(User user, OutputStream outputStream, QueryResult<Track> tracks, String baseName,
                                   FileSender.ByteSentCounter counter) throws IOException, SQLException {
         ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(outputStream);
         zipStream.setLevel(ZipArchiveOutputStream.STORED);
@@ -129,11 +127,11 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         for (Track track = tracks.nextResult(); track != null; track = tracks.nextResult()) {
             if (track.getFile().exists() && !user.isQuotaExceeded()) {
                 String trackArtist = track.getArtist();
-                if (InsertTrackStatement.UNKNOWN.equals(trackArtist)) {
+                if (MyTunesRssUtils.isUnknown(trackArtist)) {
                     trackArtist = "Unknown artist";
                 }
                 String trackAlbum = track.getAlbum();
-                if (InsertTrackStatement.UNKNOWN.equals(trackAlbum)) {
+                if (MyTunesRssUtils.isUnknown(trackAlbum)) {
                     trackAlbum = "Unknown Album";
                 }
                 int number = 1;

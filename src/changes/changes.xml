@@ -9,6 +9,10 @@
 
         <release version="6.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                Removed special system playlists "all by album" and "all by artist" and
+                the corresponding user permission.
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-1] UPnP Media Server
             </action>
             <action dev="mdescher" type="add">

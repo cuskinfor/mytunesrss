@@ -3,7 +3,6 @@ package de.codewave.mytunesrss;
 import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.LdapConfig;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
@@ -1247,12 +1246,12 @@ public class MyTunesRssUtils {
         return ArrayUtils.contains(StringUtils.split(activeTranscoders, ','), transcoder);
     }
 
-    public static boolean unknown(String trackAlbumOrArtist) {
+    public static boolean isUnknown(String trackAlbumOrArtist) {
         return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
     }
 
     public static String virtualTrackName(Track track) {
-        if (unknown(track.getArtist())) {
+        if (isUnknown(track.getArtist())) {
             return track.getName();
         }
         return track.getArtist() + " - " + track.getName();
@@ -1261,16 +1260,16 @@ public class MyTunesRssUtils {
     private static final String DEFAULT_NAME = "MyTunesRSS";
 
     public static String virtualAlbumName(Album album) {
-        if (unknown(album.getArtist()) && unknown(album.getName())) {
+        if (isUnknown(album.getArtist()) && isUnknown(album.getName())) {
             return DEFAULT_NAME;
-        } else if (unknown(album.getArtist()) || album.getArtistCount() > 1) {
+        } else if (isUnknown(album.getArtist()) || album.getArtistCount() > 1) {
             return album.getName();
         }
         return album.getArtist() + " - " + album.getName();
     }
 
     public static String virtualArtistName(Artist artist) {
-        if (unknown(artist.getName())) {
+        if (isUnknown(artist.getName())) {
             return DEFAULT_NAME;
         }
         return artist.getName();

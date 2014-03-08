@@ -211,7 +211,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 myQueue.offer(new DataStoreEvent() {
                     public boolean execute(DataStoreSession session) {
                         try {
-                            if (session.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Boolean>>() {
+                            if (session.executeQuery(new DataStoreQuery<QueryResult<Boolean>>() {
                                 @Override
                                 public QueryResult<Boolean> execute(Connection connection) throws SQLException {
                                     SmartStatement checkPhotoAlbumLinkStatement = MyTunesRssUtils.createStatement(connection, "checkPhotoAlbumLink");

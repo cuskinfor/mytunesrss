@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,7 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
-public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<Artist>> {
+public class FindArtistQuery extends MyTunesRssDataStoreQuery<QueryResult<Artist>> {
     private String myFilter;
     private String myAlbum;
     private String[] myGenres;
@@ -42,6 +43,7 @@ public class FindArtistQuery extends DataStoreQuery<DataStoreQuery.QueryResult<A
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
+        setForceEmptyResult(!user.isAudio());
     }
 
     public QueryResult<Artist> execute(Connection connection) throws SQLException {

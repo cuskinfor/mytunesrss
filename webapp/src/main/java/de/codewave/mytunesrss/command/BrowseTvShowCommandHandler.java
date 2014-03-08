@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class BrowseTvShowCommandHandler extends BrowseVideoCommandHandler {
     }
 
     @Override
-    protected DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery() {
+    protected DataStoreQuery<QueryResult<Track>> getQuery() {
         String series = MyTunesRssBase64Utils.decodeToString(getRequestParameter("series", null));
         int season = getIntegerRequestParameter("season", -1);
         if (series != null && season > -1) {

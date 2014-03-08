@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +28,7 @@ public class BrowseSinglePhotoCommandHandler extends MyTunesRssCommandHandler {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Getting photos for album with ID \"" + photoAlbumId + "\".");
             }
-            DataStoreQuery.QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
+            QueryResult<Photo> photoResult = getTransaction().executeQuery(FindPhotoQuery.getForAlbum(getAuthUser(), photoAlbumId));
             getRequest().setAttribute("photos", photoResult.getResults());
             getRequest().setAttribute("photoPage", getSafeIntegerRequestParameter("photoIndex", 0) / getWebConfig().getEffectivePhotoPageSize());
             forward(MyTunesRssResource.BrowseSinglePhoto);

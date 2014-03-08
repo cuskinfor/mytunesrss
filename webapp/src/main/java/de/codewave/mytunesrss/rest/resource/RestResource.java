@@ -19,6 +19,7 @@ import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -34,7 +35,7 @@ import java.sql.SQLException;
 
 public class RestResource {
 
-    protected QueryResultIterable<Artist, ArtistRepresentation> toArtistRepresentations(final UriInfo uriInfo, final HttpServletRequest request, DataStoreQuery.QueryResult<Artist> artists) {
+    protected QueryResultIterable<Artist, ArtistRepresentation> toArtistRepresentations(final UriInfo uriInfo, final HttpServletRequest request, QueryResult<Artist> artists) {
         return new QueryResultIterable<>(artists, new QueryResultIterable.ResultTransformer<Artist, ArtistRepresentation>() {
             public ArtistRepresentation transform(Artist artist) {
                 return toArtistRepresentation(uriInfo, request, artist);
@@ -68,7 +69,7 @@ public class RestResource {
         return representation;
     }
 
-    protected QueryResultIterable<Album, AlbumRepresentation> toAlbumRepresentations(final UriInfo uriInfo, final HttpServletRequest request, DataStoreQuery.QueryResult<Album> albums) {
+    protected QueryResultIterable<Album, AlbumRepresentation> toAlbumRepresentations(final UriInfo uriInfo, final HttpServletRequest request, QueryResult<Album> albums) {
         return new QueryResultIterable<>(albums, new QueryResultIterable.ResultTransformer<Album, AlbumRepresentation>() {
             public AlbumRepresentation transform(Album album) {
                 return toAlbumRepresentation(uriInfo, request, album);
@@ -105,7 +106,7 @@ public class RestResource {
         return representation;
     }
 
-    protected QueryResultIterable<Genre, GenreRepresentation> toGenreRepresentations(final UriInfo uriInfo, DataStoreQuery.QueryResult<Genre> genres) {
+    protected QueryResultIterable<Genre, GenreRepresentation> toGenreRepresentations(final UriInfo uriInfo, QueryResult<Genre> genres) {
         return new QueryResultIterable<>(genres, new QueryResultIterable.ResultTransformer<Genre, GenreRepresentation>() {
             public GenreRepresentation transform(Genre genre) {
                 return toGenreRepresentation(uriInfo, genre);
@@ -127,7 +128,7 @@ public class RestResource {
         return representation;
     }
 
-    protected QueryResultIterable<Playlist, PlaylistRepresentation> toPlaylistRepresentations(final UriInfo uriInfo, final HttpServletRequest request, DataStoreQuery.QueryResult<Playlist> playlists) {
+    protected QueryResultIterable<Playlist, PlaylistRepresentation> toPlaylistRepresentations(final UriInfo uriInfo, final HttpServletRequest request, QueryResult<Playlist> playlists) {
         return new QueryResultIterable<>(playlists, new QueryResultIterable.ResultTransformer<Playlist, PlaylistRepresentation>() {
             public PlaylistRepresentation transform(Playlist playlist) {
                 return toPlaylistRepresentation(uriInfo, request, playlist);
@@ -160,7 +161,7 @@ public class RestResource {
         return representation;
     }
 
-    protected QueryResultIterable<Track, TrackRepresentation> toTrackRepresentations(final UriInfo uriInfo, final HttpServletRequest request, DataStoreQuery.QueryResult<Track> tracks) {
+    protected QueryResultIterable<Track, TrackRepresentation> toTrackRepresentations(final UriInfo uriInfo, final HttpServletRequest request, QueryResult<Track> tracks) {
         return new QueryResultIterable<>(tracks, new QueryResultIterable.ResultTransformer<Track, TrackRepresentation>() {
             public TrackRepresentation transform(Track track) {
                 return toTrackRepresentation(uriInfo, request, track);

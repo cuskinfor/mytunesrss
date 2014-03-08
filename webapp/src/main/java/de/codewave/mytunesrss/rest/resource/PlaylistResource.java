@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.NotFoundException;
@@ -68,7 +69,7 @@ public class PlaylistResource extends RestResource {
             @Context HttpServletRequest request,
             @PathParam("playlist") String playlist
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), null, playlist, null, true, false));
+        QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), null, playlist, null, true, false));
         if (queryResult.getResultSize() == 0) {
             throw new NotFoundException("Playlist \"" + playlist + "\" not found.");
         }
@@ -131,7 +132,7 @@ public class PlaylistResource extends RestResource {
             @Context HttpServletRequest request,
             @PathParam("playlist") String playlist
     ) throws SQLException {
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), null, playlist, null, true, false));
+        QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), null, playlist, null, true, false));
         return queryResult.getResultSize() == 1 ? toPlaylistRepresentation(uriInfo, request, queryResult.getResult(1)) : null;
     }
 
@@ -157,7 +158,7 @@ public class PlaylistResource extends RestResource {
     ) throws SQLException {
         FindPlaylistTracksQuery findPlaylistTracksQuery = new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, sortOrder);
         findPlaylistTracksQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistTracksQuery);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistTracksQuery);
         return toTrackRepresentations(uriInfo, request, queryResult);
     }
 
@@ -187,7 +188,7 @@ public class PlaylistResource extends RestResource {
     ) throws SQLException {
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), types, null, playlist, includeHidden, matchingOwner);
         findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistQuery);
+        QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(findPlaylistQuery);
         return toPlaylistRepresentations(uriInfo, request, queryResult);
     }
 

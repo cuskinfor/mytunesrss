@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.SQLException;
@@ -60,13 +61,13 @@ public class AddToOneClickPlaylistCommandHandler extends MyTunesRssCommandHandle
         }
     }
 
-    private DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery() throws SQLException {
+    private DataStoreQuery<QueryResult<Track>> getQuery() throws SQLException {
         String[] trackIds = getNonEmptyParameterValues("track");
         String trackList = getRequestParameter("tracklist", null);
         if ((trackIds == null || trackIds.length == 0) && StringUtils.isNotEmpty(trackList)) {
             trackIds = StringUtils.split(trackList, ',');
         }
-        DataStoreQuery<DataStoreQuery.QueryResult<Track>> query = null;
+        DataStoreQuery<QueryResult<Track>> query = null;
         if (trackIds != null && trackIds.length > 0) {
             return FindTrackQuery.getForIds(trackIds);
         }

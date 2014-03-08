@@ -13,6 +13,7 @@ import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
@@ -49,7 +50,7 @@ public class AlbumResource extends RestResource {
     ) throws SQLException {
         FindAlbumQuery findAlbumQuery = new FindAlbumQuery(MyTunesRssWebUtils.getAuthUser(request), album, artist, true, null, -1, -1, -1, true, false, FindAlbumQuery.AlbumType.ALL);
         findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
+        QueryResult<Album> queryResult = TransactionFilter.getTransaction().executeQuery(findAlbumQuery);
         for (Album result = queryResult.nextResult(); result != null; result = queryResult.nextResult()) {
             if (result.getName().equals(album)) {
                 return toAlbumRepresentation(uriInfo, request, result);
@@ -82,7 +83,7 @@ public class AlbumResource extends RestResource {
     ) throws SQLException {
         FindTrackQuery findTrackQuery = FindTrackQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), new String[]{album}, new String[]{artist}, sortOrder);
         findTrackQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(findTrackQuery);
         return toTrackRepresentations(uriInfo, request, queryResult);
     }
 

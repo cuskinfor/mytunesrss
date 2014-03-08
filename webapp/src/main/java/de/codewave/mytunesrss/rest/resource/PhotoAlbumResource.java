@@ -18,6 +18,7 @@ import de.codewave.mytunesrss.rest.representation.QueryResultIterable;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.validator.constraints.Range;
@@ -57,7 +58,7 @@ public class PhotoAlbumResource extends RestResource {
     ) throws SQLException {
         FindPhotoQuery findPhotoQuery = FindPhotoQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), albumId);
         findPhotoQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        DataStoreQuery.QueryResult<Photo> photos = TransactionFilter.getTransaction().executeQuery(findPhotoQuery);
+        QueryResult<Photo> photos = TransactionFilter.getTransaction().executeQuery(findPhotoQuery);
         for (int skip = 0; skip < first; skip++) {
             if (photos.nextResult() == null) {
                 throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "FIRST_INDEX_OUT_OF_BOUNDS");

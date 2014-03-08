@@ -7,10 +7,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.ResultSetType;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -23,7 +20,7 @@ import java.util.Map;
 /**
  * de.codewave.mytunesrss.datastore.statement.FindAlbumQuery
  */
-public class FindGenreQuery extends DataStoreQuery<Genre> {
+public class FindGenreQuery extends MyTunesRssDataStoreQuery<Genre> {
     private String myName;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
@@ -37,6 +34,7 @@ public class FindGenreQuery extends DataStoreQuery<Genre> {
             myExcludedPlaylistIds = user.getExcludedPlaylistIds();
             myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
             myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
+            setForceEmptyResult(!user.isAudio());
         }
     }
 
@@ -56,7 +54,7 @@ public class FindGenreQuery extends DataStoreQuery<Genre> {
         FindTrackQuery.setQueryMediaTypes(statement, myMediaTypes);
         setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         QueryResult<Genre> genres = execute(statement, new GenreResultBuilder());
-        return genres.nextResult(); 
+        return genres.nextResult();
     }
 
     public static class GenreResultBuilder implements ResultBuilder<Genre> {

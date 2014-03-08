@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +32,7 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
         if (getAuthUser().isPlaylist() || fpr) {
             TimeUnit timeUnit = TimeUnit.valueOf(getRequestParameter("timeunit", TimeUnit.SECONDS.name()));
             getRequest().setAttribute("timefactor", timeUnit.convert(1, TimeUnit.SECONDS));
-            DataStoreQuery.QueryResult<Track> tracks = getTracks();
+            QueryResult<Track> tracks = getTracks();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Found " + (tracks != null ? tracks.getResultSize() : 0) + " tracks for playlist.");
             }

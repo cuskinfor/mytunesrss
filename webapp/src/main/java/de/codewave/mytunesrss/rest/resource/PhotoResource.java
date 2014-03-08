@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.rest.representation.ExifFieldRepresentation;
 import de.codewave.mytunesrss.rest.representation.ExifRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.sanselan.ImageReadException;
@@ -54,7 +55,7 @@ public class PhotoResource extends RestResource {
             @PathParam("photo") final String photoId
     ) throws SQLException {
         List<ExifFieldRepresentation> exifFieldList = new ArrayList<>();
-        String filename = TransactionFilter.getTransaction().executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<String>>() {
+        String filename = TransactionFilter.getTransaction().executeQuery(new DataStoreQuery<QueryResult<String>>() {
             @Override
             public QueryResult<String> execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");

@@ -10,10 +10,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.GetPhotoAlbumQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.Item;
 
@@ -35,7 +32,7 @@ public class PhotoDIDL extends MyTunesRssDIDL {
 
     @Override
     void createMetaData(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        Photo photo = tx.executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<Photo>>() {
+        Photo photo = tx.executeQuery(new DataStoreQuery<QueryResult<Photo>>() {
             @Override
             public QueryResult<Photo> execute(Connection connection) throws SQLException {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");

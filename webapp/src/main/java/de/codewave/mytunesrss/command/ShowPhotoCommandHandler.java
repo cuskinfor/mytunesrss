@@ -12,6 +12,7 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.io.FileUtils;
@@ -47,7 +48,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
     public void executeAuthorized() throws Exception {
         final String id = getRequestParameter("photo", null);
         if (StringUtils.isNotBlank(id)) {
-            SimplePhoto photo = getTransaction().executeQuery(new DataStoreQuery<DataStoreQuery.QueryResult<SimplePhoto>>() {
+            SimplePhoto photo = getTransaction().executeQuery(new DataStoreQuery<QueryResult<SimplePhoto>>() {
                 @Override
                 public QueryResult<SimplePhoto> execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");

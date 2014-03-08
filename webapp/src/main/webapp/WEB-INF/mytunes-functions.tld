@@ -30,7 +30,7 @@
         </description>
         <name>unknown</name>
         <function-class>de.codewave.mytunesrss.MyTunesRssUtils</function-class>
-        <function-signature>boolean unknown(java.lang.String)</function-signature>
+        <function-signature>boolean isUnknown(java.lang.String)</function-signature>
         <example>
             &lt;c:if test="${mtfn:unknown(album.name)}"&gt;...&lt;/c:if&gt;
         </example>

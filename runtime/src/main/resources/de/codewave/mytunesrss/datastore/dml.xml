@@ -140,7 +140,7 @@
             <![CDATA[
             <selectAll>SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id</selectAll>
             <selectId>SELECT p.id AS id</selectId>
-            FROM playlist p<restricted>, link_track_playlist rltp</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded><track>, link_track_playlist ltpt, track t</track>
+            FROM playlist p<restricted>, link_track_playlist rltp</restricted><track_or_restricted_or_excluded>, link_track_playlist ltp</track_or_restricted_or_excluded><track>, track t</track>
             WHERE type != 'TEMP'
             <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
             <matching>AND user_owner = :username</matching>
@@ -148,16 +148,17 @@
             <restricted>
                 AND rltp.playlist_id IN (:restrictedPlaylistIds[])
                 AND ltp.track_id = rltp.track_id
-                AND ltp.playlist_id = p.id
             </restricted>
             <excluded>
                 AND p.id NOT IN (:excludedPlaylistIds[])
-                AND ltp.playlist_id = p.id
                 AND ltp.track_id NOT IN (
                     SELECT eltp.track_id FROM link_track_playlist eltp
                     WHERE eltp.playlist_id IN (:excludedPlaylistIds[])
                 )
             </excluded>
+            <track_or_restricted_or_excluded>
+                AND ltp.playlist_id = p.id
+            </track_or_restricted_or_excluded>
             <hidden>
                 AND p.id NOT IN (:hiddenPlaylistIds[])
             </hidden>
@@ -166,8 +167,7 @@
             <container>AND container_id = :containerId</container>
             <rootcontainer>AND container_id IS NULL</rootcontainer>
             <track>
-                AND ltpt.playlist_id = p.id
-                AND ltpt.track_id = t.id
+                AND ltp.track_id = t.id
             </track>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>

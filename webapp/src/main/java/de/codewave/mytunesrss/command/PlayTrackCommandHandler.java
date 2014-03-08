@@ -15,6 +15,7 @@ import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
         StreamSender streamSender;
         String trackId = getRequest().getParameter("track");
         try {
-            DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
+            QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
             if (tracks.getResultSize() > 0) {
                 final Track track = tracks.nextResult();
                 if (!getAuthUser().isQuotaExceeded()) {

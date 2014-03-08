@@ -52,12 +52,6 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
                 currentListId = offHeapSessionStore.newCurrentList();
                 cachedPlaylists = offHeapSessionStore.getCurrentList(currentListId);
 
-                if (StringUtils.isEmpty(containerId) && getAuthUser().isSpecialPlaylists()) {
-                    cachedPlaylists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ALBUM, PlaylistType.MyTunesSmart, getBundleString(
-                            "playlist.specialAllByAlbum"), -1));
-                    cachedPlaylists.add(new Playlist(FindPlaylistTracksQuery.PSEUDO_ID_ALL_BY_ARTIST, PlaylistType.MyTunesSmart, getBundleString(
-                            "playlist.specialAllByArtist"), -1));
-                }
                 if (StringUtils.isNotEmpty(containerId)) {
                     Playlist container = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), null, containerId, null, false, false))
                             .nextResult();

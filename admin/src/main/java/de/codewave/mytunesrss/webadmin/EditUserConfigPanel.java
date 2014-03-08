@@ -47,7 +47,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myPermPlaylist;
     private CheckBox myPermDownload;
     private CheckBox myPermYahooPlayer;
-    private CheckBox myPermStandardPlaylist;
     private CheckBox myPermFlashPlayer;
     private CheckBox myPermRemote;
     private CheckBox myPermExternalLinks;
@@ -118,7 +117,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermPlaylist = new CheckBox();
         myPermDownload = new CheckBox();
         myPermYahooPlayer = new CheckBox();
-        myPermStandardPlaylist = new CheckBox();
         myPermFlashPlayer = new CheckBox();
         myPermRemote = new CheckBox();
         myPermExternalLinks = new CheckBox();
@@ -149,7 +147,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myPermissions.addItem(new Object[]{myPermPlaylist, getBundleString("editUserConfigPanel.permPlaylist")}, myPermPlaylist);
         myPermissions.addItem(new Object[]{myPermDownload, getBundleString("editUserConfigPanel.permDownload")}, myPermDownload);
         myPermissions.addItem(new Object[]{myPermYahooPlayer, getBundleString("editUserConfigPanel.permYahooPlayer")}, myPermYahooPlayer);
-        myPermissions.addItem(new Object[]{myPermStandardPlaylist, getBundleString("editUserConfigPanel.permStandardPlaylist")}, myPermStandardPlaylist);
         myPermissions.addItem(new Object[]{myPermFlashPlayer, getBundleString("editUserConfigPanel.permFlashPlayer")}, myPermFlashPlayer);
         myPermissions.addItem(new Object[]{myPermRemote, getBundleString("editUserConfigPanel.permRemote")}, myPermRemote);
         myPermissions.addItem(new Object[]{myPermExternalLinks, getBundleString("editUserConfigPanel.permExternalLinks")}, myPermExternalLinks);
@@ -297,7 +294,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             mySharedUser.setValue(myUser.isSharedUser());
             mySearchFuzziness.setValue(myUser.getSearchFuzziness(), 0, 100, "");
             mySessionTimeout.setValue(myUser.getSessionTimeout(), 1, Integer.MAX_VALUE, 10);
-            myPermStandardPlaylist.setValue(myUser.isSpecialPlaylists());
             myPermTranscoder.setValue(myUser.isTranscoder());
             myPermUpload.setValue(myUser.isUpload());
             myPlaylistsRestrictions.removeAllItems();
@@ -434,7 +430,6 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myUser.setSharedUser(mySharedUser.booleanValue());
         myUser.setSearchFuzziness(mySearchFuzziness.getIntegerValue(-1));
         myUser.setSessionTimeout(mySessionTimeout.getIntegerValue(10));
-        myUser.setSpecialPlaylists(myPermStandardPlaylist.booleanValue());
         myUser.setTranscoder(myPermTranscoder.booleanValue());
         myUser.setUpload(myPermUpload.booleanValue());
         Set<String> restricted = new HashSet<>();

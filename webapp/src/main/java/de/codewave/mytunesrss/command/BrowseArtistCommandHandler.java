@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 
@@ -61,7 +62,7 @@ public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
                 artists = cachedArtists;
             }
             getRequest().setAttribute("artists", artists);
-            DataStoreQuery.QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
+            QueryResult<Playlist> playlistsQueryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(),
                                                                                                                             Collections.singletonList(
                                                                                                                                     PlaylistType.MyTunes),
                                                                                                                             null,

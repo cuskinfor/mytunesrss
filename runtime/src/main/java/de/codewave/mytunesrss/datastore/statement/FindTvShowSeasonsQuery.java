@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 
@@ -19,7 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FindTvShowSeasonsQuery extends DataStoreQuery<DataStoreQuery.QueryResult<TvShowSeason>> {
+public class FindTvShowSeasonsQuery extends MyTunesRssDataStoreQuery<QueryResult<TvShowSeason>> {
 
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
@@ -31,6 +32,7 @@ public class FindTvShowSeasonsQuery extends DataStoreQuery<DataStoreQuery.QueryR
             myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
             myExcludedPlaylistIds = user.getExcludedPlaylistIds();
             myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
+            setForceEmptyResult(!user.isVideo());
         }
         mySeries = series;
     }

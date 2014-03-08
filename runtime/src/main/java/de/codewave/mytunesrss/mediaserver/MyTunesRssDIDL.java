@@ -16,6 +16,7 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.binding.xml.Descriptor;
+import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.support.model.*;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.MusicAlbum;
@@ -195,9 +196,9 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         MusicTrack musicTrack = new MusicTrack();
         musicTrack.setId(objectId);
         musicTrack.setParentID(parentId);
-        musicTrack.setTitle(track.getName());
-        musicTrack.setArtists(new PersonWithRole[]{new PersonWithRole(track.getArtist(), "Performer")});
-        musicTrack.setAlbum(track.getAlbum());
+        musicTrack.setTitle(mapUnknown(track.getName()));
+        musicTrack.setArtists(new PersonWithRole[]{new PersonWithRole(mapUnknown(track.getArtist()), "Performer")});
+        musicTrack.setAlbum(mapUnknown(track.getAlbum()));
         musicTrack.setCreator("MyTunesRSS");
         musicTrack.setDescription(track.getName());
         musicTrack.setOriginalTrackNumber(track.getTrackNumber());
@@ -213,7 +214,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         Movie movie = new Movie();
         movie.setId(objectId);
         movie.setParentID(parentId);
-        movie.setTitle(track.getName());
+        movie.setTitle(mapUnknown(track.getName()));
         movie.setCreator("MyTunesRSS");
         movie.setResources(Collections.singletonList(createTrackResource(track, user)));
         addUpnpAlbumArtUri(user, track.getImageHash(), movie);
@@ -294,9 +295,14 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     }
 
     protected MusicAlbum createMusicAlbum(User user, Album album, String objectId, String parentId) {
-        MusicAlbum musicAlbum = new MusicAlbum(objectId, parentId, album.getName(), album.getArtist(), album.getTrackCount());
+        MusicAlbum musicAlbum = new MusicAlbum(objectId, parentId, mapUnknown(album.getName()), mapUnknown(album.getArtist()), album.getTrackCount());
+        musicAlbum.setArtists(new PersonWithRole[] {new PersonWithRole(mapUnknown(album.getArtist()), "Performer")});
         addUpnpAlbumArtUri(user, album.getImageHash(), musicAlbum);
         return musicAlbum;
+    }
+
+    protected String mapUnknown(String name) {
+        return MyTunesRssUtils.isUnknown(name) ? "<unknown>" : name;
     }
 
     protected org.fourthline.cling.support.model.item.Photo createPhotoItem(Photo photo, PhotoAlbum photoAlbum, DateFormat dateFormat, User user, int size) {

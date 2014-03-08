@@ -16,6 +16,7 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -74,7 +75,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
 
     private void sendPlaylist(String trackId) throws SQLException, IOException {
         StreamSender sender;
-        DataStoreQuery.QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
+        QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
         if (tracks.getResultSize() > 0) {
             Track track = tracks.nextResult();
             if (track.getMediaType() == MediaType.Video) {

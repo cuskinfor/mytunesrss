@@ -19,7 +19,7 @@ public class TvShowsDIDL extends MyTunesRssContainerDIDL {
                 new FindTvShowsQuery(user),
                 new DataStoreQuery.ResultProcessor<TvShow>() {
                     public void process(TvShow tvShow) {
-                        addContainer(new PlaylistContainer(ObjectID.TvShow.getValue() + ";" + encode(tvShow.getName()), ObjectID.TvShows.getValue(), tvShow.getName(), "MyTunesRSS", tvShow.getSeasonCount()));
+                        addContainer(new PlaylistContainer(ObjectID.TvShow.getValue() + ";" + encode(tvShow.getName()), ObjectID.TvShows.getValue(), mapUnknown(tvShow.getName()), "MyTunesRSS", tvShow.getSeasonCount()));
                     }
                 },
                 firstResult,

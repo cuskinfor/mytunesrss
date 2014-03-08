@@ -9,6 +9,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,7 +60,7 @@ public class TrackRetrieveUtils {
         return null;
     }
 
-    public static DataStoreQuery<DataStoreQuery.QueryResult<Track>> getQuery(DataStoreSession session, HttpServletRequest servletRequest, User user,
+    public static DataStoreQuery<QueryResult<Track>> getQuery(DataStoreSession session, HttpServletRequest servletRequest, User user,
             boolean keepPlaylistOrder) throws SQLException {
         String[] albums = getNonEmptyParameterValues(servletRequest, "album");
         decodeBase64(albums);
@@ -82,7 +83,7 @@ public class TrackRetrieveUtils {
                 Collection<String> albumNames = new HashSet<>();
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
                     FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, artist, false, null, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
-                    DataStoreQuery.QueryResult<Album> albumsWithArtist = session.executeQuery(findAlbumQuery);
+                    QueryResult<Album> albumsWithArtist = session.executeQuery(findAlbumQuery);
                     for (Album albumWithArtist = albumsWithArtist.nextResult(); albumWithArtist != null;
                             albumWithArtist = albumsWithArtist.nextResult()) {
                         albumNames.add(albumWithArtist.getName());
@@ -97,7 +98,7 @@ public class TrackRetrieveUtils {
         } else if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
                 FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, new String[] {genre}, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
-                DataStoreQuery.QueryResult<Album> albumsWithGenre = session.executeQuery(findAlbumQuery);
+                QueryResult<Album> albumsWithGenre = session.executeQuery(findAlbumQuery);
                 List<String> albumNames = new ArrayList<>();
                 for (Album albumWithGenre = albumsWithGenre.nextResult(); albumWithGenre != null; albumWithGenre = albumsWithGenre.nextResult()) {
                     albumNames.add(albumWithGenre.getName());
