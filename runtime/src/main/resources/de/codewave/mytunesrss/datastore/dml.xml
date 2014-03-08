@@ -139,7 +139,7 @@
         <sql>
             <![CDATA[
             <selectAll>SELECT p.id AS id, p.name AS name, p.type AS type, p.track_count AS track_count, user_private AS user_private, hidden AS hidden, user_owner AS user_owner, container_id AS container_id</selectAll>
-            <selectCount>SELECT COUNT(p.id)</selectCount>
+            <selectId>SELECT p.id AS id</selectId>
             FROM playlist p<restricted>, link_track_playlist rltp</restricted><restricted_or_excluded>, link_track_playlist ltp</restricted_or_excluded><track>, link_track_playlist ltpt, track t</track>
             WHERE type != 'TEMP'
             <nohidden>AND (hidden IS NULL OR hidden = FALSE)</nohidden>
@@ -171,8 +171,8 @@
             </track>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
-            GROUP BY id, name, type, track_count, user_private, hidden, user_owner, container_id
-            ORDER BY LOWER(p.name)
+            GROUP BY id<selectAll>, name, type, track_count, user_private, hidden, user_owner, container_id</selectAll>
+            <selectAll>ORDER BY LOWER(p.name)</selectAll>
             ]]>
         </sql>
     </statement>
@@ -819,7 +819,7 @@
             ]]>
         </sql>
     </statement>
-    
+
     <statement name="getPhotoAlbum">
         <sql>
             SELECT id AS id, name AS name, first_date AS first_date, last_date AS last_date, photo_count AS photo_count

@@ -6,7 +6,9 @@
 package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import org.codehaus.jackson.JsonGenerationException;
+import de.codewave.mytunesrss.config.User;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
@@ -44,7 +46,17 @@ public class MediaServerConfig {
         return new File(MyTunesRss.PREFERENCES_DATA_PATH, "media_server.json");
     }
 
+    private MediaServerClientProfile myDefaultClientProfile = new MediaServerClientProfile();
     private List<MediaServerClientProfile> myClientProfiles = new ArrayList<>();
+
+    @XmlElement
+    public MediaServerClientProfile getDefaultClientProfile() {
+        return myDefaultClientProfile;
+    }
+
+    public void setDefaultClientProfile(MediaServerClientProfile defaultClientProfile) {
+        myDefaultClientProfile = defaultClientProfile;
+    }
 
     @XmlElement
     public List<MediaServerClientProfile> getClientProfiles() {
@@ -64,12 +76,17 @@ public class MediaServerConfig {
         myClientProfiles = new ArrayList<>(clientProfiles);
     }
 
-    public MediaServerClientProfile getClientProfile(String userAgent) {
+    public MediaServerClientProfile getClientProfile(String userAgent, String clientIp) {
         for (MediaServerClientProfile clientProfile : getClientProfiles()) {
-            if (clientProfile.matches(userAgent)) {
+            if (clientProfile.matches(userAgent, clientIp)) {
                 return clientProfile;
             }
         }
-        return new MediaServerClientProfile();
+        MediaServerClientProfile defaultClientProfile = getDefaultClientProfile();
+        if (defaultClientProfile.matches(userAgent, clientIp)) {
+            return defaultClientProfile;
+        }
+        return null;
     }
+
 }

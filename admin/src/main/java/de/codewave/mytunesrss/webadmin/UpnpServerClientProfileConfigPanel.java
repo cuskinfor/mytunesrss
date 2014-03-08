@@ -5,7 +5,9 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Form;
+import com.vaadin.ui.Select;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
 import de.codewave.vaadin.SmartTextField;
@@ -26,6 +28,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     private Runnable mySaveRunnable;
     private MediaServerClientProfile myMediaServerClientProfile;
     private SmartTextField myNameField;
+    private Select myUserSelect;
     private SmartTextField myUserAgentPatternField;
     private SmartTextField myNetworkField;
     private SmartTextField myPhotoSizesField;
@@ -48,13 +51,15 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
         myGeneralForm = getComponentFactory().createForm(null, false);
         myNameField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.name", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.name", 1, 100), 1, 100, false));
+        myUserSelect = getComponentFactory().createSelect("upnpServerConfigPanel.clientProfileConfigPanel.user", MyTunesRss.CONFIG.getUsers());
         myGeneralForm.addField("name", myNameField);
+        myGeneralForm.addField("user", myUserSelect);
         addComponent(getComponentFactory().surroundWithPanel(myGeneralForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.general.caption")));
         myActivationForm = getComponentFactory().createForm(null, false);
         myUserAgentPatternField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.userAgentPattern", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.userAgentPattern"), 1, 100, false));
         myActivationForm.addField("useragent", myUserAgentPatternField);
         myNetworkField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.network", new NetworkValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.network")));
-        myActivationForm.addField("netmask", myNetworkField);
+        myActivationForm.addField("network", myNetworkField);
         addComponent(getComponentFactory().surroundWithPanel(myActivationForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.activation.caption")));
         myPhotosForm = getComponentFactory().createForm(null, false);
         myPhotoSizesField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.photoSizes", new AbstractValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.photoSizes")) {
@@ -100,6 +105,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     @Override
     protected void writeToConfig() {
         myMediaServerClientProfile.setName(myNameField.getStringValue(null));
+        myMediaServerClientProfile.setUsername(((User)myUserSelect.getValue()).getName());
         myMediaServerClientProfile.setUserAgentPattern(myUserAgentPatternField.getStringValue("*"));
         myMediaServerClientProfile.setNetwork(StringUtils.trimToNull(myNetworkField.getStringValue(null)));
         List<Integer> photoSizes = new ArrayList<>();
@@ -122,6 +128,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     @Override
     protected void initFromConfig() {
         myNameField.setValue(myMediaServerClientProfile.getName(), "");
+        myUserSelect.select(MyTunesRss.CONFIG.getUser(myMediaServerClientProfile.getUsername()));
         myUserAgentPatternField.setValue(myMediaServerClientProfile.getUserAgentPattern(), "*");
         myNetworkField.setValue(myMediaServerClientProfile.getNetwork(), "");
         myPhotoSizesField.setValue(StringUtils.join(myMediaServerClientProfile.getPhotoSizes(), ","), "1024,0");

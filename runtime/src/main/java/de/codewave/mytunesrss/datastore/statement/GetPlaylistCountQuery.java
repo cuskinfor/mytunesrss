@@ -5,6 +5,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.config.User;
+import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 
 import java.sql.Connection;
@@ -24,15 +25,17 @@ public class GetPlaylistCountQuery extends AbstractFindPlaylistQuery<Integer> {
     }
 
     public Integer execute(Connection connection) throws SQLException {
+        setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
         Map<String, Boolean> conditionals = getConditionals();
         conditionals.put("selectAll", false);
-        conditionals.put("selectCount", true);
-        SmartStatement statement = createStatement(connection, conditionals); 
+        conditionals.put("selectId", true);
+        SmartStatement statement = createStatement(connection, conditionals);
         ResultSet resultSet = statement.executeQuery();
-        if (resultSet.next()) {
-            return resultSet.getInt(1);
+        int count = 0;
+        while (resultSet.next()) {
+            count++;
         }
-        return 0;
+        return count;
     }
 
 }

@@ -63,6 +63,10 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     @Override
     public BrowseResult browse(String objectID, BrowseFlag browseFlag, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
+        if (MyTunesRssDIDL.getClientProfile() == null) {
+            LOGGER.trace("No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
+            throw new ContentDirectoryException(ErrorCode.ACTION_NOT_AUTHORIZED, "No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
+        }
         LOGGER.debug("Received browse request [objectID=\"{}\", browseFlag=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\", userAgent=\"{}\"].", new Object[] {objectID, browseFlag, filter, firstResult, maxResults, orderBy, REMOTE_CLIENT_INFO.get().getRequestUserAgent()});
         Class<? extends MyTunesRssDIDL> contentClass = contentForOid.get(objectID);
         if (contentClass == null) {
@@ -102,6 +106,10 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
 
     @Override
     public BrowseResult search(String containerId, String searchCriteria, String filter, long firstResult, long maxResults, SortCriterion[] orderBy) throws ContentDirectoryException {
+        if (MyTunesRssDIDL.getClientProfile() == null) {
+            LOGGER.trace("No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
+            throw new ContentDirectoryException(ErrorCode.ACTION_NOT_AUTHORIZED, "No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
+        }
         LOGGER.debug("Received search request [containerID=\"{}\", searchCriteria=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {containerId, searchCriteria, filter, firstResult, maxResults, orderBy});
         return super.search(containerId, searchCriteria, filter, firstResult, maxResults, orderBy);
     }

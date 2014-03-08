@@ -5,15 +5,12 @@
 
 package de.codewave.mytunesrss.webadmin;
 
-import com.vaadin.data.Item;
 import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
-import de.codewave.mytunesrss.webadmin.datasource.ItunesDatasourceOptionsPanel;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
@@ -28,6 +25,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myServerActiveCheckbox;
     private SmartTextField myServerName;
     private Table myProfilesTable;
+    private MediaServerClientProfile myDefaultProfile;
     private Set<MediaServerClientProfile> myProfiles;
 
     public UpnpServerConfigPanel() {
@@ -55,6 +53,18 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             }
         });
         profilesButtonsPanel.addComponent(addProfileButton);
+        Button editDefaultProfileButton = getComponentFactory().createButton("upnpServerConfigPanel.profile.editDefault", new Button.ClickListener() {
+            @Override
+            public void buttonClick(Button.ClickEvent event) {
+                editMediaServerClientProfile(myDefaultProfile, Collections.<String>emptySet(), new Runnable() {
+                    @Override
+                    public void run() {
+                        myDefaultProfile.setName("");
+                    }
+                });
+            }
+        });
+        profilesButtonsPanel.addComponent(editDefaultProfileButton);
         myProfilesTable = new Table();
         myProfilesTable.setCacheRate(50);
         myProfilesTable.addContainerProperty("name", String.class, null, getBundleString("upnpServerConfigPanel.profile.name"), null, null);
@@ -83,6 +93,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         boolean oldServerState = MyTunesRss.CONFIG.isUpnpMediaServerActive();
         MyTunesRss.CONFIG.setUpnpMediaServerActive(myServerActiveCheckbox.booleanValue());
         MyTunesRss.CONFIG.setUpnpMediaServerName(StringUtils.trimToNull(myServerName.getStringValue(null)));
+        MyTunesRss.MEDIA_SERVER_CONFIG.setDefaultClientProfile(myDefaultProfile);
         MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(new ArrayList<>(myProfiles));
         if (MyTunesRss.CONFIG.isUpnpMediaServerActive() != oldServerState || !StringUtils.equals(oldServerName, StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()))) {
             MyTunesRss.stopUpnpMediaServer();
@@ -91,7 +102,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         try {
             MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);
             MyTunesRss.CONFIG.save();
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("upnpServerConfigPanel.error.save");
         }
     }
@@ -164,9 +175,10 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeReset() {
+        myDefaultProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getDefaultClientProfile().clone();
         myProfiles = new TreeSet<>();
         for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
-            myProfiles.add((MediaServerClientProfile) mediaServerClientProfile.clone());
+            myProfiles.add(mediaServerClientProfile.clone());
         }
         return true;
     }

@@ -46,7 +46,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createDirectChildren(MyTunesRss.CONFIG.getUser("cling"), tx, oidParams, filter, firstResult, maxResults, orderby);
+            createDirectChildren(getClientProfile().getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
         } finally {
             tx.rollback();
         }
@@ -55,7 +55,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     final void initMetaData(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createMetaData(MyTunesRss.CONFIG.getUser("cling"), tx, oidParams, filter, firstResult, maxResults, orderby);
+            createMetaData(getClientProfile().getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
         } finally {
             tx.rollback();
         }
@@ -310,9 +310,10 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return photoItem;
     }
 
-    protected MediaServerClientProfile getClientProfile() {
+    static MediaServerClientProfile getClientProfile() {
         String userAgent = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRequestUserAgent();
-        return MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfile(userAgent);
+        String clientIp = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress();
+        return MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfile(userAgent, clientIp);
     }
 
     protected int getInt(String s, int defaultValue) {

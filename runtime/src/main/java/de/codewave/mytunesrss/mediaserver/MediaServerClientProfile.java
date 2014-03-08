@@ -6,6 +6,7 @@
 package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.utils.WildcardMatcher;
 import org.apache.commons.lang3.StringUtils;
@@ -26,8 +27,10 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
     private String myUserAgentPattern;
     private WildcardMatcher myWildcardMatcher;
     private String myNetwork;
+    private Network myNetworkInternal;
     private List<Integer> myPhotoSizes = Arrays.asList(1024, 2048, 4096, 0);
     private List<String> myTranscoders = Collections.emptyList();
+    private String myUsername;
 
     @XmlElement
     public String getName() {
@@ -45,7 +48,7 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
 
     public void setUserAgentPattern(String userAgentPattern) {
         myUserAgentPattern = userAgentPattern;
-        myWildcardMatcher = new WildcardMatcher(userAgentPattern);
+        myWildcardMatcher = new WildcardMatcher(StringUtils.defaultIfBlank(userAgentPattern, "*"));
     }
 
     @XmlElement
@@ -55,6 +58,11 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
 
     public void setNetwork(String network) {
         myNetwork = network;
+        try {
+            myNetworkInternal = new Network(network);
+        } catch (IllegalArgumentException ignored) {
+            myNetworkInternal = new Network(null);
+        }
     }
 
     @XmlElement
@@ -66,8 +74,8 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
         myPhotoSizes = new ArrayList<>(photoSizes);
     }
 
-    public boolean matches(String userAgent) {
-        return myWildcardMatcher.matches(userAgent);
+    public boolean matches(String userAgent, String clientIp) {
+        return myNetworkInternal.matches(clientIp) && myWildcardMatcher.matches(userAgent);
     }
 
     @XmlElement
@@ -92,7 +100,7 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
     }
 
     @Override
-    public Object clone() {
+    public MediaServerClientProfile clone() {
         MediaServerClientProfile clone;
         try {
             clone = (MediaServerClientProfile) super.clone();
@@ -100,9 +108,11 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
             clone = new MediaServerClientProfile();
         }
         clone.setName(getName());
+        clone.setUsername(getUsername());
+        clone.setNetwork(getNetwork());
         clone.setUserAgentPattern(getUserAgentPattern());
-        clone.setPhotoSizes(new ArrayList<Integer>(getPhotoSizes()));
-        clone.setTranscoders(new ArrayList<String>(getTranscoders()));
+        clone.setPhotoSizes(new ArrayList<>(getPhotoSizes()));
+        clone.setTranscoders(new ArrayList<>(getTranscoders()));
         return clone;
     }
 
@@ -123,4 +133,20 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
     public int compareTo(MediaServerClientProfile o) {
         return StringUtils.trimToEmpty(getName()).compareTo(StringUtils.trimToEmpty(o.getName()));
     }
+
+    @XmlElement
+    public String getUsername() {
+        return myUsername;
+    }
+
+    public void setUsername(String username) {
+        myUsername = username;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public User getUser() {
+        return StringUtils.isNotBlank(getUsername()) ? MyTunesRss.CONFIG.getUser(getUsername()) : null;
+    }
+
 }

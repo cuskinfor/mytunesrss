@@ -33,8 +33,8 @@ public class FindPlaylistQuery extends AbstractFindPlaylistQuery<DataStoreQuery.
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = getConditionals();
         conditionals.put("selectAll", true);
-        conditionals.put("selectCount", false);
-        SmartStatement statement = createStatement(connection, conditionals); 
+        conditionals.put("selectId", false);
+        SmartStatement statement = createStatement(connection, conditionals);
         return execute(statement, new PlaylistResultBuilder());
     }
 
