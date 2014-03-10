@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 
 public class FindAllTracksQuery extends DataStoreQuery<QueryResult<Track>> {
-    private String myId;
     private SortOrder mySortOrder;
     private List<String> myRestrictedPlaylistIds = Collections.emptyList();
     private List<String> myExcludedPlaylistIds = Collections.emptyList();
@@ -55,7 +54,7 @@ public class FindAllTracksQuery extends DataStoreQuery<QueryResult<Track>> {
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<>();
-        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty() && (myRestrictedPlaylistIds.size() > 1 || !myRestrictedPlaylistIds.get(0).equals(myId)));
+        conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
@@ -63,16 +62,7 @@ public class FindAllTracksQuery extends DataStoreQuery<QueryResult<Track>> {
         conditionals.put("indexorder", mySortOrder != SortOrder.Album && mySortOrder != SortOrder.Artist);
         conditionals.put("albumorder", mySortOrder == SortOrder.Album);
         conditionals.put("artistorder", mySortOrder == SortOrder.Artist);
-        String[] parts = StringUtils.split(myId, "@");
-        if (parts.length == 3) {
-            conditionals.put("index", parts.length == 3);
-        }
         statement = MyTunesRssUtils.createStatement(connection, "findAllTracks", conditionals);
-        statement.setString("id", parts[0]);
-        if (parts.length == 3) {
-            statement.setInt("firstIndex", Integer.parseInt(parts[1]));
-            statement.setInt("lastIndex", Integer.parseInt(parts[2]));
-        }
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);
         statement.setItems("excludedPlaylistIds", myExcludedPlaylistIds);
         statement.setItems("datasources", myPermittedDataSources);
