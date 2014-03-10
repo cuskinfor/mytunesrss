@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.StorageFolder;
@@ -45,7 +46,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
             storageFolderList.add(new StorageFolder(ObjectID.Movies.getValue(), ObjectID.Root.getValue(), "Movies", "MyTunesRSS", systemInformation.getMovieCount(), 0L));
             storageFolderList.add(new StorageFolder(ObjectID.TvShows.getValue(), ObjectID.Root.getValue(), "TV Shows", "MyTunesRSS", tvShowCount, 0L));
         }
-        if (user.isPhotos()) {
+        if (user.isPhotos() && !getClientProfile().getPhotoSizes().isEmpty()) {
             FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery();
             int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
             List<Integer> photoSizes = getClientProfile().getPhotoSizes();

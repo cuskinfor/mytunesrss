@@ -61,7 +61,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
                     public void run() {
                         myDefaultProfile.setName("");
                     }
-                });
+                }, true);
             }
         });
         profilesButtonsPanel.addComponent(editDefaultProfileButton);
@@ -81,6 +81,16 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     @Override
     protected boolean beforeSave() {
         boolean valid = VaadinUtils.isValid(myServerForm);
+        if (myServerActiveCheckbox.booleanValue()) {
+            boolean allProfilesValid = myDefaultProfile.getUser() != null;
+            for (MediaServerClientProfile profile : myProfiles) {
+                allProfilesValid &= profile.getUser() != null;
+            }
+            if (!allProfilesValid) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("upnpServerConfigPanel.error.missingUserInProfile");
+                return false;
+            }
+        }
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         }
@@ -124,7 +134,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             public void buttonClick(Button.ClickEvent event) {
                 Set<String> usedProfileNames = getProfileNames();
                 usedProfileNames.remove(mediaServerClientProfile.getName());
-                editMediaServerClientProfile(mediaServerClientProfile, usedProfileNames, null);
+                editMediaServerClientProfile(mediaServerClientProfile, usedProfileNames, null, false);
             }
         });
         Button delete = getComponentFactory().createButton("upnpServerConfigPanel.profile.delete", new Button.ClickListener() {
@@ -157,11 +167,11 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             public void run() {
                 myProfiles.add(clientProfile);
             }
-        });
+        }, false);
     }
 
-    private void editMediaServerClientProfile(MediaServerClientProfile clientProfile, Set<String> usedProfileNames, Runnable saveRunnable) {
-        UpnpServerClientProfileConfigPanel upnpServerClientProfileConfigPanel = new UpnpServerClientProfileConfigPanel(this, usedProfileNames, saveRunnable, clientProfile);
+    private void editMediaServerClientProfile(MediaServerClientProfile clientProfile, Set<String> usedProfileNames, Runnable saveRunnable, boolean defaultProfile) {
+        UpnpServerClientProfileConfigPanel upnpServerClientProfileConfigPanel = new UpnpServerClientProfileConfigPanel(this, usedProfileNames, saveRunnable, clientProfile, defaultProfile);
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(upnpServerClientProfileConfigPanel);
     }
 

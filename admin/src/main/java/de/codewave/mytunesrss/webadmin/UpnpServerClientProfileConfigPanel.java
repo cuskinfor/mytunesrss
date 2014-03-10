@@ -27,6 +27,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     private Set<String> myUsedProfileNames;
     private Runnable mySaveRunnable;
     private MediaServerClientProfile myMediaServerClientProfile;
+    private boolean myDefaultProfile;
     private SmartTextField myNameField;
     private Select myUserSelect;
     private SmartTextField myUserAgentPatternField;
@@ -38,11 +39,12 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     private Form myPhotosForm;
     private Form myTranscodersForm;
 
-    public UpnpServerClientProfileConfigPanel(UpnpServerConfigPanel upnpServerConfigPanel, Set<String> usedProfileNames, Runnable saveRunnable, MediaServerClientProfile mediaServerClientProfile) {
+    public UpnpServerClientProfileConfigPanel(UpnpServerConfigPanel upnpServerConfigPanel, Set<String> usedProfileNames, Runnable saveRunnable, MediaServerClientProfile mediaServerClientProfile, boolean defaultProfile) {
         myUpnpServerConfigPanel = upnpServerConfigPanel;
         myUsedProfileNames = usedProfileNames;
         mySaveRunnable = saveRunnable;
         myMediaServerClientProfile = mediaServerClientProfile;
+        myDefaultProfile = defaultProfile;
     }
 
     public void attach() {
@@ -51,8 +53,14 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
         myGeneralForm = getComponentFactory().createForm(null, false);
         myNameField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.name", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.name", 1, 100), 1, 100, false));
+        if (!myDefaultProfile) {
+            myNameField.setRequired(true);
+        }
         myUserSelect = getComponentFactory().createSelect("upnpServerConfigPanel.clientProfileConfigPanel.user", MyTunesRss.CONFIG.getUsers());
-        myGeneralForm.addField("name", myNameField);
+        myUserSelect.setRequired(true);
+        if (!myDefaultProfile) {
+            myGeneralForm.addField("name", myNameField);
+        }
         myGeneralForm.addField("user", myUserSelect);
         addComponent(getComponentFactory().surroundWithPanel(myGeneralForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.general.caption")));
         myActivationForm = getComponentFactory().createForm(null, false);
@@ -104,8 +112,8 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected void writeToConfig() {
-        myMediaServerClientProfile.setName(myNameField.getStringValue(null));
-        myMediaServerClientProfile.setUsername(((User)myUserSelect.getValue()).getName());
+        myMediaServerClientProfile.setName(myDefaultProfile ? "" : myNameField.getStringValue(null));
+        myMediaServerClientProfile.setUsername(((User) myUserSelect.getValue()).getName());
         myMediaServerClientProfile.setUserAgentPattern(myUserAgentPatternField.getStringValue("*"));
         myMediaServerClientProfile.setNetwork(StringUtils.trimToNull(myNetworkField.getStringValue(null)));
         List<Integer> photoSizes = new ArrayList<>();
@@ -127,7 +135,9 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected void initFromConfig() {
-        myNameField.setValue(myMediaServerClientProfile.getName(), "");
+        if (!myDefaultProfile) {
+            myNameField.setValue(myMediaServerClientProfile.getName(), "");
+        }
         myUserSelect.select(MyTunesRss.CONFIG.getUser(myMediaServerClientProfile.getUsername()));
         myUserAgentPatternField.setValue(myMediaServerClientProfile.getUserAgentPattern(), "*");
         myNetworkField.setValue(myMediaServerClientProfile.getNetwork(), "");

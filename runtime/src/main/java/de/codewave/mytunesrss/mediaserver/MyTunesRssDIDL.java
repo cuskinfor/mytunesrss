@@ -319,7 +319,12 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     static MediaServerClientProfile getClientProfile() {
         String userAgent = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRequestUserAgent();
         String clientIp = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress();
-        return MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfile(userAgent, clientIp);
+        MediaServerClientProfile clientProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfile(userAgent, clientIp);
+        if (clientProfile.getUser() == null) {
+            // fallback to default if no user
+            clientProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getDefaultClientProfile();
+        }
+        return clientProfile;
     }
 
     protected int getInt(String s, int defaultValue) {
