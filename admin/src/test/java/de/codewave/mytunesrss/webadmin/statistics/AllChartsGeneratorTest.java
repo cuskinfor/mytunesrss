@@ -141,6 +141,7 @@ public class AllChartsGeneratorTest {
             }
             JFreeChart chart = generator.generate(eventsPerDay, PropertyResourceBundle.getBundle("de.codewave.mytunesrss.webadmin.MyTunesRssAdmin"));
             File file = File.createTempFile("MyTunesRSS_" + generator.getClass().getSimpleName(), ".jpg");
+            file.deleteOnExit();
             System.out.println("writing file \"" + file + "\".");
             saveToFile(chart, file, 1024, 768, 100);
         }
