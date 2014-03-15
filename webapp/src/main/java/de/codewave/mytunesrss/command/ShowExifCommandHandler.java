@@ -6,6 +6,8 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.statement.GetPhotoQuery;
+import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
@@ -59,19 +61,8 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
         if (getAuthUser().isPhotos()) {
             final String id = getRequestParameter("photo", null);
             if (StringUtils.isNotBlank(id)) {
-                String filename = getTransaction().executeQuery(new DataStoreQuery<QueryResult<String>>() {
-                    @Override
-                    public QueryResult<String> execute(Connection connection) throws SQLException {
-                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");
-                        statement.setString("id", id);
-                        return execute(statement, new ResultBuilder<String>() {
-                            public String create(ResultSet resultSet) throws SQLException {
-                                return resultSet.getString("file");
-                            }
-                        });
-                    }
-                }).getResult(0);
-                File photoFile = new File(filename);
+                Photo photo = getTransaction().executeQuery(new GetPhotoQuery(id));
+                File photoFile = new File(photo.getFile());
                 if (photoFile.isFile()) {
                     List<ExifField> exifFieldList = new ArrayList<>();
                     for (TiffField tiffField : MyTunesRssExifUtils.getExifData(photoFile)) {

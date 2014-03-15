@@ -22,6 +22,8 @@ public class PhotoRepresentation implements RestRepresentation {
     private URI myOriginalImageUri;
     private URI myThumbnailImageUri;
     private URI myExifDataUri;
+    private long myWidth;
+    private long myHeight;
 
     public PhotoRepresentation() {
     }
@@ -130,5 +132,27 @@ public class PhotoRepresentation implements RestRepresentation {
 
     public void setExifDataUri(URI exifDataUri) {
         myExifDataUri = exifDataUri;
+    }
+
+    /**
+     * Width of the photo in pixels or 0 if unknown for some reason.
+     */
+    public long getWidth() {
+        return myWidth;
+    }
+
+    public void setWidth(long width) {
+        myWidth = width;
+    }
+
+    /**
+     * Height of the photo in pixels or 0 if unknown for some reason.
+     */
+    public long getHeight() {
+        return myHeight;
+    }
+
+    public void setHeight(long height) {
+        myHeight = height;
     }
 }

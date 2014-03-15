@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.mediaserver;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.GetPhotoAlbumQuery;
+import de.codewave.mytunesrss.datastore.statement.GetPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
 import de.codewave.utils.sql.*;
@@ -32,25 +33,7 @@ public class PhotoDIDL extends MyTunesRssDIDL {
 
     @Override
     void createMetaData(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        Photo photo = tx.executeQuery(new DataStoreQuery<QueryResult<Photo>>() {
-            @Override
-            public QueryResult<Photo> execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");
-                statement.setString("id", decode(oidParams).get(1));
-                return execute(statement, new ResultBuilder<Photo>() {
-                    public Photo create(ResultSet resultSet) throws SQLException {
-                        Photo photo = new Photo();
-                        photo.setId(resultSet.getString("ID"));
-                        photo.setName(resultSet.getString("NAME"));
-                        photo.setFile(resultSet.getString("FILE"));
-                        photo.setDate(resultSet.getLong("DATE"));
-                        photo.setImageHash(resultSet.getString("IMAGE_HASH"));
-                        photo.setLastImageUpdate(resultSet.getLong("LAST_IMAGE_UPDATE"));
-                        return photo;
-                    }
-                });
-            }
-        }).getResult(0);
+        Photo photo = tx.executeQuery(new GetPhotoQuery(decode(oidParams).get(1)));
         PhotoAlbum photoAlbum = tx.executeQuery(new GetPhotoAlbumQuery(decode(oidParams).get(0))).nextResult();
         Item item = createPhotoItem(photo, photoAlbum, new SimpleDateFormat("yyyy-dd-mm"), user, getInt(decode(oidParams).get(0), DEFAULT_PHOTO_SIZE));
         if (item != null) {

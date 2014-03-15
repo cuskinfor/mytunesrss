@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.datastore.statement.GetPhotoQuery;
+import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
@@ -28,7 +30,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Locale;
 
 public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
 
@@ -48,32 +49,21 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
     public void executeAuthorized() throws Exception {
         final String id = getRequestParameter("photo", null);
         if (StringUtils.isNotBlank(id)) {
-            SimplePhoto photo = getTransaction().executeQuery(new DataStoreQuery<QueryResult<SimplePhoto>>() {
-                @Override
-                public QueryResult<SimplePhoto> execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");
-                    statement.setString("id", id);
-                    return execute(statement, new ResultBuilder<SimplePhoto>() {
-                        public SimplePhoto create(ResultSet resultSet) throws SQLException {
-                            return new SimplePhoto(resultSet.getString("file"), resultSet.getLong("last_image_update"));
-                        }
-                    });
-                }
-            }).getResult(0);
+            Photo photo = getTransaction().executeQuery(new GetPhotoQuery(id));
             long ifModifiedSince = getRequest().getDateHeader("If-Modified-Since");
-            File photoFile = new File(photo.myFile);
+            File photoFile = new File(photo.getFile());
             if (ifModifiedSince > -1 && (photoFile.lastModified() / 1000) <= (ifModifiedSince / 1000)) {
                 getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 if (!getAuthUser().isQuotaExceeded()) {
-                    if (StringUtils.isNotBlank(photo.myFile) && photoFile.isFile()) {
+                    if (StringUtils.isNotBlank(photo.getFile()) && photoFile.isFile()) {
                         StreamSender sender = null;
                         int requestedImageSize;
                         int maxImageSize = 0;
                         try {
-                            maxImageSize = MyTunesRssUtils.getMaxImageSize(photoFile);
+                            maxImageSize = MyTunesRssUtils.getImageSize(photo).getMaxSize();
                             requestedImageSize = getIntegerRequestParameter("size", Integer.MAX_VALUE);
-                        } catch (IOException e) {
+                        } catch (IOException ignored) {
                             requestedImageSize = 0;
                         }
                         String mimeType;
@@ -94,7 +84,7 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                             sender = new FileSender(photoFile, mimeType, photoFile.length());
                         }
                         sender.setCounter((StreamSender.ByteSentCounter) SessionManager.getSessionInfo(getRequest()));
-                        getResponse().setDateHeader("Last-Modified", photo.myLastImageUpdate);
+                        getResponse().setDateHeader("Last-Modified", photo.getLastImageUpdate());
                         getResponse().setHeader("Cache-Control", MyTunesRssWebUtils.createCacheControlValue(0));
                         sendResponse(sender, MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(photoFile.getName()) + "." + MyTunesRssUtils.getSuffixForMimeType(mimeType)));
                     } else {

@@ -558,27 +558,56 @@ public class MyTunesRssUtils {
         }
     }
 
-    public static int getMaxImageSize(de.codewave.mytunesrss.meta.Image source) throws IOException {
+    public static Size getImageSize(final Photo photo) throws IOException {
+        if (photo.getWidth() <= 0 || photo.getHeight() <= 0) {
+            final Size size = getImageSize(new File(photo.getFile()));
+            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+                            @Override
+                            public void execute(Connection connection) throws SQLException {
+                                LOGGER.debug("Updating size (" + size.getWidth() + ";" + size.getHeight() + ") for photo \"" + photo.getId() + "\".");
+                                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePhotoSize");
+                                statement.setString("id", photo.getId());
+                                statement.setLong("width", size.getWidth());
+                                statement.setLong("height", size.getHeight());
+                                statement.execute();
+                            }
+                        });
+                    } catch (SQLException e) {
+                        LOGGER.info("Could not update photo size for photo \"" + photo.getId() + "\".", e);
+                    }
+                }
+            });
+            return size;
+        } else {
+            return new Size((int)photo.getWidth(), (int)photo.getHeight());
+        }
+    }
+
+    public static Size getImageSize(de.codewave.mytunesrss.meta.Image source) throws IOException {
         if (isExecutableGraphicsMagick() && source.getImageFile() != null) {
             try {
-                return getMaxImageSizeExternalProcess(source.getImageFile());
+                return getImageSizeExternalProcess(source.getImageFile());
             } catch (IOException e) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Could not get max image size using external process, fallback to pure java image processing.", e);
                 } else {
                     LOGGER.info("Could not get max image size using external process, fallback to pure java image processing.");
                 }
-                return getMaxImageSizeJava(source);
+                return getImageSizeJava(source);
             }
         } else {
-            return getMaxImageSizeJava(source);
+            return getImageSizeJava(source);
         }
     }
 
-    public static int getMaxImageSize(File source) throws IOException {
+    public static Size getImageSize(File source) throws IOException {
         if (isExecutableGraphicsMagick()) {
             try {
-                return getMaxImageSizeExternalProcess(source);
+                return getImageSizeExternalProcess(source);
             } catch (IOException e) {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Could not get max image size using external process, fallback to pure java image processing.", e);
@@ -586,28 +615,28 @@ public class MyTunesRssUtils {
                     LOGGER.info("Could not get max image size using external process, fallback to pure java image processing.");
                 }
                 de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
-                return getMaxImageSizeJava(image);
+                return getImageSizeJava(image);
             }
         } else {
             de.codewave.mytunesrss.meta.Image image = new de.codewave.mytunesrss.meta.Image(guessContentType(source), FileUtils.readFileToByteArray(source));
-            return getMaxImageSizeJava(image);
+            return getImageSizeJava(image);
         }
     }
 
-    private static int getMaxImageSizeJava(de.codewave.mytunesrss.meta.Image source) throws IOException {
+    private static Size getImageSizeJava(de.codewave.mytunesrss.meta.Image source) throws IOException {
         try (ByteArrayInputStream imageInputStream = new ByteArrayInputStream(source.getData())) {
             BufferedImage original = ImageIO.read(imageInputStream);
             int width = original.getWidth();
             int height = original.getHeight();
-            return Math.max(width, height);
+            return new Size(width, height);
         }
     }
 
-    private static int getMaxImageSizeExternalProcess(File source) throws IOException {
-        List<String> resizeCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "identify", "-format", "%w %h", source.getAbsolutePath());
-        String msg = "Executing command \"" + StringUtils.join(resizeCommand, " ") + "\".";
+    private static Size getImageSizeExternalProcess(File source) throws IOException {
+        List<String> identifyCommand = Arrays.asList(MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath(), "identify", "-format", "%w %h", source.getAbsolutePath());
+        String msg = "Executing command \"" + StringUtils.join(identifyCommand, " ") + "\".";
         LOGGER.debug(msg);
-        Process process = new ProcessBuilder(resizeCommand).start();
+        Process process = new ProcessBuilder(identifyCommand).start();
         MyTunesRss.SPAWNED_PROCESSES.add(process);
         InputStream is = process.getInputStream();
         try {
@@ -619,7 +648,7 @@ public class MyTunesRssUtils {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image dimensions for \"" + source.getAbsolutePath() + "\" are \"" + dimensions[0] + "x" + dimensions[1] + "\".");
                 }
-                return Math.max(Integer.parseInt(dimensions[0]), Integer.parseInt(dimensions[1]));
+                return new Size(Integer.parseInt(dimensions[0]), Integer.parseInt(dimensions[1]));
             } else {
                 throw new IOException("Could not get dimension from images using external process.");
             }

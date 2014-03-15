@@ -59,6 +59,8 @@ public class FindPhotoQuery extends DataStoreQuery<QueryResult<Photo>> {
                 photo.setDate(resultSet.getLong("date"));
                 photo.setImageHash(StringUtils.trimToNull(resultSet.getString("image_hash")));
                 photo.setLastImageUpdate(resultSet.getLong("last_image_update"));
+                photo.setWidth(resultSet.getLong("width"));
+                photo.setHeight(resultSet.getLong("height"));
                 return photo;
             }
         });

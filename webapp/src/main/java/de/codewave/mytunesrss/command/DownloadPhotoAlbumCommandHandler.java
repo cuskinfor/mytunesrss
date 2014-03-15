@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.utils.servlet.SessionManager;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
@@ -32,13 +31,6 @@ import java.util.Map;
 public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadPhotoAlbumCommandHandler.class);
-    private static Map<String, String> IMAGE_TO_MIME = new HashMap<>();
-
-    static {
-        IMAGE_TO_MIME.put("jpg", "image/jpeg");
-        IMAGE_TO_MIME.put("gif", "image/gif");
-        IMAGE_TO_MIME.put("png", "image/png");
-    }
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -59,8 +51,7 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
     }
 
     private void createZipArchive(OutputStream outputStream, List<Photo> results, MyTunesRssSendCounter sendCounter, int photoSize) throws IOException {
-        ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(outputStream);
-        try {
+        try (ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(outputStream)) {
             zipStream.setLevel(ZipArchiveOutputStream.STORED);
             zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
             for (Photo photo : results) {
@@ -78,12 +69,9 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
                         } else {
                             File tempFile = MyTunesRssUtils.createTempFile("jpg");
                             try {
-                                MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, (photoSize * MyTunesRssUtils.getMaxImageSize(photoFile)) / 100, (float)MyTunesRss.CONFIG.getJpegQuality(), "photo=" + photoFile.getAbsolutePath());
-                                FileInputStream fileInputStream = new FileInputStream(tempFile);
-                                try {
+                                MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, (photoSize * MyTunesRssUtils.getImageSize(photo).getMaxSize()) / 100, (float) MyTunesRss.CONFIG.getJpegQuality(), "photo=" + photoFile.getAbsolutePath());
+                                try (FileInputStream fileInputStream = new FileInputStream(tempFile)) {
                                     IOUtils.copyLarge(fileInputStream, zipStream);
-                                } finally {
-                                    fileInputStream.close();
                                 }
                                 archiveEntry.setSize(tempFile.length());
                             } finally {
@@ -109,8 +97,6 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
                     zipStream.closeArchiveEntry();
                 }
             }
-        } finally {
-            zipStream.close();
         }
     }
 }

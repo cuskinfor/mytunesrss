@@ -55,6 +55,8 @@
                 last_image_update NUMERIC(19),
                 ts_updated NUMERIC(19),
                 source_id VARCHAR(100),
+                width NUMERIC(19),
+                height NUMERIC(19),
                 UNIQUE (id)
             )
         </sql>

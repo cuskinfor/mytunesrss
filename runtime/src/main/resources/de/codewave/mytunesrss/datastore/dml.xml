@@ -503,7 +503,7 @@
     <statement name="findPhotos">
         <sql>
             <![CDATA[
-            SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update
+            SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update, p.width AS width, p.height AS height
             FROM photo p, link_photo_album lpa<restricted>, link_photo_album rlpa</restricted>
             WHERE p.id = lpa.photo_id
             AND lpa.album_id = :album_id
@@ -520,7 +520,7 @@
             <excludedDatasources>
                 AND p.source_id NOT IN (:excludedDataSourceIds[])
             </excludedDatasources>
-            GROUP BY id, name, file, date, image_hash, last_image_update
+            GROUP BY id, name, file, date, image_hash, last_image_update, width, height
             ORDER BY date, LOWER(name)
             ]]>
         </sql>
@@ -528,7 +528,7 @@
 
     <statement name="getPhoto">
         <sql>
-            SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update
+            SELECT p.id AS id, p.name AS name, p.file AS file, p.date AS date, p.image_hash AS image_hash, p.last_image_update AS last_image_update, p.width AS width, p.height AS height
             FROM photo p
             WHERE p.id = :id
         </sql>
@@ -784,6 +784,12 @@
     <statement name="fillLuceneSearchTempTable">
         <sql loop="track_id" loopbatch="10000">
             INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
+        </sql>
+    </statement>
+
+    <statement name="updatePhotoSize">
+        <sql>
+            UPDATE photo SET width = :width, height = :height WHERE id = :id
         </sql>
     </statement>
 

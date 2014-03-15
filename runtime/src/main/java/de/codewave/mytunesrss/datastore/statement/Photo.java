@@ -12,6 +12,8 @@ public class Photo {
     private long myDate;
     private String myImageHash;
     private long myLastImageUpdate;
+    private long myWidth;
+    private long myHeight;
 
     public String getId() {
         return myId;
@@ -59,5 +61,21 @@ public class Photo {
 
     public void setLastImageUpdate(long lastImageUpdate) {
         this.myLastImageUpdate = lastImageUpdate;
+    }
+
+    public long getWidth() {
+        return myWidth;
+    }
+
+    public void setWidth(long width) {
+        myWidth = width;
+    }
+
+    public long getHeight() {
+        return myHeight;
+    }
+
+    public void setHeight(long height) {
+        myHeight = height;
     }
 }

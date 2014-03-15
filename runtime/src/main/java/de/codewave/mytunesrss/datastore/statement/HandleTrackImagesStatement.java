@@ -124,7 +124,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                             }
                             MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 256, "image/jpg"), 256, (float) MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                         }
-                        int originalSize = MyTunesRssUtils.getMaxImageSize(image);
+                        int originalSize = MyTunesRssUtils.getImageSize(image).getMaxSize();
                         if (originalSize > 256) {
                             // upper limit for image size is 2048
                             int bigImageSize = originalSize <= 2048 ? originalSize : 2048;

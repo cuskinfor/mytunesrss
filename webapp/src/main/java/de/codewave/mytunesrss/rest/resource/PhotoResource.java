@@ -6,6 +6,8 @@
 package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.datastore.statement.GetPhotoQuery;
+import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
@@ -55,19 +57,8 @@ public class PhotoResource extends RestResource {
             @PathParam("photo") final String photoId
     ) throws SQLException {
         List<ExifFieldRepresentation> exifFieldList = new ArrayList<>();
-        String filename = TransactionFilter.getTransaction().executeQuery(new DataStoreQuery<QueryResult<String>>() {
-            @Override
-            public QueryResult<String> execute(Connection connection) throws SQLException {
-                SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");
-                statement.setString("id", photoId);
-                return execute(statement, new ResultBuilder<String>() {
-                    public String create(ResultSet resultSet) throws SQLException {
-                        return resultSet.getString("file");
-                    }
-                });
-            }
-        }).getResult(0);
-        File photoFile = new File(filename);
+        Photo photo = TransactionFilter.getTransaction().executeQuery(new GetPhotoQuery(photoId));
+        File photoFile = new File(photo.getFile());
         if (photoFile.isFile()) {
             for (TiffField tiffField : MyTunesRssExifUtils.getExifData(photoFile)) {
                 try {

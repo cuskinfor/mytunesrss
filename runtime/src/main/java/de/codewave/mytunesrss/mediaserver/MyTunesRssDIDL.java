@@ -16,7 +16,6 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.binding.xml.Descriptor;
-import org.fourthline.cling.model.message.header.UpnpHeader;
 import org.fourthline.cling.support.model.*;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.MusicAlbum;
@@ -226,7 +225,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         String filename = file.getName();
         MimeType mimeType = MimeType.valueOf(MyTunesRssUtils.guessContentType(file));
         try {
-            int maxSize = MyTunesRssUtils.getMaxImageSize(file);
+            int maxSize = MyTunesRssUtils.getImageSize(photo).getMaxSize();
             if (size > 0 && size < maxSize) {
                 filename = FilenameUtils.getBaseName(file.getName()) + ".jpg";
                 mimeType = MimeType.valueOf("image/jpeg");

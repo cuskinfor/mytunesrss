@@ -349,4 +349,9 @@
         <sql>UPDATE track SET original_genre = genre</sql>
     </statement>
 
+    <statement name="migrate_6.0.0">
+        <sql>ALTER TABLE photo ADD COLUMN width NUMERIC(19)</sql>
+        <sql>ALTER TABLE photo ADD COLUMN height NUMERIC(19)</sql>
+    </statement>
+
 </statements>
