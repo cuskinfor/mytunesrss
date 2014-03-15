@@ -137,7 +137,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         Statement statement = connection.createStatement();
                         try {
                             statement.execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
-                            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_CHANGED));
                         } finally {
                             statement.close();
                         }
@@ -165,6 +164,8 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             }
         } catch (Exception e) {
             throw e;
+        } finally {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         }
     }
 

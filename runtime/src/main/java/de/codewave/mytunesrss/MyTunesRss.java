@@ -14,7 +14,6 @@ import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.statement.FindAllTracksQuery;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
@@ -1062,8 +1061,12 @@ public class MyTunesRss {
             UPNP_DATABASE_UPDATE_LISTENER = new MyTunesRssEventListener() {
                 @Override
                 public void handleEvent(MyTunesRssEvent event) {
-                    if (event.getType() == MyTunesRssEvent.EventType.DATABASE_CHANGED) {
-                        directoryService.getManager().getImplementation().changeSystemUpdateID();
+                    if (event.getType() == MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE) {
+                        MyTunesRssContentDirectoryService contentDirectoryService = directoryService.getManager().getImplementation();
+                        String oldId = contentDirectoryService.getSystemUpdateID().toString();
+                        contentDirectoryService.changeSystemUpdateID();
+                        String newId = contentDirectoryService.getSystemUpdateID().toString();
+                        LOGGER.info("Changing media server system update ID from {} to {}.", oldId, newId);
                     }
                 }
             };

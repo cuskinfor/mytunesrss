@@ -9,6 +9,8 @@ import de.codewave.mytunesrss.datastore.statement.Playlist;
 import de.codewave.mytunesrss.datastore.statement.SaveMyTunesPlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.SavePlaylistStatement;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.rest.resource.EditPlaylistResource;
@@ -40,6 +42,7 @@ public class SavePlaylistCommandHandler extends MyTunesRssCommandHandler {
                 statement.setName(name);
                 statement.setTrackIds(getTrackIds(playlistContent));
                 getTransaction().executeStatement(statement);
+                MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
                 getRequest().getSession().removeAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
                 getRequest().getSession().removeAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS);
                 forward(MyTunesRssCommand.ShowPortal);

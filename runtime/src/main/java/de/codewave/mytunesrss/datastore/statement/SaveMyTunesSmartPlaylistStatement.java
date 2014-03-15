@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,17 +34,21 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
     }
 
     public void execute(Connection connection) throws SQLException {
-        handleIdAndUpdate(connection);
-        super.execute(connection);
-        SmartStatement statement = MyTunesRssUtils.createStatement(connection, isUpdate() ? "updateSmartInfo" : "insertSmartInfo");
-        statement.setString("playlist_id", getId());
-        Collection<List<Object>> params = new ArrayList<>();
-        for (SmartInfo smartInfo : mySmartInfos) {
-            params.add(Arrays.asList(new Object[] {smartInfo.getFieldType().name(), smartInfo.getPattern(), smartInfo.isInvert()}));
+        try {
+            handleIdAndUpdate(connection);
+            super.execute(connection);
+            SmartStatement statement = MyTunesRssUtils.createStatement(connection, isUpdate() ? "updateSmartInfo" : "insertSmartInfo");
+            statement.setString("playlist_id", getId());
+            Collection<List<Object>> params = new ArrayList<>();
+            for (SmartInfo smartInfo : mySmartInfos) {
+                params.add(Arrays.asList(new Object[] {smartInfo.getFieldType().name(), smartInfo.getPattern(), smartInfo.isInvert()}));
+            }
+            statement.setObject("param", params);
+            statement.execute();
+            myExecutedId = getId();
+        } finally {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         }
-        statement.setObject("param", params);
-        statement.execute();
-        myExecutedId = getId();
     }
 
     public String getPlaylistIdAfterExecute() {

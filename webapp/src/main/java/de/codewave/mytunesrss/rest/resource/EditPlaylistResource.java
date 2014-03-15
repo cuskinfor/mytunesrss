@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.rest.resource;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
@@ -280,6 +282,7 @@ public class EditPlaylistResource extends RestResource {
         }
         statement.setTrackIds(trackIds);
         TransactionFilter.getTransaction().executeStatement(statement);
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         request.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
         request.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
     }

@@ -93,7 +93,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
                 throw new ContentDirectoryException(ErrorCode.ARGUMENT_VALUE_INVALID, "Unexpected browse flag \"" + browseFlag.name() + "\".");
             }
             try {
-                return new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches());
+                return new BrowseResult(new DIDLParser().generate(content), content.getCount(), content.getTotalMatches(), getSystemUpdateID().getValue());
             } catch (Exception e) {
                 LOGGER.error("Could not create browse result.", e);
                 throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create browse result: " + e.getMessage());

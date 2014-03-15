@@ -2,6 +2,8 @@ package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
@@ -62,6 +64,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         } else {
             refreshSmartPlaylist(connection, mySmartInfos, myPlaylistId);
         }
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         LOGGER.info("Smart playlists have been refreshed.");
     }
 
@@ -218,11 +221,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             statement.setString("id", playlistId);
             statement.setObject("track_id", tracks);
             statement.execute();
-        } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could update smart playlist.", e);
-            }
-        } catch (ParseException e) {
+        } catch (IOException | ParseException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could update smart playlist.", e);
             }

@@ -5,6 +5,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 
@@ -25,5 +27,6 @@ public class DeletePlaylistStatement implements DataStoreStatement {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "deletePlaylistById");
         statement.setString("id", myId);
         statement.execute();
+        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
     }
 }

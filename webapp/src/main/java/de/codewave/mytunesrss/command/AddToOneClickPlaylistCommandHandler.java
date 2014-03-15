@@ -7,6 +7,8 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -50,6 +52,7 @@ public class AddToOneClickPlaylistCommandHandler extends MyTunesRssCommandHandle
             trackIds.addAll(getTrackIds(getTransaction().executeQuery(getQuery()).getResults()));
             statement.setTrackIds(trackIds);
             getTransaction().executeStatement(statement);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
             String backUrl = MyTunesRssBase64Utils.decodeToString(getRequestParameter("backUrl", null));
             if (StringUtils.isNotEmpty(backUrl)) {
                 redirect(backUrl);

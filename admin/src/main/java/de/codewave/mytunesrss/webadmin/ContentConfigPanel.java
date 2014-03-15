@@ -12,6 +12,8 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
@@ -238,6 +240,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                     } catch (RuntimeException e) {
                         LOG.warn("Unhandled exception during database update after content config change.", e);
                     } finally {
+                        MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
                         applicationWindow.hideBlockingMessage();
                     }
                     return null;

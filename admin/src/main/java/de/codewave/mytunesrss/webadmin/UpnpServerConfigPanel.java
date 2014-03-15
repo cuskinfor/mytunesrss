@@ -9,6 +9,8 @@ import com.vaadin.data.validator.StringLengthValidator;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.event.MyTunesRssEvent;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.vaadin.SmartTextField;
@@ -99,21 +101,25 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected void writeToConfig() {
-        String oldServerName = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName());
-        boolean oldServerState = MyTunesRss.CONFIG.isUpnpMediaServerActive();
-        MyTunesRss.CONFIG.setUpnpMediaServerActive(myServerActiveCheckbox.booleanValue());
-        MyTunesRss.CONFIG.setUpnpMediaServerName(StringUtils.trimToNull(myServerName.getStringValue(null)));
-        MyTunesRss.MEDIA_SERVER_CONFIG.setDefaultClientProfile(myDefaultProfile);
-        MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(new ArrayList<>(myProfiles));
-        if (MyTunesRss.CONFIG.isUpnpMediaServerActive() != oldServerState || !StringUtils.equals(oldServerName, StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()))) {
-            MyTunesRss.stopUpnpMediaServer();
-            MyTunesRss.startUpnpMediaServer();
-        }
         try {
-            MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);
-            MyTunesRss.CONFIG.save();
-        } catch (IOException ignored) {
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("upnpServerConfigPanel.error.save");
+            String oldServerName = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName());
+            boolean oldServerState = MyTunesRss.CONFIG.isUpnpMediaServerActive();
+            MyTunesRss.CONFIG.setUpnpMediaServerActive(myServerActiveCheckbox.booleanValue());
+            MyTunesRss.CONFIG.setUpnpMediaServerName(StringUtils.trimToNull(myServerName.getStringValue(null)));
+            MyTunesRss.MEDIA_SERVER_CONFIG.setDefaultClientProfile(myDefaultProfile);
+            MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(new ArrayList<>(myProfiles));
+            if (MyTunesRss.CONFIG.isUpnpMediaServerActive() != oldServerState || !StringUtils.equals(oldServerName, StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()))) {
+                MyTunesRss.stopUpnpMediaServer();
+                MyTunesRss.startUpnpMediaServer();
+            }
+            try {
+                MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);
+                MyTunesRss.CONFIG.save();
+            } catch (IOException ignored) {
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("upnpServerConfigPanel.error.save");
+            }
+        } finally {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         }
     }
 
