@@ -206,6 +206,7 @@ public class LuceneTrackService {
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
             }
+            LOGGER.debug("Lucene query returned " + trackIds.size() + " tracks.");
             return new ArrayList<>(trackIds);
         } finally {
             if (isearcher != null) {
