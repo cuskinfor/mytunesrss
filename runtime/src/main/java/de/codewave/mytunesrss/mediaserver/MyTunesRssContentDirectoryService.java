@@ -5,6 +5,13 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.utils.sql.EmptyQueryResult;
+import de.codewave.utils.sql.QueryResult;
+import org.apache.lucene.queryParser.ParseException;
 import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.support.contentdirectory.ContentDirectoryException;
 import org.fourthline.cling.support.contentdirectory.DIDLParser;
@@ -14,7 +21,9 @@ import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -111,7 +120,19 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             throw new ContentDirectoryException(ErrorCode.ACTION_NOT_AUTHORIZED, "No client profile found for client at " + AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress() + ".");
         }
         LOGGER.debug("Received search request [containerID=\"{}\", searchCriteria=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {containerId, searchCriteria, filter, firstResult, maxResults, orderBy});
-        return super.search(containerId, searchCriteria, filter, firstResult, maxResults, orderBy);
+        try {
+            SearchDIDL searchDIDL = new SearchDIDL();
+            searchDIDL.initDirectChildren(searchCriteria, filter, firstResult, maxResults, orderBy);
+            try {
+                return new BrowseResult(new DIDLParser().generate(searchDIDL), searchDIDL.getCount(), searchDIDL.getTotalMatches(), getSystemUpdateID().getValue());
+            } catch (Exception e) {
+                LOGGER.error("Could not create browse result.", e);
+                throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create browse result: " + e.getMessage());
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Could not create search result.", e);
+            throw new ContentDirectoryException(ErrorCode.ACTION_FAILED, "Could not create search result: " + e.getMessage());
+        }
     }
 
 }

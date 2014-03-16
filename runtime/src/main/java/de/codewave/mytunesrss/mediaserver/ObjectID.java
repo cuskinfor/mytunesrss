@@ -10,7 +10,7 @@ public enum ObjectID {
     PlaylistFolder("pf"), Playlist("p"), PlaylistTrack("pt"), Albums("as"), Album("a"), AlbumTrack("at"), Artists("ars"), ArtistAlbums("aras"),
     ArtistAlbum("ara"), ArtistAlbumTrack("aat"), Genres("gs"), GenreAlbums("gas"), GenreAlbum("ga"), GenreAlbumTrack("gat"),
     Movies("ms"), Movie("m"), TvShows("vs"), TvShow("v"), TvShowSeason("vv"), TvShowEpisode("vvv"), PhotoAlbums("pas"), PhotoAlbum("pa"), Photo("ph"),
-    Root("0");
+    Root("0"), SearchResultTrack("srt");
 
     private String myValue;
 

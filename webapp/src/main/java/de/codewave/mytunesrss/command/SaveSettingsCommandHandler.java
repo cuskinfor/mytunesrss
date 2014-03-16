@@ -126,7 +126,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 addError(new BundleError("error.settingsPageSizeRange"));
                 return true;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             addError(new BundleError("error.settingsPageSizeRange"));
             return true;
         }
@@ -140,7 +140,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 addError(new BundleError("error.settingsMaxSearchResultsRange"));
                 return true;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             addError(new BundleError("error.settingsMaxSearchResultsRange"));
             return true;
         }
@@ -154,7 +154,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 addError(new BundleError("error.settingsPhotoPageSizeRange"));
                 return true;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             addError(new BundleError("error.settingsPhotoPageSizeRange"));
             return true;
         }
@@ -168,7 +168,7 @@ public class SaveSettingsCommandHandler extends MyTunesRssCommandHandler {
                 addError(new BundleError("error.settingsPhotoJpegQualityRange"));
                 return true;
             }
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
             addError(new BundleError("error.settingsPhotoJpegQualityRange"));
             return true;
         }
