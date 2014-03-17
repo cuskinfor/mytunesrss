@@ -31,6 +31,8 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
     private List<Integer> myPhotoSizes = Arrays.asList(1024, 2048, 4096, 0);
     private List<String> myTranscoders = Collections.emptyList();
     private String myUsername;
+    private int myMaxSearchResults = 1000;
+    private int mySearchFuzziness = 35;
 
     @XmlElement
     public String getName() {
@@ -149,4 +151,21 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
         return StringUtils.isNotBlank(getUsername()) ? MyTunesRss.CONFIG.getUser(getUsername()) : null;
     }
 
+    @XmlElement
+    public int getMaxSearchResults() {
+        return myMaxSearchResults;
+    }
+
+    public void setMaxSearchResults(int maxSearchResults) {
+        myMaxSearchResults = maxSearchResults;
+    }
+
+    @XmlElement
+    public int getSearchFuzziness() {
+        return mySearchFuzziness;
+    }
+
+    public void setSearchFuzziness(int searchFuzziness) {
+        mySearchFuzziness = searchFuzziness;
+    }
 }

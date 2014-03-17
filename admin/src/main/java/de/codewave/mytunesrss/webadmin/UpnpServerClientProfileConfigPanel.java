@@ -14,6 +14,7 @@ import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
+import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import de.codewave.vaadin.validation.NetworkValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -35,10 +36,13 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myUserAgentPatternField;
     private SmartTextField myNetworkField;
     private SmartTextField myPhotoSizesField;
+    private SmartTextField myMaxSearchResultsField;
+    private SmartTextField mySearchMatchAccuracyField;
     private LinkedHashMap<String, CheckBox> myTranscoderCheckboxes = new LinkedHashMap<>();
     private Form myGeneralForm;
     private Form myActivationForm;
     private Form myPhotosForm;
+    private Form mySearchForm;
     private Form myTranscodersForm;
 
     public UpnpServerClientProfileConfigPanel(UpnpServerConfigPanel upnpServerConfigPanel, Set<String> usedProfileNames, Runnable saveRunnable, MediaServerClientProfile mediaServerClientProfile, boolean defaultProfile) {
@@ -51,7 +55,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
 
     public void attach() {
         super.attach();
-        init(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+        init(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
 
         myGeneralForm = getComponentFactory().createForm(null, false);
         myNameField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.name", new StringLengthValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.name", 1, 100), 1, 100, false));
@@ -76,7 +80,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
             @Override
             public boolean isValid(Object value) {
                 int sizes = 0;
-                for (String s : StringUtils.split((String)value, ",")) {
+                for (String s : StringUtils.split((String) value, ",")) {
                     try {
                         Integer.parseInt(s);
                         sizes++;
@@ -87,8 +91,16 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
                 return sizes > 0;
             }
         });
-        myPhotosForm.addField(myPhotoSizesField, myPhotoSizesField);
+        myPhotosForm.addField("photo.sizes", myPhotoSizesField);
         addComponent(getComponentFactory().surroundWithPanel(myPhotosForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.photos.caption")));
+        mySearchForm = getComponentFactory().createForm(null, false);
+        myMaxSearchResultsField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.searchMaxResults", new MinMaxIntegerValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.searchMaxResults", 1, 10000), 1, 10000));
+        myMaxSearchResultsField.setRequired(true);
+        mySearchMatchAccuracyField = getComponentFactory().createTextField("upnpServerConfigPanel.clientProfileConfigPanel.searchMatchAccuracy", new MinMaxIntegerValidator(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.error.searchMatchAccuracy", 10, 100), 10, 100));
+        mySearchMatchAccuracyField.setRequired(true);
+        mySearchForm.addField("search.maxResults", myMaxSearchResultsField);
+        mySearchForm.addField("search.matchAccuracy", mySearchMatchAccuracyField);
+        addComponent(getComponentFactory().surroundWithPanel(mySearchForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.search.caption")));
         myTranscodersForm = getComponentFactory().createForm(null, false);
         for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getEffectiveTranscoderConfigs()) {
             CheckBox checkbox = new CheckBox(transcoderConfig.getName());
@@ -96,13 +108,13 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
             myTranscodersForm.addField(checkbox, checkbox);
         }
         addComponent(getComponentFactory().surroundWithPanel(myTranscodersForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.transcoders.caption")));
-        addDefaultComponents(0, 4, 0, 4, false);
+        addDefaultComponents(0, 5, 0, 5, false);
         initFromConfig();
     }
 
     @Override
     protected boolean beforeSave() {
-        boolean valid = VaadinUtils.isValid(myGeneralForm, myActivationForm, myPhotosForm, myTranscodersForm);
+        boolean valid = VaadinUtils.isValid(myGeneralForm, myActivationForm, myPhotosForm, mySearchForm, myTranscodersForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
         } else if (myUsedProfileNames.contains(myNameField.getStringValue(null))) {
@@ -123,6 +135,8 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
             photoSizes.add(Integer.parseInt(size));
         }
         myMediaServerClientProfile.setPhotoSizes(photoSizes);
+        myMediaServerClientProfile.setMaxSearchResults(myMaxSearchResultsField.getIntegerValue(1000));
+        myMediaServerClientProfile.setSearchFuzziness(100 - mySearchMatchAccuracyField.getIntegerValue(65));
         List<String> transcoders = new ArrayList<>();
         for (Map.Entry<String, CheckBox> transcoderEntry : myTranscoderCheckboxes.entrySet()) {
             if (transcoderEntry.getValue().booleanValue()) {
@@ -144,6 +158,8 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
         myUserAgentPatternField.setValue(myMediaServerClientProfile.getUserAgentPattern(), "*");
         myNetworkField.setValue(myMediaServerClientProfile.getNetwork(), "");
         myPhotoSizesField.setValue(StringUtils.join(myMediaServerClientProfile.getPhotoSizes(), ","), "1024,0");
+        myMaxSearchResultsField.setValue(myMediaServerClientProfile.getMaxSearchResults());
+        mySearchMatchAccuracyField.setValue(100 - myMediaServerClientProfile.getSearchFuzziness());
         for (Map.Entry<String, CheckBox> transcoder : myTranscoderCheckboxes.entrySet()) {
             transcoder.getValue().setValue(myMediaServerClientProfile.getTranscoders().contains(transcoder.getKey()));
         }

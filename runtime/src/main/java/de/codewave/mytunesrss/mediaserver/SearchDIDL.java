@@ -26,7 +26,13 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
     @Override
     void createDirectChildren(final User user, DataStoreSession tx, String searchCriteria, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         try {
-            FindTrackQuery query = FindTrackQuery.getForSearchTerm(MyTunesRssDIDL.getClientProfile().getUser(), searchCriteria, 35, SortOrder.KeepOrder, 1000);
+            FindTrackQuery query = FindTrackQuery.getForSearchTerm(
+                    getClientProfile().getUser(),
+                    searchCriteria,
+                    getClientProfile().getSearchFuzziness(),
+                    SortOrder.KeepOrder,
+                    getClientProfile().getMaxSearchResults()
+            );
             executeAndProcess(tx, query, new DataStoreQuery.ResultProcessor<Track>() {
                 @Override
                 public void process(Track track) {
