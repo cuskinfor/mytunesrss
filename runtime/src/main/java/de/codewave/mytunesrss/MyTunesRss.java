@@ -1094,7 +1094,7 @@ public class MyTunesRss {
             directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class) {
                 @Override
                 protected int getLockTimeoutMillis() {
-                    return 10000; // TODO configuration
+                    return MyTunesRss.CONFIG.getUpnpMediaServerLockTimeoutSeconds() * 1000;
                 }
             });
             LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);

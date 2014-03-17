@@ -152,6 +152,7 @@ public class MyTunesRssConfig {
     private Map<String, String> myGenreMappings = new HashMap<>();
     private boolean myUpnpMediaServerActive;
     private String myUpnpMediaServerName;
+    private int myUpnpMediaServerLockTimeoutSeconds = 10;
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -1105,6 +1106,14 @@ public class MyTunesRssConfig {
         myUpnpMediaServerName = upnpMediaServerName;
     }
 
+    public int getUpnpMediaServerLockTimeoutSeconds() {
+        return myUpnpMediaServerLockTimeoutSeconds;
+    }
+
+    public void setUpnpMediaServerLockTimeoutSeconds(int upnpMediaServerLockTimeoutSeconds) {
+        myUpnpMediaServerLockTimeoutSeconds = upnpMediaServerLockTimeoutSeconds;
+    }
+
     private String encryptCreationTime(long creationTime) {
         String checksum = Long.toString(creationTime);
         try {
@@ -1329,6 +1338,7 @@ public class MyTunesRssConfig {
         myGenreMappings.remove(""); // if the default was used for any 'from' key
         setUpnpMediaServerActive(JXPathUtils.getBooleanValue(settings, "upnp-server-active", true));
         setUpnpMediaServerName(JXPathUtils.getStringValue(settings, "upnp-server-name", null));
+        setUpnpMediaServerLockTimeoutSeconds(JXPathUtils.getIntValue(settings, "upnp-server-timeout", 10));
     }
 
     /**
@@ -1770,6 +1780,7 @@ public class MyTunesRssConfig {
             if (StringUtils.isNotBlank(getUpnpMediaServerName())) {
                 root.appendChild(DOMUtils.createTextElement(settings, "upnp-server-name", getUpnpMediaServerName()));
             }
+            root.appendChild(DOMUtils.createIntElement(settings, "upnp-server-timeout", getUpnpMediaServerLockTimeoutSeconds()));
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();

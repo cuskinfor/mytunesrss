@@ -16,6 +16,7 @@ import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
+import de.codewave.vaadin.validation.MinMaxIntegerValidator;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -26,6 +27,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     private Form myServerForm;
     private CheckBox myServerActiveCheckbox;
     private SmartTextField myServerName;
+    private SmartTextField myLockTimeout;
     private Table myProfilesTable;
     private MediaServerClientProfile myDefaultProfile;
     private Set<MediaServerClientProfile> myProfiles;
@@ -39,9 +41,12 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         init(getBundleString("upnpServerConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         myServerActiveCheckbox = getComponentFactory().createCheckBox("upnpServerConfigPanel.server.active");
         myServerName = getComponentFactory().createTextField("upnpServerConfigPanel.server.name", new StringLengthValidator(getBundleString("upnpServerConfigPanel.error.name", 100), 0, 100, true));
+        myLockTimeout = getComponentFactory().createTextField("upnpServerConfigPanel.server.lockTimeout", new MinMaxIntegerValidator(getBundleString("upnpServerConfigPanel.error.lockTimeout", 1, 60), 1, 60));
+        myLockTimeout.setRequired(true);
         myServerForm = getComponentFactory().createForm(null, false);
-        myServerForm.addField(myServerActiveCheckbox, myServerActiveCheckbox);
-        myServerForm.addField(myServerName, myServerName);
+        myServerForm.addField("serverActive", myServerActiveCheckbox);
+        myServerForm.addField("serverName", myServerName);
+        myServerForm.addField("lockTimeout", myLockTimeout);
         addComponent(getComponentFactory().surroundWithPanel(myServerForm, FORM_PANEL_MARGIN_INFO, getBundleString("upnpServerConfigPanel.caption.server")));
         Panel profilesPanel = new Panel(getBundleString("upnpServerConfigPanel.caption.profiles"));
         profilesPanel.setContent(getComponentFactory().createVerticalLayout(true, true));
@@ -106,6 +111,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             boolean oldServerState = MyTunesRss.CONFIG.isUpnpMediaServerActive();
             MyTunesRss.CONFIG.setUpnpMediaServerActive(myServerActiveCheckbox.booleanValue());
             MyTunesRss.CONFIG.setUpnpMediaServerName(StringUtils.trimToNull(myServerName.getStringValue(null)));
+            MyTunesRss.CONFIG.setUpnpMediaServerLockTimeoutSeconds(myLockTimeout.getIntegerValue(10));
             MyTunesRss.MEDIA_SERVER_CONFIG.setDefaultClientProfile(myDefaultProfile);
             MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(new ArrayList<>(myProfiles));
             if (MyTunesRss.CONFIG.isUpnpMediaServerActive() != oldServerState || !StringUtils.equals(oldServerName, StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()))) {
@@ -127,6 +133,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
     protected void initFromConfig() {
         myServerActiveCheckbox.setValue(MyTunesRss.CONFIG.isUpnpMediaServerActive());
         myServerName.setValue(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()));
+        myLockTimeout.setValue(MyTunesRss.CONFIG.getUpnpMediaServerLockTimeoutSeconds());
         myProfilesTable.removeAllItems();
         for (MediaServerClientProfile mediaServerClientProfile : myProfiles) {
             addClientProfileTableItem(mediaServerClientProfile);
