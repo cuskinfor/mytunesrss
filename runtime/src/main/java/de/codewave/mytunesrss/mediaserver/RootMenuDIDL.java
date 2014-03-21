@@ -71,7 +71,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
 
     @Override
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
-        addContainer(createSimpleContainer("0", "", 7));
+        addContainer(createSimpleContainer("0", "", "MyTunesRSS", 7));
         myTotalMatches = 1;
     }
 

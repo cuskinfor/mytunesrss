@@ -50,9 +50,13 @@ public class AlbumDIDL extends MyTunesRssContainerDIDL {
         );
         findAlbumQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         Album album = tx.executeQuery(findAlbumQuery).nextResult();
-        Container container = createSimpleContainer(getParentId(album.getName(), album.getArtist()), ObjectID.Albums.getValue(), album.getTrackCount());
-        addUpnpAlbumArtUri(user, album.getImageHash(), container);
-        addContainer(container);
-        myTotalMatches = 1;
+        if (album != null) {
+            Container container = createSimpleContainer(getParentId(album.getName(), album.getArtist()), ObjectID.Albums.getValue(), album.getTrackCount());
+            addUpnpAlbumArtUri(user, album.getImageHash(), container);
+            addContainer(container);
+            myTotalMatches = 1;
+        } else {
+            myTotalMatches = 0;
+        }
     }
 }
