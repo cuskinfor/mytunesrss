@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.NotYetImplementedException;
 import de.codewave.utils.sql.*;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryParser.ParseException;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
@@ -25,10 +26,12 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
 
     @Override
     void createDirectChildren(final User user, DataStoreSession tx, String searchCriteria, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+        String searchTerms = extractSearchTerms(searchCriteria);
+        LOGGER.debug("Extracted search terms \"" + searchTerms + "\".");
         try {
             FindTrackQuery query = FindTrackQuery.getForSearchTerm(
                     getClientProfile().getUser(),
-                    searchCriteria,
+                    searchTerms,
                     getClientProfile().getSearchFuzziness(),
                     SortOrder.KeepOrder,
                     getClientProfile().getMaxSearchResults()
@@ -57,5 +60,20 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
     void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         throw new NotYetImplementedException();
     }
+
+    private String extractSearchTerms(String searchCriteria) {
+        String prefix = "dc:title contains \"";
+        if (StringUtils.startsWith(searchCriteria, prefix) && StringUtils.endsWith(searchCriteria, "\"")) {
+            String escapedSearchTerm = StringUtils.trimToEmpty(searchCriteria.substring(prefix.length(), searchCriteria.length() - 1));
+            String test = escapedSearchTerm.replace("\\\\", "").replace("\\\"", "");
+            // after removing all escaped backslashes and double-quotes we should not have any more backslashes in a valid query
+            if (!StringUtils.contains(test, "\\")) {
+                return escapedSearchTerm.replace("\\\\", "\\").replace("\\\"", "\"");
+            }
+        }
+        LOGGER.warn("Search criteria \"" + searchCriteria + "\" not supported.");
+        throw new UnsupportedOperationException("Search criteria \"" + searchCriteria + "\" not supported.");
+    }
+
 
 }
