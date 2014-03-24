@@ -54,10 +54,14 @@ import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
+import org.fourthline.cling.model.message.header.UDADeviceTypeHeader;
 import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.model.types.DeviceType;
 import org.fourthline.cling.model.types.UDADeviceType;
+import org.fourthline.cling.model.types.UDAServiceType;
 import org.fourthline.cling.model.types.UDN;
+import org.fourthline.cling.registry.DefaultRegistryListener;
+import org.fourthline.cling.registry.Registry;
 import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -206,6 +210,7 @@ public class MyTunesRss {
     private static UpnpService UPNP_SERVICE;
     private static MyTunesRssEventListener UPNP_DATABASE_UPDATE_LISTENER;
     public static MediaServerConfig MEDIA_SERVER_CONFIG;
+    private static final Set<RemoteDevice> MEDIA_RENDERS = new HashSet<>();
 
     public static void main(final String[] args) throws IOException, AWTException, SchedulerException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, DatabaseJobRunningException, ValidationException {
         PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
@@ -1049,8 +1054,48 @@ public class MyTunesRss {
                     }
                 }
             });
+            addMediaRendererListener();
+            LOGGER.debug("Initial media renderer search.");
+            UPNP_SERVICE.getControlPoint().search(new UDADeviceTypeHeader(new UDADeviceType("MediaRenderer")));
         } else {
             LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
+        }
+    }
+
+    private static void addMediaRendererListener() {
+        UPNP_SERVICE.getRegistry().addListener(new DefaultRegistryListener() {
+
+            @Override
+            public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
+                if (isMediaRendererWithAvTransport(device)) {
+                    synchronized (MEDIA_RENDERS) {
+                        if (MEDIA_RENDERS.add(device)) {
+                            LOGGER.info("Added media renderer: " + device.getIdentity());
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
+                synchronized (MEDIA_RENDERS) {
+                    if (MEDIA_RENDERS.remove(device)) {
+                        LOGGER.info("Removed media renderer: " + device.getIdentity());
+                    }
+                }
+            }
+
+            private boolean isMediaRendererWithAvTransport(RemoteDevice device) {
+                return "MediaRenderer".equals(device.getType().getType()) && device.getType().getVersion() == 1 && device.findService(new UDAServiceType("AVTransport", 1)) != null;
+            }
+
+
+        });
+    }
+    
+    public static Set<RemoteDevice> getMediaRenders() {
+        synchronized (MEDIA_RENDERS) {
+            return new HashSet<>(MEDIA_RENDERS);
         }
     }
 
