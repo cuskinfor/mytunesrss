@@ -28,6 +28,9 @@
             <action dev="mdescher" type="update">
                 Updated bundled Windows JRE to 7u51.
             </action>
+            <action dev="mdescher" type="update">
+                MyTunesRSS requires Java 7 now.
+            </action>
         </release>
 
         <release version="5.0.2" date="___D___">
