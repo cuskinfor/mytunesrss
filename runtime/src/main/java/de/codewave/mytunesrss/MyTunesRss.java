@@ -10,21 +10,18 @@ import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
 import de.codewave.mytunesrss.cache.FileSystemCache;
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
-import de.codewave.mytunesrss.config.RouterConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.statement.FindAllTracksQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
-import de.codewave.mytunesrss.event.MyTunesRssEventListener;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.mytunesrss.lucene.AddLuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
-import de.codewave.mytunesrss.mediaserver.MyTunesRssContentDirectoryService;
 import de.codewave.mytunesrss.network.MulticastService;
 import de.codewave.mytunesrss.server.WebServer;
 import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
@@ -32,13 +29,16 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
+import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
 import de.codewave.mytunesrss.vlc.VlcPlayer;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.QueryResult;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -49,20 +49,7 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.fourthline.cling.UpnpService;
-import org.fourthline.cling.UpnpServiceImpl;
-import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
-import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
-import org.fourthline.cling.model.message.header.UDADeviceTypeHeader;
-import org.fourthline.cling.model.meta.*;
-import org.fourthline.cling.model.types.DeviceType;
-import org.fourthline.cling.model.types.UDADeviceType;
-import org.fourthline.cling.model.types.UDAServiceType;
-import org.fourthline.cling.model.types.UDN;
-import org.fourthline.cling.registry.DefaultRegistryListener;
-import org.fourthline.cling.registry.Registry;
-import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -139,7 +126,6 @@ public class MyTunesRss {
     public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
     public static final long STARTUP_TIME = System.currentTimeMillis();
     private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<>(10);
-    private static final UDN UDN_MEDIASERVER = UDN.uniqueSystemIdentifier("MyTunesRSS-MediaServer");
     public static String VERSION;
     public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
@@ -195,7 +181,6 @@ public class MyTunesRss {
     public static MyTunesRssForm FORM;
     public static AtomicReference<MyTunesRssEvent> LAST_DATABASE_EVENT = new AtomicReference<>();
     public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
-    public static RouterConfig ROUTER_CONFIG = new RouterConfig();
     public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();
     public static String CACHE_DATA_PATH;
     public static String PREFERENCES_DATA_PATH;
@@ -207,10 +192,8 @@ public class MyTunesRss {
     public static String HEAPDUMP_FILENAME;
     public static ClassLoader EXTRA_CLASSLOADER;
     public static File INTERNAL_MYSQL_SERVER_PATH;
-    private static UpnpService UPNP_SERVICE;
-    private static MyTunesRssEventListener UPNP_DATABASE_UPDATE_LISTENER;
     public static MediaServerConfig MEDIA_SERVER_CONFIG;
-    private static final Set<RemoteDevice> MEDIA_RENDERS = new HashSet<>();
+    public static MyTunesRssUpnpService UPNP_SERVICE;
 
     public static void main(final String[] args) throws IOException, AWTException, SchedulerException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, DatabaseJobRunningException, ValidationException {
         PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
@@ -250,33 +233,7 @@ public class MyTunesRss {
             System.exit(0);
         }
         // shutdown hook
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                LOGGER.info("Running shutdown hook.");
-                // try to kill all still running processes
-                LOGGER.info("Trying to kill " + SPAWNED_PROCESSES.size() + " previously spawned processes.");
-                for (Process process : SPAWNED_PROCESSES) {
-                    process.destroy();
-                }
-                // try to do the best to shutdown the store in a clean way to keep H2 databases intact
-                if (STORE != null && STORE.isInitialized()) {
-                    LOGGER.info("Destroying still initialized store.");
-                    STORE.destroy();
-                }
-                // try to kill internal mysql database
-                if (CONFIG.getDatabaseType() == DatabaseType.mysqlinternal) {
-                    LOGGER.info("Trying to shutdown internal mysql server.");
-                    try {
-                        Class clazz = Class.forName("com.mysql.management.driverlaunched.ServerLauncherSocketFactory", true, EXTRA_CLASSLOADER);
-                        clazz.getMethod("shutdown", File.class, File.class).invoke(null, INTERNAL_MYSQL_SERVER_PATH, null);
-                    } catch (Exception e) {
-                        LOGGER.warn("Could not shutdown internal mysql server.", e);
-                    }
-                }
-
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(new ShutdownHook()));
         Thread.setDefaultUncaughtExceptionHandler(UNCAUGHT_HANDLER);
         prepareLogging();
         LOGGER.info("Command line: " + StringUtils.join(args, " "));
@@ -365,8 +322,9 @@ public class MyTunesRss {
                 }
             });
         }
-        startUpnpService();
-        startUpnpMediaServer();
+        UPNP_SERVICE = new MyTunesRssUpnpService();
+        UPNP_SERVICE.start();
+        UPNP_SERVICE.startMediaServer();
         startWebserver();
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
@@ -848,7 +806,9 @@ public class MyTunesRss {
             adminContext.setHandler(MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz())); // TODO config
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
-            ROUTER_CONFIG.addAdminPortMapping(adminPort);
+            if (MyTunesRss.CONFIG.isUpnpAdmin()) {
+                MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(adminPort, MyTunesRssUpnpService.NAME_ADMIN_MAPPING);
+            }
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could start admin server.", e);
@@ -901,7 +861,7 @@ public class MyTunesRss {
 
     public static boolean stopAdminServer() {
         try {
-            ROUTER_CONFIG.deleteAdminPortMapping();
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getAdminPort());
             ADMIN_SERVER.stop();
             ADMIN_SERVER.join();
             FileUtils.deleteQuietly(new File(MyTunesRss.CACHE_DATA_PATH, "adminport"));
@@ -1037,127 +997,6 @@ public class MyTunesRss {
         public void handleReOpenApplication() {
             LOGGER.debug("Apple extension: handleReOpenApplication. Ignored in headless mode.");
         }
-    }
-
-    private static void startUpnpService() throws ValidationException, IOException {
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if (feedback == null || feedback.isValid()) {
-            UPNP_SERVICE = new UpnpServiceImpl();
-            Runtime.getRuntime().addShutdownHook(new Thread() {
-                @Override
-                public void run() {
-                    try {
-                        LOGGER.info("Shutting down UPnP service.");
-                        UPNP_SERVICE.shutdown();
-                    } catch (RuntimeException e) {
-                        LOGGER.warn("Could not complete shutdown hook for UPnP service.", e);
-                    }
-                }
-            });
-            addMediaRendererListener();
-            LOGGER.debug("Initial media renderer search.");
-            UPNP_SERVICE.getControlPoint().search(new UDADeviceTypeHeader(new UDADeviceType("MediaRenderer")));
-        } else {
-            LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
-        }
-    }
-
-    private static void addMediaRendererListener() {
-        UPNP_SERVICE.getRegistry().addListener(new DefaultRegistryListener() {
-
-            @Override
-            public void remoteDeviceAdded(Registry registry, RemoteDevice device) {
-                if (isMediaRendererWithAvTransport(device)) {
-                    synchronized (MEDIA_RENDERS) {
-                        if (MEDIA_RENDERS.add(device)) {
-                            LOGGER.info("Added media renderer: " + device.getIdentity());
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void remoteDeviceRemoved(Registry registry, RemoteDevice device) {
-                synchronized (MEDIA_RENDERS) {
-                    if (MEDIA_RENDERS.remove(device)) {
-                        LOGGER.info("Removed media renderer: " + device.getIdentity());
-                    }
-                }
-            }
-
-            private boolean isMediaRendererWithAvTransport(RemoteDevice device) {
-                return "MediaRenderer".equals(device.getType().getType()) && device.getType().getVersion() == 1 && device.findService(new UDAServiceType("AVTransport", 1)) != null;
-            }
-
-
-        });
-    }
-    
-    public static Set<RemoteDevice> getMediaRenders() {
-        synchronized (MEDIA_RENDERS) {
-            return new HashSet<>(MEDIA_RENDERS);
-        }
-    }
-
-    public static void startUpnpMediaServer() {
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if ((feedback == null || feedback.isValid()) && MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
-            final LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
-            UPNP_DATABASE_UPDATE_LISTENER = new MyTunesRssEventListener() {
-                @Override
-                public void handleEvent(MyTunesRssEvent event) {
-                    if (event.getType() == MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE) {
-                        MyTunesRssContentDirectoryService contentDirectoryService = directoryService.getManager().getImplementation();
-                        String oldId = contentDirectoryService.getSystemUpdateID().toString();
-                        contentDirectoryService.changeSystemUpdateID();
-                        String newId = contentDirectoryService.getSystemUpdateID().toString();
-                        LOGGER.info("Changing media server system update ID from {} to {}.", oldId, newId);
-                    }
-                }
-            };
-            DeviceIdentity identity = new DeviceIdentity(UDN_MEDIASERVER);
-            DeviceType type = new UDADeviceType("MediaServer", 1);
-            String mediaServerName = MyTunesRss.CONFIG.getUpnpMediaServerName();
-            if (StringUtils.isBlank(mediaServerName)) {
-                try {
-                    mediaServerName = InetAddress.getLocalHost().getHostName();
-                } catch (UnknownHostException e) {
-                    LOGGER.debug("Could not get hostname.", e);
-                }
-            }
-            DeviceDetails details = new DeviceDetails(StringUtils.isNotBlank(mediaServerName) ? "MyTunesRSS: " + mediaServerName : "MyTunesRSS", new ManufacturerDetails("Codewave Software"), new ModelDetails("MyTunesRSS", "MyTunesRSS Media Server", MyTunesRss.VERSION));
-            org.fourthline.cling.model.meta.Icon icon = null;
-            try {
-                File tempFile = File.createTempFile("mytunesrss-mediaserver-", ".png");
-                try (InputStream is = MyTunesRss.class.getResourceAsStream("/de/codewave/mytunesrss/mediaserver48.png"); OutputStream os = new FileOutputStream(tempFile)) {
-                    IOUtils.copyLarge(is, os);
-                }
-                icon = new org.fourthline.cling.model.meta.Icon("image/png", 48, 48, 8, tempFile);
-            } catch (RuntimeException | IOException e) {
-                LOGGER.warn("Could not create icon for UPnP Media Server.", e);
-            }
-            directoryService.setManager(new DefaultServiceManager(directoryService, MyTunesRssContentDirectoryService.class) {
-                @Override
-                protected int getLockTimeoutMillis() {
-                    return MyTunesRss.CONFIG.getUpnpMediaServerLockTimeoutSeconds() * 1000;
-                }
-            });
-            LocalService<ConnectionManagerService> connectionManagerService = new AnnotationLocalServiceBinder().read(ConnectionManagerService.class);
-            connectionManagerService.setManager(new DefaultServiceManager<>(connectionManagerService, ConnectionManagerService.class));
-            try {
-                MyTunesRss.UPNP_SERVICE.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[] {directoryService, connectionManagerService}));
-                MyTunesRssEventManager.getInstance().addListener(UPNP_DATABASE_UPDATE_LISTENER);
-            } catch (ValidationException e) {
-                LOGGER.warn("Could not add UPnP Media Server device.");
-            }
-        }
-    }
-
-    public static void stopUpnpMediaServer() {
-        LOGGER.info("Shutting down UPnP Media Server.");
-        MyTunesRssEventManager.getInstance().removeListener(UPNP_DATABASE_UPDATE_LISTENER);
-        UPNP_DATABASE_UPDATE_LISTENER = null;
-        MyTunesRss.UPNP_SERVICE.getRegistry().removeDevice(UDN_MEDIASERVER);
     }
 
 }

@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
+import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
 import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
@@ -206,8 +207,9 @@ public class MyTunesRssUtils {
                 MyTunesRss.stopAdminServer();
             }
             LOGGER.info("Shutting down executor services.");
-            MyTunesRss.ROUTER_CONFIG.deleteUserPortMappings();
-            MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getPort());
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getSslPort());
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getAdminPort());
             MyTunesRss.EXECUTOR_SERVICE.shutdown();
             if (MyTunesRss.QUARTZ_SCHEDULER != null) {
                 try {

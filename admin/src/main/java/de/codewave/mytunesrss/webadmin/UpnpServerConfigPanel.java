@@ -115,8 +115,8 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
             MyTunesRss.MEDIA_SERVER_CONFIG.setDefaultClientProfile(myDefaultProfile);
             MyTunesRss.MEDIA_SERVER_CONFIG.setClientProfiles(new ArrayList<>(myProfiles));
             if (MyTunesRss.CONFIG.isUpnpMediaServerActive() != oldServerState || !StringUtils.equals(oldServerName, StringUtils.trimToEmpty(MyTunesRss.CONFIG.getUpnpMediaServerName()))) {
-                MyTunesRss.stopUpnpMediaServer();
-                MyTunesRss.startUpnpMediaServer();
+                MyTunesRss.UPNP_SERVICE.shutdownMediaServer();
+                MyTunesRss.UPNP_SERVICE.startMediaServer();
             }
             try {
                 MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);

@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.server;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
 import de.codewave.utils.servlet.SessionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -119,7 +120,12 @@ public class WebServer {
                     throw new ServerStartException(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.serverStart"));
                 }
             }
-            MyTunesRss.ROUTER_CONFIG.addUserPortMappings();
+            if (MyTunesRss.CONFIG.isUpnpUserHttp()) {
+                MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getPort(), MyTunesRssUpnpService.NAME_USER_MAPPING_HTTP);
+            }
+            if (MyTunesRss.CONFIG.isUpnpUserHttps()) {
+                MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getSslPort(), MyTunesRssUpnpService.NAME_USER_MAPPING_HTTPS);
+            }
             myRunning.set(true);
             int localPort = myServer.getConnectors()[0].getLocalPort();
             LOGGER.debug("Started user server on port " + localPort + ".");
@@ -225,7 +231,7 @@ public class WebServer {
     public synchronized boolean stop() {
         if (myServer != null) {
             try {
-                MyTunesRss.ROUTER_CONFIG.deleteAdminPortMapping();
+                MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getAdminPort());
                 myServer.stop();
                 myServer.join();
             } catch (Exception e) {

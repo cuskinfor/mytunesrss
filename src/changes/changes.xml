@@ -9,6 +9,9 @@
 
         <release version="6.0.0" date="___D___">
             <action dev="mdescher" type="add">
+                [MYTUNESRSS-476] Routerkonfiguration mit Cling Lib neu implementieren
+            </action>
+            <action dev="mdescher" type="add">
                 [MYTUNESRSS-484] Add original photo size (width and height) to database
             </action>
             <action dev="mdescher" type="add">
