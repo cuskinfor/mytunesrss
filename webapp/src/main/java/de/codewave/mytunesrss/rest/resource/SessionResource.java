@@ -16,9 +16,11 @@ import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
+import de.codewave.mytunesrss.rest.representation.MediaRendererRepresentation;
 import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
 import de.codewave.utils.servlet.ServletUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.fourthline.cling.model.meta.RemoteDevice;
 import org.jboss.resteasy.annotations.GZIP;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
@@ -60,6 +62,9 @@ public class SessionResource extends RestResource {
         if (IncludeExcludeInterceptor.isAttr("airtunesTargets")) {
             session.setAirtunesTargets(getAirtunesTargets());
         }
+        if (IncludeExcludeInterceptor.isAttr("mediaRenderers")) {
+            session.setMediaRenderers(getMediaRenderers());
+        }
         if (IncludeExcludeInterceptor.isAttr("sessionTimeoutMinutes")) {
             session.setSessionTimeoutMinutes(user.getSessionTimeout());
         }
@@ -76,6 +81,14 @@ public class SessionResource extends RestResource {
             airtunesTargets.add(new BonjourDeviceRepresentation(device));
         }
         return airtunesTargets;
+    }
+
+    private List<MediaRendererRepresentation> getMediaRenderers() {
+        List<MediaRendererRepresentation> representations = new ArrayList<>();
+        for (RemoteDevice device : MyTunesRss.UPNP_SERVICE.getMediaRenders()) {
+            representations.add(new MediaRendererRepresentation(device));
+        }
+        return representations;
     }
 
     public List<String> getTranscoders(User user) {

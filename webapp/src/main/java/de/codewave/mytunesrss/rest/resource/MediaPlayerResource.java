@@ -8,6 +8,7 @@ package de.codewave.mytunesrss.rest.resource;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.remotecontrol.MediaRendererRemoteController;
 import de.codewave.mytunesrss.remotecontrol.NoopRemoteController;
 import de.codewave.mytunesrss.remotecontrol.RemoteController;
 import de.codewave.mytunesrss.remotecontrol.VlcPlayerRemoteController;
@@ -17,6 +18,7 @@ import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import org.apache.commons.lang3.StringUtils;
+import org.fourthline.cling.model.meta.RemoteDevice;
 import org.jboss.resteasy.spi.BadRequestException;
 import org.jboss.resteasy.spi.validation.ValidateRequest;
 
@@ -38,7 +40,8 @@ public class MediaPlayerResource extends RestResource {
     }
 
     private RemoteController getController() {
-        return MyTunesRss.VLC_PLAYER != null ? new VlcPlayerRemoteController() : new NoopRemoteController();
+        return MediaRendererRemoteController.getInstance();
+        //return MyTunesRss.VLC_PLAYER != null ? new VlcPlayerRemoteController() : new NoopRemoteController();
     }
 
     /**
@@ -83,7 +86,7 @@ public class MediaPlayerResource extends RestResource {
     }
 
     /**
-     * Add tracks to the current paylist.
+     * Add tracks to the current playlist.
      *
      * @param tracks List of track IDs to add.
      * @param autostart Start playback after adding the tracks if not currently playing.
@@ -123,11 +126,11 @@ public class MediaPlayerResource extends RestResource {
      * Set player status.
      *
      * @param volume Volume [0-100].
-     * @param fullscreen "true" to activate fullscreen playback of video files or "false" to decative fullscreen playback.
-     * @param targets List of airtunes targets.
+     * @param fullscreen "true" to activate fullscreen playback of video files or "false" to deactivate fullscreen playback.
+     * @param renderer Target media renderer.
      * @param action Controller action (One of "PLAY", "PAUSE", "STOP", "SEEK", "SHUFFLE", "NEXT", "PREVIOUS").
      * @param track Track index (when using action "PLAY").
-     * @param seek Seek position (when usin action "SEEK").
+     * @param seek Seek position (when using action "SEEK").
      *
      * @return The current media player status.
      *
@@ -138,7 +141,7 @@ public class MediaPlayerResource extends RestResource {
     public MediaPlayerRepresentation setStatus(
             @FormParam("volume") Integer volume,
             @FormParam("fullscreen") Boolean fullscreen,
-            @FormParam("airtunes") String[] targets,
+            @FormParam("renderer") String renderer,
             @FormParam("action") Action action,
             @FormParam("track") @DefaultValue("-1") int track,
             @FormParam("seek") Integer seek
@@ -152,8 +155,13 @@ public class MediaPlayerResource extends RestResource {
         if (seek != null) {
             getController().seek(seek);
         }
-        if (targets != null && targets.length > 0) {
-            getController().setAirtunesTargets(targets);
+        if (StringUtils.isNotBlank(renderer)) {
+            for (RemoteDevice device : MyTunesRss.UPNP_SERVICE.getMediaRenders()) {
+                if (renderer.equals(device.getIdentity().getUdn().getIdentifierString())) {
+                    getController().setMediaRenderer(device);
+                    break;
+                }
+            }
         }
         if (action != null) {
             switch (action) {

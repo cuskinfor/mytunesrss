@@ -19,6 +19,8 @@ public class SessionRepresentation implements RestRepresentation {
 
     private List<BonjourDeviceRepresentation> myAirtunesTargets;
 
+    private List<MediaRendererRepresentation> myMediaRenderers;
+
     private List<String> myPermissions;
 
     private Integer mySessionTimeoutMinutes;
@@ -56,6 +58,17 @@ public class SessionRepresentation implements RestRepresentation {
 
     public void setAirtunesTargets(List<BonjourDeviceRepresentation> airtunesTargets) {
         myAirtunesTargets = airtunesTargets;
+    }
+
+    /**
+     * List of available media renderers that can be used for the media player.
+     */
+    public List<MediaRendererRepresentation> getMediaRenderers() {
+        return myMediaRenderers;
+    }
+
+    public void setMediaRenderers(List<MediaRendererRepresentation> mediaRenderers) {
+        myMediaRenderers = mediaRenderers;
     }
 
     /**

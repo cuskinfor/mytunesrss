@@ -318,27 +318,19 @@
 	</div>
 
     <script type="text/javascript">
-        function selectAirtunesTargets() {
-            var targets = [];
-            $jQ('#devicelist :checked').each(function() {
-                targets.push($jQ(this).val());
-            });
-            if (targets.length > 0) {
-                $jQ.modal.close();
-                showLoading('<fmt:message key="switchingAirtunesTarget"/>');
-                MediaPlayerResource.setStatus({airtunes:targets});
-                hideLoading();
-            } else {
-                displayError('<fmt:message key="airtunesTargetDialog.selectAtLeastOneSpeaker"/>');
-            }
+        function selectMediaRenderer(rendererId) {
+            $jQ.modal.close();
+            showLoading('<fmt:message key="switchingAirtunesTarget"/>');
+            MediaPlayerResource.setStatus({renderer:rendererId});
+            hideLoading();
         }
 
         function openSpeakerSelection() {
-            var airtunesTargets = SessionResource.getSession().airtunesTargets;
+            var mediaRenderers = SessionResource.getSession().mediaRenderers;
             $jQ("#devicelist").empty();
-            $jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");
-            for (var i = 0; i < airtunesTargets.length; i++) {
-                $jQ("#devicelist").append("<input type='checkbox' value='" + airtunesTargets[i].host + "' /> " + airtunesTargets[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "<br/>");
+            <%--$jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");--%>
+            for (var i = 0; i < mediaRenderers.length; i++) {
+                $jQ("#devicelist").append("<a onclick='selectMediaRenderer(\"" + mediaRenderers[i].id + "\")'>" + mediaRenderers[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</a><br/>");
             }
             openDialog("#airtunesTargetDialog");
         }
@@ -358,7 +350,7 @@
 
             <p align="right">
                 <button id="linkAirtunesTargetDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
-                <button id="linkAirtunesTargetDialogOk" onclick="selectAirtunesTargets()"><fmt:message key="airtunesTargetDialog.ok"/></button>
+                <%--button id="linkAirtunesTargetDialogOk" onclick="selectAirtunesTargets()"><fmt:message key="airtunesTargetDialog.ok"/></button--%>
             </p>
         </div>
 

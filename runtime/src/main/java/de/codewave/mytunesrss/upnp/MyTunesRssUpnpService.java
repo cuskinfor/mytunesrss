@@ -75,8 +75,8 @@ public class MyTunesRssUpnpService {
 
     public Future execute(ActionCallback actionCallback) {
         return myClingService.getControlPoint().execute(actionCallback);
-    } 
-    
+    }
+
     private void addMediaRendererListener() {
         myClingService.getRegistry().addListener(new MediaRendererRegistryListener(new DeviceRegistryCallback() {
             @Override
@@ -133,12 +133,12 @@ public class MyTunesRssUpnpService {
             myClingService.getControlPoint().execute(new PortMappingAdd(service, desiredMapping) {
                 @Override
                 public void success(ActionInvocation invocation) {
-                    LOGGER.info("Added port mapping \"" + name + "\" (" + port + " -> " + hashCode() + ":" + port + ") to device \"" + device.getDisplayString() + "\".");
+                    LOGGER.info("Added port mapping \"" + name + "\" (" + port + " -> " + hashCode() + ":" + port + ") to device \"" + device.getDetails().getFriendlyName() + "\".");
                 }
 
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not add port mapping \"" + name + "\" (" + port + " -> " + hashCode() + ":" + port + ") to device \"" + device.getDisplayString() + "\": \"" + defaultMsg + "\".");
+                    LOGGER.warn("Could not add port mapping \"" + name + "\" (" + port + " -> " + hashCode() + ":" + port + ") to device \"" + device.getDetails().getFriendlyName() + "\": \"" + defaultMsg + "\".");
                 }
             });
         }
@@ -152,12 +152,12 @@ public class MyTunesRssUpnpService {
             myClingService.getControlPoint().execute(new PortMappingDelete(service, desiredMapping) {
                 @Override
                 public void success(ActionInvocation invocation) {
-                    LOGGER.info("Removed port mapping (" + port + " -> " + hashCode() + ":" + port + ") from device \"" + device.getDisplayString() + "\".");
+                    LOGGER.info("Removed port mapping (" + port + " -> " + hashCode() + ":" + port + ") from device \"" + device.getDetails().getFriendlyName() + "\".");
                 }
 
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not remove port mapping (" + port + " -> " + hashCode() + ":" + port + ") from device \"" + device.getDisplayString() + "\": \"" + defaultMsg + "\".");
+                    LOGGER.warn("Could not remove port mapping (" + port + " -> " + hashCode() + ":" + port + ") from device \"" + device.getDetails().getFriendlyName() + "\": \"" + defaultMsg + "\".");
                 }
             });
         }
