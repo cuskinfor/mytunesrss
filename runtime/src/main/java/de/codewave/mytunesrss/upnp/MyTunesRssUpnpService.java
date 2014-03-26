@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
+import org.fourthline.cling.controlpoint.ActionCallback;
 import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.action.ActionInvocation;
@@ -35,6 +36,7 @@ import java.net.UnknownHostException;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 public class MyTunesRssUpnpService {
 
@@ -71,6 +73,10 @@ public class MyTunesRssUpnpService {
         }
     }
 
+    public Future execute(ActionCallback actionCallback) {
+        return myClingService.getControlPoint().execute(actionCallback);
+    } 
+    
     private void addMediaRendererListener() {
         myClingService.getRegistry().addListener(new MediaRendererRegistryListener(new DeviceRegistryCallback() {
             @Override

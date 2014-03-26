@@ -17,6 +17,7 @@ import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
+import org.fourthline.cling.model.meta.RemoteDevice;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -128,5 +129,10 @@ public class VlcPlayerRemoteController implements RemoteController {
 
     public void setAirtunesTargets(String[] airtunesTargets) throws Exception {
         MyTunesRss.VLC_PLAYER.setRaopTargets(airtunesTargets);
+    }
+
+    @Override
+    public void setMediaRenderer(RemoteDevice mediaRenderer) throws Exception {
+        throw new UnsupportedOperationException("Cannot set a media renderer for the vlc player remote controller.");
     }
 }

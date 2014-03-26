@@ -32,6 +32,6 @@ public class MediaRendererRegistryListener extends DefaultRegistryListener {
     }
 
     private boolean isMediaRendererWithAvTransport(RemoteDevice device) {
-        return "MediaRenderer".equals(device.getType().getType()) && device.getType().getVersion() == 1 && device.findService(new UDAServiceType("AVTransport", 1)) != null;
+        return "MediaRenderer".equals(device.getType().getType()) && device.getType().getVersion() == 1 && device.findService(new UDAServiceType("AVTransport", 1)) != null && device.findService(new UDAServiceType("RenderingControl", 1)) != null;
     }
 }

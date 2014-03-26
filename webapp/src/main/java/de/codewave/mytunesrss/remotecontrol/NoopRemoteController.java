@@ -7,6 +7,7 @@ package de.codewave.mytunesrss.remotecontrol;
 
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import org.fourthline.cling.model.meta.RemoteDevice;
 
 import java.util.Collections;
 import java.util.List;
@@ -88,7 +89,12 @@ public class NoopRemoteController implements RemoteController {
         return null;
     }
 
+    @Override
     public void setAirtunesTargets(String[] airtunesTargets) throws Exception {
+        // intentionally left blank
+    }
+
+    public void setMediaRenderer(RemoteDevice mediaRenderer) throws Exception {
         // intentionally left blank
     }
 }

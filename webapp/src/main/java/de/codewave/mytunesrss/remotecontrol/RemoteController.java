@@ -7,10 +7,12 @@ package de.codewave.mytunesrss.remotecontrol;
 
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import org.fourthline.cling.model.meta.RemoteDevice;
 
 import java.util.List;
 
 public interface RemoteController {
+    
     void loadPlaylist(User user, String playlistId) throws Exception;
 
     void loadAlbum(User user, String albumName, String albumArtistName) throws Exception;
@@ -56,4 +58,6 @@ public interface RemoteController {
     Track getTrack(int index) throws Exception;
 
     void setAirtunesTargets(String[] airtunesTargets) throws Exception;
+    
+    void setMediaRenderer(RemoteDevice mediaRenderer) throws Exception;
 }
