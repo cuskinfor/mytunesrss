@@ -17,27 +17,30 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.gena.CancelReason;
-import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteService;
 import org.fourthline.cling.model.types.UDAServiceId;
 import org.fourthline.cling.support.avtransport.callback.*;
-import org.fourthline.cling.support.avtransport.lastchange.AVTransportLastChangeParser;
-import org.fourthline.cling.support.avtransport.lastchange.AVTransportVariable;
-import org.fourthline.cling.support.lastchange.LastChange;
+import org.fourthline.cling.support.model.PositionInfo;
 import org.fourthline.cling.support.model.SeekMode;
 import org.fourthline.cling.support.model.TransportState;
+import org.fourthline.cling.support.renderingcontrol.callback.GetVolume;
+import org.fourthline.cling.support.renderingcontrol.callback.SetVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URI;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class MediaRendererRemoteController implements RemoteController {
 
@@ -58,7 +61,7 @@ public class MediaRendererRemoteController implements RemoteController {
             return myUser;
         }
     }
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaRendererRemoteController.class);
     private static final MediaRendererRemoteController INSTANCE = new MediaRendererRemoteController();
 
@@ -66,18 +69,65 @@ public class MediaRendererRemoteController implements RemoteController {
         return INSTANCE;
     }
 
+    private volatile RemoteDevice myMediaRenderer;
+    private volatile SubscriptionCallback mySubscriptionCallback;
+    private volatile List<TrackWithUser> myTracks = new ArrayList<>();
+    private volatile int myCurrentTrack;
+    private AtomicLong myMaxVolume = new AtomicLong(0);
+    private volatile PositionInfo myPositionInfo;
+    private AtomicInteger myVolume = new AtomicInteger(0);
+    private AtomicBoolean myPlaying = new AtomicBoolean(false);
+
     private MediaRendererRemoteController() {
-        // only the singleton above can be created
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    while (true) {
+                        Thread.sleep(250);
+                        final RemoteService avTransport = getAvTransport();
+                        final RemoteService renderingControl = getRenderingControl();
+                        if (avTransport != null && renderingControl != null) {
+                            Future f1 = MyTunesRss.UPNP_SERVICE.execute(new GetPositionInfo(getAvTransport()) {
+                                @Override
+                                public void received(ActionInvocation invocation, PositionInfo positionInfo) {
+                                    myPositionInfo = positionInfo;
+                                }
+                                @Override
+                                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                                    LOGGER.warn("Could not get position info from media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
+                                }
+                            });
+                            Future f2 = MyTunesRss.UPNP_SERVICE.execute(new GetVolume(getRenderingControl()) {
+                                @Override
+                                public void received(ActionInvocation actionInvocation, int currentVolume) {
+                                    myVolume.set(currentVolume);
+                                }
+                                @Override
+                                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                                    LOGGER.warn("Could not get volume from media renderer \"" + renderingControl.getDevice().getDetails().getFriendlyName() + "\".");
+                                }
+                            });
+                            long start = System.currentTimeMillis();
+                            try {
+                                try {
+                                    f1.get(1, TimeUnit.SECONDS);
+                                } finally {
+                                    f2.get(Math.max(1, 1000 - (System.currentTimeMillis() - start)), TimeUnit.MILLISECONDS);
+                                }
+                            } catch (ExecutionException | TimeoutException e) {
+                                LOGGER.debug("Exception while waiting for future.", e);
+                            }
+                        }
+                    }
+                } catch (InterruptedException ignored) {
+                    LOGGER.info("Media renderer query thread was interrupted and stops now.");
+                }
+            }
+        }, "MediaRendererStatusQuery").start();
     }
 
-    // TODO thread safety
-    private RemoteDevice myMediaRenderer;
-    private SubscriptionCallback mySubscriptionCallback;
-    private List<TrackWithUser> myTracks = new ArrayList<>();
-    private int myCurrentTrack;
-    private TransportState myTransportState;
-
-    public void loadPlaylist(User user, String playlistId) throws SQLException {
+    public synchronized void loadPlaylist(User user, String playlistId) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
         loadItems(user, query);
     }
@@ -87,7 +137,7 @@ public class MediaRendererRemoteController implements RemoteController {
         setTracks(user, tracks);
     }
 
-    public void setTracks(User user, List<Track> tracks) {
+    public synchronized void setTracks(User user, List<Track> tracks) {
         stop();
         myTracks.clear();
         for (Track track : tracks) {
@@ -107,56 +157,60 @@ public class MediaRendererRemoteController implements RemoteController {
         }
     }
 
-    public void loadAlbum(User user, String albumName, String albumArtistName) throws SQLException {
+    public synchronized void loadAlbum(User user, String albumName, String albumArtistName) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForAlbum(user, new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
         loadItems(user, query);
     }
 
-    public void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException {
+    public synchronized void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         loadItems(user, query);
     }
 
-    public void loadGenre(User user, String genreName) throws SQLException {
+    public synchronized void loadGenre(User user, String genreName) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
         loadItems(user, query);
     }
 
-    public void loadTracks(User user, String[] trackIds) throws SQLException {
+    public synchronized void loadTracks(User user, String[] trackIds) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         loadItems(user, query);
     }
 
-    public void addTracks(User user, String[] trackIds, boolean startPlaybackIfStopped) throws SQLException {
+    public synchronized void addTracks(User user, String[] trackIds, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         addItems(user, query, startPlaybackIfStopped);
     }
 
-    public void clearPlaylist() {
+    public synchronized void clearPlaylist() {
         stop();
         myTracks.clear();
     }
 
-    public void play(final int index) {
-        if (myMediaRenderer != null) {
+    public synchronized void play(final int index) {
+        final RemoteService service = getAvTransport();
+        if (service != null) {
             // TODO handle index -1 as resume/start current
             final Track track = myTracks.get(index).getTrack();
-            final String playbackUrl = createPlaybackUrl(createBaseUrl(myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
-            MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(getAvTransport(), playbackUrl, track.getName()) {
-
+            String hostAddress = service.getDevice().getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+            final String playbackUrl = createPlaybackUrl(createBaseUrl(hostAddress, myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
+            MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUrl, track.getName()) {
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not set playback URL \"" + playbackUrl + "\" at media renderer \"" + myMediaRenderer.getDisplayString() + "\".");
+                    LOGGER.warn("Could not set playback URL \"" + playbackUrl + "\" at media renderer \"" + service.getDevice().getDisplayString() + "\".");
                 }
-
                 @Override
                 public void success(ActionInvocation invocation) {
                     myCurrentTrack = index;
-                    startReceivingEvents();
-                    MyTunesRss.UPNP_SERVICE.execute(new Play(getAvTransport()) {
+                    MyTunesRss.UPNP_SERVICE.execute(new Play(service) {
+                        @Override
+                        public void success(ActionInvocation invocation) {
+                            myPlaying.set(true);
+                        }
+
                         @Override
                         public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                            LOGGER.warn("Could not start playback on media renderer \"" + myMediaRenderer.getDetails().getFriendlyName() + "\".");
+                            LOGGER.warn("Could not start playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
                         }
                     });
                 }
@@ -164,81 +218,96 @@ public class MediaRendererRemoteController implements RemoteController {
         }
     }
 
-    public void pause() {
-        if (myMediaRenderer != null) {
-            stopReceivingEvents();
-            MyTunesRss.UPNP_SERVICE.execute(new Pause(getAvTransport()) {
+    public synchronized void pause() {
+        final RemoteService service = getAvTransport();
+        if (service != null) {
+            MyTunesRss.UPNP_SERVICE.execute(new Pause(service) {
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not pause playback on media renderer \"" + myMediaRenderer.getDetails().getFriendlyName() + "\".");
+                    LOGGER.warn("Could not pause playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
                 }
             });
         }
     }
 
-    public void stop() {
-        if (myMediaRenderer != null) {
-            stopReceivingEvents();
-            final RemoteDevice mediaRenderer = myMediaRenderer;
-            final RemoteService service = mediaRenderer.findService(new UDAServiceId("AVTransport"));
+    public synchronized void stop() {
+        final RemoteService service = getAvTransport();
+        if (service != null) {
             MyTunesRss.UPNP_SERVICE.execute(new Stop(service) {
                 @Override
+                public void success(ActionInvocation invocation) {
+                    myPlaying.set(false);
+                }
+                @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not stop playback on media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\".");
+                    LOGGER.warn("Could not stop playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
                 }
             });
         }
     }
 
-    public void next() {
+    public synchronized void next() {
         stop();
         play(++myCurrentTrack);
     }
 
-    public void prev() {
+    public synchronized void prev() {
         stop();
         play(--myCurrentTrack);
     }
 
-    public void seek(int percentage) {
-        if (myMediaRenderer != null) {
+    public synchronized void seek(int percentage) {
+        final RemoteService service = getAvTransport();
+        if (service != null) {
             final String target = "H+:MM:SS"; // TODO
-            MyTunesRss.UPNP_SERVICE.execute(new Seek(getAvTransport(), SeekMode.REL_TIME, target) {
+            MyTunesRss.UPNP_SERVICE.execute(new Seek(service, SeekMode.REL_TIME, target) {
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not seek to \"" + target + "\" on media renderer \"" + myMediaRenderer.getDetails().getFriendlyName() + "\".");
+                    LOGGER.warn("Could not seek to \"" + target + "\" on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
                 }
             });
         }
     }
 
-    public RemoteTrackInfo getCurrentTrackInfo() {
-        // TODO get remote track info
+    public synchronized RemoteTrackInfo getCurrentTrackInfo() {
         RemoteTrackInfo trackInfo = new RemoteTrackInfo();
-        trackInfo.setCurrentTime(myMediaRenderer != null ? 0 : 0);
+        PositionInfo positionInfo = myPositionInfo;
+
+        trackInfo.setCurrentTime(positionInfo != null ? (int)positionInfo.getTrackElapsedSeconds() : 0);
         trackInfo.setCurrentTrack(myCurrentTrack + 1);
-        trackInfo.setLength(0);
-        trackInfo.setPlaying(myMediaRenderer != null ? false : false);
-        trackInfo.setVolume(100);
+        trackInfo.setLength(positionInfo != null ? (int)positionInfo.getTrackDurationSeconds() : 0);
+        trackInfo.setPlaying(myPlaying.get());
+        Long maxVolume = Math.max(myMaxVolume.get(), 1);
+        trackInfo.setVolume(maxVolume != null ? (int)(((long)myVolume.get() * 100L) / maxVolume.longValue()) : 0);
+
         return trackInfo;
     }
 
-    public void setVolume(int percentage) {
-        // TODO set volume
+    public synchronized void setVolume(final int percentage) {
+        final Long maxVolume = myMaxVolume.get();
+        final RemoteService service = getRenderingControl();
+        if (service != null && maxVolume != null) {
+            MyTunesRss.UPNP_SERVICE.execute(new SetVolume(service, ((long)percentage * maxVolume.longValue()) / 100L) {
+                @Override
+                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                    LOGGER.warn("Could not set volume to \"" + percentage + "\" on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
+                }
+            });
+        }
     }
 
-    public boolean setFullScreen(boolean fullScreen) {
+    public synchronized boolean setFullScreen(boolean fullScreen) {
         // TOOD set fullscreen
         return fullScreen;
     }
 
-    public void shuffle() {
+    public synchronized void shuffle() {
         stop();
         Collections.shuffle(myTracks);
         play(0);
     }
-    
-    public List<Track> getPlaylist() {
+
+    public synchronized List<Track> getPlaylist() {
         List<Track> playlist = new ArrayList<>();
         for (TrackWithUser track : myTracks) {
             playlist.add(track.getTrack());
@@ -246,7 +315,7 @@ public class MediaRendererRemoteController implements RemoteController {
         return playlist;
     }
 
-    public Track getTrack(int index) throws Exception {
+    public synchronized Track getTrack(int index) throws Exception {
         if (index < 0 || index >= myTracks.size()) {
             return null;
         }
@@ -254,26 +323,16 @@ public class MediaRendererRemoteController implements RemoteController {
     }
 
     @Override
-    public void setAirtunesTargets(String[] airtunesTargets) throws Exception {
+    public synchronized void setAirtunesTargets(String[] airtunesTargets) throws Exception {
         throw new UnsupportedOperationException("Cannot set airtunes targets for the media renderer remote controller.");
     }
 
-    public void setMediaRenderer(RemoteDevice mediaRenderer) throws Exception {
-        stop();
-        myMediaRenderer = mediaRenderer;
-    }
-
-    private void stopReceivingEvents() {
+    public synchronized void setMediaRenderer(RemoteDevice mediaRenderer) throws Exception {
         if (mySubscriptionCallback != null) {
             mySubscriptionCallback.end();
-            mySubscriptionCallback = null;
         }
-    }
-    
-    private void startReceivingEvents() {
-        if (mySubscriptionCallback != null) {
-            stopReceivingEvents();
-        }
+        stop();
+        myMediaRenderer = mediaRenderer;
         mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
             @Override
             void handleTransportStateChange(TransportState oldState, TransportState newState) {
@@ -281,10 +340,12 @@ public class MediaRendererRemoteController implements RemoteController {
             }
         };
         MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
+        myMaxVolume.set(getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum());
     }
 
-    private void handleTransportStateChange(TransportState oldTransportState, TransportState newTransportState) {
-        if (oldTransportState == TransportState.PLAYING && newTransportState == TransportState.STOPPED && myCurrentTrack + 1 < myTracks.size()) {
+    private synchronized void handleTransportStateChange(TransportState oldTransportState, TransportState newTransportState) {
+        myPlaying.set(newTransportState == TransportState.PLAYING);
+        if (newTransportState == TransportState.STOPPED && myCurrentTrack + 1 < myTracks.size()) {
             // advance if playback has stopped
             next();
         }
@@ -318,10 +379,9 @@ public class MediaRendererRemoteController implements RemoteController {
                 append(MiscUtils.getUtf8UrlEncoded(transcoder != null ? transcoder.getTargetSuffix() : FilenameUtils.getExtension(track.getFilename())));
         return builder.toString();
     }
-    
-    private String createBaseUrl(User user, String command) {
+
+    private String createBaseUrl(String hostAddress, User user, String command) {
         StringBuilder builder = new StringBuilder("http://");
-        String hostAddress = myMediaRenderer.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
         builder.append(hostAddress).
                 append(":").append(MyTunesRss.CONFIG.getPort());
         String context = StringUtils.trimToEmpty(MyTunesRss.CONFIG.getWebappContext());

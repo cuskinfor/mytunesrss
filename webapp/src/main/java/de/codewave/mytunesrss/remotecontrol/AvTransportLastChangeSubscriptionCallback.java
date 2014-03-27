@@ -1,11 +1,14 @@
 package de.codewave.mytunesrss.remotecontrol;
 
+import de.codewave.utils.MiscUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.support.avtransport.lastchange.AVTransportLastChangeParser;
+import org.fourthline.cling.support.avtransport.lastchange.AVTransportVariable;
+import org.fourthline.cling.support.lastchange.EventedValueEnum;
 import org.fourthline.cling.support.lastchange.LastChange;
 import org.fourthline.cling.support.model.TransportState;
 import org.slf4j.Logger;
@@ -45,19 +48,31 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
             String xml = currentValues.get("LastChange").toString();
             try {
                 LastChange lastChange = new LastChange(new AVTransportLastChangeParser(), xml);
-                // find changes and call callbacks
+                checkTransportStateChange(myPreviousLastChange.getEventedValue(0, AVTransportVariable.TransportState.class), lastChange.getEventedValue(0, AVTransportVariable.TransportState.class));
+                myPreviousLastChange = lastChange;
             } catch (Exception e) {
                 LOGGER.info("Could not parse LastChange event data (" + e.getClass().getSimpleName() + "): \"" + e.getMessage() + "\".");
             }
         }
     }
 
+    private void checkTransportStateChange(AVTransportVariable.TransportState oldValue, AVTransportVariable.TransportState newValue) {
+        TransportState oldState = oldValue != null ? oldValue.getValue() : null;
+        TransportState newState = newValue != null ? newValue.getValue() : null;
+        if (isChanged(oldState, newState)) {
+            handleTransportStateChange(oldState, newState);
+        }
+    }
+
+    private boolean isChanged(Object o1, Object o2) {
+        return (o1 == null && o2 != null) || (o1 != null && o2 == null) || (o1 != null && o2 != null && !o1.equals(o2));
+    }
+
     @Override
     protected void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
         LOGGER.info("AVTransport events missed: " + numberOfMissedEvents + ".");
     }
-    
+
     abstract void handleTransportStateChange(TransportState oldState, TransportState newState);
-    
-    // TOOD more of them
+
 }
