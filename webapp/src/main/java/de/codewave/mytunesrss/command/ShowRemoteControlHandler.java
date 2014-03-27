@@ -19,7 +19,7 @@ public class ShowRemoteControlHandler extends CreatePlaylistBaseCommandHandler {
                 throw new IllegalArgumentException("No tracks found for request parameters!");
             }
         } else {
-            MediaRendererRemoteController.getInstance().setTracks(tracks.getResults());
+            MediaRendererRemoteController.getInstance().setTracks(getAuthUser(), tracks.getResults());
         }
         if (Boolean.valueOf(getRequestParameter("shuffle", "false"))) {
             MediaRendererRemoteController.getInstance().shuffle();

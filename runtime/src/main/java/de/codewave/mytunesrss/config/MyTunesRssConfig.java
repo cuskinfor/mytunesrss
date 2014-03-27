@@ -1957,7 +1957,8 @@ public class MyTunesRssConfig {
     }
 
     public synchronized boolean isRemoteControl() {
-        return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
+        //return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
+        return true;
     }
 
     public synchronized boolean isMyTunesRssComActive() {

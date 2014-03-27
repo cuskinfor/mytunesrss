@@ -29,11 +29,11 @@ public class NoopRemoteController implements RemoteController {
         // intentionally left blank
     }
 
-    public void loadTracks(String[] trackIds) {
+    public void loadTracks(User user, String[] trackIds) {
         // intentionally left blank
     }
 
-    public void addTracks(String[] trackIds, boolean startPlaybackIfStopped) {
+    public void addTracks(User user, String[] trackIds, boolean startPlaybackIfStopped) {
         // intentionally left blank
     }
 

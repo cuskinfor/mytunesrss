@@ -13,6 +13,7 @@ import org.fourthline.cling.UpnpService;
 import org.fourthline.cling.UpnpServiceImpl;
 import org.fourthline.cling.binding.annotations.AnnotationLocalServiceBinder;
 import org.fourthline.cling.controlpoint.ActionCallback;
+import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.action.ActionInvocation;
@@ -75,6 +76,10 @@ public class MyTunesRssUpnpService {
 
     public Future execute(ActionCallback actionCallback) {
         return myClingService.getControlPoint().execute(actionCallback);
+    }
+
+    public void execute(SubscriptionCallback actionCallback) {
+        myClingService.getControlPoint().execute(actionCallback);
     }
 
     private void addMediaRendererListener() {

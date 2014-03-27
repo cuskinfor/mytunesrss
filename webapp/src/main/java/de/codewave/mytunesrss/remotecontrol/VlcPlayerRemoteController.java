@@ -54,12 +54,12 @@ public class VlcPlayerRemoteController implements RemoteController {
         loadItems(query);
     }
 
-    public void loadTracks(String[] trackIds) throws SQLException, VlcPlayerException {
+    public void loadTracks(User user, String[] trackIds) throws SQLException, VlcPlayerException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         loadItems(query);
     }
 
-    public void addTracks(String[] trackIds, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
+    public void addTracks(User user, String[] trackIds, boolean startPlaybackIfStopped) throws SQLException, VlcPlayerException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         addItems(query, startPlaybackIfStopped);
     }

@@ -80,7 +80,7 @@ public class MediaPlayerResource extends RestResource {
         } else if (StringUtils.isNotBlank(genre)) {
             getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
         } else if (tracks != null && tracks.length > 0) {
-            getController().loadTracks(tracks);
+            getController().loadTracks(MyTunesRssWebUtils.getAuthUser(request), tracks);
         }
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
@@ -107,7 +107,7 @@ public class MediaPlayerResource extends RestResource {
         if (tracks == null || tracks.length == 0) {
             throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "MISSING_TRACK_IDS");
         }
-        getController().addTracks(tracks, autostart);
+        getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), tracks, autostart);
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
 

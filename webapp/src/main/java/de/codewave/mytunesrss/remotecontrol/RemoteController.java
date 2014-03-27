@@ -21,9 +21,9 @@ public interface RemoteController {
 
     void loadGenre(User user, String genreName) throws Exception;
 
-    void loadTracks(String[] trackIds) throws Exception;
+    void loadTracks(User user, String[] trackIds) throws Exception;
 
-    void addTracks(String[] trackIds, boolean startPlaybackIfStopped) throws Exception;
+    void addTracks(User user, String[] trackIds, boolean startPlaybackIfStopped) throws Exception;
 
     void clearPlaylist() throws Exception;
 
