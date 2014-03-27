@@ -277,7 +277,7 @@ public class MediaRendererRemoteController implements RemoteController {
         mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
             @Override
             void handleTransportStateChange(TransportState oldState, TransportState newState) {
-                handleTransportStateChange(oldState, newState);
+                MediaRendererRemoteController.this.handleTransportStateChange(oldState, newState);
             }
         };
         MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
