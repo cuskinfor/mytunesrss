@@ -75,6 +75,7 @@ public class MediaRendererRemoteController implements RemoteController {
     private SubscriptionCallback mySubscriptionCallback;
     private List<TrackWithUser> myTracks = new ArrayList<>();
     private int myCurrentTrack;
+    private TransportState myTransportState;
 
     public void loadPlaylist(User user, String playlistId) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
@@ -273,51 +274,20 @@ public class MediaRendererRemoteController implements RemoteController {
         if (mySubscriptionCallback != null) {
             stopReceivingEvents();
         }
-        mySubscriptionCallback = new SubscriptionCallback(getAvTransport()) {
+        mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
             @Override
-            protected void failed(GENASubscription subscription, UpnpResponse responseStatus, Exception exception, String defaultMsg) {
-                LOGGER.warn("AVTransport event subscription failed.", exception);
-            }
-
-            @Override
-            protected void established(GENASubscription subscription) {
-                LOGGER.info("AVTransport event subscription established.");
-            }
-
-            @Override
-            protected void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
-                LOGGER.info("AVTransport event subscription ended: \"" + reason + "\".");
-            }
-
-            @Override
-            protected void eventReceived(GENASubscription subscription) {
-                Map currentValues = subscription.getCurrentValues();
-                if (currentValues.containsKey("LastChange")) {
-                    String xml = currentValues.get("LastChange").toString();
-                    try {
-                        LastChange lastChange = new LastChange(new AVTransportLastChangeParser(), xml);
-                        TransportState transportState = lastChange.getEventedValue(0, AVTransportVariable.TransportState.class).getValue();
-                        String trackDuration = lastChange.getEventedValue(0, AVTransportVariable.CurrentTrackDuration.class).getValue();
-                        URI trackUri = lastChange.getEventedValue(0, AVTransportVariable.AVTransportURI.class).getValue();
-                        LOGGER.debug("LastChange: [transportState=" + transportState.name() + ", avTransportUri=" + trackUri + ", currentTrackDuration=" + trackDuration + "].");
-                        if (transportState == TransportState.STOPPED) {
-                            LOGGER.debug("Received LastChange event: PLAYBACK STOPPED.");
-                            if (myCurrentTrack + 1 < myTracks.size()) {
-                                next();
-                            }
-                        }
-                    } catch (Exception e) {
-                        LOGGER.info("Could not parse LastChange event data (" + e.getClass().getSimpleName() + "): \"" + e.getMessage() + "\".");
-                    }
-                }
-            }
-
-            @Override
-            protected void eventsMissed(GENASubscription subscription, int numberOfMissedEvents) {
-                LOGGER.info("AVTransport events missed: " + numberOfMissedEvents + ".");
+            void handleTransportStateChange(TransportState oldState, TransportState newState) {
+                handleTransportStateChange(oldState, newState);
             }
         };
         MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
+    }
+
+    private void handleTransportStateChange(TransportState oldTransportState, TransportState newTransportState) {
+        if (oldTransportState == TransportState.PLAYING && newTransportState == TransportState.STOPPED && myCurrentTrack + 1 < myTracks.size()) {
+            // advance if playback has stopped
+            next();
+        }
     }
 
     private RemoteService getAvTransport() {
