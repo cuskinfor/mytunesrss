@@ -8,10 +8,7 @@ package de.codewave.mytunesrss.rest.resource;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.remotecontrol.MediaRendererRemoteController;
-import de.codewave.mytunesrss.remotecontrol.NoopRemoteController;
-import de.codewave.mytunesrss.remotecontrol.RemoteController;
-import de.codewave.mytunesrss.remotecontrol.VlcPlayerRemoteController;
+import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
@@ -39,9 +36,8 @@ public class MediaPlayerResource extends RestResource {
         PLAY(), PAUSE(), STOP(), SEEK(), SHUFFLE(), NEXT(), PREVIOUS();
     }
 
-    private RemoteController getController() {
-        return MediaRendererRemoteController.getInstance();
-        //return MyTunesRss.VLC_PLAYER != null ? new VlcPlayerRemoteController() : new NoopRemoteController();
+    private MediaRendererController getController() {
+        return MediaRendererController.getInstance();
     }
 
     /**

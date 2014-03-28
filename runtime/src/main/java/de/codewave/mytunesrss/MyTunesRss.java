@@ -6,7 +6,6 @@ package de.codewave.mytunesrss;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
 import de.codewave.camel.mp4.Mp4Parser;
-import de.codewave.mytunesrss.bonjour.BonjourServiceListener;
 import de.codewave.mytunesrss.cache.FileSystemCache;
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
@@ -30,8 +29,6 @@ import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
 import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
-import de.codewave.mytunesrss.vlc.VlcPlayer;
-import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -57,7 +54,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
-import javax.jmdns.JmDNS;
 import javax.management.MBeanServer;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
@@ -167,9 +163,6 @@ public class MyTunesRss {
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
-    public static BonjourServiceListener RAOP_LISTENER = new BonjourServiceListener();
-    public static BonjourServiceListener AIRPLAY_LISTENER = new BonjourServiceListener();
-    public static VlcPlayer VLC_PLAYER = new VlcPlayer(RAOP_LISTENER, AIRPLAY_LISTENER);
     public static LuceneTrackService LUCENE_TRACK_SERVICE = new LuceneTrackService();
     public static String[] ORIGINAL_CMD_ARGS;
     public static MyTunesRssExecutorService EXECUTOR_SERVICE = new MyTunesRssExecutorService();
@@ -188,7 +181,6 @@ public class MyTunesRss {
     public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
     public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP = false;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<>();
-    public static JmDNS BONJOUR;
     public static String HEAPDUMP_FILENAME;
     public static ClassLoader EXTRA_CLASSLOADER;
     public static File INTERNAL_MYSQL_SERVER_PATH;
@@ -293,15 +285,6 @@ public class MyTunesRss {
             }
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
-            try {
-                BONJOUR = JmDNS.create();
-                BONJOUR.addServiceListener("_raop._tcp.local.", RAOP_LISTENER);
-                BONJOUR.addServiceListener("_airplay._tcp.local.", AIRPLAY_LISTENER);
-            } catch (IOException e) {
-                LOGGER.warn("Could not add service listeners for RAOP and AIRPLAY.", e);
-            }
-        }
-        if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminHostFromConfigOrCommandLine(), getAdminPortFromConfigOrCommandLine())) {
                 MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
                 if (!startAdminServer(null, 0)) {
@@ -312,15 +295,6 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             MyTunesRssJobUtils.scheduleStatisticEventsJob();
             MyTunesRssJobUtils.scheduleDatabaseJob();
-            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
-                public void run() {
-                    try {
-                        MyTunesRss.VLC_PLAYER.init();
-                    } catch (VlcPlayerException e) {
-                        LOGGER.warn("Could not start VLC-Player.", e);
-                    }
-                }
-            });
         }
         UPNP_SERVICE = new MyTunesRssUpnpService();
         UPNP_SERVICE.start();

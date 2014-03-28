@@ -17,8 +17,6 @@ public class SessionRepresentation implements RestRepresentation {
 
     private List<String> myTranscoders;
 
-    private List<BonjourDeviceRepresentation> myAirtunesTargets;
-
     private List<MediaRendererRepresentation> myMediaRenderers;
 
     private List<String> myPermissions;
@@ -47,17 +45,6 @@ public class SessionRepresentation implements RestRepresentation {
 
     public void setTranscoders(List<String> transcoders) {
         myTranscoders = transcoders;
-    }
-
-    /**
-     * List of available airtunes targets that can be used for the server local media player.
-     */
-    public List<BonjourDeviceRepresentation> getAirtunesTargets() {
-        return myAirtunesTargets;
-    }
-
-    public void setAirtunesTargets(List<BonjourDeviceRepresentation> airtunesTargets) {
-        myAirtunesTargets = airtunesTargets;
     }
 
     /**

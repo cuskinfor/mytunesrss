@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.mytunesrss.remotecontrol.MediaRendererRemoteController;
+import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
             getRequest().setAttribute("playlists", playlists);
             getRequest().setAttribute("uploadLink", getAuthUser().isUpload() && MyTunesRss.CONFIG.isUploadableDatasource());
             getRequest().setAttribute("statistics", getTransaction().executeQuery(new GetSystemInformationQuery()));
-            getRequest().setAttribute("showRemoteControl", !MediaRendererRemoteController.getInstance().getPlaylist().isEmpty());
+            getRequest().setAttribute("showRemoteControl", !MediaRendererController.getInstance().getPlaylist().isEmpty());
             forward(MyTunesRssResource.Portal);
         } else {
             forward(MyTunesRssResource.Login);

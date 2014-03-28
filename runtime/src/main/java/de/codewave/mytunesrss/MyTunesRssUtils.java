@@ -12,7 +12,6 @@ import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
-import de.codewave.mytunesrss.vlc.VlcPlayerException;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
@@ -182,13 +181,6 @@ public class MyTunesRssUtils {
             MediaServerConfig.save(MyTunesRss.MEDIA_SERVER_CONFIG);
         } catch (IOException e) {
             LOGGER.warn("Could not save media player configuration.", e);
-        }
-        try {
-            if (MyTunesRss.VLC_PLAYER != null) {
-                MyTunesRss.VLC_PLAYER.destroy();
-            }
-        } catch (VlcPlayerException e) {
-            LOGGER.error("Could not destroy VLC player.", e);
         }
         LOGGER.debug("Destroying streaming cache.");
         MyTunesRss.TRANSCODER_CACHE.destroy();

@@ -1,6 +1,5 @@
-package de.codewave.mytunesrss.remotecontrol;
+package de.codewave.mytunesrss.mediarenderercontrol;
 
-import de.codewave.utils.MiscUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
@@ -8,7 +7,6 @@ import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.Service;
 import org.fourthline.cling.support.avtransport.lastchange.AVTransportLastChangeParser;
 import org.fourthline.cling.support.avtransport.lastchange.AVTransportVariable;
-import org.fourthline.cling.support.lastchange.EventedValueEnum;
 import org.fourthline.cling.support.lastchange.LastChange;
 import org.fourthline.cling.support.model.TransportState;
 import org.slf4j.Logger;
@@ -21,7 +19,7 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
     private static final Logger LOGGER = LoggerFactory.getLogger(AvTransportLastChangeSubscriptionCallback.class);
 
     private LastChange myPreviousLastChange = new LastChange(new AVTransportLastChangeParser());
-
+ 
     public AvTransportLastChangeSubscriptionCallback(Service service) {
         super(service);
     }

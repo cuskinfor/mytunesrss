@@ -7,15 +7,12 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.command.WebAppScope;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
-import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.UserPermission;
-import de.codewave.mytunesrss.rest.representation.BonjourDeviceRepresentation;
 import de.codewave.mytunesrss.rest.representation.MediaRendererRepresentation;
 import de.codewave.mytunesrss.rest.representation.SessionRepresentation;
 import de.codewave.utils.servlet.ServletUtils;
@@ -30,7 +27,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @ValidateRequest
 @Path("session")
@@ -59,9 +58,6 @@ public class SessionResource extends RestResource {
         if (IncludeExcludeInterceptor.isAttr("permissions")) {
             session.setPermissions(getPermissions(user));
         }
-        if (IncludeExcludeInterceptor.isAttr("airtunesTargets")) {
-            session.setAirtunesTargets(getAirtunesTargets());
-        }
         if (IncludeExcludeInterceptor.isAttr("mediaRenderers")) {
             session.setMediaRenderers(getMediaRenderers());
         }
@@ -72,15 +68,6 @@ public class SessionResource extends RestResource {
             session.setSearchFuzziness(user.getSearchFuzziness());
         }
         return session;
-    }
-
-    private List<BonjourDeviceRepresentation> getAirtunesTargets() {
-        Collection<BonjourDevice> devices = MyTunesRss.VLC_PLAYER.getRaopDevices();
-        List<BonjourDeviceRepresentation> airtunesTargets = new ArrayList<>(devices.size());
-        for (BonjourDevice device : devices) {
-            airtunesTargets.add(new BonjourDeviceRepresentation(device));
-        }
-        return airtunesTargets;
     }
 
     private List<MediaRendererRepresentation> getMediaRenderers() {

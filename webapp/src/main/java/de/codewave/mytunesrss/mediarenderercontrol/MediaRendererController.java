@@ -1,4 +1,4 @@
-package de.codewave.mytunesrss.remotecontrol;
+package de.codewave.mytunesrss.mediarenderercontrol;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -42,7 +42,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MediaRendererRemoteController implements RemoteController {
+public class MediaRendererController {
 
     private static final class TrackWithUser {
         private final Track myTrack;
@@ -62,69 +62,23 @@ public class MediaRendererRemoteController implements RemoteController {
         }
     }
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MediaRendererRemoteController.class);
-    private static final MediaRendererRemoteController INSTANCE = new MediaRendererRemoteController();
+    private static final Logger LOGGER = LoggerFactory.getLogger(MediaRendererController.class);
+    private static final MediaRendererController INSTANCE = new MediaRendererController();
 
-    public static final MediaRendererRemoteController getInstance() {
+    public static MediaRendererController getInstance() {
         return INSTANCE;
     }
 
     private volatile RemoteDevice myMediaRenderer;
+    private volatile long myMaxVolume = 1;
     private volatile SubscriptionCallback mySubscriptionCallback;
     private volatile List<TrackWithUser> myTracks = new ArrayList<>();
-    private volatile int myCurrentTrack;
-    private AtomicLong myMaxVolume = new AtomicLong(0);
-    private volatile PositionInfo myPositionInfo;
-    private AtomicInteger myVolume = new AtomicInteger(0);
+    private AtomicInteger myCurrentTrack = new AtomicInteger(0);
     private AtomicBoolean myPlaying = new AtomicBoolean(false);
+    private AtomicLong myTimeExplicitlyStopped = new AtomicLong(0);
 
-    private MediaRendererRemoteController() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    while (true) {
-                        Thread.sleep(250);
-                        final RemoteService avTransport = getAvTransport();
-                        final RemoteService renderingControl = getRenderingControl();
-                        if (avTransport != null && renderingControl != null) {
-                            Future f1 = MyTunesRss.UPNP_SERVICE.execute(new GetPositionInfo(getAvTransport()) {
-                                @Override
-                                public void received(ActionInvocation invocation, PositionInfo positionInfo) {
-                                    myPositionInfo = positionInfo;
-                                }
-                                @Override
-                                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                                    LOGGER.warn("Could not get position info from media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
-                                }
-                            });
-                            Future f2 = MyTunesRss.UPNP_SERVICE.execute(new GetVolume(getRenderingControl()) {
-                                @Override
-                                public void received(ActionInvocation actionInvocation, int currentVolume) {
-                                    myVolume.set(currentVolume);
-                                }
-                                @Override
-                                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                                    LOGGER.warn("Could not get volume from media renderer \"" + renderingControl.getDevice().getDetails().getFriendlyName() + "\".");
-                                }
-                            });
-                            long start = System.currentTimeMillis();
-                            try {
-                                try {
-                                    f1.get(1, TimeUnit.SECONDS);
-                                } finally {
-                                    f2.get(Math.max(1, 1000 - (System.currentTimeMillis() - start)), TimeUnit.MILLISECONDS);
-                                }
-                            } catch (ExecutionException | TimeoutException e) {
-                                LOGGER.debug("Exception while waiting for future.", e);
-                            }
-                        }
-                    }
-                } catch (InterruptedException ignored) {
-                    LOGGER.info("Media renderer query thread was interrupted and stops now.");
-                }
-            }
-        }, "MediaRendererStatusQuery").start();
+    private MediaRendererController() {
+        // only singleton instance above can be created
     }
 
     public synchronized void loadPlaylist(User user, String playlistId) throws SQLException {
@@ -184,43 +138,54 @@ public class MediaRendererRemoteController implements RemoteController {
 
     public synchronized void clearPlaylist() {
         stop();
+        LOGGER.debug("Clearing playlist.");
         myTracks.clear();
     }
 
     public synchronized void play(final int index) {
         final RemoteService service = getAvTransport();
         if (service != null) {
-            // TODO handle index -1 as resume/start current
-            final Track track = myTracks.get(index).getTrack();
-            String hostAddress = service.getDevice().getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
-            final String playbackUrl = createPlaybackUrl(createBaseUrl(hostAddress, myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
-            MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUrl, track.getName()) {
-                @Override
-                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not set playback URL \"" + playbackUrl + "\" at media renderer \"" + service.getDevice().getDisplayString() + "\".");
-                }
-                @Override
-                public void success(ActionInvocation invocation) {
-                    myCurrentTrack = index;
-                    MyTunesRss.UPNP_SERVICE.execute(new Play(service) {
-                        @Override
-                        public void success(ActionInvocation invocation) {
-                            myPlaying.set(true);
-                        }
+            if (index == -1) {
+                sendPlay(service);
+            } else {
+                final Track track = myTracks.get(index).getTrack();
+                String hostAddress = service.getDevice().getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+                final String playbackUrl = createPlaybackUrl(createBaseUrl(hostAddress, myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
+                LOGGER.debug("Setting playback URL to \"" + playbackUrl + "\".");
+                MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUrl, track.getName()) {
+                    @Override
+                    public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                        LOGGER.warn("Could not set playback URL \"" + playbackUrl + "\" at media renderer \"" + service.getDevice().getDisplayString() + "\".");
+                    }
 
-                        @Override
-                        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                            LOGGER.warn("Could not start playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
-                        }
-                    });
-                }
-            });
+                    @Override
+                    public void success(ActionInvocation invocation) {
+                        myCurrentTrack.set(index);
+                        sendPlay(service);
+                    }
+                });
+            }
         }
+    }
+
+    private void sendPlay(final RemoteService service) {
+        LOGGER.debug("Starting playback.");
+        MyTunesRss.UPNP_SERVICE.execute(new Play(service) {
+            @Override
+            public void success(ActionInvocation invocation) {
+                myPlaying.set(true);
+            }
+            @Override
+            public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                LOGGER.warn("Could not start playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
+            }
+        });
     }
 
     public synchronized void pause() {
         final RemoteService service = getAvTransport();
         if (service != null) {
+            LOGGER.debug("Pausing playback.");
             MyTunesRss.UPNP_SERVICE.execute(new Pause(service) {
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
@@ -233,6 +198,8 @@ public class MediaRendererRemoteController implements RemoteController {
     public synchronized void stop() {
         final RemoteService service = getAvTransport();
         if (service != null) {
+            myTimeExplicitlyStopped.set(System.currentTimeMillis());
+            LOGGER.debug("Stopping playback.");
             MyTunesRss.UPNP_SERVICE.execute(new Stop(service) {
                 @Override
                 public void success(ActionInvocation invocation) {
@@ -248,46 +215,101 @@ public class MediaRendererRemoteController implements RemoteController {
 
     public synchronized void next() {
         stop();
-        play(++myCurrentTrack);
+        if (myCurrentTrack.get() + 1 < myTracks.size()) {
+            LOGGER.debug("Playing next track.");
+            play(myCurrentTrack.incrementAndGet());
+        }
     }
 
     public synchronized void prev() {
         stop();
-        play(--myCurrentTrack);
+        if (myCurrentTrack.get() > 0) {
+            LOGGER.debug("Playing previous track.");
+            play(myCurrentTrack.decrementAndGet());
+        }
     }
 
-    public synchronized void seek(int percentage) {
-        final RemoteService service = getAvTransport();
-        if (service != null) {
-            final String target = "H+:MM:SS"; // TODO
-            MyTunesRss.UPNP_SERVICE.execute(new Seek(service, SeekMode.REL_TIME, target) {
+    public synchronized void seek(final int percentage) {
+        final RemoteService avTransport = getAvTransport();
+        if (avTransport != null) {
+            MyTunesRss.UPNP_SERVICE.execute(new GetPositionInfo(avTransport) {
+                @Override
+                public void received(ActionInvocation invocation, PositionInfo positionInfo) {
+                    int duration = (int) positionInfo.getTrackDurationSeconds();
+                    int position = (duration * percentage) / 100;
+                    int hours = position / 3600;
+                    int minutes = (position / 60) % 60;
+                    int second = position % 60;
+                    final String target = Integer.toString(hours) + ":" + StringUtils.leftPad(Integer.toString(minutes), 2, '0') + ":" + StringUtils.leftPad(Integer.toString(second), 2, '0');
+                    LOGGER.debug("Seeking to \"" + target + "\".");
+                    MyTunesRss.UPNP_SERVICE.execute(new Seek(avTransport, SeekMode.REL_TIME, target) {
+                        @Override
+                        public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                            LOGGER.warn("Could not seek to \"" + target + "\" on media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
+                        }
+                    });
+                }
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not seek to \"" + target + "\" on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
+                    LOGGER.warn("Could not get track duration seconds from media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
                 }
             });
         }
     }
 
-    public synchronized RemoteTrackInfo getCurrentTrackInfo() {
-        RemoteTrackInfo trackInfo = new RemoteTrackInfo();
-        PositionInfo positionInfo = myPositionInfo;
-
-        trackInfo.setCurrentTime(positionInfo != null ? (int)positionInfo.getTrackElapsedSeconds() : 0);
-        trackInfo.setCurrentTrack(myCurrentTrack + 1);
-        trackInfo.setLength(positionInfo != null ? (int)positionInfo.getTrackDurationSeconds() : 0);
+    public synchronized MediaRendererTrackInfo getCurrentTrackInfo() {
+        final MediaRendererTrackInfo trackInfo = new MediaRendererTrackInfo();
+        trackInfo.setCurrentTrack(myCurrentTrack.get() + 1);
         trackInfo.setPlaying(myPlaying.get());
-        Long maxVolume = Math.max(myMaxVolume.get(), 1);
-        trackInfo.setVolume(maxVolume != null ? (int)(((long)myVolume.get() * 100L) / maxVolume.longValue()) : 0);
+        
+        final RemoteService avTransport = getAvTransport();
+        final RemoteService renderingControl = getRenderingControl();
+        
+        if (avTransport != null && renderingControl != null) {
+            Future getPositionInfoFuture = MyTunesRss.UPNP_SERVICE.execute(new GetPositionInfo(avTransport) {
+                @Override
+                public void received(ActionInvocation invocation, PositionInfo positionInfo) {
+                    trackInfo.setCurrentTime((int) positionInfo.getTrackElapsedSeconds());
+                    trackInfo.setLength((int) positionInfo.getTrackDurationSeconds());
+                }
+                @Override
+                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                    LOGGER.warn("Could not get position info from media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
+                }
+            });
+            Future getVolumeFuture = MyTunesRss.UPNP_SERVICE.execute(new GetVolume(renderingControl) {
+                @Override
+                public void received(ActionInvocation actionInvocation, int currentVolume) {
+                    Long maxVolume = Math.max(myMaxVolume, 1);
+                    trackInfo.setVolume((int) (((long) currentVolume * 100L) / maxVolume.longValue()));
+                }
 
+                @Override
+                public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
+                    LOGGER.warn("Could not get volume from media renderer \"" + renderingControl.getDevice().getDetails().getFriendlyName() + "\".");
+                }
+            });
+            try {
+                int maxWaitMillis = 1000;
+                long start = System.currentTimeMillis();
+                try {
+                    getPositionInfoFuture.get(maxWaitMillis, TimeUnit.MILLISECONDS);
+                } finally {
+                    getVolumeFuture.get(Math.max(1, maxWaitMillis - (System.currentTimeMillis() - start)), TimeUnit.MILLISECONDS);
+                }
+            } catch (ExecutionException | TimeoutException | InterruptedException e) {
+                LOGGER.debug("Exception while waiting for media renderer state.", e);
+            }
+        }
+        
         return trackInfo;
     }
 
     public synchronized void setVolume(final int percentage) {
-        final Long maxVolume = myMaxVolume.get();
         final RemoteService service = getRenderingControl();
-        if (service != null && maxVolume != null) {
-            MyTunesRss.UPNP_SERVICE.execute(new SetVolume(service, ((long)percentage * maxVolume.longValue()) / 100L) {
+        if (service != null) {
+            LOGGER.debug("Setting volume to " + percentage + "% of maximum volume.");
+            MyTunesRss.UPNP_SERVICE.execute(new SetVolume(service, ((long) percentage * myMaxVolume) / 100L) {
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                     LOGGER.warn("Could not set volume to \"" + percentage + "\" on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
@@ -298,13 +320,18 @@ public class MediaRendererRemoteController implements RemoteController {
 
     public synchronized boolean setFullScreen(boolean fullScreen) {
         // TOOD set fullscreen
+        LOGGER.debug("Setting fullscreen (NOT YET IMPLEMENTED).");
         return fullScreen;
     }
 
     public synchronized void shuffle() {
+        boolean oldPlaying = myPlaying.get();
         stop();
+        LOGGER.debug("Shuffling tracks.");
         Collections.shuffle(myTracks);
-        play(0);
+        if (oldPlaying) {
+            play(0);
+        }
     }
 
     public synchronized List<Track> getPlaylist() {
@@ -322,31 +349,40 @@ public class MediaRendererRemoteController implements RemoteController {
         return myTracks.get(index).getTrack();
     }
 
-    @Override
-    public synchronized void setAirtunesTargets(String[] airtunesTargets) throws Exception {
-        throw new UnsupportedOperationException("Cannot set airtunes targets for the media renderer remote controller.");
-    }
-
-    public synchronized void setMediaRenderer(RemoteDevice mediaRenderer) throws Exception {
+    public synchronized void setMediaRenderer(RemoteDevice mediaRenderer) {
         if (mySubscriptionCallback != null) {
+            LOGGER.debug("Ending subscription callback.");
             mySubscriptionCallback.end();
+            mySubscriptionCallback = null;
         }
         stop();
+        if (mediaRenderer != null) {
+            LOGGER.debug("Setting media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\".");
+        } else {
+            LOGGER.debug("Clearing media renderer.");
+        }
         myMediaRenderer = mediaRenderer;
-        mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
-            @Override
-            void handleTransportStateChange(TransportState oldState, TransportState newState) {
-                MediaRendererRemoteController.this.handleTransportStateChange(oldState, newState);
-            }
-        };
-        MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
-        myMaxVolume.set(getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum());
+        if (mediaRenderer != null) {
+            mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
+                @Override
+                void handleTransportStateChange(TransportState oldState, TransportState newState) {
+                    MediaRendererController.this.handleTransportStateChange(oldState, newState);
+                }
+            };
+            LOGGER.debug("Starting subscription callback.");
+            MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
+            myMaxVolume = getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum();
+            LOGGER.debug("Maximum volume for media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" is " + myMaxVolume + ".");
+        }
     }
 
     private synchronized void handleTransportStateChange(TransportState oldTransportState, TransportState newTransportState) {
-        myPlaying.set(newTransportState == TransportState.PLAYING);
-        if (newTransportState == TransportState.STOPPED && myCurrentTrack + 1 < myTracks.size()) {
-            // advance if playback has stopped
+        LOGGER.debug("Media renderer transport state changed from " + oldTransportState.name() + " to " + newTransportState.name() + ".");
+        myPlaying.set(newTransportState != TransportState.STOPPED && newTransportState != TransportState.PAUSED_PLAYBACK);
+        long timeDelta = System.currentTimeMillis() - myTimeExplicitlyStopped.get();
+        if (newTransportState == TransportState.STOPPED && (timeDelta > 1000) && myCurrentTrack.get() + 1 < myTracks.size()) {
+            // advance if playback has stopped automatically (myUserStopped == false)
+            LOGGER.debug("Automatically advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago).");
             next();
         }
     }

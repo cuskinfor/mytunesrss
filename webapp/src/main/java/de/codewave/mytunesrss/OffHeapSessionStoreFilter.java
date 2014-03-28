@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.*;
@@ -23,6 +24,8 @@ public class OffHeapSessionStoreFilter implements Filter {
     }
 
     public void destroy() {
+        // TODO: wrong class
+        MediaRendererController.getInstance().setMediaRenderer(null);
         // nothing to destroy
     }
 }

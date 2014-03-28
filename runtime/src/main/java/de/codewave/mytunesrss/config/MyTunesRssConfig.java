@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.itunes.ItunesPlaylistType;
-import de.codewave.mytunesrss.vlc.VlcVersion;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
@@ -133,10 +132,7 @@ public class MyTunesRssConfig {
     private boolean myHeadless = false;
     private boolean myVlcEnabled;
     private File myVlcExecutable;
-    private VlcVersion myVlcVersion;
-    private int myVlcSocketTimeout;
     private String myRssDescription;
-    private int myVlcRaopVolume = 75;
     private File myGmExecutable;
     private boolean myGmEnabled;
     private long myImageExpirationMillis;
@@ -937,14 +933,6 @@ public class MyTunesRssConfig {
         myVlcExecutable = vlcExecutable;
     }
 
-    public synchronized VlcVersion getVlcVersion() {
-        return myVlcVersion;
-    }
-
-    public synchronized void setVlcVersion(VlcVersion vlcVersion) {
-        myVlcVersion = vlcVersion;
-    }
-
     public synchronized File getGmExecutable() {
         return myGmExecutable;
     }
@@ -967,22 +955,6 @@ public class MyTunesRssConfig {
 
     public synchronized void setVlcEnabled(boolean vlcEnabled) {
         myVlcEnabled = vlcEnabled;
-    }
-
-    public synchronized int getVlcSocketTimeout() {
-        return myVlcSocketTimeout;
-    }
-
-    public synchronized void setVlcSocketTimeout(int vlcSocketTimeout) {
-        myVlcSocketTimeout = vlcSocketTimeout;
-    }
-
-    public synchronized int getVlcRaopVolume() {
-        return myVlcRaopVolume;
-    }
-
-    public synchronized void setVlcRaopVolume(int vlcRaopVolume) {
-        myVlcRaopVolume = vlcRaopVolume;
     }
 
     public synchronized String getRssDescription() {
@@ -1311,10 +1283,7 @@ public class MyTunesRssConfig {
         setHeadless(JXPathUtils.getBooleanValue(settings, "headless", false));
         String vlc = JXPathUtils.getStringValue(settings, "vlc", MyTunesRssUtils.findVlcExecutable());
         setVlcExecutable(vlc != null ? new File(vlc) : null);
-        setVlcVersion(VlcVersion.valueOf(JXPathUtils.getStringValue(settings, "vlc-version", VlcVersion.V20.name())));
         setVlcEnabled(JXPathUtils.getBooleanValue(settings, "vlc-enabled", true));
-        setVlcSocketTimeout(JXPathUtils.getIntValue(settings, "vlc-timeout", 100));
-        setVlcRaopVolume(JXPathUtils.getIntValue(settings, "vlc-raop-volume", 75));
         String gm = JXPathUtils.getStringValue(settings, "gm", MyTunesRssUtils.findGraphicsMagickExecutable());
         setGmExecutable(gm != null ? new File(gm) : null);
         setGmEnabled(JXPathUtils.getBooleanValue(settings, "gm-enabled", true));
@@ -1746,13 +1715,10 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createBooleanElement(settings, "headless", isHeadless()));
             if (getVlcExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "vlc", getVlcExecutable().getAbsolutePath()));
-                root.appendChild(DOMUtils.createTextElement(settings, "vlc-version", getVlcVersion().name()));
             }
             if (getGmExecutable() != null) {
                 root.appendChild(DOMUtils.createTextElement(settings, "gm", getGmExecutable().getAbsolutePath()));
             }
-            root.appendChild(DOMUtils.createIntElement(settings, "vlc-timeout", getVlcSocketTimeout()));
-            root.appendChild(DOMUtils.createIntElement(settings, "vlc-raop-volume", getVlcRaopVolume()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "vlc-enabled", isVlcEnabled()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "gm-enabled", isGmEnabled()));
             root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));

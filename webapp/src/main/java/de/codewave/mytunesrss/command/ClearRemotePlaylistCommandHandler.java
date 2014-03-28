@@ -5,12 +5,12 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.remotecontrol.MediaRendererRemoteController;
+import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 
 public class ClearRemotePlaylistCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
-        MediaRendererRemoteController.getInstance().clearPlaylist();
+        MediaRendererController.getInstance().clearPlaylist();
         forward(MyTunesRssCommand.ShowPortal);
     }
 }

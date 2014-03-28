@@ -3,9 +3,9 @@
  * All rights reserved.
  */
 
-package de.codewave.mytunesrss.remotecontrol;
+package de.codewave.mytunesrss.mediarenderercontrol;
 
-public class RemoteTrackInfo {
+public class MediaRendererTrackInfo {
     private int myCurrentTrack;
     private int myLength = -1;
     private int myCurrentTime = 0;

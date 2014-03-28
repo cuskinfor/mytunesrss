@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest.representation;
 
-import de.codewave.mytunesrss.bonjour.BonjourDevice;
 import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 import org.fourthline.cling.model.meta.RemoteDevice;
