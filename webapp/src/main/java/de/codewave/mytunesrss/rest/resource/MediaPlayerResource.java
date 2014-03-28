@@ -183,7 +183,7 @@ public class MediaPlayerResource extends RestResource {
                     getController().shuffle();
                     break;
                 case STOP:
-                    getController().stop();
+                    getController().stop(true);
                     break;
                 default:
                     throw new IllegalArgumentException("Illegal action \"" + action + "\".");

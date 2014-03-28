@@ -1,5 +1,6 @@
 package de.codewave.mytunesrss.mediarenderercontrol;
 
+import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
@@ -18,7 +19,7 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AvTransportLastChangeSubscriptionCallback.class);
 
-    private LastChange myPreviousLastChange = new LastChange(new AVTransportLastChangeParser());
+    private TransportState myTransportState = TransportState.CUSTOM;
  
     public AvTransportLastChangeSubscriptionCallback(Service service) {
         super(service);
@@ -41,29 +42,32 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
 
     @Override
     protected void eventReceived(GENASubscription subscription) {
+        Long eventSequence = subscription.getCurrentSequence().getValue();
+        LOGGER.debug("Received GENA event #" + eventSequence + ".");
         Map currentValues = subscription.getCurrentValues();
         if (currentValues.containsKey("LastChange")) {
             String xml = currentValues.get("LastChange").toString();
             try {
                 LastChange lastChange = new LastChange(new AVTransportLastChangeParser(), xml);
-                checkTransportStateChange(myPreviousLastChange.getEventedValue(0, AVTransportVariable.TransportState.class), lastChange.getEventedValue(0, AVTransportVariable.TransportState.class));
-                myPreviousLastChange = lastChange;
+                LOGGER.debug("Received last changed data in GENA event #" + eventSequence + ".");
+                AVTransportVariable.TransportState transportStateEventedValue = lastChange.getEventedValue(0, AVTransportVariable.TransportState.class);
+                if (transportStateEventedValue != null) {
+                    TransportState transportState = transportStateEventedValue.getValue();
+                    if (transportState == null) {
+                        transportState = TransportState.CUSTOM;
+                    }
+                    if (myTransportState != transportState) {
+                        try {
+                            handleTransportStateChange(myTransportState, transportState);
+                        } finally {
+                            myTransportState = transportState;
+                        }
+                    }
+                }
             } catch (Exception e) {
-                LOGGER.info("Could not parse LastChange event data (" + e.getClass().getSimpleName() + "): \"" + e.getMessage() + "\".");
+                LOGGER.warn("Could not parse last change data (" + e.getClass().getName() + "): \"" + e.getMessage() + "\".");
             }
         }
-    }
-
-    private void checkTransportStateChange(AVTransportVariable.TransportState oldValue, AVTransportVariable.TransportState newValue) {
-        TransportState oldState = oldValue != null ? oldValue.getValue() : null;
-        TransportState newState = newValue != null ? newValue.getValue() : null;
-        if (isChanged(oldState, newState)) {
-            handleTransportStateChange(oldState, newState);
-        }
-    }
-
-    private boolean isChanged(Object o1, Object o2) {
-        return (o1 == null && o2 != null) || (o1 != null && o2 == null) || (o1 != null && o2 != null && !o1.equals(o2));
     }
 
     @Override

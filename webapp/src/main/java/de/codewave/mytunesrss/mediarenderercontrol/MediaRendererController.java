@@ -64,7 +64,8 @@ public class MediaRendererController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaRendererController.class);
     private static final MediaRendererController INSTANCE = new MediaRendererController();
-
+    private static final long TIMEOUT_MILLIS = 2000;
+    
     public static MediaRendererController getInstance() {
         return INSTANCE;
     }
@@ -92,7 +93,7 @@ public class MediaRendererController {
     }
 
     public synchronized void setTracks(User user, List<Track> tracks) {
-        stop();
+        stop(false);
         myTracks.clear();
         for (Track track : tracks) {
             myTracks.add(new TrackWithUser(track, user));
@@ -137,7 +138,7 @@ public class MediaRendererController {
     }
 
     public synchronized void clearPlaylist() {
-        stop();
+        stop(false);
         LOGGER.debug("Clearing playlist.");
         myTracks.clear();
     }
@@ -195,12 +196,12 @@ public class MediaRendererController {
         }
     }
 
-    public synchronized void stop() {
+    public synchronized void stop(boolean async) {
         final RemoteService service = getAvTransport();
         if (service != null) {
             myTimeExplicitlyStopped.set(System.currentTimeMillis());
             LOGGER.debug("Stopping playback.");
-            MyTunesRss.UPNP_SERVICE.execute(new Stop(service) {
+            Future stopFuture = MyTunesRss.UPNP_SERVICE.execute(new Stop(service) {
                 @Override
                 public void success(ActionInvocation invocation) {
                     myPlaying.set(false);
@@ -210,11 +211,18 @@ public class MediaRendererController {
                     LOGGER.warn("Could not stop playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
                 }
             });
+            if (!async) {
+                try {
+                    stopFuture.get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+                } catch (InterruptedException | TimeoutException | ExecutionException ignored) {
+                    LOGGER.info("Problem while waiting for stop playback response.");
+                }
+            }
         }
     }
 
     public synchronized void next() {
-        stop();
+        stop(false);
         if (myCurrentTrack.get() + 1 < myTracks.size()) {
             LOGGER.debug("Playing next track.");
             play(myCurrentTrack.incrementAndGet());
@@ -222,7 +230,7 @@ public class MediaRendererController {
     }
 
     public synchronized void prev() {
-        stop();
+        stop(false);
         if (myCurrentTrack.get() > 0) {
             LOGGER.debug("Playing previous track.");
             play(myCurrentTrack.decrementAndGet());
@@ -326,7 +334,7 @@ public class MediaRendererController {
 
     public synchronized void shuffle() {
         boolean oldPlaying = myPlaying.get();
-        stop();
+        stop(false);
         LOGGER.debug("Shuffling tracks.");
         Collections.shuffle(myTracks);
         if (oldPlaying) {
@@ -355,7 +363,7 @@ public class MediaRendererController {
             mySubscriptionCallback.end();
             mySubscriptionCallback = null;
         }
-        stop();
+        stop(true);
         if (mediaRenderer != null) {
             LOGGER.debug("Setting media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\".");
         } else {
