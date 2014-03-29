@@ -198,17 +198,24 @@
 
         function init2(trackInfo) {
             getStateAndUpdateInterfacePeriodic();
-            if (!trackInfo.playing) {
-                <c:choose>
-                    <c:when test="${param.fullScreen == 'true'}">
-                        startPlayback(0);
-                        toggleFullScreen();
-                    </c:when>
-                    <c:otherwise>
-                        startPlayback(0);
-                    </c:otherwise>
-                </c:choose>
-            }
+            <c:choose>
+                <c:when test="${empty currentlySelectedMediaRenderer}">
+                    openMediaRendererSelection();
+                </c:when>
+                <c:otherwise>
+                    if (!trackInfo.playing) {
+                        <c:choose>
+                            <c:when test="${param.fullScreen == 'true'}">
+                                startPlayback(0);
+                                toggleFullScreen();
+                            </c:when>
+                            <c:otherwise>
+                                startPlayback(0);
+                            </c:otherwise>
+                        </c:choose>
+                    }
+                </c:otherwise>
+            </c:choose>
         }
 
       $jQ(document).ready(function(){
