@@ -1085,6 +1085,32 @@ div.pager img {
 	background: #fff;
 }
 
+/* Remote control media renderer */
+
+div.mediarenderer {
+	position: relative;
+    padding: 5px 5px 5px 5px;
+    background: #ffe;
+}
+
+div.mediarenderertop {
+    height: 3px;
+    background: #666 url( "../images/msg_top.gif" ) 0 1px repeat-x;
+}
+
+div.mediarendererbottom {
+    height: 2px;
+    background: #666 url( "../images/msg_bottom.gif" ) 0 0 repeat-x;
+    border-bottom: 1px solid #888;
+}
+
+p.mediarendererdevicelist a {
+    text-decoration: none;
+    color: #000;
+    cursor: pointer;
+    font-weight: bold;
+    padding-bottom: 3px;
+}
 
 /* Playlist */
 

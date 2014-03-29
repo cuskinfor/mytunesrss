@@ -168,7 +168,7 @@ public class MediaPlayerResource extends RestResource {
                     getController().pause();
                     break;
                 case PLAY:
-                    getController().play(track);
+                    getController().play(track, true);
                     break;
                 case PREVIOUS:
                     getController().prev();

@@ -13,6 +13,7 @@ import org.fourthline.cling.support.model.TransportState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Map;
 
 public abstract class AvTransportLastChangeSubscriptionCallback extends SubscriptionCallback {
@@ -20,7 +21,7 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
     private static final Logger LOGGER = LoggerFactory.getLogger(AvTransportLastChangeSubscriptionCallback.class);
 
     private TransportState myTransportState = TransportState.CUSTOM;
- 
+
     public AvTransportLastChangeSubscriptionCallback(Service service) {
         super(service);
     }
@@ -75,6 +76,6 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
         LOGGER.info("AVTransport events missed: " + numberOfMissedEvents + ".");
     }
 
-    abstract void handleTransportStateChange(TransportState oldState, TransportState newState);
+    abstract void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState);
 
 }

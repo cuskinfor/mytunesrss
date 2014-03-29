@@ -26,6 +26,8 @@ public class ShowRemoteControlHandler extends CreatePlaylistBaseCommandHandler {
         getRequest().setAttribute("itemsPerPage", 10); // TODO config
         getRequest().setAttribute("pagesPerPager", 10); // TODO config
         getRequest().setAttribute("currentPage", MediaRendererController.getInstance().getCurrentTrackInfo().getCurrentTrack() / 10); // TODO config
+        String mediaRendererName = MediaRendererController.getInstance().getMediaRendererName();
+        getRequest().setAttribute("currentlySelectedMediaRenderer", mediaRendererName.substring(0, Math.min(30, mediaRendererName.length())));
         forward(MyTunesRssResource.RemoteControl);
     }
 }

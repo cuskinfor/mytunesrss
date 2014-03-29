@@ -249,14 +249,20 @@
                     <li class="settings first"><a id="linkClear" href="${servletUrl}/clearRemotePlaylist/${auth}">
                         <fmt:message key="doClearRemotePlaylist" />
                     </a></li>
-                    <li class="settings"><a id="linkSpeaker" style="cursor:pointer" onclick="openSpeakerSelection()">
-                        <fmt:message key="selectAirtunesSpeaker" />
+                    <li class="settings"><a id="linkSpeaker" style="cursor:pointer" onclick="openMediaRendererSelection()">
+                        <fmt:message key="selectMediaRenderer" />
                     </a></li>
                     <li class="spacer">&nbsp;</li>
 		            <li class="back"><a id="linkBack" style="cursor:pointer" onclick="self.document.location.href='${mtfn:decode64(param.backUrl)}'">
 		                <fmt:message key="back" />
 		            </a></li>
 		        </ul>
+
+                <div class="mediarenderertop"></div>
+                <div class="mediarenderer">
+            		<span><strong><fmt:message key="selectedMediaRenderer"/>:</strong></span>&nbsp;<span id="mediaRendererName">${currentlySelectedMediaRenderer}</span>
+                </div>
+                <div class="mediarendererbottom"></div>
 
 		        <div class="navigation">
 
@@ -318,39 +324,40 @@
 	</div>
 
     <script type="text/javascript">
-        function selectMediaRenderer(rendererId) {
+        function selectMediaRenderer(rendererId, rendererName) {
             $jQ.modal.close();
-            showLoading('<fmt:message key="switchingAirtunesTarget"/>');
+            showLoading('<fmt:message key="switchingMediaRenderer"/>');
             MediaPlayerResource.setStatus({renderer:rendererId});
+            $jQ("#mediaRendererName").empty();
+            $jQ("#mediaRendererName").append(rendererName.substr(0, 30));
             hideLoading();
         }
 
-        function openSpeakerSelection() {
+        function openMediaRendererSelection() {
             var mediaRenderers = SessionResource.getSession().mediaRenderers;
             $jQ("#devicelist").empty();
-            <%--$jQ("#devicelist").append("<input type='checkbox' value='' /> <fmt:message key="airtunesTargetDialog.localPlayback" /><br />");--%>
             for (var i = 0; i < mediaRenderers.length; i++) {
-                $jQ("#devicelist").append("<a onclick='selectMediaRenderer(\"" + mediaRenderers[i].id + "\")'>" + mediaRenderers[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</a><br/>");
+                var mediaRendererName = mediaRenderers[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                $jQ("#devicelist").append("<a onclick='selectMediaRenderer(\"" + mediaRenderers[i].id + "\", \"" + mediaRendererName.replace(/"/g, "\"") + "\")'>" + mediaRendererName + "</a><br/>");
             }
-            openDialog("#airtunesTargetDialog");
+            openDialog("#mediaRendererSelectionDialog");
         }
     </script>
 
-    <div id="airtunesTargetDialog" class="dialog">
+    <div id="mediaRendererSelectionDialog" class="dialog">
         <h2>
-            <fmt:message key="airtunesTargetDialog.title" />
+            <fmt:message key="mediaRendererSelectionDialog.title" />
         </h2>
 
         <div>
             <p>
-                <fmt:message key="airtunesTargetDialog.text" />
+                <fmt:message key="mediaRendererSelectionDialog.text" />
             </p>
 
-            <p id="devicelist"></p>
+            <p class="mediarendererdevicelist" id="devicelist"></p>
 
             <p align="right">
-                <button id="linkAirtunesTargetDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
-                <%--button id="linkAirtunesTargetDialogOk" onclick="selectAirtunesTargets()"><fmt:message key="airtunesTargetDialog.ok"/></button--%>
+                <button id="mediaRendererSelectionDialogCancel" onclick="$jQ.modal.close()"><fmt:message key="doCancel"/></button>
             </p>
         </div>
 

@@ -5,10 +5,7 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
@@ -22,6 +19,7 @@ import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteService;
 import org.fourthline.cling.model.types.UDAServiceId;
 import org.fourthline.cling.support.avtransport.callback.*;
+import org.fourthline.cling.support.model.MediaInfo;
 import org.fourthline.cling.support.model.PositionInfo;
 import org.fourthline.cling.support.model.SeekMode;
 import org.fourthline.cling.support.model.TransportState;
@@ -30,6 +28,8 @@ import org.fourthline.cling.support.renderingcontrol.callback.SetVolume;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -65,7 +65,7 @@ public class MediaRendererController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MediaRendererController.class);
     private static final MediaRendererController INSTANCE = new MediaRendererController();
     private static final long TIMEOUT_MILLIS = 2000;
-    
+
     public static MediaRendererController getInstance() {
         return INSTANCE;
     }
@@ -80,6 +80,10 @@ public class MediaRendererController {
 
     private MediaRendererController() {
         // only singleton instance above can be created
+    }
+
+    public synchronized String getMediaRendererName() {
+        return myMediaRenderer != null ? myMediaRenderer.getDetails().getFriendlyName() : "";
     }
 
     public synchronized void loadPlaylist(User user, String playlistId) throws SQLException {
@@ -108,7 +112,7 @@ public class MediaRendererController {
         }
         if (!getCurrentTrackInfo().isPlaying() && startPlaybackIfStopped) {
             // start playback with first new track
-            play(oldSize);
+            play(oldSize, true);
         }
     }
 
@@ -143,7 +147,7 @@ public class MediaRendererController {
         myTracks.clear();
     }
 
-    public synchronized void play(final int index) {
+    public synchronized void play(final int index, boolean async) {
         final RemoteService service = getAvTransport();
         if (service != null) {
             if (index == -1) {
@@ -153,7 +157,7 @@ public class MediaRendererController {
                 String hostAddress = service.getDevice().getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
                 final String playbackUrl = createPlaybackUrl(createBaseUrl(hostAddress, myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
                 LOGGER.debug("Setting playback URL to \"" + playbackUrl + "\".");
-                MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUrl, track.getName()) {
+                Future setUriFuture = MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUrl, track.getName()) {
                     @Override
                     public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                         LOGGER.warn("Could not set playback URL \"" + playbackUrl + "\" at media renderer \"" + service.getDevice().getDisplayString() + "\".");
@@ -165,6 +169,13 @@ public class MediaRendererController {
                         sendPlay(service);
                     }
                 });
+                if (!async) {
+                    try {
+                        setUriFuture.get(TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException | TimeoutException | ExecutionException ignored) {
+                        LOGGER.info("Problem while waiting for set URI response.");
+                    }
+                }
             }
         }
     }
@@ -176,6 +187,7 @@ public class MediaRendererController {
             public void success(ActionInvocation invocation) {
                 myPlaying.set(true);
             }
+
             @Override
             public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                 LOGGER.warn("Could not start playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
@@ -206,6 +218,7 @@ public class MediaRendererController {
                 public void success(ActionInvocation invocation) {
                     myPlaying.set(false);
                 }
+
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                     LOGGER.warn("Could not stop playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
@@ -225,7 +238,7 @@ public class MediaRendererController {
         stop(false);
         if (myCurrentTrack.get() + 1 < myTracks.size()) {
             LOGGER.debug("Playing next track.");
-            play(myCurrentTrack.incrementAndGet());
+            play(myCurrentTrack.incrementAndGet(), true);
         }
     }
 
@@ -233,7 +246,7 @@ public class MediaRendererController {
         stop(false);
         if (myCurrentTrack.get() > 0) {
             LOGGER.debug("Playing previous track.");
-            play(myCurrentTrack.decrementAndGet());
+            play(myCurrentTrack.decrementAndGet(), true);
         }
     }
 
@@ -257,6 +270,7 @@ public class MediaRendererController {
                         }
                     });
                 }
+
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                     LOGGER.warn("Could not get track duration seconds from media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
@@ -269,10 +283,10 @@ public class MediaRendererController {
         final MediaRendererTrackInfo trackInfo = new MediaRendererTrackInfo();
         trackInfo.setCurrentTrack(myCurrentTrack.get() + 1);
         trackInfo.setPlaying(myPlaying.get());
-        
+
         final RemoteService avTransport = getAvTransport();
         final RemoteService renderingControl = getRenderingControl();
-        
+
         if (avTransport != null && renderingControl != null) {
             Future getPositionInfoFuture = MyTunesRss.UPNP_SERVICE.execute(new GetPositionInfo(avTransport) {
                 @Override
@@ -280,6 +294,7 @@ public class MediaRendererController {
                     trackInfo.setCurrentTime((int) positionInfo.getTrackElapsedSeconds());
                     trackInfo.setLength((int) positionInfo.getTrackDurationSeconds());
                 }
+
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                     LOGGER.warn("Could not get position info from media renderer \"" + avTransport.getDevice().getDetails().getFriendlyName() + "\".");
@@ -298,18 +313,15 @@ public class MediaRendererController {
                 }
             });
             try {
-                int maxWaitMillis = 1000;
-                long start = System.currentTimeMillis();
-                try {
-                    getPositionInfoFuture.get(maxWaitMillis, TimeUnit.MILLISECONDS);
-                } finally {
-                    getVolumeFuture.get(Math.max(1, maxWaitMillis - (System.currentTimeMillis() - start)), TimeUnit.MILLISECONDS);
+                long timeout = System.currentTimeMillis() + 1000;
+                for (Future future : new Future[]{getPositionInfoFuture, getVolumeFuture}) {
+                    future.get(Math.max(timeout - System.currentTimeMillis(), 1), TimeUnit.MILLISECONDS);
                 }
             } catch (ExecutionException | TimeoutException | InterruptedException e) {
-                LOGGER.debug("Exception while waiting for media renderer state.", e);
+                LOGGER.debug("Exception while waiting for future.", e);
             }
         }
-        
+
         return trackInfo;
     }
 
@@ -333,13 +345,10 @@ public class MediaRendererController {
     }
 
     public synchronized void shuffle() {
-        boolean oldPlaying = myPlaying.get();
         stop(false);
         LOGGER.debug("Shuffling tracks.");
         Collections.shuffle(myTracks);
-        if (oldPlaying) {
-            play(0);
-        }
+        myCurrentTrack.set(0);
     }
 
     public synchronized List<Track> getPlaylist() {
@@ -373,22 +382,24 @@ public class MediaRendererController {
         if (mediaRenderer != null) {
             mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
                 @Override
-                void handleTransportStateChange(TransportState oldState, TransportState newState) {
-                    MediaRendererController.this.handleTransportStateChange(oldState, newState);
+                void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
+                    MediaRendererController.this.handleTransportStateChange(previousTransportState, currentTransportState);
                 }
             };
             LOGGER.debug("Starting subscription callback.");
+            myTimeExplicitlyStopped.set(System.currentTimeMillis());
             MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
             myMaxVolume = getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum();
             LOGGER.debug("Maximum volume for media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" is " + myMaxVolume + ".");
+            play(myCurrentTrack.get(), true);
         }
     }
 
-    private synchronized void handleTransportStateChange(TransportState oldTransportState, TransportState newTransportState) {
-        LOGGER.debug("Media renderer transport state changed from " + oldTransportState.name() + " to " + newTransportState.name() + ".");
-        myPlaying.set(newTransportState != TransportState.STOPPED && newTransportState != TransportState.PAUSED_PLAYBACK);
+    private synchronized void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
+        LOGGER.debug("Media renderer transport state changed from " + previousTransportState.name() + " to " + currentTransportState.name() + ".");
+        myPlaying.set(currentTransportState != TransportState.STOPPED && currentTransportState != TransportState.PAUSED_PLAYBACK);
         long timeDelta = System.currentTimeMillis() - myTimeExplicitlyStopped.get();
-        if (newTransportState == TransportState.STOPPED && (timeDelta > 1000) && myCurrentTrack.get() + 1 < myTracks.size()) {
+        if (currentTransportState == TransportState.STOPPED && (timeDelta > 1000) && myCurrentTrack.get() + 1 < myTracks.size()) {
             // advance if playback has stopped automatically (myUserStopped == false)
             LOGGER.debug("Automatically advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago).");
             next();
