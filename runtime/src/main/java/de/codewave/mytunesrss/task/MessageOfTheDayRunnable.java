@@ -26,7 +26,7 @@ public class MessageOfTheDayRunnable implements Runnable {
             URI uri = null;
             try {
                 uri = MyTunesRss.REGISTRATION.isReleaseVersion() && !MyTunesRss.REGISTRATION.isUnregistered() ? new URI("http://www.codewave.de/tools/motd/mytunesrss.xml") : new URI("http://www.codewave.de/tools/motd/mytunesrss_unregistered.xml");
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException ignored) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Invalid message of the day URI.");
                 }

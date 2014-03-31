@@ -74,7 +74,7 @@ public class PlaylistFileProcessor implements FileProcessor {
                 }
             } catch (RuntimeException e) {
                 LOG.error("Could not insert/update playlist from \"" + playlistFile + "\".", e);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
         }

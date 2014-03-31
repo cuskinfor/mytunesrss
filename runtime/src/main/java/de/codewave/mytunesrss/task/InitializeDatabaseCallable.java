@@ -109,7 +109,7 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                                 return new Version(resultSet.getString("version"));
                             }
                         }
-                    } catch (SQLException e) {
+                    } catch (SQLException ignored) {
                         // intentionally left blank
                     }
                     return null;

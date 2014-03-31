@@ -105,7 +105,7 @@ public class PlaylistListener implements PListHandlerListener {
                     if (LOG.isErrorEnabled()) {
                         LOG.error("Could not insert/update playlist \"" + name + "\" into database.", e);
                     }
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                 }
             }

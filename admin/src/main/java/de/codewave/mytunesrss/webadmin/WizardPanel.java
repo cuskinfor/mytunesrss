@@ -111,7 +111,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                                 while (MyTunesRss.EXECUTOR_SERVICE.isDatabaseJobRunning()) {
                                     try {
                                         Thread.sleep(1000);
-                                    } catch (InterruptedException e) {
+                                    } catch (InterruptedException ignored) {
                                         LOGGER.info("Wizard watchdog thread has been interrupted!");
                                     }
                                 }

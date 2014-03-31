@@ -33,7 +33,7 @@ public class ModalInfoDialog {
                         if (!myCancelled.get() && !Thread.interrupted()) {
                             myInfo.setVisible(true);
                         }
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                         LOGGER.info("Interrupted while delaying.");
                     }
                 }
@@ -55,7 +55,7 @@ public class ModalInfoDialog {
                             myInfo.dispose();
                             myThread.join(100);
                         }
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                         LOGGER.debug("Interrupted while waiting for thread to die.");
                     }
                 }

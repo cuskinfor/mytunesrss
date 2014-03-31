@@ -336,7 +336,7 @@ public class MyTunesRssWebUtils {
             StringBuilder cookieValue = new StringBuilder(Base64.encodeBase64String(username.getBytes("UTF-8")).trim());
             cookieValue.append(";").append(new String(Base64.encodeBase64(passwordHash), "UTF-8").trim());
             response.addCookie(createLoginCookie(cookieValue.toString()));
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException ignored) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Character set UTF-8 not found.");
             }
@@ -365,7 +365,7 @@ public class MyTunesRssWebUtils {
                 if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "UserV2")) {
                     try {
                         return new String(Base64.decodeBase64(Base64Utils.decodeToString(cookie.getValue()).split(";")[0]), "UTF-8");
-                    } catch (UnsupportedEncodingException e) {
+                    } catch (UnsupportedEncodingException ignored) {
                         if (LOGGER.isErrorEnabled()) {
                             LOGGER.error("Character set UTF-8 not found.");
                         }

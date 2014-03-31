@@ -222,7 +222,7 @@ public class TranscoderConfig implements Cloneable {
         TranscoderConfig clone = null;
         try {
             clone = (TranscoderConfig) super.clone();
-        } catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException ignored) {
             clone = new TranscoderConfig();
         }
         clone.myTranscoderActivations = new ArrayList<>();

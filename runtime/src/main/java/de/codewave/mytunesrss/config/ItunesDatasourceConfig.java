@@ -223,7 +223,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         } catch (IOException e) {
             LOGGER.warn("Could not find iTunes auto-add folder.", e);
             return null;
-        } catch (StopParsingException e) {
+        } catch (StopParsingException ignored) {
             LOGGER.debug("Finished parsing iTunes XML with stop-exception!");
         }
         return ItunesLoader.getFileNameForLocation(listener.getMusicFolder());

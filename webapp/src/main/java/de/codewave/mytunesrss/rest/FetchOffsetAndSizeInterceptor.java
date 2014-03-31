@@ -33,13 +33,13 @@ public class FetchOffsetAndSizeInterceptor implements PostProcessInterceptor, Ac
             Long fetchOffset = null;
             try {
                 fetchOffset = myRequest.getParameter("fetch.offset") != null ? Long.parseLong(myRequest.getParameter("fetch.offset")) : null;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 // ignore parse exception, just keep fetchOffset NULL
             }
             Long fetchSize = null;
             try {
                 fetchSize = myRequest.getParameter("fetch.size") != null ? Long.parseLong(myRequest.getParameter("fetch.size")) : null;
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 // ignore parse exception, just keep fetchSize NULL
             }
             if (fetchOffset != null || fetchSize != null) {

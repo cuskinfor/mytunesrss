@@ -122,7 +122,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
             while (!myTerminated.get()) {
                 wait();
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             LOGGER.warn("Interrupted while waiting for photo thumbnail generation termination.");
         }
     }

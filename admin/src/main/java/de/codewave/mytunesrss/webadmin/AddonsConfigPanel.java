@@ -355,7 +355,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                                 if (removedConfig != null) {
                                     try {
                                         FileUtils.deleteQuietly(removedConfig.getBaseDir());
-                                    } catch (IOException e) {
+                                    } catch (IOException ignored) {
                                         LOGGER.error("Could not get flash player base directory.");
                                     }
                                 }

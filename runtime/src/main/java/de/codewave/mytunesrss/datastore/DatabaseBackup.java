@@ -46,7 +46,7 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
         myFile = file;
         try {
             myDate = new SimpleDateFormat("'h2-backup-'yyyy-MM-dd_HH-mm-ss'.zip'").parse(file.getName()).getTime();
-        } catch (ParseException e) {
+        } catch (ParseException ignored) {
             throw new IOException("Could not parse data from database backup file name \"" + file.getName() + "\".");
         }
     }

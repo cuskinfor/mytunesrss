@@ -65,7 +65,7 @@ public class LogServlet extends HttpServlet {
                 writer.println();
                 writer.flush();
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             // ignore and stop writing
         } finally {
             MyTunesRss.LOG_QUEUE_MANAGER.removeQueue(queue);

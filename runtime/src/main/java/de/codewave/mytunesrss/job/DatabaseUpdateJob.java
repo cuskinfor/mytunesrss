@@ -21,7 +21,7 @@ public class DatabaseUpdateJob implements Job {
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), false);
-        } catch (DatabaseJobRunningException e) {
+        } catch (DatabaseJobRunningException ignored) {
             MyTunesRss.ADMIN_NOTIFY.notifySkippedDatabaseUpdate(jobExecutionContext);
         }
     }

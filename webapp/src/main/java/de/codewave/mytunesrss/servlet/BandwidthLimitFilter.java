@@ -86,7 +86,7 @@ public class BandwidthLimitFilter implements Filter {
                     myDelegate.flush();
                     try {
                         Thread.sleep(timeToWait);
-                    } catch (InterruptedException e) {
+                    } catch (InterruptedException ignored) {
                         break;
                     }
                 }

@@ -230,7 +230,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
                 filename = FilenameUtils.getBaseName(file.getName()) + ".jpg";
                 mimeType = MimeType.valueOf("image/jpeg");
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             size = 0;
         }
         StringBuilder builder = createWebAppCall(user, "showPhoto");

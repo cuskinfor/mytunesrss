@@ -50,7 +50,7 @@ public class ResourceBundleManager {
             if (is != null) {
                 try {
                     return new PropertyResourceBundle(is);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                     if (LOGGER.isWarnEnabled()) {
                         LOGGER.warn("Could not read property resource bundle \"" + bundlePath + "\".");
                     }

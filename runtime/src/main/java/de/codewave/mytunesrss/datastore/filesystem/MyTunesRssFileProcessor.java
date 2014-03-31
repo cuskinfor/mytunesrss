@@ -134,7 +134,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         } finally {
             processedCount++;
@@ -197,7 +197,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setDate(createDate != null ? createDate.longValue() : -1);
                 }
             }
-        } catch (ImageReadException e) {
+        } catch (ImageReadException ignored) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not read EXIF data from \"" + photoFile.getAbsolutePath() + "\".");
             }
@@ -294,7 +294,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 String yearString = StringUtils.defaultIfEmpty(tag.getYear(), "-1");
                 try {
                     statement.setYear(Integer.parseInt(yearString));
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException ignored) {
                     LOGGER.warn("Illegal YEAR value \"" + yearString + "\" in \"" + file + "\".");
                     statement.setYear(-1);
                 }
@@ -325,7 +325,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                 statement.setPos(Integer.parseInt(posParts[0].trim()), Integer.parseInt(posParts[1].trim()));
                             }
                         }
-                    } catch (NumberFormatException e) {
+                    } catch (NumberFormatException ignored) {
                         LOGGER.warn("Illegal TPA/TPOS value \"" + pos + "\" in \"" + file + "\".");
                     }
                 }
@@ -627,7 +627,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             name = StringUtils.trimToNull(name);
             LOGGER.debug("Fallback name for \"" + file + "\" and pattern \"" + pattern + "\" is \"" + name + "\".");
             return name;
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             LOGGER.warn("Could not create fallback name for \"" + file + "\" with pattern \"" + pattern + "\".");
         }
         return null;

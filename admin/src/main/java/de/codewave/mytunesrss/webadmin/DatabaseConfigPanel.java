@@ -281,20 +281,20 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
             String driverClass = myDatabaseDriver.getStringValue(null);
             try {
                 Class.forName(driverClass, false, MyTunesRss.EXTRA_CLASSLOADER);
-            } catch (ClassNotFoundException e) {
+            } catch (ClassNotFoundException ignored) {
                 return "databaseConfigPanel.error.missingDriverClass";
             }
             if (myDatabaseType.getValue() == DatabaseType.mysqlinternal) {
                 try {
                     Class.forName("com.mysql.management.MysqldResource", false, MyTunesRss.EXTRA_CLASSLOADER);
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException ignored) {
                     return "databaseConfigPanel.error.missingMxjConnector";
                 }
                 try {
                     if (MyTunesRss.EXTRA_CLASSLOADER.getResource("connector-mxj.properties") == null) {
                         return "databaseConfigPanel.error.missingMxjDbFiles";
                     }
-                } catch (MissingResourceException e) {
+                } catch (MissingResourceException ignored) {
                     return "databaseConfigPanel.error.missingMxjDbFiles";
                 }
             }

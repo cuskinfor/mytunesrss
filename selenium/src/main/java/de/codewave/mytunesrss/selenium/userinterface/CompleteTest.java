@@ -64,7 +64,7 @@ public class CompleteTest {
                 System.out.println("searching element: " + by);
                 try {
                     Thread.sleep(200);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     // ignore
                 }
                 return super.findElement(by);
@@ -322,7 +322,7 @@ public class CompleteTest {
         try {
             driver.findElement(by);
             return true;
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException ignored) {
             return false;
         }
     }

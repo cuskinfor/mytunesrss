@@ -1223,7 +1223,7 @@ public class MyTunesRssConfig {
         setNotifyOnSkippedDatabaseUpdate(JXPathUtils.getBooleanValue(settings, "admin-notify/skipped-db-update", false));
         try {
             setStatisticKeepTime(JXPathUtils.getIntValue(settings, "statistics-keep-time", getStatisticKeepTime()));
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             LOGGER.warn("Could not read/parse statistics keep time, keeping default.");
             // intentionally left blank; keep default
         }
@@ -1393,7 +1393,7 @@ public class MyTunesRssConfig {
                                 JXPathContext ignorePlaylistsContext = ignorePlaylistsIterator.next();
                                 try {
                                     itunesDatasourceConfig.addIgnorePlaylist(ItunesPlaylistType.valueOf(JXPathUtils.getStringValue(ignorePlaylistsContext, ".", ItunesPlaylistType.Master.name())));
-                                } catch (IllegalArgumentException e) {
+                                } catch (IllegalArgumentException ignored) {
                                     // ignore illegal config entry
                                 }
                             }
@@ -1443,7 +1443,7 @@ public class MyTunesRssConfig {
                         default:
                             throw new IllegalArgumentException("Unknown datasource type!");
                     }
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException ignored) {
                     if (LOGGER.isWarnEnabled()) {
                         LOGGER.warn("Illegal data source of type \"" + JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()) + "\" ignored.");
                     }

@@ -126,7 +126,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                 addGenreMapping(genreMapping.getKey(), genreMapping.getValue());
                 oldGenreMappings.put(genreMapping.getKey(), genreMapping.getValue());
             }
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
             MyTunesRss.UNHANDLED_EXCEPTION.set(true);
         } finally {
             session.rollback();

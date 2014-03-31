@@ -209,9 +209,9 @@ public class MyTunesRssExecutorService {
                     StopWatch.start("Running scheduled refresh  of update/play time related smart playlists.");
                     try {
                         MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.SCHEDULED));
-                    } catch (SQLException e) {
+                    } catch (SQLException ignored) {
                         LOGGER.warn("Could not update smart playlists.");
-                    } catch (RuntimeException e) {
+                    } catch (RuntimeException ignored) {
                         LOGGER.warn("Could not update smart playlists.");
                     } finally {
                         StopWatch.stop();

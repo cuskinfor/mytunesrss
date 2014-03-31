@@ -53,7 +53,7 @@ public class CacheControlInterceptor implements PreProcessInterceptor, PostProce
         if (header != null && !header.isEmpty()) {
             try {
                 IF_MODIFIED_SINCE.set(DATE_FORMAT.get().parse(header.get(0)).getTime());
-            } catch (ParseException e) {
+            } catch (ParseException ignored) {
                 // ignore parse exception
             }
         }

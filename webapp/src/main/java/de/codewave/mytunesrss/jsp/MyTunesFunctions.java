@@ -349,7 +349,7 @@ public class MyTunesFunctions {
     public static String hostFromUrl(String url) {
         try {
             return new URL(url).getHost();
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException ignored) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not create URL from \"" + url + "\". Returning complete URL as host.");
             }

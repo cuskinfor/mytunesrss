@@ -216,7 +216,7 @@ public class MyTunesRssUpnpService {
             try {
                 myClingService.getRegistry().addDevice(new LocalDevice(identity, type, details, icon, new LocalService[]{directoryService, connectionManagerService}));
                 MyTunesRssEventManager.getInstance().addListener(myUpnpDatabaseUpdateListener);
-            } catch (ValidationException e) {
+            } catch (ValidationException ignored) {
                 LOGGER.warn("Could not add UPnP Media Server device.");
             }
         }

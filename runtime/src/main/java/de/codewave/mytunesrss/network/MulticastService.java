@@ -44,7 +44,7 @@ public class MulticastService extends Thread {
             while (THREAD.isAlive()) {
                 try {
                     MulticastService.class.wait(200);
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     // intentionally left blank
                 }
             }
@@ -92,7 +92,7 @@ public class MulticastService extends Thread {
                             otherInstances.add(new RemoteServer(name, receivePacket.getAddress().getHostName(), port));
                         }
                     }
-                } catch (SocketTimeoutException e) {
+                } catch (SocketTimeoutException ignored) {
                     // intentionally left blank
                 }
             }
@@ -133,7 +133,7 @@ public class MulticastService extends Thread {
                         DatagramPacket sendPacket = new DatagramPacket(answer, answer.length, receivePacket.getAddress(), receivePacket.getPort());
                         socket.send(sendPacket);
                     }
-                } catch (SocketTimeoutException e) {
+                } catch (SocketTimeoutException ignored) {
                     // intentionally left blank
                 } catch (IOException e) {
                     if (LOG.isErrorEnabled()) {

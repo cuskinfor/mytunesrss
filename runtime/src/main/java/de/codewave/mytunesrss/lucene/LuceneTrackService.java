@@ -70,7 +70,7 @@ public class LuceneTrackService {
             if (myIndexWriter != null) {
                 try {
                     myIndexWriter.close();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                     LOGGER.error("Could not close index writer.");
                 }
             }

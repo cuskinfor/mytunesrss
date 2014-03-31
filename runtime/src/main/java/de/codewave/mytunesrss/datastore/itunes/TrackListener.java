@@ -81,7 +81,7 @@ public class TrackListener implements PListHandlerListener {
             }
         } catch (RuntimeException e) {
             LOG.error("Could not process track with ID \"" + trackId + "\".", e);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
         return false;

@@ -82,7 +82,7 @@ public class OrphanedImageRemover {
                                 LOGGER.debug("Deleting image directory \"" + dir.getAbsolutePath() + "\".");
                                 FileUtils.deleteDirectory(dir);
                             }
-                        } catch (IOException e) {
+                        } catch (IOException ignored) {
                             LOGGER.info("Could not remove orphaned images from \"" + imageDir.getAbsolutePath() + "\".");
                         }
                     }

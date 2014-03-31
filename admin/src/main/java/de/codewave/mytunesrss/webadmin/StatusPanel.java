@@ -540,7 +540,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     }
                     myUpdatePanel.addStyleName("updatePanel");
                     myUpdatePanel.setVisible(true);
-                } catch (MalformedURLException e) {
+                } catch (MalformedURLException ignored) {
                     // ignore, panel remains invisible
                 }
             }

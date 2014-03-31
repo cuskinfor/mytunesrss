@@ -113,7 +113,7 @@ public class MyTunesRssDataStoreTest {
                     MyTunesRss.STORE.destroy();
                     Thread.sleep(200);
                     MyTunesRss.STORE.init();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                 } catch (IOException e) {
                     LOGGER.error("Bang!", e);

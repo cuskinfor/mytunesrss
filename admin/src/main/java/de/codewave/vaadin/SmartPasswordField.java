@@ -47,7 +47,7 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         if (StringUtils.isNotBlank(s)) {
             try {
                 return Integer.parseInt(s);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 return defaultValue;
             }
         }
@@ -59,7 +59,7 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         if (StringUtils.isNotBlank(s)) {
             try {
                 return Long.parseLong(s);
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 return defaultValue;
             }
         }

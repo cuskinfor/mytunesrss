@@ -89,7 +89,7 @@ public class WebServer {
                     ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
                     ajpConnector.setHost(MyTunesRss.CONFIG.getAjpHost());
                     myServer.addConnector(ajpConnector);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                 }
             }
@@ -142,7 +142,7 @@ public class WebServer {
                     serverSocket = new ServerSocket(port);
                     freePort = port;
                     break;
-                } catch (BindException e) {
+                } catch (BindException ignored) {
                     // ignore exception, try next port
                 } finally {
                     if (serverSocket != null) {
@@ -187,7 +187,7 @@ public class WebServer {
                     if (result == -1) {
                         try {
                             Thread.sleep(100);
-                        } catch (InterruptedException e) {
+                        } catch (InterruptedException ignored) {
                             // intentionally left blank
                         }
                     }

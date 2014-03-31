@@ -46,7 +46,7 @@ public class MyTunesRssRegistration {
             } else {
                 throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.InvalidFile);
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             throw new MyTunesRssRegistrationException(MyTunesRssRegistrationException.Error.InvalidFile);
         }
     }
@@ -153,7 +153,7 @@ public class MyTunesRssRegistration {
             if (expirationDate != null) {
                 try {
                     myExpiration = new SimpleDateFormat("yyyy-MM-dd").parse(expirationDate).getTime();
-                } catch (ParseException e) {
+                } catch (ParseException ignored) {
                     // intentionally left blank
                 }
             } else {

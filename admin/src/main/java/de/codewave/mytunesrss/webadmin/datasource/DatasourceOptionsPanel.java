@@ -344,7 +344,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
                             });
                         }
                         transaction.commit();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                         LOGGER.info("Could not update track file types.");
                         transaction.rollback();
                     } finally {

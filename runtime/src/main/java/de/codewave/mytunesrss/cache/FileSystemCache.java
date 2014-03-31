@@ -46,7 +46,7 @@ public class FileSystemCache implements Runnable {
             if (file.isDirectory()) {
                 try {
                     FileUtils.deleteDirectory(file);
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                     result = false;
                 }
             } else {
@@ -133,7 +133,7 @@ public class FileSystemCache implements Runnable {
         if (file.isDirectory()) {
             try {
                 FileUtils.deleteDirectory(new File(myBaseDir, name));
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 return false;
             }
             return true;
@@ -192,7 +192,7 @@ public class FileSystemCache implements Runnable {
             try {
                 truncateCache();
                 Thread.sleep(myIntervalMillis);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
                 // this is the expected way to end the thread
                 return;
             }

@@ -29,7 +29,7 @@ public class EmailValidator extends AbstractStringValidator {
         try {
             new InternetAddress(s, true);
             return true;
-        } catch (AddressException e) {
+        } catch (AddressException ignored) {
             return false;
         }
     }

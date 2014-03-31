@@ -73,7 +73,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                         return true;
                     }
                 }
-            } catch (NumberFormatException e) {// intentionally left blank
+            } catch (NumberFormatException ignored) {// intentionally left blank
             }
         }
         return false;
@@ -175,7 +175,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         if (bundle == null) {
             try {
                 bundle = new PropertyResourceBundle(new FileInputStream(language));
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not read language file \"" + language.getAbsolutePath() + "\".");
                 }

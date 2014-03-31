@@ -74,7 +74,7 @@ public class DatabaseUpdateQueue implements Runnable {
                     checkpointStartTime = System.currentTimeMillis();
                 }
             } while ((event == null || !event.isTerminate()) && !Thread.interrupted());
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             LOGGER.info("Interrupted while waiting for event.");
         } finally {
             if (tx != null) {

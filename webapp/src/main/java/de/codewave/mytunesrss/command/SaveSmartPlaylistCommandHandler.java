@@ -38,7 +38,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                     if (type == SmartFieldType.sizeLimit || type == SmartFieldType.mintime || type == SmartFieldType.maxtime || type == SmartFieldType.recentlyPlayed || type == SmartFieldType.recentlyUpdated) {
                         try {
                             Integer.parseInt(pattern);
-                        } catch (NumberFormatException e) {
+                        } catch (NumberFormatException ignored) {
                             switch (type) {
                                 case sizeLimit:
                                     addError(new BundleError("error.illegalSmartPlaylistSizeLimit"));
@@ -130,7 +130,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
                     int v1 = EditSmartPlaylistCommandHandler.getSmartTypeSortValue(SmartFieldType.valueOf(o1.get("fieldType")), Boolean.valueOf(o1.get("invert")));
                     int v2 = EditSmartPlaylistCommandHandler.getSmartTypeSortValue(SmartFieldType.valueOf(o2.get("fieldType")), Boolean.valueOf(o2.get("invert")));
                     return v1 - v2;
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException ignored) {
                     return 0;
                 }
             }

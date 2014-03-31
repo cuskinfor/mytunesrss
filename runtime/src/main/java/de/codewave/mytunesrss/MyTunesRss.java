@@ -203,10 +203,10 @@ public class MyTunesRss {
                 socket.getOutputStream().flush();
                 try {
                     socket.getInputStream().read();
-                } catch (IOException e) {
+                } catch (IOException ignored) {
                     // this is okay, the server has shutdown
                 }
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 System.err.println("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN)[0] + "\" specified.");
                 System.exit(1);
             } catch (IOException e) {
@@ -558,7 +558,7 @@ public class MyTunesRss {
         while (true) {
             try {
                 registerDatabaseDriver();
-            } catch (ClassNotFoundException | IllegalAccessException  | InstantiationException | RuntimeException e) {
+            } catch (ClassNotFoundException | IllegalAccessException  | InstantiationException | RuntimeException ignored) {
                 if (!CONFIG.isDefaultDatabase()) {
                     int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
@@ -940,7 +940,7 @@ public class MyTunesRss {
     public static MessageWithParameters getImportantAdminMessage() {
         try {
             return IMPORTANT_ADMIN_MESSAGE.remove();
-        } catch (NoSuchElementException e) {
+        } catch (NoSuchElementException ignored) {
             //LOGGER.debug("Ignoring exception.", e);
             return null;
         }

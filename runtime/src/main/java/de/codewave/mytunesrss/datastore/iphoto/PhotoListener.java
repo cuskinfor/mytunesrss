@@ -16,7 +16,10 @@ import de.codewave.mytunesrss.datastore.updatequeue.DataStoreStatementEvent;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
+import org.apache.commons.codec.language.bm.Rule;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
@@ -27,6 +30,8 @@ import java.util.*;
  */
 public abstract class PhotoListener implements PListHandlerListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoListener.class);
+    
     private DatabaseUpdateQueue myQueue;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
@@ -63,7 +68,9 @@ public abstract class PhotoListener implements PListHandlerListener {
                 if (processPhoto(key, photo, photoId, myPhotoTsUpdate.remove(photoId))) {
                     myUpdatedCount++;
                 }
-            } catch (InterruptedException e) {
+            } catch (RuntimeException e) {
+                LOGGER.error("Could not process photo with ID " + photoId + ".", e);
+            } catch (InterruptedException ignored) {
                 Thread.currentThread().interrupt();
             }
         }

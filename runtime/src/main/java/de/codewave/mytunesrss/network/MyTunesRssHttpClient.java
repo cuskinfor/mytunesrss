@@ -32,7 +32,7 @@ public class MyTunesRssHttpClient {
                 if (client.executeMethod(postMethod) == 200) {
                     return postMethod.getResponseBodyAsString();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
             }
         }
@@ -49,9 +49,9 @@ public class MyTunesRssHttpClient {
                 if (client.executeMethod(postMethod) == 200) {
                     return Integer.valueOf(postMethod.getResponseBodyAsString());
                 }
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
                 LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 LOGGER.warn("Could not fetch mytunesrss.com nickname for \"" + MyTunesRss.CONFIG.getMyTunesRssComUser() + "\".");
             }
         }

@@ -24,7 +24,7 @@ public class ValidRegExpValidator extends AbstractStringValidator {
         }
         try {
             Pattern.compile(value);
-        } catch (PatternSyntaxException e) {
+        } catch (PatternSyntaxException ignored) {
             return false;
         }
         return true;

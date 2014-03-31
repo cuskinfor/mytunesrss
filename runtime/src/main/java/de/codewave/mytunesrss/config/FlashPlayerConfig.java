@@ -39,14 +39,14 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
         InputStream stream = FlashPlayerConfig.class.getResourceAsStream(file);
         try {
             return StringUtils.join(IOUtils.readLines(stream), System.getProperty("line.separator"));
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not read stream from \"" + file + "\".");
             }
         } finally {
             try {
                 stream.close();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not close stream from \"" + file + "\".");
                 }

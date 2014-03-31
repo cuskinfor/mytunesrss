@@ -49,7 +49,7 @@ public abstract class AlbumListener implements PListHandlerListener {
     public boolean beforeArrayAdd(List array, Object value) {
         try {
             insertAlbum((Map) value);
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         }
         return false;

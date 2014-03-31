@@ -98,7 +98,7 @@ public class ThemeServlet extends HttpServlet {
             FileInputStream inStream = new FileInputStream(image);
             try {
                 IOUtils.copy(inStream, httpServletResponse.getOutputStream());
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 inStream.close();
             }
         }

@@ -99,7 +99,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             internalExecute(mvStore);
             orphanedImageRemover.remove();
             result = Boolean.TRUE;
-        } catch (InterruptedException e) {
+        } catch (InterruptedException ignored) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
@@ -235,7 +235,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue, trackTsUpdate, photoTsUpdate, mvStore);
                     }
                 }
-            } catch (ShutdownRequestedException e) {
+            } catch (ShutdownRequestedException ignored) {
                 // intentionally left blank
             }
         }

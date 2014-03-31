@@ -40,7 +40,7 @@ public class LibraryListener implements PListHandlerListener {
         if ("Archive Path".equals(key)) {
             try {
                 myLibraryId = IOUtils.getFilenameHash(myIphotoLibraryXml);
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not create library id for file \"" + myIphotoLibraryXml + "\". No files from this library will be imported.");
                 }

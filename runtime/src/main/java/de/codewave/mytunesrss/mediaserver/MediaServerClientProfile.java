@@ -106,7 +106,7 @@ public class MediaServerClientProfile implements Cloneable, Comparable<MediaServ
         MediaServerClientProfile clone;
         try {
             clone = (MediaServerClientProfile) super.clone();
-        } catch (CloneNotSupportedException e) {
+        } catch (CloneNotSupportedException ignored) {
             clone = new MediaServerClientProfile();
         }
         clone.setName(getName());

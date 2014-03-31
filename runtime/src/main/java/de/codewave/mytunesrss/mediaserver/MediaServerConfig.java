@@ -30,7 +30,7 @@ public class MediaServerConfig {
         mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
         try {
             return mapper.readValue(getConfigFile(), MediaServerConfig.class);
-        } catch (IOException e) {
+        } catch (IOException ignored) {
             return new MediaServerConfig();
         }
     }

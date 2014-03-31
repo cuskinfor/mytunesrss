@@ -174,7 +174,7 @@ public class WebConfig {
                 }
                 try {
                     initFromString(MyTunesRssBase64Utils.decodeToString(getCookieValue(request)));
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     // intentionally left blank
                 }
             }
@@ -306,7 +306,7 @@ public class WebConfig {
             try {
                 PlaylistType.valueOf(type);
                 return type;
-            } catch (IllegalArgumentException e) {
+            } catch (IllegalArgumentException ignored) {
                 // set default value and return it
             }
             setPlaylistType(PlaylistType.M3u.name());

@@ -110,7 +110,7 @@ public enum MyTunesRssResource {
             if (context != null) {
                 try {
                     message = context.getResourceBundle().getString(welcomeMessage);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                     // intentionally left blank
                 }
             }

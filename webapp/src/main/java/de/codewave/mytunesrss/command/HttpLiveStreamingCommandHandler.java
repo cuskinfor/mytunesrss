@@ -137,7 +137,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
             try {
                 LOG.debug("Sleeping a while before trying again to read playlist file.");
                 Thread.sleep(1000);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
                 LOG.debug("Interrupted while waiting for file.");
             }
         }
@@ -177,7 +177,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                 try {
                     LOG.info("Trying to remove directory with incomplete segments from cache.");
                     FileUtils.deleteDirectory(myTargetDir);
-                } catch (IOException e1) {
+                } catch (IOException ignored) {
                     LOG.error("Could not delete directory with incomplete segments. Trying to rename directory.");
                     if (!myTargetDir.renameTo(new File(myTargetDir.getParentFile(), UUID.randomUUID().toString()))) {
                         LOG.error("Could not rename directory with incomplete segments either. Please consider deleting caches manually as soon as possible.");

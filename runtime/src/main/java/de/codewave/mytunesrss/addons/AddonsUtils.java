@@ -195,7 +195,7 @@ public class AddonsUtils {
                 if (themeDir != null && themeDir.exists()) {
                     try {
                         FileUtils.deleteDirectory(themeDir);
-                    } catch (IOException e1) {
+                    } catch (IOException ignored) {
                         if (LOG.isErrorEnabled()) {
                             LOG.error("Could not delete directory.", e);
                         }
@@ -313,7 +313,7 @@ public class AddonsUtils {
                 } finally {
                     languageInputStream.close();
                 }
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 return AddFileResult.SaveFailed;
             }
         } else {

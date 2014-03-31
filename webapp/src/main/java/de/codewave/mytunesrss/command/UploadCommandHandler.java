@@ -102,7 +102,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                     try {
                         // iTunes has consumed all files and the XML has been updated, so schedule a database update now
                         MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.<DatasourceConfig>singleton(datasource), false);
-                    } catch (DatabaseJobRunningException e) {
+                    } catch (DatabaseJobRunningException ignored) {
                         // There is another database update running, so try to schedule the update again in 5 minutes
                         // unless we have been waiting for more than 10 hours, in this case simply quit
                         if (System.currentTimeMillis() - startTime <= UPDATE_MAX_WAIT_MILLIS) {
