@@ -45,7 +45,11 @@ public class PlaylistListener implements PListHandlerListener {
     }
 
     public boolean beforeArrayAdd(List array, Object value) {
-        insertPlaylist((Map) value);
+        try {
+            insertPlaylist((Map) value);
+        } catch (RuntimeException e) {
+            LOG.error("Could not process playlist.", e);
+        }
         return false;
     }
 
