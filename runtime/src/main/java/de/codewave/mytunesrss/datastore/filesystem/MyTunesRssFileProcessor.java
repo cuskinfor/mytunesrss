@@ -135,6 +135,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
+        } catch (RuntimeException e) {
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } finally {

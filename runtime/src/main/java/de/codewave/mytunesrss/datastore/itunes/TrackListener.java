@@ -84,6 +84,8 @@ public class TrackListener implements PListHandlerListener {
             if (processTrack(track, myTrackTsUpdate.remove(trackId))) {
                 myUpdatedCount++;
             }
+        } catch (RuntimeException e) {
+            LOG.error("Could not process track with ID \"" + trackId + "\".", e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
