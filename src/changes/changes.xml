@@ -8,8 +8,8 @@
     <body>
 
         <release version="6.0.0" date="___D___">
-            <action dev="mdescher" type="add">
-                [MYTUNESRSS-475] Replace VLC player integration with MediaRenderer control
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-473] Smart playlist criteria with "NOT" do not work
             </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-476] Routerkonfiguration mit Cling Lib neu implementieren

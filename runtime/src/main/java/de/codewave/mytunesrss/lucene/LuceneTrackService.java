@@ -314,6 +314,7 @@ public class LuceneTrackService {
 
     private Query createQuery(Collection<SmartInfo> smartInfos, int fuzziness) {
         BooleanQuery andQuery = new BooleanQuery();
+        boolean invertedOnly = true;
         for (SmartInfo smartInfo : smartInfos) {
             switch (smartInfo.getFieldType()) {
                 case album:
@@ -324,6 +325,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly &= smartInfo.isInvert();
                     break;
                 case artist:
                     orQuery = new BooleanQuery();
@@ -338,6 +340,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly &= smartInfo.isInvert();
                     break;
                 case comment:
                     orQuery = new BooleanQuery();
@@ -347,6 +350,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly |= smartInfo.isInvert();
                     break;
                 case composer:
                     orQuery = new BooleanQuery();
@@ -356,6 +360,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly |= smartInfo.isInvert();
                     break;
                 case file:
                     orQuery = new BooleanQuery();
@@ -365,6 +370,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly |= smartInfo.isInvert();
                     break;
                 case genre:
                     orQuery = new BooleanQuery();
@@ -374,6 +380,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly |= smartInfo.isInvert();
                     break;
                 case title:
                     orQuery = new BooleanQuery();
@@ -383,6 +390,7 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly |= smartInfo.isInvert();
                     break;
                 case tvshow:
                     orQuery = new BooleanQuery();
@@ -392,10 +400,15 @@ public class LuceneTrackService {
                         orQuery.add(innerAndQuery, BooleanClause.Occur.SHOULD);
                     }
                     andQuery.add(orQuery, smartInfo.isInvert() ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    invertedOnly |= smartInfo.isInvert();
                     break;
                 default:
                     // nothing to add to query in other cases
             }
+        }
+        if (invertedOnly) {
+            // add a dummy query
+            andQuery.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
         }
         return andQuery;
     }
