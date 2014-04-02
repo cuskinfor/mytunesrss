@@ -20,10 +20,7 @@ import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.message.header.UDADeviceTypeHeader;
 import org.fourthline.cling.model.meta.*;
-import org.fourthline.cling.model.types.DeviceType;
-import org.fourthline.cling.model.types.UDADeviceType;
-import org.fourthline.cling.model.types.UDAServiceId;
-import org.fourthline.cling.model.types.UDN;
+import org.fourthline.cling.model.types.*;
 import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.fourthline.cling.support.igd.callback.PortMappingAdd;
 import org.fourthline.cling.support.igd.callback.PortMappingDelete;
@@ -132,18 +129,18 @@ public class MyTunesRssUpnpService {
 
     public void addInternetGatewayDevicePortMapping(final int port, final String name) {
         for (final RemoteDevice device : getInternetGatewayDevices()) {
-            RemoteService service = device.findService(new UDAServiceId("WANIPConnection"));
-            String hostAddress = device.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+            RemoteService service = device.findService(new UDAServiceType("WANIPConnection"));
+            final String hostAddress = device.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
             PortMapping desiredMapping = new PortMapping(port, hostAddress, PortMapping.Protocol.TCP, name);
             myClingService.getControlPoint().execute(new PortMappingAdd(service, desiredMapping) {
                 @Override
                 public void success(ActionInvocation invocation) {
-                    LOGGER.info("Added port mapping \"" + name + "\" (" + port + " -> " + hashCode() + ":" + port + ") to device \"" + device.getDetails().getFriendlyName() + "\".");
+                    LOGGER.info("Added port mapping \"" + name + "\" (" + port + " -> " + hostAddress + ":" + port + ") to device \"" + device.getDetails().getFriendlyName() + "\".");
                 }
 
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not add port mapping \"" + name + "\" (" + port + " -> " + hashCode() + ":" + port + ") to device \"" + device.getDetails().getFriendlyName() + "\": \"" + defaultMsg + "\".");
+                    LOGGER.warn("Could not add port mapping \"" + name + "\" (" + port + " -> " + hostAddress + ":" + port + ") to device \"" + device.getDetails().getFriendlyName() + "\": \"" + defaultMsg + "\".");
                 }
             });
         }
@@ -151,18 +148,18 @@ public class MyTunesRssUpnpService {
 
     public void removeInternetGatewayDevicePortMapping(final int port) {
         for (final RemoteDevice device : getInternetGatewayDevices()) {
-            RemoteService service = device.findService(new UDAServiceId("WANIPConnection"));
-            String hostAddress = device.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+            RemoteService service = device.findService(new UDAServiceType("WANIPConnection"));
+            final String hostAddress = device.getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
             PortMapping desiredMapping = new PortMapping(port, hostAddress, PortMapping.Protocol.TCP);
             myClingService.getControlPoint().execute(new PortMappingDelete(service, desiredMapping) {
                 @Override
                 public void success(ActionInvocation invocation) {
-                    LOGGER.info("Removed port mapping (" + port + " -> " + hashCode() + ":" + port + ") from device \"" + device.getDetails().getFriendlyName() + "\".");
+                    LOGGER.info("Removed port mapping (" + port + " -> " + hostAddress + ":" + port + ") from device \"" + device.getDetails().getFriendlyName() + "\".");
                 }
 
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                    LOGGER.warn("Could not remove port mapping (" + port + " -> " + hashCode() + ":" + port + ") from device \"" + device.getDetails().getFriendlyName() + "\": \"" + defaultMsg + "\".");
+                    LOGGER.warn("Could not remove port mapping (" + port + " -> " + hostAddress + ":" + port + ") from device \"" + device.getDetails().getFriendlyName() + "\": \"" + defaultMsg + "\".");
                 }
             });
         }

@@ -285,6 +285,10 @@ public class MyTunesRss {
             }
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
+            UPNP_SERVICE = new MyTunesRssUpnpService();
+            UPNP_SERVICE.start();
+        }
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminHostFromConfigOrCommandLine(), getAdminPortFromConfigOrCommandLine())) {
                 MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
                 if (!startAdminServer(null, 0)) {
@@ -296,10 +300,10 @@ public class MyTunesRss {
             MyTunesRssJobUtils.scheduleStatisticEventsJob();
             MyTunesRssJobUtils.scheduleDatabaseJob();
         }
-        UPNP_SERVICE = new MyTunesRssUpnpService();
-        UPNP_SERVICE.start();
-        UPNP_SERVICE.startMediaServer();
-        startWebserver();
+        if (!SHUTDOWN_IN_PROGRESS.get()) {
+            UPNP_SERVICE.startMediaServer();
+            startWebserver();
+        }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
                 RUN_DATABASE_REFRESH_ON_STARTUP = false;

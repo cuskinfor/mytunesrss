@@ -10,6 +10,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
 import de.codewave.vaadin.SmartPasswordField;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -268,9 +269,27 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
                 }
             }, 2, TimeUnit.SECONDS);
         }
+        if (MyTunesRss.CONFIG.isUpnpAdmin() && !myUpnpAdmin.booleanValue()) {
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getAdminPort());
+        }
+        if (MyTunesRss.CONFIG.isUpnpUserHttp() && !myUpnpUserHttp.booleanValue()) {
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getPort());
+        }
+        if (MyTunesRss.CONFIG.isUpnpUserHttps() && !myUpnpUserHttps.booleanValue()) {
+            MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getSslPort());
+        }
         MyTunesRss.CONFIG.setUpnpAdmin(myUpnpAdmin.booleanValue());
         MyTunesRss.CONFIG.setUpnpUserHttp(myUpnpUserHttp.booleanValue());
         MyTunesRss.CONFIG.setUpnpUserHttps(myUpnpUserHttps.booleanValue());
+        if (MyTunesRss.CONFIG.isUpnpAdmin()) {
+            MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getAdminPort(), MyTunesRssUpnpService.NAME_ADMIN_MAPPING);
+        }
+        if (MyTunesRss.CONFIG.isUpnpUserHttp()) {
+            MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getPort(), MyTunesRssUpnpService.NAME_USER_MAPPING_HTTP);
+        }
+        if (MyTunesRss.CONFIG.isUpnpUserHttps()) {
+            MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getSslPort(), MyTunesRssUpnpService.NAME_USER_MAPPING_HTTPS);
+        }
         MyTunesRss.CONFIG.save();
         if (musicServerConfigChanged) {
             MyTunesRss.stopWebserver();
