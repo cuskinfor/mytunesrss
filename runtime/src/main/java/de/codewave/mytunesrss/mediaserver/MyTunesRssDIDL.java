@@ -107,19 +107,6 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return res;
     }
 
-    protected Res createPlaylistResource(Playlist playlist, User user) {
-        StringBuilder builder = createWebAppCall(user, "createPlaylist"); // TODO hard-coded command name is not nice
-        builder.append("/").
-                append(MyTunesRssUtils.encryptPathInfo("playlist=" + MiscUtils.getUtf8UrlEncoded(playlist.getId()) + "/type=M3u")).
-                append("/playlist.m3u");
-        Res res = new Res();
-        MimeType mimeType = MimeType.valueOf("application/x-mpegurl");
-        res.setProtocolInfo(new ProtocolInfo(mimeType));
-        res.setValue(builder.toString());
-        LOGGER.debug("Resource value is \"" + res.getValue() + "\".");
-        return res;
-    }
-
     private StringBuilder createWebAppCall(User user, String command) {
         StringBuilder builder = new StringBuilder("http://");
         String hostAddress = StringUtils.defaultIfBlank(MyTunesRss.CONFIG.getHost(), AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getLocalAddress().getHostAddress());
