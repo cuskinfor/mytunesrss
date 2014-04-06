@@ -272,6 +272,8 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         types.add(new FileType(true, "tif", "image/tiff", MediaType.Image, false));
         types.add(new FileType(true, "tiff", "image/tiff", MediaType.Image, false));
         types.add(new FileType(true, "png", "image/png", MediaType.Image, false));
+        types.add(new FileType(true, "mkv", "video/x-matroska", MediaType.Video, false));
+        types.add(new FileType(true, "mka", "audio/x-matroska", MediaType.Audio, false));
         Collections.sort(types, new Comparator<FileType>() {
             public int compare(FileType o1, FileType o2) {
                 return o1.getSuffix().compareTo(o2.getSuffix());
