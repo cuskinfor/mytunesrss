@@ -19,7 +19,7 @@ import org.fourthline.cling.binding.xml.Descriptor;
 import org.fourthline.cling.support.model.*;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.MusicAlbum;
-import org.fourthline.cling.support.model.dlna.DLNAProfiles;
+import org.fourthline.cling.support.model.dlna.*;
 import org.fourthline.cling.support.model.item.Movie;
 import org.fourthline.cling.support.model.item.MusicTrack;
 import org.seamless.util.MimeType;
@@ -32,10 +32,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.DateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public abstract class MyTunesRssDIDL extends DIDLContent {
 
@@ -97,13 +94,18 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
                 append(MiscUtils.getUtf8UrlEncoded(transcoder != null ? transcoder.getTargetSuffix() : FilenameUtils.getExtension(track.getFilename())));
         Res res = new Res();
         MimeType mimeType = MimeType.valueOf(transcoder != null ? transcoder.getTargetContentType() : track.getContentType());
-        res.setProtocolInfo(new ProtocolInfo(mimeType));
+        EnumMap<DLNAAttribute.Type, DLNAAttribute> attributes = new EnumMap<>(DLNAAttribute.Type.class);
+        attributes.put(DLNAAttribute.Type.DLNA_ORG_OP, new DLNAOperationsAttribute(DLNAOperations.RANGE));
+        attributes.put(DLNAAttribute.Type.DLNA_ORG_CI, new DLNAConversionIndicatorAttribute(transcoder != null ? DLNAConversionIndicator.TRANSCODED : DLNAConversionIndicator.NONE));
+        attributes.put(DLNAAttribute.Type.DLNA_ORG_FLAGS, new DLNAFlagsAttribute(DLNAFlags.STREAMING_TRANSFER_MODE, DLNAFlags.BACKGROUND_TRANSFERT_MODE, DLNAFlags.DLNA_V15));
+        DLNAProtocolInfo protocolInfo = new DLNAProtocolInfo(Protocol.HTTP_GET, "*", mimeType.toStringNoParameters(), attributes);
+        res.setProtocolInfo(protocolInfo);
         if (transcoder == null) {
             res.setSize(track.getContentLength());
         }
         res.setDuration(toHumanReadableTime(track.getTime()));
         res.setValue(builder.toString());
-        LOGGER.debug("Resource value is \"" + res.getValue() + "\".");
+        LOGGER.debug("Resource value is \"" + res.getValue() + "\" with protocol info \"" + protocolInfo + "\".");
         return res;
     }
 
