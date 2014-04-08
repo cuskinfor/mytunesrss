@@ -9,6 +9,9 @@
 
         <release version="6.0.0" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-493] Duration missing (at least for watch folder movies)
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-473] Smart playlist criteria with "NOT" do not work
             </action>
             <action dev="mdescher" type="add">

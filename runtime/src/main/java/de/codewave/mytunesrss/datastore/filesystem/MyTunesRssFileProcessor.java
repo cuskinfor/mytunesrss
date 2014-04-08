@@ -427,6 +427,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (year != null) {
                     statement.setYear(year);
                 }
+                statement.setTime((int) moov.getDurationSeconds());
                 if (mediaType == MediaType.Audio) {
                     String album = moov.getAlbum();
                     if (StringUtils.isBlank(album)) {
