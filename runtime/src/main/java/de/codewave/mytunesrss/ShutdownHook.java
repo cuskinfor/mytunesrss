@@ -32,8 +32,10 @@ public class ShutdownHook implements Runnable {
                 LOGGER.warn("Could not shutdown internal mysql server.", e);
             }
         }
-        // try to shutdown UPnP stuff
-        MyTunesRss.UPNP_SERVICE.shutdownMediaServer();
-        MyTunesRss.UPNP_SERVICE.shutdown();
+        if (MyTunesRss.UPNP_SERVICE != null) {
+            // try to shutdown UPnP stuff
+            MyTunesRss.UPNP_SERVICE.shutdownMediaServer();
+            MyTunesRss.UPNP_SERVICE.shutdown();
+        }
     }
 }
