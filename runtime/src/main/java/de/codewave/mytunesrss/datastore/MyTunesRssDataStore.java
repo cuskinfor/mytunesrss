@@ -124,14 +124,17 @@ public class MyTunesRssDataStore extends DataStore {
         }
     }
 
-    public void executeStatement(DataStoreStatement statement) throws SQLException{
+    public void executeStatement(DataStoreStatement statement) throws SQLException {
         DataStoreSession transaction = getTransaction();
+        boolean committed = false;
         try {
             transaction.executeStatement(statement);
             transaction.commit();
-        } catch (SQLException e) {
-            transaction.rollback();
-            throw e;
+            committed = true;
+        } finally {
+            if (!committed) {
+                transaction.rollback();
+            }
         }
     }
 

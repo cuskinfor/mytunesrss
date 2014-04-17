@@ -206,12 +206,10 @@ public class MyTunesRssExecutorService {
             GENERAL_EXECUTOR.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    StopWatch.start("Running scheduled refresh  of update/play time related smart playlists.");
+                    StopWatch.start("Running scheduled refresh of update/play time related smart playlists.");
                     try {
                         MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.SCHEDULED));
-                    } catch (SQLException ignored) {
-                        LOGGER.warn("Could not update smart playlists.");
-                    } catch (RuntimeException ignored) {
+                    } catch (SQLException | RuntimeException ignored) {
                         LOGGER.warn("Could not update smart playlists.");
                     } finally {
                         StopWatch.stop();
