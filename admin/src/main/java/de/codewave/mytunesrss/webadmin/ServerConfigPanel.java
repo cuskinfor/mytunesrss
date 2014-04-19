@@ -126,7 +126,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myUserAccessLogRetainDays = getComponentFactory().createTextField("serverConfigPanel.accesslog.user.retain", getApplication().getValidatorFactory().createMinMaxValidator(1, 90));
         myAdminAccessLogRetainDays = getComponentFactory().createTextField("serverConfigPanel.accesslog.admin.retain", getApplication().getValidatorFactory().createMinMaxValidator(1, 90));
         myUserAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.user.ext");
-        myAdminAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.admin.retain");
+        myAdminAccessLogExtended = getComponentFactory().createCheckBox("serverConfigPanel.accesslog.admin.ext");
         List<String> timezones = new ArrayList<>();
         for (int i = 12; i > 0; i--) {
             timezones.add("GMT-" + StringUtils.leftPad("" + i, 2, '0'));
