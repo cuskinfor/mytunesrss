@@ -130,7 +130,7 @@
                                             <fmt:message key="season"/> ${track.season}
                                         </c:when>
                                         <c:otherwise>
-                                            <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}"/>
+                                            ${track.episode} - <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}"/>
                                         </c:otherwise>
                                     </c:choose>
                                     <c:if test="${!empty track.id && !empty track.comment}">
