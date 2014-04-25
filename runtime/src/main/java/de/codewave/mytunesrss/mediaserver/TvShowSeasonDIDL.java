@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.fourthline.cling.support.model.SortCriterion;
+import org.fourthline.cling.support.model.item.Movie;
 
 import java.sql.SQLException;
 
@@ -23,13 +24,16 @@ public class TvShowSeasonDIDL extends MyTunesRssContainerDIDL {
                 new FindTvShowEpisodesQuery(user, decode(oidParams).get(0), Integer.parseInt(decode(oidParams).get(1))),
                 new DataStoreQuery.ResultProcessor<Track>() {
                     public void process(Track track) {
-                        addItem(createMovieTrack(
+                        Movie movie = createMovieTrack(
                                 user,
                                 track,
                                 ObjectID.TvShowEpisode.getValue() + ";" + encode(track.getId()),
                                 ObjectID.TvShowSeason.getValue() + ";" + encode(track.getSeries(), Integer.toString(track.getSeason()))
 
-                        ));
+                        );
+                        // fix title by prepending the episode number
+                        movie.setTitle(track.getEpisode() + " - " + mapUnknown(track.getName()));
+                        addItem(movie);
                     }
                 },
                 firstResult,
