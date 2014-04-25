@@ -102,6 +102,7 @@ public class MediaRendererController {
         for (Track track : tracks) {
             myTracks.add(new TrackWithUser(track, user));
         }
+        myCurrentTrack.set(0);
     }
 
     private void addItems(User user, DataStoreQuery<QueryResult<Track>> query, boolean startPlaybackIfStopped) throws SQLException {
