@@ -142,9 +142,9 @@ public class MediaRendererController {
     }
 
     public synchronized void clearPlaylist() {
+        myTracks.clear();
         stop(false);
         LOGGER.debug("Clearing playlist.");
-        myTracks.clear();
     }
 
     public synchronized void play(final int index, boolean async) {
