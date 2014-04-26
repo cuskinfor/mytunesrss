@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="6.0.1" date="___D___">
+            <action dev="mdescher" type="update">
+                If the default media server client profile has no valid user and the main server config has only
+                a single user, use this one as a fallback for easier configuration of the server.
+            </action>
+        </release>
+
         <release version="6.0" date="2014-04-26">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-493] Duration missing (at least for watch folder movies)

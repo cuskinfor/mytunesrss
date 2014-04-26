@@ -30,7 +30,7 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
         LOGGER.debug("Extracted search terms \"" + searchTerms + "\".");
         try {
             FindTrackQuery query = FindTrackQuery.getForSearchTerm(
-                    getClientProfile().getUser(),
+                    getUser(),
                     searchTerms,
                     getClientProfile().getSearchFuzziness(),
                     SortOrder.KeepOrder,

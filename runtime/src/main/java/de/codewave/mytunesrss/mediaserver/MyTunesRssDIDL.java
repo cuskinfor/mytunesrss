@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
+import com.google.common.collect.ImmutableList;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -43,7 +44,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createDirectChildren(getClientProfile().getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
+            createDirectChildren(getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
         } finally {
             tx.rollback();
         }
@@ -52,7 +53,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     final void initMetaData(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createMetaData(getClientProfile().getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
+            createMetaData(getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
         } finally {
             tx.rollback();
         }
@@ -308,11 +309,25 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         String userAgent = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRequestUserAgent();
         String clientIp = AbstractContentDirectoryService.REMOTE_CLIENT_INFO.get().getRemoteAddress().getHostAddress();
         MediaServerClientProfile clientProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfile(userAgent, clientIp);
-        if (clientProfile.getUser() == null) {
+        if (clientProfile == null || clientProfile.getUser() == null) {
             // fallback to default if no user
             clientProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getDefaultClientProfile();
         }
         return clientProfile;
+    }
+
+    static User getUser() {
+        MediaServerClientProfile clientProfile = getClientProfile();
+        User user = clientProfile.getUser();
+        if (user == null) {
+            // If the profile has no user name or the corresponding user does not exist anymore
+            // and we only have a single user in the config, use that one.
+            List<User> users = ImmutableList.copyOf(MyTunesRss.CONFIG.getUsers());
+            if (users.size() == 1) {
+                user = users.get(0);
+            }
+        }
+        return user;
     }
 
     protected int getInt(String s, int defaultValue) {
