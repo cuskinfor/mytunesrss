@@ -417,12 +417,20 @@ public class MediaRendererController {
     private synchronized void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
         LOGGER.debug("Media renderer transport state changed from " + previousTransportState.name() + " to " + currentTransportState.name() + ".");
         long timeDelta = System.currentTimeMillis() - myTimeExplicitlyStopped.get();
-        if (currentTransportState == TransportState.STOPPED && myPlaying.get() && (timeDelta > 1000) && myCurrentTrack.get() + 1 < myTracks.size()) {
+        if (currentTransportState == TransportState.STOPPED && myPlaying.get() && (timeDelta > 1000)) {
             if (myCurrentRendererTransportUri != null && myCurrentRendererTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
-                LOGGER.debug("Automatically advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago).");
-                next();
+                if (myCurrentTrack.get() + 1 < myTracks.size()) {
+                    LOGGER.debug("Automatically advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago).");
+                    next();
+                } else {
+                    LOGGER.debug("Last track reached, switching back to first track.");
+                    myPlaying.set(false);
+                    myCurrentTrack.set(0);
+                }
             } else {
                 LOGGER.debug("Not advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago) since media renderer has wrong URI.");
+                myPlaying.set(false);
+                myCurrentTrack.set(0);
             }
         }
     }
