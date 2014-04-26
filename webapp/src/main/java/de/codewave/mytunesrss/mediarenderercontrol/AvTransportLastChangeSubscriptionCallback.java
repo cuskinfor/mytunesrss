@@ -21,6 +21,7 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
     private static final Logger LOGGER = LoggerFactory.getLogger(AvTransportLastChangeSubscriptionCallback.class);
 
     private TransportState myTransportState = TransportState.CUSTOM;
+    private URI myTransportUri;
 
     public AvTransportLastChangeSubscriptionCallback(Service service) {
         super(service);
@@ -65,6 +66,17 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
                         }
                     }
                 }
+                AVTransportVariable.AVTransportURI transportUriEventedValue = lastChange.getEventedValue(0, AVTransportVariable.AVTransportURI.class);
+                if (transportUriEventedValue != null) {
+                    URI transportUri = transportUriEventedValue.getValue();
+                    if ((myTransportUri == null && transportUri != null) || (myTransportUri != null && transportUri == null) || (myTransportUri != null && !myTransportUri.equals(transportUri))) {
+                        try {
+                            handleTransportUriChange(myTransportUri, transportUri);
+                        } finally {
+                            myTransportUri = transportUri;
+                        }
+                    }
+                }
             } catch (Exception e) {
                 LOGGER.warn("Could not parse last change data (" + e.getClass().getName() + "): \"" + e.getMessage() + "\".");
             }
@@ -77,5 +89,7 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
     }
 
     abstract void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState);
+
+    protected abstract void handleTransportUriChange(URI previousTransportUri, URI currentTransportUri);
 
 }

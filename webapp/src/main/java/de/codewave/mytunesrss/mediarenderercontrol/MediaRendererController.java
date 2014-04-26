@@ -19,10 +19,7 @@ import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteService;
 import org.fourthline.cling.model.types.UDAServiceId;
 import org.fourthline.cling.support.avtransport.callback.*;
-import org.fourthline.cling.support.model.MediaInfo;
-import org.fourthline.cling.support.model.PositionInfo;
-import org.fourthline.cling.support.model.SeekMode;
-import org.fourthline.cling.support.model.TransportState;
+import org.fourthline.cling.support.model.*;
 import org.fourthline.cling.support.renderingcontrol.callback.GetVolume;
 import org.fourthline.cling.support.renderingcontrol.callback.SetVolume;
 import org.slf4j.Logger;
@@ -77,6 +74,7 @@ public class MediaRendererController {
     private AtomicInteger myCurrentTrack = new AtomicInteger(0);
     private AtomicBoolean myPlaying = new AtomicBoolean(false);
     private AtomicLong myTimeExplicitlyStopped = new AtomicLong(0);
+    private volatile URI myCurrentRendererTransportUri;
 
     private MediaRendererController() {
         // only singleton instance above can be created
@@ -148,25 +146,25 @@ public class MediaRendererController {
         LOGGER.debug("Clearing playlist.");
     }
 
-    public synchronized void play(final int index, boolean async) {
+    public synchronized void play(int index, boolean async) {
         final RemoteService service = getAvTransport();
         if (service != null) {
-            if (index == -1) {
+            if (index == -1 && (myCurrentRendererTransportUri != null && myCurrentRendererTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport())))) {
                 sendPlay(service);
             } else {
-                final Track track = myTracks.get(index).getTrack();
-                String hostAddress = service.getDevice().getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
-                final String playbackUrl = createPlaybackUrl(createBaseUrl(hostAddress, myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
-                LOGGER.debug("Setting playback URL to \"" + playbackUrl + "\".");
-                Future setUriFuture = MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUrl, track.getName()) {
+                final int effectiveIndex = index != -1 ? index : myCurrentTrack.get();
+                final Track track = myTracks.get(effectiveIndex).getTrack();
+                final URI playbackUri = getPlaybackUri(effectiveIndex, service);
+                LOGGER.debug("Setting playback URL to \"" + playbackUri + "\".");
+                Future setUriFuture = MyTunesRss.UPNP_SERVICE.execute(new SetAVTransportURI(service, playbackUri.toASCIIString(), track.getName()) {
                     @Override
                     public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
-                        LOGGER.warn("Could not set playback URL \"" + playbackUrl + "\" at media renderer \"" + service.getDevice().getDisplayString() + "\".");
+                        LOGGER.warn("Could not set playback URL \"" + playbackUri + "\" at media renderer \"" + service.getDevice().getDisplayString() + "\".");
                     }
 
                     @Override
                     public void success(ActionInvocation invocation) {
-                        myCurrentTrack.set(index);
+                        myCurrentTrack.set(effectiveIndex);
                         sendPlay(service);
                     }
                 });
@@ -179,6 +177,12 @@ public class MediaRendererController {
                 }
             }
         }
+    }
+
+    private URI getPlaybackUri(int index, RemoteService service) {
+        String hostAddress = service.getDevice().getIdentity().getDiscoveredOnLocalAddress().getHostAddress();
+        String playbackUrl = createPlaybackUrl(createBaseUrl(hostAddress, myTracks.get(index).getUser(), MyTunesRssCommand.PlayTrack.getName()), myTracks.get(index).getTrack());
+        return URI.create(playbackUrl);
     }
 
     private void sendPlay(final RemoteService service) {
@@ -201,6 +205,11 @@ public class MediaRendererController {
         if (service != null) {
             LOGGER.debug("Pausing playback.");
             MyTunesRss.UPNP_SERVICE.execute(new Pause(service) {
+                @Override
+                public void success(ActionInvocation invocation) {
+                    myPlaying.set(false);
+                }
+
                 @Override
                 public void failure(ActionInvocation invocation, UpnpResponse operation, String defaultMsg) {
                     LOGGER.warn("Could not pause playback on media renderer \"" + service.getDevice().getDetails().getFriendlyName() + "\".");
@@ -288,7 +297,7 @@ public class MediaRendererController {
         final RemoteService avTransport = getAvTransport();
         final RemoteService renderingControl = getRenderingControl();
 
-        if (avTransport != null && renderingControl != null) {
+        if (avTransport != null && renderingControl != null && myCurrentRendererTransportUri != null && myCurrentRendererTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
             Future getPositionInfoFuture = MyTunesRss.UPNP_SERVICE.execute(new GetPositionInfo(avTransport) {
                 @Override
                 public void received(ActionInvocation invocation, PositionInfo positionInfo) {
@@ -386,6 +395,15 @@ public class MediaRendererController {
                 void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
                     MediaRendererController.this.handleTransportStateChange(previousTransportState, currentTransportState);
                 }
+
+                @Override
+                protected void handleTransportUriChange(URI previousTransportUri, URI currentTransportUri) {
+                    MediaRendererController.this.myCurrentRendererTransportUri = currentTransportUri;
+                    if (currentTransportUri == null || !currentTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
+                        myPlaying.set(false);
+                        myCurrentTrack.set(0);
+                    }
+                }
             };
             LOGGER.debug("Starting subscription callback.");
             myTimeExplicitlyStopped.set(System.currentTimeMillis());
@@ -398,12 +416,14 @@ public class MediaRendererController {
 
     private synchronized void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
         LOGGER.debug("Media renderer transport state changed from " + previousTransportState.name() + " to " + currentTransportState.name() + ".");
-        myPlaying.set(currentTransportState != TransportState.STOPPED && currentTransportState != TransportState.PAUSED_PLAYBACK);
         long timeDelta = System.currentTimeMillis() - myTimeExplicitlyStopped.get();
-        if (currentTransportState == TransportState.STOPPED && (timeDelta > 1000) && myCurrentTrack.get() + 1 < myTracks.size()) {
-            // advance if playback has stopped automatically (myUserStopped == false)
-            LOGGER.debug("Automatically advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago).");
-            next();
+        if (currentTransportState == TransportState.STOPPED && myPlaying.get() && (timeDelta > 1000) && myCurrentTrack.get() + 1 < myTracks.size()) {
+            if (myCurrentRendererTransportUri != null && myCurrentRendererTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
+                LOGGER.debug("Automatically advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago).");
+                next();
+            } else {
+                LOGGER.debug("Not advancing to next track (last explicitly stopped " + timeDelta + " milliseconds ago) since media renderer has wrong URI.");
+            }
         }
     }
 
