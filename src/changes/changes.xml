@@ -39,7 +39,7 @@
             </action>
         </release>
 
-        <release version="5.0.2" date="___D___">
+        <release version="5.0.2" date="2014-02-08">
             <action dev="mdescher" type="fix">
                 Allow smart playlist criteria patterns with up to 255 character. Added
                 proper error message in case user enters longer values.
