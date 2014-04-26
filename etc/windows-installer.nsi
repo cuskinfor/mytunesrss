@@ -79,10 +79,10 @@ SectionEnd
 
   ;Language strings
   LangString DESC_MyTunesRSS ${LANG_GERMAN} "Die Programmdateien fuer MyTunesRSS."
-  LangString DESC_Jre ${LANG_GERMAN} "Java Laufzeitumgebung fuer MyTunesRSS. Optional falls sie bereits Java 1.6 oder hoeher auf Ihrem Rechner installiert haben."
+  LangString DESC_Jre ${LANG_GERMAN} "Java Laufzeitumgebung fuer MyTunesRSS. Optional falls sie bereits Java 1.7 oder hoeher auf Ihrem Rechner installiert haben."
 
   LangString DESC_MyTunesRSS ${LANG_ENGLISH} "The program files for MyTunesRSS."
-  LangString DESC_Jre ${LANG_ENGLISH} "Java runtime for MyTunesRSS. Optional if you already hava Java 1.6 or better installed."
+  LangString DESC_Jre ${LANG_ENGLISH} "Java runtime for MyTunesRSS. Optional if you already hava Java 1.7 or better installed."
 
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
@@ -99,6 +99,7 @@ Section "Uninstall"
   RMDir /r "$APPDATA\MyTunesRSS3"
   RMDir /r "$APPDATA\MyTunesRSS4"
   RMDir /r "$APPDATA\MyTunesRSS5"
+  RMDir /r "$APPDATA\MyTunesRSS-6"
   RMDir /r "$SMPROGRAMS\MyTunesRSS"
 
 SectionEnd
