@@ -9,6 +9,9 @@
 
         <release version="6.0.1" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-495] Database config panel detects server changes even when nothing has changed
+            </action>
+            <action dev="mdescher" type="fix">
                 Corrected JRE version from 1.6 to 1.7 in Windows installer messages.
             </action>
             <action dev="mdescher" type="fix">

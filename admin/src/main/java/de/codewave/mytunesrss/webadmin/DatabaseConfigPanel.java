@@ -368,19 +368,19 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (!newType.equals(MyTunesRss.CONFIG.getDatabaseType())) {
             return true;
         }
-        if (!newDriver.equals(MyTunesRss.CONFIG.getDatabaseDriver())) {
+        if (myDatabaseDriver.isEnabled() && !newDriver.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseDriver()))) {
             return true;
         }
-        if (!newConnect.equals(MyTunesRss.CONFIG.getDatabaseConnection())) {
+        if (myDatabaseConnection.isEnabled() && !newConnect.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseConnection()))) {
             return true;
         }
-        if (!newConnectOptions.equals(MyTunesRss.CONFIG.getDatabaseConnectionOptions())) {
+        if (myConnectionOptions.isEnabled() && !newConnectOptions.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseConnectionOptions()))) {
             return true;
         }
-        if (!newUser.equals(MyTunesRss.CONFIG.getDatabaseUser())) {
+        if (myDatabaseUser.isEnabled() && !newUser.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseUser()))) {
             return true;
         }
-        if (!newPass.equals(MyTunesRss.CONFIG.getDatabasePassword())) {
+        if (myDatabasePassword.isEnabled() && !newPass.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabasePassword()))) {
             return true;
         }
         return false;
