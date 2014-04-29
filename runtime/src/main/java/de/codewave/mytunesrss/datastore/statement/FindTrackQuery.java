@@ -225,10 +225,6 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         }
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
-        conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
-        conditionals.put("albumsort", mySortOrder == SortOrder.Album);
-        conditionals.put("moviesort", mySortOrder == SortOrder.Movie);
-        conditionals.put("tvshowsort", mySortOrder == SortOrder.TvShow);
         conditionals.put("album", myAlbums != null && myAlbums.length > 0);
         conditionals.put("artist", myArtists != null && myArtists.length > 0);
         conditionals.put("albumartist", myAlbumArtists != null && myAlbumArtists.length > 0);
@@ -238,9 +234,11 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         conditionals.put("tvshow", mySeries != null);
         conditionals.put("tvshowseason", mySeries != null && mySeason != null);
         conditionals.put("photosort", mySortOrder == SortOrder.Photos);
-        conditionals.put("lucenesort", !CollectionUtils.isEmpty(myIds) && (mySortOrder == null || mySortOrder == SortOrder.KeepOrder));
-        conditionals.put("lucenesortAlbum", !CollectionUtils.isEmpty(myIds) && mySortOrder == SortOrder.Album);
-        conditionals.put("lucenesortArtist", !CollectionUtils.isEmpty(myIds) && mySortOrder == SortOrder.Artist);
+        conditionals.put("luceneAdditionalSort", mySortOrder == SortOrder.Artist || mySortOrder == SortOrder.Album || mySortOrder == SortOrder.Movie || mySortOrder == SortOrder.TvShow);
+        conditionals.put("artistsort", mySortOrder == SortOrder.Artist);
+        conditionals.put("albumsort", mySortOrder == SortOrder.Album);
+        conditionals.put("moviesort", mySortOrder == SortOrder.Movie);
+        conditionals.put("tvshowsort", mySortOrder == SortOrder.TvShow);
         conditionals.put("datasource", myPermittedDataSources != null);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
