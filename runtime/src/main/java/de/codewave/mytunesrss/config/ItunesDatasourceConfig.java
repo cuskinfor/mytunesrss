@@ -211,20 +211,11 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
             LOGGER.debug("Parsing iTunes XML to find music folder.");
             XmlUtils.parseApplePList(new File(getDefinition()).toURI().toURL(), handler);
             LOGGER.debug("Finished parsing iTunes XML without stop-exception!");
-        } catch (ParserConfigurationException e) {
-            LOGGER.warn("Could not find iTunes auto-add folder.", e);
-            return null;
-        } catch (SAXException e) {
-            LOGGER.warn("Could not find iTunes auto-add folder.", e);
-            return null;
-        } catch (MalformedURLException e) {
-            LOGGER.warn("Could not find iTunes auto-add folder.", e);
-            return null;
-        } catch (IOException e) {
-            LOGGER.warn("Could not find iTunes auto-add folder.", e);
-            return null;
         } catch (StopParsingException ignored) {
             LOGGER.debug("Finished parsing iTunes XML with stop-exception!");
+        } catch (Exception e) {
+            LOGGER.warn("Could not find iTunes auto-add folder.", e);
+            return null;
         }
         return ItunesLoader.getFileNameForLocation(listener.getMusicFolder());
     }

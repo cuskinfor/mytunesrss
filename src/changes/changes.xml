@@ -9,6 +9,9 @@
 
         <release version="6.0.1" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-499] Parsing broken iTunes XML results in unhandled error
+            </action>
+            <action dev="mdescher" type="fix">
                 [MYTUNESRSS-498] Search result ordering improvements
             </action>
             <action dev="mdescher" type="fix">
