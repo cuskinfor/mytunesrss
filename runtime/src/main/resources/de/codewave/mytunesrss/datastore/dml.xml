@@ -274,9 +274,9 @@
             )
         </excluded>
         <temptables>AND t.id = tluc.track_id</temptables>
-        GROUP BY <temptables>tluc.pos, </temptables>{trackColumnsForGrouping}
+        GROUP BY <temptables>tluc.score, </temptables>{trackColumnsForGrouping}
         <sorting>ORDER BY </sorting>
-        <temptables>tluc.pos<luceneAdditionalSort>, </luceneAdditionalSort></temptables>
+        <temptables>tluc.score DESC<luceneAdditionalSort>, </luceneAdditionalSort></temptables>
         <albumsort>LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</albumsort>
         <artistsort>LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</artistsort>
         <moviesort>LOWER(t.name)</moviesort>
@@ -781,8 +781,8 @@
     </statement>
 
     <statement name="fillLuceneSearchTempTable">
-        <sql loop="track_id" loopbatch="10000">
-            INSERT INTO temp_lucene_tracks (track_id) VALUES (:loopitem_track_id)
+        <sql loop="track" loopbatch="10000">
+            INSERT INTO temp_lucene_tracks (track_id, score) VALUES (:loopitem_track_key, :loopitem_track_value)
         </sql>
     </statement>
 

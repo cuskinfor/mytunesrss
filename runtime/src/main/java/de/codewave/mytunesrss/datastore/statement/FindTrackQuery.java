@@ -10,7 +10,7 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
-import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -29,8 +29,19 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
 
     public static FindTrackQuery getForIds(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
-        query.myIds = Arrays.asList(trackIds);
+        query.myScoredTracks = new HashMap<>();
+        for (String trackId : trackIds) {
+            query.myScoredTracks.put(trackId, 0f);
+        }
         return query;
+    }
+
+    private static Map<String, Float> toMap(Collection<LuceneTrackService.ScoredTrack> scoredTracks) {
+        Map<String, Float> result = new HashMap<>();
+        for (LuceneTrackService.ScoredTrack scoredTrack : scoredTracks) {
+            result.put(scoredTrack.getId(), scoredTrack.getScore());
+        }
+        return result;
     }
 
     public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder, int maxResults) throws IOException, ParseException {
@@ -39,8 +50,8 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
         String[] searchTerms = StringUtils.split(StringUtils.defaultString(StringUtils.lowerCase(searchTerm)), " ");
-        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerms, fuzziness, maxResults);
-        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<>(luceneResult);
+        Collection<LuceneTrackService.ScoredTrack> scoredTracks = MyTunesRss.LUCENE_TRACK_SERVICE.searchTracks(searchTerms, fuzziness, maxResults);
+        query.myScoredTracks = scoredTracks.isEmpty() ? Collections.singletonMap("ThisDummyIdWillNeverExist", 0f) : toMap(scoredTracks);
         query.myMediaTypes = getQueryMediaTypes(user);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
@@ -51,8 +62,8 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         query.myExcludedPlaylistIds = user.getExcludedPlaylistIds();
-        Collection<String> luceneResult = MyTunesRss.LUCENE_TRACK_SERVICE.searchTrackIds(searchTerm, maxResults);
-        query.myIds = luceneResult.isEmpty() ? Collections.singletonList("ThisDummyIdWillNeverExist") : new ArrayList<>(luceneResult);
+        Collection<LuceneTrackService.ScoredTrack> scoredTracks = MyTunesRss.LUCENE_TRACK_SERVICE.searchTracks(searchTerm, maxResults);
+        query.myScoredTracks = scoredTracks.isEmpty() ? Collections.singletonMap("ThisDummyIdWillNeverExist", 0f) : toMap(scoredTracks);
         query.myMediaTypes = getQueryMediaTypes(user);
         query.myPermittedDataSources = getPermittedDataSources(user);
         return query;
@@ -178,7 +189,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         return query;
     }
 
-    private List<String> myIds;
+    private Map<String, Float> myScoredTracks;
     private String[] myAlbums;
     private String[] myGenres;
     private String[] myArtists;
@@ -217,9 +228,9 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         Map<String, Boolean> conditionals = new HashMap<>();
         MyTunesRssUtils.createStatement(connection, "createSearchTempTables").execute(); // create if not exists
         MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
-        if (!CollectionUtils.isEmpty(myIds)) {
+        if (!CollectionUtils.isEmpty(myScoredTracks)) {
             statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
-            statement.setObject("track_id", myIds);
+            statement.setObject("track", myScoredTracks);
             statement.execute();
             conditionals.put("temptables", Boolean.TRUE);
         }
@@ -239,7 +250,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         conditionals.put("albumsort", mySortOrder == SortOrder.Album);
         conditionals.put("moviesort", mySortOrder == SortOrder.Movie);
         conditionals.put("tvshowsort", mySortOrder == SortOrder.TvShow);
-        conditionals.put("sorting", mySortOrder == SortOrder.Artist || mySortOrder == SortOrder.Album || mySortOrder == SortOrder.Movie || mySortOrder == SortOrder.TvShow || !CollectionUtils.isEmpty(myIds));
+        conditionals.put("sorting", mySortOrder == SortOrder.Artist || mySortOrder == SortOrder.Album || mySortOrder == SortOrder.Movie || mySortOrder == SortOrder.TvShow || !CollectionUtils.isEmpty(myScoredTracks));
         conditionals.put("datasource", myPermittedDataSources != null);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);

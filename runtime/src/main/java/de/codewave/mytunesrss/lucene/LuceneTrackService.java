@@ -30,6 +30,41 @@ public class LuceneTrackService {
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneTrackService.class);
     private static final int MAX_TRACK_BUFFER = 5000;
 
+    public static class ScoredTrack {
+        private String myId;
+        private float myScore;
+
+        public ScoredTrack(String id, float score) {
+            myId = id;
+            myScore = score;
+        }
+
+        public String getId() {
+            return myId;
+        }
+
+        public float getScore() {
+            return myScore;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            ScoredTrack that = (ScoredTrack) o;
+
+            if (!myId.equals(that.myId)) return false;
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return myId.hashCode();
+        }
+    }
+
     private Deque<LuceneTrack> myTrackBuffer = new ArrayDeque<>();
     private FSDirectory myDirectory;
     private Analyzer myAnalyzer;
@@ -192,10 +227,10 @@ public class LuceneTrackService {
         }
     }
 
-    public List<String> searchTrackIds(String[] searchTerms, int fuzziness, int maxResults) throws IOException, ParseException {
+    public List<ScoredTrack> searchTracks(String[] searchTerms, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
-        Collection<String> trackIds;
+        Collection<ScoredTrack> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
@@ -204,7 +239,7 @@ public class LuceneTrackService {
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
             trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
+                trackIds.add(new ScoredTrack(isearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             LOGGER.debug("Lucene query returned " + trackIds.size() + " tracks.");
             return new ArrayList<>(trackIds);
@@ -218,7 +253,7 @@ public class LuceneTrackService {
         }
     }
 
-    public List<String> searchTrackIds(String searchExpression, int maxResults) throws IOException, LuceneQueryParserException {
+    public List<ScoredTrack> searchTracks(String searchExpression, int maxResults) throws IOException, LuceneQueryParserException {
         Directory directory = null;
         IndexSearcher isearcher = null;
         try {
@@ -236,9 +271,9 @@ public class LuceneTrackService {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
-            Collection<String> trackIds = new LinkedHashSet<>();
+            Collection<ScoredTrack> trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
+                trackIds.add(new ScoredTrack(isearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             return new ArrayList<>(trackIds);
         } finally {
@@ -288,10 +323,10 @@ public class LuceneTrackService {
         return finalQuery;
     }
 
-    public Collection<String> searchTrackIds(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
+    public Collection<ScoredTrack> searchTracks(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
         IndexSearcher isearcher = null;
-        Collection<String> trackIds;
+        Collection<ScoredTrack> trackIds;
         try {
             directory = getDirectory();
             isearcher = new IndexSearcher(IndexReader.open(directory));
@@ -299,7 +334,7 @@ public class LuceneTrackService {
             TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
             trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                trackIds.add(isearcher.doc(scoreDoc.doc).get("id"));
+                trackIds.add(new ScoredTrack(isearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             return trackIds;
         } finally {

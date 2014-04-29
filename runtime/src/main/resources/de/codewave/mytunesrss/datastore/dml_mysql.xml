@@ -17,9 +17,9 @@
     <statement name="createSearchTempTables">
         <sql>
             CREATE TEMPORARY TABLE IF NOT EXISTS temp_lucene_tracks (
-                pos INTEGER AUTO_INCREMENT,
                 track_id VARCHAR(100),
-                PRIMARY KEY(pos),
+                score REAL,
+                PRIMARY KEY(track_id),
                 UNIQUE(track_id)
             )
         </sql>
