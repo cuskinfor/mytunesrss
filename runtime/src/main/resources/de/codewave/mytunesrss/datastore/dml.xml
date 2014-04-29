@@ -275,11 +275,12 @@
         </excluded>
         <temptables>AND t.id = tluc.track_id</temptables>
         GROUP BY <temptables>tluc.pos, </temptables>{trackColumnsForGrouping}
-        <temptables>ORDER BY tluc.pos<luceneAdditionalSort>, </luceneAdditionalSort></temptables>
-        <albumsort>ORDER BY LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</albumsort>
-        <artistsort>ORDER BY LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</artistsort>
-        <moviesort>ORDER BY LOWER(t.name)</moviesort>
-        <tvshowsort>ORDER BY LOWER(t.series), t.season, t.episode, LOWER(t.name)</tvshowsort>
+        <sorting>ORDER BY </sorting>
+        <temptables>tluc.pos<luceneAdditionalSort>, </luceneAdditionalSort></temptables>
+        <albumsort>LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</albumsort>
+        <artistsort>LOWER(t.artist), t.album, t.pos_number, t.track_number, LOWER(t.name)</artistsort>
+        <moviesort>LOWER(t.name)</moviesort>
+        <tvshowsort>LOWER(t.series), t.season, t.episode, LOWER(t.name)</tvshowsort>
         ]]>
       </sql>
     </statement>

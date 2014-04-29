@@ -239,6 +239,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         conditionals.put("albumsort", mySortOrder == SortOrder.Album);
         conditionals.put("moviesort", mySortOrder == SortOrder.Movie);
         conditionals.put("tvshowsort", mySortOrder == SortOrder.TvShow);
+        conditionals.put("sorting", mySortOrder == SortOrder.Artist || mySortOrder == SortOrder.Album || mySortOrder == SortOrder.Movie || mySortOrder == SortOrder.TvShow || !CollectionUtils.isEmpty(myIds));
         conditionals.put("datasource", myPermittedDataSources != null);
         statement = MyTunesRssUtils.createStatement(connection, "findTracks", conditionals);
         statement.setItems("album", myAlbums);
