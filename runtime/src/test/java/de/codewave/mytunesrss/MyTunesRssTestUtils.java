@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.utils.sql.DataStoreSession;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
@@ -17,10 +18,17 @@ import java.util.UUID;
  */
 public class MyTunesRssTestUtils {
 
+    public static File createTempDir() throws IOException {
+        File tempDir = File.createTempFile("mytunesrss-test-", ".tmp");
+        tempDir.delete();
+        tempDir.mkdirs();
+        return tempDir;
+    }
+
     public static void before() throws ClassNotFoundException, IOException, SQLException, NoSuchAlgorithmException {
         MyTunesRss.VERSION = "1.0.0";
-        MyTunesRss.CACHE_DATA_PATH = Files.createTempDir().getAbsolutePath();
-        MyTunesRss.PREFERENCES_DATA_PATH = Files.createTempDir().getAbsolutePath();
+        MyTunesRss.CACHE_DATA_PATH = createTempDir().getAbsolutePath();
+        MyTunesRss.PREFERENCES_DATA_PATH = createTempDir().getAbsolutePath();
         MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
         MyTunesRss.CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);

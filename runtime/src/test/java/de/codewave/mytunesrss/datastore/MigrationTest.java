@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.statement.MigrationStatement;
@@ -17,9 +18,7 @@ public class MigrationTest {
 
     @Test
     public void testStoreInitWithMigration() throws ClassNotFoundException, IOException, SQLException {
-        File tempDir = File.createTempFile("mytunesrss-test-database-", ".tmp");
-        tempDir.delete();
-        tempDir.mkdirs();
+        File tempDir = MyTunesRssTestUtils.createTempDir();
         IOUtils.copy(getClass().getResourceAsStream("/testdatabase/MyTunesRSS.h2.db"), new FileOutputStream(new File(tempDir, "MyTunesRSS.h2.db")));
         MyTunesRss.VERSION = "999.999.999";
         MyTunesRss.CONFIG = new MyTunesRssConfig();
