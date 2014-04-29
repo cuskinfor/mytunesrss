@@ -344,7 +344,8 @@ public class LibraryResource extends RestResource {
      * @param fuzziness Search fuzziness (see Lucene documentation where 0% fuzziness is exact search and 100% fuzziness is a similarity of 0). If the session representation has a value
      *                  for the search fuzziness (i.e. a value is configured in the user settings), this parameter is ignored and the value from the user settings is used.
      * @param maxItems Maximum number of results to return.
-     * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
+     * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder"). The main sort order is always the relevance of the result. The specified
+     *                  sort order only applies to results with the same relevance.
      *
      * @return A list of tracks.
      *
@@ -365,7 +366,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("expert") @DefaultValue("false") boolean expert,
             @QueryParam("fuzziness") @DefaultValue("35") @Range(min = 0, max = 100, message = "Fuzziness must a be a value from 0 to 100.") int fuzziness,
             @QueryParam("max") @DefaultValue("1000") @Range(min = 1, max = 1000, message = "Max must be a value from 1 to 1000.") int maxItems,
-            @QueryParam("sort") @DefaultValue("KeepOrder") SortOrder sortOrder
+            @QueryParam("sort") @DefaultValue("Album") SortOrder sortOrder
             ) throws IOException, ParseException, SQLException, LuceneQueryParserException {
         QueryResult<Track> queryResult = null;
         User user = MyTunesRssWebUtils.getAuthUser(request);

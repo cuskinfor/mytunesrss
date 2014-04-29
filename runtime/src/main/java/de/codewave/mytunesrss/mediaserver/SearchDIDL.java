@@ -33,7 +33,7 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
                     getUser(),
                     searchTerms,
                     getClientProfile().getSearchFuzziness(),
-                    SortOrder.KeepOrder,
+                    SortOrder.Album,
                     getClientProfile().getMaxSearchResults()
             );
             executeAndProcess(tx, query, new DataStoreQuery.ResultProcessor<Track>() {
