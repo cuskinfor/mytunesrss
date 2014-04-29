@@ -767,10 +767,10 @@
                 <not_recently_updated>AND t.ts_updated < :ts_updated</not_recently_updated>
                 <recently_played>AND t.ts_played >= :ts_played</recently_played>
                 <not_recently_played>AND t.ts_played < :ts_played</not_recently_played>
-                <order_playcount>ORDER BY t.playcount<order_desc> DESC</order_desc>, <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_playcount>
-                <order_lastplayed>ORDER BY t.ts_played<order_desc> DESC</order_desc>, <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_lastplayed>
-                <order_lastupdate>ORDER BY t.ts_updated<order_desc> DESC</order_desc>, <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_lastupdate>
-                <order_default>ORDER BY <lucene>tluc.pos, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_default>
+                <order_playcount>ORDER BY t.playcount<order_desc> DESC</order_desc>, <lucene>tluc.score DESC, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_playcount>
+                <order_lastplayed>ORDER BY t.ts_played<order_desc> DESC</order_desc>, <lucene>tluc.score DESC, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_lastplayed>
+                <order_lastupdate>ORDER BY t.ts_updated<order_desc> DESC</order_desc>, <lucene>tluc.score DESC, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_lastupdate>
+                <order_default>ORDER BY <lucene>tluc.score DESC, </lucene>LOWER(t.artist), LOWER(t.album), t.pos_number, t.track_number, LOWER(t.name)</order_default>
                 {smartPlaylistOrderAndLimitTail}
             ]]>
         </sql>
