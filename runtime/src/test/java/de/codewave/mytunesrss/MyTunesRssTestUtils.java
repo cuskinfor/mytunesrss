@@ -27,9 +27,6 @@ public class MyTunesRssTestUtils {
 
     public static void before() throws ClassNotFoundException, IOException, SQLException, NoSuchAlgorithmException {
         MyTunesRss.VERSION = "1.0.0";
-        MyTunesRss.CACHE_DATA_PATH = createTempDir().getAbsolutePath();
-        MyTunesRss.PREFERENCES_DATA_PATH = createTempDir().getAbsolutePath();
-        MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
         MyTunesRss.CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);
         MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");

@@ -6,6 +6,7 @@ import de.codewave.mytunesrss.config.User;
 import org.apache.lucene.queryParser.ParseException;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -28,9 +29,12 @@ public class FindTrackQueryTest {
     public void tearDown() throws Exception {
         MyTunesRssTestUtils.after();
     }
-    
+
     @Test
     public void testQueries() throws SQLException, IOException, ParseException {
+        MyTunesRss.CACHE_DATA_PATH = MyTunesRssTestUtils.createTempDir().getAbsolutePath();
+        MyTunesRss.PREFERENCES_DATA_PATH = MyTunesRssTestUtils.createTempDir().getAbsolutePath();
+        MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
         for (SortOrder sortOrder : SortOrder.values()) {
             MyTunesRss.STORE.executeQuery(FindTrackQuery.getForAlbum(user, new String[]{"Moon Child"}, new String[]{"Metallica"}, sortOrder));
             MyTunesRss.STORE.executeQuery(FindTrackQuery.getForArtist(user, new String[]{"ABBA"}, sortOrder));

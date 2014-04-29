@@ -90,6 +90,14 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         return false;
     }
 
+    private Map<String, Float> toMap(Collection<LuceneTrackService.ScoredTrack> scoredTracks) {
+        Map<String, Float> result = new HashMap<>();
+        for (LuceneTrackService.ScoredTrack scoredTrack : scoredTracks) {
+            result.put(scoredTrack.getId(), scoredTrack.getScore());
+        }
+        return result;
+    }
+
     private void refreshSmartPlaylist(Connection connection, Collection<SmartInfo> smartInfos, String playlistId) throws SQLException {
         LOGGER.debug("Refreshing smart playlist with id \"" + playlistId + "\".");
         try {
@@ -99,7 +107,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                 MyTunesRssUtils.createStatement(connection, "truncateSearchTempTables").execute(); // truncate if already existed
                 if (!CollectionUtils.isEmpty(scoredTracks)) {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "fillLuceneSearchTempTable");
-                    statement.setObject("track", scoredTracks);
+                    statement.setObject("track", toMap(scoredTracks));
                     statement.execute();
                 }
             }
