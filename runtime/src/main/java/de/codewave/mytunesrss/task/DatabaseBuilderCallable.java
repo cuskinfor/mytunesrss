@@ -90,7 +90,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         myQueue.start();
         Boolean result = Boolean.FALSE;
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
-        MVStore mvStore = MyTunesRssUtils.getMvStoreBuilder("database-import").compressData().open();
+        MVStore mvStore = MyTunesRssUtils.getMvStoreBuilder("database-import").compress().open();
         OrphanedImageRemover orphanedImageRemover = new OrphanedImageRemover();
         orphanedImageRemover.init();
         try {
