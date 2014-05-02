@@ -317,7 +317,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                                 orphanedImageRemover.init();
                                 try {
                                     MyTunesRss.STORE.executeStatement(new RemoveImagesForDataSourcesStatement(MyTunesRssUtils.toDatasourceIds(datasources)));
-                                    MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, false, false));
+                                    MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, false, false, true));
                                     orphanedImageRemover.remove();
                                 } finally {
                                     orphanedImageRemover.destroy();

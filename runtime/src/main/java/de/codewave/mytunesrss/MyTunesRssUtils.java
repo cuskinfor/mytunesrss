@@ -979,7 +979,7 @@ public class MyTunesRssUtils {
                 LOGGER.warn("Could not delete tracks from lucene index.", e);
             }
             LOGGER.debug("Recreating help tables.");
-            session.executeStatement(new RecreateHelpTablesStatement(true, true, true));
+            session.executeStatement(new RecreateHelpTablesStatement(true, true, true, true));
             orphanedImageRemover.remove();
         } finally {
             orphanedImageRemover.destroy();
@@ -1310,7 +1310,7 @@ public class MyTunesRssUtils {
     public static void createNaturalSortOrderGenreNames(Connection connection) {
         createNaturalSortOrderNames(connection, "listGenresForNatSortUpdate", 255, 3);
     }
-    
+
     private static void createNaturalSortOrderNames(Connection connection, String statement, int length, int maxExpanded) {
         try {
             ResultSet resultSet = MyTunesRssUtils.createStatement(connection, statement).executeQuery(ResultSetType.TYPE_FORWARD_ONLY_UPDATABLE, 100);

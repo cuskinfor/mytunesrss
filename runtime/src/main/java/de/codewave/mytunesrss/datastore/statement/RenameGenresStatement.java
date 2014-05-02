@@ -30,7 +30,7 @@ public class RenameGenresStatement implements DataStoreStatement {
         } finally {
             StopWatch.stop();
         }
-        new RecreateHelpTablesStatement(false, false, true).execute(connection);
+        new RecreateHelpTablesStatement(false, false, true, true).execute(connection);
     }
 
 }

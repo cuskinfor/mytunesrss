@@ -29,4 +29,8 @@
         <sql>ALTER TABLE smart_info MODIFY COLUMN pattern VARCHAR(255) NOT NULL</sql>
     </statement>
 
+    <statement name="migrate_6.0.1_part_2">
+        <sql>ALTER TABLE album MODIFY COLUMN artist VARCHAR(255) NOT NULL</sql>
+    </statement>
+
 </statements>

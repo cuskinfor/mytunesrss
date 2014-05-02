@@ -37,7 +37,7 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         session.commit();
         try {
             StopWatch.start("Recreating help tables");
-            session.executeStatement(new RecreateHelpTablesStatement(true, true, true));
+            session.executeStatement(new RecreateHelpTablesStatement(true, true, true, true));
         } catch (SQLException e) {
             LOGGER.warn("Could not execute data store statement.", e);
         } finally {

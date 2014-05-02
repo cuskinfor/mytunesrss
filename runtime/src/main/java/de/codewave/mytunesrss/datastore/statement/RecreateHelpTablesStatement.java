@@ -18,15 +18,17 @@ import java.util.List;
 public class RecreateHelpTablesStatement implements DataStoreStatement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RecreateHelpTablesStatement.class);
-    
+
     private final boolean myRecreateAlbums;
     private final boolean myRecreateArtists;
     private final boolean myRecreateGenres;
+    private final boolean myCommit;
 
-    public RecreateHelpTablesStatement(boolean recreateAlbums, boolean recreateArtists, boolean recreateGenres) {
+    public RecreateHelpTablesStatement(boolean recreateAlbums, boolean recreateArtists, boolean recreateGenres, boolean commit) {
         myRecreateAlbums = recreateAlbums;
         myRecreateArtists = recreateArtists;
         myRecreateGenres = recreateGenres;
+        myCommit = commit;
     }
 
     public void execute(Connection connection) throws SQLException {
@@ -37,7 +39,9 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
                 SmartStatement statementAlbum = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum");
                 statementAlbum.execute();
                 MyTunesRssUtils.createNaturalSortOrderAlbumNames(connection);
-                connection.commit();
+                if (myCommit) {
+                    connection.commit();
+                }
             } finally {
                 StopWatch.stop();
             }
@@ -49,7 +53,9 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
                 SmartStatement statementArtist = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesArtist");
                 statementArtist.execute();
                 MyTunesRssUtils.createNaturalSortOrderArtistNames(connection);
-                connection.commit();
+                if (myCommit) {
+                    connection.commit();
+                }
             } finally {
                 StopWatch.stop();
             }
@@ -72,7 +78,9 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
                 statementGenre.setObject("genres", genreNames);
                 statementGenre.execute();
                 MyTunesRssUtils.createNaturalSortOrderGenreNames(connection);
-                connection.commit();
+                if (myCommit) {
+                    connection.commit();
+                }
             } finally {
                 StopWatch.stop();
             }

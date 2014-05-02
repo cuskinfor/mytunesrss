@@ -111,7 +111,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
     }
 
     private void recreateAlbums() throws SQLException {
-        MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, false, false));
+        MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, false, false, true));
     }
 
     public synchronized void waitForTermination() {
