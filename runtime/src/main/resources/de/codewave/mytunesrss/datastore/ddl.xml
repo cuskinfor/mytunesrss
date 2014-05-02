@@ -122,35 +122,41 @@
         <sql>
             {create_table_prefix} album (
                 name VARCHAR(255) NOT NULL,
+                nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 artist_count INTEGER,
-                artist VARCHAR(255),
+                artist VARCHAR(255) NOT NULL,
                 image_hash CHAR(24),
                 compilation INTEGER,
-                year INTEGER
+                year INTEGER,
+                PRIMARY KEY (name, artist)
             )
         </sql>
         <sql>
             {create_table_prefix} artist (
                 name VARCHAR(255) NOT NULL,
+                nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
-                album_count INTEGER
+                album_count INTEGER,
+                PRIMARY KEY (name)
             )
         </sql>
         <sql>
             {create_table_prefix} genre (
                 name VARCHAR(255) NOT NULL,
+                nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
                 track_count INTEGER,
                 album_count INTEGER,
                 artist_count INTEGER,
                 hidden BOOLEAN,
-                updated BOOLEAN
+                updated BOOLEAN,
+                PRIMARY KEY (name)
             )
         </sql>
         <sql>

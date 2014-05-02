@@ -8,6 +8,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.config.CommonTrackDatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
+import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.utils.sql.*;
 import org.slf4j.Logger;
@@ -110,11 +111,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
     }
 
     private void recreateAlbums() throws SQLException {
-        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
-            public void execute(Connection connection) throws SQLException {
-                MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
-            }
-        });
+        MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, false, false));
     }
 
     public synchronized void waitForTermination() {

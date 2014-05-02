@@ -354,4 +354,15 @@
         <sql>ALTER TABLE photo ADD COLUMN height NUMERIC(19)</sql>
     </statement>
 
+    <statement name="migrate_6.0.1">
+        <sql>DELETE FROM album</sql>
+        <sql>ALTER TABLE album ADD COLUMN nat_sort_name VARCHAR(1020)</sql>
+        <sql>ALTER TABLE album ALTER COLUMN artist SET NOT NULL</sql>
+        <sql>ALTER TABLE album ADD PRIMARY KEY (name, artist)</sql>
+        <sql>ALTER TABLE artist ADD COLUMN nat_sort_name VARCHAR(1020)</sql>
+        <sql>ALTER TABLE artist ADD PRIMARY KEY (name)</sql>
+        <sql>ALTER TABLE genre ADD COLUMN nat_sort_name VARCHAR(1020)</sql>
+        <sql>ALTER TABLE genre ADD PRIMARY KEY (name)</sql>
+    </statement>
+
 </statements>

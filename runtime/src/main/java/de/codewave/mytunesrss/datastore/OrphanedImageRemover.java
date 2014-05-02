@@ -27,7 +27,7 @@ public class OrphanedImageRemover {
     public void init() throws SQLException {
         StopWatch.start("Initializing orphaned image remover");
         try {
-            myStore = MyTunesRssUtils.getMvStoreBuilder("orphaned-image-remover").compressData().open();
+            myStore = MyTunesRssUtils.getMvStoreBuilder("orphaned-image-remover").compress().open();
             final Map<String, Byte> hashes = myStore.openMap("hashes");
             DataStoreQuery<Void> query = new DataStoreQuery<Void>() {
                 @Override

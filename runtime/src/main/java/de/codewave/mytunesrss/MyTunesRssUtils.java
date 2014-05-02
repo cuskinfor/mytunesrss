@@ -11,12 +11,12 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
-import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.ResultSetType;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
@@ -71,6 +71,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
@@ -1298,4 +1299,29 @@ public class MyTunesRssUtils {
         return artist.getName();
     }
 
+    public static void createNaturalSortOrderAlbumNames(Connection connection) {
+        createNaturalSortOrderNames(connection, "listAlbumsForNatSortUpdate", 255, 3);
+    }
+
+    public static void createNaturalSortOrderArtistNames(Connection connection) {
+        createNaturalSortOrderNames(connection, "listArtistsForNatSortUpdate", 255, 3);
+    }
+
+    public static void createNaturalSortOrderGenreNames(Connection connection) {
+        createNaturalSortOrderNames(connection, "listGenresForNatSortUpdate", 255, 3);
+    }
+    
+    private static void createNaturalSortOrderNames(Connection connection, String statement, int length, int maxExpanded) {
+        try {
+            ResultSet resultSet = MyTunesRssUtils.createStatement(connection, statement).executeQuery(ResultSetType.TYPE_FORWARD_ONLY_UPDATABLE, 100);
+            while (resultSet.next()) {
+                String name = resultSet.getString("name");
+                String natSortName = MiscUtils.toNaturalSortString(name, length, maxExpanded);
+                resultSet.updateString("nat_sort_name", natSortName);
+                resultSet.updateRow();
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Could not create natural sort order names using statement \"" + statement + "\".", e);
+        }
+    }
 }

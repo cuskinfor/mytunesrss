@@ -4,6 +4,8 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.StopWatch;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -15,6 +17,8 @@ import java.util.List;
  */
 public class RecreateHelpTablesStatement implements DataStoreStatement {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(RecreateHelpTablesStatement.class);
+    
     private final boolean myRecreateAlbums;
     private final boolean myRecreateArtists;
     private final boolean myRecreateGenres;
@@ -32,6 +36,7 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
             try {
                 SmartStatement statementAlbum = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum");
                 statementAlbum.execute();
+                MyTunesRssUtils.createNaturalSortOrderAlbumNames(connection);
                 connection.commit();
             } finally {
                 StopWatch.stop();
@@ -43,6 +48,7 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
             try {
                 SmartStatement statementArtist = MyTunesRssUtils.createStatement(connection, "recreateHelpTablesArtist");
                 statementArtist.execute();
+                MyTunesRssUtils.createNaturalSortOrderArtistNames(connection);
                 connection.commit();
             } finally {
                 StopWatch.stop();
@@ -65,6 +71,7 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
                 statementGenre.setObject("hidden_genres", hiddenGenres);
                 statementGenre.setObject("genres", genreNames);
                 statementGenre.execute();
+                MyTunesRssUtils.createNaturalSortOrderGenreNames(connection);
                 connection.commit();
             } finally {
                 StopWatch.stop();

@@ -15,6 +15,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
+import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.RemoveImagesForDataSourcesStatement;
 import de.codewave.mytunesrss.datastore.statement.SystemInformation;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
@@ -316,11 +317,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                                 orphanedImageRemover.init();
                                 try {
                                     MyTunesRss.STORE.executeStatement(new RemoveImagesForDataSourcesStatement(MyTunesRssUtils.toDatasourceIds(datasources)));
-                                    MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
-                                        public void execute(Connection connection) throws SQLException {
-                                            MyTunesRssUtils.createStatement(connection, "recreateHelpTablesAlbum").execute();
-                                        }
-                                    });
+                                    MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, false, false));
                                     orphanedImageRemover.remove();
                                 } finally {
                                     orphanedImageRemover.destroy();
