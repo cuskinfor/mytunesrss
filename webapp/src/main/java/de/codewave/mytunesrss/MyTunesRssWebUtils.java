@@ -286,7 +286,7 @@ public class MyTunesRssWebUtils {
                 return new StatusCodeSender(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // no if-modified-since request or file has been modified
-                if (Mp4Utils.isMp4File(file)) {
+                if (false && Mp4Utils.isMp4File(file)) { // qt-faststart disabled due to performance problems with range requests
                     // use qt-faststart for MP4 files
                     LOGGER.info("Using QT-FASTSTART utility.");
                     return new StreamSender(Mp4Utils.getFastStartInputStream(file), track.getContentType(), track.getContentLength());

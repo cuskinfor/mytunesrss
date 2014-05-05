@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="6.0.1" date="___D___">
+            <action dev="mdescher" type="remove">
+                Removed QT Faststart due to performance problems with range requests. A better solution
+                might be a cache for QT Faststart movies. Task in Jira has been created.
+            </action>
+        </release>
+
         <release version="6.0.1" date="2014-05-02">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-496] Implement natural sort for DB selects
