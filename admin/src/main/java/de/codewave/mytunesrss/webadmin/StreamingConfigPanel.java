@@ -39,6 +39,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     private Button myAddTranscoder;
     private SmartTextField myTranscodingCacheMaxGiB;
     private SmartTextField myHttpLiveStreamCacheMaxGiB;
+    private SmartTextField myQtFaststartCacheMaxGiB;
     private AtomicLong myTranscoderNumberGenerator = new AtomicLong(1);
     private CheckBox myVlcEnabled;
     private SmartTextField myVlcBinary;
@@ -87,6 +88,8 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myCacheForm.addField("limitTranscoding", myTranscodingCacheMaxGiB);
         myHttpLiveStreamCacheMaxGiB = getComponentFactory().createTextField("streamingConfigPanel.cache.httpLiveStreamCacheMaxGiB", getApplication().getValidatorFactory().createMinMaxValidator(1, 1024));
         myCacheForm.addField("limitHttpLiveStream", myHttpLiveStreamCacheMaxGiB);
+        myQtFaststartCacheMaxGiB = getComponentFactory().createTextField("streamingConfigPanel.cache.qtFastStartCacheMaxGiB", getApplication().getValidatorFactory().createMinMaxValidator(1, 1024));
+        myCacheForm.addField("limitQtFaststart", myQtFaststartCacheMaxGiB);
         myClearAllCachesButton = getComponentFactory().createButton("streamingConfigPanel.clearAllCaches", this);
         myCacheForm.addField(myClearAllCachesButton, myClearAllCachesButton);
         addComponent(getComponentFactory().surroundWithPanel(myCacheForm, FORM_PANEL_MARGIN_INFO, getBundleString("streamingConfigPanel.caption.cache")));
@@ -101,8 +104,9 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         for (TranscoderConfig transcoderConfig : myTranscoderConfigs) {
             addTranscoderConfigTableItem(transcoderConfig);
         }
-        myTranscodingCacheMaxGiB.setValue(MyTunesRss.CONFIG.getTranscodingCacheMaxGiB(), 1, 1024, "1");
-        myHttpLiveStreamCacheMaxGiB.setValue(MyTunesRss.CONFIG.getHttpLiveStreamCacheMaxGiB(), 1, 1024, "5");
+        myTranscodingCacheMaxGiB.setValue(MyTunesRss.CONFIG.getTranscodingCacheMaxGiB(), 1, 1024, "5");
+        myHttpLiveStreamCacheMaxGiB.setValue(MyTunesRss.CONFIG.getHttpLiveStreamCacheMaxGiB(), 1, 1024, "20");
+        myQtFaststartCacheMaxGiB.setValue(MyTunesRss.CONFIG.getQtFaststartCacheMaxGiB(), 1, 1024, "20");
         myVlcEnabled.setValue(MyTunesRss.CONFIG.isVlcEnabled());
         myVlcBinary.setValue(MyTunesRss.CONFIG.getVlcExecutable() != null ? MyTunesRss.CONFIG.getVlcExecutable().getAbsolutePath() : "");
         setTablePageLengths();
@@ -137,12 +141,15 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        int maxGiB = myTranscodingCacheMaxGiB.getIntegerValue(1);
+        int maxGiB = myTranscodingCacheMaxGiB.getIntegerValue(5);
         MyTunesRss.CONFIG.setTranscodingCacheMaxGiB(maxGiB);
         MyTunesRss.TRANSCODER_CACHE.setMaxSizeBytes((long)maxGiB * 1024L * 1024L * 1024L);
-        maxGiB = myHttpLiveStreamCacheMaxGiB.getIntegerValue(5);
+        maxGiB = myHttpLiveStreamCacheMaxGiB.getIntegerValue(20);
         MyTunesRss.CONFIG.setHttpLiveStreamCacheMaxGiB(maxGiB);
         MyTunesRss.HTTP_LIVE_STREAMING_CACHE.setMaxSizeBytes((long)maxGiB * 1024L * 1024L * 1024L);
+        maxGiB = myQtFaststartCacheMaxGiB.getIntegerValue(20);
+        MyTunesRss.CONFIG.setQtFaststartCacheMaxGiB(maxGiB);
+        MyTunesRss.QT_FASTSTART_CACHE.setMaxSizeBytes((long)maxGiB * 1024L * 1024L * 1024L);
         String vlcBinary = myVlcBinary.getStringValue(null);
         File vlcExecutable = vlcBinary != null ? new File(vlcBinary) : null;
         if (vlcExecutable != null && vlcExecutable.isDirectory() && SystemUtils.IS_OS_MAC_OSX && "vlc.app".equalsIgnoreCase(vlcExecutable.getName())) {

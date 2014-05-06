@@ -6,7 +6,6 @@ import de.codewave.mytunesrss.command.StatusCodeSender;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -18,8 +17,7 @@ import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,10 +27,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -286,10 +281,25 @@ public class MyTunesRssWebUtils {
                 return new StatusCodeSender(HttpServletResponse.SC_NOT_MODIFIED);
             } else {
                 // no if-modified-since request or file has been modified
-                if (false && Mp4Utils.isMp4File(file)) { // qt-faststart disabled due to performance problems with range requests
-                    // use qt-faststart for MP4 files
-                    LOGGER.info("Using QT-FASTSTART utility.");
-                    return new StreamSender(Mp4Utils.getFastStartInputStream(file), track.getContentType(), track.getContentLength());
+                File qtFaststartFile = new File(MyTunesRss.QT_FASTSTART_CACHE.getBaseDir(), "qtfast_" + track.getId());
+                if (Mp4Utils.isMp4File(file) && !qtFaststartFile.isFile()) {
+                    if (!Mp4Utils.isFastStart(file)) {
+                        // create qt-faststart version
+                        LOGGER.info("Using QT-FASTSTART utility.");
+                        try (FileOutputStream qtFaststartStream = new FileOutputStream(qtFaststartFile)) {
+                            IOUtils.copyLarge(Mp4Utils.getFastStartInputStream(file), qtFaststartStream);
+                        } catch (IOException ignored) {
+                            qtFaststartFile.delete();
+                            qtFaststartFile.createNewFile();
+                        }
+                    } else {
+                        qtFaststartFile.createNewFile();
+                    }
+                }
+                if (qtFaststartFile.isFile() && qtFaststartFile.length() > 0) {
+                    // qt-faststart file
+                    MyTunesRss.QT_FASTSTART_CACHE.touch("qtfast_" + track.getId());
+                    return new StreamSender(new FileInputStream(qtFaststartFile), track.getContentType(), track.getContentLength());
                 } else {
                     // standard file
                     return new StreamSender(new FileInputStream(file), track.getContentType(), track.getContentLength());
@@ -333,9 +343,7 @@ public class MyTunesRssWebUtils {
 
     public static void rememberLogin(HttpServletResponse response, String username, byte[] passwordHash) {
         try {
-            StringBuilder cookieValue = new StringBuilder(Base64.encodeBase64String(username.getBytes("UTF-8")).trim());
-            cookieValue.append(";").append(new String(Base64.encodeBase64(passwordHash), "UTF-8").trim());
-            response.addCookie(createLoginCookie(cookieValue.toString()));
+            response.addCookie(createLoginCookie(Base64.encodeBase64String(username.getBytes("UTF-8")).trim() + ";" + new String(Base64.encodeBase64(passwordHash), "UTF-8").trim()));
         } catch (UnsupportedEncodingException ignored) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Character set UTF-8 not found.");
@@ -382,7 +390,7 @@ public class MyTunesRssWebUtils {
                 if (StringUtils.equals(cookie.getName(), MyTunesRss.APPLICATION_IDENTIFIER + "UserV2")) {
                     try {
                         return Base64.decodeBase64(Base64Utils.decodeToString(cookie.getValue()).split(";")[1]);
-                    } catch (Exception e) {
+                    } catch (RuntimeException e) {
                         if (LOGGER.isWarnEnabled()) {
                             LOGGER.warn("Could not get password from user cookie value.", e);
                         }

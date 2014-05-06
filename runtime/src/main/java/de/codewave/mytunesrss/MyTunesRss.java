@@ -112,6 +112,7 @@ public class MyTunesRss {
     public static final String CACHEDIR_TEMP = "tmp";
     public static final String CACHEDIR_TRANSCODER = "transcoder";
     public static final String CACHEDIR_HTTP_LIVE_STREAMING = "http_live_streaming";
+    public static final String CACHEDIR_QT_FASTSTART = "qt_faststart";
 
     public static final String APPLICATION_IDENTIFIER = System.getProperty("codewaveAppId", "MyTunesRSS-6");
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS5", "MyTunesRSS4", "MyTunesRSS3"};
@@ -160,6 +161,7 @@ public class MyTunesRss {
     public static FileSystemCache TRANSCODER_CACHE;
     public static FileSystemCache TEMP_CACHE;
     public static FileSystemCache HTTP_LIVE_STREAMING_CACHE;
+    public static FileSystemCache QT_FASTSTART_CACHE;
     public static Scheduler QUARTZ_SCHEDULER;
     public static MailSender MAILER = new MailSender();
     public static AdminNotifier ADMIN_NOTIFY = new AdminNotifier();
@@ -670,6 +672,8 @@ public class MyTunesRss {
         }
         HTTP_LIVE_STREAMING_CACHE = new FileSystemCache("HttpLiveStreaming", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_HTTP_LIVE_STREAMING), MyTunesRss.CONFIG.getHttpLiveStreamCacheMaxGiB() * FACTOR_GIB_TO_BYTE, 60000L);
         HTTP_LIVE_STREAMING_CACHE.init();
+        QT_FASTSTART_CACHE = new FileSystemCache("QtFaststart", new File(MyTunesRss.CACHE_DATA_PATH, MyTunesRss.CACHEDIR_QT_FASTSTART), MyTunesRss.CONFIG.getQtFaststartCacheMaxGiB() * FACTOR_GIB_TO_BYTE, 60000L);
+        QT_FASTSTART_CACHE.init();
     }
 
     private static void startQuartzScheduler() throws SchedulerException {
