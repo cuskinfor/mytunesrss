@@ -185,8 +185,6 @@ public class MyTunesRssUtils {
         }
         LOGGER.debug("Destroying streaming cache.");
         MyTunesRss.TRANSCODER_CACHE.destroy();
-        LOGGER.debug("Destroying qt-faststart cache.");
-        MyTunesRss.QT_FASTSTART_CACHE.destroy();
         if (MyTunesRss.FORM != null) {
             MyTunesRss.FORM.hide();
         }

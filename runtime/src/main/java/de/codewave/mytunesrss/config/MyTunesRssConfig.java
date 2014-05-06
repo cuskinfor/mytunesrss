@@ -63,10 +63,9 @@ public class MyTunesRssConfig {
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
     private String myWebLoginMessage = "";
-    private long myTranscodingCacheMaxGiB = 5;
-    private long myTempMaxGiB = 5;
-    private long myHttpLiveStreamCacheMaxGiB = 20;
-    private long myQtFaststartCacheMaxGiB = 20;
+    private long myTranscodingCacheMaxGiB = 1;
+    private long myTempMaxGiB = 1;
+    private long myHttpLiveStreamCacheMaxGiB = 5;
     private Level myCodewaveLogLevel;
     private String myLastNewVersionInfo;
     private boolean myDeleteDatabaseOnExit;
@@ -271,14 +270,6 @@ public class MyTunesRssConfig {
 
     public synchronized void setHttpLiveStreamCacheMaxGiB(long httpLiveStreamCacheMaxGiB) {
         myHttpLiveStreamCacheMaxGiB = httpLiveStreamCacheMaxGiB;
-    }
-
-    public long getQtFaststartCacheMaxGiB() {
-        return myQtFaststartCacheMaxGiB;
-    }
-
-    public void setQtFaststartCacheMaxGiB(long qtFaststartCacheMaxGiB) {
-        myQtFaststartCacheMaxGiB = qtFaststartCacheMaxGiB;
     }
 
     public synchronized Level getCodewaveLogLevel() {
@@ -1188,7 +1179,6 @@ public class MyTunesRssConfig {
         setTranscodingCacheMaxGiB(JXPathUtils.getLongValue(settings, "transcodingCacheMaxGiB", getTranscodingCacheMaxGiB()));
         setTempMaxGiB(JXPathUtils.getLongValue(settings, "tempMaxGiB", getTempMaxGiB()));
         setHttpLiveStreamCacheMaxGiB(JXPathUtils.getLongValue(settings, "httpLiveStreamCacheMaxGiB", getHttpLiveStreamCacheMaxGiB()));
-        setQtFaststartCacheMaxGiB(JXPathUtils.getLongValue(settings, "qtFaststartCacheMaxGiB", getQtFaststartCacheMaxGiB()));
         setCodewaveLogLevel(Level.toLevel(JXPathUtils.getStringValue(settings, "codewaveLogLevel", Level.INFO.toString()).toUpperCase()));
         setLastNewVersionInfo(JXPathUtils.getStringValue(settings, "lastNewVersionInfo", "0"));
         setUpdateIgnoreVersion(JXPathUtils.getStringValue(settings, "updateIgnoreVersion", MyTunesRss.VERSION));
@@ -1601,7 +1591,6 @@ public class MyTunesRssConfig {
             root.appendChild(DOMUtils.createLongElement(settings, "transcodingCacheMaxGiB", myTranscodingCacheMaxGiB));
             root.appendChild(DOMUtils.createLongElement(settings, "tempMaxGiB", myTempMaxGiB));
             root.appendChild(DOMUtils.createLongElement(settings, "httpLiveStreamCacheMaxGiB", myHttpLiveStreamCacheMaxGiB));
-            root.appendChild(DOMUtils.createLongElement(settings, "qtFaststartCacheMaxGiB", myQtFaststartCacheMaxGiB));
             root.appendChild(DOMUtils.createTextElement(settings, "codewaveLogLevel", myCodewaveLogLevel.toString().toUpperCase()));
             root.appendChild(DOMUtils.createTextElement(settings, "lastNewVersionInfo", myLastNewVersionInfo));
             root.appendChild(DOMUtils.createTextElement(settings, "updateIgnoreVersion", myUpdateIgnoreVersion));
