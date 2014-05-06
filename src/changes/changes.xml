@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.0.1" date="___D___">
+        <release version="6.0.2" date="2014-05-06">
             <action dev="mdescher" type="remove">
                 Removed QT Faststart due to performance problems with range requests.
             </action>
