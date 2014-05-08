@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="___V___" date="___D___">
+        <release version="6.0.3" date="___D___">
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-494] Better playback counting/lastfm scrobbling
             </action>
