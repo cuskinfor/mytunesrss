@@ -250,7 +250,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                 authorize(WebAppScope.Session, MyTunesRssWebUtils.getRememberedUsername(getRequest()));
             }
             if (!isRequestAuthorized()) {
-                forward(MyTunesRssResource.Login);
+                executeUnauthorized();
             } else {
                 handleDisplayFilter();
                 throttleBandwidth();
@@ -277,6 +277,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
             getSession().removeAttribute("errors");
             redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowFatalError));
         }
+    }
+
+    protected void executeUnauthorized() throws IOException, ServletException {
+        forward(MyTunesRssResource.Login);
     }
 
     protected void throttleBandwidth() {

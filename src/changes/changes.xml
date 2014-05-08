@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="___V___" date="___D___">
+            <action dev="mdescher" type="update">
+                [MYTUNESRSS-494] Better playback counting/lastfm scrobbling
+            </action>
+        </release>
+
         <release version="6.0.2" date="2014-05-06">
             <action dev="mdescher" type="remove">
                 Removed QT Faststart due to performance problems with range requests.

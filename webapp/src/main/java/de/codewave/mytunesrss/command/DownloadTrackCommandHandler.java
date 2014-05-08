@@ -28,50 +28,20 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
 
     @Override
     public void executeAuthorized() throws Exception {
-        if (!isRequestAuthorized() || !getAuthUser().isDownload()) {
+        if (!getAuthUser().isDownload()) {
             getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
         } else {
-            StreamSender streamSender = null;
-            Track track = null;
-            String trackId = getRequest().getParameter("track");
-            try {
-                QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
-                if (tracks.getResultSize() > 0) {
-                    track = tracks.nextResult();
-
-                    File file = track.getFile();
-                    if (!file.exists()) {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" not found, trying harder to find file.");
-                        }
-                        file = MyTunesRssUtils.searchFile(file);
-                    }
-                    if (file.exists()) {
-                        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false))) + "\"");
-                        streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
-                        MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
-                        streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
-                    } else {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" does not exist.");
-                        }
-                        MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
-                        streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
-                    }
-                } else {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("No tracks recognized in request, sending response code SC_NOT_FOUND instead.");
-                    }
-                    streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
-                }
-            } finally {
-                getTransaction().commit();
-            }
-            if (ServletUtils.isHeadRequest(getRequest())) {
-                sendHeadResponse(streamSender);
-            } else {
-                sendGetResponse(streamSender);
-            }
+            super.executeAuthorized();
         }
+    }
+    
+    @Override
+    protected void updateStatisticsOnInitialRequest(String trackId, Track track) {
+        // nothing to do here
+    }
+
+    @Override
+    protected void setResponseHeaders(Track track, File file) {
+        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false))) + "\"");
     }
 }
