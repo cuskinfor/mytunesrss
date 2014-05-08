@@ -8,9 +8,11 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.servlet.RedirectSender;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
@@ -79,22 +81,26 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
         if (tracks.getResultSize() > 0) {
             Track track = tracks.nextResult();
             if (track.getMediaType() == MediaType.Video) {
-                File dir = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), trackId);
-                if (!dir.isDirectory()) {
-                    synchronized (this) {
-                        if (!dir.isDirectory()) {
-                            dir.mkdir();
-                            MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
-                            MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
-                            getAuthUser().playLastFmTrack(track);
+                if (getBooleanRequestParameter("initial", true)) {
+                    MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
+                    getAuthUser().playLastFmTrack(track);
+                    sender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.HttpLiveStream) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace(MyTunesRssCommand.HttpLiveStream.getName(), "initial=false")));
+                } else {
+                    File dir = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), trackId);
+                    if (!dir.isDirectory()) {
+                        synchronized (this) {
+                            if (!dir.isDirectory()) {
+                                dir.mkdir();
+                                MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
+                            }
                         }
                     }
+                    File playlistFile = waitForPlaylistFile(dir, 30000);
+                    MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
+                    byte[] playlistBytes = FileUtils.readFileToByteArray(playlistFile);
+                    LOG.debug("Sending playlist: " + new String(playlistBytes, Charset.forName("UTF-8")));
+                    sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
                 }
-                File playlistFile = waitForPlaylistFile(dir, 30000);
-                MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
-                byte[] playlistBytes = FileUtils.readFileToByteArray(playlistFile);
-                LOG.debug("Sending playlist: " + new String(playlistBytes, Charset.forName("UTF-8")));
-                sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
             } else {
                 sender = new StatusCodeSender(HttpServletResponse.SC_FORBIDDEN);
             }

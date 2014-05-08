@@ -64,9 +64,7 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                     } else {
                         if (initialRequest) {
                             streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.PlayTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace(MyTunesRssCommand.PlayTrack.getName(), "initial=false")));
-                            if (initialRequest) {
-                                updateStatisticsOnInitialRequest(trackId, track);
-                            }
+                            updateStatisticsOnInitialRequest(trackId, track);
                         } else {
                             setResponseHeaders(track, file);
                             streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
