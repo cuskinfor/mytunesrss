@@ -23,6 +23,10 @@ public class RedirectSender extends StreamSender {
 
     @Override
     public void sendGetResponse(HttpServletRequest request, HttpServletResponse response, boolean throwExceptions) throws IOException {
-        sendHeadResponse(request, response);
+        try {
+            sendHeadResponse(request, response);
+        } finally {
+            afterSend();
+        }
     }
 }

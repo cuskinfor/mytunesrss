@@ -12,9 +12,12 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.servlet.RedirectSender;
+import de.codewave.mytunesrss.statistics.DownloadEvent;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
+import de.codewave.utils.servlet.StreamListener;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
@@ -64,11 +67,17 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                     } else {
                         if (initialRequest) {
                             streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.PlayTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace(MyTunesRssCommand.PlayTrack.getName(), "initial=false")));
+                            streamSender.setStreamListener(new StreamListener() {
+                                @Override
+                                public void afterSend() {
+                                    StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(getAuthUser().getName(), track.getId(),  0));
+                                }
+                            });
                             updateStatisticsOnInitialRequest(trackId, track);
                         } else {
                             setResponseHeaders(track, file);
                             streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
-                            streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), track.getId(), SessionManager.getSessionInfo(getRequest())));
+                            streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
                         }
                     }
                 } else {

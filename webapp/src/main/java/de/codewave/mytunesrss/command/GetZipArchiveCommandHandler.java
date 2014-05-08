@@ -80,7 +80,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                     }
                     File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;
                     FileSender fileSender = new FileSender(sendFile, "application/zip", sendFile.length());
-                    fileSender.setCounter(new MyTunesRssSendCounter(user, null, sessionInfo));
+                    fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
                     fileSender.sendGetResponse(getRequest(), getResponse(), false);
                 } finally {
                     /*if (tempFile != null && tempFile.isFile()) {
@@ -89,7 +89,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                 }
             } else {
                 getResponse().setContentType("application/zip");
-                createZipArchive(user, getResponse().getOutputStream(), tracks, baseName, new MyTunesRssSendCounter(user, null, sessionInfo));
+                createZipArchive(user, getResponse().getOutputStream(), tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));
             }
         } else {
             getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);

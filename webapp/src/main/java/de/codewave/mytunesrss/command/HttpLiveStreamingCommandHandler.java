@@ -13,9 +13,12 @@ import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.RedirectSender;
+import de.codewave.mytunesrss.statistics.DownloadEvent;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
+import de.codewave.utils.servlet.StreamListener;
 import de.codewave.utils.servlet.StreamSender;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
@@ -66,7 +69,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
             } else {
                 sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
                 LOG.debug("Sending video/MP2T response \"" + mediaFile.getAbsolutePath() + "\".");
-                sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), trackId, SessionManager.getSessionInfo(getRequest())));
+                sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
             }
         } else {
             LOG.debug("Sending 404 NOT_FOUND response.");
@@ -79,12 +82,18 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
         StreamSender sender;
         QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[]{trackId}));
         if (tracks.getResultSize() > 0) {
-            Track track = tracks.nextResult();
+            final Track track = tracks.nextResult();
             if (track.getMediaType() == MediaType.Video) {
                 if (getBooleanRequestParameter("initial", true)) {
                     MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
                     getAuthUser().playLastFmTrack(track);
                     sender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.HttpLiveStream) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace(MyTunesRssCommand.HttpLiveStream.getName(), "initial=false")));
+                    sender.setStreamListener(new StreamListener() {
+                        @Override
+                        public void afterSend() {
+                            StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(getAuthUser().getName(), track.getId(),  0));
+                        }
+                    });
                 } else {
                     File dir = new File(MyTunesRss.HTTP_LIVE_STREAMING_CACHE.getBaseDir(), trackId);
                     if (!dir.isDirectory()) {

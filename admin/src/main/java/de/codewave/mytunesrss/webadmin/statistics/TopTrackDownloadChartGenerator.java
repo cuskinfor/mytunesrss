@@ -31,7 +31,9 @@ public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
         List<String> trackIds = new ArrayList<>();
         for (List<StatisticsEvent> eventList : eventsPerDay.values()) {
             for (StatisticsEvent event : eventList) {
-                trackIds.add(((DownloadEvent)event).myTrackId);
+                if (((DownloadEvent)event).myTrackId != null) {
+                    trackIds.add(((DownloadEvent)event).myTrackId);
+                }
             }
         }
         Set<String> uniqueTrackIds = new HashSet<>(trackIds);
