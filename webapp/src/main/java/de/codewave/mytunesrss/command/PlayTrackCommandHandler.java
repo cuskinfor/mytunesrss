@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.mytunesrss.jsp.MyTunesFunctions;
 import de.codewave.mytunesrss.servlet.RedirectSender;
 import de.codewave.mytunesrss.statistics.DownloadEvent;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
@@ -19,9 +18,7 @@ import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamListener;
 import de.codewave.utils.servlet.StreamSender;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +45,13 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
             QueryResult<Track> tracks = getTransaction().executeQuery(FindTrackQuery.getForIds(new String[] {trackId}));
             if (tracks.getResultSize() > 0) {
                 final Track track = tracks.nextResult();
-                if (!initialRequest || !getAuthUser().isQuotaExceeded()) {
+                if (initialRequest && getAuthUser().isQuotaExceeded()) {
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("User limit exceeded, sending response code SC_CONFLICT instead.");
+                    }
+                    MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
+                    streamSender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
+                } else {
                     File file = track.getFile();
                     if (!file.exists()) {
                         if (LOG.isWarnEnabled()) {
@@ -60,32 +63,15 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" does not exist.");
                         }
-                        if (initialRequest) {
-                            MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
-                        }
+                        MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);
                         streamSender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
                     } else {
                         if (initialRequest) {
-                            streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.PlayTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace(MyTunesRssCommand.PlayTrack.getName(), "initial=false")));
-                            streamSender.setStreamListener(new StreamListener() {
-                                @Override
-                                public void afterSend() {
-                                    StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(getAuthUser().getName(), track.getId(),  0));
-                                }
-                            });
-                            updateStatisticsOnInitialRequest(trackId, track);
+                            streamSender = handleInitialRequest(track, file);
                         } else {
-                            setResponseHeaders(track, file);
-                            streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
-                            streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+                            streamSender = handleFollowUpRequest(track, file);
                         }
                     }
-                } else {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("User limit exceeded, sending response code SC_CONFLICT instead.");
-                    }
-                    MyTunesRss.ADMIN_NOTIFY.notifyQuotaExceeded(getAuthUser());
-                    streamSender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
                 }
             } else {
                 if (LOG.isWarnEnabled()) {
@@ -103,18 +89,28 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
         }
     }
 
-    protected void updateStatisticsOnInitialRequest(String trackId, Track track) {
-        MyTunesRssUtils.asyncPlayCountAndDateUpdate(trackId);
+    protected StreamSender handleInitialRequest(final Track track, File file) throws IOException {
+        StreamSender streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.PlayTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace("/" + MyTunesRssCommand.PlayTrack.getName(), "initial=false")));
+        MyTunesRssUtils.asyncPlayCountAndDateUpdate(track.getId());
         getAuthUser().playLastFmTrack(track);
+        streamSender.setStreamListener(new StreamListener() {
+            @Override
+            public void afterSend() {
+                StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(getAuthUser().getName(), track.getId(), 0));
+            }
+        });
+        return streamSender;
+    }
+
+    protected StreamSender handleFollowUpRequest(Track track, File file) throws IOException {
+        StreamSender streamSender = MyTunesRssWebUtils.getMediaStreamSender(getRequest(), track, file);
+        streamSender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
+        return streamSender;
     }
 
     @Override
     protected void executeUnauthorized() throws IOException, ServletException {
         getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
-    }
-
-    protected void setResponseHeaders(Track track, File file) {
-        // nothing to do here
     }
 
     protected void sendGetResponse(StreamSender streamSender) throws IOException {

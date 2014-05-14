@@ -1,30 +1,24 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssSendCounter;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.MyTunesFunctions;
-import de.codewave.utils.MiscUtils;
-import de.codewave.utils.servlet.ServletUtils;
-import de.codewave.utils.servlet.SessionManager;
+import de.codewave.mytunesrss.servlet.RedirectSender;
+import de.codewave.mytunesrss.statistics.DownloadEvent;
+import de.codewave.mytunesrss.statistics.StatisticsEventManager;
+import de.codewave.utils.servlet.StreamListener;
 import de.codewave.utils.servlet.StreamSender;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.io.FilenameUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
+import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.command.DownloadTrackCommandHandler
  */
 public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(DownloadTrackCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws Exception {
@@ -34,14 +28,28 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
             super.executeAuthorized();
         }
     }
-    
+
     @Override
-    protected void updateStatisticsOnInitialRequest(String trackId, Track track) {
-        // nothing to do here
+    protected StreamSender handleInitialRequest(final Track track, File file) throws IOException {
+        addResponseHeader(track, file);
+        StreamSender streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.DownloadTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace("/" + MyTunesRssCommand.DownloadTrack.getName(), "initial=false")));
+        streamSender.setStreamListener(new StreamListener() {
+            @Override
+            public void afterSend() {
+                StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(getAuthUser().getName(), track.getId(), 0));
+            }
+        });
+        return streamSender;
+    }
+
+    private void addResponseHeader(Track track, File file) {
+        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false))) + "\"");
     }
 
     @Override
-    protected void setResponseHeaders(Track track, File file) {
-        getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + MyTunesRssUtils.getLegalFileName(FilenameUtils.getBaseName(file.getName()) + "." + MyTunesFunctions.suffix(getWebConfig(), getAuthUser(), track, getBooleanRequestParameter("notranscode", false))) + "\"");
+    protected StreamSender handleFollowUpRequest(Track track, File file) throws IOException {
+        addResponseHeader(track, file);
+        return super.handleFollowUpRequest(track, file);
     }
+
 }
