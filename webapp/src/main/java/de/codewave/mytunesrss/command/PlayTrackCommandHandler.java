@@ -55,12 +55,6 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
                     File file = track.getFile();
                     if (!file.exists()) {
                         if (LOG.isWarnEnabled()) {
-                            LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" not found, trying harder to find file.");
-                        }
-                        file = MyTunesRssUtils.searchFile(file);
-                    }
-                    if (!file.exists()) {
-                        if (LOG.isWarnEnabled()) {
                             LOG.warn("Requested file \"" + MiscUtils.getUtf8UrlEncoded(file.getAbsolutePath()) + "\" does not exist.");
                         }
                         MyTunesRss.ADMIN_NOTIFY.notifyMissingFile(track);

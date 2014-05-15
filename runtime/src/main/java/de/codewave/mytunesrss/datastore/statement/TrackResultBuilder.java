@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
@@ -26,7 +27,7 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
         String pathname = resultSet.getString("FILE");
         track.setFilename(pathname);
-        track.setFile(StringUtils.isNotEmpty(pathname) ? new File(pathname) : null);
+        track.setFile(StringUtils.isNotEmpty(pathname) ? MyTunesRssUtils.searchFile(pathname) : null);
         track.setProtected(resultSet.getBoolean("PROTECTED"));
         track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
         track.setGenre(resultSet.getString("GENRE"));

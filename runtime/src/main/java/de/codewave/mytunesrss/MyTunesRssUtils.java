@@ -811,8 +811,7 @@ public class MyTunesRssUtils {
         File composedFile = new File(MiscUtils.compose(filename));
         LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(composedFile.getAbsolutePath()) + ".");
         if (composedFile.exists()) {
-            return composedFile;
-        }
+            return composedFile;}
         File decomposedFile = new File(MiscUtils.decompose(filename));
         LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(decomposedFile.getAbsolutePath()) + ".");
         if (decomposedFile.exists()) {
