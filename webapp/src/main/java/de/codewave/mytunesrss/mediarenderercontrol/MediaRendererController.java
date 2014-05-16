@@ -149,6 +149,9 @@ public class MediaRendererController {
     public synchronized void play(int index, boolean async) {
         final RemoteService service = getAvTransport();
         if (service != null) {
+            if (myPlaying.get()) {
+                stop(false);
+            }
             if (index == -1 && (myCurrentRendererTransportUri != null && myCurrentRendererTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport())))) {
                 sendPlay(service);
             } else {
