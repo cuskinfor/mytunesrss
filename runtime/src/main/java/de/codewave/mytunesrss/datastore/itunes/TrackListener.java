@@ -129,9 +129,10 @@ public class TrackListener implements PListHandlerListener {
                             statement.setName(name.trim());
                             String artist = StringUtils.trimToNull((String) track.get("Artist"));
                             statement.setArtist(artist);
-                            String albumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist")));
-                            statement.setAlbumArtist(albumArtist);
-                            statement.setSortAlbumArtist(StringUtils.trimToNull((String)track.get("Sort Album Artist")));
+                            String originalAlbumArtist = (String) track.get("Album Artist");
+                            String effectiveAlbumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty(originalAlbumArtist, artist));
+                            statement.setAlbumArtist(effectiveAlbumArtist);
+                            statement.setSortAlbumArtist(!StringUtils.isEmpty(originalAlbumArtist) ? StringUtils.trimToNull((String)track.get("Sort Album Artist")) : StringUtils.trimToNull((String)track.get("Sort Artist")));
                             statement.setAlbum(StringUtils.trimToNull((String) track.get("Album")));
                             statement.setSortAlbum(StringUtils.trimToNull((String)track.get("Sort Album")));
                             int timeSeconds = (int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0);
@@ -168,7 +169,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
                             statement.setComposer(StringUtils.trimToNull((String) track.get("Composer")));
                             boolean compilation = track.get("Compilation") != null && ((Boolean) track.get("Compilation")).booleanValue();
-                            statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, albumArtist));
+                            statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, effectiveAlbumArtist));
                             statement.setComment(StringUtils.trimToNull((String) track.get("Comments")));
                             statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
                                     (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
