@@ -11,8 +11,10 @@
                 artist VARCHAR(255) NOT NULL,
                 lower_artist VARCHAR(255) NOT NULL,
                 album_artist VARCHAR(255) NOT NULL,
+                sort_album_artist VARCHAR(255) NOT NULL,
                 lower_album_artist VARCHAR(255) NOT NULL,
                 album VARCHAR(255) NOT NULL,
+                sort_album VARCHAR(255) NOT NULL,
                 lower_album VARCHAR(255) NOT NULL,
                 time INTEGER,
                 track_number INTEGER,
@@ -122,6 +124,7 @@
         <sql>
             {create_table_prefix} album (
                 name VARCHAR(255) NOT NULL,
+                sort_name VARCHAR(255) NOT NULL,
                 nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
@@ -137,6 +140,7 @@
         <sql>
             {create_table_prefix} artist (
                 name VARCHAR(255) NOT NULL,
+                sort_name VARCHAR(255) NOT NULL,
                 nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),

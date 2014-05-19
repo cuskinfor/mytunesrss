@@ -33,4 +33,11 @@
         <sql>ALTER TABLE album MODIFY COLUMN artist VARCHAR(255) NOT NULL</sql>
     </statement>
 
+    <statement name="migrate_6.1_part_3">
+        <sql>ALTER TABLE track MODIFY COLUMN sort_album_artist VARCHAR(255) NOT NULL</sql>
+        <sql>ALTER TABLE track MODIFY COLUMN sort_album VARCHAR(255) NOT NULL</sql>
+        <sql>ALTER TABLE album MODIFY COLUMN sort_name VARCHAR(255) NOT NULL</sql>
+        <sql>ALTER TABLE artist MODIFY COLUMN sort_name VARCHAR(255) NOT NULL</sql>
+    </statement>
+
 </statements>

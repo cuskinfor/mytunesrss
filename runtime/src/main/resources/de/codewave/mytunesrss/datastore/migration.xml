@@ -371,4 +371,25 @@
         <sql>ALTER TABLE genre ADD PRIMARY KEY (name)</sql>
     </statement>
 
+    <statement name="migrate_6.1_part_1">
+        <sql>ALTER TABLE track ADD COLUMN sort_album_artist VARCHAR(255)</sql>
+        <sql>ALTER TABLE track ADD COLUMN sort_album VARCHAR(255)</sql>
+        <sql>ALTER TABLE album ADD COLUMN sort_name VARCHAR(255)</sql>
+        <sql>ALTER TABLE artist ADD COLUMN sort_name VARCHAR(255)</sql>
+    </statement>
+
+    <statement name="migrate_6.1_part_2">
+        <sql>UPDATE track SET sort_album_artist = album_artist</sql>
+        <sql>UPDATE track SET sort_album = album</sql>
+        <sql>UPDATE album SET sort_name = name</sql>
+        <sql>UPDATE artist SET sort_name = NAME</sql>
+    </statement>
+
+    <statement name="migrate_6.1_part_3">
+        <sql>ALTER TABLE track ALTER COLUMN sort_album_artist SET NOT NULL</sql>
+        <sql>ALTER TABLE track ALTER COLUMN sort_album SET NOT NULL</sql>
+        <sql>ALTER TABLE album ALTER COLUMN sort_name SET NOT NULL</sql>
+        <sql>ALTER TABLE artist ALTER COLUMN sort_name SET NOT NULL</sql>
+    </statement>
+
 </statements>

@@ -1299,22 +1299,22 @@ public class MyTunesRssUtils {
     }
 
     public static void createNaturalSortOrderAlbumNames(Connection connection) {
-        createNaturalSortOrderNames(connection, "listAlbumsForNatSortUpdate", 255, 3);
+        createNaturalSortOrderNames(connection, "listAlbumsForNatSortUpdate", "sort_name", 255, 3);
     }
 
     public static void createNaturalSortOrderArtistNames(Connection connection) {
-        createNaturalSortOrderNames(connection, "listArtistsForNatSortUpdate", 255, 3);
+        createNaturalSortOrderNames(connection, "listArtistsForNatSortUpdate", "sort_name", 255, 3);
     }
 
     public static void createNaturalSortOrderGenreNames(Connection connection) {
-        createNaturalSortOrderNames(connection, "listGenresForNatSortUpdate", 255, 3);
+        createNaturalSortOrderNames(connection, "listGenresForNatSortUpdate", "name", 255, 3);
     }
 
-    private static void createNaturalSortOrderNames(Connection connection, String statement, int length, int maxExpanded) {
+    private static void createNaturalSortOrderNames(Connection connection, String statement, String nameColumn, int length, int maxExpanded) {
         try {
             ResultSet resultSet = MyTunesRssUtils.createStatement(connection, statement).executeQuery(ResultSetType.TYPE_FORWARD_ONLY_UPDATABLE, 100);
             while (resultSet.next()) {
-                String name = resultSet.getString("name");
+                String name = resultSet.getString(nameColumn);
                 String natSortName = MiscUtils.toNaturalSortString(name, length, maxExpanded);
                 resultSet.updateString("nat_sort_name", natSortName);
                 resultSet.updateRow();

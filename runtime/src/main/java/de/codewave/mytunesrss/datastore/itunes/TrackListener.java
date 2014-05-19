@@ -131,7 +131,9 @@ public class TrackListener implements PListHandlerListener {
                             statement.setArtist(artist);
                             String albumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty((String) track.get("Album Artist"), (String) track.get("Artist")));
                             statement.setAlbumArtist(albumArtist);
+                            statement.setSortAlbumArtist(StringUtils.trimToNull((String)track.get("Sort Album Artist")));
                             statement.setAlbum(StringUtils.trimToNull((String) track.get("Album")));
+                            statement.setSortAlbum(StringUtils.trimToNull((String)track.get("Sort Album")));
                             int timeSeconds = (int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0);
                             /* keeping the code for testing/debugging purposes!
                             if (timeSeconds > 0 && file.getName().toLowerCase().endsWith(".mp3")) {

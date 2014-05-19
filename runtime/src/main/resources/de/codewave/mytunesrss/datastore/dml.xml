@@ -431,8 +431,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, lower_album_artist, album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, original_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, LOWER(:album_artist), :album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :original_genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, sort_album_artist, lower_album_artist, album, sort_album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, original_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, :sort_album_artist, LOWER(:album_artist), :album, :sort_album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :original_genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
         </sql>
     </statement>
 
@@ -445,12 +445,12 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            UPDATE track SET name = :name, album = :album, artist = :artist, time = :time, track_number = :track_number,
+            UPDATE track SET name = :name, album = :album, sort_album = :sort_album, artist = :artist, time = :time, track_number = :track_number,
                              file = :file, protected = :protected, mediatype = :mediatype, genre = :genre, original_genre = :original_genre, suffix = :suffix, mp4codec = :mp4codec,
                              ts_updated = :ts_updated, comment = :comment, pos_number = :pos_number, pos_size = :pos_size, lower_genre = LOWER(:genre), lower_artist = LOWER(:artist),
                              lower_name = LOWER(:name), lower_album = LOWER(:album), year = :year,
                              series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
-                             album_artist = :album_artist, lower_album_artist = LOWER(:album_artist), composer = :composer,
+                             album_artist = :album_artist, sort_album_artist = :sort_album_artist, lower_album_artist = LOWER(:album_artist), composer = :composer,
                              compilation = :compilation, source_id = :source_id, image_hash = NULL
             WHERE id = :id
         </sql>
@@ -592,16 +592,16 @@
     <statement name="recreateHelpTablesAlbum">
         <sql>DELETE FROM album</sql>
         <sql>
-            INSERT INTO album (name, nat_sort_name, lower_name, first_char, artist, track_count, artist_count, image_hash, year, compilation)
-            SELECT MAX(album), MAX(album), MAX(lower_album), SUBSTRING(MAX(lower_album) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year), MAX(compilation) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album, lower_album_artist
+            INSERT INTO album (name, sort_name, nat_sort_name, lower_name, first_char, artist, track_count, artist_count, image_hash, year, compilation)
+            SELECT MAX(album), MIN(sort_album), MIN(sort_album), MAX(lower_album), SUBSTRING(MIN(LOWER(sort_album)) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year), MAX(compilation) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album, lower_album_artist
         </sql>
     </statement>
 
     <statement name="recreateHelpTablesArtist">
         <sql>DELETE FROM artist</sql>
         <sql>
-            INSERT INTO artist (name, nat_sort_name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(album_artist), MAX(album_artist), lower_album_artist, SUBSTRING(lower_album_artist FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
+            INSERT INTO artist (name, sort_name, nat_sort_name, lower_name, first_char, track_count, album_count)
+            SELECT MAX(album_artist), MIN(sort_album_artist), MIN(sort_album_artist), lower_album_artist, SUBSTRING(LOWER(sort_album_artist) FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
         </sql>
         <sql>
             UPDATE artist SET track_count = (
@@ -864,11 +864,11 @@
     </statement>
     
     <statement name="listAlbumsForNatSortUpdate">
-        <sql>SELECT name, artist, nat_sort_name FROM album</sql>
+        <sql>SELECT name, artist, sort_name, nat_sort_name FROM album</sql>
     </statement>
 
     <statement name="listArtistsForNatSortUpdate">
-        <sql>SELECT name, nat_sort_name FROM artist</sql>
+        <sql>SELECT name, sort_name, nat_sort_name FROM artist</sql>
     </statement>
 
     <statement name="listGenresForNatSortUpdate">

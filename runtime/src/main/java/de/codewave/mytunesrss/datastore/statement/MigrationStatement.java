@@ -318,6 +318,15 @@ public class MigrationStatement implements DataStoreStatement {
                         databaseVersion = new Version("6.0.1");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
+                    // migration for 6.1
+                    if (databaseVersion.compareTo(new Version("6.1")) < 0) {
+                        LOG.info("Migrating database to 6.1.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_6.1_part_1").execute();
+                        MyTunesRssUtils.createStatement(connection, "migrate_6.1_part_2").execute();
+                        MyTunesRssUtils.createStatement(connection, "migrate_6.1_part_3").execute();
+                        databaseVersion = new Version("6.1");
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
                 } finally {
                     connection.setAutoCommit(autoCommit);
                 }
