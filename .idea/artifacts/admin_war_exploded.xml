@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="admin:war exploded">
-    <output-path>$PROJECT_DIR$/admin/target/admin-6.0.3-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/admin/target/admin-6.1-SNAPSHOT</output-path>
     <root id="root">
       <element id="javaee-facet-resources" facet="admin/web/Web" />
       <element id="directory" name="WEB-INF">
