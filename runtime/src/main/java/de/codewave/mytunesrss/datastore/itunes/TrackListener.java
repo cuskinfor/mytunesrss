@@ -128,9 +128,9 @@ public class TrackListener implements PListHandlerListener {
                             statement.setId(trackId);
                             statement.setName(name.trim());
                             String artist = StringUtils.trimToNull((String) track.get("Artist"));
-                            statement.setArtist(artist);
                             String originalAlbumArtist = (String) track.get("Album Artist");
                             String effectiveAlbumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty(originalAlbumArtist, artist));
+                            statement.setArtist(artist);
                             statement.setAlbumArtist(effectiveAlbumArtist);
                             statement.setSortAlbumArtist(!StringUtils.isEmpty(originalAlbumArtist) ? StringUtils.trimToNull((String)track.get("Sort Album Artist")) : StringUtils.trimToNull((String)track.get("Sort Artist")));
                             statement.setAlbum(StringUtils.trimToNull((String) track.get("Album")));
