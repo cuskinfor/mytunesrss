@@ -28,7 +28,7 @@
 <%--@elvariable id="allArtistGenreTrackCount" type="java.lang.Integer"--%>
 <%--@elvariable id="allAlbumsTrackCount" type="java.lang.Integer"--%>
 
-<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt>artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
+<c:set var="backUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt>artist=${cwfn:encodeUrl(param.artist)}/matchAlbumArtist=${cwfn:encodeUrl(param.matchAlbumArtist)}/genre=${cwfn:encodeUrl(param.genre)}/page=${param.page}/index=${param.index}</mt:encrypt></c:set>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 
@@ -111,7 +111,7 @@
     <jsp:include page="incl_pager.jsp" />
 </c:if>
 
-<c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt>page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
+<c:set var="displayFilterUrl" scope="request">${servletUrl}/browseAlbum/${auth}/<mt:encrypt>page=${param.page}/artist=${cwfn:encodeUrl(param.artist)}/matchAlbumArtist=${cwfn:encodeUrl(param.matchAlbumArtist)}/genre=${cwfn:encodeUrl(param.genre)}</mt:encrypt>/backUrl=${param.backUrl}</c:set>
 <c:set var="filterYearActive" scope="request" value="true"/>
 <c:set var="filterAlbumTypeActive" scope="request" value="true"/>
 <jsp:include page="/incl_display_filter.jsp"/>

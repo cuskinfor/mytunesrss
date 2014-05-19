@@ -39,6 +39,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
             if (StringUtils.isEmpty(genreName)) {
                 genreName = null;
             }
+            boolean matchAlbumArtist = getBooleanRequestParameter("matchAlbumArtist", false);
             getRequest().setAttribute("albumPager", new Pager(PagerConfig.PAGES, PagerConfig.PAGES.size()));
             OffHeapSessionStore offHeapSessionStore = OffHeapSessionStore.get(getRequest());
             String currentListId = getRequestParameter(OffHeapSessionStore.CURRENT_LIST_ID, null);
@@ -47,7 +48,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 FindAlbumQuery findAlbumQuery = new FindAlbumQuery(getAuthUser(),
                                                                    getDisplayFilter().getTextFilter(),
                                                                    artist,
-                                                                   false,
+                                                                   matchAlbumArtist,
                                                                    genreName != null ? new String[] {genreName} : null,
                                                                    getIntegerRequestParameter("page", -1),
                                                                    getDisplayFilter().getMinYear(),
