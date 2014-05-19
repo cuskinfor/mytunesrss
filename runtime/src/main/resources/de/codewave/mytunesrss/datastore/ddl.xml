@@ -124,7 +124,6 @@
         <sql>
             {create_table_prefix} album (
                 name VARCHAR(255) NOT NULL,
-                sort_name VARCHAR(255) NOT NULL,
                 nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
@@ -140,7 +139,6 @@
         <sql>
             {create_table_prefix} artist (
                 name VARCHAR(255) NOT NULL,
-                sort_name VARCHAR(255) NOT NULL,
                 nat_sort_name VARCHAR(1020),
                 lower_name VARCHAR(255) NOT NULL,
                 first_char VARCHAR(1),
