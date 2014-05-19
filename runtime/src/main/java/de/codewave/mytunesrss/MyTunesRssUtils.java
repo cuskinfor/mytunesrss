@@ -1270,7 +1270,7 @@ public class MyTunesRssUtils {
     }
 
     public static boolean isUnknown(String trackAlbumOrArtist) {
-        return InsertTrackStatement.UNKNOWN.equals(trackAlbumOrArtist);
+        return StringUtils.isBlank(trackAlbumOrArtist);
     }
 
     public static String virtualTrackName(Track track) {

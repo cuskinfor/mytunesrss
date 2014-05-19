@@ -27,7 +27,6 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
         String pathname = resultSet.getString("FILE");
         track.setFilename(pathname);
-        track.setFile(StringUtils.isNotEmpty(pathname) ? MyTunesRssUtils.searchFile(pathname) : null);
         track.setProtected(resultSet.getBoolean("PROTECTED"));
         track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
         track.setGenre(resultSet.getString("GENRE"));
@@ -51,7 +50,7 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setSourceId(resultSet.getString("SOURCE_ID"));
         DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(track.getSourceId());
         if (datasource != null) {
-            track.setContentType(datasource.getContentType(track.getFile().getName().toLowerCase()));
+            track.setContentType(datasource.getContentType(track.getFilename().toLowerCase()));
         } else {
             track.setContentType("application/octet-stream");
         }

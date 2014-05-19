@@ -66,7 +66,7 @@ public class MyTunesFunctions {
                 }
             }
         }
-        return FilenameUtils.getExtension(track.getFile().getName());
+        return FilenameUtils.getExtension(track.getFilename());
     }
 
     public static String contentType(WebConfig config, User user, Track track) {

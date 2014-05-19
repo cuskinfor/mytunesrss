@@ -37,7 +37,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         return artist;
     }
 
-    public static final String UNKNOWN = "!";
+    public static final String UNKNOWN = "";
 
     private String myId;
     private String myName;
@@ -180,14 +180,14 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             }
             myStatement.clearParameters();
             myStatement.setString("id", myId);
-            myStatement.setString("name", StringUtils.isNotEmpty(myName) ? myName : UNKNOWN);
-            myStatement.setString("artist", StringUtils.isNotEmpty(myArtist) ? myArtist : UNKNOWN);
-            String albumArtist = StringUtils.isNotEmpty(myAlbumArtist) ? myAlbumArtist : UNKNOWN;
+            myStatement.setString("name", StringUtils.isNotBlank(myName) ? myName.trim() : UNKNOWN);
+            myStatement.setString("artist", StringUtils.isNotBlank(myArtist) ? myArtist.trim() : UNKNOWN);
+            String albumArtist = StringUtils.isNotBlank(myAlbumArtist) ? myAlbumArtist.trim() : UNKNOWN;
             myStatement.setString("album_artist", albumArtist);
-            myStatement.setString("sort_album_artist", StringUtils.isNotEmpty(mySortAlbumArtist) ? mySortAlbumArtist : albumArtist);
-            String album = StringUtils.isNotEmpty(myAlbum) ? myAlbum : UNKNOWN;
+            myStatement.setString("sort_album_artist", StringUtils.isNotBlank(mySortAlbumArtist) ? mySortAlbumArtist.trim() : albumArtist);
+            String album = StringUtils.isNotBlank(myAlbum) ? myAlbum.trim() : UNKNOWN;
             myStatement.setString("album", album);
-            myStatement.setString("sort_album", StringUtils.isNotEmpty(mySortAlbum) ? mySortAlbum : album);
+            myStatement.setString("sort_album", StringUtils.isBlank(mySortAlbum) ? mySortAlbum.trim() : album);
             myStatement.setInt("time", myTime);
             myStatement.setInt("track_number", myTrackNumber);
             myStatement.setString("file", myFileName);

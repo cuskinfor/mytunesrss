@@ -4,22 +4,24 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 
 import java.io.File;
+import java.io.Serializable;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.Track
  */
-public class Track {
+public class Track implements Serializable {
     private String myId;
     private String myName;
     private String myAlbum;
     private String myArtist;
     private int myTime;
     private int myTrackNumber;
-    private File myFile;
+    private transient File myFile;
     private boolean myProtected;
     private MediaType myMediaType;
     private String myGenre;
@@ -57,7 +59,7 @@ public class Track {
         setTime(source.getTime());
         setTrackNumber(source.getTrackNumber());
         setFilename(source.getFilename());
-        setFile(source.getFile());
+        setFile(source.myFile);
         setProtected(source.isProtected());
         setMediaType(source.getMediaType());
         setGenre(source.getGenre());
@@ -98,6 +100,9 @@ public class Track {
     }
 
     public File getFile() {
+        if (myFile == null) {
+            myFile = MyTunesRssUtils.searchFile(myFilename);
+        }
         return myFile;
     }
 

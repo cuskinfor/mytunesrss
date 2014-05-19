@@ -593,7 +593,7 @@
         <sql>DELETE FROM album</sql>
         <sql>
             INSERT INTO album (name, nat_sort_name, lower_name, first_char, artist, track_count, artist_count, image_hash, year, compilation)
-            SELECT MAX(album), MIN(sort_album), MAX(lower_album), SUBSTRING(MIN(LOWER(sort_album)) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year), MAX(compilation) FROM track WHERE mediatype = 'Audio' GROUP BY lower_album, lower_album_artist
+            SELECT MAX(album), MIN(sort_album), MAX(lower_album), SUBSTRING(MIN(LOWER(sort_album)) FROM 1 FOR 1), MAX(album_artist), COUNT(id), COUNT(DISTINCT(lower_album_artist)), MAX(image_hash), MAX(year), MAX(compilation) FROM track WHERE mediatype = 'Audio' AND album IS NOT NULL AND album != '' GROUP BY lower_album, lower_album_artist
         </sql>
     </statement>
 
@@ -601,7 +601,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, nat_sort_name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(album_artist), MIN(sort_album_artist), lower_album_artist, SUBSTRING(LOWER(sort_album_artist) FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' GROUP BY lower_album_artist
+            SELECT MAX(album_artist), MIN(sort_album_artist), lower_album_artist, SUBSTRING(LOWER(sort_album_artist) FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' AND artist IS NOT NULL AND artist != '' GROUP BY lower_album_artist
         </sql>
         <sql>
             UPDATE artist SET track_count = (
@@ -862,7 +862,7 @@
     <statement name="getAllCountsForMediaServer">
         <sql>SELECT COUNT(ID) FROM playlist</sql>
     </statement>
-    
+
     <statement name="listAlbumsForNatSortUpdate">
         <sql>SELECT name, artist, nat_sort_name FROM album</sql>
     </statement>
