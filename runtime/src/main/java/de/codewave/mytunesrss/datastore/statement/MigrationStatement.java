@@ -314,7 +314,6 @@ public class MigrationStatement implements DataStoreStatement {
                         MyTunesRssUtils.createStatement(connection, "migrate_6.0.1_part_1").execute();
                         MyTunesRssUtils.createStatement(connection, "migrate_6.0.1_part_2").execute();
                         MyTunesRssUtils.createStatement(connection, "migrate_6.0.1_part_3").execute();
-                        new RecreateHelpTablesStatement(true, true, true, false).execute(connection);
                         databaseVersion = new Version("6.0.1");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
@@ -325,6 +324,7 @@ public class MigrationStatement implements DataStoreStatement {
                         MyTunesRssUtils.createStatement(connection, "migrate_6.1_part_2").execute();
                         MyTunesRssUtils.createStatement(connection, "migrate_6.1_part_3").execute();
                         databaseVersion = new Version("6.1");
+                        new RecreateHelpTablesStatement(true, true, true, false).execute(connection);
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
                 } finally {

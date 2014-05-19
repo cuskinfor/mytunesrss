@@ -601,7 +601,7 @@
         <sql>DELETE FROM artist</sql>
         <sql>
             INSERT INTO artist (name, nat_sort_name, lower_name, first_char, track_count, album_count)
-            SELECT MAX(album_artist), MIN(sort_album_artist), lower_album_artist, SUBSTRING(LOWER(sort_album_artist) FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' AND artist IS NOT NULL AND artist != '' GROUP BY lower_album_artist
+            SELECT MAX(album_artist), MIN(sort_album_artist), lower_album_artist, SUBSTRING(LOWER(MIN(sort_album_artist)) FROM 1 FOR 1), 0, 0 FROM track WHERE mediatype = 'Audio' AND artist IS NOT NULL AND artist != '' GROUP BY lower_album_artist
         </sql>
         <sql>
             UPDATE artist SET track_count = (
