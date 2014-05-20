@@ -14,7 +14,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLConnection;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -29,7 +28,7 @@ import java.util.concurrent.TimeoutException;
  * de.codewave.mytunesrss.command.ShowTrackImageCommandHandler
  */
 public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
-    private static final Logger LOG = LoggerFactory.getLogger(ShowImageCommandHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShowImageCommandHandler.class);
 
     private Map<Integer, Image> myDefaultImages = new HashMap<>();
 
@@ -49,11 +48,13 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                             MyTunesRssUtils.resizeImageWithMaxSize(image, tempFile, size, (float)MyTunesRss.CONFIG.getJpegQuality(), "default image");
                             myDefaultImages.put(size, new Image("image/jpg", FileUtils.readFileToByteArray(tempFile)));
                         } finally {
-                            tempFile.delete();
+                            if (!tempFile.delete()) {
+                                LOGGER.debug("Could not delete file \"" + tempFile.getAbsolutePath() + "\".");
+                            }
                         }
                     } catch (IOException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not copy default image data into byte array.", e);
+                        if (LOGGER.isErrorEnabled()) {
+                            LOGGER.error("Could not copy default image data into byte array.", e);
                         }
                     } finally {
                         IOUtils.close(inputStream);
@@ -85,8 +86,8 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         if (ifModifiedSince != -1 && (image.getLastUpdate() / 1000) <= (ifModifiedSince / 1000)) {
             getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
         } else {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending image with mime type \"" + image.getMimeType() + "\".");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Sending image with mime type \"" + image.getMimeType() + "\".");
             }
             getResponse().setContentType(image.getMimeType());
             getResponse().setContentLength(image.getData().length);
@@ -103,8 +104,8 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
         String hash = getRequest().getParameter("hash");
         int size = getIntegerRequestParameter("size", -1);
         if (!isRequestAuthorized()) {
-            if (LOG.isWarnEnabled()) {
-                LOG.warn("Not authorized to request image, sending default MyTunesRSS image.");
+            if (LOGGER.isWarnEnabled()) {
+                LOGGER.warn("Not authorized to request image, sending default MyTunesRSS image.");
             }
         } else {
             if (StringUtils.isNotBlank(hash)) {
@@ -115,11 +116,11 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             } else if (StringUtils.isNotBlank(photoId)) {
                 image = getImageForPhotoId(photoId, size);
             } else {
-                LOG.warn("Neither photo id nor image hash found in request.");
+                LOGGER.warn("Neither photo id nor image hash found in request.");
             }
         }
         if (image == null) {
-            LOG.warn("No image available, sending default image.");
+            LOGGER.warn("No image available, sending default image.");
             sendDefaultImage(size);
         } else {
             sendImage(image);
@@ -127,7 +128,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private DatabaseImage getImageForPhotoId(final String photoId, int size) throws SQLException, IOException {
-        LOG.debug("Trying to generate thumbnail for photo \"" + photoId + "\".");
+        LOGGER.debug("Trying to generate thumbnail for photo \"" + photoId + "\".");
         DataStoreSession session = getTransaction();
         File photoFile = session.executeQuery(new DataStoreQuery<File>() {
             @Override
@@ -143,11 +144,11 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
             }
         });
         if (photoFile != null && photoFile.exists()) {
-            LOG.debug("Photo file is \"" + photoFile.getAbsolutePath() + "\".");
+            LOGGER.debug("Photo file is \"" + photoFile.getAbsolutePath() + "\".");
             Future<String> result = MyTunesRss.EXECUTOR_SERVICE.generatePhotoThumbnail(photoId, photoFile);
             try {
                 String imageHash = result.get(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationTimeoutSeconds() * 1000, TimeUnit.MILLISECONDS);
-                LOG.debug("Photo image hash is \"" + imageHash + "\".");
+                LOGGER.debug("Photo image hash is \"" + imageHash + "\".");
                 if (StringUtils.isNotBlank(imageHash)) {
                     File file = MyTunesRssUtils.getImage(imageHash, size);
                     if (file != null) {
@@ -155,14 +156,14 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                     }
                 }
             } catch (InterruptedException e) {
-                LOG.warn("On-demand photo thumbnail generation interrupted.", e);
+                LOGGER.warn("On-demand photo thumbnail generation interrupted.", e);
             } catch (ExecutionException e) {
-                LOG.warn("On-demand photo thumbnail generation failed.", e);
+                LOGGER.warn("On-demand photo thumbnail generation failed.", e);
             } catch (TimeoutException e) {
-                LOG.warn("On-demand photo thumbnail generation timeout.", e);
+                LOGGER.warn("On-demand photo thumbnail generation timeout.", e);
             }
         } else {
-            LOG.warn("No photo file found for photo id \"" + photoId + "\".");
+            LOGGER.warn("No photo file found for photo id \"" + photoId + "\".");
         }
         return null;
     }

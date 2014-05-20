@@ -178,7 +178,7 @@ public class TrackListener implements PListHandlerListener {
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                             return true;
-                        } else if (tsUpdated != null) {
+                        } else {
                             myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                         }
                         return false;

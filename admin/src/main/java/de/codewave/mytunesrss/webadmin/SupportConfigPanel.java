@@ -19,6 +19,8 @@ import de.codewave.vaadin.component.ProgressWindow;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,6 +33,8 @@ import java.util.UUID;
 
 public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SupportConfigPanel.class);
+    
     private Form mySupportForm;
     private Form myRegistrationForm;
     private Form mySysInfoForm;
@@ -123,7 +127,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         if (clickEvent.getSource() == mySendSupport) {
             if (StringUtils.isNotBlank((String) myName.getValue()) && StringUtils.isNotBlank((String) myEmail.getValue()) && StringUtils.isNotBlank((String) myDescription.getValue())) {
                 SendSupportRequestTask task = new SendSupportRequestTask(((MainWindow) VaadinUtils.getApplicationWindow(this)), (String) myName.getValue(), (String) myEmail.getValue(), myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
-                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("supportConfigPanel.task.message"), false, 2000, task).show(getWindow());
+                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("supportConfigPanel.task.message"), 2000, task).show(getWindow());
             } else {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
             }
@@ -138,7 +142,9 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         try {
             myUploadDir = new File(MyTunesRss.CACHE_DATA_PATH + "/license-upload");
             if (!myUploadDir.isDirectory()) {
-                myUploadDir.mkdir();
+                if (!myUploadDir.mkdir()) {
+                    LOGGER.warn("Could not create folder for license upload.");
+                }
             }
             return new FileOutputStream(new File(myUploadDir, filename));
         } catch (IOException e) {

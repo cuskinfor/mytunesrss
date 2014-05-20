@@ -20,7 +20,6 @@ import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamListener;
 import de.codewave.utils.servlet.StreamSender;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +35,7 @@ import java.util.UUID;
 
 public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandHandler {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpLiveStreamingCommandHandler.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpLiveStreamingCommandHandler.class);
 
     @Override
     public void executeAuthorized() throws IOException, SQLException {
@@ -64,15 +63,15 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
         if (mediaFile.isFile()) {
             MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
             if (getAuthUser().isQuotaExceeded()) {
-                LOG.debug("Sending 409 QUOTA_EXCEEDED response.");
+                LOGGER.debug("Sending 409 QUOTA_EXCEEDED response.");
                 sender = new StatusCodeSender(HttpServletResponse.SC_CONFLICT, "QUOTA_EXCEEDED");
             } else {
                 sender = new FileSender(mediaFile, "video/MP2T", mediaFile.length());
-                LOG.debug("Sending video/MP2T response \"" + mediaFile.getAbsolutePath() + "\".");
+                LOGGER.debug("Sending video/MP2T response \"" + mediaFile.getAbsolutePath() + "\".");
                 sender.setCounter(new MyTunesRssSendCounter(getAuthUser(), SessionManager.getSessionInfo(getRequest())));
             }
         } else {
-            LOG.debug("Sending 404 NOT_FOUND response.");
+            LOGGER.debug("Sending 404 NOT_FOUND response.");
             sender = new StatusCodeSender(HttpServletResponse.SC_NOT_FOUND);
         }
         sender.sendGetResponse(getRequest(), getResponse(), false);
@@ -99,7 +98,9 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                     if (!dir.isDirectory()) {
                         synchronized (this) {
                             if (!dir.isDirectory()) {
-                                dir.mkdir();
+                                if (!dir.mkdir()) {
+                                    LOGGER.warn("Could not create folder for http live streaming.");
+                                }
                                 MyTunesRss.EXECUTOR_SERVICE.execute(new HttpLiveStreamingSegmenterRunnable(dir, track.getFile()));
                             }
                         }
@@ -107,7 +108,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                     File playlistFile = waitForPlaylistFile(dir, 30000);
                     MyTunesRss.HTTP_LIVE_STREAMING_CACHE.touch(trackId);
                     byte[] playlistBytes = FileUtils.readFileToByteArray(playlistFile);
-                    LOG.debug("Sending playlist: " + new String(playlistBytes, Charset.forName("UTF-8")));
+                    LOGGER.debug("Sending playlist: " + new String(playlistBytes, Charset.forName("UTF-8")));
                     sender = new StreamSender(new ByteArrayInputStream(playlistBytes), "application/x-mpegURL", playlistBytes.length);
                 }
             } else {
@@ -120,40 +121,40 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
     }
 
     private File waitForPlaylistFile(File dir, long timeoutMillis) throws IOException {
-        LOG.debug("Waiting up to " + timeoutMillis + " milliseconds for playlist file.");
+        LOGGER.debug("Waiting up to " + timeoutMillis + " milliseconds for playlist file.");
         File playlistFile = new File(dir, "playlist.m3u8");
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime < timeoutMillis) {
             try {
-                LOG.debug("Reading playlist file \"" + playlistFile.getAbsolutePath() + "\".");
+                LOGGER.debug("Reading playlist file \"" + playlistFile.getAbsolutePath() + "\".");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(playlistFile), "UTF-8"));
                 try {
                     int segments = 0;
                     for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
-                        LOG.debug("Read line \"" + line + "\" from playlistFile file.");
+                        LOGGER.debug("Read line \"" + line + "\" from playlistFile file.");
                         if (StringUtils.trimToEmpty(StringUtils.lowerCase(line)).startsWith("#extinf")) {
-                            LOG.debug("Found segment " + (segments + 1) + ".");
+                            LOGGER.debug("Found segment " + (segments + 1) + ".");
                             segments++;
                             if (segments == 3) {
-                                LOG.debug("Enough segments found, returning playlist file after " + (System.currentTimeMillis() - startTime) + " milliseconds.");
+                                LOGGER.debug("Enough segments found, returning playlist file after " + (System.currentTimeMillis() - startTime) + " milliseconds.");
                                 return playlistFile;
                             }
                         }
                     }
                 } catch (IOException e) {
-                    LOG.debug("Caught IOException while waiting for playlist file.", e);
+                    LOGGER.debug("Caught IOException while waiting for playlist file.", e);
                 } finally {
-                    LOG.debug("Closing playlist file reader.");
+                    LOGGER.debug("Closing playlist file reader.");
                     bufferedReader.close();
                 }
             } catch (IOException e) {
-                LOG.debug("Caught IOException while waiting for playlist file.", e);
+                LOGGER.debug("Caught IOException while waiting for playlist file.", e);
             }
             try {
-                LOG.debug("Sleeping a while before trying again to read playlist file.");
+                LOGGER.debug("Sleeping a while before trying again to read playlist file.");
                 Thread.sleep(1000);
             } catch (InterruptedException ignored) {
-                LOG.debug("Interrupted while waiting for file.");
+                LOGGER.debug("Interrupted while waiting for file.");
             }
         }
         throw new IOException("Timeout waiting for playlist file.");
@@ -177,7 +178,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                 transcodeCommand.add("--no-sout-smem-time-sync");
                 transcodeCommand.add("--sout=#transcode{height=320,canvas-aspect=1.5:1,vb=768,vcodec=h264,venc=x264{aud,profile=baseline,level=30,keyint=30,bframes=0,ref=1,nocabac},acodec=mp3,ab=128,samplerate=44100,channels=2,deinterlace,audio-sync}:std{access=livehttp{seglen=10,index=" + myTargetDir.getAbsolutePath() + "/playlist.m3u8" + ",index-url=./" + myTargetDir.getName() + "/stream-########.ts},mux=ts{use-key-frames},dst=" + myTargetDir.getAbsolutePath() + "/stream-########.ts}");
                 String msg = "Executing HTTP Live Streaming command \"" + StringUtils.join(transcodeCommand, " ") + "\".";
-                LOG.debug(msg);
+                LOGGER.debug(msg);
                 process = new ProcessBuilder(transcodeCommand).start();
                 MyTunesRss.SPAWNED_PROCESSES.add(process);
                 LogStreamCopyThread stdoutCopyThread = new LogStreamCopyThread(process.getInputStream(), false, LoggerFactory.getLogger("VLC"), LogStreamCopyThread.LogLevel.Info, msg, null);
@@ -188,14 +189,14 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
                 stderrCopyThreads.start();
                 process.waitFor();
             } catch (Exception e) {
-                LOG.error("Error in http live streaming thread.", e);
+                LOGGER.error("Error in http live streaming thread.", e);
                 try {
-                    LOG.info("Trying to remove directory with incomplete segments from cache.");
+                    LOGGER.info("Trying to remove directory with incomplete segments from cache.");
                     FileUtils.deleteDirectory(myTargetDir);
                 } catch (IOException ignored) {
-                    LOG.error("Could not delete directory with incomplete segments. Trying to rename directory.");
+                    LOGGER.error("Could not delete directory with incomplete segments. Trying to rename directory.");
                     if (!myTargetDir.renameTo(new File(myTargetDir.getParentFile(), UUID.randomUUID().toString()))) {
-                        LOG.error("Could not rename directory with incomplete segments either. Please consider deleting caches manually as soon as possible.");
+                        LOGGER.error("Could not rename directory with incomplete segments either. Please consider deleting caches manually as soon as possible.");
                     }
                 }
             } finally {

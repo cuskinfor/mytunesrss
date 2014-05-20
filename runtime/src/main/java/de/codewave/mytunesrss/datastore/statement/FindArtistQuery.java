@@ -37,7 +37,7 @@ public class FindArtistQuery extends MyTunesRssDataStoreQuery<QueryResult<Artist
     public FindArtistQuery(User user, String filter, String album, String[] genres, int index) {
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myAlbum = album;
-        myGenres = genres;
+        myGenres = genres != null ? genres.clone() : null;
         myIndex = index;
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();

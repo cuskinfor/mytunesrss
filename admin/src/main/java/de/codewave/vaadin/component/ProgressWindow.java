@@ -7,7 +7,6 @@ import com.vaadin.ui.*;
 public class ProgressWindow extends Window implements Refresher.RefreshListener {
 
     public static interface Task extends Runnable {
-        int getProgress();
         void onWindowClosed();
     }
 
@@ -15,9 +14,7 @@ public class ProgressWindow extends Window implements Refresher.RefreshListener 
 
     private Thread myThread;
 
-    private Object myProgressBar;
-
-    public ProgressWindow(float width, int units, Resource icon, String caption, String message, boolean progressBar, long refreshIntervalMillis, Task task) {
+    public ProgressWindow(float width, int units, Resource icon, String caption, String message, long refreshIntervalMillis, Task task) {
         if (caption != null) {
             setCaption(caption);
         }
@@ -43,9 +40,6 @@ public class ProgressWindow extends Window implements Refresher.RefreshListener 
         panel.setContent(horizontalLayout);
         horizontalLayout.setSpacing(true);
         verticalLayout.setComponentAlignment(panel, Alignment.MIDDLE_RIGHT);
-        if (progressBar) {
-            // TODO: add progress bar
-        }
         Refresher refresher = new Refresher();
         addComponent(refresher);
         refresher.setRefreshInterval(refreshIntervalMillis);
@@ -60,10 +54,6 @@ public class ProgressWindow extends Window implements Refresher.RefreshListener 
     }
 
     public void refresh(Refresher refresher) {
-        if (myProgressBar != null) {
-            int progress = myTask.getProgress();
-            // TODO: refresh progress
-        }
         if (!myThread.isAlive()) {
             getParent().removeWindow(this);
             myTask.onWindowClosed();

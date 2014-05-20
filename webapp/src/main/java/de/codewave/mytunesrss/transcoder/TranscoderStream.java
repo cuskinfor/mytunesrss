@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * de.codewave.mytunesrss.transcoder.TranscoderStream
  */
 public class TranscoderStream extends InputStream {
-    private static final Logger LOG = LoggerFactory.getLogger(TranscoderStream.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TranscoderStream.class);
 
     private Process myProcess;
     private TranscoderConfig myTranscoderConfig;
@@ -36,23 +36,25 @@ public class TranscoderStream extends InputStream {
     }
 
     private void init() throws IOException {
-        LOG.debug("Creating transcoder stream for transcoder \"" + myTranscoderConfig.getName() + "\", file \"" + myInputFile.getAbsolutePath() + "\", and cache file \"" + (myCacheFile != null ? myCacheFile.getAbsolutePath() : "---none---") + "\".");
+        LOGGER.debug("Creating transcoder stream for transcoder \"" + myTranscoderConfig.getName() + "\", file \"" + myInputFile.getAbsolutePath() + "\", and cache file \"" + (myCacheFile != null ? myCacheFile.getAbsolutePath() : "---none---") + "\".");
         if (myCacheFile != null && myCacheFile.isFile()) {
-            LOG.debug("Found transcoded file \"" + myCacheFile.getAbsolutePath() + "\" in cache.");
-            myCacheFile.setLastModified(System.currentTimeMillis()); // touch file to prevent expiration
+            LOGGER.debug("Found transcoded file \"" + myCacheFile.getAbsolutePath() + "\" in cache.");
+            if (!myCacheFile.setLastModified(System.currentTimeMillis())) { // touch file to prevent expiration
+                LOGGER.debug("Could not touch cache file \"" + myCacheFile.getAbsolutePath() + "\".");
+            }
             myInputStream = new BufferedInputStream(new FileInputStream(myCacheFile));
         } else {
-            LOG.debug("No transcoded file in cache found.");
+            LOGGER.debug("No transcoded file in cache found.");
             if (myCacheFile != null) {
                 myTempCacheFile = MyTunesRss.TEMP_CACHE.createTempFile();
-                LOG.debug("Creating output stream for temporary cache file \"" + myTempCacheFile.getAbsolutePath() + "\".");
+                LOGGER.debug("Creating output stream for temporary cache file \"" + myTempCacheFile.getAbsolutePath() + "\".");
                 myCacheOutputStream = new BufferedOutputStream(new FileOutputStream(myTempCacheFile));
             }
             List<String> transcodeCommand = MyTunesRssUtils.getDefaultVlcCommand(myInputFile);
             transcodeCommand.add("--no-sout-smem-time-sync");
             transcodeCommand.add("--sout=#transcode{" + myTranscoderConfig.getOptions() + "}:std{access=file,mux=" + StringUtils.defaultIfBlank(myTranscoderConfig.getTargetMux(), "dummy") + ",dst=-}");
             String msg = "Executing " + getName() + " command \"" + StringUtils.join(transcodeCommand, " ") + "\".";
-            LOG.debug(msg);
+            LOGGER.debug(msg);
             myProcess = new ProcessBuilder(transcodeCommand).start();
             MyTunesRss.SPAWNED_PROCESSES.add(myProcess);
             myInputStream = myProcess.getInputStream();
@@ -155,62 +157,64 @@ public class TranscoderStream extends InputStream {
     @Override
     public void close() throws IOException {
         if (closed.compareAndSet(false, true)) {
-            LOG.debug("Closing transcoder stream.");
+            LOGGER.debug("Closing transcoder stream.");
             final InputStream inputStream = myInputStream;
             myInputStream = null;
             if (myProcess != null) {
-                LOG.debug("Transcoder process has been used.");
+                LOGGER.debug("Transcoder process has been used.");
                 if (myCacheOutputStream != null) {
-                    LOG.debug("Cache file has been written.");
+                    LOGGER.debug("Cache file has been written.");
                     new Thread(new Runnable() {
                         public void run() {
                             try {
-                                LOG.debug("Copying remaining transcoder stream contents into cache file.");
+                                LOGGER.debug("Copying remaining transcoder stream contents into cache file.");
                                 IOUtils.copyLarge(inputStream, myCacheOutputStream);
                             } catch (IOException e) {
-                                LOG.warn("Could not finish cached transcoded file.", e);
+                                LOGGER.warn("Could not finish cached transcoded file.", e);
                                 myCacheFile.delete();
                             } finally {
                                 try {
-                                    LOG.debug("Closing cache output stream.");
+                                    LOGGER.debug("Closing cache output stream.");
                                     myCacheOutputStream.close();
                                     try {
                                         myProcess.waitFor();
-                                        LOG.debug("VLC process exited with code " + myProcess.exitValue() + ".");
+                                        LOGGER.debug("VLC process exited with code " + myProcess.exitValue() + ".");
                                         if (myProcess.exitValue() == 0 && (!myCacheFile.exists() || myCacheFile.delete())) {
                                             if (!myTempCacheFile.renameTo(myCacheFile)) {
-                                                LOG.warn("Could not rename temp file \"" + myTempCacheFile.getAbsolutePath() + "\" to transcoder cache file \"" + myCacheFile.getAbsolutePath() + "\".");
+                                                LOGGER.warn("Could not rename temp file \"" + myTempCacheFile.getAbsolutePath() + "\" to transcoder cache file \"" + myCacheFile.getAbsolutePath() + "\".");
                                             }
                                         }
                                     } catch (InterruptedException e) {
-                                        LOG.warn("Interrupted while waiting for transcoder process to finish.", e);
+                                        LOGGER.warn("Interrupted while waiting for transcoder process to finish.", e);
                                     }
                                 } catch (IOException e) {
-                                    LOG.warn("Could not close cache output stream.", e);
+                                    LOGGER.warn("Could not close cache output stream.", e);
                                 }
                                 try {
-                                    LOG.debug("Closing input stream.");
+                                    LOGGER.debug("Closing input stream.");
                                     inputStream.close();
                                 } catch (IOException e) {
-                                    LOG.warn("Could not close input stream.", e);
+                                    LOGGER.warn("Could not close input stream.", e);
                                 }
-                                LOG.debug("Destroying process.");
+                                LOGGER.debug("Destroying process.");
                                 myProcess.destroy();
                                 MyTunesRss.SPAWNED_PROCESSES.remove(myProcess);
                                 if (myCacheFile.isFile() && myCacheFile.length() == 0) {
                                     // delete empty files from cache (most likely VLC could not start at all)
-                                    myCacheFile.delete();
+                                    if (!myCacheFile.delete()) {
+                                        LOGGER.debug("Could not delete empty cached file \"" + myCacheFile.getAbsolutePath() + "\".");
+                                    }
                                 }
                             }
                         }
                     }).start();
                 } else {
-                    LOG.debug("Destroying process.");
+                    LOGGER.debug("Destroying process.");
                     myProcess.destroy();
                     MyTunesRss.SPAWNED_PROCESSES.remove(myProcess);
                 }
             } else if (inputStream != null) {
-                LOG.debug("Closing input stream.");
+                LOGGER.debug("Closing input stream.");
                 inputStream.close();
             }
         }

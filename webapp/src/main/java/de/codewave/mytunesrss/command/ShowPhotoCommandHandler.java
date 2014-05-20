@@ -35,16 +35,6 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowPhotoCommandHandler.class);
 
-    private static final class SimplePhoto {
-        private String myFile;
-        private long myLastImageUpdate;
-
-        private SimplePhoto(String file, long lastImageUpdate) {
-            myFile = file;
-            myLastImageUpdate = lastImageUpdate;
-        }
-    }
-
     @Override
     public void executeAuthorized() throws Exception {
         final String id = getRequestParameter("photo", null);
@@ -74,7 +64,9 @@ public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
                                 MyTunesRssUtils.resizeImageWithMaxSize(photoFile, tempFile, requestedImageSize, (float)getIntegerRequestParameter("jpegQuality", MyTunesRss.CONFIG.getJpegQuality()), "photo=" + photoFile.getAbsolutePath());
                                 image = FileUtils.readFileToByteArray(tempFile);
                             } finally {
-                                tempFile.delete();
+                                if (!tempFile.delete()) {
+                                    LOGGER.debug("Could not delete file \"" + tempFile.getAbsolutePath() + "\".");
+                                }
                             }
                             mimeType = "image/jpg";
                             sender = new StreamSender(new ByteArrayInputStream(image), mimeType, tempFile.length());

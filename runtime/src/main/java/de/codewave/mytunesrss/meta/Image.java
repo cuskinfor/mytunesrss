@@ -66,7 +66,9 @@ public class Image {
     
     public synchronized void deleteImageFile() {
         if (myImageFile != null && myImageFile != NO_FILE) {
-            myImageFile.delete();
+            if (!myImageFile.delete()) {
+                LOGGER.debug("Could not delete image file \"" + myImageFile.getAbsolutePath() + "\".");
+            }
             myImageFile = null;
         }
     }

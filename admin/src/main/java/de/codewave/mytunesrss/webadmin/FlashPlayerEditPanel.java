@@ -190,7 +190,9 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             File uploadFile = new File(getUploadDir(), event.getFilename());
             File targetDir = myFlashPlayerConfig.getBaseDir();
             targetDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer", myFlashPlayerConfig.getId());
-            targetDir.mkdirs();
+            if (!targetDir.mkdirs()) {
+                LOGGER.warn("Could not create folder for flash player.");
+            }
             if (event.getFilename().toLowerCase().endsWith(".zip")) {
                 if (!ZipUtils.unzip(uploadFile, targetDir)) {
                     ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.extractFailed");

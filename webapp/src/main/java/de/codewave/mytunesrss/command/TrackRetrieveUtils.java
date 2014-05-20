@@ -35,7 +35,7 @@ public class TrackRetrieveUtils {
 
     private static int getIntegerRequestParameter(HttpServletRequest request, String name, int defaultValue) {
         String value = request.getParameter(name);
-        return StringUtils.isNotEmpty(value) ? Integer.valueOf(value) : defaultValue;
+        return StringUtils.isNotEmpty(value) ? Integer.parseInt(value) : defaultValue;
     }
 
     private static void decodeBase64(String[] strings) {

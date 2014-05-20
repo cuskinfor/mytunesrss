@@ -286,7 +286,9 @@ public class MyTunesRssUtils {
                     }
                 }
             }
-            file.delete();
+            if (!file.delete()) {
+                LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
+            }
         } else if (file.isFile()) {
             return file.delete();
         }
@@ -523,7 +525,9 @@ public class MyTunesRssUtils {
         LOGGER.info("Restoring database backup from file \"" + backup.getFile().getAbsolutePath() + "\".");
         File databaseDir = new File(MyTunesRss.CACHE_DATA_PATH + "/" + "h2");
         FileUtils.deleteDirectory(databaseDir);
-        databaseDir.mkdir();
+        if (!databaseDir.mkdir()) {
+            LOGGER.warn("Could not create folder for database.");
+        }
         ZipUtils.unzip(backup.getFile(), databaseDir);
     }
 
@@ -548,7 +552,9 @@ public class MyTunesRssUtils {
             LOGGER.info("Deleting " + (backups.size() - numberOfBackupsToKeep) + " old database backup files.");
             for (int i = numberOfBackupsToKeep; i < backups.size(); i++) {
                 LOGGER.debug("Deleting backup file \"" + backups.get(i).getFile() + "\".");
-                backups.get(i).getFile().delete();
+                if (!backups.get(i).getFile().delete()) {
+                    LOGGER.warn("Could not delete database backup \"" + backups.get(i).getFile().getAbsolutePath() + "\".");
+                }
             }
         }
     }
@@ -1039,7 +1045,9 @@ public class MyTunesRssUtils {
     public static RequestLogHandler createJettyAccessLogHandler(String prefix, int retainDays, boolean extended, String tz) {
         File accessLogDir = new File(MyTunesRss.CACHE_DATA_PATH + "/accesslogs");
         if (!accessLogDir.exists()) {
-            accessLogDir.mkdirs();
+            if (!accessLogDir.mkdirs()) {
+                LOGGER.warn("Could not create folder for access logs.");
+            }
         }
         RequestLogHandler requestLogHandler = new RequestLogHandler();
         NCSARequestLog requestLog = new NCSARequestLog(new File(accessLogDir, prefix + "-yyyy_mm_dd.log").getAbsolutePath());
@@ -1054,11 +1062,15 @@ public class MyTunesRssUtils {
     public static MVStore.Builder getMvStoreBuilder(String filename) {
         File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
         if (!dir.exists()) {
-            dir.mkdirs();
+            if (!dir.mkdirs()) {
+                LOGGER.warn("Could not create folder for mvstore.");
+            }
         }
         File file = new File(dir, filename);
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
+            }
         }
         return new MVStore.Builder().fileStore(new FileStore()).fileName(file.getAbsolutePath());
     }
@@ -1066,11 +1078,15 @@ public class MyTunesRssUtils {
     public static void removeMvStoreFile(String filename) {
         File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
         if (!dir.exists()) {
-            dir.mkdirs();
+            if (!dir.mkdirs()) {
+                LOGGER.warn("Could not create folder for mvstore.");
+            }
         }
         File file = new File(dir, filename);
         if (file.exists()) {
-            file.delete();
+            if (!file.delete()) {
+                LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
+            }
         }
     }
 
@@ -1088,7 +1104,9 @@ public class MyTunesRssUtils {
             return null;
         }
         File file = new File(MyTunesRss.CACHE_DATA_PATH, "thumbs");
-        file.mkdirs();
+        if (!file.mkdirs()) {
+            LOGGER.warn("Could not create folder for thumbs.");
+        }
         while (imageHash.length() > 0) {
             file = new File(file, imageHash.substring(0, Math.min(imageHash.length(), IMAGE_PATH_SPLIT_SIZE)));
             imageHash = imageHash.substring(Math.min(imageHash.length(), IMAGE_PATH_SPLIT_SIZE));
@@ -1173,11 +1191,15 @@ public class MyTunesRssUtils {
         if (StringUtils.isNotBlank(imageHash)) {
             File file = getImage(imageHash, size);
             if (file != null) {
-                file.delete();
+                if (!file.delete()) {
+                    LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
+                }
             }
             File imageDir = getImageDir(imageHash);
             if (!imageDir.exists()) {
-                imageDir.mkdirs();
+                if (!imageDir.mkdirs()) {
+                    LOGGER.warn("Could not create folder for images.");
+                }
             }
             return new File(imageDir, "img" + size + "." + getSuffixForMimeType(mimeType));
         } else {

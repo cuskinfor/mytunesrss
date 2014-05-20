@@ -75,7 +75,9 @@ public class DownloadPhotoAlbumCommandHandler extends BandwidthThrottlingCommand
                                 }
                                 archiveEntry.setSize(tempFile.length());
                             } finally {
-                                tempFile.delete();
+                                if (!tempFile.delete()) {
+                                    LOGGER.debug("Could not delete file \"" + tempFile.getAbsolutePath() + "\".");
+                                }
                             }
                         }
                         zipStream.closeArchiveEntry();

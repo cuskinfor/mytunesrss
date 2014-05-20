@@ -62,31 +62,24 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                     LOGGER.debug("Result set has \"" + tracks.getResultSize() + "\" results which is too much for archive file ID generation.");
                 }
                 File tempFile = null;
-                try {
-                    if (cachedFile == null || !cachedFile.isFile()) {
-                        LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
-                        tempFile = File.createTempFile("mytunesrss_", ".zip", MyTunesRss.TEMP_CACHE.getBaseDir());
-                        FileOutputStream outputStream = new FileOutputStream(tempFile);
-                        try {
-                            createZipArchive(user, outputStream, tracks, baseName, null);
-                        } catch (Exception e) {
-                            tempFile.delete();
-                            throw e;
-                        } finally {
-                            outputStream.close();
+                if (cachedFile == null || !cachedFile.isFile()) {
+                    LOGGER.debug("No archive with ID \"" + fileIdentifier + "\" found in cache.");
+                    tempFile = File.createTempFile("mytunesrss_", ".zip", MyTunesRss.TEMP_CACHE.getBaseDir());
+                    try (FileOutputStream outputStream = new FileOutputStream(tempFile)) {
+                        createZipArchive(user, outputStream, tracks, baseName, null);
+                    } catch (RuntimeException e) {
+                        if (!tempFile.delete()) {
+                            LOGGER.debug("Could not delete file \"" + tempFile.getAbsolutePath() + "\".");
                         }
-                    } else {
-                        LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
+                        throw e;
                     }
-                    File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;
-                    FileSender fileSender = new FileSender(sendFile, "application/zip", sendFile.length());
-                    fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
-                    fileSender.sendGetResponse(getRequest(), getResponse(), false);
-                } finally {
-                    /*if (tempFile != null && tempFile.isFile()) {
-                        tempFile.delete();
-                    }*/
+                } else {
+                    LOGGER.debug("Using archive with ID \"" + fileIdentifier + "\" from cache.");
                 }
+                File sendFile = cachedFile != null && cachedFile.isFile() ? cachedFile : tempFile;
+                FileSender fileSender = new FileSender(sendFile, "application/zip", sendFile.length());
+                fileSender.setCounter(new MyTunesRssSendCounter(user, sessionInfo));
+                fileSender.sendGetResponse(getRequest(), getResponse(), false);
             } else {
                 getResponse().setContentType("application/zip");
                 createZipArchive(user, getResponse().getOutputStream(), tracks, baseName, new MyTunesRssSendCounter(user, sessionInfo));

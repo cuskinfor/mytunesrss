@@ -49,7 +49,7 @@ public class FindAlbumQuery extends MyTunesRssDataStoreQuery<QueryResult<Album>>
         myFilter = StringUtils.isNotEmpty(filter) ? "%" + MyTunesRssUtils.toSqlLikeExpression(StringUtils.lowerCase(filter)) + "%" : null;
         myArtist = artist;
         myMatchAlbumArtist = matchAlbumArtist;
-        myGenres = genres;
+        myGenres = genres != null ? genres.clone() : null;
         myIndex = index;
         myMinYear = minYear >= 0 ? minYear : Integer.MIN_VALUE;
         myMaxYear = (maxYear >= 0 && maxYear >= minYear) ? maxYear : Integer.MAX_VALUE;

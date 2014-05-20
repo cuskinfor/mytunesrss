@@ -95,11 +95,10 @@ public class ThemeServlet extends HttpServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending image \"" + image.getAbsolutePath() + "\" with content type \"" + httpServletResponse.getContentType() + "\".");
             }
-            FileInputStream inStream = new FileInputStream(image);
-            try {
+            try (FileInputStream inStream = new FileInputStream(image)) {
                 IOUtils.copy(inStream, httpServletResponse.getOutputStream());
             } catch (IOException ignored) {
-                inStream.close();
+                // ignore exception
             }
         }
     }

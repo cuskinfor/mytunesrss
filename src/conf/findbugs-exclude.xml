@@ -1,0 +1,8 @@
+<FindBugsFilter>
+    <Match>
+        <Class name="com\.intellij\.uiDesigner\..*" />
+    </Match>
+    <Match>
+        <Class name="de\.codewave\.mytunesrss\.servlet\.resteasyfix\..*" />
+    </Match>
+</FindBugsFilter>

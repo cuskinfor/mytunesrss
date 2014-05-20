@@ -36,12 +36,8 @@ public class PhotoDIDL extends MyTunesRssDIDL {
         Photo photo = tx.executeQuery(new GetPhotoQuery(decode(oidParams).get(1)));
         PhotoAlbum photoAlbum = tx.executeQuery(new GetPhotoAlbumQuery(decode(oidParams).get(0))).nextResult();
         Item item = createPhotoItem(photo, photoAlbum, new SimpleDateFormat("yyyy-dd-mm"), user, getInt(decode(oidParams).get(0), DEFAULT_PHOTO_SIZE));
-        if (item != null) {
-            addItem(item);
-            myTotalMatches = 1;
-        } else {
-            myTotalMatches = 0;
-        }
+        addItem(item);
+        myTotalMatches = 1;
     }
 
     @Override

@@ -34,7 +34,7 @@ import java.util.*;
  * de.codewave.mytunesrss.addons.AddonsUtils
  */
 public class AddonsUtils {
-    private static final Logger LOG = LoggerFactory.getLogger(AddonsUtils.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddonsUtils.class);
     private static final String GET_LANG_URI = "http://mytunesrss.com/tools/get_language.php";
     private static final String STORE_LANG_URI = "http://mytunesrss.com/tools/store_language.php";
 
@@ -47,7 +47,9 @@ public class AddonsUtils {
         try {
             File themesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/themes");
             if (!themesDir.exists() && builtinThemes) {
-                themesDir.mkdirs();
+                if (!themesDir.mkdirs()) {
+                    LOGGER.warn("Could not create folder for themes.");
+                }
             }
             if (builtinThemes) {
                 themeSet.addAll(getThemesFromDir(themesDir));
@@ -55,9 +57,7 @@ public class AddonsUtils {
             themesDir = getUserThemesDir();
             themeSet.addAll(getThemesFromDir(themesDir));
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Problem reading existing themes.", e);
-            }
+            LOGGER.error("Problem reading existing themes.", e);
         }
         List<ThemeDefinition> themes = new ArrayList<>(themeSet);
         Collections.sort(themes, new Comparator<ThemeDefinition>() {
@@ -71,7 +71,9 @@ public class AddonsUtils {
     private static File getUserThemesDir() {
         File themesDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/themes");
         if (!themesDir.exists()) {
-            themesDir.mkdirs();
+            if (!themesDir.mkdirs()) {
+                LOGGER.warn("Could not create folder for themes.");
+            }
         }
         return themesDir;
     }
@@ -103,7 +105,9 @@ public class AddonsUtils {
         try {
             File languagesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages");
             if (!languagesDir.exists() && builtinLanguages) {
-                languagesDir.mkdirs();
+                if (!languagesDir.mkdirs()) {
+                    LOGGER.warn("Could not create folder for languages.");
+                }
             }
             if (builtinLanguages) {
                 languageSet.add(new LanguageDefinition().setCode("de").setVersion(MyTunesRss.VERSION));
@@ -113,8 +117,8 @@ public class AddonsUtils {
             languagesDir = getUserLanguagesDir();
             languageSet.addAll(getLanguagesFromDir(languagesDir));
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Problem reading existing themes and languages.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Problem reading existing themes and languages.", e);
             }
         }
         List<LanguageDefinition> languages = new ArrayList<>(languageSet);
@@ -129,7 +133,9 @@ public class AddonsUtils {
     private static File getUserLanguagesDir() {
         File languagesDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/languages");
         if (!languagesDir.exists()) {
-            languagesDir.mkdirs();
+            if (!languagesDir.mkdirs()) {
+                LOGGER.warn("Could not create folder for languages.");
+            }
         }
         return languagesDir;
     }
@@ -148,10 +154,8 @@ public class AddonsUtils {
                     if (languageCode != null) {
                         try {
                             languages.add(getLocalLanguageDefinition(languagesDir, languageCode));
-                        } catch (IOException e) {
-                            LOG.warn("Could not use language defintion.", e);
-                        } catch (NumberFormatException e) {
-                            LOG.warn("Could not use language defintion.", e);
+                        } catch (IOException | NumberFormatException e) {
+                            LOGGER.warn("Could not use language defintion.", e);
                         }
                     }
                 }
@@ -196,8 +200,8 @@ public class AddonsUtils {
                     try {
                         FileUtils.deleteDirectory(themeDir);
                     } catch (IOException ignored) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not delete directory.", e);
+                        if (LOGGER.isErrorEnabled()) {
+                            LOGGER.error("Could not delete directory.", e);
                         }
                     }
                 }
@@ -207,8 +211,8 @@ public class AddonsUtils {
                     try {
                         zipInputStream.close();
                     } catch (IOException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not close zip input stream.", e);
+                        if (LOGGER.isErrorEnabled()) {
+                            LOGGER.error("Could not close zip input stream.", e);
                         }
                     }
                 }
@@ -234,8 +238,8 @@ public class AddonsUtils {
                 }
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not verify language archive.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not verify language archive.", e);
             }
             return false;
         } finally {
@@ -243,8 +247,8 @@ public class AddonsUtils {
                 try {
                     zipInputStream.close();
                 } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not close zip input stream.", e);
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Could not close zip input stream.", e);
                     }
                 }
             }
@@ -264,10 +268,10 @@ public class AddonsUtils {
             }
             File uploadDir = new File(baseDir, dirName);
             if (!uploadDir.exists()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Creating upload directory \"" + uploadDir + "\".");
+                LOGGER.debug("Creating upload directory \"" + uploadDir + "\".");
+                if (!uploadDir.mkdirs()) {
+                    LOGGER.warn("Could not create folder for uploads.");
                 }
-                uploadDir.mkdirs();
             }
             if (uploadDir.isDirectory()) {
                 FileOutputStream targetStream = new FileOutputStream(new File(uploadDir, fileName));
@@ -292,15 +296,15 @@ public class AddonsUtils {
                     }
                 }
             } catch (IOException e) {
-                LOG.error("Could save language file.", e);
+                LOGGER.error("Could save language file.", e);
                 return AddFileResult.ExtractFailed;
             } finally {
                 if (zipInputStream != null) {
                     try {
                         zipInputStream.close();
                     } catch (IOException e) {
-                        if (LOG.isErrorEnabled()) {
-                            LOG.error("Could not close zip input stream.", e);
+                        if (LOGGER.isErrorEnabled()) {
+                            LOGGER.error("Could not close zip input stream.", e);
                         }
                     }
                 }
@@ -332,8 +336,8 @@ public class AddonsUtils {
                 }
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not verify language archive.", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not verify language archive.", e);
             }
             return false;
         } finally {
@@ -341,8 +345,8 @@ public class AddonsUtils {
                 try {
                     zipInputStream.close();
                 } catch (IOException e) {
-                    if (LOG.isErrorEnabled()) {
-                        LOG.error("Could not close zip input stream.", e);
+                    if (LOGGER.isErrorEnabled()) {
+                        LOGGER.error("Could not close zip input stream.", e);
                     }
                 }
             }
@@ -366,8 +370,8 @@ public class AddonsUtils {
                 return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.deleteThemeNoDir");
             }
         } catch (IOException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not delete theme \"" + themeName + "\".", e);
+            if (LOGGER.isErrorEnabled()) {
+                LOGGER.error("Could not delete theme \"" + themeName + "\".", e);
             }
             return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.couldNotRemoveTheme");
         }
@@ -377,13 +381,17 @@ public class AddonsUtils {
     public static String deleteLanguage(String languageCode) {
         File languageFile = new File(getUserLanguagesDir(), "MyTunesRssWeb_" + languageCode + ".properties");
         if (languageFile.isFile()) {
-            languageFile.delete();
+            if (!languageFile.delete()) {
+                LOGGER.debug("Could not delete file \"" + languageFile.getAbsolutePath() + "\".");
+            }
         } else {
             return MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.deleteLanguageNoFile");
         }
         File metaFile = new File(getUserLanguagesDir(), "MyTunesRssWeb_" + languageCode + ".json");
         if (metaFile.isFile()) {
-            metaFile.delete();
+            if (!metaFile.delete()) {
+                LOGGER.debug("Could not delete file \"" + metaFile + "\".");
+            }
         }
         return null;
     }
@@ -486,7 +494,7 @@ public static enum AddFileResult {
             }
             return status == 200 || status == 201;
         } catch (IOException e) {
-            LOG.error("Could not upload language file.", e);
+            LOGGER.error("Could not upload language file.", e);
         } finally {
             postMethod.releaseConnection();
         }
@@ -509,9 +517,9 @@ public static enum AddFileResult {
                 }
             }
         } catch (IOException e) {
-            LOG.error("Could not update language.", e);
+            LOGGER.error("Could not update language.", e);
         } catch (NumberFormatException e) {
-            LOG.error("Could not update language.", e);
+            LOGGER.error("Could not update language.", e);
         }
         return Result.ERROR;
     }
@@ -537,7 +545,7 @@ public static enum AddFileResult {
                 }
             }
         } catch (IOException e) {
-            LOG.error("Could not download language.", e);
+            LOGGER.error("Could not download language.", e);
         }
         return false;
     }

@@ -632,7 +632,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             name = StringUtils.trimToNull(name);
             LOGGER.debug("Fallback name for \"" + file + "\" and pattern \"" + pattern + "\" is \"" + name + "\".");
             return name;
-        } catch (Exception ignored) {
+        } catch (RuntimeException ignored) {
             LOGGER.warn("Could not create fallback name for \"" + file + "\" with pattern \"" + pattern + "\".");
         }
         return null;

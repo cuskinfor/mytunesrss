@@ -179,7 +179,9 @@ public class FileSystemCache implements Runnable {
     public void touch(String name) {
         File file = new File(myBaseDir, name);
         if (file.exists()) {
-            file.setLastModified(System.currentTimeMillis());
+            if (!file.setLastModified(System.currentTimeMillis())) {
+                LOGGER.debug("Could not set modification timestamp for \"" + file.getAbsolutePath() + "\".");
+            }
         }
     }
 

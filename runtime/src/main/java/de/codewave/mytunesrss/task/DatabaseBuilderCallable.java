@@ -200,7 +200,6 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                 public Void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdAndUpdateTs");
                     ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
-                    Set<String> ids = new HashSet<>();
                     while (rs.next()) {
                         photoTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
                     }

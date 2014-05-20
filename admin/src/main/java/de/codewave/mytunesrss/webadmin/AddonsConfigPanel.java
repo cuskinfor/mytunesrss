@@ -320,7 +320,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             } else if ("UpdateLanguage".equals(tableRowButton.getData())) {
                 String communityId = tableRowButton.getItemId().toString();
-                switch (AddonsUtils.updateLanguage(Integer.valueOf(communityId))) {
+                switch (AddonsUtils.updateLanguage(Integer.parseInt(communityId))) {
                     case ERROR:
                         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageDownloadFailed");
                         break;

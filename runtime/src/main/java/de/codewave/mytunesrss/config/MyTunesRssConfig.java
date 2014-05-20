@@ -30,6 +30,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
@@ -1750,13 +1751,15 @@ public class MyTunesRssConfig {
             FileOutputStream outputStream = null;
             try {
                 File settingsFile = getSettingsFile();
-                settingsFile.renameTo(new File(settingsFile.getParentFile(), settingsFile.getName() + ".bak"));
+                if (!settingsFile.renameTo(new File(settingsFile.getParentFile(), settingsFile.getName() + ".bak"))) {
+                    LOGGER.debug("Could not add backup extension to file \"" + settingsFile.getAbsolutePath() + "\".");
+                }
                 outputStream = new FileOutputStream(settingsFile);
                 DOMUtils.prettyPrint(settings, outputStream);
             } finally {
                 IOUtils.close(outputStream);
             }
-        } catch (Exception e) {
+        } catch (IOException | ParserConfigurationException | RuntimeException e) {
             LOGGER.error("Could not write settings file.", e);
         }
     }

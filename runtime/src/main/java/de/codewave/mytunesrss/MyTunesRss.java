@@ -389,7 +389,9 @@ public class MyTunesRss {
             RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
             File heapdumpFolder = new File(CACHE_DATA_PATH + "/heapdumps");
             if (!heapdumpFolder.isDirectory()) {
-                heapdumpFolder.mkdirs();
+                if (!heapdumpFolder.mkdirs()) {
+                    LOGGER.warn("Could not create folder for heapdumps.");
+                }
             }
             FileUtils.cleanDirectory(heapdumpFolder);
             HEAPDUMP_FILENAME = heapdumpFolder.getAbsolutePath() + "/mytunesrss-" + runtimeMXBean.getName().split("@")[0] + ".hprof";
@@ -458,7 +460,9 @@ public class MyTunesRss {
         for (String dir : new String[]{"lib", "themes", "languages", "flashplayer"}) {
             File file = new File(MyTunesRss.PREFERENCES_DATA_PATH, dir);
             if (!file.exists()) {
-                file.mkdirs();
+                if (!file.mkdirs()) {
+                    LOGGER.warn("Could not create folder for preferences.");
+                }
             }
         }
     }

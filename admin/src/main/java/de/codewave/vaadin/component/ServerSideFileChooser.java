@@ -227,7 +227,9 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
                 @Override
                 protected void onOk(String text) {
                     getParent().removeWindow(this);
-                    new File(myCurrentDir, text).mkdir();
+                    if (!new File(myCurrentDir, text).mkdir()) {
+                        LOGGER.warn("Could not create folder \"" + text + "\".");
+                    }
                     setFiles(false);
                 }
             }.show(VaadinUtils.getApplicationWindow(this));

@@ -14,7 +14,7 @@ public class UpdatePlayCountAndDateStatement implements DataStoreStatement {
     private String[] myIds;
 
     public UpdatePlayCountAndDateStatement(String[] ids) {
-        myIds = ids;
+        myIds = ids != null ? ids.clone() : null;
     }
 
     public void execute(Connection connection) throws SQLException {
