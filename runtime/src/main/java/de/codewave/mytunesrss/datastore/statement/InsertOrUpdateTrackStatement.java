@@ -187,7 +187,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setString("sort_album_artist", StringUtils.isNotBlank(mySortAlbumArtist) ? mySortAlbumArtist.trim() : albumArtist);
             String album = StringUtils.isNotBlank(myAlbum) ? myAlbum.trim() : UNKNOWN;
             myStatement.setString("album", album);
-            myStatement.setString("sort_album", StringUtils.isBlank(mySortAlbum) ? mySortAlbum.trim() : album);
+            myStatement.setString("sort_album", StringUtils.isNotBlank(mySortAlbum) ? mySortAlbum.trim() : album);
             myStatement.setInt("time", myTime);
             myStatement.setInt("track_number", myTrackNumber);
             myStatement.setString("file", myFileName);
