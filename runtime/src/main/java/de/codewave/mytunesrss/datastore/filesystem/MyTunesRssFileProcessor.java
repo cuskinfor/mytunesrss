@@ -328,6 +328,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     } catch (NumberFormatException ignored) {
                         LOGGER.warn("Illegal TPA/TPOS value \"" + pos + "\" in \"" + file + "\".");
                     }
+                    statement.setSortAlbum(StringUtils.trimToNull(id3v2Tag.getSortAlbum()));
+                    statement.setSortAlbumArtist(StringUtils.trimToNull(id3v2Tag.getSortAlbumArtist()));
                 }
                 statement.setAlbumArtist(albumArtist);
                 String genre = tag.getGenreAsString();
