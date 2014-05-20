@@ -461,6 +461,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     if (diskAtom != null) {
                         statement.setPos(diskAtom.getNumber(), diskAtom.getSize());
                     }
+                    statement.setSortAlbum(StringUtils.trimToNull(moov.getSortAlbum()));
+                    statement.setSortAlbumArtist(StringUtils.trimToNull(moov.getSortAlbumArtist()));
                 } else if (mediaType == MediaType.Video) {
                     VideoType videoType = myDatasourceConfig.getVideoType();
                     if (moov.getMediaType() == StikAtom.Type.TvShow) {
