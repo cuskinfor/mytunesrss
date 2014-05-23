@@ -7,17 +7,14 @@
 
     <body>
 
-        <release version="6.1" date="___D___">
+        <release version="6.1" date="2014-05-23">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-503] Support for iTunes SortAlbum and SortAlbumArtist
                 and corresponding ID3v2.4 tags "TSOA" and "TSO2" and MP4 atoms
                 "soal" and "soaa".
             </action>
-        </release>
-
-        <release version="6.0.3" date="___D___">
             <action dev="mdescher" type="update">
-                [MYTUNESRSS-494] Better playback counting/lastfm scrobbling
+                [MYTUNESRSS-494] Better playback counting/lastfm scrobbling.
             </action>
         </release>
 
