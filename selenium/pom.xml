@@ -11,7 +11,7 @@
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
         <artifactId>mytunesrss-pom</artifactId>
-        <version>6.1-SNAPSHOT</version>
+        <version>6.2-SNAPSHOT</version>
         <relativePath>../mytunesrss-pom/pom.xml</relativePath>
     </parent>
     <repositories>
