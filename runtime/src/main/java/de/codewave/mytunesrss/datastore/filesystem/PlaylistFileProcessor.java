@@ -1,6 +1,7 @@
 package de.codewave.mytunesrss.datastore.filesystem;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
@@ -72,6 +73,8 @@ public class PlaylistFileProcessor implements FileProcessor {
                 if (LOG.isErrorEnabled()) {
                     LOG.error("Could not insert/update playlist from \"" + playlistFile + "\" into database.", e);
                 }
+            } catch (ShutdownRequestedException e) {
+                throw e; // don't handle this one
             } catch (RuntimeException e) {
                 LOG.error("Could not insert/update playlist from \"" + playlistFile + "\".", e);
             } catch (InterruptedException ignored) {

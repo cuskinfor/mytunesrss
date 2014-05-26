@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="6.1.1" date="___D___">
+            <action dev="mdescher" type="fix">
+                Database import could not be interrupted anymore.
+            </action>
+        </release>
+
         <release version="6.1" date="2014-05-23">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-503] Support for iTunes SortAlbum and SortAlbumArtist
