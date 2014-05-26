@@ -9,6 +9,9 @@
 
         <release version="6.2" date="___D___">
             <action dev="mdescher" type="fix">
+                Corrected parent URI in playlist REST representation.
+            </action>
+            <action dev="mdescher" type="fix">
                 Database import could not be interrupted anymore.
             </action>
         </release>

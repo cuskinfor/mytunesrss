@@ -152,7 +152,7 @@ public class RestResource {
                 representation.setChildrenUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
             }
             if (IncludeExcludeInterceptor.isAttr("parentUri") && StringUtils.isNotBlank(playlist.getContainerId())) {
-                representation.setParentUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).build(playlist.getContainerId()));
+                representation.setParentUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylist").build(playlist.getContainerId()));
             }
             if (IncludeExcludeInterceptor.isAttr("downloadUri") && MyTunesRssWebUtils.getAuthUser(request).isDownload()) {
                 representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("playlist=" + playlist.getId()), enc("_cda=" + ue(playlist.getName()) + ".zip")));
