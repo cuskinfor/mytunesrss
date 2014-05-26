@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.1.1" date="___D___">
+        <release version="6.2" date="___D___">
             <action dev="mdescher" type="fix">
                 Database import could not be interrupted anymore.
             </action>
