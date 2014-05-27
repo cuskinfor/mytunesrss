@@ -118,6 +118,7 @@
     <orderEntry type="library" name="Maven: org.jboss.resteasy:resteasy-hibernatevalidator-provider:2.3.7.Final" level="project" />
     <orderEntry type="library" name="Maven: org.hibernate:hibernate-validator:4.2.0.Final" level="project" />
     <orderEntry type="library" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
+    <orderEntry type="library" name="Maven: org.codehaus.enunciate:enunciate-core-annotations:1.27" level="project" />
   </component>
   <component name="org.twodividedbyzero.idea.findbugs">
     <option name="_detectors">

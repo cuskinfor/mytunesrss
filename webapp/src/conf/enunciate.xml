@@ -16,4 +16,8 @@
         <docs disabled="false" title="Codewave MyTunesRSS REST API" includeExampleXml="true" includeExampleJson="true" />
     </modules>
 
+    <facets>
+        <exclude name="http://codewave.de/mytunesrss#internal"/>
+    </facets>
+
 </enunciate>

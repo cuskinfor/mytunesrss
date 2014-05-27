@@ -7,13 +7,17 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.datastore.statement.Track;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
+import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.QueryResult;
+import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.jboss.resteasy.spi.BadRequestException;
@@ -77,6 +81,8 @@ public class MediaPlayerResource extends RestResource {
             getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
         } else if (tracks != null && tracks.length > 0) {
             getController().loadTracks(MyTunesRssWebUtils.getAuthUser(request), tracks);
+        } else {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "MISSING_TRACK_IDS");
         }
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
@@ -84,7 +90,12 @@ public class MediaPlayerResource extends RestResource {
     /**
      * Add tracks to the current playlist.
      *
-     * @param tracks List of track IDs to add.
+     * @param playlist A playlist ID (all tracks of the playlist will be added).
+     * @param album An album name (all tracks of the album will be added).
+     * @param albumArtist An album artist name to exactly specify the album.
+     * @param artist An artist name (all tracks of the artist will be added).
+     * @param genre A genre name (all tracks if the genre will be added).
+     * @param tracks A list of individual track IDs to add.
      * @param autostart Start playback after adding the tracks if not currently playing.
      *
      * @return List of tracks in the current playlist.
@@ -97,14 +108,40 @@ public class MediaPlayerResource extends RestResource {
     public List<TrackRepresentation> addToPlaylist(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
+            @FormParam("playlist") String playlist,
+            @FormParam("album") String album,
+            @FormParam("albumArtist") String albumArtist,
+            @FormParam("artist") String artist,
+            @FormParam("genre") String genre,
             @FormParam("track") String[] tracks,
             @FormParam("autostart") @DefaultValue("false") boolean autostart
     ) throws Exception {
-        if (tracks == null || tracks.length == 0) {
+        if (StringUtils.isNotBlank(playlist)) {
+            FindPlaylistTracksQuery findPlaylistTracksQuery = new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, SortOrder.KeepOrder);
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findPlaylistTracksQuery), autostart);
+        } else if (StringUtils.isNotBlank(album)) {
+            FindTrackQuery findTrackQuery = FindTrackQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), new String[] {album}, new String[] {albumArtist}, SortOrder.Album);
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findTrackQuery), autostart);
+        } else if (StringUtils.isNotBlank(artist)) {
+            FindTrackQuery findTrackQuery = FindTrackQuery.getForArtist(MyTunesRssWebUtils.getAuthUser(request), new String[]{artist}, SortOrder.Artist);
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findTrackQuery), autostart);
+        } else if (StringUtils.isNotBlank(genre)) {
+            FindTrackQuery findTrackQuery = FindTrackQuery.getForGenre(MyTunesRssWebUtils.getAuthUser(request), new String[]{genre}, SortOrder.Album);
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findTrackQuery), autostart);
+        } else if (tracks != null && tracks.length > 0) {
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), tracks, autostart);
+        } else {
             throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "MISSING_TRACK_IDS");
         }
-        getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), tracks, autostart);
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
+    }
+
+    private String[] queryTrackIds(DataStoreQuery<QueryResult<Track>> query) throws java.sql.SQLException {
+        query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(query);
+        TrackIdResultProcessor processor = new TrackIdResultProcessor();
+        queryResult.processRemainingResults(processor);
+        return processor.getTrackIds();
     }
 
     /**
