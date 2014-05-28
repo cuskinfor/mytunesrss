@@ -157,7 +157,7 @@
                     </c:choose>
                 </th>
                 <c:set var="sectionArguments"><c:choose><c:when test="${empty track.sectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.sectionPlaylistId)}</c:otherwise></c:choose></c:set>
-                <c:set var="addRemoteControl"><c:choose><c:when test="${empty track.sectionPlaylistId}">track:jQuery.makeArray([${mtfn:jsArray(fn:split(track.sectionIds, ","))}])</c:when><c:otherwise>playlist:'${mtfn:escapeJs(track.sectionPlaylistId)}'</c:otherwise></c:choose></c:set>
+                <c:set var="addRemoteControl"><c:choose><c:when test="${empty track.sectionPlaylistId}">tracklist:'${mtfn:escapeJs(track.sectionIds)}'</c:when><c:otherwise>playlist:'${mtfn:escapeJs(track.sectionPlaylistId)}'</c:otherwise></c:choose></c:set>
                 <th class="actions">
                     <c:choose>
                         <c:when test="${!stateEditPlaylist}">

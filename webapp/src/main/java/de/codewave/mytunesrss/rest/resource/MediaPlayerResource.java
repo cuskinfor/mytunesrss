@@ -52,7 +52,8 @@ public class MediaPlayerResource extends RestResource {
      * @param albumArtist An album artist name to exactly specify the album.
      * @param artist An artist name (all tracks of the artist will be added).
      * @param genre A genre name (all tracks if the genre will be added).
-     * @param tracks A list of individual track IDs to add.
+     * @param track An individual track ID to add.
+     * @param tracklist A comma separated list of individual track IDs to add.
      *
      * @return List of tracks in the current playlist.
      *
@@ -69,7 +70,8 @@ public class MediaPlayerResource extends RestResource {
             @FormParam("albumArtist") String albumArtist,
             @FormParam("artist") String artist,
             @FormParam("genre") String genre,
-            @FormParam("track") String[] tracks
+            @FormParam("track") String track,
+            @FormParam("tracklist") String tracklist
     ) throws Exception {
         if (StringUtils.isNotBlank(playlist)) {
             getController().loadPlaylist(MyTunesRssWebUtils.getAuthUser(request), playlist);
@@ -79,8 +81,10 @@ public class MediaPlayerResource extends RestResource {
             getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false);
         } else if (StringUtils.isNotBlank(genre)) {
             getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
-        } else if (tracks != null && tracks.length > 0) {
-            getController().loadTracks(MyTunesRssWebUtils.getAuthUser(request), tracks);
+        } else if (StringUtils.isNotBlank(tracklist)) {
+            getController().loadTracks(MyTunesRssWebUtils.getAuthUser(request), StringUtils.split(tracklist, ","));
+        } else if (StringUtils.isNotBlank(track)) {
+            getController().loadTracks(MyTunesRssWebUtils.getAuthUser(request), new String[] {track});
         } else {
             throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "MISSING_TRACK_IDS");
         }
@@ -95,7 +99,8 @@ public class MediaPlayerResource extends RestResource {
      * @param albumArtist An album artist name to exactly specify the album.
      * @param artist An artist name (all tracks of the artist will be added).
      * @param genre A genre name (all tracks if the genre will be added).
-     * @param tracks A list of individual track IDs to add.
+     * @param track An individual track ID to add.
+     * @param tracklist A comma separated list of individual track IDs to add.
      * @param autostart Start playback after adding the tracks if not currently playing.
      *
      * @return List of tracks in the current playlist.
@@ -113,23 +118,22 @@ public class MediaPlayerResource extends RestResource {
             @FormParam("albumArtist") String albumArtist,
             @FormParam("artist") String artist,
             @FormParam("genre") String genre,
-            @FormParam("track") String[] tracks,
+            @FormParam("track") String track,
+            @FormParam("tracklist") String tracklist,
             @FormParam("autostart") @DefaultValue("false") boolean autostart
     ) throws Exception {
         if (StringUtils.isNotBlank(playlist)) {
-            FindPlaylistTracksQuery findPlaylistTracksQuery = new FindPlaylistTracksQuery(MyTunesRssWebUtils.getAuthUser(request), playlist, SortOrder.KeepOrder);
-            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findPlaylistTracksQuery), autostart);
+            getController().addPlaylist(MyTunesRssWebUtils.getAuthUser(request), playlist, autostart);
         } else if (StringUtils.isNotBlank(album)) {
-            FindTrackQuery findTrackQuery = FindTrackQuery.getForAlbum(MyTunesRssWebUtils.getAuthUser(request), new String[] {album}, new String[] {albumArtist}, SortOrder.Album);
-            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findTrackQuery), autostart);
+            getController().addAlbum(MyTunesRssWebUtils.getAuthUser(request), album, albumArtist, autostart);
         } else if (StringUtils.isNotBlank(artist)) {
-            FindTrackQuery findTrackQuery = FindTrackQuery.getForArtist(MyTunesRssWebUtils.getAuthUser(request), new String[]{artist}, SortOrder.Artist);
-            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findTrackQuery), autostart);
+            getController().addArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false, autostart);
         } else if (StringUtils.isNotBlank(genre)) {
-            FindTrackQuery findTrackQuery = FindTrackQuery.getForGenre(MyTunesRssWebUtils.getAuthUser(request), new String[]{genre}, SortOrder.Album);
-            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), queryTrackIds(findTrackQuery), autostart);
-        } else if (tracks != null && tracks.length > 0) {
-            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), tracks, autostart);
+            getController().addGenre(MyTunesRssWebUtils.getAuthUser(request), genre, autostart);
+        } else if (StringUtils.isNotBlank(tracklist)) {
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), StringUtils.split(tracklist, ","), autostart);
+        } else if (StringUtils.isNotBlank(track)) {
+            getController().addTracks(MyTunesRssWebUtils.getAuthUser(request), new String[]{track}, autostart);
         } else {
             throw new MyTunesRssRestException(HttpServletResponse.SC_BAD_REQUEST, "MISSING_TRACK_IDS");
         }

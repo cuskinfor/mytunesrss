@@ -89,6 +89,11 @@ public class MediaRendererController {
         loadItems(user, query);
     }
 
+    public synchronized void addPlaylist(User user, String playlistId, boolean startPlaybackIfStopped) throws SQLException {
+        DataStoreQuery<QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
+        addItems(user, query, startPlaybackIfStopped);
+    }
+
     private void loadItems(User user, DataStoreQuery<QueryResult<Track>> query) throws SQLException {
         List<Track> tracks = TransactionFilter.getTransaction().executeQuery(query).getResults();
         setTracks(user, tracks);
@@ -120,14 +125,29 @@ public class MediaRendererController {
         loadItems(user, query);
     }
 
+    public synchronized void addAlbum(User user, String albumName, String albumArtistName, boolean startPlaybackIfStopped) throws SQLException {
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForAlbum(user, new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
+        addItems(user, query, startPlaybackIfStopped);
+    }
+
     public synchronized void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         loadItems(user, query);
     }
 
+    public synchronized void addArtist(User user, String artistName, boolean fullAlbums, boolean startPlaybackIfStopped) throws SQLException {
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
+        addItems(user, query, startPlaybackIfStopped);
+    }
+
     public synchronized void loadGenre(User user, String genreName) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
         loadItems(user, query);
+    }
+
+    public synchronized void addGenre(User user, String genreName, boolean startPlaybackIfStopped) throws SQLException {
+        DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
+        addItems(user, query, startPlaybackIfStopped);
     }
 
     public synchronized void loadTracks(User user, String[] trackIds) throws SQLException {

@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreQuery;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class TrackIdResultProcessor implements DataStoreQuery.ResultProcessor<Track> {
