@@ -101,9 +101,11 @@
                     <td class="actions">
                         <c:choose>
                             <c:when test="${!stateEditPlaylist}">
+                                <c:set var="addRemoteControl">track:'${mtfn:escapeJs(track.id)}'</c:set>
                                 <mttag:actions index="${fnCount}"
                                                backUrl="${mtfn:encode64(backUrl)}"
                                                linkFragment="track=${track.id}"
+                                               addRemoteControl="${addRemoteControl}"
                                                filename="${mtfn:virtualTrackName(track)}"
                                                track="${track}"
                                                externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"

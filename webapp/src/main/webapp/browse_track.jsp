@@ -88,11 +88,13 @@
             <th class="actions">
                 <c:set var="filename" value="${mtfn:decode64(param.playlistName)}"/>
                 <c:set var="linkFragment" value="playlist=${cwfn:encodeUrl(param.playlist)}"/>
+                <c:set var="addRemoteControl">playlist:'${mtfn:escapeJs(param.playlist)}'</c:set>
                 <c:choose>
                     <c:when test="${!stateEditPlaylist}">
                         <mttag:actions index="${fnCount}"
                                        backUrl="${mtfn:encode64(backUrl)}"
                                        linkFragment="${linkFragment}"
+                                       addRemoteControl="${addRemoteControl}"
                                        filename="${filename}"
                                        zipFileCount="${fn:length(tracks)}"
                                        defaultPlaylistName="${filename}"
@@ -155,12 +157,14 @@
                     </c:choose>
                 </th>
                 <c:set var="sectionArguments"><c:choose><c:when test="${empty track.sectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.sectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.sectionPlaylistId)}</c:otherwise></c:choose></c:set>
+                <c:set var="addRemoteControl"><c:choose><c:when test="${empty track.sectionPlaylistId}">track:jQuery.makeArray([${mtfn:jsArray(fn:split(track.sectionIds, ","))}])</c:when><c:otherwise>playlist:'${mtfn:escapeJs(track.sectionPlaylistId)}'</c:otherwise></c:choose></c:set>
                 <th class="actions">
                     <c:choose>
                         <c:when test="${!stateEditPlaylist}">
                             <mttag:actions index="${fnCount}"
                                            backUrl="${mtfn:encode64(backUrl)}"
                                            linkFragment="${sectionArguments}"
+                                           addRemoteControl="${addRemoteControl}"
                                            filename="${sectionFileName}"
                                            zipFileCount="${mtfn:sectionTrackCount(track.sectionIds)}"
                                            defaultPlaylistName="${sectionFileName}"
@@ -240,9 +244,11 @@
                 <c:choose>
                     <c:when test="${!stateEditPlaylist}">
                         <c:set var="shareText"><c:choose><c:when test="${mtfn:unknown(track.artist)}">${track.name}</c:when><c:otherwise>${track.artist} - ${track.name}</c:otherwise></c:choose></c:set>
+                        <c:set var="addRemoteControl">track:'${mtfn:escapeJs(track.id)}'</c:set>
                         <mttag:actions index="${fnCount}"
                                        backUrl="${mtfn:encode64(backUrl)}"
                                        linkFragment="track=${track.id}"
+                                       addRemoteControl="${addRemoteControl}"
                                        filename="${mtfn:virtualTrackName(track)}"
                                        track="${track}"
                                        externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"

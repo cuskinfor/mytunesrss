@@ -138,9 +138,11 @@
                             <td class="actions">
                                 <c:choose>
                                     <c:when test="${!stateEditPlaylist}">
+                                        <c:set var="addRemoteControl">artist:'${mtfn:escapeJs(artist.name)}'</c:set>
                                         <mttag:actions index="${loopStatus.index}"
                                                        backUrl="${mtfn:encode64(backUrl)}"
                                                        linkFragment="artist=${mtfn:encode64(artist.name)}/fullAlbums=false"
+                                                       addRemoteControl="${addRemoteControl}"
                                                        filename="${mtfn:virtualArtistName(artist)}"
                                                        zipFileCount="${artist.trackCount}"
                                                        externalSitesFlag="${mtfn:externalSites('artist') && !mtfn:unknown(artist.name) && authUser.externalSites}"

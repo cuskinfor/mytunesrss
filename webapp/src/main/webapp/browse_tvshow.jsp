@@ -149,17 +149,20 @@
                             <c:choose>
                                 <c:when test="${empty track.id && track.season == -1}">
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seriesSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seriesSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seriesSectionPlaylistId)}</c:otherwise></c:choose></c:set>
+                                    <c:set var="addRemoteControl"><c:choose><c:when test="${empty track.seriesSectionPlaylistId}">track:jQuery.makeArray([${mtfn:jsArray(fn:split(track.seriesSectionIds, ","))}])</c:when><c:otherwise>playlist:'${mtfn:escapeJs(track.seriesSectionPlaylistId)}'</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${track.series}</c:set>
                                     <c:set var="playlistName">${track.series}</c:set>
                                 </c:when>
                                 <c:when test="${empty track.id}">
                                     <c:set var="linkFragment"><c:choose><c:when test="${empty track.seasonSectionPlaylistId}">tracklist=${cwfn:encodeUrl(track.seasonSectionIds)}</c:when><c:otherwise>playlist=${cwfn:encodeUrl(track.seasonSectionPlaylistId)}</c:otherwise></c:choose></c:set>
+                                    <c:set var="addRemoteControl"><c:choose><c:when test="${empty track.seasonSectionPlaylistId}">track:jQuery.makeArray([${mtfn:jsArray(fn:split(track.seasonSectionIds, ","))}])</c:when><c:otherwise>playlist:'${mtfn:escapeJs(track.seasonSectionPlaylistId)}'</c:otherwise></c:choose></c:set>
                                     <c:set var="filename">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
                                     <c:set var="filename">${filename}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season}</c:set>
                                 </c:when>
                                 <c:otherwise>
                                     <c:set var="linkFragment">track=${track.id}</c:set>
+                                    <c:set var="addRemoteControl">track:'${mtfn:escapeJs(track.id)}'</c:set>
                                     <c:set var="filename">${track.name}</c:set>
                                     <c:set var="playlistName">${track.series} - <fmt:message key="season"/> ${track.season} - ${track.name}</c:set>
                                 </c:otherwise>
@@ -169,6 +172,7 @@
                                     <mttag:actions index="${fnCount}"
                                                    backUrl="${mtfn:encode64(backUrl)}"
                                                    linkFragment="${linkFragment}"
+                                                   addRemoteControl="${addRemoteControl}"
                                                    filename="${filename}"
                                                    track="${cwfn:choose(!empty track.id , track, null)}"
                                                    externalSitesFlag="${mtfn:externalSites('title') && authUser.externalSites}"

@@ -205,9 +205,11 @@
                     </c:choose>
                 </td>
                 <td class="actions">
+                    <c:set var="addRemoteControl">playlist:'${mtfn:escapeJs(playlist.id)}'</c:set>
                     <mttag:actions index="${loopStatus.index}"
                                    backUrl="${mtfn:encode64(backUrl)}"
                                    linkFragment="playlist=${playlist.id}"
+                                   addRemoteControl="${addRemoteControl}"
                                    filename="${playlist.name}"
                                    zipFileCount="${playlist.trackCount}" />
                 </td>

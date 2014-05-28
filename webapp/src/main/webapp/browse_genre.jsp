@@ -132,9 +132,11 @@
                                 <td class="actions">
                                     <c:choose>
                                         <c:when test="${!stateEditPlaylist}">
+                                            <c:set var="addRemoteControl">genre:'${mtfn:escapeJs(genre.name)}'</c:set>
                                             <mttag:actions index="${loopStatus.index}"
                                                            backUrl="${mtfn:encode64(backUrl)}"
                                                            linkFragment="genre=${mtfn:encode64(genre.name)}"
+                                                           addRemoteControl="${addRemoteControl}"
                                                            filename="${genre.name}"
                                                            zipFileCount="${genre.trackCount}"
                                                            defaultPlaylistName="${genre.name}"
