@@ -25,6 +25,8 @@
         JSON = JSON || {};
         JSON.stringify = function(value) { return value.toJSON(); };
         JSON.parse = JSON.parse || function(jsonsring) { return jsonsring.evalJSON(true); };
+        
+        var playlistVersion = ${playlistVersion};
 
         var trackNames = new Array(
             <c:forEach items="${tracks}" var="track" varStatus="trackLoopStatus">
@@ -124,7 +126,7 @@
             if (trackInfo == null || trackInfo == undefined) {
                 return;
             }
-
+            
             var firstTrackOnPage = itemsPerPage * currentPage;
             var highlightIndex = trackInfo.currentTrack - firstTrackOnPage - 1;
 
@@ -153,6 +155,10 @@
                 $jQ("#volume").slider("value", trackInfo.volume);
             } else {
                 $jQ("#volume").slider("value", 0);
+            }
+
+            if (playlistVersion != trackInfo.playlistVersion) {
+                self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/backUrl=${param.backUrl}/fullScreen=' + myFullScreen;
             }
         }
 
@@ -199,7 +205,7 @@
         function init2(trackInfo) {
             getStateAndUpdateInterfacePeriodic();
             <c:choose>
-                <c:when test="${empty currentlySelectedMediaRenderer}">
+                <c:when test="${empty currentlySelectedMediaRenderer }">
                     openMediaRendererSelection();
                 </c:when>
                 <c:otherwise>
@@ -342,12 +348,14 @@
 
         function openMediaRendererSelection() {
             var mediaRenderers = SessionResource.getSession().mediaRenderers;
-            $jQ("#devicelist").empty();
-            for (var i = 0; i < mediaRenderers.length; i++) {
-                var mediaRendererName = mediaRenderers[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                $jQ("#devicelist").append("<a onclick='selectMediaRenderer(\"" + mediaRenderers[i].id + "\", \"" + mediaRendererName.replace(/"/g, "\"") + "\")'>" + mediaRendererName + "</a><br/>");
+            if (mediaRenderers.length > 0) {
+                $jQ("#devicelist").empty();
+                for (var i = 0; i < mediaRenderers.length; i++) {
+                    var mediaRendererName = mediaRenderers[i].name.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    $jQ("#devicelist").append("<a onclick='selectMediaRenderer(\"" + mediaRenderers[i].id + "\", \"" + mediaRendererName.replace(/"/g, "\"") + "\")'>" + mediaRendererName + "</a><br/>");
+                }
+                openDialog("#mediaRendererSelectionDialog");
             }
-            openDialog("#mediaRendererSelectionDialog");
         }
     </script>
 

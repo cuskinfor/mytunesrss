@@ -8,6 +8,9 @@
     <body>
 
         <release version="6.2" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-507] Refresh playlist in remote control display on change
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-506] Add API for adding albums, artists, genres and playlists to remote control
             </action>

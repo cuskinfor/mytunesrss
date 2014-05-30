@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,6 +70,7 @@ public class MediaRendererController {
     private volatile long myMaxVolume = 1;
     private volatile SubscriptionCallback mySubscriptionCallback;
     private volatile List<TrackWithUser> myTracks = new ArrayList<>();
+    private volatile AtomicLong myPlaylistVersion = new AtomicLong(0); 
     private AtomicInteger myCurrentTrack = new AtomicInteger(0);
     private AtomicBoolean myPlaying = new AtomicBoolean(false);
     private AtomicLong myTimeExplicitlyStopped = new AtomicLong(0);
@@ -92,6 +92,7 @@ public class MediaRendererController {
     public synchronized void addPlaylist(User user, String playlistId, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = new FindPlaylistTracksQuery(user, playlistId, SortOrder.KeepOrder);
         addItems(user, query, startPlaybackIfStopped);
+        myPlaylistVersion.incrementAndGet();
     }
 
     private void loadItems(User user, DataStoreQuery<QueryResult<Track>> query) throws SQLException {
@@ -105,6 +106,7 @@ public class MediaRendererController {
         for (Track track : tracks) {
             myTracks.add(new TrackWithUser(track, user));
         }
+        myPlaylistVersion.incrementAndGet();
         myCurrentTrack.set(0);
     }
 
@@ -128,6 +130,7 @@ public class MediaRendererController {
     public synchronized void addAlbum(User user, String albumName, String albumArtistName, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForAlbum(user, new String[]{albumName}, StringUtils.isNotBlank(albumArtistName) ? new String[]{albumArtistName} : new String[0], SortOrder.Album);
         addItems(user, query, startPlaybackIfStopped);
+        myPlaylistVersion.incrementAndGet();
     }
 
     public synchronized void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException {
@@ -138,6 +141,7 @@ public class MediaRendererController {
     public synchronized void addArtist(User user, String artistName, boolean fullAlbums, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         addItems(user, query, startPlaybackIfStopped);
+        myPlaylistVersion.incrementAndGet();
     }
 
     public synchronized void loadGenre(User user, String genreName) throws SQLException {
@@ -148,6 +152,7 @@ public class MediaRendererController {
     public synchronized void addGenre(User user, String genreName, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForGenre(user, new String[]{genreName}, SortOrder.Album);
         addItems(user, query, startPlaybackIfStopped);
+        myPlaylistVersion.incrementAndGet();
     }
 
     public synchronized void loadTracks(User user, String[] trackIds) throws SQLException {
@@ -158,10 +163,12 @@ public class MediaRendererController {
     public synchronized void addTracks(User user, String[] trackIds, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForIds(trackIds);
         addItems(user, query, startPlaybackIfStopped);
+        myPlaylistVersion.incrementAndGet();
     }
 
     public synchronized void clearPlaylist() {
         myTracks.clear();
+        myPlaylistVersion.incrementAndGet();
         stop(false);
         LOGGER.debug("Clearing playlist.");
     }
@@ -358,6 +365,10 @@ public class MediaRendererController {
         return trackInfo;
     }
 
+    public synchronized long getPlaylistVersion() {
+        return myPlaylistVersion.get();
+    }
+    
     public synchronized void setVolume(final int percentage) {
         final RemoteService service = getRenderingControl();
         if (service != null) {
@@ -381,6 +392,7 @@ public class MediaRendererController {
         stop(false);
         LOGGER.debug("Shuffling tracks.");
         Collections.shuffle(myTracks);
+        myPlaylistVersion.incrementAndGet();
         myCurrentTrack.set(0);
     }
 

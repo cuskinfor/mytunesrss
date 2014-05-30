@@ -7,17 +7,13 @@ package de.codewave.mytunesrss.rest.resource;
 
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 import de.codewave.mytunesrss.rest.MyTunesRssRestException;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.MediaPlayerRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
-import de.codewave.mytunesrss.servlet.TransactionFilter;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.QueryResult;
-import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.jboss.resteasy.spi.BadRequestException;
@@ -140,14 +136,6 @@ public class MediaPlayerResource extends RestResource {
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
 
-    private String[] queryTrackIds(DataStoreQuery<QueryResult<Track>> query) throws java.sql.SQLException {
-        query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-        QueryResult<Track> queryResult = TransactionFilter.getTransaction().executeQuery(query);
-        TrackIdResultProcessor processor = new TrackIdResultProcessor();
-        queryResult.processRemainingResults(processor);
-        return processor.getTrackIds();
-    }
-
     /**
      * Remove the current playlist and stop playback.
      *
@@ -230,7 +218,7 @@ public class MediaPlayerResource extends RestResource {
                     throw new IllegalArgumentException("Illegal action \"" + action + "\".");
             }
         }
-        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
+        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo(), getController().getPlaylistVersion());
     }
 
     /**
@@ -288,7 +276,7 @@ public class MediaPlayerResource extends RestResource {
     @GET
     @Produces("application/json")
     public MediaPlayerRepresentation getStatus() throws Exception {
-        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo());
+        return new MediaPlayerRepresentation(getController().getCurrentTrackInfo(), getController().getPlaylistVersion());
     }
 
 }

@@ -18,11 +18,12 @@ public class MediaPlayerRepresentation implements RestRepresentation {
     private Integer myLength;
     private Boolean myPlaying;
     private Integer myVolume;
+    private Long myPlaylistVersion;
 
     public MediaPlayerRepresentation() {
     }
 
-    public MediaPlayerRepresentation(MediaRendererTrackInfo mediaRendererTrackInfo) {
+    public MediaPlayerRepresentation(MediaRendererTrackInfo mediaRendererTrackInfo, long playlistVersion) {
         if (IncludeExcludeInterceptor.isAttr("currentTime")) {
             setCurrentTime(mediaRendererTrackInfo.getCurrentTime());
         }
@@ -37,6 +38,9 @@ public class MediaPlayerRepresentation implements RestRepresentation {
         }
         if (IncludeExcludeInterceptor.isAttr("volume")) {
             setVolume(mediaRendererTrackInfo.getVolume());
+        }
+        if (IncludeExcludeInterceptor.isAttr("playlistVersion")) {
+            setPlaylistVersion(playlistVersion);
         }
     }
 
@@ -93,5 +97,17 @@ public class MediaPlayerRepresentation implements RestRepresentation {
 
     public void setVolume(Integer volume) {
         myVolume = volume;
+    }
+
+    /**
+     * Version of the playlist. Each modification to the playlist increments the version by one. So the client
+     * can use the version to check for changes of the playlist and reload it in case the version has changed.
+     */
+    public Long getPlaylistVersion() {
+        return myPlaylistVersion;
+    }
+
+    public void setPlaylistVersion(Long playlistVersion) {
+        myPlaylistVersion = playlistVersion;
     }
 }
