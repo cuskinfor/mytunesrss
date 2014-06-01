@@ -9,7 +9,10 @@
 
         <release version="6.2" date="___D___">
             <action dev="mdescher" type="update">
-                Updated Mac OS X JDK to 1.7.0 Update 60.
+                Updated Windows JRE to 1.7.0 Update 60.
+            </action>
+            <action dev="mdescher" type="update">
+                Updated Mac OS X JRE to 1.7.0 Update 60.
             </action>
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-507] Refresh playlist in remote control display on change
