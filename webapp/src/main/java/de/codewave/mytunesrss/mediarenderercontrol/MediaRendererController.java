@@ -528,9 +528,9 @@ public class MediaRendererController implements DeviceRegistryCallback {
 
     @Override
     public void remove(RemoteDevice device) {
-        if (myMediaRenderer.equals(device)) {
+        if (myMediaRenderer != null && myMediaRenderer.equals(device)) {
             LOGGER.warn("Currently selected media renderer removed from system, clearing currently selected renderer!");
-            // remove current media renderer if it has been removed from the system 
+            // remove current media renderer if it has been removed from the system
             setMediaRenderer(null);
             // force stopped state since the stop call during setMediaRenderer(null) will fail
             myPlaying.set(false);
