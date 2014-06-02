@@ -108,8 +108,12 @@
         }
 
         function startPlayback(index) {
-            unhighlightAllTracks();
-            updateInterface(MediaPlayerResource.setStatus({action:"PLAY",track:"" + (currentPage * itemsPerPage + index)}));
+            if ($jQ("#mediaRendererName").text() === '') {
+                displayError("<fmt:message key="noMediaRendererSelected"/>");
+            } else {
+                unhighlightAllTracks();
+                updateInterface(MediaPlayerResource.setStatus({action: "PLAY", track: "" + (currentPage * itemsPerPage + index)}));
+            }
         }
 
         function highlightTrack(index, className) {
@@ -122,16 +126,24 @@
             }
         }
 
-        function updateInterface(trackInfo) {
+        function updateInterface(trackInfo, jumpToCurrent) {
             if (trackInfo == null || trackInfo == undefined) {
                 return;
             }
-            
+
             var firstTrackOnPage = itemsPerPage * currentPage;
             var highlightIndex = trackInfo.currentTrack - firstTrackOnPage - 1;
 
             unhighlightAllTracks();
 
+            if (jumpToCurrent === true) {
+                var newCurrentPage = Math.floor((trackInfo.currentTrack - 1) / itemsPerPage);
+                if (newCurrentPage != currentPage) {
+                    currentPage = newCurrentPage;
+                    createPlaylist();
+                }
+            }
+            
             if (highlightIndex >= 0 && highlightIndex < itemsPerPage) {
                 highlightTrack(highlightIndex, trackInfo.playing ? "remoteplaybackplaying" : "remoteplayback");
             }
@@ -167,23 +179,35 @@
         }
 
         function play() {
-            updateInterface(MediaPlayerResource.setStatus({action:"PLAY"}));
+            if ($jQ("#mediaRendererName").text() === '') {
+                displayError("<fmt:message key="noMediaRendererSelected"/>");
+            } else {
+                updateInterface(MediaPlayerResource.setStatus({action:"PLAY"}), true);
+            }
         }
 
         function pause() {
-            updateInterface(MediaPlayerResource.setStatus({action:"PAUSE"}));
+            updateInterface(MediaPlayerResource.setStatus({action:"PAUSE"}), true);
         }
 
         function stop() {
-            updateInterface(MediaPlayerResource.setStatus({action:"STOP"}));
+            updateInterface(MediaPlayerResource.setStatus({action:"STOP"}), true);
         }
 
         function nextTrack() {
-            updateInterface(MediaPlayerResource.setStatus({action:"NEXT"}));
+            if ($jQ("#mediaRendererName").text() === '') {
+                displayError("<fmt:message key="noMediaRendererSelected"/>");
+            } else {
+                updateInterface(MediaPlayerResource.setStatus({action: "NEXT"}), true);
+            }
         }
 
         function previousTrack() {
-            updateInterface(MediaPlayerResource.setStatus({action:"PREVIOUS"}));
+            if ($jQ("#mediaRendererName").text() === '') {
+                displayError("<fmt:message key="noMediaRendererSelected"/>");
+            } else {
+                updateInterface(MediaPlayerResource.setStatus({action: "PREVIOUS"}), true);
+            }
         }
 
         function shuffle() {
@@ -191,9 +215,13 @@
         }
 
         function toggleFullScreen() {
-            var newStatus = MediaPlayerResource.setStatus({fullscreen:!myFullScreen});
-            myFullScreen = !myFullScreen;
-            updateInterface(newStatus);
+            if ($jQ("#mediaRendererName").text() === '') {
+                displayError("<fmt:message key="noMediaRendererSelected"/>");
+            } else {
+                var newStatus = MediaPlayerResource.setStatus({fullscreen: !myFullScreen});
+                myFullScreen = !myFullScreen;
+                updateInterface(newStatus);
+            }
         }
 
         function init() {

@@ -74,7 +74,7 @@ public class MediaPlayerResource extends RestResource {
         } else if (StringUtils.isNotBlank(album)) {
             getController().loadAlbum(MyTunesRssWebUtils.getAuthUser(request), album, albumArtist);
         } else if (StringUtils.isNotBlank(artist)) {
-            getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false);
+            getController().loadArtist(MyTunesRssWebUtils.getAuthUser(request), artist);
         } else if (StringUtils.isNotBlank(genre)) {
             getController().loadGenre(MyTunesRssWebUtils.getAuthUser(request), genre);
         } else if (StringUtils.isNotBlank(tracklist)) {
@@ -123,7 +123,7 @@ public class MediaPlayerResource extends RestResource {
         } else if (StringUtils.isNotBlank(album)) {
             getController().addAlbum(MyTunesRssWebUtils.getAuthUser(request), album, albumArtist, autostart);
         } else if (StringUtils.isNotBlank(artist)) {
-            getController().addArtist(MyTunesRssWebUtils.getAuthUser(request), artist, false, autostart);
+            getController().addArtist(MyTunesRssWebUtils.getAuthUser(request), artist, autostart);
         } else if (StringUtils.isNotBlank(genre)) {
             getController().addGenre(MyTunesRssWebUtils.getAuthUser(request), genre, autostart);
         } else if (StringUtils.isNotBlank(tracklist)) {

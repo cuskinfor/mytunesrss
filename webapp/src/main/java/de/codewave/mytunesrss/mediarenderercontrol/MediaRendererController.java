@@ -137,12 +137,12 @@ public class MediaRendererController implements DeviceRegistryCallback {
         myPlaylistVersion.incrementAndGet();
     }
 
-    public synchronized void loadArtist(User user, String artistName, boolean fullAlbums) throws SQLException {
+    public synchronized void loadArtist(User user, String artistName) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         loadItems(user, query);
     }
 
-    public synchronized void addArtist(User user, String artistName, boolean fullAlbums, boolean startPlaybackIfStopped) throws SQLException {
+    public synchronized void addArtist(User user, String artistName, boolean startPlaybackIfStopped) throws SQLException {
         DataStoreQuery<QueryResult<Track>> query = FindTrackQuery.getForArtist(user, new String[]{artistName}, SortOrder.Album);
         addItems(user, query, startPlaybackIfStopped);
         myPlaylistVersion.incrementAndGet();
@@ -548,6 +548,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
     @Override
     public void remove(RemoteDevice device) {
         if (myMediaRenderer.equals(device)) {
+            LOGGER.warn("Currently selected media renderer removed from system, clearing currently selected renderer!");
             // remove current media renderer if it has been removed from the system 
             setMediaRenderer(null);
             // force stopped state since the stop call during setMediaRenderer(null) will fail

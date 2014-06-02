@@ -59,7 +59,7 @@
     function displayError(text) {
         $jQ.ctNotifyOption({
             opacity: 1
-        })
+        });
         $jQ.ctNotify(text, "error");
     }
 
