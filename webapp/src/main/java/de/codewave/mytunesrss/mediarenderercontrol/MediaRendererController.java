@@ -15,7 +15,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.action.ActionInvocation;
-import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteService;
@@ -77,7 +76,6 @@ public class MediaRendererController implements DeviceRegistryCallback {
     private AtomicBoolean myPlaying = new AtomicBoolean(false);
     private AtomicLong myTimeExplicitlyStopped = new AtomicLong(0);
     private volatile URI myCurrentRendererTransportUri;
-    private AtomicInteger mySubscriptionFailedCount = new AtomicInteger(0);
 
     private MediaRendererController() {
         // only singleton instance above can be created
@@ -427,7 +425,6 @@ public class MediaRendererController implements DeviceRegistryCallback {
             LOGGER.debug("Setting media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\".");
         } else {
             LOGGER.debug("Clearing media renderer.");
-            mySubscriptionFailedCount.set(0);
         }
         myMediaRenderer = mediaRenderer;
         if (mediaRenderer != null) {
@@ -443,22 +440,6 @@ public class MediaRendererController implements DeviceRegistryCallback {
                     if (currentTransportUri == null || !currentTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
                         myPlaying.set(false);
                         myCurrentTrack.set(0);
-                    }
-                }
-
-                @Override
-                protected void established(GENASubscription subscription) {
-                    super.established(subscription);
-                    mySubscriptionFailedCount.set(0);
-                }
-
-                @Override
-                protected void failed(GENASubscription subscription, UpnpResponse responseStatus, Exception exception, String defaultMsg) {
-                    super.failed(subscription, responseStatus, exception, defaultMsg);
-                    if (mySubscriptionFailedCount.incrementAndGet() == 3) {
-                        setMediaRenderer(null);
-                    } else {
-                        setMediaRenderer(myMediaRenderer);
                     }
                 }
             };
