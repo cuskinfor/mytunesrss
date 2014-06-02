@@ -48,7 +48,7 @@ public class MyTunesRssUpnpService {
     private MyTunesRssEventListener myUpnpDatabaseUpdateListener;
     private Set<RemoteDevice> myMediaRenderers = new HashSet<>();
     private Set<RemoteDevice> myInternetGatewayDevices = new HashSet<>();
-
+    
     public void start() throws ValidationException, IOException {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback == null || feedback.isValid()) {
@@ -79,8 +79,14 @@ public class MyTunesRssUpnpService {
         myClingService.getControlPoint().execute(actionCallback);
     }
 
+    public void addMediaRendererRegistryCallback(DeviceRegistryCallback deviceRegistryCallback) {
+        if (myClingService != null) {
+            myClingService.getRegistry().addListener(new MediaRendererRegistryListener(deviceRegistryCallback));
+        }
+    }
+    
     private void addMediaRendererListener() {
-        myClingService.getRegistry().addListener(new MediaRendererRegistryListener(new DeviceRegistryCallback() {
+        addMediaRendererRegistryCallback(new DeviceRegistryCallback() {
             @Override
             public void add(RemoteDevice device) {
                 synchronized (myMediaRenderers) {
@@ -94,7 +100,7 @@ public class MyTunesRssUpnpService {
                     myMediaRenderers.remove(device);
                 }
             }
-        }));
+        });
     }
 
     public Set<RemoteDevice> getMediaRenders() {

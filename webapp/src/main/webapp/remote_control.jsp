@@ -157,9 +157,13 @@
                 $jQ("#volume").slider("value", 0);
             }
 
+            $jQ("#mediaRendererName").empty();
+            $jQ("#mediaRendererName").append(trackInfo.mediaRenderer.substr(0, 30));
+
             if (playlistVersion != trackInfo.playlistVersion) {
                 self.document.location.href = '${servletUrl}/showRemoteControl/${auth}/backUrl=${param.backUrl}/fullScreen=' + myFullScreen;
             }
+
         }
 
         function play() {

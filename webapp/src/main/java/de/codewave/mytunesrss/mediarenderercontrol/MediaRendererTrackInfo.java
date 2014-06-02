@@ -11,6 +11,7 @@ public class MediaRendererTrackInfo {
     private int myCurrentTime = 0;
     private boolean myPlaying;
     private int myVolume;
+    private String myMediaRendererName;
 
     public int getCurrentTrack() {
         return myCurrentTrack;
@@ -50,5 +51,13 @@ public class MediaRendererTrackInfo {
 
     public void setVolume(int volume) {
         myVolume = volume;
+    }
+
+    public String getMediaRendererName() {
+        return myMediaRendererName;
+    }
+
+    public void setMediaRendererName(String mediaRendererName) {
+        myMediaRendererName = mediaRendererName;
     }
 }

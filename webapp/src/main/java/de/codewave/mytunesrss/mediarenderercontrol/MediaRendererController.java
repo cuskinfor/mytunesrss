@@ -7,6 +7,7 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
+import de.codewave.mytunesrss.upnp.DeviceRegistryCallback;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
@@ -39,7 +40,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class MediaRendererController {
+public class MediaRendererController implements DeviceRegistryCallback {
 
     private static final class TrackWithUser {
         private final Track myTrack;
@@ -80,6 +81,7 @@ public class MediaRendererController {
 
     private MediaRendererController() {
         // only singleton instance above can be created
+        MyTunesRss.UPNP_SERVICE.addMediaRendererRegistryCallback(this);
     }
 
     public synchronized String getMediaRendererName() {
@@ -323,6 +325,7 @@ public class MediaRendererController {
 
     public synchronized MediaRendererTrackInfo getCurrentTrackInfo() {
         final MediaRendererTrackInfo trackInfo = new MediaRendererTrackInfo();
+        trackInfo.setMediaRendererName(getMediaRendererName());
         trackInfo.setCurrentTrack(myCurrentTrack.get() + 1);
         trackInfo.setPlaying(myPlaying.get());
 
@@ -536,4 +539,20 @@ public class MediaRendererController {
                 append(MyTunesRssUtils.createAuthToken(user));
         return builder.toString();
     }
+
+    @Override
+    public void add(RemoteDevice device) {
+        // ignore this
+    }
+
+    @Override
+    public void remove(RemoteDevice device) {
+        if (myMediaRenderer.equals(device)) {
+            // remove current media renderer if it has been removed from the system 
+            setMediaRenderer(null);
+            // force stopped state since the stop call during setMediaRenderer(null) will fail
+            myPlaying.set(false);
+        }
+    }
+
 }
