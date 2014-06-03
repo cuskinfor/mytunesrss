@@ -1,6 +1,9 @@
 package de.codewave.mytunesrss;
 
+import de.codewave.mytunesrss.mediarenderercontrol.MediaRendererController;
 import org.h2.mvstore.MVStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -12,6 +15,8 @@ import javax.servlet.http.HttpSessionListener;
 import java.util.Map;
 
 public class OffHeapSessionStoreListener implements ServletContextListener, HttpSessionListener {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(OffHeapSessionStoreListener.class);
 
     static OffHeapSessionStore getOffHeapSessionStore(HttpServletRequest request) {
         return (OffHeapSessionStore) getSessions(request.getSession()).get(request.getSession().getId());
@@ -32,6 +37,9 @@ public class OffHeapSessionStoreListener implements ServletContextListener, Http
     public void contextDestroyed(ServletContextEvent sce) {
         getMVStore(sce.getServletContext()).close();
         sce.getServletContext().removeAttribute(OffHeapSessionStoreListener.class.getName());
+        // TODO: wrong class
+        LOGGER.info("Removing media renderer from media renderer controller on application context destruction.");
+        MediaRendererController.getInstance().setMediaRenderer(null);
     }
 
     public void sessionCreated(HttpSessionEvent se) {

@@ -24,8 +24,6 @@ public class OffHeapSessionStoreFilter implements Filter {
     }
 
     public void destroy() {
-        // TODO: wrong class
-        MediaRendererController.getInstance().setMediaRenderer(null);
         // nothing to destroy
     }
 }
