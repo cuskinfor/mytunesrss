@@ -25,7 +25,7 @@
         JSON = JSON || {};
         JSON.stringify = function(value) { return value.toJSON(); };
         JSON.parse = JSON.parse || function(jsonsring) { return jsonsring.evalJSON(true); };
-        
+
         var playlistVersion = ${playlistVersion};
 
         var trackNames = new Array(
@@ -76,7 +76,7 @@
                 document.getElementById("pager_first").style.display = "none";
                 document.getElementById("pager_previous").style.display = "none";
             }
-            if ((currentPage + 1) * itemsPerPage < trackNames.length) {
+            if ((getFirstPage() + pagesPerPager) * itemsPerPage < trackNames.length) {
                 document.getElementById("pager_next").style.display = "inline-block";
                 document.getElementById("pager_last").style.display = "inline-block";
             } else {
@@ -143,7 +143,7 @@
                     createPlaylist();
                 }
             }
-            
+
             if (highlightIndex >= 0 && highlightIndex < itemsPerPage) {
                 highlightTrack(highlightIndex, trackInfo.playing ? "remoteplaybackplaying" : "remoteplayback");
             }
