@@ -115,7 +115,8 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.seamless:seamless-swing:1.0-alpha3" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.guava:guava:16.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.google.gwt:gwt-user:2.3.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:1.0.0.GA" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: javax.validation:validation-api:1.1.0.Final" level="project" />
+    <orderEntry type="library" name="Maven: javax.validation:validation-api:sources:1.1.0.Final" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:4.10" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.hamcrest:hamcrest-core:1.1" level="project" />
   </component>

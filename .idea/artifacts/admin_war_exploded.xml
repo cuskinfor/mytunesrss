@@ -18,6 +18,7 @@
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-util:1.7" />
           <element id="library" level="project" name="Maven: xml-apis:xml-apis:2.0.2" />
           <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.5" />
+          <element id="library" level="project" name="Maven: javax.validation:validation-api:sources:1.1.0.Final" />
         </element>
       </element>
     </root>

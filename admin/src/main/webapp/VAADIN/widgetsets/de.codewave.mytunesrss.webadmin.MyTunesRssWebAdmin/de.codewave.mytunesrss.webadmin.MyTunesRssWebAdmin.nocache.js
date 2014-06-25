@@ -294,12 +294,12 @@ function de_codewave_mytunesrss_webadmin_MyTunesRssWebAdmin(){
   $stats && $stats({moduleName:'de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin', sessionId:$sessionId_0, subSystem:'startup', evtGroup:'bootstrap', millis:(new Date).getTime(), type:'selectingPermutation'});
   if (!isHostedMode()) {
     try {
-      unflattenKeylistIntoAnswers(['opera'], '52FD4541092F2E941B149338BBF8D0E0');
-      unflattenKeylistIntoAnswers(['ie8'], '641B0EF92542D649D74149FC96B2C52D');
-      unflattenKeylistIntoAnswers(['safari'], '674BB15C6672CC39FFAA2BEC533CEDBC');
-      unflattenKeylistIntoAnswers(['ie9'], 'DD31C95CFA64832B014B551C9AB33A15');
-      unflattenKeylistIntoAnswers(['ie6'], 'E5F93F489D6E4129D4D78CAEFA0154A0');
-      unflattenKeylistIntoAnswers(['gecko1_8'], 'EDCE7265CC9382C8ECB7FA9337ACE772');
+      unflattenKeylistIntoAnswers(['gecko1_8'], '8C325C5AC35838EBF09B7CFA22D98DAB');
+      unflattenKeylistIntoAnswers(['ie9'], 'A5D12B05EFDE17E4654516FFFCB459E5');
+      unflattenKeylistIntoAnswers(['safari'], 'A7C7C7A44AD8B826D05AB3392DA0C51F');
+      unflattenKeylistIntoAnswers(['ie8'], 'A9F11224683B78AD9A97571E97683352');
+      unflattenKeylistIntoAnswers(['opera'], 'C9E462C4BB20EFD1D6B2456C3500F756');
+      unflattenKeylistIntoAnswers(['ie6'], 'FD8D19672C58E3D63F93C1DA8706ABE9');
       strongName = answers[computePropValue('user.agent')];
       var idx = strongName.indexOf(':');
       if (idx != -1) {
@@ -316,13 +316,6 @@ function de_codewave_mytunesrss_webadmin_MyTunesRssWebAdmin(){
   function onBodyDone(){
     if (!bodyDone) {
       bodyDone = true;
-      if (!__gwt_stylesLoaded['treetable.css']) {
-        var l = $doc_0.createElement('link');
-        __gwt_stylesLoaded['treetable.css'] = l;
-        l.setAttribute('rel', 'stylesheet');
-        l.setAttribute('href', base + 'treetable.css');
-        $doc_0.getElementsByTagName('head')[0].appendChild(l);
-      }
       maybeStartModule();
       if ($doc_0.removeEventListener) {
         $doc_0.removeEventListener('DOMContentLoaded', onBodyDone, false);
