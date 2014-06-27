@@ -20,14 +20,15 @@ public class ShowJukeboxCommandHandler extends MyTunesRssCommandHandler {
         if (flashPlayerConfig == null) {
             flashPlayerConfig = FlashPlayerConfig.getDefault();
         }
-        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MiscUtils.getUtf8UrlEncoded(getPlaylistUrl(flashPlayerConfig.getPlaylistFileType(), flashPlayerConfig.getTimeUnit())));
+        redirect(MyTunesRssWebUtils.getApplicationUrl(getRequest()) + "/flashplayer/" + playerId + "/?url=" + MiscUtils.getUtf8UrlEncoded(getPlaylistUrl(flashPlayerConfig.getPlaylistFileType(), flashPlayerConfig.getTimeUnit(), flashPlayerConfig.getImageSize())));
     }
 
-    private String getPlaylistUrl(PlaylistFileType playlistFileType, TimeUnit timeUnit) {
+    private String getPlaylistUrl(PlaylistFileType playlistFileType, TimeUnit timeUnit, int imageSize) {
         MyTunesRssCommandCallBuilder builder = new MyTunesRssCommandCallBuilder(MyTunesRssCommand.CreatePlaylist);
         builder.addParam("fpr", "1");
         builder.addParam("timeunit", timeUnit.name());
         builder.addParam("type", convertPlaylistType(playlistFileType).name());
+        builder.addParam("imageSize", Integer.toString(imageSize));
         builder.addPathInfoSegment(MyTunesRssBase64Utils.decodeToString(getRequestParameter("playlistParams", null)));
         return builder.getCall(getRequest());
     }

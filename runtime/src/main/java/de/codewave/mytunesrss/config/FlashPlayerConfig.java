@@ -19,10 +19,10 @@ import java.util.concurrent.TimeUnit;
 public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneable {
     private static final Logger LOGGER = LoggerFactory.getLogger(FlashPlayerConfig.class);
 
-    public static final FlashPlayerConfig JW316 = new FlashPlayerConfig("mytunesrss_jwmediaplayer316", "JW Media Player 3.16", PlaylistFileType.Xspf, 600, 450, TimeUnit.SECONDS);
-    public static final FlashPlayerConfig JW46 = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
-    public static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS);
-    public static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", PlaylistFileType.Xspf, 600, 450, TimeUnit.MILLISECONDS);
+    public static final FlashPlayerConfig JW316 = new FlashPlayerConfig("mytunesrss_jwmediaplayer316", "JW Media Player 3.16", PlaylistFileType.Xspf, 600, 450, TimeUnit.SECONDS, 256);
+    public static final FlashPlayerConfig JW46 = new FlashPlayerConfig("mytunesrss_jwmediaplayer", "JW Media Player 4.6", PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS, 256);
+    public static final FlashPlayerConfig JW46_SHUFFLE = new FlashPlayerConfig("mytunesrss_jwmediaplayer_shuffle", "JW Media Player 4.6 (Shuffle)", PlaylistFileType.Xspf, 600, 276, TimeUnit.SECONDS, 256);
+    public static final FlashPlayerConfig SIMPLE = new FlashPlayerConfig("mytunesrss_simple", "XSPF Player", PlaylistFileType.Xspf, 600, 450, TimeUnit.MILLISECONDS, 256);
 
     public static final FlashPlayerConfig ABSOLUTE_DEFAULT = JW46;
 
@@ -73,14 +73,16 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     private int myWidth;
     private int myHeight;
     private TimeUnit myTimeUnit;
+    private int myImageSize;
 
-    public FlashPlayerConfig(String id, String name, PlaylistFileType playlistFileType, int width, int height, TimeUnit timeUnit) {
+    public FlashPlayerConfig(String id, String name, PlaylistFileType playlistFileType, int width, int height, TimeUnit timeUnit, int imageSize) {
         myId = id;
         myName = name;
         myPlaylistFileType = playlistFileType;
         myWidth = width;
         myHeight = height;
         myTimeUnit = timeUnit;
+        myImageSize = imageSize;
     }
 
     public String getId() {
@@ -131,6 +133,14 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
         myTimeUnit = timeUnit;
     }
 
+    public int getImageSize() {
+        return myImageSize;
+    }
+
+    public void setImageSize(int imageSize) {
+        myImageSize = imageSize;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -168,6 +178,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
             clone.myWidth = myWidth;
             clone.myHeight = myHeight;
             clone.myTimeUnit = myTimeUnit;
+            clone.myImageSize = myImageSize;
             return clone;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException("Could not clone flash player config.", e);

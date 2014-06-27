@@ -8,6 +8,9 @@
     <body>
 
         <release version="6.2" date="___D___">
+            <action dev="mdescher" type="add">
+                [MYTUNESRSS-511] Configurable image size for jukebox configs
+            </action>
             <action dev="mdescher" type="update">
                 Fix for smart playlist criteria "not recently played".
             </action>

@@ -5,7 +5,7 @@
             <title><c:out value="${track.name}"/></title>
             <description><c:out value="${track.artist}"/></description>
             <guid>${permServletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt></guid>
-            <c:if test="${!empty(track.imageHash)}"><jwplayer:image>${permServletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=128</mt:encrypt></jwplayer:image></c:if>
+            <c:if test="${!empty(track.imageHash)}"><jwplayer:image>${permServletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}${imgSizePathParam}</mt:encrypt></jwplayer:image></c:if>
             <jwplayer:source file="${mtfn:downloadLink(pageContext, track, null)}/${cwfn:encodeUrl(mtfn:virtualTrackName(track))}.${mtfn:suffix(config, authUser, track)}" type="${mtfn:contentType(config, authUser, track)}" />
         </item></c:forEach>
     </channel>

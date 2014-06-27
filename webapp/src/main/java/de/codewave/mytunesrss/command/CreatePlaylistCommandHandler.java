@@ -32,6 +32,8 @@ public class CreatePlaylistCommandHandler extends CreatePlaylistBaseCommandHandl
         if (getAuthUser().isPlaylist() || fpr) {
             TimeUnit timeUnit = TimeUnit.valueOf(getRequestParameter("timeunit", TimeUnit.SECONDS.name()));
             getRequest().setAttribute("timefactor", timeUnit.convert(1, TimeUnit.SECONDS));
+            int imageSize = getSafeIntegerRequestParameter("imageSize", 0);
+            getRequest().setAttribute("imgSizePathParam", imageSize > 0 ? "/size=" + imageSize : "");
             QueryResult<Track> tracks = getTracks();
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Found " + (tracks != null ? tracks.getResultSize() : 0) + " tracks for playlist.");

@@ -833,7 +833,7 @@ public class MyTunesRssConfig {
     public synchronized FlashPlayerConfig removeFlashPlayer(String id) {
         FlashPlayerConfig config = getFlashPlayer(id);
         if (config != null) {
-            myFlashPlayers.remove(new FlashPlayerConfig(id, null, null, 0, 0, TimeUnit.SECONDS));
+            myFlashPlayers.remove(new FlashPlayerConfig(id, null, null, 0, 0, TimeUnit.SECONDS, 0));
         }
         return config;
     }
@@ -1267,7 +1267,8 @@ public class MyTunesRssConfig {
                     PlaylistFileType.valueOf(JXPathUtils.getStringValue(flashPlayerContext, "filetype", PlaylistFileType.Xspf.name())),
                     JXPathUtils.getIntValue(flashPlayerContext, "width", 600),
                     JXPathUtils.getIntValue(flashPlayerContext, "height", 276),
-                    TimeUnit.valueOf(JXPathUtils.getStringValue(flashPlayerContext, "timeunit", TimeUnit.SECONDS.name()))
+                    TimeUnit.valueOf(JXPathUtils.getStringValue(flashPlayerContext, "timeunit", TimeUnit.SECONDS.name())),
+                    JXPathUtils.getIntValue(flashPlayerContext, "imageSize", 256)
             );
             addFlashPlayer(flashPlayerConfig);
         }
@@ -1701,6 +1702,7 @@ public class MyTunesRssConfig {
                     player.appendChild(DOMUtils.createTextElement(settings, "timeunit", flashPlayerConfig.getTimeUnit().name()));
                     player.appendChild(DOMUtils.createIntElement(settings, "width", flashPlayerConfig.getWidth()));
                     player.appendChild(DOMUtils.createIntElement(settings, "height", flashPlayerConfig.getHeight()));
+                    player.appendChild(DOMUtils.createIntElement(settings, "imageSize", flashPlayerConfig.getImageSize()));
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "initialWizard", isInitialWizard()));

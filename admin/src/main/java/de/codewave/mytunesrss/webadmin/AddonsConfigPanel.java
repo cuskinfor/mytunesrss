@@ -378,7 +378,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             setTablePageLengths();
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.defaultJukeboxesRestored");
         } else if (clickEvent.getSource() == myAddFlashPlayer) {
-            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS));
+            FlashPlayerEditPanel flashPlayerEditPanel = new FlashPlayerEditPanel(this, new FlashPlayerConfig(UUID.randomUUID().toString(), "", PlaylistFileType.Xspf, 640, 480, TimeUnit.SECONDS, 256));
             SinglePanelWindow flashPlayerEditWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("flashPlayerEditPanel.caption"), flashPlayerEditPanel);
             flashPlayerEditWindow.show(getWindow());
         } else if (clickEvent.getSource() == myAddLanguage) {

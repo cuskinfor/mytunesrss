@@ -65,6 +65,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
     private Select myTimeUnit;
     private SmartTextField myWidth;
     private SmartTextField myHeight;
+    private SmartTextField myImageSize;
     private Upload myUpload;
     private List<String> myIllegalNames;
 
@@ -102,6 +103,8 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myHeight = getComponentFactory().createTextField("flashPlayerEditPanel.height", new MinMaxIntegerValidator(getBundleString("flashPlayerEditPanel.error.height", 1, 4096), 1, 4096));
         setRequired(myHeight);
         myForm.addField("height", myHeight);
+        myImageSize = getComponentFactory().createTextField("flashPlayerEditPanel.imageSize", new MinMaxIntegerValidator(getBundleString("flashPlayerEditPanel.error.imageSize", 0, 4096), 0, 4096));
+        myForm.addField("imageSize", myImageSize);
         myUpload = new Upload(null, this);
         myUpload.setButtonCaption(getBundleString("flashPlayerEditPanel.upload"));
         myUpload.setImmediate(true);
@@ -127,6 +130,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myFlashPlayerConfig.setTimeUnit(((TimeUnitWrapper)myTimeUnit.getValue()).getTimeUnit());
         myFlashPlayerConfig.setWidth(myWidth.getIntegerValue(640));
         myFlashPlayerConfig.setHeight(myHeight.getIntegerValue(480));
+        myFlashPlayerConfig.setImageSize(myImageSize.getIntegerValue(0));
         myAddonsConfigPanel.saveFlashPlayer(myFlashPlayerConfig);
         MyTunesRss.CONFIG.save();
     }
@@ -143,6 +147,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         }
         myWidth.setValue(myFlashPlayerConfig.getWidth());
         myHeight.setValue(myFlashPlayerConfig.getHeight());
+        myImageSize.setValue(myFlashPlayerConfig.getImageSize());
     }
 
     protected boolean beforeSave() {
