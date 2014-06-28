@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.2" date="___D___">
+        <release version="6.2" date="2014-06-28">
             <action dev="mdescher" type="add">
                 [MYTUNESRSS-511] Configurable image size for jukebox configs
             </action>
