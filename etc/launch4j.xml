@@ -10,9 +10,8 @@
   <stayAlive>false</stayAlive>
   <icon>mytunesrss.ico</icon>
   <jre>
-    <path/>
-    <minVersion>1.6.0</minVersion>
-    <jdkPreference>preferJre</jdkPreference>
+    <path>data/jre</path>
+    <jdkPreference>jreOnly</jdkPreference>
     <initialHeapSize>16</initialHeapSize>
     <maxHeapSize>512</maxHeapSize>
     <opt>-XX:HeapDumpPath=.</opt>

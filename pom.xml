@@ -198,17 +198,6 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>launch4j-jre</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>java</executable>
-                                    <commandlineArgs>-jar etc/launch4j/launch4j.jar etc/launch4j-jre.xml</commandlineArgs>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>macosx-package</id>
                                 <phase>package</phase>
                                 <goals>
