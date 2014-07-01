@@ -75,7 +75,6 @@ SectionEnd
   ;Assign language strings to sections
   !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
     !insertmacro MUI_DESCRIPTION_TEXT ${MyTunesRSS} $(DESC_MyTunesRSS)
-    !insertmacro MUI_DESCRIPTION_TEXT ${Jre} $(DESC_Jre)
   !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
