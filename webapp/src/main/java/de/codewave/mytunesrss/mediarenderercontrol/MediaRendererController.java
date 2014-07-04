@@ -15,6 +15,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.action.ActionInvocation;
+import org.fourthline.cling.model.gena.CancelReason;
+import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.UpnpResponse;
 import org.fourthline.cling.model.meta.RemoteDevice;
 import org.fourthline.cling.model.meta.RemoteService;
@@ -414,7 +416,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
         return myTracks.get(index).getTrack();
     }
 
-    public synchronized void setMediaRenderer(RemoteDevice mediaRenderer) {
+    public synchronized void setMediaRenderer(final RemoteDevice mediaRenderer) {
         if (mySubscriptionCallback != null) {
             LOGGER.debug("Ending subscription callback.");
             mySubscriptionCallback.end();
@@ -429,26 +431,60 @@ public class MediaRendererController implements DeviceRegistryCallback {
         myMediaRenderer = mediaRenderer;
         if (mediaRenderer != null) {
             mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
+
+                private volatile boolean active;
+                
+                @Override
+                public synchronized void end() {
+                    active = false;
+                    super.end();
+                }
+
                 @Override
                 void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
-                    MediaRendererController.this.handleTransportStateChange(previousTransportState, currentTransportState);
+                    if (active) {
+                        MediaRendererController.this.handleTransportStateChange(previousTransportState, currentTransportState);
+                    }
                 }
 
                 @Override
                 protected void handleTransportUriChange(URI previousTransportUri, URI currentTransportUri) {
-                    MediaRendererController.this.myCurrentRendererTransportUri = currentTransportUri;
-                    if (currentTransportUri == null || !currentTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
-                        myPlaying.set(false);
-                        myCurrentTrack.set(0);
+                    if (active) {
+                        MediaRendererController.this.myCurrentRendererTransportUri = currentTransportUri;
+                        if (currentTransportUri == null || !currentTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
+                            myPlaying.set(false);
+                            myCurrentTrack.set(0);
+                        }
                     }
+                }
+
+                @Override
+                protected void ended(GENASubscription subscription, CancelReason reason, UpnpResponse responseStatus) {
+                    String reasonText = reason != null ? reason.name() : "<none>";
+                    String message = responseStatus != null ? responseStatus.getStatusMessage() : "<none>";
+                    LOGGER.info("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription ended (reason = " + reasonText + ", message = \"" + message + "\").");
+                    setMediaRenderer(null);
+                }
+
+                @Override
+                protected void failed(GENASubscription subscription, UpnpResponse responseStatus, Exception exception, String defaultMsg) {
+                    String message = responseStatus != null ? responseStatus.getStatusMessage() : "<none>";
+                    LOGGER.warn("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription failed (message = \"" + message + "\").", exception);
+                    setMediaRenderer(null);
+                }
+
+                @Override
+                protected void established(GENASubscription subscription) {
+                    LOGGER.info("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription established.");
+                    myMaxVolume = getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum();
+                    LOGGER.debug("Maximum volume for media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" is " + myMaxVolume + ".");
+                    play(myCurrentTrack.get(), true);
+                    active = true;
                 }
             };
             LOGGER.debug("Starting subscription callback.");
             myTimeExplicitlyStopped.set(System.currentTimeMillis());
             MyTunesRss.UPNP_SERVICE.execute(mySubscriptionCallback);
-            myMaxVolume = getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum();
-            LOGGER.debug("Maximum volume for media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" is " + myMaxVolume + ".");
-            play(myCurrentTrack.get(), true);
         }
     }
 
