@@ -9,6 +9,9 @@
 
         <release version="6.3" date="___D___">
             <action dev="mdescher" type="update">
+                [MYTUNESRSS-512] Add warning when saving empty admin password
+            </action>
+            <action dev="mdescher" type="update">
                 Media renderer controller refactorings and improvements.
             </action>
         </release>

@@ -22,6 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -90,6 +91,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myUserAccessLogExtended;
     private CheckBox myAdminAccessLogExtended;
     private Select myAccessLogTz;
+    private boolean myEmptyAdminPasswordWarning;
 
     public void attach() {
         super.attach();
@@ -230,6 +232,7 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myUserAccessLogExtended.setValue(MyTunesRss.CONFIG.isUserAccessLogExtended());
         myAdminAccessLogExtended.setValue(MyTunesRss.CONFIG.isAdminAccessLogExtended());
         myAccessLogTz.setValue(MyTunesRss.CONFIG.getAccessLogTz());
+        myEmptyAdminPasswordWarning = true;
     }
 
     protected void writeToConfig() {
@@ -345,6 +348,11 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         boolean valid = VaadinUtils.isValid(myAdminForm, myGeneralForm, myExtendedForm, myHttpForm, myHttpsForm, myAccessLogForm);
         if (!valid) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
+        }
+        if (!Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myAdminPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get())) && StringUtils.isBlank(myAdminPassword.getStringValue("")) && myEmptyAdminPasswordWarning) {
+            myEmptyAdminPasswordWarning = false;
+            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("serverConfigPanel.warning.emptyAdminPassword");
+            return false;
         }
         return valid;
     }
