@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUncaughtHandler
@@ -13,10 +14,10 @@ import java.util.Locale;
 public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUncaughtHandler.class);
 
-    private volatile boolean executed;
+    private AtomicBoolean executed = new AtomicBoolean(false);
     
-    public synchronized void uncaughtException(Thread t, final Throwable e) {
-        if (!executed) {
+    public void uncaughtException(Thread t, final Throwable e) {
+        if (!executed.getAndSet(true)) {
             String message = "Uncaught exception in thread \"" + t.getName() + "\": \"" + e.getMessage() + "\".";
             try {
                 LOGGER.error("Uncaught exception in thread \"" + t.getName() + "\".", e);
@@ -27,7 +28,6 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
                 MyTunesRss.ADMIN_NOTIFY.notifyInternalError(e);
             } finally {
                 MyTunesRssUtils.shutdownGracefully(message);
-                executed = true;
             }
         }
     }
