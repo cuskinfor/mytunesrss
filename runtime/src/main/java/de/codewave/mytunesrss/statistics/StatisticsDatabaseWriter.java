@@ -24,7 +24,7 @@ public class StatisticsDatabaseWriter implements StatisticsEventListener {
                         tx.executeStatement(statisticsEventStatement);
                         tx.commit();
                         LOGGER.debug("Wrote statistics event \"" + event + "\" to database.");
-                    } catch (SQLException e) {
+                    } catch (SQLException | RuntimeException e) {
                         LOGGER.error("Could not write statistics event to database.", e);
                     } finally {
                         tx.rollback();                    }
