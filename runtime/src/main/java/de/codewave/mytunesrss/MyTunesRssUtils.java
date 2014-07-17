@@ -173,6 +173,10 @@ public class MyTunesRssUtils {
     }
 
     public static void shutdownGracefully() {
+        shutdownGracefully(null);
+    }
+    
+    public static void shutdownGracefully(String finalErrorMessage) {
         ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.shuttingDown"));
         info.show(2000L);
         MyTunesRss.SHUTDOWN_IN_PROGRESS.set(true);
@@ -248,7 +252,17 @@ public class MyTunesRssUtils {
             LOGGER.error("Exception during shutdown.", e);
         } finally {
             LOGGER.info("Very last log message before shutdown.");
-            System.exit(0);
+            try {
+                if (StringUtils.isNotBlank(finalErrorMessage)) {
+                    if (!MyTunesRssUtils.isHeadless()) {
+                        JOptionPane.showMessageDialog(null, finalErrorMessage, MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.title"), JOptionPane.ERROR_MESSAGE);
+                    } else {
+                        System.err.println(finalErrorMessage);
+                    }
+                }
+            } finally {
+                System.exit(0);
+            }
         }
     }
 

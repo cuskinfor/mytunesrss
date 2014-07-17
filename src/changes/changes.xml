@@ -9,7 +9,10 @@
 
         <release version="6.3" date="___D___">
             <action dev="mdescher" type="update">
-                Catch all runtimetime exceptions in statistics writer thread.
+                [MYTUNESRSS-514] Uncaught exception handler does not stop app
+            </action>
+            <action dev="mdescher" type="update">
+                Catch all runtime exceptions in statistics writer thread.
             </action>
             <action dev="mdescher" type="update">
                 [MYTUNESRSS-512] Add warning when saving empty admin password
