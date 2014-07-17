@@ -255,6 +255,7 @@ public class MyTunesRssUtils {
             try {
                 if (StringUtils.isNotBlank(finalErrorMessage)) {
                     if (!MyTunesRssUtils.isHeadless()) {
+                        info.destroy();
                         JOptionPane.showMessageDialog(null, finalErrorMessage, MyTunesRssUtils.getBundleString(Locale.getDefault(), "uncaughtError.title"), JOptionPane.ERROR_MESSAGE);
                     } else {
                         System.err.println(finalErrorMessage);
