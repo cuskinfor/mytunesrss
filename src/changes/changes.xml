@@ -9,6 +9,9 @@
 
         <release version="6.3" date="___D___">
             <action dev="mdescher" type="update">
+                Added TOGGLE_PLAY_PAUSE action to media player REST API.
+            </action>
+            <action dev="mdescher" type="update">
                 [MYTUNESRSS-514] Uncaught exception handler does not stop app
             </action>
             <action dev="mdescher" type="update">

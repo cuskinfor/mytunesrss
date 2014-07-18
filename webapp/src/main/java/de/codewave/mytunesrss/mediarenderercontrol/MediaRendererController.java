@@ -177,6 +177,14 @@ public class MediaRendererController implements DeviceRegistryCallback {
         LOGGER.debug("Clearing playlist.");
     }
 
+    public synchronized void togglePlayPause(boolean asyncPlay) {
+        if (myPlaying.get()) {
+            pause();
+        } else {
+            play(-1, asyncPlay);
+        }
+    }
+    
     public synchronized void play(int index, boolean async) {
         final RemoteService service = getAvTransport();
         if (service != null) {

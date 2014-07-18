@@ -33,7 +33,7 @@ import java.util.List;
 public class MediaPlayerResource extends RestResource {
 
     public static enum Action {
-        PLAY(), PAUSE(), STOP(), SEEK(), SHUFFLE(), NEXT(), PREVIOUS();
+        PLAY(), PAUSE(), STOP(), SEEK(), SHUFFLE(), NEXT(), PREVIOUS(), TOGGLE_PLAY_PAUSE();
     }
 
     private MediaRendererController getController() {
@@ -198,6 +198,9 @@ public class MediaPlayerResource extends RestResource {
                     break;
                 case PLAY:
                     getController().play(track, true);
+                    break;
+                case TOGGLE_PLAY_PAUSE:
+                    getController().togglePlayPause(true);
                     break;
                 case PREVIOUS:
                     getController().prev();
