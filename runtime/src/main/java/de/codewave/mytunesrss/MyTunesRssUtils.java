@@ -175,7 +175,7 @@ public class MyTunesRssUtils {
     public static void shutdownGracefully() {
         shutdownGracefully(null);
     }
-    
+
     public static void shutdownGracefully(String finalErrorMessage) {
         ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.shuttingDown"));
         info.show(2000L);
@@ -1059,10 +1059,8 @@ public class MyTunesRssUtils {
 
     public static RequestLogHandler createJettyAccessLogHandler(String prefix, int retainDays, boolean extended, String tz) {
         File accessLogDir = new File(MyTunesRss.CACHE_DATA_PATH + "/accesslogs");
-        if (!accessLogDir.exists()) {
-            if (!accessLogDir.mkdirs()) {
-                LOGGER.warn("Could not create folder for access logs.");
-            }
+        if (!accessLogDir.exists() && !accessLogDir.mkdirs()) {
+            LOGGER.warn("Could not create folder for access logs.");
         }
         RequestLogHandler requestLogHandler = new RequestLogHandler();
         NCSARequestLog requestLog = new NCSARequestLog(new File(accessLogDir, prefix + "-yyyy_mm_dd.log").getAbsolutePath());
@@ -1076,32 +1074,24 @@ public class MyTunesRssUtils {
 
     public static MVStore.Builder getMvStoreBuilder(String filename) {
         File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                LOGGER.warn("Could not create folder for mvstore.");
-            }
+        if (!dir.exists() && !dir.mkdirs()) {
+            LOGGER.warn("Could not create folder for mvstore.");
         }
         File file = new File(dir, filename);
-        if (file.exists()) {
-            if (!file.delete()) {
-                LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
-            }
+        if (file.exists() && !file.delete()) {
+            LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
         }
         return new MVStore.Builder().fileStore(new FileStore()).fileName(file.getAbsolutePath());
     }
 
     public static void removeMvStoreFile(String filename) {
         File dir = new File(MyTunesRss.CACHE_DATA_PATH, "mvstore");
-        if (!dir.exists()) {
-            if (!dir.mkdirs()) {
-                LOGGER.warn("Could not create folder for mvstore.");
-            }
+        if (!dir.exists() && !dir.mkdirs()) {
+            LOGGER.warn("Could not create folder for mvstore.");
         }
         File file = new File(dir, filename);
-        if (file.exists()) {
-            if (!file.delete()) {
-                LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
-            }
+        if (file.exists() && !file.delete()) {
+            LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
         }
     }
 
@@ -1119,7 +1109,7 @@ public class MyTunesRssUtils {
             return null;
         }
         File file = new File(MyTunesRss.CACHE_DATA_PATH, "thumbs");
-        if (!file.mkdirs()) {
+        if (!file.exists() && !file.mkdirs()) {
             LOGGER.warn("Could not create folder for thumbs.");
         }
         while (imageHash.length() > 0) {
