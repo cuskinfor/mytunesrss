@@ -9,6 +9,9 @@
 
         <release version="6.3" date="___D___">
             <action dev="mdescher" type="update">
+                Changed some connection pool properties (keep more idle connections).
+            </action>
+            <action dev="mdescher" type="update">
                 Added TOGGLE_PLAY_PAUSE action to media player REST API.
             </action>
             <action dev="mdescher" type="update">
