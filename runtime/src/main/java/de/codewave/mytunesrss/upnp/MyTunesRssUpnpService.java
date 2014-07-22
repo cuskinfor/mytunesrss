@@ -35,6 +35,7 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 public class MyTunesRssUpnpService {
 
@@ -48,15 +49,20 @@ public class MyTunesRssUpnpService {
     private MyTunesRssEventListener myUpnpDatabaseUpdateListener;
     private Set<RemoteDevice> myMediaRenderers = new HashSet<>();
     private Set<RemoteDevice> myInternetGatewayDevices = new HashSet<>();
-    
+
     public void start() throws ValidationException, IOException {
         RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
         if (feedback == null || feedback.isValid()) {
             myClingService = new UpnpServiceImpl();
             addMediaRendererListener();
             addInternetGatewayDeviceListener();
-            LOGGER.debug("Initial media renderer search.");
-            myClingService.getControlPoint().search();
+            MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
+                @Override
+                public void run() {
+                    LOGGER.debug("Search for UPnP services.");
+                    myClingService.getControlPoint().search();
+                }
+            }, 0, 10, TimeUnit.SECONDS);
         } else {
             LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
         }
@@ -84,7 +90,7 @@ public class MyTunesRssUpnpService {
             myClingService.getRegistry().addListener(new MediaRendererRegistryListener(deviceRegistryCallback));
         }
     }
-    
+
     private void addMediaRendererListener() {
         addMediaRendererRegistryCallback(new DeviceRegistryCallback() {
             @Override
