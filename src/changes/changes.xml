@@ -8,6 +8,9 @@
     <body>
 
         <release version="6.3" date="___D___">
+            <action dev="mdescher" type="fix">
+                Fixed deadlock in media renderer controller.
+            </action>
             <action dev="mdescher" type="add">
                 Search for UPnP devices every 10 seconds.
             </action>

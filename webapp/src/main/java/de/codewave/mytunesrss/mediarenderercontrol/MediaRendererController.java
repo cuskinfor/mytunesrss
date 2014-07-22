@@ -184,7 +184,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
             play(-1, asyncPlay);
         }
     }
-    
+
     public synchronized void play(int index, boolean async) {
         final RemoteService service = getAvTransport();
         if (service != null) {
@@ -427,8 +427,14 @@ public class MediaRendererController implements DeviceRegistryCallback {
     public synchronized void setMediaRenderer(final RemoteDevice mediaRenderer) {
         if (mySubscriptionCallback != null) {
             LOGGER.debug("Ending subscription callback.");
-            mySubscriptionCallback.end();
+            final SubscriptionCallback callback = mySubscriptionCallback;
             mySubscriptionCallback = null;
+            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                @Override
+                public void run() {
+                    callback.end();
+                }
+            });
         }
         stop(true);
         if (mediaRenderer != null) {
@@ -441,7 +447,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
             mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
 
                 private volatile boolean active;
-                
+
                 @Override
                 public synchronized void end() {
                     active = false;
