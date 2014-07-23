@@ -124,7 +124,7 @@ public class MyTunesRss {
     public static final long STARTUP_TIME = System.currentTimeMillis();
     private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<>(10);
     public static String VERSION;
-    public static final String UPDATE_URL = "http://www.codewave.de/download/versions/mytunesrss.xml";
+    public static final String UPDATE_URL = "http://www.codewave.de/tools/autoupdate/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG;
     public static WebServer WEBSERVER = new WebServer();
