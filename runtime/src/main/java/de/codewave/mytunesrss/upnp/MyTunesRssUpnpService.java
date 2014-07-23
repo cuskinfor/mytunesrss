@@ -81,8 +81,8 @@ public class MyTunesRssUpnpService {
         return myClingService.getControlPoint().execute(actionCallback);
     }
 
-    public void execute(SubscriptionCallback actionCallback) {
-        myClingService.getControlPoint().execute(actionCallback);
+    public void execute(SubscriptionCallback subscriptionCallback) {
+        myClingService.getControlPoint().execute(subscriptionCallback);
     }
 
     public void addMediaRendererRegistryCallback(DeviceRegistryCallback deviceRegistryCallback) {
