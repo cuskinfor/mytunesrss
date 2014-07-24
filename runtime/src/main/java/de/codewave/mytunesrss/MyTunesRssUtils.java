@@ -993,11 +993,7 @@ public class MyTunesRssUtils {
                     statement.execute();
                 }
             });
-            try {
-                MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForSourceIds(sourceIds);
-            } catch (IOException e) {
-                LOGGER.warn("Could not delete tracks from lucene index.", e);
-            }
+            MyTunesRss.LUCENE_TRACK_SERVICE.deleteTracksForSourceIds(sourceIds);
             LOGGER.debug("Recreating help tables.");
             session.executeStatement(new RecreateHelpTablesStatement(true, true, true, true));
             orphanedImageRemover.remove();

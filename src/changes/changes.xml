@@ -9,6 +9,9 @@
 
         <release version="6.3" date="___D___">
             <action dev="mdescher" type="fix">
+                [MYTUNESRSS-517] Search adds open files to lucene index which never get closed
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed deadlock in media renderer controller.
             </action>
             <action dev="mdescher" type="add">

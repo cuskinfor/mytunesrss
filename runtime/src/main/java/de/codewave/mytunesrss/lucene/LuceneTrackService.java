@@ -105,8 +105,15 @@ public class LuceneTrackService {
             if (myIndexWriter != null) {
                 try {
                     myIndexWriter.close();
-                } catch (IOException ignored) {
-                    LOGGER.error("Could not close index writer.");
+                } catch (CorruptIndexException e) {
+                    LOGGER.error("Could not close index writer.", e);
+                    try {
+                        deleteLuceneIndex();
+                    } catch (IOException e1) {
+                        LOGGER.error("Could not delete corrupted lucene index.", e1);
+                    }
+                } catch (IOException e) {
+                    LOGGER.error("Could not close index writer.",e );
                 }
             }
             if (myDirectory != null) {
@@ -172,7 +179,7 @@ public class LuceneTrackService {
         }
     }
 
-    public synchronized void flushTrackBuffer() throws IOException {
+    public synchronized void flushTrackBuffer() {
         StopWatch.start("Indexing " + myTrackBuffer.size() + " tracks");
         try {
             for (LuceneTrack track = myTrackBuffer.peek(); track != null; track = myTrackBuffer.peek()) {
@@ -187,7 +194,15 @@ public class LuceneTrackService {
                 myTrackBuffer.pop(); // element done
             }
             getIndexWriter().commit();
-        } catch (Exception e) {
+        } catch (CorruptIndexException e) {
+            LOGGER.error("Could not flush track buffer to lucene index.", e);
+            try {
+                deleteLuceneIndex();
+            } catch (IOException e1) {
+                LOGGER.error("Could not delete corrupted lucene index.", e1);
+            }
+            shutdown();
+        } catch (IOException | RuntimeException e) {
             LOGGER.error("Could not flush track buffer to lucene index.", e);
             shutdown();
         } finally {
@@ -195,7 +210,7 @@ public class LuceneTrackService {
         }
     }
 
-    public synchronized void deleteTracksForSourceIds(Collection<String> sourceIds) throws IOException {
+    public synchronized void deleteTracksForSourceIds(Collection<String> sourceIds) {
         flushTrackBuffer();
         StopWatch.start("Removing tracks for " + sourceIds.size() + " data sources from index");
         try {
@@ -203,7 +218,15 @@ public class LuceneTrackService {
                 getIndexWriter().deleteDocuments(new Term("source_id", sourceId));
                 getIndexWriter().commit();
             }
-        } catch (Exception e) {
+        } catch (CorruptIndexException e) {
+            LOGGER.error("Could not flush track buffer to lucene index.", e);
+            try {
+                deleteLuceneIndex();
+            } catch (IOException e1) {
+                LOGGER.error("Could not delete corrupted lucene index.", e1);
+            }
+            shutdown();
+        } catch (IOException | RuntimeException e) {
             LOGGER.error("Could not flush track buffer to lucene index.", e);
             shutdown();
         } finally {
@@ -221,7 +244,7 @@ public class LuceneTrackService {
                 getIndexWriter().commit();
             }
             LOGGER.info("Finished removing " + trackIds.size() + " tracks (duration: " + (System.currentTimeMillis() - start) + " ms).");
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             LOGGER.error("Could not flush track buffer to lucene index.", e);
             shutdown();
         }
@@ -229,60 +252,52 @@ public class LuceneTrackService {
 
     public List<ScoredTrack> searchTracks(String[] searchTerms, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
-        IndexSearcher isearcher = null;
+        IndexReader indexReader = null;
+        IndexSearcher indexSearcher = null;
         Collection<ScoredTrack> trackIds;
         try {
             directory = getDirectory();
-            isearcher = new IndexSearcher(IndexReader.open(directory));
-            isearcher.setDefaultFieldSortScoring(true, true);
+            indexReader = IndexReader.open(directory);
+            indexSearcher = new IndexSearcher(indexReader);
+            indexSearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = createQuery(searchTerms, fuzziness);
-            TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
+            TopDocs topDocs = indexSearcher.search(luceneQuery, maxResults);
             trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                trackIds.add(new ScoredTrack(isearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
+                trackIds.add(new ScoredTrack(indexSearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             LOGGER.debug("Lucene query returned " + trackIds.size() + " tracks.");
             return new ArrayList<>(trackIds);
         } finally {
-            if (isearcher != null) {
-                isearcher.close();
-            }
-            if (directory != null) {
-                directory.close();
-            }
+            close(directory, indexReader, indexSearcher);
         }
     }
 
     public List<ScoredTrack> searchTracks(String searchExpression, int maxResults) throws IOException, LuceneQueryParserException {
         Directory directory = null;
-        IndexSearcher isearcher = null;
+        IndexReader indexReader = null;
+        IndexSearcher indexSearcher = null;
         try {
             directory = getDirectory();
-            isearcher = new IndexSearcher(IndexReader.open(directory));
-            isearcher.setDefaultFieldSortScoring(true, true);
+            indexReader = IndexReader.open(directory);
+            indexSearcher = new IndexSearcher(indexReader);
+            indexSearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = null;
             try {
                 QueryParser parser = new QueryParser(Version.LUCENE_35, "name", new WhitespaceAnalyzer(Version.LUCENE_35));
                 parser.setAllowLeadingWildcard(true);
                 luceneQuery = parser.parse(searchExpression);
-            } catch (ParseException e) {
-                throw new LuceneQueryParserException("Could not parse query string.", e);
-            } catch (Exception e) {
+            } catch (ParseException | RuntimeException e) {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
-            TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
+            TopDocs topDocs = indexSearcher.search(luceneQuery, maxResults);
             Collection<ScoredTrack> trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                trackIds.add(new ScoredTrack(isearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
+                trackIds.add(new ScoredTrack(indexSearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             return new ArrayList<>(trackIds);
         } finally {
-            if (isearcher != null) {
-                isearcher.close();
-            }
-            if (directory != null) {
-                directory.close();
-            }
+            close(directory, indexReader, indexSearcher);
         }
     }
 
@@ -325,24 +340,45 @@ public class LuceneTrackService {
 
     public Collection<ScoredTrack> searchTracks(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
         Directory directory = null;
-        IndexSearcher isearcher = null;
+        IndexReader indexReader = null;
+        IndexSearcher indexSearcher = null;
         Collection<ScoredTrack> trackIds;
         try {
             directory = getDirectory();
-            isearcher = new IndexSearcher(IndexReader.open(directory));
+            indexReader = IndexReader.open(directory);
+            indexSearcher = new IndexSearcher(indexReader);
             Query luceneQuery = createQuery(smartInfos, fuzziness);
-            TopDocs topDocs = isearcher.search(luceneQuery, maxResults);
+            TopDocs topDocs = indexSearcher.search(luceneQuery, maxResults);
             trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
-                trackIds.add(new ScoredTrack(isearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
+                trackIds.add(new ScoredTrack(indexSearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             return trackIds;
         } finally {
-            if (isearcher != null) {
-                isearcher.close();
+            close(directory, indexReader, indexSearcher);
+        }
+    }
+
+    private void close(Directory directory, IndexReader indexReader, IndexSearcher indexSearcher) {
+        if (indexSearcher != null) {
+            try {
+                indexSearcher.close();
+            } catch (IOException e) {
+                LOGGER.warn("Could not close index searcher.", e);
             }
-            if (directory != null) {
+        }
+        if (indexReader != null) {
+            try {
+                indexReader.close();
+            } catch (IOException e) {
+                LOGGER.warn("Could not close index reader.", e);
+            }
+        }
+        if (directory != null) {
+            try {
                 directory.close();
+            } catch (IOException e) {
+                LOGGER.warn("Could not close directory.", e);
             }
         }
     }
