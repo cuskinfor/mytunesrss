@@ -36,7 +36,7 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
             @Override
             public void destroyObject(Object object) throws Exception {
                 if (object instanceof Connection) {
-                    ((Connection) object).close();
+                    ((AutoCloseable) object).close();
                 }
             }
         }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 25, 10, false, false, 150000, 10, 600000, true, 300000);
