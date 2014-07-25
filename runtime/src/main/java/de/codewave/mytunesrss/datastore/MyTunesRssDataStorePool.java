@@ -39,7 +39,7 @@ public class MyTunesRssDataStorePool extends GenericObjectPool {
                     ((Connection) object).close();
                 }
             }
-        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 30000, 10, 10, false, false, 60000, 10, 300000, true, 60000);
+        }, 50, GenericObjectPool.WHEN_EXHAUSTED_BLOCK, 5000, 25, 10, false, false, 150000, 10, 600000, true, 300000);
     }
 
     @Override
