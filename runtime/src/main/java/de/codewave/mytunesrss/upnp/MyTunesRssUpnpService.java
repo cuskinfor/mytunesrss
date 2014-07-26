@@ -59,8 +59,10 @@ public class MyTunesRssUpnpService {
             MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
                 @Override
                 public void run() {
-                    LOGGER.debug("Search for UPnP services.");
-                    myClingService.getControlPoint().search();
+                    if (MyTunesRss.CONFIG.isUpnpAdmin() || MyTunesRss.CONFIG.isUpnpUserHttp() || MyTunesRss.CONFIG.isUpnpUserHttps() || MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
+                        LOGGER.debug("Search for UPnP services.");
+                        myClingService.getControlPoint().search();
+                    }
                 }
             }, 0, 10, TimeUnit.SECONDS);
         } else {
