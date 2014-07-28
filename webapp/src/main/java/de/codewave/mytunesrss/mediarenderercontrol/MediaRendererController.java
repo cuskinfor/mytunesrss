@@ -18,8 +18,7 @@ import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.UpnpResponse;
-import org.fourthline.cling.model.meta.RemoteDevice;
-import org.fourthline.cling.model.meta.RemoteService;
+import org.fourthline.cling.model.meta.*;
 import org.fourthline.cling.model.types.UDAServiceId;
 import org.fourthline.cling.support.avtransport.callback.*;
 import org.fourthline.cling.support.model.*;
@@ -33,10 +32,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -82,6 +78,10 @@ public class MediaRendererController implements DeviceRegistryCallback {
     private MediaRendererController() {
         // only singleton instance above can be created
         MyTunesRss.UPNP_SERVICE.addMediaRendererRegistryCallback(this);
+    }
+
+    public synchronized String getMediaRendererId() {
+        return myMediaRenderer != null ? myMediaRenderer.getIdentity().getUdn().getIdentifierString() : "";
     }
 
     public synchronized String getMediaRendererName() {
@@ -333,6 +333,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
 
     public synchronized MediaRendererTrackInfo getCurrentTrackInfo() {
         final MediaRendererTrackInfo trackInfo = new MediaRendererTrackInfo();
+        trackInfo.setMediaRendererId(getMediaRendererId());
         trackInfo.setMediaRendererName(getMediaRendererName());
         trackInfo.setCurrentTrack(myCurrentTrack.get() + 1);
         trackInfo.setPlaying(myPlaying.get());
@@ -429,12 +430,21 @@ public class MediaRendererController implements DeviceRegistryCallback {
             LOGGER.debug("Ending subscription callback.");
             final SubscriptionCallback callback = mySubscriptionCallback;
             mySubscriptionCallback = null;
-            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+            // use a callable since we must not run the un-subscribe call in the thread that synchronizes this class
+            Future<Void> future = MyTunesRss.EXECUTOR_SERVICE.submit(new Callable<Void>() {
                 @Override
-                public void run() {
+                public Void call() {
                     callback.end();
+                    return null;
                 }
             });
+            try {
+                future.get(5, TimeUnit.SECONDS);
+            } catch (InterruptedException | ExecutionException e) {
+                LOGGER.info("Caught exception waiting for un-subscribe callback.", e);
+            } catch (TimeoutException e) {
+                LOGGER.info("Timeout waiting for un-subscribe callback.", e);
+            }
         }
         stop(true);
         if (mediaRenderer != null) {
@@ -489,11 +499,16 @@ public class MediaRendererController implements DeviceRegistryCallback {
 
                 @Override
                 protected void established(GENASubscription subscription) {
-                    LOGGER.info("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription established.");
-                    myMaxVolume = getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum();
-                    LOGGER.debug("Maximum volume for media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" is " + myMaxVolume + ".");
-                    play(myCurrentTrack.get(), true);
-                    active = true;
+                    try {
+                        LOGGER.info("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription established.");
+                        myMaxVolume = getRenderingControl().getStateVariable("Volume").getTypeDetails().getAllowedValueRange().getMaximum();
+                        LOGGER.debug("Maximum volume for media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" is " + myMaxVolume + ".");
+                        play(myCurrentTrack.get(), true);
+                        active = true;
+                    } catch (RuntimeException e) {
+                        LOGGER.warn("Media renderer subscription established method failed, un-setting media renderer.", e);
+                        setMediaRenderer(null);
+                    }
                 }
             };
             LOGGER.debug("Starting subscription callback.");

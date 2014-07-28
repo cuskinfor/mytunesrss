@@ -19,6 +19,7 @@ public class MediaPlayerRepresentation implements RestRepresentation {
     private Boolean myPlaying;
     private Integer myVolume;
     private Long myPlaylistVersion;
+    private String myMediaRendererId;
     private String myMediaRenderer;
 
     public MediaPlayerRepresentation() {
@@ -45,6 +46,9 @@ public class MediaPlayerRepresentation implements RestRepresentation {
         }
         if (IncludeExcludeInterceptor.isAttr("mediaRenderer")) {
             setMediaRenderer(mediaRendererTrackInfo.getMediaRendererName());
+        }
+        if (IncludeExcludeInterceptor.isAttr("mediaRendererId")) {
+            setMediaRendererId(mediaRendererTrackInfo.getMediaRendererId());
         }
     }
 
@@ -113,6 +117,17 @@ public class MediaPlayerRepresentation implements RestRepresentation {
 
     public void setPlaylistVersion(Long playlistVersion) {
         myPlaylistVersion = playlistVersion;
+    }
+
+    /**
+     * The ID of the currently used media renderer.
+     */
+    public String getMediaRendererId() {
+        return myMediaRendererId;
+    }
+
+    public void setMediaRendererId(String mediaRendererId) {
+        myMediaRendererId = mediaRendererId;
     }
 
     /**

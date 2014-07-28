@@ -245,6 +245,15 @@ public class MyTunesRssExecutorService {
         }
     }
 
+    public synchronized <T> Future<T> submit(Callable<T> callable) {
+        try {
+            return GENERAL_EXECUTOR.submit(callable);
+        } catch (RejectedExecutionException e) {
+            LOGGER.error("Could not schedule task.", e);
+        }
+        return null;
+    }
+
     public synchronized <T> ScheduledFuture<T> schedule(Callable<T> callable, int delay, TimeUnit timeUnit) {
         try {
             return GENERAL_EXECUTOR.schedule(callable, delay, timeUnit);

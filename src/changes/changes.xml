@@ -8,6 +8,9 @@
     <body>
 
         <release version="6.3" date="___D___">
+            <action dev="mdescher" type="add">
+                Added id of currently selected media renderer to media player representation.
+            </action>
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-517] Search adds open files to lucene index which never get closed
             </action>
