@@ -439,11 +439,9 @@ public class MediaRendererController implements DeviceRegistryCallback {
                 }
             });
             try {
-                future.get(5, TimeUnit.SECONDS);
-            } catch (InterruptedException | ExecutionException e) {
+                future.get(500, TimeUnit.MILLISECONDS);
+            } catch (InterruptedException | ExecutionException | TimeoutException e) {
                 LOGGER.info("Caught exception waiting for un-subscribe callback.", e);
-            } catch (TimeoutException e) {
-                LOGGER.info("Timeout waiting for un-subscribe callback.", e);
             }
         }
         stop(true);
@@ -457,23 +455,24 @@ public class MediaRendererController implements DeviceRegistryCallback {
             mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
 
                 private volatile boolean active;
+                private volatile boolean endCalled = false;
 
                 @Override
                 public synchronized void end() {
-                    active = false;
+                    endCalled = true;
                     super.end();
                 }
 
                 @Override
                 void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState) {
-                    if (active) {
+                    if (active && !endCalled) {
                         MediaRendererController.this.handleTransportStateChange(previousTransportState, currentTransportState);
                     }
                 }
 
                 @Override
                 protected void handleTransportUriChange(URI previousTransportUri, URI currentTransportUri) {
-                    if (active) {
+                    if (active && !endCalled) {
                         MediaRendererController.this.myCurrentRendererTransportUri = currentTransportUri;
                         if (currentTransportUri == null || !currentTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {
                             myPlaying.set(false);
@@ -487,14 +486,18 @@ public class MediaRendererController implements DeviceRegistryCallback {
                     String reasonText = reason != null ? reason.name() : "<none>";
                     String message = responseStatus != null ? responseStatus.getStatusMessage() : "<none>";
                     LOGGER.info("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription ended (reason = " + reasonText + ", message = \"" + message + "\").");
-                    setMediaRenderer(null);
+                    if (!endCalled) {
+                        setMediaRenderer(null);
+                    }
                 }
 
                 @Override
                 protected void failed(GENASubscription subscription, UpnpResponse responseStatus, Exception exception, String defaultMsg) {
                     String message = responseStatus != null ? responseStatus.getStatusMessage() : "<none>";
                     LOGGER.warn("Media renderer \"" + mediaRenderer.getDetails().getFriendlyName() + "\" subscription failed (message = \"" + message + "\").", exception);
-                    setMediaRenderer(null);
+                    if (!endCalled) {
+                        setMediaRenderer(null);
+                    }
                 }
 
                 @Override

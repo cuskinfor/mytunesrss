@@ -187,6 +187,8 @@ public class MediaPlayerResource extends RestResource {
                     break;
                 }
             }
+        } else if (renderer != null) {
+            getController().setMediaRenderer(null);
         }
         if (action != null) {
             switch (action) {

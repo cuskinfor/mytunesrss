@@ -60,7 +60,7 @@ public class MyTunesRssUpnpService {
                 @Override
                 public void run() {
                     if (MyTunesRss.CONFIG.isUpnpAdmin() || MyTunesRss.CONFIG.isUpnpUserHttp() || MyTunesRss.CONFIG.isUpnpUserHttps() || MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
-                        LOGGER.debug("Search for UPnP services.");
+                        LOGGER.debug("Searching for UPnP services.");
                         myClingService.getControlPoint().search();
                     }
                 }
