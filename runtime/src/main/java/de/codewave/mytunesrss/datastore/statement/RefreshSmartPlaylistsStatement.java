@@ -25,6 +25,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RefreshSmartPlaylistsStatement.class);
     private static final long MILLIS_PER_DAY = 1000L * 3600L * 24L;
+    private static final Object SYNC = new Object();
     public enum UpdateType {
         SCHEDULED(), ON_PLAY(), DEFAULT()
     }
@@ -229,7 +230,9 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
             statement.setString("id", playlistId);
             statement.setObject("track_id", tracks);
-            statement.execute();
+            synchronized (SYNC) {
+                statement.execute();
+            }
         } catch (IOException | ParseException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could update smart playlist.", e);

@@ -9,6 +9,9 @@
 
         <release version="6.3" date="___D___">
             <action dev="mdescher" type="add">
+                Fixed possible database deadlock when refreshig smart playlists.
+            </action>
+            <action dev="mdescher" type="add">
                 Added ID of currently selected media renderer to media player representation.
             </action>
             <action dev="mdescher" type="fix">

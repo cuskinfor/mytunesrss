@@ -743,7 +743,7 @@
     </statement>
 
     <statement name="updateSmartPlaylist">
-        <sql>SELECT id FROM playlist FOR UPDATE</sql>
+        <sql>SELECT id FROM playlist FOR UPDATE</sql> <!-- lock table first -->
         <sql>DELETE FROM link_track_playlist WHERE playlist_id = :id</sql>
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>
         <sql>{updatePlaylistCount}</sql>
