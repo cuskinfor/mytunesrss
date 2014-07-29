@@ -106,8 +106,8 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
 
     private boolean refreshSmartPlaylist(Connection connection, Collection<SmartInfo> smartInfos, String playlistId) throws SQLException {
         LATCH_MAP.putIfAbsent(playlistId, new AtomicInteger(0));
-        if (LATCH_MAP.get(playlistId).getAndIncrement() < 2) { // only 2 requests may enter at the same time
-            synchronized (LATCH_MAP.get(playlistId)) { // only one request may enter at any time and at most one is allowed to wait
+        if (LATCH_MAP.get(playlistId).getAndIncrement() < 2) { // at most two concurrent requests may enter here at any time
+            synchronized (LATCH_MAP.get(playlistId)) { // only one request may enter at any time and only one (see above) is allowed to wait
                 LOGGER.info("Refreshing smart playlist with id \"" + playlistId + "\".");
                 try {
                     if (SmartInfo.isLuceneCriteria(smartInfos)) {
