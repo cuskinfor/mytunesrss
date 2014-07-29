@@ -106,8 +106,8 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
 
     private boolean refreshSmartPlaylist(Connection connection, Collection<SmartInfo> smartInfos, String playlistId) throws SQLException {
         LATCH_MAP.putIfAbsent(playlistId, new AtomicInteger(0));
-        if (LATCH_MAP.get(playlistId).getAndIncrement() < 2) {
-            synchronized (LATCH_MAP.get(playlistId)) {
+        if (LATCH_MAP.get(playlistId).getAndIncrement() < 2) { // only 2 requests may enter at the same time
+            synchronized (LATCH_MAP.get(playlistId)) { // only one request may enter at any time and at most one is allowed to wait
                 LOGGER.info("Refreshing smart playlist with id \"" + playlistId + "\".");
                 try {
                     if (SmartInfo.isLuceneCriteria(smartInfos)) {
@@ -238,7 +238,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
                     statement.setString("id", playlistId);
                     statement.setObject("track_id", tracks);
-                    synchronized (LATCH_MAP) { // synchronize globally to prevent databack locks
+                    synchronized (LATCH_MAP) { // synchronize globally to prevent database locks
                         statement.execute();
                     }
                     return true;
