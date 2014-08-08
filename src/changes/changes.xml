@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.3" date="___D___">
+        <release version="6.3" date="2014-08-08">
             <action dev="mdescher" type="add">
                 Fixed possible database deadlock when refreshig smart playlists.
             </action>
