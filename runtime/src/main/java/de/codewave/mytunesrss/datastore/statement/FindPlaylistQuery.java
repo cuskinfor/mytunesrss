@@ -28,7 +28,11 @@ public class FindPlaylistQuery extends AbstractFindPlaylistQuery<QueryResult<Pla
     }
 
     public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
-        super(user, types, id, containerId, includeHidden, matchingOwnerOnly);
+        this(user, types, id, containerId, includeHidden, matchingOwnerOnly, false);
+    }
+
+    public FindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly, boolean ignoreTracks) {
+        super(user, types, id, containerId, includeHidden, matchingOwnerOnly, ignoreTracks);
     }
 
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {

@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="6.3.1" date="2014-xx-xx">
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-518] Empty playlists might not be shown in manager
+            </action>
+        </release>
+
         <release version="6.3" date="2014-08-08">
             <action dev="mdescher" type="add">
                 Fixed possible database deadlock when refreshig smart playlists.

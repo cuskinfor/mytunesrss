@@ -25,7 +25,7 @@ public class ShowPlaylistManagerCommandHandler extends MyTunesRssCommandHandler 
         if (getAuthUser().isCreatePlaylists()) {
             QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), Arrays.asList(
                     PlaylistType.MyTunes,
-                    PlaylistType.MyTunesSmart), null, null, false, true));
+                    PlaylistType.MyTunesSmart), null, null, false, true, true));
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Playlist> playlists;
             if (pageSize > 0 && queryResult.getResultSize() > pageSize) {

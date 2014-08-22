@@ -32,6 +32,7 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
     private boolean myMatchingOwnerOnly;
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
+    private boolean myIgnoreTracks;
 
     protected AbstractFindPlaylistQuery(List<PlaylistType> types, String id, String containerId, boolean includeHidden) {
         myTypes = types;
@@ -41,6 +42,10 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
     }
 
     protected AbstractFindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
+        this(user, types, id, containerId, includeHidden, matchingOwnerOnly, false);
+    }
+
+    protected AbstractFindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly, boolean ignoreTracks) {
         this(types, id, containerId, includeHidden);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
@@ -49,6 +54,7 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
         myMatchingOwnerOnly = matchingOwnerOnly;
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
+        myIgnoreTracks = ignoreTracks;
     }
 
     protected SmartStatement createStatement(Connection connection, Map<String, Boolean> conditionals) throws SQLException {
@@ -82,12 +88,12 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("hidden", !myHiddenPlaylistIds.isEmpty());
-        boolean track = (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null;
+        boolean track = !myIgnoreTracks && ((myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
         conditionals.put("track_or_restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty() || track);
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
-        conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
-        conditionals.put("datasource", myPermittedDataSources != null);
+        conditionals.put("mediatype", !myIgnoreTracks && myMediaTypes != null && myMediaTypes.length > 0);
+        conditionals.put("datasource", !myIgnoreTracks && myPermittedDataSources != null);
         conditionals.put("track", track);
         return conditionals;
     }
