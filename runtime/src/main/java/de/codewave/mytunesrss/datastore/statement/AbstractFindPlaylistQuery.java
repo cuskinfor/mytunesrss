@@ -8,12 +8,10 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -32,7 +30,6 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
     private boolean myMatchingOwnerOnly;
     private MediaType[] myMediaTypes;
     private String[] myPermittedDataSources;
-    private boolean myIgnoreTracks;
 
     protected AbstractFindPlaylistQuery(List<PlaylistType> types, String id, String containerId, boolean includeHidden) {
         myTypes = types;
@@ -42,10 +39,6 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
     }
 
     protected AbstractFindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly) {
-        this(user, types, id, containerId, includeHidden, matchingOwnerOnly, false);
-    }
-
-    protected AbstractFindPlaylistQuery(User user, List<PlaylistType> types, String id, String containerId, boolean includeHidden, boolean matchingOwnerOnly, boolean ignoreTracks) {
         this(types, id, containerId, includeHidden);
         myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
         myExcludedPlaylistIds = user.getExcludedPlaylistIds();
@@ -54,7 +47,11 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
         myMatchingOwnerOnly = matchingOwnerOnly;
         myMediaTypes = FindTrackQuery.getQueryMediaTypes(user);
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
-        myIgnoreTracks = ignoreTracks;
+    }
+
+    public void setMatchingOwnerOnly(User user) {
+        myUserName = user.getName();
+        myMatchingOwnerOnly = true;
     }
 
     protected SmartStatement createStatement(Connection connection, Map<String, Boolean> conditionals) throws SQLException {
@@ -88,12 +85,12 @@ public abstract class AbstractFindPlaylistQuery<T> extends DataStoreQuery<T> {
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
         conditionals.put("excluded", !myExcludedPlaylistIds.isEmpty());
         conditionals.put("hidden", !myHiddenPlaylistIds.isEmpty());
-        boolean track = !myIgnoreTracks && ((myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null);
+        boolean track = (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null;
         conditionals.put("track_or_restricted_or_excluded", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty() || track);
         conditionals.put("types", myTypes != null && !myTypes.isEmpty());
         conditionals.put("id", StringUtils.isNotBlank(myId));
-        conditionals.put("mediatype", !myIgnoreTracks && myMediaTypes != null && myMediaTypes.length > 0);
-        conditionals.put("datasource", !myIgnoreTracks && myPermittedDataSources != null);
+        conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
+        conditionals.put("datasource", myPermittedDataSources != null);
         conditionals.put("track", track);
         return conditionals;
     }

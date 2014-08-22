@@ -23,9 +23,7 @@ public class ShowPlaylistManagerCommandHandler extends MyTunesRssCommandHandler 
     @Override
     public void executeAuthorized() throws Exception {
         if (getAuthUser().isCreatePlaylists()) {
-            QueryResult<Playlist> queryResult = getTransaction().executeQuery(new FindPlaylistQuery(getAuthUser(), Arrays.asList(
-                    PlaylistType.MyTunes,
-                    PlaylistType.MyTunesSmart), null, null, false, true, true));
+            QueryResult<Playlist> queryResult = getTransaction().executeQuery(FindPlaylistQuery.createForPlaylistManager(getAuthUser()));
             int pageSize = getWebConfig().getEffectivePageSize();
             List<Playlist> playlists;
             if (pageSize > 0 && queryResult.getResultSize() > pageSize) {
