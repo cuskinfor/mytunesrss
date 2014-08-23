@@ -1912,6 +1912,10 @@ public class MyTunesRssConfig {
             setVersion("4.8.0");
             myTranscoderConfigs = TranscoderConfig.getDefaultTranscoders();
         }
+        if (current.compareTo(new Version("6.3.2")) < 0) {
+            setVersion("6.3.2");
+            MyTunesRss.REBUILD_LUCENE_INDEX_ON_STARTUP = true;
+        }
     }
 
     private String migrateFallback(String fallback) {
