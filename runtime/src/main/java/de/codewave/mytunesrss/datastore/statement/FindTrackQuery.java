@@ -14,7 +14,6 @@ import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryParser.ParseException;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
@@ -44,7 +43,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         return result;
     }
 
-    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder, int maxResults) throws IOException, ParseException {
+    public static FindTrackQuery getForSearchTerm(User user, String searchTerm, int fuzziness, SortOrder sortOrder, int maxResults) throws IOException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();
@@ -57,7 +56,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         return query;
     }
 
-    public static FindTrackQuery getForExpertSearchTerm(User user, String searchTerm, SortOrder sortOrder, int maxResults) throws IOException, ParseException, LuceneQueryParserException {
+    public static FindTrackQuery getForExpertSearchTerm(User user, String searchTerm, SortOrder sortOrder, int maxResults) throws IOException, LuceneQueryParserException {
         FindTrackQuery query = new FindTrackQuery();
         query.mySortOrder = sortOrder;
         query.myRestrictedPlaylistIds = user.getRestrictedPlaylistIds();

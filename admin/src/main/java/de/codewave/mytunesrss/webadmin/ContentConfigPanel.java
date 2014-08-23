@@ -30,7 +30,7 @@ import java.util.concurrent.Callable;
 
 public class ContentConfigPanel extends MyTunesRssConfigPanel {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContentConfigPanel.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ContentConfigPanel.class);
 
     private TreeTable myPlaylists;
     private Table myGenres;
@@ -39,10 +39,16 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
     private Set<String> oldHiddenGenres = new HashSet<>();
     private Set<String> oldHiddenPlaylists = new HashSet<>();
     private Map<String, String> oldGenreMappings = new HashMap<>();
+    private Button myReindexButton;
 
     public void attach() {
         super.attach();
-        init(getBundleString("contentsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("contentsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
+
+        myReindexButton = getComponentFactory().createButton("contentsConfigPanel.index.reindex", this);
+        Panel panel = new Panel(getBundleString("contentsConfigPanel.index.caption"));
+        panel.addComponent(myReindexButton);
+        addComponent(panel);
 
         myPlaylists = new TreeTable();
         myPlaylists.setCacheRate(50);
@@ -53,7 +59,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         myPlaylists.setColumnExpandRatio("name", 1);
         myPlaylists.setSortContainerPropertyId("name");
         myPlaylists.setEditable(false);
-        Panel panel = new Panel(getBundleString("contentsConfigPanel.visiblePlaylists.caption"));
+        panel = new Panel(getBundleString("contentsConfigPanel.visiblePlaylists.caption"));
         panel.addComponent(myPlaylists);
         addComponent(panel);
 
@@ -83,7 +89,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         panel.addComponent(myAddGenreMapping);
         addComponent(panel);
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }
@@ -159,10 +165,10 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         final boolean genreMappingsChanged = isGenreMappingsChanged();
         final boolean hiddenPlaylistsChanged = isHiddenPlaylistsChanged();
         final boolean hiddenGenresChanged = isHiddenGenresChanged();
-        LOG.debug("genreMappingsChanged = " + genreMappingsChanged + ", hiddenPlaylistsChanged = " + hiddenPlaylistsChanged + ", hiddenGenresChanged = " + hiddenGenresChanged + ".");
+        LOGGER.debug("genreMappingsChanged = " + genreMappingsChanged + ", hiddenPlaylistsChanged = " + hiddenPlaylistsChanged + ", hiddenGenresChanged = " + hiddenGenresChanged + ".");
         if (hiddenGenresChanged || hiddenPlaylistsChanged || genreMappingsChanged) {
             final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
-            applicationWindow.showBlockingMessage("contentConfigPanel.info.updatingDatabase");
+            applicationWindow.showBlockingMessage("contentsConfigPanel.info.updatingDatabase");
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseJob(new Callable<Void>() {
                 public Void call() {
                     try {
@@ -185,8 +191,8 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                                         session.executeStatement(statement);
                                         session.commit();
                                     } catch (SQLException e) {
-                                        if (LOG.isErrorEnabled()) {
-                                            LOG.error("Could not update playlist attributes.", e);
+                                        if (LOGGER.isErrorEnabled()) {
+                                            LOGGER.error("Could not update playlist attributes.", e);
                                         }
                                         session.rollback();
                                     }
@@ -215,8 +221,8 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                                         });
                                         session.commit();
                                     } catch (SQLException e) {
-                                        if (LOG.isErrorEnabled()) {
-                                            LOG.error("Could not update genre hidden attribute.", e);
+                                        if (LOGGER.isErrorEnabled()) {
+                                            LOGGER.error("Could not update genre hidden attribute.", e);
                                         }
                                         session.rollback();
                                     }
@@ -230,15 +236,15 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                                 StopWatch.start("Updating genre mappings after saving content configuration");
                                 MyTunesRss.STORE.executeStatement(new RenameGenresStatement(MyTunesRss.CONFIG.getGenreMappings()));
                             } catch (SQLException e) {
-                                if (LOG.isErrorEnabled()) {
-                                    LOG.error("Could not rename genres.", e);
+                                if (LOGGER.isErrorEnabled()) {
+                                    LOGGER.error("Could not rename genres.", e);
                                 }
                             } finally {
                                 StopWatch.stop();
                             }
                         }
                     } catch (RuntimeException e) {
-                        LOG.warn("Unhandled exception during database update after content config change.", e);
+                        LOGGER.warn("Unhandled exception during database update after content config change.", e);
                     } finally {
                         MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
                         applicationWindow.hideBlockingMessage();
@@ -307,6 +313,21 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         if (clickEvent.getSource() == myAddGenreMapping) {
             addGenreMapping("", "");
             setTablePageLengths();
+        } else if (clickEvent.getSource() == myReindexButton) {
+            final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
+            applicationWindow.showBlockingMessage("contentsConfigPanel.info.rebuildingIndex");
+            MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                @Override
+                public void run() {
+                    MyTunesRssUtils.rebuildLuceneIndex();
+                    try {
+                        MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.DEFAULT));
+                    } catch (SQLException|RuntimeException e) {
+                        LOGGER.info("Could not refresh smart playlists.", e);
+                    }
+                    applicationWindow.hideBlockingMessage();
+                }
+            });
         } else if (findTableItemWithObject(myGenreMappings, clickEvent.getSource()) != null) {
             myGenreMappings.removeItem(findTableItemWithObject(myGenreMappings, clickEvent.getSource()));
             setTablePageLengths();

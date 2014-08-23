@@ -5,13 +5,13 @@ import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.datastore.statement.SmartInfo;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.LimitTokenCountAnalyzer;
-import org.apache.lucene.analysis.WhitespaceAnalyzer;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.LimitTokenCountAnalyzer;
+import org.apache.lucene.document.*;
 import org.apache.lucene.index.*;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.sandbox.queries.SlowFuzzyQuery;
 import org.apache.lucene.search.*;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
@@ -79,17 +79,17 @@ public class LuceneTrackService {
             myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
         }
         if (myAnalyzer == null) {
-            myAnalyzer = new LimitTokenCountAnalyzer(new WhitespaceAnalyzer(Version.LUCENE_35), 300);
+            myAnalyzer = new LimitTokenCountAnalyzer(new WhitespaceAnalyzer(Version.LUCENE_4_9), 300);
         }
         try {
             if (myIndexWriter == null) {
-                IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, myAnalyzer);
+                IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_4_9, myAnalyzer);
                 indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.APPEND);
                 myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
             }
         } catch (IndexNotFoundException e) {
             LOGGER.warn("No lucene index found, creating a new one.", e);
-            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_35, myAnalyzer);
+            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_4_9, myAnalyzer);
             indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
         }
@@ -142,32 +142,32 @@ public class LuceneTrackService {
             LOGGER.debug("Creating lucene document for track \"" + track + "\".");
         }
         Document document = new Document();
-        document.add(new Field("id", track.getId(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("source_id", track.getSourceId(), Field.Store.YES, Field.Index.NO));
-        document.add(new Field("filename", StringUtils.lowerCase(track.getFilename()), Field.Store.NO, Field.Index.NOT_ANALYZED));
+        document.add(new StoredField("id", track.getId()));
+        document.add(new StoredField("source_id", track.getSourceId()));
+        document.add(new StringField("filename", StringUtils.lowerCase(track.getFilename()), Field.Store.NO));
         if (StringUtils.isNotBlank(track.getName())) {
-            document.add(new Field("name", StringUtils.lowerCase(track.getName()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("name", StringUtils.lowerCase(track.getName()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getAlbum())) {
-            document.add(new Field("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("album", StringUtils.lowerCase(track.getAlbum()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getArtist())) {
-            document.add(new Field("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("artist", StringUtils.lowerCase(track.getArtist()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getSeries())) {
-            document.add(new Field("series", StringUtils.lowerCase(track.getSeries()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("series", StringUtils.lowerCase(track.getSeries()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getComment())) {
-            document.add(new Field("comment", StringUtils.lowerCase(track.getComment()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("comment", StringUtils.lowerCase(track.getComment()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getAlbumArtist())) {
-            document.add(new Field("album_artist", StringUtils.lowerCase(track.getAlbumArtist()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("album_artist", StringUtils.lowerCase(track.getAlbumArtist()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getGenre())) {
-            document.add(new Field("genre", StringUtils.lowerCase(track.getGenre()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("genre", StringUtils.lowerCase(track.getGenre()), Field.Store.NO));
         }
         if (StringUtils.isNotBlank(track.getComposer())) {
-            document.add(new Field("composer", StringUtils.lowerCase(track.getComposer()), Field.Store.NO, Field.Index.ANALYZED));
+            document.add(new TextField("composer", StringUtils.lowerCase(track.getComposer()), Field.Store.NO));
         }
         return document;
     }
@@ -250,18 +250,17 @@ public class LuceneTrackService {
         }
     }
 
-    public List<ScoredTrack> searchTracks(String[] searchTerms, int fuzziness, int maxResults) throws IOException, ParseException {
+    public List<ScoredTrack> searchTracks(String[] searchTerms, int fuzziness, int maxResults) throws IOException {
         Directory directory = null;
         IndexReader indexReader = null;
         IndexSearcher indexSearcher = null;
         Collection<ScoredTrack> trackIds;
         try {
             directory = getDirectory();
-            indexReader = IndexReader.open(directory);
+            indexReader = DirectoryReader.open(directory);
             indexSearcher = new IndexSearcher(indexReader);
-            indexSearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = createQuery(searchTerms, fuzziness);
-            TopDocs topDocs = indexSearcher.search(luceneQuery, maxResults);
+            TopDocs topDocs = indexSearcher.search(luceneQuery, null, maxResults, Sort.RELEVANCE, true, true);
             trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(new ScoredTrack(indexSearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
@@ -269,7 +268,7 @@ public class LuceneTrackService {
             LOGGER.debug("Lucene query returned " + trackIds.size() + " tracks.");
             return new ArrayList<>(trackIds);
         } finally {
-            close(directory, indexReader, indexSearcher);
+            close(directory, indexReader);
         }
     }
 
@@ -279,25 +278,24 @@ public class LuceneTrackService {
         IndexSearcher indexSearcher = null;
         try {
             directory = getDirectory();
-            indexReader = IndexReader.open(directory);
+            indexReader = DirectoryReader.open(directory);
             indexSearcher = new IndexSearcher(indexReader);
-            indexSearcher.setDefaultFieldSortScoring(true, true);
             Query luceneQuery = null;
             try {
-                QueryParser parser = new QueryParser(Version.LUCENE_35, "name", new WhitespaceAnalyzer(Version.LUCENE_35));
+                QueryParser parser = new QueryParser(Version.LUCENE_4_9, "name", new WhitespaceAnalyzer(Version.LUCENE_4_9));
                 parser.setAllowLeadingWildcard(true);
                 luceneQuery = parser.parse(searchExpression);
             } catch (ParseException | RuntimeException e) {
                 throw new LuceneQueryParserException("Could not parse query string.", e);
             }
-            TopDocs topDocs = indexSearcher.search(luceneQuery, maxResults);
+            TopDocs topDocs = indexSearcher.search(luceneQuery, null, maxResults, Sort.RELEVANCE, true, true);
             Collection<ScoredTrack> trackIds = new LinkedHashSet<>();
             for (ScoreDoc scoreDoc : topDocs.scoreDocs) {
                 trackIds.add(new ScoredTrack(indexSearcher.doc(scoreDoc.doc).get("id"), scoreDoc.score));
             }
             return new ArrayList<>(trackIds);
         } finally {
-            close(directory, indexReader, indexSearcher);
+            close(directory, indexReader);
         }
     }
 
@@ -316,7 +314,7 @@ public class LuceneTrackService {
                 query.setBoost(1000f);
                 termOrQuery.add(query, BooleanClause.Occur.SHOULD);
                 if (fuzziness > 0) {
-                    query = new FuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f);
+                    query = new SlowFuzzyQuery(new Term(field, escapedSearchTerm), ((float) (100 - fuzziness)) / 100f);
                     termOrQuery.add(query, BooleanClause.Occur.SHOULD);
                 }
             }
@@ -345,7 +343,7 @@ public class LuceneTrackService {
         Collection<ScoredTrack> trackIds;
         try {
             directory = getDirectory();
-            indexReader = IndexReader.open(directory);
+            indexReader = DirectoryReader.open(directory);
             indexSearcher = new IndexSearcher(indexReader);
             Query luceneQuery = createQuery(smartInfos, fuzziness);
             TopDocs topDocs = indexSearcher.search(luceneQuery, maxResults);
@@ -355,18 +353,11 @@ public class LuceneTrackService {
             }
             return trackIds;
         } finally {
-            close(directory, indexReader, indexSearcher);
+            close(directory, indexReader);
         }
     }
 
-    private void close(Directory directory, IndexReader indexReader, IndexSearcher indexSearcher) {
-        if (indexSearcher != null) {
-            try {
-                indexSearcher.close();
-            } catch (IOException e) {
-                LOGGER.warn("Could not close index searcher.", e);
-            }
-        }
+    private void close(Directory directory, IndexReader indexReader) {
         if (indexReader != null) {
             try {
                 indexReader.close();
@@ -481,6 +472,7 @@ public class LuceneTrackService {
             // add a dummy query
             andQuery.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
         }
+        LOGGER.debug("QUERY for \"" + StringUtils.join(smartInfos, " ") + "\" (fuzziness=" + fuzziness + "): " + andQuery);
         return andQuery;
     }
 
@@ -488,7 +480,7 @@ public class LuceneTrackService {
         if (StringUtils.isNotEmpty(pattern)) {
             for (String term : StringUtils.split(pattern)) {
                 if (fuzziness > 0) {
-                    query.add(new FuzzyQuery(new Term(field, QueryParser.escape(term)), ((float) (100 - fuzziness)) / 100f), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
+                    query.add(new SlowFuzzyQuery(new Term(field, QueryParser.escape(term)), ((float) (100 - fuzziness)) / 100f), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                 } else {
                     query.add(new WildcardQuery(new Term(field, "*" + QueryParser.escape(term) + "*")), not ? BooleanClause.Occur.MUST_NOT : BooleanClause.Occur.MUST);
                 }
@@ -499,7 +491,7 @@ public class LuceneTrackService {
     private void addToOrQuery(BooleanQuery query, String field, String pattern, int fuzziness) {
         if (StringUtils.isNotEmpty(pattern)) {
             if (fuzziness > 0) {
-                query.add(new FuzzyQuery(new Term(field, QueryParser.escape(pattern)), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
+                query.add(new SlowFuzzyQuery(new Term(field, QueryParser.escape(pattern)), ((float) (100 - fuzziness)) / 100f), BooleanClause.Occur.SHOULD);
             } else {
                 query.add(new WildcardQuery(new Term(field, "*" + QueryParser.escape(pattern) + "*")), BooleanClause.Occur.SHOULD);
             }

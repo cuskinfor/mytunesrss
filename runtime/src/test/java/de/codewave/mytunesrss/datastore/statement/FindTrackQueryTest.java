@@ -3,16 +3,12 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
 import de.codewave.mytunesrss.config.User;
-import org.apache.lucene.queryParser.ParseException;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
-import static org.junit.Assert.*;
 
 public class FindTrackQueryTest {
 
@@ -31,7 +27,7 @@ public class FindTrackQueryTest {
     }
 
     @Test
-    public void testQueries() throws SQLException, IOException, ParseException {
+    public void testQueries() throws SQLException, IOException {
         MyTunesRss.CACHE_DATA_PATH = MyTunesRssTestUtils.createTempDir().getAbsolutePath();
         MyTunesRss.PREFERENCES_DATA_PATH = MyTunesRssTestUtils.createTempDir().getAbsolutePath();
         MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();

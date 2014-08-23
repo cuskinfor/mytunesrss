@@ -8,6 +8,15 @@
     <body>
 
         <release version="6.3.1" date="2014-08-22">
+            <action dev="mdescher" type="add">
+                Added button to recreate the search index on the content config panel in the admin interface.
+            </action>
+            <action dev="mdescher" type="fix">
+                [MYTUNESRSS-519] Smart playlist with genre criteria "R&amp;B" is always empty
+            </action>
+        </release>
+
+        <release version="6.3.1" date="2014-08-22">
             <action dev="mdescher" type="fix">
                 [MYTUNESRSS-518] Empty playlists might not be shown in manager
             </action>

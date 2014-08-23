@@ -5,24 +5,22 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
-import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import de.codewave.mytunesrss.rest.RequiredUserPermissions;
 import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.*;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.Version;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.mutable.MutableInt;
-import org.apache.lucene.queryParser.ParseException;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.Range;
 import org.jboss.resteasy.annotations.GZIP;
@@ -42,8 +40,6 @@ public class LibraryResource extends RestResource {
 
     /**
      * Get URIs of all kind of data in the library.
-     *
-     * @param uriInfo
      *
      * @return Tbe library representation which contains several URIs for further data retrieval.
      */
@@ -350,7 +346,6 @@ public class LibraryResource extends RestResource {
      * @return A list of tracks.
      *
      * @throws IOException
-     * @throws ParseException
      * @throws SQLException
      * @throws LuceneQueryParserException
      */
@@ -367,7 +362,7 @@ public class LibraryResource extends RestResource {
             @QueryParam("fuzziness") @DefaultValue("35") @Range(min = 0, max = 100, message = "Fuzziness must a be a value from 0 to 100.") int fuzziness,
             @QueryParam("max") @DefaultValue("1000") @Range(min = 1, max = 1000, message = "Max must be a value from 1 to 1000.") int maxItems,
             @QueryParam("sort") @DefaultValue("Album") SortOrder sortOrder
-            ) throws IOException, ParseException, SQLException, LuceneQueryParserException {
+            ) throws IOException, SQLException, LuceneQueryParserException {
         QueryResult<Track> queryResult = null;
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (expert) {
