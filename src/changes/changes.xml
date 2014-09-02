@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.3.2" date="2014-xx-xx">
+        <release version="6.3.2" date="2014-09-02">
             <action dev="mdescher" type="add">
                 Added button to recreate the search index on the content config panel in the admin interface.
             </action>
