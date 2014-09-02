@@ -1,5 +1,8 @@
 package de.codewave.mytunesrss.datastore.statement;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.util.Collection;
 
 /**
@@ -52,5 +55,10 @@ public class SmartInfo {
 
     public boolean isLuceneCriteria() {
         return myFieldType.isLucene();
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("type", myFieldType).append("pattern", myPattern).append("invert", myInvert).build();
     }
 }

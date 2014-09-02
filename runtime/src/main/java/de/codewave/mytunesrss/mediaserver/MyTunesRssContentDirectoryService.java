@@ -5,13 +5,6 @@
 
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
-import de.codewave.mytunesrss.datastore.statement.Track;
-import de.codewave.utils.sql.EmptyQueryResult;
-import de.codewave.utils.sql.QueryResult;
-import org.apache.lucene.queryParser.ParseException;
 import org.fourthline.cling.model.types.ErrorCode;
 import org.fourthline.cling.support.contentdirectory.ContentDirectoryException;
 import org.fourthline.cling.support.contentdirectory.DIDLParser;
@@ -21,9 +14,7 @@ import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 

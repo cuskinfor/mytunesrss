@@ -8,16 +8,16 @@ import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.mytunesrss.lucene.AddLuceneTrack;
+import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.DataStoreStatement;
-import de.codewave.utils.sql.ResultSetType;
-import de.codewave.utils.sql.SmartStatement;
+import de.codewave.utils.sql.*;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
@@ -1344,6 +1344,45 @@ public class MyTunesRssUtils {
             }
         } catch (SQLException e) {
             LOGGER.error("Could not create natural sort order names using statement \"" + statement + "\".", e);
+        }
+    }
+
+    public static void rebuildLuceneIndex() {
+        StopWatch.start("Recreating lucene index from scratch");
+        try {
+            MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
+            FindAllTracksQuery query = new FindAllTracksQuery(SortOrder.KeepOrder);
+            query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
+            DataStoreSession dataStoreSession = MyTunesRss.STORE.getTransaction();
+            try {
+               QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
+                for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
+                    LuceneTrack luceneTrack = new AddLuceneTrack();
+                    luceneTrack.setId(track.getId());
+                    luceneTrack.setSourceId(track.getSourceId());
+                    luceneTrack.setAlbum(track.getAlbum());
+                    luceneTrack.setAlbumArtist(track.getAlbumArtist());
+                    luceneTrack.setArtist(track.getArtist());
+                    luceneTrack.setComment(track.getComment());
+                    luceneTrack.setComposer(track.getComposer());
+                    luceneTrack.setFilename(track.getFilename());
+                    luceneTrack.setGenre(track.getGenre());
+                    luceneTrack.setName(track.getName());
+                    luceneTrack.setSeries(track.getSeries());
+                    try {
+                        MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
+                    } catch (IOException e) {
+                        LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
+                    }
+                }
+            } finally {
+                MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
+                dataStoreSession.rollback();
+            }
+        } catch (IOException | SQLException e) {
+            LOGGER.error("Could not recreate lucene index.", e);
+        } finally {
+            StopWatch.stop();
         }
     }
 }

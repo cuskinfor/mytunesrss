@@ -320,41 +320,9 @@ public class MyTunesRss {
                 REBUILD_LUCENE_INDEX_ON_STARTUP = false;
                 ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.rebuildingLuceneIndex"));
                 info.show(2000L);
-                StopWatch.start("Recreating lucene index from scratch");
                 try {
-                    MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
-                    FindAllTracksQuery query = new FindAllTracksQuery(SortOrder.KeepOrder);
-                    query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
-                    DataStoreSession dataStoreSession = MyTunesRss.STORE.getTransaction();
-                    try {
-                       QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
-                        for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
-                            LuceneTrack luceneTrack = new AddLuceneTrack();
-                            luceneTrack.setId(track.getId());
-                            luceneTrack.setSourceId(track.getSourceId());
-                            luceneTrack.setAlbum(track.getAlbum());
-                            luceneTrack.setAlbumArtist(track.getAlbumArtist());
-                            luceneTrack.setArtist(track.getArtist());
-                            luceneTrack.setComment(track.getComment());
-                            luceneTrack.setComposer(track.getComposer());
-                            luceneTrack.setFilename(track.getFilename());
-                            luceneTrack.setGenre(track.getGenre());
-                            luceneTrack.setName(track.getName());
-                            luceneTrack.setSeries(track.getSeries());
-                            try {
-                                MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
-                            } catch (IOException e) {
-                                LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
-                            }
-                        }
-                    } finally {
-                        MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
-                        dataStoreSession.rollback();
-                    }
-                } catch (IOException | SQLException e) {
-                    LOGGER.error("Could not recreate lucene index.", e);
+                    MyTunesRssUtils.rebuildLuceneIndex();
                 } finally {
-                    StopWatch.stop();
                     info.destroy();
                 }
             }

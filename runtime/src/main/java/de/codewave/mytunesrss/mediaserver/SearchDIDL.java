@@ -10,9 +10,9 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.NotYetImplementedException;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryParser.ParseException;
 import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,7 +51,7 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
                     }
                 }
             }, firstResult, (int) maxResults);
-        } catch (IOException | ParseException e) {
+        } catch (IOException e) {
             LOGGER.error("Could not create search query.", e);
         }
     }

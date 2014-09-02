@@ -55,7 +55,11 @@
     <orderEntry type="library" name="Maven: org.springframework.integration:spring-integration-core:2.1.0.RELEASE" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: javax.activation:activation:1.1.1" level="project" />
     <orderEntry type="library" name="Maven: javax.mail:mail:1.4.4" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:3.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-core:4.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-analyzers-common:4.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-queryparser:4.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-queries:4.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.lucene:lucene-sandbox:4.9.0" level="project" />
     <orderEntry type="library" name="Maven: de.codewave.systray:systray:1.2" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:7.5.4.v20111024" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-continuation:7.5.4.v20111024" level="project" />
