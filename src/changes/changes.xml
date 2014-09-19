@@ -9,6 +9,9 @@
 
         <release version="6.3.3" date="2014-09-19">
             <action dev="mdescher" type="fix">
+                Fixed checkbox for private playlists which was always disabled when the page was loaded.
+            </action>
+            <action dev="mdescher" type="fix">
                 Fixed SQL statement when browsing genres with playlist exclusions activated.
             </action>
         </release>

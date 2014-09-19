@@ -107,7 +107,7 @@
             } else {
                 totalCount = playlist.trackCount;
             }
-            if (playlist.userPrivate) {
+            if (playlist.private) {
                 $jQ("#privatePlaylist").attr("checked", "checked");
             } else {
                 $jQ("#privatePlaylist").removeAttr("checked");
@@ -226,7 +226,7 @@
                                <c:if test="${!authUser.createPublicPlaylists}">disabled="disabled"</c:if>
 						       id="privatePlaylist"
 						       value="true"
-						       <c:if test="${playlist.userPrivate}">checked="checked"</c:if> />
+						       <c:if test="${playlist.private}">checked="checked"</c:if> />
 						       <fmt:message key="playlistUserPrivate" />
 		    		</td>
 		    	</tr>
