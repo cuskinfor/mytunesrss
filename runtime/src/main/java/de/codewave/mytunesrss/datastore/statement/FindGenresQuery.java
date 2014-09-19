@@ -52,7 +52,7 @@ public class FindGenresQuery extends MyTunesRssDataStoreQuery<QueryResult<Genre>
         conditionals.put("nohidden", !myIncludeHidden);
         conditionals.put("mediatype", myMediaTypes != null && myMediaTypes.length > 0);
         conditionals.put("datasource", myPermittedDataSources != null);
-        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || !myRestrictedPlaylistIds.isEmpty());
+        conditionals.put("track", (myMediaTypes != null && myMediaTypes.length > 0) || myPermittedDataSources != null || !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findGenres", conditionals);
         statement.setInt("index", myIndex);
         statement.setItems("restrictedPlaylistIds", myRestrictedPlaylistIds);

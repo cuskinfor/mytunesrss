@@ -7,6 +7,12 @@
 
     <body>
 
+        <release version="6.3.3" date="2014-09-19">
+            <action dev="mdescher" type="fix">
+                Fixed SQL statement when browsing genres with playlist exclusions activated.
+            </action>
+        </release>
+
         <release version="6.3.2" date="2014-09-02">
             <action dev="mdescher" type="add">
                 Added button to recreate the search index on the content config panel in the admin interface.
