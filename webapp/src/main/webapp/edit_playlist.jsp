@@ -226,7 +226,7 @@
                                <c:if test="${!authUser.createPublicPlaylists}">disabled="disabled"</c:if>
 						       id="privatePlaylist"
 						       value="true"
-						       <c:if test="${playlist.private}">checked="checked"</c:if> />
+						       <c:if test="${playlist.userPrivate || !authUser.createPublicPlaylists}">checked="checked"</c:if> />
 						       <fmt:message key="playlistUserPrivate" />
 		    		</td>
 		    	</tr>

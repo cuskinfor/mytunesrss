@@ -67,7 +67,7 @@
                                        <c:if test="${!authUser.createPublicPlaylists}">disabled="disabled"</c:if>
                                        name="smartPlaylist.playlist.userPrivate"
                                        value="true"
-                                       <c:if test="${smartPlaylist.playlist.userPrivate}">checked="checked"</c:if> />
+                                       <c:if test="${smartPlaylist.playlist.userPrivate || !authUser.createPublicPlaylists}">checked="checked"</c:if> />
                             </td>
                         </tr>
 
