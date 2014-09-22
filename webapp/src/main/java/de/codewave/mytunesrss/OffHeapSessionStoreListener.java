@@ -35,7 +35,10 @@ public class OffHeapSessionStoreListener implements ServletContextListener, Http
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
-        getMVStore(sce.getServletContext()).close();
+        MVStore mvStore = getMVStore(sce.getServletContext());
+        if (mvStore != null) {
+            mvStore.close();
+        }
         sce.getServletContext().removeAttribute(OffHeapSessionStoreListener.class.getName());
         // TODO: wrong class
         LOGGER.info("Removing media renderer from media renderer controller on application context destruction.");

@@ -7,6 +7,15 @@
 
     <body>
 
+        <release version="6.3.4" date="2014-09-??">
+            <action dev="mdescher" type="fix">
+                Fixed possible NPE on server shutdown.
+            </action>
+            <action dev="mdescher" type="update">
+                Updated to camel 2.2 which uses windows-1252 instead of iso-8859-1 when parsing files.
+            </action>
+        </release>
+
         <release version="6.3.3" date="2014-09-19">
             <action dev="mdescher" type="fix">
                 Fixed checkbox for private playlists which was always disabled when the page was loaded.
