@@ -23,6 +23,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave:camel:2.1" level="project" />
     <orderEntry type="module" module-name="runtime" scope="PROVIDED" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave.apple-extensions:apple-extensions:1.0.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.slf4j:slf4j-api:1.6.4" level="project" />
@@ -45,7 +46,7 @@
     <orderEntry type="library" name="Maven: org.apache.commons:commons-compress:1.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.tukaani:xz:1.0" level="project" />
     <orderEntry type="library" name="Maven: com.ibm.icu:icu4j:52.1" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave:camel:2.1" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: de.codewave:camel:2.2" level="project" />
     <orderEntry type="library" name="Maven: commons-io:commons-io:2.1" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.servlet:servlet-api:2.5" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: quartz:quartz:1.5.2" level="project" />
