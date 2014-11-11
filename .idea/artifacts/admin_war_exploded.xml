@@ -1,8 +1,7 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="admin:war exploded">
-    <output-path>$PROJECT_DIR$/admin/target/admin-6.3.4-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/admin/target/admin-6.3.5-SNAPSHOT</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="admin/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
           <element id="module-output" name="admin" />
@@ -12,15 +11,19 @@
           <element id="library" level="project" name="Maven: org.vaadin.addons:refresher:1.1.1" />
           <element id="library" level="project" name="Maven: org.vaadin.addon:jfreechartwrapper:2.5.0" />
           <element id="library" level="project" name="Maven: jfree:jfreechart:1.0.13" />
-          <element id="library" level="project" name="Maven: jfree:jcommon:1.0.15" />
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-svggen:1.7" />
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-awt-util:1.7" />
           <element id="library" level="project" name="Maven: org.apache.xmlgraphics:batik-util:1.7" />
-          <element id="library" level="project" name="Maven: xml-apis:xml-apis:2.0.2" />
+          <element id="library" level="project" name="Maven: xml-apis:xml-apis:1.0.b2" />
+          <element id="library" level="project" name="Maven: jfree:jcommon:1.0.15" />
           <element id="library" level="project" name="Maven: javax.servlet:servlet-api:2.5" />
           <element id="library" level="project" name="Maven: javax.validation:validation-api:sources:1.1.0.Final" />
         </element>
       </element>
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/admin/target/MANIFEST.MF" />
+      </element>
+      <element id="javaee-facet-resources" facet="admin/web/Web" />
     </root>
   </artifact>
 </component>
