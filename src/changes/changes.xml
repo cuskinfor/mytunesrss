@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.5" date="___D___">
+        <release version="6.5" date="2014-11-14">
             <action dev="mdescher" type="add">Added function for downloading a support archive which can/should be attached to support request emails.</action>
             <action dev="mdescher" type="remove">Removed support features: send support request.</action>
             <action dev="mdescher" type="remove">Removed community features: mytunesrss.com, language up/download, message of the day, update check.</action>
