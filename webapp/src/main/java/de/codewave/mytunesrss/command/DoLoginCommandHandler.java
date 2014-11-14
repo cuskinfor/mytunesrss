@@ -56,10 +56,6 @@ public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
         }
         MyTunesRssWebUtils.setCookieLanguage(getRequest(), getResponse(), lc);
         MyTunesRssWebUtils.saveWebConfig(getRequest(), getResponse(), getAuthUser(), webConfig);
-        if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
-            restartMyTunesRssCom();
-        } else {
-            redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
-        }
+        redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.ShowPortal));
     }
 }

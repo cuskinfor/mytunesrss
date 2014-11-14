@@ -14,7 +14,6 @@ import de.codewave.utils.Version;
 import de.codewave.utils.io.IOUtils;
 import de.codewave.utils.xml.DOMUtils;
 import de.codewave.utils.xml.JXPathUtils;
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringUtils;
@@ -25,13 +24,14 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
     private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(Charset.forName("UTF-8")), "DES");
-    private static final String CREATION_TIME_KEY = "playmode";
     public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864&server.innodb_file_per_table=1";
 
     private String myHost;
@@ -53,13 +52,8 @@ public class MyTunesRssConfig {
     private boolean myCheckUpdateOnStart = true;
     private String myVersion;
     private Collection<User> myUsers = new HashSet<>();
-    private String mySupportName = "";
-    private String mySupportEmail = "";
     private String myProxyHost = "";
     private int myProxyPort = -1;
-    private String myMyTunesRssComUser = "";
-    private byte[] myMyTunesRssComPasswordHash = null;
-    private boolean myMyTunesRssComSsl = false;
     private boolean myLocalTempArchive;
     private SecretKey myPathInfoKey;
     private String myWebWelcomeMessage = "";
@@ -107,7 +101,6 @@ public class MyTunesRssConfig {
     private boolean myNotifyOnOutdatedItunesXml;
     private boolean myNotifyOnSkippedDatabaseUpdate;
     private int myStatisticKeepTime = 60;
-    private String myCryptedCreationTime;
     private Collection<TranscoderConfig> myTranscoderConfigs = new ArrayList<>();
     private List<ExternalSiteDefinition> myExternalSites = new ArrayList<>();
     private String myAutoLogin;
@@ -315,22 +308,6 @@ public class MyTunesRssConfig {
         return true;
     }
 
-    public synchronized String getSupportEmail() {
-        return mySupportEmail;
-    }
-
-    public synchronized void setSupportEmail(String supportEmail) {
-        mySupportEmail = supportEmail;
-    }
-
-    public synchronized String getSupportName() {
-        return mySupportName;
-    }
-
-    public synchronized void setSupportName(String supportName) {
-        mySupportName = supportName;
-    }
-
     public synchronized String getProxyHost() {
         return myProxyHost;
     }
@@ -349,30 +326,6 @@ public class MyTunesRssConfig {
 
     public synchronized boolean isProxyServer() {
         return StringUtils.isNotBlank(myProxyHost) && myProxyPort > 0 && myProxyPort < 65536;
-    }
-
-    public synchronized byte[] getMyTunesRssComPasswordHash() {
-        return myMyTunesRssComPasswordHash != null ? myMyTunesRssComPasswordHash.clone() : null;
-    }
-
-    public synchronized void setMyTunesRssComPasswordHash(byte[] myTunesRssComPasswordHash) {
-        myMyTunesRssComPasswordHash = myTunesRssComPasswordHash != null ? myTunesRssComPasswordHash.clone() : null;
-    }
-
-    public synchronized String getMyTunesRssComUser() {
-        return myMyTunesRssComUser;
-    }
-
-    public synchronized void setMyTunesRssComUser(String myTunesRssComUser) {
-        myMyTunesRssComUser = myTunesRssComUser;
-    }
-
-    public synchronized boolean isMyTunesRssComSsl() {
-        return myMyTunesRssComSsl;
-    }
-
-    public synchronized void setMyTunesRssComSsl(boolean myTunesRssComSsl) {
-        myMyTunesRssComSsl = myTunesRssComSsl;
     }
 
     public synchronized String getWebWelcomeMessage() {
@@ -1087,56 +1040,19 @@ public class MyTunesRssConfig {
         myUpnpMediaServerLockTimeoutSeconds = upnpMediaServerLockTimeoutSeconds;
     }
 
-    private String encryptCreationTime(long creationTime) {
-        String checksum = Long.toString(creationTime);
-        try {
-            Cipher cipher = Cipher.getInstance(CHECKSUM_KEY.getAlgorithm());
-            cipher.init(Cipher.ENCRYPT_MODE, CHECKSUM_KEY);
-            return new String(Base64.encodeBase64(cipher.doFinal(checksum.getBytes("UTF-8"))), "UTF-8");
-        } catch (Exception e) {
-            LOGGER.error("Could not encrypt creation time!", e);
-        }
-        return null;
-    }
-
-    public synchronized long getConfigCreationTime() {
-        try {
-            Cipher cipher = Cipher.getInstance(CHECKSUM_KEY.getAlgorithm());
-            cipher.init(Cipher.DECRYPT_MODE, CHECKSUM_KEY);
-            String creationTime = new String(cipher.doFinal(Base64.decodeBase64(myCryptedCreationTime.getBytes("UTF-8"))), "UTF-8");
-            return Long.parseLong(creationTime);
-        } catch (Exception e) {
-            LOGGER.error("Could not decrypt creation time!", e);
-        }
-        return 1;
-    }
-
     public synchronized void load() {
         try {
             File file = getSettingsFile();
             LOGGER.info("Loading configuration from \"" + file.getAbsolutePath() + "\".");
-            String freshCryptedCreationTime = encryptCreationTime(System.currentTimeMillis());
             if (!file.isFile()) {
                 FileUtils.writeStringToFile(file,
-                        "<settings><" + CREATION_TIME_KEY + ">" + freshCryptedCreationTime + "</" + CREATION_TIME_KEY +
-                                "></settings>");
+                        "<settings></settings>");
             }
             JXPathContext settings = JXPathUtils.getContext(JXPathUtils.getContext(file.toURI().toURL()), "settings");
             setVersion(StringUtils.defaultIfEmpty(JXPathUtils.getStringValue(settings, "version", "0"), "0"));
             Version currentAppVersion = new Version(MyTunesRss.VERSION);
             Version currentConfigVersion = new Version(getVersion());
             Version minimumChecksumVersion = new Version("3.6.2");
-            myCryptedCreationTime = JXPathUtils.getStringValue(settings,
-                    CREATION_TIME_KEY,
-                    currentConfigVersion.compareTo(minimumChecksumVersion) >= 0 ? encryptCreationTime(1) :
-                            freshCryptedCreationTime);
-            if (StringUtils.isNotBlank(currentConfigVersion.getAppendix())) {
-                // fresh evaluation period if last version was not a release version
-                myCryptedCreationTime = freshCryptedCreationTime;
-            } else if (currentAppVersion.getMajor() != currentConfigVersion.getMajor() || currentAppVersion.getMinor() != currentConfigVersion.getMinor()) {
-                // fresh evaluation period if the last version was a different major or minor version
-                myCryptedCreationTime = freshCryptedCreationTime;
-            }
             loadFromContext(settings);
             if (currentConfigVersion.compareTo(currentAppVersion) < 0) {
                 migrate(currentConfigVersion);
@@ -1167,13 +1083,8 @@ public class MyTunesRssConfig {
         setCheckUpdateOnStart(JXPathUtils.getBooleanValue(settings, "checkUpdateOnStart", isCheckUpdateOnStart()));
         readDataSources(settings);
         setLocalTempArchive(JXPathUtils.getBooleanValue(settings, "localTempArchive", isLocalTempArchive()));
-        setSupportName(JXPathUtils.getStringValue(settings, "supportName", getSupportName()));
-        setSupportEmail(JXPathUtils.getStringValue(settings, "supportEmail", getSupportEmail()));
         setProxyHost(JXPathUtils.getStringValue(settings, "proxyHost", getProxyHost()));
         setProxyPort(JXPathUtils.getIntValue(settings, "proxyPort", getProxyPort()));
-        setMyTunesRssComSsl(JXPathUtils.getBooleanValue(settings, "myTunesRssComSsl", isMyTunesRssComSsl()));
-        setMyTunesRssComUser(JXPathUtils.getStringValue(settings, "myTunesRssComUser", getMyTunesRssComUser()));
-        setMyTunesRssComPasswordHash(JXPathUtils.getByteArray(settings, "myTunesRssComPassword", getMyTunesRssComPasswordHash()));
         setWebWelcomeMessage(JXPathUtils.getStringValue(settings, "webWelcomeMessage", getWebWelcomeMessage()));
         setWebLoginMessage(JXPathUtils.getStringValue(settings, "webLoginMessage", getWebLoginMessage()));
         readPathInfoEncryptionKey(settings);
@@ -1575,16 +1486,8 @@ public class MyTunesRssConfig {
                 users.appendChild(userElement);
                 user.saveToPreferences(settings, userElement);
             }
-            root.appendChild(DOMUtils.createTextElement(settings, "supportName", mySupportName));
-            root.appendChild(DOMUtils.createTextElement(settings, "supportEmail", mySupportEmail));
             root.appendChild(DOMUtils.createTextElement(settings, "proxyHost", myProxyHost));
             root.appendChild(DOMUtils.createIntElement(settings, "proxyPort", myProxyPort));
-            root.appendChild(DOMUtils.createBooleanElement(settings, "myTunesRssComSsl", myMyTunesRssComSsl));
-            root.appendChild(DOMUtils.createTextElement(settings, "myTunesRssComUser", myMyTunesRssComUser));
-            if (myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0) {
-                root.appendChild(DOMUtils.createByteArrayElement(settings, "myTunesRssComPassword", myMyTunesRssComPasswordHash));
-            }
-            root.appendChild(DOMUtils.createTextElement(settings, CREATION_TIME_KEY, myCryptedCreationTime));
             root.appendChild(DOMUtils.createTextElement(settings, "webWelcomeMessage", myWebWelcomeMessage));
             root.appendChild(DOMUtils.createTextElement(settings, "webLoginMessage", myWebLoginMessage));
             if (myPathInfoKey != null) {
@@ -1934,10 +1837,6 @@ public class MyTunesRssConfig {
     public synchronized boolean isRemoteControl() {
         //return MyTunesRss.CONFIG.isVlcEnabled() && MyTunesRssUtils.canExecute(getVlcExecutable());
         return true;
-    }
-
-    public synchronized boolean isMyTunesRssComActive() {
-        return StringUtils.isNotEmpty(myMyTunesRssComUser) && myMyTunesRssComPasswordHash != null && myMyTunesRssComPasswordHash.length > 0;
     }
 
     public synchronized boolean isValidMailConfig() {

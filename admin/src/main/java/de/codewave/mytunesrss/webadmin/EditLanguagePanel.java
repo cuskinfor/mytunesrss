@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin;
 
+import com.vaadin.data.Property;
 import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
@@ -12,7 +13,6 @@ import com.vaadin.ui.TextField;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
-import de.codewave.mytunesrss.network.MyTunesRssHttpClient;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import org.apache.commons.io.IOUtils;
@@ -31,13 +31,11 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
 
     private Table myEditorTable;
     private Locale myEditLang;
-    private Integer myCommunityId;
     private AddonsConfigPanel myAddonsConfigPanel;
 
-    public EditLanguagePanel(AddonsConfigPanel addonsConfigPanel, Locale editLang, Integer communityId) {
+    public EditLanguagePanel(AddonsConfigPanel addonsConfigPanel, Locale editLang) {
         myAddonsConfigPanel = addonsConfigPanel;
         myEditLang = editLang;
-        myCommunityId = communityId;
     }
 
     public void attach() {
@@ -83,14 +81,14 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
                 textField.addListener(new FieldEvents.BlurListener() {
                     public void blur(FieldEvents.BlurEvent event) {
                         TextField textField =(TextField) event.getSource();
-                        if (StringUtils.isBlank((String) textField.getValue())) {
+                        if (StringUtils.isBlank((CharSequence) textField.getValue())) {
                             textField.addStyleName("missing-translation");
                         } else {
                             textField.removeStyleName("missing-translation");
                         }
                     }
                 });
-                if (StringUtils.isBlank((String) textField.getValue())) {
+                if (StringUtils.isBlank((CharSequence) textField.getValue())) {
                     textField.addStyleName("missing-translation");
                 }
             }
@@ -114,13 +112,10 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
     protected void writeToConfig() {
         Properties props = new Properties();
         for (Object id : myEditorTable.getItemIds()) {
-            props.setProperty((String)id, (String) ((TextField) myEditorTable.getItem(id).getItemProperty("edit").getValue()).getValue());
+            props.setProperty((String)id, (String) ((Property) myEditorTable.getItem(id).getItemProperty("edit").getValue()).getValue());
         }
         LanguageDefinition definition = new LanguageDefinition();
-        definition.setId(myCommunityId);
         definition.setCode(myEditLang.toString());
-        definition.setVersion(MyTunesRss.VERSION);
-        definition.setAccountId(MyTunesRssHttpClient.getMyTunesRssComAccountId());
         try {
             AddonsUtils.storeLanguage(definition, props);
         } catch (IOException e) {
@@ -135,7 +130,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
     protected boolean beforeSave() {
         for (Object id : myEditorTable.getItemIds()) {
             TextField textField = (TextField) myEditorTable.getItem(id).getItemProperty("edit").getValue();
-            if (StringUtils.isBlank((String) textField.getValue())) {
+            if (StringUtils.isBlank((CharSequence) textField.getValue())) {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showWarning("editLanguagePanel.error.emptyTranslation");
                 break;
             }

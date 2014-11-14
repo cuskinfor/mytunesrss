@@ -15,12 +15,7 @@ public class DoLogoutCommandHandler extends MyTunesRssCommandHandler {
     @Override
     public void executeAuthorized() throws Exception {
         MyTunesRssWebUtils.forgetLogin(getResponse());
-        if (getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) != null) {
-            restartMyTunesRssCom();
-            getSession().invalidate();
-        } else {
-            getSession().invalidate();
-            redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.Login));
-        }
+        getSession().invalidate();
+        redirect(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.Login));
     }
 }

@@ -38,8 +38,6 @@ public class MyTunesRssExecutorService {
 
     private Future DATABASE_MAINTENANCE_FUTURE;
 
-    private ScheduledFuture MYTUNESRSSCOM_UPDATE_FUTURE;
-
     private ScheduledFuture PHOTO_THUMBNAIL_GENERATOR_FUTURE;
 
     private PhotoThumbnailGeneratorRunnable myPhotoThumbnailGeneratorRunnable;
@@ -171,28 +169,6 @@ public class MyTunesRssExecutorService {
         }
     }
 
-    public synchronized void scheduleMyTunesRssComUpdate() {
-        try {
-            MYTUNESRSSCOM_UPDATE_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(new MyTunesRssComUpdateRunnable(), 0, 300, TimeUnit.SECONDS);
-        } catch (RejectedExecutionException e) {
-            LOGGER.error("Could not schedule mytunesrss.com update task.", e);
-        }
-    }
-
-    public synchronized void executeMyTunesRssComUpdate() {
-        try {
-            GENERAL_EXECUTOR.execute(new MyTunesRssComUpdateRunnable());
-        } catch (RejectedExecutionException e) {
-            LOGGER.error("Could not execute mytunesrss.com update task.", e);
-        }
-    }
-
-    public synchronized void cancelMyTunesRssComUpdate() {
-        if (MYTUNESRSSCOM_UPDATE_FUTURE != null && !MYTUNESRSSCOM_UPDATE_FUTURE.isDone() && !MYTUNESRSSCOM_UPDATE_FUTURE.isCancelled()) {
-            MYTUNESRSSCOM_UPDATE_FUTURE.cancel(true);
-        }
-    }
-
     public synchronized void scheduleExternalAddressUpdate() {
         try {
             GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 60, TimeUnit.SECONDS);
@@ -218,14 +194,6 @@ public class MyTunesRssExecutorService {
             }, 0, 1, TimeUnit.HOURS);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule smart playlist refresh task.", e);
-        }
-    }
-
-    public synchronized void scheduleUpdateCheck() {
-        try {
-            GENERAL_EXECUTOR.scheduleWithFixedDelay(new CheckUpdateRunnable(), 0, 3600, TimeUnit.SECONDS);
-        } catch (RejectedExecutionException e) {
-            LOGGER.error("Could not schedule update check task.", e);
         }
     }
 

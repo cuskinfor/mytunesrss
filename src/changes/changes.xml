@@ -7,6 +7,13 @@
 
     <body>
 
+        <release version="6.5" date="___D___">
+            <action dev="mdescher" type="add">Added function for downloading a support archive which can/should be attached to support request emails.</action>
+            <action dev="mdescher" type="remove">Removed support features: send support request.</action>
+            <action dev="mdescher" type="remove">Removed community features: mytunesrss.com, language up/download, message of the day, update check.</action>
+            <action dev="mdescher" type="remove">Removed license check. MyTunesRSS can be used for free now.</action>
+        </release>
+
         <release version="6.3.4" date="2014-10-04">
             <action dev="mdescher" type="fix">
                 Fixed possible NPE on server shutdown.

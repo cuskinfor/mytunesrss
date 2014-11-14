@@ -4,7 +4,10 @@
 
 package de.codewave.mytunesrss.servlet;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.UserAgent;
 import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -58,9 +61,6 @@ public class WebConfig {
             CFG_ALBUM_IMAGE_SIZE, CFG_SHOW_REMOTE_CONTROL, CFG_SHOW_ADD_REMOTE_CONTROL, CFG_ACTIVE_TRANSCODERS, CFG_SEARCH_FUZZINESS,
             CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
             CFG_MAX_SEARCH_RESULTS, CFG_PHOTO_JPEG_QUALITY};
-
-    public static final String MYTUNESRSS_COM_USER = "mytunesrss_com_user";
-    public static final String MYTUNESRSS_COM_COOKIE = "mytunesrss_com_cookie";
 
     public static enum PlaylistType {
         M3u(), Xspf(), Json(), JwMediaRss();
@@ -163,23 +163,13 @@ public class WebConfig {
             }
             initFromString(MyTunesRssBase64Utils.decodeToString(user.getWebConfig(MyTunesRssWebUtils.getUserAgent(request))));
         } else {
-            if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE))) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Initializing web configuration from request parameter.");
-                }
-                initFromString(MyTunesRssBase64Utils.decodeToString(request.getParameter(WebConfig.MYTUNESRSS_COM_COOKIE)));
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Initializing web configuration from cookie.");
-                }
-                try {
-                    initFromString(MyTunesRssBase64Utils.decodeToString(getCookieValue(request)));
-                } catch (Exception ignored) {
-                    // intentionally left blank
-                }
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Initializing web configuration from cookie.");
             }
-            if (StringUtils.isNotEmpty(request.getParameter(WebConfig.MYTUNESRSS_COM_USER))) {
-                request.getSession().setAttribute(WebConfig.MYTUNESRSS_COM_USER, request.getParameter(WebConfig.MYTUNESRSS_COM_USER));
+            try {
+                initFromString(MyTunesRssBase64Utils.decodeToString(getCookieValue(request)));
+            } catch (Exception ignored) {
+                // intentionally left blank
             }
         }
     }
@@ -219,27 +209,23 @@ public class WebConfig {
     }
 
     public void save(HttpServletRequest request, HttpServletResponse response) {
-        if (StringUtils.isEmpty((String) request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
-            Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
-            cookie.setVersion(1);
-            cookie.setComment("MyTunesRSS settings cookie");
-            cookie.setMaxAge(3600 * 24 * 365);// one year
-            String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
-            cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
-            response.addCookie(cookie);
-        }
+        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
+        cookie.setVersion(1);
+        cookie.setComment("MyTunesRSS settings cookie");
+        cookie.setMaxAge(3600 * 24 * 365);// one year
+        String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
+        cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
+        response.addCookie(cookie);
     }
 
     public void removeCookie(HttpServletRequest request, HttpServletResponse response) {
-        if (StringUtils.isEmpty((String) request.getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER))) {
-            Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
-            cookie.setVersion(1);
-            cookie.setComment("MyTunesRSS settings cookie");
-            cookie.setMaxAge(0); // delete cookie
-            String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
-            cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
-            response.addCookie(cookie);
-        }
+        Cookie cookie = new Cookie(CONFIG_COOKIE_NAME, createCookieValue());
+        cookie.setVersion(1);
+        cookie.setComment("MyTunesRSS settings cookie");
+        cookie.setMaxAge(0); // delete cookie
+        String servletUrl = MyTunesRssWebUtils.getServletUrl(request);
+        cookie.setPath(servletUrl.substring(servletUrl.lastIndexOf("/")));
+        response.addCookie(cookie);
     }
 
     public String createCookieValue() {

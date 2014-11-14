@@ -8,7 +8,6 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.desktop.DesktopWrapper;
 import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
 import de.codewave.mytunesrss.server.WebServer;
-import de.codewave.mytunesrss.task.SendSupportRequestRunnable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -33,10 +32,6 @@ public class MyTunesRssForm {
     private JButton myStartAdminBrowser;
     private JTextField myAdminUrl;
     private JButton myQuit;
-    private JTextField mySupportName;
-    private JButton mySendSupport;
-    private JTextField mySupportEmail;
-    private JTextArea mySupportDescription;
     private JPanel myRootPanel;
     private JButton myStartUserBrowser;
     private JTextField myUserUrl;
@@ -70,24 +65,9 @@ public class MyTunesRssForm {
                 }
             }
         });
-        mySendSupport.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                if (StringUtils.isNotBlank(mySupportName.getText()) && StringUtils.isNotBlank(mySupportEmail.getText()) && StringUtils.isNotBlank(mySupportDescription.getText())) {
-                    SendSupportRequestRunnable runnable = new SendSupportRequestRunnable(mySupportName.getText(), mySupportEmail.getText(), mySupportDescription.getText() + "\n\n\n", false);
-                    runnable.run();
-                    if (runnable.isSuccess()) {
-                        JOptionPane.showMessageDialog(myRootPanel, MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.supportSentText"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.supportSentTitle"), JOptionPane.OK_OPTION);
-                    } else {
-                        JOptionPane.showMessageDialog(myRootPanel, MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.supportErrorText"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.supportErrorTitle"), JOptionPane.OK_OPTION);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(myRootPanel, MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.missingSupportFieldsText"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.missingSupportFieldsTitle"), JOptionPane.OK_OPTION);
-                }
-            }
-        });
         myQuit.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                for (Component c : new Component[] {myStartAdminBrowser, myAdminUrl, myStartUserBrowser, myUserUrl, mySupportName, mySupportEmail, mySupportDescription, mySendSupport, myQuit}) {
+                for (Component c : new Component[]{myStartAdminBrowser, myAdminUrl, myStartUserBrowser, myUserUrl, myQuit}) {
                     c.setEnabled(false);
                 }
                 new Thread(new Runnable() {
@@ -97,7 +77,6 @@ public class MyTunesRssForm {
                 }, "AsyncSwingFormShutdown").start();
             }
         });
-        refreshSupportConfig();
         myFrame = new JFrame(MyTunesRssUtils.getBundleString(Locale.getDefault(), "mainForm.title", MyTunesRss.VERSION));
         final MyTunesRssSystray systray = SystemUtils.IS_OS_WINDOWS ? new MyTunesRssSystray(myFrame) : null;
         myFrame.addWindowListener(new WindowAdapter() {
@@ -166,11 +145,6 @@ public class MyTunesRssForm {
         myUserUrl.setText(e != null ? e.getMessage() : "");
         myUserUrl.setToolTipText(myUserUrl.getText());
         myStartUserBrowser.setEnabled(false);
-    }
-
-    public void refreshSupportConfig() {
-        mySupportName.setText(MyTunesRss.CONFIG.getSupportName());
-        mySupportEmail.setText(MyTunesRss.CONFIG.getSupportEmail());
     }
 
     public void executeApple() {

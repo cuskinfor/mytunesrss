@@ -11,7 +11,10 @@ import com.vaadin.terminal.ClassResource;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.DatabaseJobRunningException;
+import de.codewave.mytunesrss.FetchExternalAddressRunnable;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.GetSystemInformationQuery;
@@ -24,20 +27,14 @@ import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.webadmin.datasource.DatasourcesConfigPanel;
 import de.codewave.mytunesrss.webadmin.datasource.DatasourcesSelectionPanel;
-import de.codewave.utils.Version;
 import de.codewave.utils.network.NetworkUtils;
-import de.codewave.utils.network.UpdateInfo;
-import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.component.OptionWindow;
 import de.codewave.vaadin.component.SinglePanelWindow;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.MalformedURLException;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
@@ -51,7 +48,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Panel myAlertPanel;
     private Label myServerStatus;
     private Label myDatabaseStatus;
-    private Label myMyTunesRssComStatus;
     private Button myStartServer;
     private Button myStopServer;
     private Table myInternalAddresses;
@@ -78,10 +74,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Button myHelp;
     private Button myLogout;
     private Refresher myRefresher;
-    private Panel myUpdatePanel;
     private Button myQuitMyTunesRss;
-    private MessageOfTheDayItem myMessageOfTheDay;
-    private Button myForceMyTunesRssComUpdate;
 
     public void attach() {
         super.attach();
@@ -96,8 +89,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myAlertPanel.addStyleName("alertPanel");
         myAlertPanel.setVisible(false);
         addComponent(myAlertPanel);
-        myUpdatePanel = new Panel(null, getApplication().getComponentFactory().createVerticalLayout(true, true));
-        addComponent(myUpdatePanel);
         Panel server = new Panel(getApplication().getBundleString("statusPanel.server.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
         addComponent(server);
         ((Layout) server.getContent()).setMargin(true);
@@ -166,17 +157,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         databaseButtons.addComponent(myResetDatabase);
         databaseButtons.addComponent(myBackupDatabase);
         databaseButtons.addComponent(myDatabaseMaintenance);
-        Panel mytunesrsscom = new Panel(getApplication().getBundleString("statusPanel.mytunesrss.caption"), getApplication().getComponentFactory().createVerticalLayout(true, true));
-        addComponent(mytunesrsscom);
-        myMyTunesRssComStatus = new Label();
-        myMyTunesRssComStatus.setWidth("100%");
-        myMyTunesRssComStatus.addStyleName("statusmessage");
-        mytunesrsscom.addComponent(myMyTunesRssComStatus);
-        Panel mytunesrsscomButtons = new Panel(getApplication().getComponentFactory().createHorizontalLayout(false, true));
-        mytunesrsscomButtons.addStyleName("light");
-        mytunesrsscom.addComponent(mytunesrsscomButtons);
-        myForceMyTunesRssComUpdate = getApplication().getComponentFactory().createButton("statusPanel.mytunesrss.forceUpdate", StatusPanel.this);
-        mytunesrsscomButtons.addComponent(myForceMyTunesRssComUpdate);
         Panel configButtons = new Panel(getApplication().getBundleString("statusPanel.config.caption"), getApplication().getComponentFactory().createGridLayout(4, 3, true, true));
         addComponent(configButtons);
         myServerConfig = getApplication().getComponentFactory().createButton("statusPanel.config.server", StatusPanel.this);
@@ -229,8 +209,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         myResetDatabase.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseBackupRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseMaintenanceRunning());
         myBackupDatabase.setEnabled(MyTunesRss.CONFIG.isDefaultDatabase() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseBackupRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseMaintenanceRunning());
         myDatabaseMaintenance.setEnabled(!MyTunesRss.EXECUTOR_SERVICE.isDatabaseUpdateRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseResetRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseBackupRunning() && !MyTunesRss.EXECUTOR_SERVICE.isDatabaseMaintenanceRunning());
-        refreshMyTunesRssComUpdateState();
-        refreshMyTunesUpdateInfo();
         refreshAlert();
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
     }
@@ -368,12 +346,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             myBackupDatabase.setEnabled(false);
             myDatabaseMaintenance.setEnabled(false);
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseMaintenance();
-        } else if (clickEvent.getSource() == myForceMyTunesRssComUpdate) {
-            if (MyTunesRss.CONFIG.isMyTunesRssComActive()) {
-                MyTunesRss.EXECUTOR_SERVICE.executeMyTunesRssComUpdate();
-            } else {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("statusPanel.error.mytunesrsscomNotActive");
-            }
         } else if (clickEvent.getSource() == myHelp) {
             getWindow().open(new ExternalResource("http://kb.mytunesrss.com"));
         } else if (clickEvent.getSource() == myQuitMyTunesRss) {
@@ -449,8 +421,6 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     }
 
     public void refresh(Refresher source) {
-        refreshMyTunesRssComUpdateState();
-        refreshMyTunesUpdateInfo();
         refreshAlert();
         // refresh internal addresses
         myInternalAddresses.removeAllItems();
@@ -497,95 +467,11 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkImportantMessage();
     }
 
-    private void refreshMyTunesRssComUpdateState() {
-        MyTunesRssEvent lastMyTunesRssComEvent = MyTunesRssComUpdateRunnable.LAST_UPDATE_EVENT;
-        if (lastMyTunesRssComEvent == null) {
-            myMyTunesRssComStatus.setValue(getApplication().getBundleString("statusPanel.myTunesRssComStateUnknown"));
-        } else {
-            myMyTunesRssComStatus.setValue(MyTunesRssUtils.getBundleString(getLocale(), lastMyTunesRssComEvent.getMessageKey(), lastMyTunesRssComEvent.getMessageParams()));
-        }
-    }
-
-    private void refreshMyTunesUpdateInfo() {
-        UpdateInfo updateInfo = CheckUpdateRunnable.UPDATE_INFO;
-        myUpdatePanel.removeAllComponents();
-        Label updateStatusLabel = new Label();
-        myUpdatePanel.addComponent(updateStatusLabel);
-        updateStatusLabel.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-        updateStatusLabel.addStyleName("statusmessage");
-        myUpdatePanel.setVisible(false);
-        if (updateInfo != null) {
-            Version updateVersion = new Version(updateInfo.getVersion());
-            if (updateVersion.compareTo(new Version(MyTunesRss.VERSION)) > 0) {
-                try {
-                    String osIdentifier = "Unknown";
-                    if (SystemUtils.IS_OS_MAC_OSX) {
-                        osIdentifier = "MacOSX";
-                    } else if (SystemUtils.IS_OS_WINDOWS) {
-                        osIdentifier = "Windows";
-                    }
-                    Link downloadLink = new Link(getApplication().getBundleString("statusPanel.update.download"), new ExternalResource(updateInfo.getUrl(osIdentifier)));
-                    updateStatusLabel.setValue(getApplication().getBundleString("statusPanel.updates.info", MyTunesRss.VERSION, updateInfo.getVersion()));
-                    myUpdatePanel.addComponent(new Label(updateInfo.getInfo(getApplication().getLocale()), Label.CONTENT_PREFORMATTED));
-                    if (MyTunesRss.REGISTRATION.isValidVersion(updateVersion)) {
-                        myUpdatePanel.addComponent(downloadLink);
-                    } else {
-                        Label maxVersionInfoLabel = new Label(getApplication().getBundleString("statusPanel.updates.maxVersionLimit"));
-                        maxVersionInfoLabel.setWidth(100, Sizeable.UNITS_PERCENTAGE);
-                        maxVersionInfoLabel.addStyleName("statusmessage");
-                        myUpdatePanel.addComponent(maxVersionInfoLabel);
-                    }
-                    myUpdatePanel.addStyleName("updatePanel");
-                    myUpdatePanel.setVisible(true);
-                } catch (MalformedURLException ignored) {
-                    // ignore, panel remains invisible
-                }
-            }
-        }
-    }
-
     private void refreshAlert() {
         myAlertPanel.setVisible(false);
         myAlertPanel.removeAllComponents();
         myStartServer.setEnabled(!MyTunesRss.WEBSERVER.isRunning());
         myStopServer.setEnabled(MyTunesRss.WEBSERVER.isRunning());
-
-        // message of the day
-        MessageOfTheDay motd = MyTunesRss.MESSAGE_OF_THE_DAY.get();
-        if (motd != null && motd.getItems() != null) {
-            for (MessageOfTheDayItem item : motd.getItems()) {
-                if (!StringUtils.isBlank(item.getValue())) {
-                    Version minVersion = StringUtils.isNotBlank(item.getMinVersion()) ? new Version(item.getMinVersion()) : new Version(0, 0, 0);
-                    Version maxVersion = StringUtils.isNotBlank(item.getMaxVersion()) ? new Version(item.getMaxVersion()) : new Version(Integer.MAX_VALUE, Integer.MAX_VALUE, Integer.MAX_VALUE);
-                    Version currentVersion = new Version(MyTunesRss.VERSION);
-                    if (minVersion.compareTo(new Version(MyTunesRss.VERSION)) <= 0 && maxVersion.compareTo(currentVersion) >= 0) {
-                        if (StringUtils.equalsIgnoreCase(getLocale().getLanguage(), item.getLanguage())) {
-                            myMessageOfTheDay = item;
-                            break;
-                        } else if (StringUtils.isBlank(item.getLanguage())) {
-                            myMessageOfTheDay = item;
-                        }
-                    }
-                }
-            }
-        }
-        if (myMessageOfTheDay != null) {
-            myAlertPanel.setVisible(true);
-            myAlertPanel.addComponent(new Label(StringUtils.trim(myMessageOfTheDay.getValue()), Label.CONTENT_XHTML));
-        }
-
-        // registration feedback
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(getLocale());
-        if (feedback != null && feedback.getMessage() != null) {
-            myAlertPanel.setVisible(true);
-            myAlertPanel.addComponent(new Label(feedback.getMessage()));
-            if (!feedback.isValid()) {
-                myStartServer.setEnabled(false);
-                myStopServer.setEnabled(false);
-                MyTunesRss.stopWebserver();
-            }
-        }
-
     }
 
     private String[] getLocalAddresses() {

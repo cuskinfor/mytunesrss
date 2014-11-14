@@ -18,7 +18,6 @@ import de.codewave.mytunesrss.addons.ThemeDefinition;
 import de.codewave.mytunesrss.config.ExternalSiteDefinition;
 import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.config.PlaylistFileType;
-import de.codewave.mytunesrss.network.MyTunesRssHttpClient;
 import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
@@ -59,7 +58,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Button myAddFlashPlayer;
     private Button myRestoreDefaultJukeboxes;
     private Button myAddLanguage;
-    private Button myDownloadLanguage;
 
     public void attach() {
         super.attach();
@@ -86,9 +84,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myLanguagesTable = new Table();
         myLanguagesTable.setCacheRate(50);
         myLanguagesTable.addContainerProperty("name", String.class, null, getBundleString("addonsConfigPanel.languages.name"), null, null);
-        myLanguagesTable.addContainerProperty("version", String.class, null, getBundleString("addonsConfigPanel.languages.version"), null, null);
-        myLanguagesTable.addContainerProperty("author", String.class, null, getBundleString("addonsConfigPanel.languages.author"), null, null);
-        myLanguagesTable.addContainerProperty("update", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("edit", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("delete", Button.class, null, "", null, null);
         myLanguagesTable.addContainerProperty("export", Button.class, null, "", null, null);
@@ -104,8 +99,6 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         uploadLanguage.addListener((Upload.SucceededListener) this);
         uploadLanguage.addListener((Upload.FailedListener) this);
         languageButtons.addComponent(uploadLanguage);
-        myDownloadLanguage = getComponentFactory().createButton("addonsConfigPanel.downloadLanguage", this);
-        languageButtons.addComponent(myDownloadLanguage);
         languagesPanel.addComponent(languageButtons);
         Panel sitesPanel = new Panel(getBundleString("addonsConfigPanel.caption.sites"), getComponentFactory().createVerticalLayout(true, true));
         mySitesTable = new Table();
@@ -180,20 +173,10 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         });
         for (LanguageDefinition languageDefinition : languages) {
             if (languageDefinition != null) {
-                Button uploadUpdateButton = null;
-                if (languageDefinition.getId() == null || MyTunesRssHttpClient.getMyTunesRssComAccountId().equals(languageDefinition.getAccountId())) {
-                    uploadUpdateButton = createTableRowButton("button.upload", this, languageDefinition, "UploadLanguage");
-                    uploadUpdateButton.setEnabled(MyTunesRss.CONFIG.isMyTunesRssComActive());
-                } else {
-                    uploadUpdateButton = createTableRowButton("button.update", this, languageDefinition.getId(), "UpdateLanguage");
-                }
                 myLanguagesTable.addItem(
                         new Object[] {
                             languageDefinition.getLocale().getDisplayName(getApplication().getLocale()),
-                            languageDefinition.getVersion(),
-                            languageDefinition.getNick(),
-                            uploadUpdateButton,
-                            createTableRowButton("button.edit", this, languageDefinition.getCode() + ";" + (languageDefinition.getId() != null ? languageDefinition.getId().toString() : ""), "EditLanguage"),
+                            createTableRowButton("button.edit", this, languageDefinition.getCode(), "EditLanguage"),
                             createTableRowButton("button.delete", this, languageDefinition.getCode(), "DeleteLanguage"),
                             createTableRowButton("button.export", this, languageDefinition.getCode(), "ExportLanguage")
                         },
@@ -298,42 +281,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 String name = tableRowButton.getItemId() == DEFAULT_UI_THEME_ID ? null : tableRowButton.getItem().getItemProperty("name").getValue().toString();
                 MyTunesRss.CONFIG.setDefaultUserInterfaceTheme(name);
                 refreshThemes();
-            } else if ("UploadLanguage".equals(tableRowButton.getData())) {
-                if (StringUtils.isNotBlank(MyTunesRssHttpClient.getMyTunesRssComNickname())) {
-                    try {
-                        LanguageDefinition languageDefinition = (LanguageDefinition) tableRowButton.getItemId();
-                        if (AddonsUtils.isComplete(languageDefinition)) {
-                            if (AddonsUtils.uploadLanguage(languageDefinition)) {
-                                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.languageUploadOk");
-                                refreshLanguages();
-                            } else {
-                                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageUploadFailed");
-                            }
-                        } else {
-                            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.incompleteTranslation");
-                        }
-                    } catch (IOException e) {
-                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageUploadFailedWithParam", e.getMessage());
-                    }
-                } else {
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.missingNickname");
-                }
-            } else if ("UpdateLanguage".equals(tableRowButton.getData())) {
-                String communityId = tableRowButton.getItemId().toString();
-                switch (AddonsUtils.updateLanguage(Integer.parseInt(communityId))) {
-                    case ERROR:
-                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageDownloadFailed");
-                        break;
-                    case LANGUAGE_UPTODATE:
-                        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageUpToDate");
-                        break;
-                    default:
-                        refreshLanguages();
-                        break;
-                }
             } else if ("EditLanguage".equals(tableRowButton.getData())) {
-                String[] split = tableRowButton.getItemId().toString().split(";");
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, LanguageDefinition.getLocaleFromCode(split[0]), split.length == 2 ? Integer.parseInt(tableRowButton.getItemId().toString().split(";")[1]) : null));
+                String lc = tableRowButton.getItemId().toString();
+                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(new EditLanguagePanel(this, LanguageDefinition.getLocaleFromCode(lc)));
             } else if ("ExportLanguage".equals(tableRowButton.getData())) {
                 String code = tableRowButton.getItemId().toString();
                 sendLanguageFile(AddonsUtils.getUserLanguageFile(LanguageDefinition.getLocaleFromCode(code)));
@@ -397,40 +347,9 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 @Override
                 protected void onOk(LocaleRepresentation representation) {
                     getParent().removeWindow(this);
-                    ((MainWindow) VaadinUtils.getApplicationWindow(AddonsConfigPanel.this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale(), null));
+                    ((MainWindow) VaadinUtils.getApplicationWindow(AddonsConfigPanel.this)).showComponent(new EditLanguagePanel(AddonsConfigPanel.this, representation.getLocale()));
                 }
             }.show(getWindow());
-        } else if (clickEvent.getSource() == myDownloadLanguage) {
-            try {
-                Collection<LanguageDefinition> remoteLanguages = AddonsUtils.getRemoteLanguageDefinitions();
-                Collection<LanguageDefinition> localLanguages = AddonsUtils.getLanguages(false);
-                for (Iterator<LanguageDefinition> remoteLangIter = remoteLanguages.iterator(); remoteLangIter.hasNext(); ) {
-                    LanguageDefinition remoteLang = remoteLangIter.next();
-                    for (LanguageDefinition localLang : localLanguages) {
-                        if (remoteLang.getId().equals(localLang.getId())) {
-                            remoteLangIter.remove();
-                            break;
-                        }
-                    }
-                }
-                if (!remoteLanguages.isEmpty()) {
-                    DownloadLanguagePanel downloadLanguagePanel = new DownloadLanguagePanel(remoteLanguages) {
-                        @Override
-                        public void onSuccessfulDownload() {
-                            refreshLanguages();
-                            setTablePageLengths();
-                        }
-                    };
-                    SinglePanelWindow downloadWindow = new SinglePanelWindow(50, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.downloadLanguageWindow.caption"), downloadLanguagePanel);
-                    downloadWindow.setClosable(true);
-                    downloadWindow.show(getWindow());
-                } else {
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("addonsConfigPanel.info.noRemoteLanguages");
-                }
-            } catch (IOException e) {
-                LOGGER.warn("Could not download language files from mytunesrss.com.", e);
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.languageListDownloadFailed");
-            }
         } else {
             super.buttonClick(clickEvent);
         }
@@ -630,7 +549,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         protected boolean isValidString(String s) {
             Set<String> others = new HashSet<>();
             for (Object itemId : mySitesTable.getItemIds()) {
-                if (StringUtils.equals((String) getTableCellPropertyValue(mySitesTable, itemId, myProperty), s)) {
+                if (StringUtils.equals((CharSequence) getTableCellPropertyValue(mySitesTable, itemId, myProperty), s)) {
                     String other = (String) getTableCellPropertyValue(mySitesTable, itemId, myOtherProperty);
                     if (others.contains(other)) {
                         return false;

@@ -31,7 +31,6 @@ import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 import java.text.MessageFormat;
 import java.util.*;
 
@@ -101,10 +100,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         MyTunesRssWebUtils.addError(getRequest(), message, "messages");
     }
 
-    protected void createParameterModel(String... parameterNames) {
-        MyTunesRssWebUtils.createParameterModel(getRequest(), parameterNames);
-    }
-
     protected DataStoreSession getTransaction() {
         return TransactionFilter.getTransaction();
     }
@@ -117,20 +112,10 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private void prepareRequestForResource() {
-        String myTunesRssComUsername = (String) getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER);
         String servletUrl = MyTunesRssWebUtils.getServletUrl(getRequest());
         getRequest().setAttribute("servletUrl", servletUrl);
-        WebConfig webConfig = getWebConfig();
-        if (StringUtils.isEmpty(myTunesRssComUsername) || !webConfig.isMyTunesRssComAddress()) {
-            getRequest().setAttribute("permServletUrl", servletUrl);
-            getRequest().setAttribute("downloadPlaybackServletUrl", servletUrl);
-        } else {
-            String appUrl = MyTunesRssWebUtils.getApplicationUrl(getRequest());
-            String url =
-                    MyTunesRss.MYTUNESRSSCOM_URL + "/" + myTunesRssComUsername + getRequest().getContextPath() + servletUrl.substring(appUrl.length());
-            getRequest().setAttribute("permServletUrl", url);
-            getRequest().setAttribute("downloadPlaybackServletUrl", url);
-        }
+        getRequest().setAttribute("permServletUrl", servletUrl);
+        getRequest().setAttribute("downloadPlaybackServletUrl", servletUrl);
         getRequest().setAttribute("permFeedServletUrl", getRequest().getAttribute("permServletUrl"));
         getRequest().setAttribute("appUrl", MyTunesRssWebUtils.getApplicationUrl(getRequest()));
         String theme = StringUtils.defaultIfEmpty(MyTunesRssWebUtils.getWebConfig(getRequest()).getTheme(), MyTunesRss.CONFIG.getDefaultUserInterfaceTheme());
@@ -195,20 +180,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void redirect(String url) throws IOException {
         getResponse().sendRedirect(url.replace("&amp;", "&"));
-    }
-
-    protected Map<String, Boolean> getStates() {
-        Map<String, Boolean> states = (Map<String, Boolean>) getSession().getAttribute("states");
-        if (states == null) {
-            synchronized (getSession()) {
-                states = (Map<String, Boolean>) getSession().getAttribute("states");
-                if (states == null) {
-                    states = new HashMap<>();
-                    getSession().setAttribute("states", states);
-                }
-            }
-        }
-        return states;
     }
 
     public void execute() throws Exception {
@@ -358,20 +329,6 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected String getBundleString(String key, Object... params) {
         return MessageFormat.format(getBundleString(key), params);
-    }
-
-    protected void restartMyTunesRssCom() throws IOException {
-        String url = MyTunesRss.MYTUNESRSSCOM_TOOLS_URL + "/redirect.php?username=" + getSession().getAttribute(WebConfig.MYTUNESRSS_COM_USER) +
-                "&cookie=" + URLEncoder.encode(getWebConfig().createCookieValue(), "UTF-8");
-        LOG.debug("Restarting mytunesrss.com after saving web settings: \"" + url + "\".");
-        redirect(url);
-    }
-
-    protected int getValidIndex(int index, int pageSize, int listSize) {
-        if (index * pageSize > listSize) {
-            return (listSize - 1 / pageSize);
-        }
-        return index;
     }
 
     /**

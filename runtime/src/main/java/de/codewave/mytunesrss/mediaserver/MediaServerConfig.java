@@ -10,7 +10,9 @@ import de.codewave.mytunesrss.config.User;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import javax.xml.bind.annotation.XmlElement;
@@ -28,6 +30,7 @@ public class MediaServerConfig {
         ObjectMapper mapper = new ObjectMapper();
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
+        mapper.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         try {
             return mapper.readValue(getConfigFile(), MediaServerConfig.class);
         } catch (IOException ignored) {
@@ -39,6 +42,7 @@ public class MediaServerConfig {
         ObjectMapper mapper = new ObjectMapper();
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         mapper.getSerializationConfig().withAnnotationIntrospector(introspector);
+        mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES, false);
         mapper.writeValue(getConfigFile(), mediaServerConfig);
     }
 

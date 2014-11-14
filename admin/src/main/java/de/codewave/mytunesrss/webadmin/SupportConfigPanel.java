@@ -6,88 +6,42 @@
 package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.terminal.ExternalResource;
-import com.vaadin.terminal.Sizeable;
-import com.vaadin.ui.*;
+import com.vaadin.terminal.StreamResource;
+import com.vaadin.ui.Button;
+import com.vaadin.ui.Form;
+import com.vaadin.ui.Label;
+import com.vaadin.ui.Select;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssRegistration;
-import de.codewave.mytunesrss.MyTunesRssRegistrationException;
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.webadmin.task.SendSupportRequestTask;
-import de.codewave.vaadin.SmartTextField;
-import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.component.ProgressWindow;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.input.NullInputStream;
 import org.apache.log4j.Level;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 import java.util.UUID;
 
-public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.Receiver, Upload.SucceededListener, Upload.FailedListener {
+public class SupportConfigPanel extends MyTunesRssConfigPanel {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SupportConfigPanel.class);
-    
+
     private Form mySupportForm;
-    private Form myRegistrationForm;
     private Form mySysInfoForm;
     private Select myLogLevel;
     private Button myShowLog;
-    private SmartTextField myName;
-    private SmartTextField myEmail;
-    private TextArea myDescription;
-    private CheckBox myIncludeItunesXml;
-    private Button mySendSupport;
-    private SmartTextField myRegName;
-    private DateField myExpirationDate;
-    private Upload myUploadLicense;
-    private File myUploadDir;
+    private Button myGetLogs;
 
     public void attach() {
         super.attach();
-        init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
         mySupportForm = getComponentFactory().createForm(null, true);
-        myName = getComponentFactory().createTextField("supportConfigPanel.name");
-        myEmail = getComponentFactory().createTextField("supportConfigPanel.email");
-        myDescription = getComponentFactory().createTextArea("supportConfigPanel.description");
-        myDescription.setRows(10);
-        myIncludeItunesXml = getComponentFactory().createCheckBox("supportConfigPanel.includeItunesXml");
-        mySendSupport = getComponentFactory().createButton("supportConfigPanel.sendSupport", this);
-        mySupportForm.addField("name", myName);
-        mySupportForm.addField("email", myEmail);
-        mySupportForm.addField("description", myDescription);
-        mySupportForm.addField("includeItunesXml", myIncludeItunesXml);
-        mySupportForm.addField("sendSupport", mySendSupport);
+        myGetLogs = getComponentFactory().createButton("supportConfigPanel.getLogs", this);
+        mySupportForm.addField("getLogs", myGetLogs);
         addComponent(getComponentFactory().surroundWithPanel(mySupportForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.support")));
-        myRegistrationForm = getComponentFactory().createForm(null, true);
-        myRegName = getComponentFactory().createTextField("supportConfigPanel.regName");
-        myRegName.setEnabled(false);
-        myExpirationDate = new DateField(getBundleString("supportConfigPanel.expirationDate"));
-        myExpirationDate.setDateFormat(MyTunesRssUtils.getBundleString(Locale.getDefault(), "common.dateFormat"));
-        myExpirationDate.setResolution(DateField.RESOLUTION_DAY);
-        myExpirationDate.setEnabled(false);
-        myRegistrationForm.addField("regName", myRegName);
-        myRegistrationForm.addField("expirationDate", myExpirationDate);
-        Panel registrationPanel = getComponentFactory().surroundWithPanel(myRegistrationForm, new Layout.MarginInfo(false, true, true, true), getBundleString("supportConfigPanel.caption.registration"));
-        if (!MyTunesRss.REGISTRATION.isReleaseVersion()) {
-            Label label = new Label(getBundleString("supportConfigPanel.prereleaseCannotBeRegistered"));
-            registrationPanel.addComponent(label);
-        } else {
-            myUploadLicense = new Upload(null, this);
-            myUploadLicense.setButtonCaption(getBundleString("supportConfigPanel.uploadLicense"));
-            myUploadLicense.setImmediate(true);
-            myUploadLicense.addListener((Upload.SucceededListener) this);
-            myUploadLicense.addListener((Upload.FailedListener) this);
-            registrationPanel.addComponent(myUploadLicense);
-        }
-        addComponent(registrationPanel);
         mySysInfoForm = getComponentFactory().createForm(null, true);
         myLogLevel = getComponentFactory().createSelect("supportConfigPanel.logLevel", Arrays.asList(Level.OFF, Level.ERROR, Level.WARN, Level.INFO, Level.DEBUG, Level.TRACE));
         myShowLog = getComponentFactory().createButton("supportConfigPanel.showLog", this);
@@ -95,19 +49,13 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
         mySysInfoForm.addField("showLog", myShowLog);
         addComponent(getComponentFactory().surroundWithPanel(mySysInfoForm, FORM_PANEL_MARGIN_INFO, getBundleString("supportConfigPanel.caption.sysInfo")));
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }
 
     protected void initFromConfig() {
         myLogLevel.setValue(MyTunesRss.CONFIG.getCodewaveLogLevel());
-        myName.setValue(MyTunesRss.CONFIG.getSupportName());
-        myEmail.setValue(MyTunesRss.CONFIG.getSupportEmail());
-        myRegName.setValue(MyTunesRss.REGISTRATION.getName());
-        if (MyTunesRss.REGISTRATION.isExpirationDate()) {
-            myExpirationDate.setValue(new Date(MyTunesRss.REGISTRATION.getExpiration()));
-        }
     }
 
     protected void writeToConfig() {
@@ -115,65 +63,28 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel implements Upload.
             MyTunesRss.CONFIG.setCodewaveLogLevel((Level) myLogLevel.getValue());
             MyTunesRssUtils.setCodewaveLogLevel((Level) myLogLevel.getValue());
         }
-        MyTunesRss.CONFIG.setSupportName((String) myName.getValue());
-        MyTunesRss.CONFIG.setSupportEmail((String) myEmail.getValue());
         MyTunesRss.CONFIG.save();
-        if (MyTunesRss.FORM != null) {
-            MyTunesRss.FORM.refreshSupportConfig();
-        }
     }
 
     public void buttonClick(Button.ClickEvent clickEvent) {
-        if (clickEvent.getSource() == mySendSupport) {
-            if (StringUtils.isNotBlank((String) myName.getValue()) && StringUtils.isNotBlank((String) myEmail.getValue()) && StringUtils.isNotBlank((String) myDescription.getValue())) {
-                SendSupportRequestTask task = new SendSupportRequestTask(((MainWindow) VaadinUtils.getApplicationWindow(this)), (String) myName.getValue(), (String) myEmail.getValue(), myDescription.getValue() + "\n\n\n", (Boolean) myIncludeItunesXml.getValue());
-                new ProgressWindow(50, Sizeable.UNITS_EM, null, null, getBundleString("supportConfigPanel.task.message"), 2000, task).show(getWindow());
-            } else {
-                ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.allFieldsMandatoryForSupport");
-            }
+        if (clickEvent.getSource() == myGetLogs) {
+            getWindow().open(new StreamResource(new StreamResource.StreamSource() {
+                @Override
+                public InputStream getStream() {
+                    try {
+                        PipedOutputStream pipedOutputStream = new PipedOutputStream();
+                        MyTunesRssUtils.writeSupportArchiveAsync("mytunesrss_" + MyTunesRss.VERSION + "_support", pipedOutputStream);
+                        return new PipedInputStream(pipedOutputStream);
+                    } catch (IOException e) {
+                        LOGGER.error("Could not get support archive!", e);
+                    }
+                    return new NullInputStream(0L);
+                }
+            }, "mytunesrss_" + MyTunesRss.VERSION + "_support.zip", getApplication()));
         } else if (clickEvent.getSource() == myShowLog) {
             getWindow().open(new ExternalResource("/-system/log"), UUID.randomUUID().toString());
         } else {
             super.buttonClick(clickEvent);
-        }
-    }
-
-    public OutputStream receiveUpload(String filename, String MIMEType) {
-        try {
-            myUploadDir = new File(MyTunesRss.CACHE_DATA_PATH + "/license-upload");
-            if (!myUploadDir.isDirectory()) {
-                if (!myUploadDir.mkdir()) {
-                    LOGGER.warn("Could not create folder for license upload.");
-                }
-            }
-            return new FileOutputStream(new File(myUploadDir, filename));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not receive upload.", e);
-        }
-    }
-
-    public void uploadFailed(Upload.FailedEvent event) {
-        FileUtils.deleteQuietly(myUploadDir);
-        ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.licenseUploadFailed");
-    }
-
-    public void uploadSucceeded(Upload.SucceededEvent event) {
-        try {
-            MyTunesRssRegistration registration = MyTunesRssRegistration.register(new File(myUploadDir, event.getFilename()));
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showInfo("supportConfigPanel.info.licenseOk", registration.getName());
-        } catch (MyTunesRssRegistrationException e) {
-            switch (e.getErrror()) {
-                case InvalidFile:
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.invalidLicenseFile");
-                    break;
-                case LicenseExpired:
-                    ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("supportConfigPanel.error.licenseExpired");
-                    break;
-                default:
-                    throw new IllegalArgumentException("Unexpected error code \"" + e.getErrror() + "\".");
-            }
-        } finally {
-            FileUtils.deleteQuietly(myUploadDir);
         }
     }
 

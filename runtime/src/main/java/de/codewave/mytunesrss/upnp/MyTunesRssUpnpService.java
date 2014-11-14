@@ -51,23 +51,18 @@ public class MyTunesRssUpnpService {
     private Set<RemoteDevice> myInternetGatewayDevices = new HashSet<>();
 
     public void start() throws ValidationException, IOException {
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if (feedback == null || feedback.isValid()) {
-            myClingService = new UpnpServiceImpl();
-            addMediaRendererListener();
-            addInternetGatewayDeviceListener();
-            MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
-                @Override
-                public void run() {
-                    if (MyTunesRss.CONFIG.isUpnpAdmin() || MyTunesRss.CONFIG.isUpnpUserHttp() || MyTunesRss.CONFIG.isUpnpUserHttps() || MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
-                        LOGGER.debug("Searching for UPnP services.");
-                        myClingService.getControlPoint().search();
-                    }
+        myClingService = new UpnpServiceImpl();
+        addMediaRendererListener();
+        addInternetGatewayDeviceListener();
+        MyTunesRss.EXECUTOR_SERVICE.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                if (MyTunesRss.CONFIG.isUpnpAdmin() || MyTunesRss.CONFIG.isUpnpUserHttp() || MyTunesRss.CONFIG.isUpnpUserHttps() || MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
+                    LOGGER.debug("Searching for UPnP services.");
+                    myClingService.getControlPoint().search();
                 }
-            }, 0, 10, TimeUnit.SECONDS);
-        } else {
-            LOGGER.warn("Invalid/expired license, not starting UPnP Media Server.");
-        }
+            }
+        }, 0, 10, TimeUnit.SECONDS);
     }
 
     public void shutdown() {
@@ -180,8 +175,7 @@ public class MyTunesRssUpnpService {
     }
 
     public void startMediaServer() {
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if ((feedback == null || feedback.isValid()) && MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
+        if (MyTunesRss.CONFIG.isUpnpMediaServerActive()) {
             final LocalService<MyTunesRssContentDirectoryService> directoryService = new AnnotationLocalServiceBinder().read(MyTunesRssContentDirectoryService.class);
             myUpnpDatabaseUpdateListener = new MyTunesRssEventListener() {
                 @Override

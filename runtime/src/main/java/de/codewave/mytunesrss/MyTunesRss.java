@@ -11,14 +11,9 @@ import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.statement.FindAllTracksQuery;
-import de.codewave.mytunesrss.datastore.statement.SortOrder;
-import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
-import de.codewave.mytunesrss.lucene.AddLuceneTrack;
-import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.network.MulticastService;
@@ -27,15 +22,11 @@ import de.codewave.mytunesrss.statistics.StatisticsDatabaseWriter;
 import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
-import de.codewave.mytunesrss.task.MessageOfTheDayRunnable;
 import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
-import de.codewave.utils.sql.DataStoreSession;
-import de.codewave.utils.sql.QueryResult;
-import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -55,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.management.MBeanServer;
-import javax.naming.ldap.ManageReferralControl;
 import javax.net.ServerSocketFactory;
 import javax.swing.*;
 import java.awt.*;
@@ -118,8 +108,6 @@ public class MyTunesRss {
     public static final String[] APPLICATION_IDENTIFIER_PREV_VERSIONS = new String[]{"MyTunesRSS5", "MyTunesRSS4", "MyTunesRSS3"};
     public static final Map<String, String[]> COMMAND_LINE_ARGS = new HashMap<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRss.class);
-    public static final String MYTUNESRSSCOM_URL = "http://mytunesrss.com";
-    public static final String MYTUNESRSSCOM_TOOLS_URL = MYTUNESRSSCOM_URL + "/tools";
     public static final long FACTOR_GIB_TO_BYTE = 1024L * 1024L * 1024L;
     public static final long STARTUP_TIME = System.currentTimeMillis();
     private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<>(10);
@@ -156,7 +144,6 @@ public class MyTunesRss {
             return null;
         }
     };
-    public static MyTunesRssRegistration REGISTRATION = new MyTunesRssRegistration();
     public static final String THREAD_PREFIX = "MyTunesRSS: ";
     public static FileSystemCache TRANSCODER_CACHE;
     public static FileSystemCache TEMP_CACHE;
@@ -174,7 +161,6 @@ public class MyTunesRss {
     public static final Thread.UncaughtExceptionHandler UNCAUGHT_HANDLER = new MyTunesRssUncaughtHandler();
     public static MyTunesRssForm FORM;
     public static AtomicReference<MyTunesRssEvent> LAST_DATABASE_EVENT = new AtomicReference<>();
-    public static MessageOfTheDayRunnable MESSAGE_OF_THE_DAY = new MessageOfTheDayRunnable();
     public static final AtomicBoolean SHUTDOWN_IN_PROGRESS = new AtomicBoolean();
     public static String CACHE_DATA_PATH;
     public static String PREFERENCES_DATA_PATH;
@@ -240,7 +226,6 @@ public class MyTunesRss {
         loadSystemProperties();
         readVersion();
         loadConfig();
-        handleRegistration();
         MyTunesRssUtils.setCodewaveLogLevel(CONFIG.getCodewaveLogLevel());
         processSanityChecks();
         if (!MyTunesRssUtils.isHeadless()) {
@@ -255,11 +240,6 @@ public class MyTunesRss {
         }
         initializeCaches();
 
-        if (!SHUTDOWN_IN_PROGRESS.get()) {
-            EXECUTOR_SERVICE.scheduleExternalAddressUpdate(); // must only be scheduled once
-            EXECUTOR_SERVICE.scheduleUpdateCheck(); // must only be scheduled once
-            EXECUTOR_SERVICE.scheduleWithFixedDelay(MESSAGE_OF_THE_DAY, 0, 900, TimeUnit.SECONDS); // refresh every 15 minutes
-        }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (MyTunesRss.COMMAND_LINE_ARGS.containsKey(MyTunesRss.CMD_RESET_DB)) {
                 LOGGER.info("Recreation of default database requested via command line option.");
@@ -688,30 +668,6 @@ public class MyTunesRss {
         }
     }
 
-    private static void handleRegistration() throws IOException {
-        File license = null;
-        if (COMMAND_LINE_ARGS.containsKey("license")) {
-            license = new File(COMMAND_LINE_ARGS.get("license")[0]);
-            if (!license.isFile()) {
-                LOGGER.error("License file \"" + license.getAbsolutePath() + "\" specified on command line does not exist.");
-                license = null;
-            } else {
-                LOGGER.info("Using license file \"" + license.getAbsolutePath() + "\" specified on command line.");
-            }
-        }
-        REGISTRATION = new MyTunesRssRegistration();
-        REGISTRATION.init(license, true);
-        if (REGISTRATION.getSettings() != null) {
-            LOGGER.info("Loading configuration from license.");
-            MyTunesRssConfig configFromFile = CONFIG;
-            CONFIG = new MyTunesRssConfig();
-            CONFIG.loadFromContext(REGISTRATION.getSettings());
-            if (configFromFile.getPathInfoKey() != null) {
-                CONFIG.setPathInfoKey(configFromFile.getPathInfoKey());
-            }
-        }
-    }
-
     private static void loadConfig() throws IOException {
         CONFIG = new MyTunesRssConfig();
         CONFIG.load();
@@ -867,7 +823,6 @@ public class MyTunesRss {
                 if (FORM != null) {
                     FORM.setUserUrl(CONFIG.getPort());
                 }
-                EXECUTOR_SERVICE.scheduleMyTunesRssComUpdate();
                 if (CONFIG.isAvailableOnLocalNet()) {
                     MulticastService.startListener();
                 }
@@ -894,7 +849,6 @@ public class MyTunesRss {
                 FORM.setUserUrl(-1);
             }
             MulticastService.stopListener();
-            EXECUTOR_SERVICE.cancelMyTunesRssComUpdate();
         }
     }
 

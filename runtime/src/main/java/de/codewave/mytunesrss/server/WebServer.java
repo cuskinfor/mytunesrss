@@ -41,10 +41,6 @@ public class WebServer {
     private WebAppContext myContext;
 
     public synchronized void start() throws Exception {
-        RegistrationFeedback feedback = MyTunesRssUtils.getRegistrationFeedback(Locale.getDefault());
-        if (feedback != null && !feedback.isValid()) {
-            throw new RegistrationException(feedback.getMessage());
-        }
         if (!myRunning.get()) {
             ensureValidHttpPortInConfig();
             myServer = new Server();
@@ -55,16 +51,10 @@ public class WebServer {
                     // copy default keystore to configured location
                     LOGGER.warn("Using default keystore because configured one does not exist but SSL is enabled.");
                     File keystore = new File(MyTunesRss.CACHE_DATA_PATH, "mytunesrss.keystore");
-                    InputStream inStream = getClass().getResourceAsStream("/keystore");
-                    try {
-                        FileOutputStream outStream = new FileOutputStream(keystore);
-                        try {
+                    try (InputStream inStream = getClass().getResourceAsStream("/keystore")) {
+                        try (FileOutputStream outStream = new FileOutputStream(keystore)) {
                             IOUtils.copy(inStream, outStream);
-                        } finally {
-                            outStream.close();
                         }
-                    } finally {
-                        inStream.close();
                     }
                     sslContextFactory.setKeyStorePath(keystore.getAbsolutePath());
                     sslContextFactory.setKeyStorePassword("changeit");
@@ -89,7 +79,7 @@ public class WebServer {
                     ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
                     ajpConnector.setHost(MyTunesRss.CONFIG.getAjpHost());
                     myServer.addConnector(ajpConnector);
-                } catch (Exception ignored) {
+                } catch (RuntimeException ignored) {
                     LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
                 }
             }
@@ -135,7 +125,7 @@ public class WebServer {
     private void ensureValidHttpPortInConfig() throws IOException {
         if (MyTunesRss.CONFIG.getPort() < 1 || MyTunesRss.CONFIG.getPort() > 65535) {
             int freePort = 0;
-            int ports[] = {8080, 9090, 10000, 20000, 30000, 40000, 50000, 60000};
+            int[] ports = {8080, 9090, 10000, 20000, 30000, 40000, 50000, 60000};
             ServerSocket serverSocket = null;
             for (int port : ports) {
                 try {

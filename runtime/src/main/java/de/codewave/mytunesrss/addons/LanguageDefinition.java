@@ -2,7 +2,9 @@ package de.codewave.mytunesrss.addons;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.AnnotationIntrospector;
+import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.type.TypeReference;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
@@ -23,6 +25,8 @@ public class LanguageDefinition {
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         MAPPER.getDeserializationConfig().withAnnotationIntrospector(introspector);
         MAPPER.getSerializationConfig().withAnnotationIntrospector(introspector);
+        MAPPER.configure(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        MAPPER.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES, false);
     }
 
 
@@ -44,39 +48,7 @@ public class LanguageDefinition {
         return new Locale(split[0].trim(), split[1].trim(), split[2].trim());
     }
 
-    private Integer myId;
-    private Integer myAccountId;
-    private String myNick;
     private String myCode;
-    private String myVersion;
-    private long lastUpdate;
-
-    public Integer getId() {
-        return myId;
-    }
-
-    public LanguageDefinition setId(Integer id) {
-        myId = id;
-        return this;
-    }
-
-    public Integer getAccountId() {
-        return myAccountId;
-    }
-
-    public LanguageDefinition setAccountId(Integer accountId) {
-        myAccountId = accountId;
-        return this;
-    }
-
-    public String getNick() {
-        return myNick;
-    }
-
-    public LanguageDefinition setNick(String nick) {
-        myNick = nick;
-        return this;
-    }
 
     public String getCode() {
         return myCode;
@@ -84,24 +56,6 @@ public class LanguageDefinition {
 
     public LanguageDefinition setCode(String code) {
         myCode = code;
-        return this;
-    }
-
-    public String getVersion() {
-        return myVersion;
-    }
-
-    public LanguageDefinition setVersion(String version) {
-        myVersion = version;
-        return this;
-    }
-
-    public long getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public LanguageDefinition setLastUpdate(long lastUpdate) {
-        this.lastUpdate = lastUpdate;
         return this;
     }
 

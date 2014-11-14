@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
 import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,6 +77,7 @@ public class ShowExifCommandHandler extends MyTunesRssCommandHandler {
                     }
                     ObjectMapper mapper = new ObjectMapper();
                     mapper.getSerializationConfig().withAnnotationIntrospector(new JaxbAnnotationIntrospector());
+                    mapper.configure(SerializationConfig.Feature.WRITE_NULL_MAP_VALUES, false);
                     getResponse().setContentType("application/json");
                     mapper.writeValue(getResponse().getWriter(), exifFieldList);
                 } else {

@@ -2,6 +2,7 @@ package de.codewave.mytunesrss;
 
 import com.ibm.icu.text.Normalizer;
 import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.config.DatasourceType;
 import de.codewave.mytunesrss.config.LdapConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
@@ -15,9 +16,11 @@ import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
 import de.codewave.mytunesrss.statistics.RemoveOldEventsStatement;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.utils.MiscUtils;
+import de.codewave.utils.io.FileProcessor;
 import de.codewave.utils.io.LogStreamCopyThread;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.utils.sql.*;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.commons.httpclient.DefaultHttpMethodRetryHandler;
 import org.apache.commons.httpclient.HostConfiguration;
 import org.apache.commons.httpclient.HttpClient;
@@ -78,6 +81,7 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -333,7 +337,7 @@ public class MyTunesRssUtils {
             LOGGER.error("Setting codewave log to level \"" + level + "\".");
         }
         LoggerRepository repository = org.apache.log4j.Logger.getRootLogger().getLoggerRepository();
-        for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements();) {
+        for (Enumeration loggerEnum = repository.getCurrentLoggers(); loggerEnum.hasMoreElements(); ) {
             org.apache.log4j.Logger logger = (org.apache.log4j.Logger) loggerEnum.nextElement();
             if (logger.getName().startsWith("de.codewave.")) {
                 logger.setLevel(level);
@@ -432,25 +436,6 @@ public class MyTunesRssUtils {
             }
         }
         return false;
-    }
-
-    public static RegistrationFeedback getRegistrationFeedback(Locale locale) {
-        if (MyTunesRss.REGISTRATION.isExpiredPreReleaseVersion()) {
-            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.preReleaseVersionExpired"), false);
-        } else if (MyTunesRss.REGISTRATION.isExpiredVersion()) {
-            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.registrationExpiredVersion"), false);
-        } else if (MyTunesRss.REGISTRATION.isExpired()) {
-            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "error.registrationExpired"), false);
-        } else if (MyTunesRss.REGISTRATION.isExpirationDate() && !MyTunesRss.REGISTRATION.isReleaseVersion()) {
-            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "info.preReleaseExpiration",
-                    MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                            locale, "common.dateFormat"))), true);
-        } else if (MyTunesRss.REGISTRATION.isExpirationDate() && !MyTunesRss.REGISTRATION.isExpired()) {
-            return new RegistrationFeedback(MyTunesRssUtils.getBundleString(locale, "info.expirationInfo",
-                    MyTunesRss.REGISTRATION.getExpiration(MyTunesRssUtils.getBundleString(
-                            locale, "common.dateFormat"))), true);
-        }
-        return null;
     }
 
     private static Playlist findPlaylistWithId(List<Playlist> playlists, String containerId) {
@@ -599,7 +584,7 @@ public class MyTunesRssUtils {
             });
             return size;
         } else {
-            return new Size((int)photo.getWidth(), (int)photo.getHeight());
+            return new Size((int) photo.getWidth(), (int) photo.getHeight());
         }
     }
 
@@ -832,7 +817,8 @@ public class MyTunesRssUtils {
         File composedFile = new File(MiscUtils.compose(filename));
         LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(composedFile.getAbsolutePath()) + ".");
         if (composedFile.exists()) {
-            return composedFile;}
+            return composedFile;
+        }
         File decomposedFile = new File(MiscUtils.decompose(filename));
         LOGGER.debug("Trying to find " + MiscUtils.getUtf8UrlEncoded(decomposedFile.getAbsolutePath()) + ".");
         if (decomposedFile.exists()) {
@@ -1355,7 +1341,7 @@ public class MyTunesRssUtils {
             query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
             DataStoreSession dataStoreSession = MyTunesRss.STORE.getTransaction();
             try {
-               QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
+                QueryResult<Track> trackQueryResult = dataStoreSession.executeQuery(query);
                 for (Track track = trackQueryResult.nextResult(); track != null; track = trackQueryResult.nextResult()) {
                     LuceneTrack luceneTrack = new AddLuceneTrack();
                     luceneTrack.setId(track.getId());
@@ -1384,5 +1370,50 @@ public class MyTunesRssUtils {
         } finally {
             StopWatch.stop();
         }
+    }
+
+    public static void writeSupportArchiveAsync(final String dir, final OutputStream os) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    final ZipArchiveOutputStream zipOutput = new ZipArchiveOutputStream(os);
+                    de.codewave.utils.io.IOUtils.processFiles(new File(MyTunesRss.CACHE_DATA_PATH), new FileProcessor() {
+                                public void process(File file) {
+                                    try {
+                                        ZipUtils.addToZip(dir + "/" + file.getName(), file, zipOutput);
+                                    } catch (IOException e) {
+                                        LOGGER.error("Could not add file \"" + file.getAbsolutePath() + "\".", e);
+                                    }
+                                }
+                            }, new FileFilter() {
+                                public boolean accept(File file) {
+                                    return file.getName().startsWith("MyTunesRSS.log");
+                                }
+                            }
+                    );
+                    int index = 0;
+                    for (DatasourceConfig dataSource : MyTunesRss.CONFIG.getDatasources()) {
+                        if (dataSource.getType() == DatasourceType.Itunes) {
+                            File file = new File(dataSource.getDefinition());
+                            if (file.isFile() && file.canRead()) {
+                                if (index == 0) {
+                                    ZipUtils.addToZip(dir + "/iTunes Music Library.xml", file, zipOutput);
+                                } else {
+                                    ZipUtils.addToZip(dir + "/iTunes Music Library (" + index + ").xml", file, zipOutput);
+                                }
+                                index++;
+                            }
+                        }
+                    }
+                    zipOutput.close();
+                } catch (IOException e) {
+                    LOGGER.error("Could not write support archive.", e);
+                }
+            }
+        };
+        Thread thread = new Thread(runnable, "SupportArchiveCreator");
+        thread.setDaemon(true);
+        thread.start();
     }
 }

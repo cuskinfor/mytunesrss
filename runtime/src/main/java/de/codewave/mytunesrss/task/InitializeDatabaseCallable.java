@@ -48,17 +48,6 @@ public class InitializeDatabaseCallable implements Callable<Void> {
                 } else {
                     LOGGER.debug("Version found.");
                     if (myVersion.compareTo(new Version(MyTunesRss.VERSION)) < 0) {
-                        if (MyTunesRss.REGISTRATION.isExpiredVersion()) {
-                            if (MyTunesRssUtils.isHeadless()) {
-                                MyTunesRssUtils.showErrorMessage(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.registrationExpiredVersion"));
-                                MyTunesRssUtils.shutdownGracefully();
-                            } else {
-                                int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.licenseExpiredVersion"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
-                                if (result == JOptionPane.YES_OPTION) {
-                                    MyTunesRssUtils.shutdownGracefully();
-                                }
-                            }
-                        }
                         ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.migratingDatabase"));
                         info.show(2000L);
                         try {

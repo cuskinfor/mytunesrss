@@ -29,9 +29,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private Form myProxyForm;
     private Form mySmtpForm;
     private CheckBox myHeadless;
-    private SmartTextField myMyTunesRssComUser;
-    private SmartPasswordField myMyTunesRssComPassword;
-    private CheckBox myMyTunesRssComSsl;
     private SmartTextField myWebLoginMessage;
     private SmartTextField myWebWelcomeMessage;
     private SmartTextField myRssDescription;
@@ -53,15 +50,12 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
 
     public void attach() {
         super.attach();
-        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 7, true, true));
+        init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
         myMainWindowForm = getComponentFactory().createForm(null, true);
         myMyTunesRssComForm = getComponentFactory().createForm(null, true);
         myWebInterfaceForm = getComponentFactory().createForm(null, true);
         myProxyForm = getComponentFactory().createForm(null, true);
         mySmtpForm = getComponentFactory().createForm(null, true);
-        myMyTunesRssComUser = getComponentFactory().createTextField("miscConfigPanel.myTunesRssComUser");
-        myMyTunesRssComPassword = getComponentFactory().createPasswordTextField("miscConfigPanel.myTunesRssComPassword");
-        myMyTunesRssComSsl = getComponentFactory().createCheckBox("miscConfigPanel.myTunesRssComSsl");
         myWebLoginMessage = getComponentFactory().createTextField("miscConfigPanel.webLoginMessage");
         myWebWelcomeMessage = getComponentFactory().createTextField("miscConfigPanel.webWelcomeMessage");
         myRssDescription = getComponentFactory().createTextField("miscConfigPanel.rssDescription");
@@ -79,11 +73,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myMainWindowForm.addField(myHeadless, myHeadless);
         Panel mainWindowPanel = getComponentFactory().surroundWithPanel(myMainWindowForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.mainWindow"));
         addComponent(mainWindowPanel);
-        myMyTunesRssComForm.addField(myMyTunesRssComUser, myMyTunesRssComUser);
-        myMyTunesRssComForm.addField(myMyTunesRssComPassword, myMyTunesRssComPassword);
-        myMyTunesRssComForm.addField(myMyTunesRssComSsl, myMyTunesRssComSsl);
-        Panel myTunesRssComPanel = getComponentFactory().surroundWithPanel(myMyTunesRssComForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.myTunesRssCom"));
-        addComponent(myTunesRssComPanel);
         myProxyForm.addField(myProxyHost, myProxyHost);
         myProxyForm.addField(myProxyPort, myProxyPort);
         Panel proxyPanel = getComponentFactory().surroundWithPanel(myProxyForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.proxy"));
@@ -116,16 +105,13 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         Panel graphicsMagickPanel = getComponentFactory().surroundWithPanel(myGraphicsMagickForm, FORM_PANEL_MARGIN_INFO, getBundleString("miscConfigPanel.caption.GraphicsMagick"));
         addComponent(graphicsMagickPanel);
 
-        addDefaultComponents(0, 6, 0, 6, false);
+        addDefaultComponents(0, 5, 0, 5, false);
 
         initFromConfig();
     }
 
     protected void initFromConfig() {
-        myMyTunesRssComUser.setValue(MyTunesRss.CONFIG.getMyTunesRssComUser());
-        myMyTunesRssComPassword.setValue(MyTunesRss.CONFIG.getMyTunesRssComPasswordHash());
-        myMyTunesRssComSsl.setValue(MyTunesRss.CONFIG.isMyTunesRssComSsl() && MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536);
-        myMyTunesRssComSsl.setEnabled(MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536);
+
         myWebLoginMessage.setValue(MyTunesRss.CONFIG.getWebLoginMessage());
         myWebWelcomeMessage.setValue(MyTunesRss.CONFIG.getWebWelcomeMessage());
         myRssDescription.setValue(MyTunesRss.CONFIG.getRssDescription());
@@ -145,11 +131,6 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     }
 
     protected void writeToConfig() {
-        MyTunesRss.CONFIG.setMyTunesRssComUser(myMyTunesRssComUser.getStringValue(null));
-        MyTunesRss.CONFIG.setMyTunesRssComPasswordHash(myMyTunesRssComPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()));
-        if (myMyTunesRssComSsl.isEnabled()) {
-            MyTunesRss.CONFIG.setMyTunesRssComSsl(myMyTunesRssComSsl.booleanValue());
-        }
         MyTunesRss.CONFIG.setWebLoginMessage(myWebLoginMessage.getStringValue(null));
         MyTunesRss.CONFIG.setWebWelcomeMessage(myWebWelcomeMessage.getStringValue(null));
         MyTunesRss.CONFIG.setRssDescription(myRssDescription.getStringValue(null));
@@ -187,7 +168,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         if (clickEvent.getButton() == myGraphicsMagickHomepageButton) {
             getWindow().open(new ExternalResource("http://www.graphicsmagick.org"));
         } else if (clickEvent.getButton() == myGraphicsMagickBinarySelect) {
-            File dir = StringUtils.isNotBlank((String) myGraphicsMagickBinary.getValue()) ? new File((String) myGraphicsMagickBinary.getValue()) : null;
+            File dir = StringUtils.isNotBlank((CharSequence) myGraphicsMagickBinary.getValue()) ? new File((String) myGraphicsMagickBinary.getValue()) : null;
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getBundleString("miscConfigPanel.caption.selectGraphicsMagickBinary"), dir, null, ServerSideFileChooser.PATTERN_ALL, false, getApplication().getServerSideFileChooserLabels()) {
                 @Override
                 protected void onFileSelected(File file) {
