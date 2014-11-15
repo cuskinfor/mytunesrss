@@ -7,6 +7,10 @@
 
     <body>
 
+        <release version="6.5.1" date="2014-11-15">
+            <action dev="mdescher" type="fix">Use "http://ip4.telize.com" to get external address.</action>
+        </release>
+
         <release version="6.5" date="2014-11-14">
             <action dev="mdescher" type="add">Added function for downloading a support archive which can/should be attached to support request emails.</action>
             <action dev="mdescher" type="remove">Removed support features: send support request.</action>
