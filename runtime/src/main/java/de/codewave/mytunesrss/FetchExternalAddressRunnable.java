@@ -24,7 +24,7 @@ public class FetchExternalAddressRunnable implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(FetchExternalAddressRunnable.class);
     private static final String GET_IP_URI = "http://ip4.telize.com";
 
-    public static String EXTERNAL_ADDRESS;
+    public static volatile String EXTERNAL_ADDRESS;
 
     private HttpClient myHttpClient = MyTunesRssUtils.createHttpClient();
 
@@ -41,10 +41,11 @@ public class FetchExternalAddressRunnable implements Runnable {
                 } finally {
                     getMethod.releaseConnection();
                 }
+            } else {
+                EXTERNAL_ADDRESS =  null;
             }
         } catch (RuntimeException e) {
             LOG.warn("Encountered unexpected exception. Caught to keep scheduled task alive.", e);
         }
-        EXTERNAL_ADDRESS = null;
     }
 }

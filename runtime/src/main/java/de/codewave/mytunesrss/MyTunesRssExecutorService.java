@@ -171,7 +171,7 @@ public class MyTunesRssExecutorService {
 
     public synchronized void scheduleExternalAddressUpdate() {
         try {
-            GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 60, TimeUnit.SECONDS);
+            GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 300, TimeUnit.SECONDS);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule external address update task.", e);
         }

@@ -284,6 +284,7 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             UPNP_SERVICE.startMediaServer();
             startWebserver();
+            EXECUTOR_SERVICE.scheduleExternalAddressUpdate();
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (RUN_DATABASE_REFRESH_ON_STARTUP) {
