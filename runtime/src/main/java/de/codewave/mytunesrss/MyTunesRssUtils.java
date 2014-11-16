@@ -128,12 +128,16 @@ public class MyTunesRssUtils {
         return o1.equals(o2);
     }
 
-    public static void showErrorMessageWithDialog(String message) {
+    public static void showErrorMessageWithDialog(String message, Throwable t) {
         if (!isHeadless()) {
             JOptionPane.showMessageDialog(null, message);
         } else {
             //noinspection UseOfSystemOutOrSystemErr
             System.err.println(message);
+            if (t != null) {
+                //noinspection CallToPrintStackTrace
+                t.printStackTrace();
+            }
         }
     }
 

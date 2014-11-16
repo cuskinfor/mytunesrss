@@ -8,6 +8,7 @@
     <body>
 
         <release version="6.5.2" date="___D___">
+            <action dev="mdescher" type="fix">[MYTUNESRSS-520] Database problems on startup do not honor headless mode</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-521] Typo in label in UPnP admin</action>
         </release>
 

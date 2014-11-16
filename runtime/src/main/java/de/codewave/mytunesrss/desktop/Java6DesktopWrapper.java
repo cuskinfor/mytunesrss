@@ -22,7 +22,7 @@ public class Java6DesktopWrapper implements DesktopWrapper {
         try {
             Desktop.getDesktop().browse(uri);
         } catch (IOException e) {
-            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.openBrowser", e.getMessage()));
+            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.openBrowser", e.getMessage()), e);
         }
     }
 

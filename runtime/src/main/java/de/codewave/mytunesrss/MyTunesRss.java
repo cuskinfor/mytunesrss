@@ -271,9 +271,9 @@ public class MyTunesRss {
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             if (!startAdminServer(getAdminHostFromConfigOrCommandLine(), getAdminPortFromConfigOrCommandLine())) {
-                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()));
+                MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartWithPortFailed", getAdminPortFromConfigOrCommandLine()), null);
                 if (!startAdminServer(null, 0)) {
-                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartFailed"));
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.adminStartFailed"), null);
                 }
             }
         }
@@ -516,15 +516,15 @@ public class MyTunesRss {
         while (true) {
             try {
                 registerDatabaseDriver();
-            } catch (ClassNotFoundException | IllegalAccessException  | InstantiationException | RuntimeException ignored) {
-                if (!CONFIG.isDefaultDatabase()) {
+            } catch (ClassNotFoundException | IllegalAccessException  | InstantiationException | RuntimeException e) {
+                if (!CONFIG.isDefaultDatabase() && !MyTunesRssUtils.isHeadless()) {
                     int result = JOptionPane.showConfirmDialog(null, MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitErrorReset"), MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.title"), JOptionPane.YES_NO_OPTION);
                     if (result == JOptionPane.YES_OPTION) {
                         recreateDefaultDatabase();
                         continue;
                     }
                 } else {
-                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"), e);
                     MyTunesRssUtils.shutdownGracefully();
                 }
             }
@@ -575,7 +575,7 @@ public class MyTunesRss {
                             continue;
                         }
                     }
-                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"));
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseInitError"), null);
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
@@ -587,7 +587,7 @@ public class MyTunesRss {
                         continue; // retry
                     }
                 } else {
-                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch", VERSION, callable.getDatabaseVersion().toString()));
+                    MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.databaseVersionMismatch", VERSION, callable.getDatabaseVersion().toString()), null);
                 }
                 MyTunesRssUtils.shutdownGracefully();
             }
@@ -636,7 +636,7 @@ public class MyTunesRss {
 
     private static void processSanityChecks() {
         if (new Version(CONFIG.getVersion()).compareTo(new Version(VERSION)) > 0) {
-            MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()));
+            MyTunesRssUtils.showErrorMessageWithDialog(MessageFormat.format(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.configVersionMismatch"), VERSION, CONFIG.getVersion()), null);
             MyTunesRssUtils.shutdownGracefully();
         }
     }
@@ -649,7 +649,7 @@ public class MyTunesRss {
             } else if (SystemUtils.IS_OS_MAC_OSX) {
                 type = "osx";
             }
-            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type));
+            MyTunesRssUtils.showErrorMessageWithDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "error.missingSystemProperty." + type), null);
         }
     }
 
