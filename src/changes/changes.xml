@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="___V___" date="___D___">
+        <release version="6.5.2" date="___D___">
             <action dev="mdescher" type="fix">[MYTUNESRSS-521] Typo in label in UPnP admin</action>
         </release>
 
