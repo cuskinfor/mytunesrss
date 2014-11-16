@@ -7,6 +7,10 @@
 
     <body>
 
+        <release version="___V___" date="___D___">
+            <action dev="mdescher" type="fix">[MYTUNESRSS-521] Typo in label in UPnP admin</action>
+        </release>
+
         <release version="6.5.1" date="2014-11-15">
             <action dev="mdescher" type="fix">Use "http://ip4.telize.com" to get external address.</action>
         </release>
