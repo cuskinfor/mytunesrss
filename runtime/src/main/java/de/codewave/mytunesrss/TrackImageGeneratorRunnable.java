@@ -51,6 +51,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                 }
             }
             if (!sourceIds.isEmpty()) {
+                int count = 0;
                 try {
                     DataStoreQuery<Collection<SimpleTrack>> query = new DataStoreQuery<Collection<SimpleTrack>>() {
                         @Override
@@ -66,7 +67,6 @@ public class TrackImageGeneratorRunnable implements Runnable {
                     };
                     query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
                     Collection<SimpleTrack> tracks = MyTunesRss.STORE.executeQuery(query);
-                    int count = 0;
                     Map<String, String> folderImageCache = new LinkedHashMap<String, String>(64, 0.75f, true) {
                         @Override
                         protected boolean removeEldestEntry(Map.Entry<String, String> eldest) {
@@ -95,10 +95,12 @@ public class TrackImageGeneratorRunnable implements Runnable {
                 } catch (SQLException e) {
                     LOGGER.error("Could not fetch tracks with missing thumbnails.", e);
                 } finally {
-                    try {
-                        recreateAlbums();
-                    } catch (SQLException e) {
-                        LOGGER.error("Could not recreate albums.", e);
+                    if (count > 0) {
+                        try {
+                            recreateAlbums();
+                        } catch (SQLException e) {
+                            LOGGER.error("Could not recreate albums.", e);
+                        }
                     }
                 }
             }
