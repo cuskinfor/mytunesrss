@@ -36,12 +36,8 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
-import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
-import org.apache.tika.mime.MediaType;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
-import org.eclipse.jetty.webapp.MetaData;
 import org.h2.mvstore.FileStore;
 import org.h2.mvstore.MVStore;
 import org.quartz.SchedulerException;
@@ -87,7 +83,6 @@ import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.util.*;
 import java.util.List;
-import java.util.zip.ZipOutputStream;
 
 /**
  * de.codewave.mytunesrss.MyTunesRssUtils
@@ -101,15 +96,6 @@ public class MyTunesRssUtils {
         MIME_TO_SUFFIX.put("image/jpg", "jpg");
         MIME_TO_SUFFIX.put("image/jpeg", "jpg");
         MIME_TO_SUFFIX.put("image/png", "png");
-    }
-    
-    private static final TikaConfig TIKA_CONFIG;
-    static {
-        try {
-            TIKA_CONFIG = new TikaConfig();
-        } catch (TikaException|IOException e) {
-            throw new RuntimeException("Could not initialize TIKA config!", e);
-        }
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
@@ -1434,48 +1420,5 @@ public class MyTunesRssUtils {
         thread.setDaemon(true);
         thread.start();
     }
-    
-    public static MediaType detectMediaType(File file) {
-        try {
-            Metadata metadata = new Metadata();
-            metadata.set(Metadata.RESOURCE_NAME_KEY, file.toString());
-            return TIKA_CONFIG.getDetector().detect(TikaInputStream.get(file), metadata);
-        } catch (FileNotFoundException ignored) {
-            return null;
-        } catch (IOException e) {
-            LOGGER.warn("Could not detect media type of \"" + file.getAbsolutePath() + "\".", e);
-        }
-        return MediaType.OCTET_STREAM;
-    }
 
-    public static MediaType detectMediaType(String filename, InputStream inputStream) {
-        try {
-            Metadata metadata = new Metadata();
-            if (StringUtils.isNotBlank(filename)) {
-                metadata.set(Metadata.RESOURCE_NAME_KEY, filename);
-            }
-            return TIKA_CONFIG.getDetector().detect(TikaInputStream.get(inputStream), metadata);
-        } catch (FileNotFoundException ignored) {
-            return null;
-        } catch (IOException e) {
-            LOGGER.warn("Could not detect media type of stream (filename \"" + filename + "\").", e);
-        }
-        return MediaType.OCTET_STREAM;
-    }
-    
-    public static boolean isImage(MediaType mediaType) {
-        return mediaType != null && "image".equalsIgnoreCase(mediaType.getType());
-    }
-
-    public static boolean isAudio(MediaType mediaType) {
-        return mediaType != null && "audio".equalsIgnoreCase(mediaType.getType());
-    }
-
-    public static boolean isVideo(MediaType mediaType) {
-        return mediaType != null && "video".equalsIgnoreCase(mediaType.getType());
-    }
-
-    public static boolean isSupported(MediaType tikaMediaType) { 
-    return MyTunesRssUtils.isImage(tikaMediaType) || MyTunesRssUtils.isAudio(tikaMediaType) || MyTunesRssUtils.isVideo(tikaMediaType);
-    }
 }

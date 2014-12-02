@@ -13,7 +13,6 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.mime.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,8 +112,8 @@ public class TrackListener implements PListHandlerListener {
             String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
             if (StringUtils.isNotBlank(filename)) {
                 String mp4Codec = getMp4Codec(track, filename, tsUpdated);
-                org.apache.tika.mime.MediaType tikaMediaType = MyTunesRssUtils.detectMediaType(new File(filename));
-                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (MyTunesRssUtils.isAudio(tikaMediaType) || MyTunesRssUtils.isVideo(tikaMediaType)) && !isMp4CodecDisabled(mp4Codec)) {
+                org.apache.tika.mime.MediaType tikaMediaType = MyTunesRssMediaTypeUtils.detectMediaType(new File(filename));
+                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (MyTunesRssMediaTypeUtils.isAudio(tikaMediaType) || MyTunesRssMediaTypeUtils.isVideo(tikaMediaType)) && !isMp4CodecDisabled(mp4Codec)) {
                     File file = MyTunesRssUtils.searchFile(filename);
                     if (!file.isFile()) {
                         myMissingFiles++;

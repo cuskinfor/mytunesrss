@@ -7,7 +7,7 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.DatabaseJobRunningException;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssMediaTypeUtils;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceType;
 import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
@@ -158,8 +158,8 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private File saveFile(DatasourceConfig datasource, String fileName, InputStream inputStream) throws IOException {
-        MediaType tikaMediaType = MyTunesRssUtils.detectMediaType(fileName, inputStream);
-        if (MyTunesRssUtils.isSupported(tikaMediaType)) {
+        MediaType tikaMediaType = MyTunesRssMediaTypeUtils.detectMediaType(fileName, inputStream);
+        if (MyTunesRssMediaTypeUtils.isSupported(tikaMediaType)) {
             File targetFile = null;
             switch (datasource.getType()) {
                 case Watchfolder:

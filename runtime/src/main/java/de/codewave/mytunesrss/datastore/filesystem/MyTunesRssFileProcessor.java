@@ -8,10 +8,7 @@ import de.codewave.camel.mp4.CoverAtom;
 import de.codewave.camel.mp4.DiskAtom;
 import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.camel.mp4.StikAtom;
-import de.codewave.mytunesrss.FileSupportUtils;
-import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
@@ -36,8 +33,6 @@ import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
 import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,8 +90,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     public void process(File file) {
         try {
-            org.apache.tika.mime.MediaType fileType = MyTunesRssUtils.detectMediaType(file);
-            if (file.isFile() && MyTunesRssUtils.isSupported(fileType)) {
+            org.apache.tika.mime.MediaType fileType = MyTunesRssMediaTypeUtils.detectMediaType(file);
+            if (file.isFile() && MyTunesRssMediaTypeUtils.isSupported(fileType)) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myExistingIds.containsKey(fileId)) {
                     boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
@@ -107,7 +102,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
-                        if (MyTunesRssUtils.isImage(fileType)) {
+                        if (MyTunesRssMediaTypeUtils.isImage(fileType)) {
                             insertOrUpdateImage(file, fileId, existing);
                         } else {
                             if (insertOrUpdateTrack(file, fileId, existing, fileType)) {
@@ -115,7 +110,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             }
 
                         }
-                    } else if (MyTunesRssUtils.isImage(fileType)) {
+                    } else if (MyTunesRssMediaTypeUtils.isImage(fileType)) {
                         String albumName = getPhotoAlbum(file);
                         try {
                             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
