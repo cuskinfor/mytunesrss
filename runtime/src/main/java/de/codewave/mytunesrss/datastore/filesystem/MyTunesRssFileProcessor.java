@@ -8,8 +8,10 @@ import de.codewave.camel.mp4.CoverAtom;
 import de.codewave.camel.mp4.DiskAtom;
 import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.camel.mp4.StikAtom;
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.config.FileType;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
@@ -34,6 +36,8 @@ import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.exception.TikaException;
 import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +58,7 @@ import java.util.regex.Pattern;
  */
 public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
-
+    
     private DatabaseUpdateQueue myQueue;
     private int myUpdatedCount;
     private Map<String, Byte> myExistingIds;
@@ -91,27 +95,27 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     public void process(File file) {
         try {
-            if (file.isFile() && myDatasourceConfig.isSupported(file.getName())) {
+            org.apache.tika.mime.MediaType fileType = MyTunesRssUtils.detectMediaType(file);
+            if (file.isFile() && MyTunesRssUtils.isSupported(fileType)) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myExistingIds.containsKey(fileId)) {
                     boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
                     if (existing) {
                         myExistingIds.put(fileId, (byte)0);
                     }
-                    FileType type = myDatasourceConfig.getFileType(FileSupportUtils.getFileSuffix(file.getName()));
                     if ((!existing || (myTrackTsUpdate.containsKey(fileId) && myTrackTsUpdate.get(fileId).longValue() < file.lastModified()) || (myPhotoTsUpdate.containsKey(fileId) && myPhotoTsUpdate.get(fileId).longValue() < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
-                        if (type.getMediaType() == MediaType.Image) {
+                        if (MyTunesRssUtils.isImage(fileType)) {
                             insertOrUpdateImage(file, fileId, existing);
                         } else {
-                            if (insertOrUpdateTrack(file, fileId, existing, type)) {
+                            if (insertOrUpdateTrack(file, fileId, existing, fileType)) {
                                 return; // early return!!!
                             }
 
                         }
-                    } else if (type.getMediaType() == MediaType.Image) {
+                    } else if (MyTunesRssUtils.isImage(fileType)) {
                         String albumName = getPhotoAlbum(file);
                         try {
                             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
@@ -147,7 +151,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         }
     }
 
-    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, FileType type) throws IOException, InterruptedException {
+    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, org.apache.tika.mime.MediaType tikaMediaType) throws IOException, InterruptedException {
+        MediaType mediaType = MediaType.get(tikaMediaType);
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
         statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
@@ -155,10 +160,10 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         // never set any statement information here, since they are cleared once again later for MP4 files
         // if meta data from files should be ignored.
         if (!myDatasourceConfig.isIgnoreFileMeta() && FileSupportUtils.isMp3(file)) {
-            parseMp3MetaData(file, statement, fileId, type.getMediaType());
+            parseMp3MetaData(file, statement, fileId, mediaType);
         } else if (FileSupportUtils.isMp4(file)) {
             // we have to fetch meta data even if they should be ignored to get the MP4 codec
-            TrackMetaData meta = parseMp4MetaData(file, statement, fileId, type.getMediaType());
+            TrackMetaData meta = parseMp4MetaData(file, statement, fileId, mediaType);
             if (meta.getMp4Codec() != null && ArrayUtils.contains(myDisabledMp4Codecs, meta.getMp4Codec().toLowerCase())) {
                 myExistingIds.remove(fileId);
                 return true;
@@ -166,11 +171,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 statement.clear(); // meta data should be ignored
             }
         } else {
-            setSimpleInfo(statement, file, type.getMediaType());
+            setSimpleInfo(statement, file, mediaType);
         }
         statement.setId(fileId);
-        statement.setProtected(statement.isProtected() || type.isProtected());
-        statement.setMediaType(type.getMediaType());
+        statement.setProtected(statement.isProtected()); // TODO DRM detection
+        statement.setMediaType(mediaType);
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
         myUpdatedCount++;

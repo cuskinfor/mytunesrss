@@ -18,22 +18,21 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private ApertureDatasourceConfig myConfig;
 
     public ApertureDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, ApertureDatasourceConfig config) {
-        super(datasourcesConfigPanel, config);
+        super(datasourcesConfigPanel);
         myConfig = config;
     }
 
     @Override
     public void attach() {
         super.attach();
-        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 4, true, true));
+        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 3, true, true));
 
-        addComponent(myFileTypesPanel);
         addComponent(myPathReplacementsPanel);
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
         myMiscOptionsForm.addField(myPhotoThumbnailImportType, myPhotoThumbnailImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 3, 0, 3, false);
+        addDefaultComponents(0, 2, 0, 2, false);
 
         initFromConfig();
     }
@@ -45,8 +44,6 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
             myConfig.addPathReplacement(new ReplacementRule((String) getTableCellPropertyValue(myPathReplacements, itemId, "search"), (String) getTableCellPropertyValue(myPathReplacements, itemId, "replace")));
         }
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
-        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
-        myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
     }
@@ -58,12 +55,11 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
         for (ReplacementRule replacement : myConfig.getPathReplacements()) {
             addPathReplacement(replacement);
         }
-        setFileTypes(myConfig.getFileTypes());
         setTablePageLengths();
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm, myFileTypes)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

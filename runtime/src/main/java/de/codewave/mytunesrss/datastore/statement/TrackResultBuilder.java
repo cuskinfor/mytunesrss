@@ -48,12 +48,8 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setAlbumArtist(resultSet.getString("ALBUM_ARTIST"));
         track.setComposer(resultSet.getString("COMPOSER"));
         track.setSourceId(resultSet.getString("SOURCE_ID"));
-        DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(track.getSourceId());
-        if (datasource != null) {
-            track.setContentType(datasource.getContentType(track.getFilename().toLowerCase()));
-        } else {
-            track.setContentType("application/octet-stream");
-        }
+        org.apache.tika.mime.MediaType tikaMediaType = MyTunesRssUtils.detectMediaType(new File(pathname));
+        track.setContentType(tikaMediaType != null ? tikaMediaType.getType() : org.apache.tika.mime.MediaType.OCTET_STREAM.getType());
         return track;
     }
 }

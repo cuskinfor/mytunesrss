@@ -39,16 +39,14 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private WatchfolderDatasourceConfig myConfig;
 
     public WatchfolderDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, WatchfolderDatasourceConfig config) {
-        super(datasourcesConfigPanel, config);
+        super(datasourcesConfigPanel);
         myConfig = config;
     }
 
     @Override
     public void attach() {
         super.attach();
-        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 6, true, true));
-
-        addComponent(myFileTypesPanel);
+        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 5, true, true));
 
         myIncludeExcludeForm = getComponentFactory().createForm(null, true);
         myIncludePattern = getComponentFactory().createTextField("datasourceOptionsPanel.includePattern", new ValidRegExpValidator("datasourceOptionsPanel.error.invalidIncludePattern"));
@@ -96,7 +94,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myMiscOptionsForm.addField(myImportPlaylists, myImportPlaylists);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 5, 0, 5, false);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }
@@ -128,8 +126,6 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
         myConfig.setPhotoThumbnailImportType(((ImageImportTypeRepresentation) myPhotoThumbnailImportType.getValue()).getImageImportType());
         myConfig.setImportPlaylists(myImportPlaylists.booleanValue());
-        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
-        myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
     }
@@ -168,12 +164,11 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
             addTrackImagePattern(pattern);
         }
         myUseSingleImageInput.setValue(myConfig.isUseSingleImageInFolder());
-        setFileTypes(myConfig.getFileTypes());
         setTablePageLengths();
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImagePatternsTable, myFileTypes)) {
+        if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImagePatternsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

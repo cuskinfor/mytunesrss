@@ -41,7 +41,6 @@ import java.util.concurrent.TimeUnit;
  */
 public class MyTunesRssConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssConfig.class);
-    private static final SecretKeySpec CHECKSUM_KEY = new SecretKeySpec("codewave".getBytes(Charset.forName("UTF-8")), "DES");
     public static final String DEFAULT_INTERNAL_MYSQL_CONNECTION_OPTIONS = "server.max_allowed_packet=16M&server.innodb_log_file_size=64M&server.character-set-server=utf8&server.innodb_flush_log_at_trx_commit=2&server.innodb_buffer_pool_size=67108864&server.innodb_file_per_table=1";
 
     private String myHost;
@@ -1284,7 +1283,6 @@ public class MyTunesRssConfig {
                             watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
                             watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
                             watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
-                            readFileTypes(datasourceContext, watchfolderDatasourceConfig);
                             watchfolderDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
                             watchfolderDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
                             watchfolderDatasourceConfig.setImportPlaylists(JXPathUtils.getBooleanValue(datasourceContext, "import-playlists", true));
@@ -1315,7 +1313,6 @@ public class MyTunesRssConfig {
                             itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
                             itunesDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
                             itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
-                            readFileTypes(datasourceContext, itunesDatasourceConfig);
                             itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             itunesDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
                             itunesDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
@@ -1334,7 +1331,6 @@ public class MyTunesRssConfig {
                             iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
                             iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
                             iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            readFileTypes(datasourceContext, iphotoDatasourceConfig);
                             iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             dataSources.add(iphotoDatasourceConfig);
                             break;
@@ -1349,7 +1345,6 @@ public class MyTunesRssConfig {
                                 apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
                             }
                             apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            readFileTypes(datasourceContext, apertureDatasourceConfig);
                             apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
                             dataSources.add(apertureDatasourceConfig);
                             break;
@@ -1365,25 +1360,6 @@ public class MyTunesRssConfig {
             }
         }
         setDatasources(dataSources);
-    }
-
-    private void readFileTypes(JXPathContext settings, DatasourceConfig datasourceConfig) {
-        List<FileType> fileTypesList = new ArrayList<>();
-        Iterator<JXPathContext> fileTypes = JXPathUtils.getContextIterator(settings, "file-types/type");
-        while (fileTypes != null && fileTypes.hasNext()) {
-            JXPathContext fileTypeContext = fileTypes.next();
-            FileType fileType = new FileType();
-            fileType.setMimeType(JXPathUtils.getStringValue(fileTypeContext, "mime-type", "audio/mpeg"));
-            fileType.setSuffix(JXPathUtils.getStringValue(fileTypeContext, "suffix", "mp3"));
-            fileType.setMediaType(MediaType.valueOf(JXPathUtils.getStringValue(fileTypeContext, "mediatype", MediaType.Other.name())));
-            fileType.setProtected(JXPathUtils.getBooleanValue(fileTypeContext, "protected", false));
-            fileType.setActive(JXPathUtils.getBooleanValue(fileTypeContext, "active", true));
-            fileTypesList.add(fileType);
-        }
-        if (fileTypesList.isEmpty()) {
-            fileTypesList = datasourceConfig.getDefaultFileTypes();
-        }
-        datasourceConfig.setFileTypes(fileTypesList);
     }
 
     private List<String> readTrackImagePatterns(JXPathContext settings) {
@@ -1703,7 +1679,6 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", watchfolderDatasourceConfig.isUseSingleImageInFolder()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "import-playlists", watchfolderDatasourceConfig.isImportPlaylists()));
                     writeTrackImagePatterns(settings, dataSource, watchfolderDatasourceConfig);
-                    writeFileTypes(settings, dataSource, watchfolderDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
                     break;
                 case Itunes:
@@ -1731,7 +1706,6 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", itunesDatasourceConfig.isUseSingleImageInFolder()));
                     writeTrackImagePatterns(settings, dataSource, itunesDatasourceConfig);
-                    writeFileTypes(settings, dataSource, itunesDatasourceConfig);
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
                     break;
                 case Iphoto:
@@ -1749,7 +1723,6 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importRolls", iphotoDatasourceConfig.isImportRolls()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "importAlbums", iphotoDatasourceConfig.isImportAlbums()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", iphotoDatasourceConfig.getPhotoThumbnailImportType().name()));
-                    writeFileTypes(settings, dataSource, iphotoDatasourceConfig);
                     break;
                 case Aperture:
                     ApertureDatasourceConfig apertureDatasourceConfig = (ApertureDatasourceConfig) myDatasources.get(i);
@@ -1764,25 +1737,10 @@ public class MyTunesRssConfig {
                         }
                     }
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", apertureDatasourceConfig.getPhotoThumbnailImportType().name()));
-                    writeFileTypes(settings, dataSource, apertureDatasourceConfig);
                     break;
                 default:
                     throw new IllegalArgumentException("Unknown datasource type!");
             }
-        }
-    }
-
-    private void writeFileTypes(Document settings, Element dataSource, DatasourceConfig datasourceConfig) {
-        Element fileTypes = settings.createElement("file-types");
-        dataSource.appendChild(fileTypes);
-        for (FileType fileType : datasourceConfig.getFileTypes()) {
-            Element fileTypeElement = settings.createElement("type");
-            fileTypes.appendChild(fileTypeElement);
-            fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mime-type", fileType.getMimeType()));
-            fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "suffix", fileType.getSuffix()));
-            fileTypeElement.appendChild(DOMUtils.createTextElement(settings, "mediatype", fileType.getMediaType().name()));
-            fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "protected", fileType.isProtected()));
-            fileTypeElement.appendChild(DOMUtils.createBooleanElement(settings, "active", fileType.isActive()));
         }
     }
 

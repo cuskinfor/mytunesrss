@@ -5,13 +5,10 @@
 
 package de.codewave.mytunesrss.config;
 
-import de.codewave.mytunesrss.FileSupportUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
@@ -33,7 +30,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
     private String myName;
     private String myDefinition;
     private String myId;
-    private List<FileType> myFileTypes = new ArrayList<>();
     private long myLastUpdate;
     private boolean myUpload;
 
@@ -41,7 +37,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
         myId = source.getId();
         myName = source.myName;
         myDefinition = source.getDefinition();
-        myFileTypes = source.getFileTypes();
         myUpload = source.isUpload();
     }
 
@@ -49,7 +44,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
         setId(id);
         setName(name);
         setDefinition(definition);
-        setFileTypes(getDefaultFileTypes());
     }
 
     public String getId() {
@@ -99,49 +93,6 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
                 throw new IllegalArgumentException("Illegal datasource type.");
         }
     }
-
-    public List<FileType> getFileTypes() {
-        return new ArrayList<>(myFileTypes);
-    }
-
-    public void setFileTypes(List<FileType> fileTypes) {
-        myFileTypes = new ArrayList<>(fileTypes);
-    }
-
-    public FileType getFileType(String suffix) {
-        if (suffix != null) {
-            for (FileType type : myFileTypes) {
-                if (suffix.equalsIgnoreCase(type.getSuffix())) {
-                    return type;
-                }
-            }
-        }
-        return null;
-    }
-
-    public boolean isProtected(String filename) {
-        FileType type = getFileType(FileSupportUtils.getFileSuffix(filename));
-        return type != null && type.isProtected();
-    }
-
-    public String getContentType(String filename) {
-        FileType type = getFileType(FileSupportUtils.getFileSuffix(filename));
-        if (type != null) {
-            return type.getMimeType();
-        }
-        return "application/octet-stream";
-    }
-
-    public boolean isSupported(String filename) {
-        return isSuffixSupported(FileSupportUtils.getFileSuffix(filename));
-    }
-
-    private boolean isSuffixSupported(String suffix) {
-        FileType type = getFileType(suffix);
-        return type != null && type.isActive();
-    }
-
-    public abstract List<FileType> getDefaultFileTypes();
 
     public long getLastUpdate() {
         return myLastUpdate;

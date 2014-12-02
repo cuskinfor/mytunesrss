@@ -24,16 +24,14 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
     private ItunesDatasourceConfig myConfig;
 
     public ItunesDatasourceOptionsPanel(DatasourcesConfigPanel datasourcesConfigPanel, ItunesDatasourceConfig config) {
-        super(datasourcesConfigPanel, config);
+        super(datasourcesConfigPanel);
         myConfig = config;
     }
 
     @Override
     public void attach() {
         super.attach();
-        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 6, true, true));
-
-        addComponent(myFileTypesPanel);
+        init(getBundleString("datasourceOptionsPanel.caption", myConfig.getDefinition()), getComponentFactory().createGridLayout(1, 5, true, true));
 
         addComponent(myPathReplacementsPanel);
         Panel ignorePlaylistsPanel = new Panel(getBundleString("datasourceOptionsPanel.caption.ignoreItunesPlaylists"), getComponentFactory().createVerticalLayout(true, true));
@@ -65,7 +63,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myMiscOptionsForm.addField(myTrackImageImportType, myTrackImageImportType);
         addComponent(getComponentFactory().surroundWithPanel(myMiscOptionsForm, FORM_PANEL_MARGIN_INFO, getBundleString("datasourceOptionsPanel.caption.misc")));
 
-        addDefaultComponents(0, 5, 0, 5, false);
+        addDefaultComponents(0, 4, 0, 4, false);
 
         initFromConfig();
     }
@@ -94,8 +92,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         myConfig.setTrackImagePatterns(patterns);
         myConfig.setUseSingleImageInFolder(myUseSingleImageInput.booleanValue());
         myConfig.setTrackImageImportType(((ImageImportTypeRepresentation) myTrackImageImportType.getValue()).getImageImportType());
-        updateModifiedFileTypes(myConfig.getFileTypes(), getFileTypesAsList());
-        myConfig.setFileTypes(getFileTypesAsList());
         MyTunesRss.CONFIG.replaceDatasourceConfig(myConfig);
         MyTunesRss.CONFIG.save();
     }
@@ -122,7 +118,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
             addTrackImagePattern(pattern);
         }
         myUseSingleImageInput.setValue(myConfig.isUseSingleImageInFolder());
-        setFileTypes(myConfig.getFileTypes());
         setTablePageLengths();
     }
 
@@ -132,7 +127,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
     }
 
     protected boolean beforeSave() {
-        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm, myTrackImagePatternsTable, myFileTypes)) {
+        if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm, myTrackImagePatternsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
         }

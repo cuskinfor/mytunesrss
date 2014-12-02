@@ -456,12 +456,6 @@
         </sql>
     </statement>
 
-    <statement name="updateTrackFileType">
-        <sql>
-            UPDATE track SET protected = :protected, mediatype = :mediatype WHERE source_id = :source_id AND suffix = :suffix
-        </sql>
-    </statement>
-
     <statement name="insertPlaylist">
         <sql>INSERT INTO playlist (id, name, type, track_count, hidden, user_private, user_owner, ts_create, container_id, updated, source_id) VALUES (:id, :name, :type, 0, FALSE, :user_private, :user_name, :ts, :container_id, TRUE, :source_id)</sql>
         <sql loop="track_id" loopbatch="10000" loopcommit="10000">{createPlaylistTrackLinks}</sql>

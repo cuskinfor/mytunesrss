@@ -4,18 +4,25 @@
 
 package de.codewave.mytunesrss.jsp;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.MyTunesRssWebUtils;
+import de.codewave.mytunesrss.UserAgent;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
-import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.config.ExternalSiteDefinition;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
+import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.Photo;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.mime.MediaType;
 import org.codehaus.jackson.io.JsonStringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,12 +77,19 @@ public class MyTunesFunctions {
     }
 
     public static String contentType(WebConfig config, User user, Track track) {
-        DatasourceConfig datasource = MyTunesRss.CONFIG.getDatasource(track.getSourceId());
-        if (datasource != null) {
-            return datasource.getContentType("dummy." + suffix(config, user, track));
-        } else {
-            return "application/octet-stream";
+        if (config != null && user != null && MyTunesRss.CONFIG.isValidVlcConfig()) {
+            TranscoderConfig transcoderConfig = user.getForceTranscoder(track);
+            if (transcoderConfig != null) {
+                return transcoderConfig.getTargetContentType();
+            }
+            if (user.isTranscoder()) {
+                transcoderConfig = MyTunesRssUtils.getTranscoder(config.getActiveTranscoders(), track);
+                if (transcoderConfig != null) {
+                    return transcoderConfig.getTargetContentType();
+                }
+            }
         }
+        return track.getContentType();
     }
 
     public static boolean transcoding(PageContext pageContext, User user, Track track) {

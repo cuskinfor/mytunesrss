@@ -14,12 +14,8 @@ import de.codewave.utils.xml.XmlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.*;
 
 public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTrackDatasourceConfig {
@@ -177,25 +173,6 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         }
         LOGGER.debug("Could not find iTunes auto-add folder.");
         return null;
-    }
-
-    public List<FileType> getDefaultFileTypes() {
-        List<FileType> types = new ArrayList<>();
-        types.add(new FileType(true, "m4a", "audio/mp4", MediaType.Audio, false));
-        types.add(new FileType(true, "m4p", "audio/mp4", MediaType.Audio, true));
-        types.add(new FileType(true, "mp4", "video/mp4", MediaType.Video, false));
-        types.add(new FileType(true, "mov", "video/quicktime", MediaType.Video, false));
-        types.add(new FileType(true, "mpg", "audio/mpeg", MediaType.Audio, false));
-        types.add(new FileType(true, "mpeg", "audio/mpeg", MediaType.Audio, false));
-        types.add(new FileType(true, "m4v", "video/mp4", MediaType.Video, false));
-        types.add(new FileType(true, "m4b", "audio/mp4", MediaType.Audio, false));
-        types.add(new FileType(true, "mp3", "audio/mpeg", MediaType.Audio, false));
-        Collections.sort(types, new Comparator<FileType>() {
-            public int compare(FileType o1, FileType o2) {
-                return o1.getSuffix().compareTo(o2.getSuffix());
-            }
-        });
-        return types;
     }
 
     /**

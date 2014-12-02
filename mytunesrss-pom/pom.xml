@@ -295,7 +295,7 @@
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-compress</artifactId>
-                <version>1.4.1</version>
+                <version>1.9</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
@@ -418,6 +418,16 @@
                 <groupId>org.codehaus.enunciate</groupId>
                 <artifactId>enunciate-core-annotations</artifactId>
                 <version>1.27</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tika</groupId>
+                <artifactId>tika-parsers</artifactId>
+                <version>1.6</version>
+            </dependency>
+            <dependency>
+                <groupId>com.googlecode.mp4parser</groupId>
+                <artifactId>isoparser</artifactId>
+                <version>1.0.4.2</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

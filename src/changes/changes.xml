@@ -7,7 +7,9 @@
 
     <body>
 
-        <release version="6.5.2" date="___D___">
+        <release version="6.6.0" date="___D___">
+            <action dev="mdescher" type="update">Removed file types configuration. Use Tika library for media type detection.</action>
+            <action dev="mdescher" type="fix">Fixed problem with user interface settings page.</action>
             <action dev="mdescher" type="fix">Recreate albums in track image generator only if images were actually generated.</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-520] Database problems on startup do not honor headless mode</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-521] Typo in label in UPnP admin</action>

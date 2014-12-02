@@ -35,7 +35,7 @@ public class FileSystemLoader {
                         Thread.currentThread().interrupt();
                         throw new ShutdownRequestedException();
                     }
-                    return file.isDirectory() || (datasource.isIncluded(file) && datasource.isSupported(file.getName()));
+                    return file.isDirectory() || datasource.isIncluded(file);
                 }
             });
             for (String id : fileProcessor.getExistingIds()) {

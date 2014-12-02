@@ -18,10 +18,13 @@ import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.codec.language.bm.Rule;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.config.TikaConfig;
+import org.apache.tika.exception.TikaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -99,7 +102,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {
             String filename = applyReplacements(getImagePath(photo));
-            if (StringUtils.isNotBlank(filename) && myDatasourceConfig.isSupported(filename)) {
+            if (StringUtils.isNotBlank(filename) && MyTunesRssUtils.isImage(MyTunesRssUtils.detectMediaType(new File(filename)))) {
                 File file = MyTunesRssUtils.searchFile(filename);
                 if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated.longValue() || file.lastModified() >= tsUpdated.longValue())) {
                     InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
