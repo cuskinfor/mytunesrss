@@ -54,6 +54,10 @@
         <level value="info"/>
         <appender-ref ref="file"/>
     </logger>
+    <logger name="org.fourthline.cling.protocol.RetrieveRemoteDescriptors" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="file"/>
+    </logger>
     <root>
         <level value="info"/>
         <appender-ref ref="file"/>

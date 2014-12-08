@@ -8,6 +8,10 @@
             <param name="ConversionPattern" value="%d [%t] %-5p %c - %m%n"/>
         </layout>
     </appender>
+    <logger name="org.fourthline.cling.protocol.RetrieveRemoteDescriptors" additivity="false">
+        <level value="error"/>
+        <appender-ref ref="console"/>
+    </logger>
     <root>
         <level value="error"/>
         <appender-ref ref="console"/>

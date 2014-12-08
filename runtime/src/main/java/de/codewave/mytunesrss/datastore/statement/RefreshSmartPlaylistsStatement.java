@@ -111,7 +111,8 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         LATCH_MAP.putIfAbsent(playlistId, new AtomicInteger(0));
         if (LATCH_MAP.get(playlistId).getAndIncrement() < 2) { // at most two concurrent requests may enter here at any time
             synchronized (LATCH_MAP.get(playlistId)) { // only one request may enter at any time and only one (see above) is allowed to wait
-                LOGGER.info("Refreshing smart playlist with id \"" + playlistId + "\".");
+                String playlistIdentifier = "\"" + playlistId + "\" [" + toString(smartInfos) + "]";
+                LOGGER.info("Refreshing smart playlist " + playlistIdentifier + ".");
                 try {
                     if (SmartInfo.isLuceneCriteria(smartInfos)) {
                         Collection<LuceneTrackService.ScoredTrack> scoredTracks = MyTunesRss.LUCENE_TRACK_SERVICE.searchTracks(smartInfos, 0, 10000);
@@ -238,6 +239,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                     };
                     dataStoreQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 10000);
                     dataStoreQuery.execute(connection).addRemainingResults(tracks);
+                    LOGGER.info("Found " + tracks.size() + " tracks for " + playlistIdentifier + ".");
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateSmartPlaylist");
                     statement.setString("id", playlistId);
                     statement.setObject("track_id", tracks);
@@ -255,5 +257,17 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
             }
         }
         return false;
+    }
+
+    private String toString(Collection<SmartInfo> smartInfos) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (SmartInfo smartInfo : smartInfos) {
+            stringBuilder.append(",").append(smartInfo.getFieldType());
+            if (smartInfo.isInvert()) {
+                stringBuilder.append("(inverted)");
+            }
+            stringBuilder.append("=\"").append(smartInfo.getPattern()).append("\"");
+        }
+        return stringBuilder.substring(1);
     }
 }

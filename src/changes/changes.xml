@@ -8,6 +8,8 @@
     <body>
 
         <release version="6.6.0" date="___D___">
+            <action dev="mdescher" type="remove">Removed some frequent but useless cling warnings from log.</action>
+            <action dev="mdescher" type="add">More detailed smart playlist update logging.</action>
             <action dev="mdescher" type="update">Removed file types configuration. Use Tika library for media type detection.</action>
             <action dev="mdescher" type="fix">Fixed problem with user interface settings page.</action>
             <action dev="mdescher" type="fix">Recreate albums in track image generator only if images were actually generated.</action>
