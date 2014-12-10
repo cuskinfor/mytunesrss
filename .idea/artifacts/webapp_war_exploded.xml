@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="webapp:war exploded">
-    <output-path>$PROJECT_DIR$/webapp/target/webapp-6.6-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/webapp/target/webapp-6.5.2-SNAPSHOT</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">

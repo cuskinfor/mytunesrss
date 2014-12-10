@@ -194,16 +194,6 @@
                                        maxlength="5"
                                        value="<c:out value="${cwfn:choose(config.maxSearchResults > 0, config.maxSearchResults, '')}"/>" /></td>
                         </tr>
-                        <c:if test="${globalConfig.myTunesRssComActive}">
-                            <tr <mt:flipFlop/>>
-                                <td class="label"><fmt:message key="settings.myTunesRssComAddress" /></td>
-                                <td>
-                                    <input type="checkbox"
-                                           name="myTunesRssComAddress"
-                                           value="true" <c:if test="${config.myTunesRssComAddress}">checked="checked"</c:if>/>
-                                </td>
-                            </tr>
-                        </c:if>
                         <c:if test="${!globalConfig.disableBrowser}">
                             <tr <mt:flipFlop/>>
                                 <td class="label"><fmt:message key="settings.browserStartIndex" /></td>
