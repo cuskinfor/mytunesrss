@@ -1227,7 +1227,7 @@ public class MyTunesRssUtils {
                 StopWatch.start("Updating play count and refreshing play count/time related smart playlists.");
                 try {
                     MyTunesRss.STORE.executeStatement(new UpdatePlayCountAndDateStatement(new String[]{trackId}));
-                    MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.ON_PLAY));
+                    MyTunesRss.EXECUTOR_SERVICE.PLAY_COUNT_UPDATED.set(true); // Just set a flag, the actual update will be scheduled elsewhere.
                 } catch (SQLException | RuntimeException e) {
                     LOGGER.info("Could not update play count and/or refresh smart playlists.", e);
                 } finally {

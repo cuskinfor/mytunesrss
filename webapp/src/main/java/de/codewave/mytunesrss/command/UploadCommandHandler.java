@@ -87,6 +87,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
+    // TODO: Each upload will trigger a db update. While one is waiting to be scheduled all subsequent ones should be ignored 
     private void triggerDatabaseUpdate(final DatasourceConfig datasource, final List<File> uploadedFiles, final long lastModifiedBeforeUpload) throws DatabaseJobRunningException {
         final long startTime = System.currentTimeMillis();
         MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {

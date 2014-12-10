@@ -8,6 +8,7 @@
     <body>
 
         <release version="6.6.0" date="___D___">
+            <action dev="mdescher" type="update">Do not run async smart playlist updates concurrently and only with a fixed delay.</action>
             <action dev="mdescher" type="remove">Removed some frequent but useless cling warnings from log.</action>
             <action dev="mdescher" type="add">More detailed smart playlist update logging.</action>
             <action dev="mdescher" type="update">Removed file types configuration. Use Tika library for media type detection.</action>

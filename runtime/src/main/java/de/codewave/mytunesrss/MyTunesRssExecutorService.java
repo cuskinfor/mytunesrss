@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class MyTunesRssExecutorService {
 
@@ -26,9 +28,9 @@ public class MyTunesRssExecutorService {
 
     private final ExecutorService LUCENE_UPDATE_EXECUTOR = Executors.newSingleThreadExecutor();
 
-    private final ExecutorService ROUTER_CONFIG_EXECUTOR = Executors.newSingleThreadExecutor();
-
     private final ScheduledExecutorService GENERAL_EXECUTOR = Executors.newScheduledThreadPool(20);
+
+    private ExecutorService ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(5);
 
     private Future<Boolean> DATABASE_UPDATE_FUTURE;
 
@@ -45,20 +47,31 @@ public class MyTunesRssExecutorService {
     private ScheduledFuture TRACK_IMAGE_GENERATOR_FUTURE;
 
     private TrackImageGeneratorRunnable myTrackImageGeneratorRunnable;
-
-    private ExecutorService ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(5);
-
+    
+    public AtomicBoolean PLAY_COUNT_UPDATED = new AtomicBoolean(false);
+    
+    public long LAST_SCHEDULED_PLAYLIST_UPDATE;
+    
     public synchronized void shutdown() throws InterruptedException {
-        DATABASE_JOB_EXECUTOR.shutdownNow();
-        DATABASE_JOB_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
-        LUCENE_UPDATE_EXECUTOR.shutdownNow();
-        LUCENE_UPDATE_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
-        GENERAL_EXECUTOR.shutdownNow();
-        GENERAL_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
-        ROUTER_CONFIG_EXECUTOR.shutdownNow();
-        ROUTER_CONFIG_EXECUTOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
-        ON_DEMAND_THUMBNAIL_GENERATOR.shutdownNow();
-        ON_DEMAND_THUMBNAIL_GENERATOR.awaitTermination(10000, TimeUnit.MILLISECONDS);
+        Collection<Thread> threads = new ArrayList<>();
+        for (final ExecutorService executorService : new ExecutorService[] {DATABASE_JOB_EXECUTOR, LUCENE_UPDATE_EXECUTOR, GENERAL_EXECUTOR, ON_DEMAND_THUMBNAIL_GENERATOR}) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    executorService.shutdownNow();
+                    try {
+                        executorService.awaitTermination(10000, TimeUnit.MILLISECONDS);
+                    } catch (InterruptedException e) {
+                        LOGGER.warn("Interrupted while waiting for termination of executor service.", e);
+                    }
+                }
+            });
+            threads.add(thread);
+            thread.start();
+        }
+        for (Thread thread : threads) {
+            thread.join(10000);
+        }
     }
 
     public synchronized void scheduleDatabaseUpdate(Collection<DatasourceConfig> dataSources, boolean ignoreTimestamps) throws DatabaseJobRunningException {
@@ -151,18 +164,18 @@ public class MyTunesRssExecutorService {
     public synchronized void scheduleImageGenerators() {
         cancelImageGenerators();
         myPhotoThumbnailGeneratorRunnable = new PhotoThumbnailGeneratorRunnable();
-        PHOTO_THUMBNAIL_GENERATOR_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(myPhotoThumbnailGeneratorRunnable, 0, 60, TimeUnit.SECONDS);
+        PHOTO_THUMBNAIL_GENERATOR_FUTURE = scheduleWithFixedDelay(myPhotoThumbnailGeneratorRunnable, 0, 60, TimeUnit.SECONDS);
         myTrackImageGeneratorRunnable = new TrackImageGeneratorRunnable();
-        TRACK_IMAGE_GENERATOR_FUTURE = GENERAL_EXECUTOR.scheduleWithFixedDelay(myTrackImageGeneratorRunnable, 0, 60, TimeUnit.SECONDS);
+        TRACK_IMAGE_GENERATOR_FUTURE = scheduleWithFixedDelay(myTrackImageGeneratorRunnable, 0, 60, TimeUnit.SECONDS);
     }
 
     public synchronized void cancelImageGenerators() {
-        if (myPhotoThumbnailGeneratorRunnable != null) {
+        if (myPhotoThumbnailGeneratorRunnable != null && PHOTO_THUMBNAIL_GENERATOR_FUTURE != null) {
             PHOTO_THUMBNAIL_GENERATOR_FUTURE.cancel(true);
             myPhotoThumbnailGeneratorRunnable.waitForTermination();
             myPhotoThumbnailGeneratorRunnable = null;
         }
-        if (myTrackImageGeneratorRunnable != null) {
+        if (myTrackImageGeneratorRunnable != null && TRACK_IMAGE_GENERATOR_FUTURE != null) {
             TRACK_IMAGE_GENERATOR_FUTURE.cancel(true);
             myTrackImageGeneratorRunnable.waitForTermination();
             myTrackImageGeneratorRunnable = null;
@@ -171,7 +184,7 @@ public class MyTunesRssExecutorService {
 
     public synchronized void scheduleExternalAddressUpdate() {
         try {
-            GENERAL_EXECUTOR.scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 300, TimeUnit.SECONDS);
+            scheduleWithFixedDelay(new FetchExternalAddressRunnable(), 0, 300, TimeUnit.SECONDS);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule external address update task.", e);
         }
@@ -179,19 +192,32 @@ public class MyTunesRssExecutorService {
 
     public synchronized void scheduleSmartPlaylistRefresh() {
         try {
-            GENERAL_EXECUTOR.scheduleAtFixedRate(new Runnable() {
+            scheduleWithFixedDelay(new Runnable() {
                 @Override
                 public void run() {
-                    StopWatch.start("Running scheduled refresh of update/play time related smart playlists.");
-                    try {
-                        MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.SCHEDULED));
-                    } catch (SQLException | RuntimeException ignored) {
-                        LOGGER.warn("Could not update smart playlists.");
-                    } finally {
-                        StopWatch.stop();
+                    if (System.currentTimeMillis() - LAST_SCHEDULED_PLAYLIST_UPDATE > 3600000) {
+                        // Approximately once an hour run an update for update/play time related smart playlists
+                        StopWatch.start("Running scheduled refresh of update/play time related smart playlists.");
+                        try {
+                            MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.SCHEDULED));
+                        } catch (SQLException | RuntimeException ignored) {
+                            LOGGER.warn("Could not update smart playlists.");
+                        } finally {
+                            StopWatch.stop();
+                        }
+                    } else if (PLAY_COUNT_UPDATED.getAndSet(false)) {
+                        // if the play count of any track was updated since the last refresh, run an update for play count related smart playlists
+                        StopWatch.start("Running scheduled refresh of play count related smart playlists.");
+                        try {
+                            MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.ON_PLAY));
+                        } catch (SQLException | RuntimeException ignored) {
+                            LOGGER.warn("Could not update smart playlists.");
+                        } finally {
+                            StopWatch.stop();
+                        }
                     }
                 }
-            }, 0, 1, TimeUnit.HOURS);
+            }, 15, 15, TimeUnit.SECONDS);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule smart playlist refresh task.", e);
         }
@@ -231,20 +257,22 @@ public class MyTunesRssExecutorService {
         return null;
     }
 
-    public synchronized void scheduleWithFixedDelay(Runnable runnable, int initialDelay, int delay, TimeUnit timeUnit) {
+    public synchronized ScheduledFuture<?> scheduleWithFixedDelay(Runnable runnable, int initialDelay, int delay, TimeUnit timeUnit) {
         try {
-            GENERAL_EXECUTOR.scheduleWithFixedDelay(runnable, initialDelay, delay, timeUnit);
+            return GENERAL_EXECUTOR.scheduleWithFixedDelay(runnable, initialDelay, delay, timeUnit);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule task.", e);
         }
+        return null;
     }
 
-    public synchronized void submitRouterConfig(Runnable runnable) {
+    public synchronized ScheduledFuture<?> scheduleAtFixedRate(Runnable runnable, int initialDelay, int period, TimeUnit timeUnit) {
         try {
-            ROUTER_CONFIG_EXECUTOR.submit(runnable);
+            return GENERAL_EXECUTOR.scheduleAtFixedRate(runnable, initialDelay, period, timeUnit);
         } catch (RejectedExecutionException e) {
             LOGGER.error("Could not schedule task.", e);
         }
+        return null;
     }
 
     public synchronized void setOnDemandThumbnailGeneratorThreads(int threadCount) {
