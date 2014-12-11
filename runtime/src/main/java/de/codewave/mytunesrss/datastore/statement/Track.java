@@ -5,8 +5,10 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.TikaUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
+import org.apache.tika.metadata.Metadata;
 
 import java.io.File;
 import java.io.Serializable;
@@ -323,7 +325,7 @@ public class Track implements Serializable {
     }
 
     public String getContentType() {
-        return myContentType;
+        return myContentType != null ? myContentType : TikaUtils.getContentType(myFile);
     }
 
     public void setContentType(String contentType) {

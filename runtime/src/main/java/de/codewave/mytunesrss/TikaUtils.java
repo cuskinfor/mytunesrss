@@ -30,6 +30,17 @@ public class TikaUtils {
         }
     }
 
+    public static String getContentType(File file) {
+        Metadata metadata = new Metadata();
+        try (TikaInputStream tikaInputStream = TikaInputStream.get(file, metadata)) {
+            MediaType mediaType = TIKA_CONFIG.getDetector().detect(tikaInputStream, metadata);
+            return mediaType.getBaseType().toString();
+        } catch (IOException e) {
+            LOGGER.warn("Could not get content type from \"" + file.getAbsolutePath() + "\".", e);
+        }
+        return "application/octet-stream";
+    }
+
     public static Metadata extractMetadata(File file) {
         Metadata metadata = new Metadata();
         try (TikaInputStream tikaInputStream = TikaInputStream.get(file, metadata)) {

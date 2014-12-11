@@ -868,8 +868,8 @@
         <sql>SELECT name, nat_sort_name FROM genre</sql>
     </statement>
 
-    <statement name="findTracksWithMissingContentType">
-        <sql>SELECT {trackColumns} FROM track t WHERE t.content_type IS NULL</sql>
+    <statement name="findDataSourcesWithMissingContentType">
+        <sql>SELECT DISTINCT(source_id) FROM track WHERE content_type IS NULL</sql>
 
     </statement>
 
