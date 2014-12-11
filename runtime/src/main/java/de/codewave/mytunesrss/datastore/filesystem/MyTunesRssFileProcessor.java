@@ -93,32 +93,36 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     public void process(File file) {
         try {
             if (file.isFile()) {
-                Metadata metadata = TikaUtils.extractMetadata(file);
-                MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
-                if (mediaType != MediaType.Other) {
-                    String fileId = "file_" + IOUtils.getFilenameHash(file);
-                    if (!myExistingIds.containsKey(fileId)) {
-                        boolean existingTrack = myTrackTsUpdate.containsKey(fileId);
-                        boolean existingPhoto = myPhotoTsUpdate.containsKey(fileId);
-                        boolean existing = existingTrack || existingPhoto;
-                        if (existing) {
-                            myExistingIds.put(fileId, (byte)0);
-                        }
-                        long trackUpdateTs = existingTrack && myDatasourceConfig.getId().equals(myTrackSourceId.get(fileId)) ? myTrackTsUpdate.get(fileId).longValue() : 0;
-                        long photoUpdateTs = existingPhoto && myDatasourceConfig.getId().equals(myPhotoSourceId.get(fileId)) ? myPhotoTsUpdate.get(fileId).longValue() : 0;
-                        if ((!existing || (existingTrack && trackUpdateTs < file.lastModified()) || (existingPhoto && photoUpdateTs < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
+                String fileId = "file_" + IOUtils.getFilenameHash(file);
+                if (!myExistingIds.containsKey(fileId)) {
+                    boolean existingTrack = myTrackTsUpdate.containsKey(fileId);
+                    boolean existingPhoto = myPhotoTsUpdate.containsKey(fileId);
+                    boolean existing = existingTrack || existingPhoto;
+                    if (existing) {
+                        myExistingIds.put(fileId, (byte) 0);
+                    }
+                    long trackUpdateTs = existingTrack && myDatasourceConfig.getId().equals(myTrackSourceId.get(fileId)) ? myTrackTsUpdate.get(fileId).longValue() : 0;
+                    long photoUpdateTs = existingPhoto && myDatasourceConfig.getId().equals(myPhotoSourceId.get(fileId)) ? myPhotoTsUpdate.get(fileId).longValue() : 0;
+                    if (!existing || (existingTrack && trackUpdateTs < file.lastModified()) || (existingPhoto && photoUpdateTs < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0)) {
+                        String contentType = TikaUtils.getContentType(file);
+                        MediaType mediaType = MediaType.get(contentType);
+                        if (mediaType != MediaType.Other) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                             }
                             if (mediaType == MediaType.Image) {
                                 insertOrUpdateImage(file, fileId, existing);
                             } else {
-                                if (insertOrUpdateTrack(file, fileId, existing, metadata)) {
+                                if (insertOrUpdateTrack(file, fileId, existing, contentType)) {
                                     return; // early return!!!
                                 }
 
                             }
-                        } else if (mediaType == MediaType.Image) {
+                        }
+                    } else {
+                        String contentType = TikaUtils.getContentType(file);
+                        MediaType mediaType = MediaType.get(contentType);
+                        if (mediaType == MediaType.Image) {
                             String albumName = getPhotoAlbum(file);
                             try {
                                 final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
@@ -140,7 +144,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         } catch (ShutdownRequestedException e) {
             throw e; // don't handle this one
-        } catch (IOException|RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not process file \"" + file.getAbsolutePath() + "\".", e);
             }
@@ -155,8 +159,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         }
     }
 
-    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, Metadata metadata) throws IOException, InterruptedException {
-        MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
+    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, String contentType) throws IOException, InterruptedException {
+        MediaType mediaType = MediaType.get(contentType);
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
         statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
@@ -180,11 +184,11 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setId(fileId);
         statement.setProtected(statement.isProtected()); // TODO DRM detection
         statement.setMediaType(mediaType);
-        statement.setContentType(metadata.get(Metadata.CONTENT_TYPE));
+        statement.setContentType(contentType);
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
         myUpdatedCount++;
-        myExistingIds.put(fileId, (byte)0);
+        myExistingIds.put(fileId, (byte) 0);
         return false;
     }
 
@@ -268,7 +272,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             }
         }
         myUpdatedCount++;
-        myExistingIds.put(photoFileId, (byte)0);
+        myExistingIds.put(photoFileId, (byte) 0);
     }
 
     private TrackMetaData parseMp3MetaData(File file, InsertOrUpdateTrackStatement statement, String fileId, MediaType mediaType) {
@@ -279,7 +283,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
             }
             tag = Mp3Utils.readId3Tag(file);
-        } catch (IOException|IllegalHeaderException|RuntimeException e) {
+        } catch (IOException | IllegalHeaderException | RuntimeException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
             }
@@ -413,7 +417,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
             moov = (MoovAtom) MyTunesRss.MP4_PARSER.parseAndGet(file, "moov");
-        } catch (IOException|RuntimeException e) {
+        } catch (IOException | RuntimeException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
             }
@@ -491,7 +495,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             statement.setSeries(getFallbackSeries(file));
                         }
                         Long season = moov.getTvSeason();
-                        if (season!= null) {
+                        if (season != null) {
                             statement.setSeason(season.intValue());
                         } else {
                             statement.setSeason(getFallbackSeason(file));

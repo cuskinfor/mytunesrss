@@ -89,7 +89,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
         }
     }
 
-    // TODO: Each upload will trigger a db update. While one is waiting to be scheduled all subsequent ones should be ignored 
+    // TODO: Each upload will trigger a db update. While one is waiting to be scheduled all subsequent ones should be ignored
     private void triggerDatabaseUpdate(final DatasourceConfig datasource, final List<File> uploadedFiles, final long lastModifiedBeforeUpload) throws DatabaseJobRunningException {
         final long startTime = System.currentTimeMillis();
         MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
@@ -165,8 +165,8 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private File saveFile(DatasourceConfig datasource, String fileName, InputStream inputStream) throws IOException {
-        Metadata metadata = TikaUtils.extractMetadata(fileName, TikaInputStream.get(inputStream));
-        if (MediaType.get(metadata.get(Metadata.CONTENT_TYPE)) != MediaType.Other) {
+        String contentType = TikaUtils.getContentType(fileName, TikaInputStream.get(inputStream));
+        if (MediaType.get(contentType) != MediaType.Other) {
             File targetFile = null;
             switch (datasource.getType()) {
                 case Watchfolder:

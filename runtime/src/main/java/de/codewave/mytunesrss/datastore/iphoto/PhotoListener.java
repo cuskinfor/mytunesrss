@@ -74,8 +74,8 @@ public abstract class PhotoListener implements PListHandlerListener {
         String photoId = calculatePhotoId(key, photo);
         if (photoId != null) {
             try {
-                if (processPhoto(key, photo, photoId, myDatasourceConfig.getId().equals(myPhotoSourceId.get(photoId)) ? myPhotoTsUpdate.get(photoId) : 0)) {
-                    myPhotoTsUpdate.remove(photoId);
+                Long tsUpdate = myPhotoTsUpdate.remove(photoId);
+                if (processPhoto(key, photo, photoId, tsUpdate == null || myDatasourceConfig.getId().equals(myPhotoSourceId.get(photoId)) ? tsUpdate : 0)) {
                     myUpdatedCount++;
                 }
             } catch (RuntimeException e) {
@@ -109,36 +109,37 @@ public abstract class PhotoListener implements PListHandlerListener {
         String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {
             String filename = applyReplacements(getImagePath(photo));
-            Metadata metadata = TikaUtils.extractMetadata(new File(filename));
-            if (StringUtils.isNotBlank(filename) && MediaType.get(metadata.get(Metadata.CONTENT_TYPE)) == MediaType.Image) {
+            if (StringUtils.isNotBlank(filename)) {
                 File file = MyTunesRssUtils.searchFile(filename);
                 if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated.longValue() || file.lastModified() >= tsUpdated.longValue())) {
-                    InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
-                    statement.clear();
-                    statement.setId(photoId);
-                    statement.setName(name.trim());
-                    Double dateAsTimerInterval = (Double) photo.get("DateAsTimerInterval");
-                    Double modDateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
-                    Long createDate = null;
-                    // preference order for date:
-                    // 1) date from xml
-                    // 2) exif date
-                    // 3) modification date from xml
-                    if (dateAsTimerInterval != null) {
-                        createDate = Long.valueOf((dateAsTimerInterval.longValue() * 1000L) + 978303600000L);
-                    } else {
-                        createDate = MyTunesRssExifUtils.getCreateDate(file);
-                        if (createDate == null && modDateAsTimerInterval != null) {
-                            createDate = Long.valueOf((modDateAsTimerInterval.longValue() * 1000L) + 978303600000L);
+                    if (MediaType.get(TikaUtils.getContentType(new File(filename))) == MediaType.Image) {
+                        InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
+                        statement.clear();
+                        statement.setId(photoId);
+                        statement.setName(name.trim());
+                        Double dateAsTimerInterval = (Double) photo.get("DateAsTimerInterval");
+                        Double modDateAsTimerInterval = (Double) photo.get("ModDateAsTimerInterval");
+                        Long createDate = null;
+                        // preference order for date:
+                        // 1) date from xml
+                        // 2) exif date
+                        // 3) modification date from xml
+                        if (dateAsTimerInterval != null) {
+                            createDate = Long.valueOf((dateAsTimerInterval.longValue() * 1000L) + 978303600000L);
+                        } else {
+                            createDate = MyTunesRssExifUtils.getCreateDate(file);
+                            if (createDate == null && modDateAsTimerInterval != null) {
+                                createDate = Long.valueOf((modDateAsTimerInterval.longValue() * 1000L) + 978303600000L);
+                            }
                         }
+                        statement.setDate(createDate != null ? createDate.longValue() : 0);
+                        statement.setFile(filename);
+                        myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
+                        //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
+                        //myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
+                        myPhotoIdToPersId.put(key, photoId);
+                        return true;
                     }
-                    statement.setDate(createDate != null ? createDate.longValue() : 0);
-                    statement.setFile(filename);
-                    myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
-                    //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);
-                    //myQueue.offer(new DataStoreStatementEvent(handlePhotoImagesStatement, false, "Could not insert photo \"" + name + "\" into database"));
-                    myPhotoIdToPersId.put(key, photoId);
-                    return true;
                 } else if (tsUpdated != null) {
                     myPhotoIdToPersId.put(key, photoId);
                 }

@@ -79,8 +79,8 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
         try {
-            if (processTrack(track, myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? myTrackTsUpdate.get(trackId) : 0)) {
-                myTrackTsUpdate.remove(trackId);
+            Long tsUpdate = myTrackTsUpdate.remove(trackId);
+            if (processTrack(track, tsUpdate == null || myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? tsUpdate : 0)) {
                 myUpdatedCount++;
             }
         } catch (ShutdownRequestedException e) {
@@ -108,29 +108,29 @@ public class TrackListener implements PListHandlerListener {
             Thread.currentThread().interrupt();
             throw new ShutdownRequestedException();
         }
-        String trackId = calculateTrackId(track);
-        String name = (String) track.get("Name");
-        String trackType = (String) track.get("Track Type");
-        if (trackType == null || "File".equals(trackType)) {
-            String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
-            if (StringUtils.isNotBlank(filename)) {
-                String mp4Codec = getMp4Codec(track, filename, tsUpdated);
-                Metadata metadata = TikaUtils.extractMetadata(new File(filename));
-                MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
-                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
-                    File file = MyTunesRssUtils.searchFile(filename);
-                    if (!file.isFile()) {
-                        myMissingFiles++;
-                        if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
-                            myMissingFilePaths.add(file.getAbsolutePath());
+        Date dateModified = ((Date) track.get("Date Modified"));
+        long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
+        Date dateAdded = ((Date) track.get("Date Added"));
+        long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
+        if (tsUpdated == null || dateModifiedTime >= tsUpdated.longValue() || dateAddedTime >= tsUpdated.longValue()) {
+            String trackId = calculateTrackId(track);
+            String name = (String) track.get("Name");
+            String trackType = (String) track.get("Track Type");
+            if (trackType == null || "File".equals(trackType)) {
+                String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
+                if (StringUtils.isNotBlank(filename)) {
+                    String mp4Codec = getMp4Codec(track, filename, tsUpdated);
+                    String contentType = TikaUtils.getContentType(new File(filename));
+                    MediaType mediaType = MediaType.get(contentType);
+                    if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
+                        File file = MyTunesRssUtils.searchFile(filename);
+                        if (!file.isFile()) {
+                            myMissingFiles++;
+                            if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
+                                myMissingFilePaths.add(file.getAbsolutePath());
+                            }
                         }
-                    }
-                    if (!myDatasourceConfig.isDeleteMissingFiles() || file.isFile()) {
-                        Date dateModified = ((Date) track.get("Date Modified"));
-                        long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
-                        Date dateAdded = ((Date) track.get("Date Added"));
-                        long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-                        if (tsUpdated == null || dateModifiedTime >= tsUpdated.longValue() || dateAddedTime >= tsUpdated.longValue()) {
+                        if (!myDatasourceConfig.isDeleteMissingFiles() || file.isFile()) {
                             InsertOrUpdateTrackStatement statement = tsUpdated != null ? new UpdateTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId());
                             statement.clear();
                             statement.setId(trackId);
@@ -163,7 +163,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setProtected(false); // TODO DRM detection
                             boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
                             statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
-                            statement.setContentType(metadata.get(Metadata.CONTENT_TYPE));
+                            statement.setContentType(contentType);
                             if (video) {
                                 statement.setAlbum(null);
                                 statement.setArtist(null);

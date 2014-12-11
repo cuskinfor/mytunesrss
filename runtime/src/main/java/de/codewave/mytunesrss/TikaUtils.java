@@ -41,6 +41,18 @@ public class TikaUtils {
         return "application/octet-stream";
     }
 
+    public static String getContentType(String filename, TikaInputStream tikaInputStream) {
+        Metadata metadata = new Metadata();
+        metadata.set(TikaMetadataKeys.RESOURCE_NAME_KEY, filename);
+        try {
+            MediaType mediaType = TIKA_CONFIG.getDetector().detect(tikaInputStream, metadata);
+            return mediaType.getBaseType().toString();
+        } catch (IOException e) {
+            LOGGER.warn("Could not get content type from stream with (virtual) file name \"" + filename + "\".", e);
+        }
+        return "application/octet-stream";
+    }
+
     public static Metadata extractMetadata(File file) {
         Metadata metadata = new Metadata();
         try (TikaInputStream tikaInputStream = TikaInputStream.get(file, metadata)) {
