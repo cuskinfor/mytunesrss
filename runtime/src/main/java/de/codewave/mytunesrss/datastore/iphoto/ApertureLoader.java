@@ -38,7 +38,7 @@ public class ApertureLoader {
      * @throws java.sql.SQLException
      * @throws java.net.MalformedURLException
      */
-    public static void loadFromAperture(Thread executionThread, ApertureDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
+    public static void loadFromAperture(Thread executionThread, ApertureDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, MVStore mvStore) throws SQLException, MalformedURLException {
         File iPhotoLibraryXmlFile = new File(config.getDefinition(), ApertureDatasourceConfig.APERTURE_XML_FILE_NAME);
         URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURI().toURL();
         if (iPhotoLibraryXml != null) {
@@ -47,7 +47,7 @@ public class ApertureLoader {
                 Map<String, String> photoIdToPersId = MyTunesRssUtils.openMvMap(mvStore, "trackIdToPers");
                 photoIdToPersId.clear();
                 LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile);
-                PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoTsUpdate);
+                PhotoListener photoListener = new AperturePhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoTsUpdate, photoSourceId);
                 handler.addListener("/plist/dict", libraryListener);
                 // first add all photos
                 handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
@@ -61,11 +61,7 @@ public class ApertureLoader {
                 LOG.info("Parsing Aperture (albums): \"" + iPhotoLibraryXml.toString() + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " Aperture photos.");
-            } catch (IOException e) {
-                LOG.error("Could not read data from Aperture xml file.", e);
-            } catch (ParserConfigurationException e) {
-                LOG.error("Could not read data from Aperture xml file.", e);
-            } catch (SAXException e) {
+            } catch (IOException | SAXException | ParserConfigurationException e) {
                 LOG.error("Could not read data from Aperture xml file.", e);
             }
         }

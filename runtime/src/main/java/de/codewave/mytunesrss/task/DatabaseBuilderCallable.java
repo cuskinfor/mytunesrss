@@ -177,14 +177,16 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
     private Map<String, MissingItunesFiles> runUpdate(MVStore mvStore) throws SQLException, IOException, InterruptedException {
         Map<String, MissingItunesFiles> missingItunesFiles = new HashMap<>();
         final Map<String, Long> trackTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "trackTsUpdate");
+        final Map<String, String> trackSourceId = MyTunesRssUtils.openMvMap(mvStore, "trackSourceId");
         StopWatch.start("Fetching existing tracks");
         try {
             MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
                 public Void execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksIdAndUpdateTs");
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksIdSourceIdAndUpdateTs");
                     ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
                     while (rs.next()) {
                         trackTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
+                        trackSourceId.put(rs.getString("id"), rs.getString("source_id"));
                     }
                     return null;
                 }
@@ -193,15 +195,16 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             StopWatch.stop();
         }
         StopWatch.start("Fetching existing photos");
-        final Map<String, Long> photoTsUpdate;
+        final Map<String, Long> photoTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "photoTsUpdate");
+        final Map<String, String> photoSourceId = MyTunesRssUtils.openMvMap(mvStore, "photoSourceId");
         try {
-            photoTsUpdate = MyTunesRssUtils.openMvMap(mvStore, "photoTsUpdate");
             MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
                 public Void execute(Connection connection) throws SQLException {
-                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdAndUpdateTs");
+                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdSourceIdAndUpdateTs");
                     ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
                     while (rs.next()) {
                         photoTsUpdate.put(rs.getString("id"), myIgnoreTimestamps ? 0 : rs.getLong("ts"));
+                        photoSourceId.put(rs.getString("id"), rs.getString("source_id"));
                     }
                     return null;
                 }
@@ -216,22 +219,22 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         myState = State.UpdatingTracksFromItunes;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningItunes");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread.currentThread(), (ItunesDatasourceConfig) datasource, myQueue, trackTsUpdate, mvStore));
+                        missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread.currentThread(), (ItunesDatasourceConfig) datasource, myQueue, trackTsUpdate, trackSourceId, mvStore));
                     } else if (datasource.getType() == DatasourceType.Iphoto && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromIphoto;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, myQueue, photoTsUpdate, mvStore);
+                        IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, myQueue, photoTsUpdate, photoSourceId, mvStore);
                     } else if (datasource.getType() == DatasourceType.Aperture && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromAperture;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningAperture");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        ApertureLoader.loadFromAperture(Thread.currentThread(), (ApertureDatasourceConfig) datasource, myQueue, photoTsUpdate, mvStore);
+                        ApertureLoader.loadFromAperture(Thread.currentThread(), (ApertureDatasourceConfig) datasource, myQueue, photoTsUpdate, photoSourceId, mvStore);
                     } else if (datasource.getType() == DatasourceType.Watchfolder && !Thread.currentThread().isInterrupted()) {
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");
                         myQueue.offer(new MyTunesRssEventEvent(event));
-                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue, trackTsUpdate, photoTsUpdate, mvStore);
+                        FileSystemLoader.loadFromFileSystem(Thread.currentThread(), (WatchfolderDatasourceConfig) datasource, myQueue, trackTsUpdate, trackSourceId, photoTsUpdate, photoSourceId, mvStore);
                     }
                 }
             } catch (ShutdownRequestedException ignored) {

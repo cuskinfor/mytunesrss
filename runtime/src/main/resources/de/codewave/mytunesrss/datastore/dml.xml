@@ -403,9 +403,9 @@
         </sql>
     </statement>
 
-    <statement name="getTracksIdAndUpdateTs">
+    <statement name="getTracksIdSourceIdAndUpdateTs">
         <sql>
-            SELECT id AS id, ts_updated AS ts FROM track
+            SELECT id AS id, source_id, ts_updated AS ts FROM track
         </sql>
     </statement>
 
@@ -489,8 +489,8 @@
         <sql>SELECT id FROM photoalbum</sql>
     </statement>
 
-    <statement name="getPhotosIdAndUpdateTs">
-        <sql>SELECT id AS id, ts_updated AS ts FROM photo</sql>
+    <statement name="getPhotosIdSourceIdAndUpdateTs">
+        <sql>SELECT id AS id, source_id, ts_updated AS ts FROM photo</sql>
     </statement>
 
     <statement name="findPhotos">

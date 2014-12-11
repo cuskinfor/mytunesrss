@@ -21,11 +21,11 @@ import java.util.Map;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, Long> photoTsUpdate, MVStore mvStore) throws IOException, SQLException {
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, MVStore mvStore) throws IOException, SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
-            fileProcessor = new MyTunesRssFileProcessor(datasource, queue, trackTsUpdate, photoTsUpdate, mvStore);
+            fileProcessor = new MyTunesRssFileProcessor(datasource, queue, trackTsUpdate, trackSourceId, photoTsUpdate, photoSourceId, mvStore);
             if (LOG.isInfoEnabled()) {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }

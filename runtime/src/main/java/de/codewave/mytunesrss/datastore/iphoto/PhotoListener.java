@@ -38,25 +38,27 @@ import java.util.Set;
 public abstract class PhotoListener implements PListHandlerListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoListener.class);
-    
+
     private DatabaseUpdateQueue myQueue;
     private LibraryListener myLibraryListener;
     private int myUpdatedCount;
     private Map<String, String> myPhotoIdToPersId;
     private Map<String, Long> myPhotoTsUpdate;
+    private Map<String, String> myPhotoSourceId;
     private Thread myWatchdogThread;
     private Set<CompiledReplacementRule> myPathReplacements;
     private PhotoDatasourceConfig myDatasourceConfig;
     protected long myXmlModDate;
 
     public PhotoListener(PhotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId,
-                         Map<String, Long> photoTsUpdate) throws SQLException {
+                         Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
         myLibraryListener = libraryListener;
         myPhotoIdToPersId = photoIdToPersId;
         myPhotoTsUpdate = photoTsUpdate;
+        myPhotoSourceId = photoSourceId;
         myPathReplacements = new HashSet<>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
@@ -72,7 +74,8 @@ public abstract class PhotoListener implements PListHandlerListener {
         String photoId = calculatePhotoId(key, photo);
         if (photoId != null) {
             try {
-                if (processPhoto(key, photo, photoId, myPhotoTsUpdate.remove(photoId))) {
+                if (processPhoto(key, photo, photoId, myDatasourceConfig.getId().equals(myPhotoSourceId.get(photoId)) ? myPhotoTsUpdate.get(photoId) : 0)) {
+                    myPhotoTsUpdate.remove(photoId);
                     myUpdatedCount++;
                 }
             } catch (RuntimeException e) {

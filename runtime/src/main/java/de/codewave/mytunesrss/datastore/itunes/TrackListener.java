@@ -33,6 +33,7 @@ public class TrackListener implements PListHandlerListener {
     private int myUpdatedCount;
     private Map<Long, String> myTrackIdToPersId;
     private Map<String, Long> myTrackTsUpdate;
+    private Map<String, String> myTrackSourceId;
     private long myMissingFiles;
     private List<String> myMissingFilePaths = new ArrayList<>();
     private String[] myDisabledMp4Codecs;
@@ -41,13 +42,14 @@ public class TrackListener implements PListHandlerListener {
     private ItunesDatasourceConfig myDatasourceConfig;
 
     public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
-                         Map<String, Long> trackTsUpdate) throws SQLException {
+                         Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId) throws SQLException {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
         myLibraryListener = libraryListener;
         myTrackIdToPersId = trackIdToPersId;
         myTrackTsUpdate = trackTsUpdate;
+        myTrackSourceId = trackSourceId;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
         myPathReplacements = new HashSet<>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
@@ -77,7 +79,8 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
         try {
-            if (processTrack(track, myTrackTsUpdate.remove(trackId))) {
+            if (processTrack(track, myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? myTrackTsUpdate.get(trackId) : 0)) {
+                myTrackTsUpdate.remove(trackId);
                 myUpdatedCount++;
             }
         } catch (ShutdownRequestedException e) {

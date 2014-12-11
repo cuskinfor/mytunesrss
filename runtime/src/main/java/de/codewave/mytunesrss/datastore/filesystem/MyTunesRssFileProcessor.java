@@ -60,7 +60,9 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private int myUpdatedCount;
     private Map<String, Byte> myExistingIds;
     private Map<String, Long> myTrackTsUpdate;
+    private Map<String, String> myTrackSourceId;
     private Map<String, Long> myPhotoTsUpdate;
+    private Map<String, String> myPhotoSourceId;
     private String[] myDisabledMp4Codecs;
     private WatchfolderDatasourceConfig myDatasourceConfig;
     private Map<String, Pattern> myPatterns = new HashMap<>();
@@ -68,12 +70,14 @@ public class MyTunesRssFileProcessor implements FileProcessor {
     private long processedCount;
     private long lastProcessedCountLog = System.currentTimeMillis();
 
-    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException {
+    public MyTunesRssFileProcessor(WatchfolderDatasourceConfig datasourceConfig, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, MVStore mvStore) throws SQLException {
         myExistingIds = MyTunesRssUtils.openMvMap(mvStore, "existingIds");
         myDatasourceConfig = datasourceConfig;
         myQueue = queue;
         myTrackTsUpdate = trackTsUpdate;
+        myTrackSourceId = trackSourceId;
         myPhotoTsUpdate = photoTsUpdate;
+        myPhotoSourceId = photoSourceId;
         myDisabledMp4Codecs = StringUtils.split(StringUtils.lowerCase(StringUtils.trimToEmpty(myDatasourceConfig.getDisabledMp4Codecs())), ",");
         myPhotoAlbumIds = new HashSet<>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
@@ -94,11 +98,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 if (mediaType != MediaType.Other) {
                     String fileId = "file_" + IOUtils.getFilenameHash(file);
                     if (!myExistingIds.containsKey(fileId)) {
-                        boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
+                        boolean existingTrack = myTrackTsUpdate.containsKey(fileId);
+                        boolean existingPhoto = myPhotoTsUpdate.containsKey(fileId);
+                        boolean existing = existingTrack || existingPhoto;
                         if (existing) {
                             myExistingIds.put(fileId, (byte)0);
                         }
-                        if ((!existing || (myTrackTsUpdate.containsKey(fileId) && myTrackTsUpdate.get(fileId).longValue() < file.lastModified()) || (myPhotoTsUpdate.containsKey(fileId) && myPhotoTsUpdate.get(fileId).longValue() < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
+                        long trackUpdateTs = existingTrack && myDatasourceConfig.getId().equals(myTrackSourceId.get(fileId)) ? myTrackTsUpdate.get(fileId).longValue() : 0;
+                        long photoUpdateTs = existingPhoto && myDatasourceConfig.getId().equals(myPhotoSourceId.get(fileId)) ? myPhotoTsUpdate.get(fileId).longValue() : 0;
+                        if ((!existing || (existingTrack && trackUpdateTs < file.lastModified()) || (existingPhoto && photoUpdateTs < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                             }

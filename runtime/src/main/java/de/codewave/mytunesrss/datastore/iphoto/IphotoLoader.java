@@ -38,7 +38,7 @@ public class IphotoLoader {
      * @throws SQLException
      * @throws MalformedURLException
      */
-    public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
+    public static void loadFromIPhoto(Thread executionThread, IphotoDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, MVStore mvStore) throws SQLException, MalformedURLException {
         File iPhotoLibraryXmlFile = new File(config.getDefinition(), IphotoDatasourceConfig.IPHOTO_XML_FILE_NAME);
         URL iPhotoLibraryXml = iPhotoLibraryXmlFile.toURI().toURL();
         if (iPhotoLibraryXml != null) {
@@ -47,7 +47,7 @@ public class IphotoLoader {
                 Map<String, String> photoIdToPersId = MyTunesRssUtils.openMvMap(mvStore, "trackIdToPers");
                 photoIdToPersId.clear();
                 LibraryListener libraryListener = new LibraryListener(iPhotoLibraryXmlFile);
-                PhotoListener photoListener = new IphotoPhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoTsUpdate);
+                PhotoListener photoListener = new IphotoPhotoListener(config, executionThread, queue, libraryListener, photoIdToPersId, photoTsUpdate, photoSourceId);
                 handler.addListener("/plist/dict", libraryListener);
                 // first add all photos
                 handler.addListener("/plist/dict[Master Image List]/dict", photoListener);

@@ -61,7 +61,7 @@ public class ItunesLoader {
      * @return Number of missing files.
      * @throws SQLException
      */
-    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, MVStore mvStore) throws SQLException, MalformedURLException {
+    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, MVStore mvStore) throws SQLException, MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
         File iTunesXmlFile = new File(config.getDefinition());
@@ -80,7 +80,7 @@ public class ItunesLoader {
         Map<Long, String> trackIdToPersId = MyTunesRssUtils.openMvMap(mvStore, "trackIdToPers");
         trackIdToPersId.clear();
         LibraryListener libraryListener = new LibraryListener();
-        trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackTsUpdate);
+        trackListener = new TrackListener(config, executionThread, queue, libraryListener, trackIdToPersId, trackTsUpdate, trackSourceId);
         playlistListener = new PlaylistListener(config, executionThread, queue, libraryListener, trackIdToPersId, config);
         handler.addListener("/plist/dict", libraryListener);
         handler.addListener("/plist/dict[Tracks]/dict", trackListener);
@@ -88,11 +88,7 @@ public class ItunesLoader {
         try {
             LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
             XmlUtils.parseApplePList(iTunesLibraryXml, handler);
-        } catch (IOException e) {
-            LOG.error("Could not read data from iTunes xml file.", e);
-        } catch (ParserConfigurationException e) {
-            LOG.error("Could not read data from iTunes xml file.", e);
-        } catch (SAXException e) {
+        } catch (IOException | ParserConfigurationException | SAXException e) {
             LOG.error("Could not read data from iTunes xml file.", e);
         }
         LOG.info("Inserted/updated " + trackListener.getUpdatedCount() + " iTunes tracks. " + trackListener.getMissingFiles() +
