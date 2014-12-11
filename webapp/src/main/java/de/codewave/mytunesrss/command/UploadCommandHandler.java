@@ -7,10 +7,11 @@ package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.DatabaseJobRunningException;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssMediaTypeUtils;
+import de.codewave.mytunesrss.TikaUtils;
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.DatasourceType;
 import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.servlet.ProgressRequestWrapper;
@@ -26,7 +27,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.mime.MediaType;
+import org.apache.tika.io.TikaInputStream;
+import org.apache.tika.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -104,7 +106,7 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 } else {
                     try {
                         // iTunes has consumed all files and the XML has been updated, so schedule a database update now
-                        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.<DatasourceConfig>singleton(datasource), false);
+                        MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(Collections.singleton(datasource), false);
                     } catch (DatabaseJobRunningException ignored) {
                         // There is another database update running, so try to schedule the update again in 5 minutes
                         // unless we have been waiting for more than 10 hours, in this case simply quit
@@ -124,15 +126,17 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Extracting zip file \"" + item.getName() + "\".");
                 }
-                ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(item.getInputStream());
-                String lineSeparator = System.getProperty("line.separator");
-                StringBuilder m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
-                for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
-                    File file = saveFile(datasource, entry.getName(), zipInputStream);
-                    if (file != null) {
-                        m3uPlaylist.append(entry.getName().replace('\\', '/')).append(lineSeparator);
-                        if (datasource.getType() == DatasourceType.Itunes) {
-                            uploadedItunesFiles.add(file);
+                StringBuilder m3uPlaylist;
+                try (ZipArchiveInputStream zipInputStream = new ZipArchiveInputStream(item.getInputStream())) {
+                    String lineSeparator = System.getProperty("line.separator");
+                    m3uPlaylist = new StringBuilder("#EXTM3U").append(lineSeparator);
+                    for (ZipArchiveEntry entry = zipInputStream.getNextZipEntry(); entry != null; entry = zipInputStream.getNextZipEntry()) {
+                        File file = saveFile(datasource, entry.getName(), zipInputStream);
+                        if (file != null) {
+                            m3uPlaylist.append(entry.getName().replace('\\', '/')).append(lineSeparator);
+                            if (datasource.getType() == DatasourceType.Itunes) {
+                                uploadedItunesFiles.add(file);
+                            }
                         }
                     }
                 }
@@ -149,9 +153,11 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Uploading file \"" + item.getName() + "\".");
                 }
-                File file = saveFile(datasource, item.getName(), item.getInputStream());
-                if (datasource.getType() == DatasourceType.Itunes) {
-                    uploadedItunesFiles.add(file);
+                try (InputStream inputStream = item.getInputStream()) {
+                    File file = saveFile(datasource, item.getName(), inputStream);
+                    if (datasource.getType() == DatasourceType.Itunes) {
+                        uploadedItunesFiles.add(file);
+                    }
                 }
             }
         }
@@ -159,8 +165,8 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     private File saveFile(DatasourceConfig datasource, String fileName, InputStream inputStream) throws IOException {
-        MediaType tikaMediaType = MyTunesRssMediaTypeUtils.detectMediaType(fileName, inputStream);
-        if (MyTunesRssMediaTypeUtils.isSupported(tikaMediaType)) {
+        Metadata metadata = TikaUtils.extractMetadata(fileName, TikaInputStream.get(inputStream));
+        if (MediaType.get(metadata.get(Metadata.CONTENT_TYPE)) != MediaType.Other) {
             File targetFile = null;
             switch (datasource.getType()) {
                 case Watchfolder:
@@ -172,12 +178,9 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
                 default:
                     throw new IllegalArgumentException("Cannot upload to datasource of type \"" + datasource.getType() + "\".");
             }
-            FileOutputStream targetStream = new FileOutputStream(targetFile);
-            try {
+            try (FileOutputStream targetStream = new FileOutputStream(targetFile)) {
                 LOG.debug("Saving uploaded file \"" + targetFile.getAbsolutePath() + "\".");
                 IOUtils.copy(inputStream, targetStream);
-            } finally {
-                targetStream.close();
             }
             return targetFile;
         }

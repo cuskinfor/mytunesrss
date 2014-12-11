@@ -4,6 +4,7 @@ import de.codewave.camel.mp3.Id3Tag;
 import de.codewave.camel.mp3.Id3v1Tag;
 import de.codewave.camel.mp3.Id3v2Tag;
 import de.codewave.camel.mp3.Mp3Utils;
+import de.codewave.camel.mp3.exception.IllegalHeaderException;
 import de.codewave.camel.mp4.CoverAtom;
 import de.codewave.camel.mp4.DiskAtom;
 import de.codewave.camel.mp4.MoovAtom;
@@ -33,6 +34,7 @@ import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
+import org.apache.tika.metadata.Metadata;
 import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,18 +82,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return myExistingIds.keySet();
     }
 
-    public Set<String> getExistingPhotoAlbumIds() {
-        return myPhotoAlbumIds;
-    }
-
     public int getUpdatedCount() {
         return myUpdatedCount;
     }
 
     public void process(File file) {
         try {
-            org.apache.tika.mime.MediaType fileType = MyTunesRssMediaTypeUtils.detectMediaType(file);
-            if (file.isFile() && MyTunesRssMediaTypeUtils.isSupported(fileType)) {
+            Metadata metadata = TikaUtils.extractMetadata(file);
+            MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
+            if (file.isFile() && mediaType != MediaType.Other) {
                 String fileId = "file_" + IOUtils.getFilenameHash(file);
                 if (!myExistingIds.containsKey(fileId)) {
                     boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
@@ -102,15 +101,15 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                         }
-                        if (MyTunesRssMediaTypeUtils.isImage(fileType)) {
+                        if (mediaType == MediaType.Image) {
                             insertOrUpdateImage(file, fileId, existing);
                         } else {
-                            if (insertOrUpdateTrack(file, fileId, existing, fileType)) {
+                            if (insertOrUpdateTrack(file, fileId, existing, metadata)) {
                                 return; // early return!!!
                             }
 
                         }
-                    } else if (MyTunesRssMediaTypeUtils.isImage(fileType)) {
+                    } else if (mediaType == MediaType.Image) {
                         String albumName = getPhotoAlbum(file);
                         try {
                             final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
@@ -146,8 +145,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         }
     }
 
-    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, org.apache.tika.mime.MediaType tikaMediaType) throws IOException, InterruptedException {
-        MediaType mediaType = MediaType.get(tikaMediaType);
+    private boolean insertOrUpdateTrack(File file, String fileId, boolean existingTrack, Metadata metadata) throws IOException, InterruptedException {
+        MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
         String canonicalFilePath = file.getCanonicalPath();
         InsertOrUpdateTrackStatement statement;
         statement = existingTrack ? new UpdateTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.FileSystem, myDatasourceConfig.getId());
@@ -171,6 +170,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         statement.setId(fileId);
         statement.setProtected(statement.isProtected()); // TODO DRM detection
         statement.setMediaType(mediaType);
+        statement.setContentType(metadata.get(Metadata.CONTENT_TYPE));
         statement.setFileName(canonicalFilePath);
         myQueue.offer(new DataStoreStatementEvent(statement, true));
         myUpdatedCount++;
@@ -269,7 +269,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.debug("Reading ID3 information from file \"" + file.getAbsolutePath() + "\".");
             }
             tag = Mp3Utils.readId3Tag(file);
-        } catch (Exception e) {
+        } catch (IOException|IllegalHeaderException|RuntimeException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
             }
@@ -339,7 +339,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     statement.setGenre(StringUtils.trimToNull(genre));
                 }
                 statement.setComment(StringUtils.trimToNull(createComment(tag)));
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
                 }
@@ -387,7 +387,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 return StringUtils.trimToNull(comment);
             }
             return ((Id3v1Tag) tag).getComment();
-        } catch (Exception e) {
+        } catch (RuntimeException e) {
             if (LOGGER.isWarnEnabled()) {
                 LOGGER.warn("Could not create comment for ID3 tag", e);
             }
@@ -403,7 +403,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                 LOGGER.debug("Reading ATOM information from file \"" + file.getAbsolutePath() + "\".");
             }
             moov = (MoovAtom) MyTunesRss.MP4_PARSER.parseAndGet(file, "moov");
-        } catch (Exception e) {
+        } catch (IOException|RuntimeException e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not get ATOM information from file \"" + file.getAbsolutePath() + "\".", e);
             }
@@ -495,7 +495,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     }
                 }
                 statement.setProtected(moov.isDrmProtected());
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not parse ID3 information from file \"" + file.getAbsolutePath() + "\".", e);
                 }

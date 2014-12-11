@@ -1,12 +1,10 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MyTunesRssMediaTypeUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.utils.sql.ResultBuilder;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.File;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -46,8 +44,7 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setAlbumArtist(resultSet.getString("ALBUM_ARTIST"));
         track.setComposer(resultSet.getString("COMPOSER"));
         track.setSourceId(resultSet.getString("SOURCE_ID"));
-        org.apache.tika.mime.MediaType tikaMediaType = MyTunesRssMediaTypeUtils.detectMediaType(new File(pathname));
-        track.setContentType(tikaMediaType != null ? tikaMediaType.getType() : org.apache.tika.mime.MediaType.OCTET_STREAM.getType());
+        track.setContentType(StringUtils.defaultIfBlank(resultSet.getString("CONTENT_TYPE"), "application/octet-stream"));
         return track;
     }
 }

@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
+import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -27,14 +28,20 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.DataStoreSession;
+import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.apache.tika.metadata.Metadata;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.fourthline.cling.model.ValidationException;
@@ -56,6 +63,7 @@ import java.lang.reflect.Method;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -251,6 +259,7 @@ public class MyTunesRss {
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             EXECUTOR_SERVICE.scheduleSmartPlaylistRefresh();
             EXECUTOR_SERVICE.scheduleImageGenerators();
+            fixMissingTrackContentTypes();
         }
         if (!SHUTDOWN_IN_PROGRESS.get()) {
             StatisticsEventManager.getInstance().addListener(new StatisticsDatabaseWriter());
@@ -316,6 +325,52 @@ public class MyTunesRss {
                 }
             }
         }
+    }
+
+    /**
+     * This fixes all missing content types in the track table. This should be part of the v6.6 migration but
+     * might take a rather long time. So it is executed asynchronously and on each start in case is is cancelled.
+     * Should not do anything once all tracks have been fixed.
+     */
+    private static void fixMissingTrackContentTypes() {
+        EXECUTOR_SERVICE.execute(new Runnable() {
+            @Override
+            public void run() {
+                StopWatch.start("Adding missing content types to tracks");
+                final MutableLong loopCount = new MutableLong(0);
+                final DataStoreSession session = MyTunesRss.STORE.getTransaction();
+                try {
+                    session.executeQuery(new FindTracksWithMissingContentTypeQuery()).processResults(new DataStoreQuery.ResultProcessor<Track>() {
+                        @Override
+                        public void process(final Track track) {
+                            try {
+                                session.executeStatement(new DataStoreStatement() {
+                                    @Override
+                                    public void execute(Connection connection) throws SQLException {
+                                        SmartStatement updateTrackContentType = MyTunesRssUtils.createStatement(connection, "updateTrackContentType");
+                                        updateTrackContentType.setString("id", track.getId());
+                                        updateTrackContentType.setString("content_type", TikaUtils.extractMetadata(track.getFile()).get(Metadata.CONTENT_TYPE));
+                                        updateTrackContentType.execute();
+                                        loopCount.increment();
+                                        if (loopCount.intValue() % 1000 == 0) {
+                                            connection.commit();
+                                        }
+                                    }
+                                });
+                            } catch (SQLException e) {
+                                LOGGER.warn("Could not set content type for \"" + track.getFilename() + "\".", e);
+                            }
+                        }
+                    });
+                } catch (SQLException|RuntimeException e) {
+                    LOGGER.warn("Could not get tracks with missing content type.", e);
+                } finally {
+                    LOGGER.info("Added missing content type to " + loopCount.intValue() + " tracks.");
+                    StopWatch.stop();
+                    session.commit();
+                }
+            }
+        });
     }
 
     private static void executeAppleHeadlessOnNonHeadlessSystem() {

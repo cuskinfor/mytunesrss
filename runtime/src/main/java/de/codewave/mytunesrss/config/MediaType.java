@@ -6,10 +6,11 @@ import org.apache.commons.lang3.StringUtils;
  * Media type enumeration.
  */
 public enum MediaType {
-    Audio("audio"), Video("video"), Image("image"), Other(""), None("");
+    Audio(), Video(), Image(), Other(), None();
 
-    public static MediaType get(org.apache.tika.mime.MediaType tikaMediaType) {
-        String lowerType = StringUtils.lowerCase(tikaMediaType.getType());
+    public static MediaType get(String contentType) {
+        int i = StringUtils.defaultIfBlank(contentType, "").indexOf('/');
+        String lowerType = i > 0 ? StringUtils.lowerCase(contentType.substring(0, i)) : null;
         if ("audio".equals(lowerType)) {
             return Audio;
         } else if ("video".equals(lowerType)) {
@@ -21,16 +22,6 @@ public enum MediaType {
         }
     }
     
-    private String myMimeTypePrefix;
-
-    private MediaType(String mimeTypePrefix) {
-        myMimeTypePrefix = mimeTypePrefix;
-    }
-
-    public String getMimeTypePrefix() {
-        return myMimeTypePrefix;
-    }
-
     public String toString() {
         return name();
     }

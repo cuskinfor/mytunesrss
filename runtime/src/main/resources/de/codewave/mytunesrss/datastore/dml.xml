@@ -431,8 +431,8 @@
         <parameter name="episode" type="java.lang.Integer"/>
         <parameter name="season" type="java.lang.Integer"/>
         <sql>
-            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, sort_album_artist, lower_album_artist, album, sort_album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, original_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id)
-            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, :sort_album_artist, LOWER(:album_artist), :album, :sort_album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :original_genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id)
+            INSERT INTO track (id, name, lower_name, artist, lower_artist, album_artist, sort_album_artist, lower_album_artist, album, sort_album, lower_album, time, track_number, file, protected, mediatype, source, genre, lower_genre, original_genre, suffix, mp4codec, ts_updated, playcount, last_image_update, comment, pos_number, pos_size, year, series, lower_series, season, episode, videotype, composer, compilation, source_id, content_type)
+            VALUES (:id, :name, LOWER(:name), :artist, LOWER(:artist), :album_artist, :sort_album_artist, LOWER(:album_artist), :album, :sort_album, LOWER(:album), :time, :track_number, :file, :protected, :mediatype, :source, :genre, LOWER(:genre), :original_genre, :suffix, :mp4codec, :ts_updated, 0, 0, :comment, :pos_number, :pos_size, :year, :series, LOWER(:series), :season, :episode, :videotype, :composer, :compilation, :source_id, :content_type)
         </sql>
     </statement>
 
@@ -451,7 +451,7 @@
                              lower_name = LOWER(:name), lower_album = LOWER(:album), year = :year,
                              series = :series, lower_series = LOWER(:series), season = :season, episode = :episode, videotype = :videotype,
                              album_artist = :album_artist, sort_album_artist = :sort_album_artist, lower_album_artist = LOWER(:album_artist), composer = :composer,
-                             compilation = :compilation, source_id = :source_id, image_hash = NULL
+                             compilation = :compilation, source_id = :source_id, image_hash = NULL, content_type = :content_type
             WHERE id = :id
         </sql>
     </statement>
@@ -868,6 +868,15 @@
         <sql>SELECT name, nat_sort_name FROM genre</sql>
     </statement>
 
+    <statement name="findTracksWithMissingContentType">
+        <sql>SELECT {trackColumns} FROM track t WHERE t.content_type IS NULL</sql>
+
+    </statement>
+
+    <statement name="updateTrackContentType">
+        <sql>UPDATE track SET content_type = :content_type WHERE id = :id</sql>
+    </statement>
+
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
@@ -884,14 +893,14 @@
     </fragment>
 
     <fragment name="trackColumns">
-        t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number,
+        t.source AS source, t.id AS id, t.name AS name, t.artist AS artist, t.album AS album, t.time AS time, t.track_number AS track_number, t.content_type AS content_type,
         t.file AS file, t.protected AS protected, t.mediatype AS mediatype, t.genre AS genre, t.mp4codec AS mp4codec, t.ts_played AS ts_played, t.ts_updated AS ts_updated,
         t.playcount AS playcount, t.last_image_update AS last_image_update, t.comment AS comment, t.pos_number AS pos_number, t.pos_size AS pos_size, t.image_hash AS image_hash,
         t.year AS year, t.videotype AS videotype, t.series AS series, t.season AS season, t.episode AS episode, t.composer AS composer, t.album_artist AS album_artist, t.source_id AS source_id
     </fragment>
 
     <fragment name="trackColumnsForGrouping">
-        t.source, t.id, t.name, t.artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated,
+        t.source, t.id, t.name, t.artist, t.album, t.time, t.track_number, t.file, t.protected, t.mediatype, t.genre, t.mp4codec, t.ts_played, t.ts_updated, t.content_type,
         t.playcount, t.last_image_update, t.comment, t.pos_number, t.pos_size, t.image_hash, t.year, t.videotype, t.series, t.season, t.episode, t.composer, t.album_artist, t.source_id
     </fragment>
 

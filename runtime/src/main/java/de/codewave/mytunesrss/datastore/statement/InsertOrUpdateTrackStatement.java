@@ -65,6 +65,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     private String myComposer;
     private boolean myCompilation;
     private String mySourceId;
+    private String myContentType;
     private SmartStatement myStatement;
 
     protected InsertOrUpdateTrackStatement(TrackSource source, String sourceId) {
@@ -169,6 +170,10 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myCompilation = compilation;
     }
 
+    public void setContentType(String contentType) {
+        myContentType = contentType;
+    }
+
     public void execute(Connection connection) throws SQLException {
         try {
             DatasourceConfig config = MyTunesRss.CONFIG.getDatasource(mySourceId);
@@ -193,6 +198,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setString("file", myFileName);
             myStatement.setBoolean("protected", myProtected);
             myStatement.setString("mediatype", myMediaType.name());
+            myStatement.setString("content_type", myContentType);
             myStatement.setString("source", mySource.name());
             myStatement.setString("genre", StringUtils.defaultIfBlank(MyTunesRss.CONFIG.getGenreMapping(myGenre), myGenre));
             myStatement.setString("original_genre", myGenre);
@@ -257,6 +263,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myFileName = null;
         myProtected = false;
         myMediaType = MediaType.Other;
+        myContentType = "application/octet-stream";
         myGenre = null;
         myMp4Codec = null;
         myVideoType = null;

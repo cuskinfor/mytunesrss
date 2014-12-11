@@ -21,7 +21,7 @@ import java.sql.SQLException;
 public class MigrationStatement implements DataStoreStatement {
     private static final Logger LOG = LoggerFactory.getLogger(MigrationStatement.class);
 
-    public void execute(Connection connection) throws SQLException {
+    public void execute(final Connection connection) throws SQLException {
         Version databaseVersion = new Version(getVersion(connection));
         if (LOG.isInfoEnabled()) {
             LOG.info("Database version " + databaseVersion + " detected.");
@@ -325,6 +325,13 @@ public class MigrationStatement implements DataStoreStatement {
                         MyTunesRssUtils.createStatement(connection, "migrate_6.1_part_3").execute();
                         databaseVersion = new Version("6.1");
                         new RecreateHelpTablesStatement(true, true, true, false).execute(connection);
+                        new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                    }
+                    // migration for 6.6
+                    if (databaseVersion.compareTo(new Version("6.6")) < 0) {
+                        LOG.info("Migrating database to 6.6.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_6.6").execute();
+                        databaseVersion = new Version("6.6");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
                 } finally {

@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.datastore.itunes;
 import de.codewave.camel.mp4.MoovAtom;
 import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.config.*;
-import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdateTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertTrackStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
@@ -13,6 +12,7 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,8 +112,9 @@ public class TrackListener implements PListHandlerListener {
             String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
             if (StringUtils.isNotBlank(filename)) {
                 String mp4Codec = getMp4Codec(track, filename, tsUpdated);
-                org.apache.tika.mime.MediaType tikaMediaType = MyTunesRssMediaTypeUtils.detectMediaType(new File(filename));
-                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (MyTunesRssMediaTypeUtils.isAudio(tikaMediaType) || MyTunesRssMediaTypeUtils.isVideo(tikaMediaType)) && !isMp4CodecDisabled(mp4Codec)) {
+                Metadata metadata = TikaUtils.extractMetadata(new File(filename));
+                MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
+                if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
                     File file = MyTunesRssUtils.searchFile(filename);
                     if (!file.isFile()) {
                         myMissingFiles++;
@@ -159,6 +160,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setProtected(false); // TODO DRM detection
                             boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
                             statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
+                            statement.setContentType(metadata.get(Metadata.CONTENT_TYPE));
                             if (video) {
                                 statement.setAlbum(null);
                                 statement.setArtist(null);

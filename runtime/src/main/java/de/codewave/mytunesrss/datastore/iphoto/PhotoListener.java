@@ -5,8 +5,12 @@
 
 package de.codewave.mytunesrss.datastore.iphoto;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.TikaUtils;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.ShutdownRequestedException;
 import de.codewave.mytunesrss.config.CompiledReplacementRule;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.datastore.statement.InsertOrUpdatePhotoStatement;
@@ -17,12 +21,16 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tika.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.TrackListenerr
@@ -98,7 +106,8 @@ public abstract class PhotoListener implements PListHandlerListener {
         String mediaType = (String) photo.get("MediaType");
         if ("Image".equals(mediaType)) {
             String filename = applyReplacements(getImagePath(photo));
-            if (StringUtils.isNotBlank(filename) && MyTunesRssMediaTypeUtils.isImage(MyTunesRssMediaTypeUtils.detectMediaType(new File(filename)))) {
+            Metadata metadata = TikaUtils.extractMetadata(new File(filename));
+            if (StringUtils.isNotBlank(filename) && MediaType.get(metadata.get(Metadata.CONTENT_TYPE)) == MediaType.Image) {
                 File file = MyTunesRssUtils.searchFile(filename);
                 if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated.longValue() || file.lastModified() >= tsUpdated.longValue())) {
                     InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
