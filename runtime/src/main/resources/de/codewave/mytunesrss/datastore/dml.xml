@@ -873,10 +873,6 @@
 
     </statement>
 
-    <statement name="updateTrackContentType">
-        <sql>UPDATE track SET content_type = :content_type WHERE id = :id</sql>
-    </statement>
-
     <!-- reusable sql fragments -->
     <fragment name="letterRegionByIndex">
         <![CDATA[
