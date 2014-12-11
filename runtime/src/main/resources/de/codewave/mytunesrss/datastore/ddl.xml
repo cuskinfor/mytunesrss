@@ -44,7 +44,7 @@
                 season INTEGER,
                 composer VARCHAR(1024),
                 compilation INTEGER,
-                content_type VARCHAR(50)
+                content_type VARCHAR(50),
                 UNIQUE (id)
             )
         </sql>
