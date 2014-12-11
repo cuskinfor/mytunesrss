@@ -386,7 +386,7 @@
         <sql>ALTER TABLE track ALTER COLUMN sort_album SET NOT NULL</sql>
     </statement>
 
-    <statement name="migrate_6.6">
+    <statement name="migrate_6.6-dev-1">
         <sql>ALTER TABLE track ADD COLUMN content_type VARCHAR(50)</sql>
     </statement>
 

@@ -328,10 +328,10 @@ public class MigrationStatement implements DataStoreStatement {
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
                     // migration for 6.6
-                    if (databaseVersion.compareTo(new Version("6.6")) < 0) {
-                        LOG.info("Migrating database to 6.6.");
-                        MyTunesRssUtils.createStatement(connection, "migrate_6.6").execute();
-                        databaseVersion = new Version("6.6");
+                    if (databaseVersion.compareTo(new Version("6.6-dev-1")) < 0) {
+                        LOG.info("Migrating database to 6.6-dev-1.");
+                        MyTunesRssUtils.createStatement(connection, "migrate_6.6-dev-1").execute();
+                        databaseVersion = new Version("6.6-dev-1");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
                     }
                 } finally {
