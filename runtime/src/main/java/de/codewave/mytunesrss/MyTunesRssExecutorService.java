@@ -50,7 +50,7 @@ public class MyTunesRssExecutorService {
     
     public AtomicBoolean PLAY_COUNT_UPDATED = new AtomicBoolean(false);
     
-    public long LAST_SCHEDULED_PLAYLIST_UPDATE;
+    public volatile long LAST_SCHEDULED_PLAYLIST_UPDATE;
     
     public synchronized void shutdown() throws InterruptedException {
         Collection<Thread> threads = new ArrayList<>();
@@ -196,6 +196,7 @@ public class MyTunesRssExecutorService {
                 @Override
                 public void run() {
                     if (System.currentTimeMillis() - LAST_SCHEDULED_PLAYLIST_UPDATE > 3600000) {
+                        LAST_SCHEDULED_PLAYLIST_UPDATE = System.currentTimeMillis();
                         // Approximately once an hour run an update for update/play time related smart playlists
                         StopWatch.start("Running scheduled refresh of update/play time related smart playlists.");
                         try {
