@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
  */
 public class MyTunesRssFileProcessor implements FileProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssFileProcessor.class);
-    
+
     private DatabaseUpdateQueue myQueue;
     private int myUpdatedCount;
     private Map<String, Byte> myExistingIds;
@@ -88,41 +88,43 @@ public class MyTunesRssFileProcessor implements FileProcessor {
 
     public void process(File file) {
         try {
-            Metadata metadata = TikaUtils.extractMetadata(file);
-            MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
-            if (file.isFile() && mediaType != MediaType.Other) {
-                String fileId = "file_" + IOUtils.getFilenameHash(file);
-                if (!myExistingIds.containsKey(fileId)) {
-                    boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
-                    if (existing) {
-                        myExistingIds.put(fileId, (byte)0);
-                    }
-                    if ((!existing || (myTrackTsUpdate.containsKey(fileId) && myTrackTsUpdate.get(fileId).longValue() < file.lastModified()) || (myPhotoTsUpdate.containsKey(fileId) && myPhotoTsUpdate.get(fileId).longValue() < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
-                        if (LOGGER.isDebugEnabled()) {
-                            LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
+            if (file.isFile()) {
+                Metadata metadata = TikaUtils.extractMetadata(file);
+                MediaType mediaType = MediaType.get(metadata.get(Metadata.CONTENT_TYPE));
+                if (mediaType != MediaType.Other) {
+                    String fileId = "file_" + IOUtils.getFilenameHash(file);
+                    if (!myExistingIds.containsKey(fileId)) {
+                        boolean existing = myTrackTsUpdate.containsKey(fileId) || myPhotoTsUpdate.containsKey(fileId);
+                        if (existing) {
+                            myExistingIds.put(fileId, (byte)0);
                         }
-                        if (mediaType == MediaType.Image) {
-                            insertOrUpdateImage(file, fileId, existing);
-                        } else {
-                            if (insertOrUpdateTrack(file, fileId, existing, metadata)) {
-                                return; // early return!!!
+                        if ((!existing || (myTrackTsUpdate.containsKey(fileId) && myTrackTsUpdate.get(fileId).longValue() < file.lastModified()) || (myPhotoTsUpdate.containsKey(fileId) && myPhotoTsUpdate.get(fileId).longValue() < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0))) {
+                            if (LOGGER.isDebugEnabled()) {
+                                LOGGER.debug("Processing file \"" + file.getAbsolutePath() + "\".");
                             }
-
-                        }
-                    } else if (mediaType == MediaType.Image) {
-                        String albumName = getPhotoAlbum(file);
-                        try {
-                            final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
-                            myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
-                                public void execute(Connection connection) throws SQLException {
-                                    SmartStatement statement = MyTunesRssUtils.createStatement(connection, "touchPhotoAlbum");
-                                    statement.setString("id", albumId);
-                                    statement.execute();
+                            if (mediaType == MediaType.Image) {
+                                insertOrUpdateImage(file, fileId, existing);
+                            } else {
+                                if (insertOrUpdateTrack(file, fileId, existing, metadata)) {
+                                    return; // early return!!!
                                 }
-                            }, true));
-                        } catch (NoSuchAlgorithmException e) {
-                            if (LOGGER.isErrorEnabled()) {
-                                LOGGER.error("Could not create message digest.", e);
+
+                            }
+                        } else if (mediaType == MediaType.Image) {
+                            String albumName = getPhotoAlbum(file);
+                            try {
+                                final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
+                                myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
+                                    public void execute(Connection connection) throws SQLException {
+                                        SmartStatement statement = MyTunesRssUtils.createStatement(connection, "touchPhotoAlbum");
+                                        statement.setString("id", albumId);
+                                        statement.execute();
+                                    }
+                                }, true));
+                            } catch (NoSuchAlgorithmException e) {
+                                if (LOGGER.isErrorEnabled()) {
+                                    LOGGER.error("Could not create message digest.", e);
+                                }
                             }
                         }
                     }
