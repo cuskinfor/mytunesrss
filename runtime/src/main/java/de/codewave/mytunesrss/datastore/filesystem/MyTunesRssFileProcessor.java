@@ -120,8 +120,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             }
                         }
                     } else {
-                        String contentType = TikaUtils.getContentType(file);
-                        MediaType mediaType = MediaType.get(contentType);
+                        MediaType mediaType = TikaUtils.getMediaType(file);
                         if (mediaType == MediaType.Image) {
                             String albumName = getPhotoAlbum(file);
                             try {

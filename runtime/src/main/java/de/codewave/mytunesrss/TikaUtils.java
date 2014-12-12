@@ -30,15 +30,27 @@ public class TikaUtils {
         }
     }
 
+    public static de.codewave.mytunesrss.config.MediaType getMediaType(File file) {
+        return de.codewave.mytunesrss.config.MediaType.get(getContentType(file));
+    }
+
+    public static de.codewave.mytunesrss.config.MediaType getMediaType(String filename, TikaInputStream tikaInputStream) {
+        return de.codewave.mytunesrss.config.MediaType.get(getContentType(filename, tikaInputStream));
+    }
+
     public static String getContentType(File file) {
         Metadata metadata = new Metadata();
         try (TikaInputStream tikaInputStream = TikaInputStream.get(file, metadata)) {
             MediaType mediaType = TIKA_CONFIG.getDetector().detect(tikaInputStream, metadata);
             return mediaType.getBaseType().toString();
         } catch (IOException e) {
-            LOGGER.warn("Could not get content type from \"" + file.getAbsolutePath() + "\".", e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Could not get content type from \"" + file.getAbsolutePath() + "\".", e);
+            } else {
+                LOGGER.warn("Could not get content type from \"" + file.getAbsolutePath() + "\".");
+            }
         }
-        return "application/octet-stream";
+        return null;
     }
 
     public static String getContentType(String filename, TikaInputStream tikaInputStream) {
@@ -48,9 +60,13 @@ public class TikaUtils {
             MediaType mediaType = TIKA_CONFIG.getDetector().detect(tikaInputStream, metadata);
             return mediaType.getBaseType().toString();
         } catch (IOException e) {
-            LOGGER.warn("Could not get content type from stream with (virtual) file name \"" + filename + "\".", e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Could not get content type from stream with (virtual) file name \"" + filename + "\".", e);
+            } else {
+                LOGGER.warn("Could not get content type from stream with (virtual) file name \"" + filename + "\".");
+            }
         }
-        return "application/octet-stream";
+        return null;
     }
 
     public static Metadata extractMetadata(File file) {
@@ -60,10 +76,11 @@ public class TikaUtils {
             metadata.set(Metadata.CONTENT_TYPE, mediaType.getBaseType().toString());
             TIKA_CONFIG.getParser().parse(tikaInputStream, new DefaultHandler(), metadata, new ParseContext());
         } catch (SAXException|TikaException|IOException e) {
-            LOGGER.warn("Could not extract metadata from \"" + file.getAbsolutePath() + "\".", e);
-        }
-        if (StringUtils.isBlank(metadata.get(Metadata.CONTENT_TYPE))) {
-            metadata.set(Metadata.CONTENT_TYPE, "application/octet-stream");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn("Could not extract metadata from \"" + file.getAbsolutePath() + "\".", e);
+            } else {
+                LOGGER.warn("Could not extract metadata from \"" + file.getAbsolutePath() + "\".");
+            }
         }
         return metadata;
     }
@@ -76,10 +93,11 @@ public class TikaUtils {
             metadata.set(Metadata.CONTENT_TYPE, mediaType.getBaseType().toString());
             TIKA_CONFIG.getParser().parse(tikaInputStream, new DefaultHandler(), metadata, new ParseContext());
         } catch (SAXException|TikaException|IOException e) {
-            LOGGER.warn("Could not extract metadata from stream with (virtual) file name \"" + filename + "\".", e);
-        }
-        if (StringUtils.isBlank(metadata.get(Metadata.CONTENT_TYPE))) {
-            metadata.set(Metadata.CONTENT_TYPE, "application/octet-stream");
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.warn("Could not extract metadata from stream with (virtual) file name \"" + filename + "\".", e);
+            } else {
+                LOGGER.warn("Could not extract metadata from stream with (virtual) file name \"" + filename + "\".");
+            }
         }
         return metadata;
     }

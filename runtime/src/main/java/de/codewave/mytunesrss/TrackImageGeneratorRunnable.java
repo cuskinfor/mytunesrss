@@ -11,6 +11,7 @@ import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
 import de.codewave.utils.sql.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,13 +79,16 @@ public class TrackImageGeneratorRunnable implements Runnable {
                             break;
                         }
                         try {
-                            MyTunesRss.STORE.executeStatement(new HandleTrackImagesStatement(folderImageCache, track.mySource, track.mySourceId, new File(track.myFile), track.myId, MyTunesRss.CONFIG.getDatasource(track.mySourceId).isUseSingleImageInFolder()));
-                            count++;
-                            if (count % 250 == 0) {
-                                try {
-                                    recreateAlbums();
-                                } catch (SQLException e) {
-                                    LOGGER.error("Could not recreate albums after inserting/updating images for 250 tracks.", e);
+                            HandleTrackImagesStatement statement = new HandleTrackImagesStatement(folderImageCache, track.mySource, track.mySourceId, new File(track.myFile), track.myId, MyTunesRss.CONFIG.getDatasource(track.mySourceId).isUseSingleImageInFolder());
+                            MyTunesRss.STORE.executeStatement(statement);
+                            if (StringUtils.isNotBlank(statement.getInsertedImageHash())) {
+                                count++;
+                                if (count % 250 == 0) {
+                                    try {
+                                        recreateAlbums();
+                                    } catch (SQLException e) {
+                                        LOGGER.error("Could not recreate albums after inserting/updating images for 250 tracks.", e);
+                                    }
                                 }
                             }
                         } catch (SQLException e) {

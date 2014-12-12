@@ -75,7 +75,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         if (photoId != null) {
             try {
                 Long tsUpdate = myPhotoTsUpdate.remove(photoId);
-                if (processPhoto(key, photo, photoId, tsUpdate == null || myDatasourceConfig.getId().equals(myPhotoSourceId.get(photoId)) ? tsUpdate : 0)) {
+                if (processPhoto(key, photo, photoId, tsUpdate == null || myDatasourceConfig.getId().equals(myPhotoSourceId.get(photoId)) ? tsUpdate : Long.valueOf(0))) {
                     myUpdatedCount++;
                 }
             } catch (RuntimeException e) {
@@ -112,7 +112,7 @@ public abstract class PhotoListener implements PListHandlerListener {
             if (StringUtils.isNotBlank(filename)) {
                 File file = MyTunesRssUtils.searchFile(filename);
                 if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated.longValue() || file.lastModified() >= tsUpdated.longValue())) {
-                    if (MediaType.get(TikaUtils.getContentType(new File(filename))) == MediaType.Image) {
+                    if (TikaUtils.getMediaType(new File(filename)) == MediaType.Image) {
                         InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
                         statement.clear();
                         statement.setId(photoId);

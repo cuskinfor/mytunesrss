@@ -68,6 +68,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private TrackSource mySource;
     private String mySourceId;
     private boolean myUseSingleImageInFolder;
+    private String myInsertedImageHash;
 
     public HandleTrackImagesStatement(Map<String, String> folderImageCache, TrackSource source, String sourceId, File file, String trackId, boolean useSingleImageInFolder) {
         myFolderImageCache = folderImageCache;
@@ -76,6 +77,10 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         mySource = source;
         mySourceId = sourceId;
         myUseSingleImageInFolder = useSingleImageInFolder;
+    }
+
+    public String getInsertedImageHash() {
+        return myInsertedImageHash;
     }
 
     public void execute(Connection connection) {
@@ -189,6 +194,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                     imageHash = "";
                 }
                 new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
+                myInsertedImageHash = imageHash;
             } catch (SQLException e) {
                 LOGGER.error("Could not update image for track \"" + myTrackId + "\".", e);
             }
