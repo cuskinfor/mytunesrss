@@ -80,7 +80,7 @@ public class TrackListener implements PListHandlerListener {
         String trackId = calculateTrackId(track);
         try {
             Long tsUpdate = myTrackTsUpdate.remove(trackId);
-            if (processTrack(track, tsUpdate == null || myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? tsUpdate : 0)) {
+            if (processTrack(track, tsUpdate == null || myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? tsUpdate : Long.valueOf(0))) {
                 myUpdatedCount++;
             }
         } catch (ShutdownRequestedException e) {
@@ -120,10 +120,10 @@ public class TrackListener implements PListHandlerListener {
                 String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
                 if (StringUtils.isNotBlank(filename)) {
                     String mp4Codec = getMp4Codec(track, filename, tsUpdated);
-                    String contentType = TikaUtils.getContentType(new File(filename));
+                    File file = MyTunesRssUtils.searchFile(filename);
+                    String contentType = TikaUtils.getContentType(file);
                     MediaType mediaType = MediaType.get(contentType);
                     if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
-                        File file = MyTunesRssUtils.searchFile(filename);
                         if (!file.isFile()) {
                             myMissingFiles++;
                             if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
