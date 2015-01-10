@@ -79,9 +79,10 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
         try {
-            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
-            Long tsUpdate = myTrackTsUpdate.remove(trackId);
+            Long tsUpdate = myTrackTsUpdate.get(trackId);
             if (processTrack(track, tsUpdate == null || myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? tsUpdate : Long.valueOf(0))) {
+                myTrackTsUpdate.remove(trackId);
+                myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                 myUpdatedCount++;
             }
         } catch (ShutdownRequestedException e) {
@@ -113,25 +114,19 @@ public class TrackListener implements PListHandlerListener {
         long dateModifiedTime = dateModified != null ? dateModified.getTime() : Long.MIN_VALUE;
         Date dateAdded = ((Date) track.get("Date Added"));
         long dateAddedTime = dateAdded != null ? dateAdded.getTime() : Long.MIN_VALUE;
-        if (tsUpdated == null || dateModifiedTime >= tsUpdated.longValue() || dateAddedTime >= tsUpdated.longValue()) {
-            String trackId = calculateTrackId(track);
-            String name = (String) track.get("Name");
-            String trackType = (String) track.get("Track Type");
-            if (trackType == null || "File".equals(trackType)) {
-                String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
-                if (StringUtils.isNotBlank(filename)) {
+        String trackId = calculateTrackId(track);
+        String name = (String) track.get("Name");
+        String trackType = (String) track.get("Track Type");
+        if (trackId != null && StringUtils.isNotEmpty(name) && (trackType == null || "File".equals(trackType))) {
+            String filename = ItunesLoader.getFileNameForLocation(applyReplacements((String) track.get("Location")));
+            if (StringUtils.isNotBlank(filename)) {
+                File file = MyTunesRssUtils.searchFile(filename);
+                if (file.isFile() && file.canRead()) {
                     String mp4Codec = getMp4Codec(track, filename, tsUpdated);
-                    File file = MyTunesRssUtils.searchFile(filename);
                     String contentType = TikaUtils.getContentType(file);
                     MediaType mediaType = MediaType.get(contentType);
-                    if (trackId != null && StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(filename) && (mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
-                        if (!file.isFile()) {
-                            myMissingFiles++;
-                            if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
-                                myMissingFilePaths.add(file.getAbsolutePath());
-                            }
-                        }
-                        if (!myDatasourceConfig.isDeleteMissingFiles() || file.isFile()) {
+                    if ((mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
+                        if (tsUpdated == null || dateModifiedTime >= tsUpdated.longValue() || dateAddedTime >= tsUpdated.longValue()) {
                             InsertOrUpdateTrackStatement statement = tsUpdated != null ? new UpdateTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId());
                             statement.clear();
                             statement.setId(trackId);
@@ -141,9 +136,9 @@ public class TrackListener implements PListHandlerListener {
                             String effectiveAlbumArtist = StringUtils.trimToNull(StringUtils.defaultIfEmpty(originalAlbumArtist, artist));
                             statement.setArtist(artist);
                             statement.setAlbumArtist(effectiveAlbumArtist);
-                            statement.setSortAlbumArtist(!StringUtils.isEmpty(originalAlbumArtist) ? StringUtils.trimToNull((String)track.get("Sort Album Artist")) : StringUtils.trimToNull((String)track.get("Sort Artist")));
+                            statement.setSortAlbumArtist(!StringUtils.isEmpty(originalAlbumArtist) ? StringUtils.trimToNull((String) track.get("Sort Album Artist")) : StringUtils.trimToNull((String) track.get("Sort Artist")));
                             statement.setAlbum(StringUtils.trimToNull((String) track.get("Album")));
-                            statement.setSortAlbum(StringUtils.trimToNull((String)track.get("Sort Album")));
+                            statement.setSortAlbum(StringUtils.trimToNull((String) track.get("Sort Album")));
                             int timeSeconds = (int) (track.get("Total Time") != null ? (Long) track.get("Total Time") / 1000 : 0);
                             /* keeping the code for testing/debugging purposes!
                             if (timeSeconds > 0 && file.getName().toLowerCase().endsWith(".mp3")) {
@@ -186,9 +181,13 @@ public class TrackListener implements PListHandlerListener {
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
                             statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), Long.valueOf(0)) : mp4Codec);
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
-                            return true;
                         }
-                        return false;
+                        return true;
+                    }
+                } else {
+                    myMissingFiles++;
+                    if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
+                        myMissingFilePaths.add(file.getAbsolutePath());
                     }
                 }
             }

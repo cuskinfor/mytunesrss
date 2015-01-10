@@ -19,7 +19,6 @@ import java.util.*;
 public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
 
     private Form myMiscOptionsForm;
-    private CheckBox myDeleteMissingFiles;
     private Table myIgnoreItunesPlaylists;
     private ItunesDatasourceConfig myConfig;
 
@@ -56,8 +55,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         addComponent(myImageMappingsPanel);
 
         myMiscOptionsForm = getComponentFactory().createForm(null, true);
-        myDeleteMissingFiles = getComponentFactory().createCheckBox("datasourceOptionsPanel.itunesDeleteMissingFiles");
-        myMiscOptionsForm.addField(myDeleteMissingFiles, myDeleteMissingFiles);
         myMiscOptionsForm.addField(myArtistDropWords, myArtistDropWords);
         myMiscOptionsForm.addField(myDisabledMp4Codecs, myDisabledMp4Codecs);
         myMiscOptionsForm.addField(myTrackImageImportType, myTrackImageImportType);
@@ -70,7 +67,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
 
     @Override
     protected void writeToConfig() {
-        myConfig.setDeleteMissingFiles(myDeleteMissingFiles.booleanValue());
         myConfig.setArtistDropWords(myArtistDropWords.getStringValue(""));
         myConfig.setDisabledMp4Codecs(myDisabledMp4Codecs.getStringValue(""));
         myConfig.clearPathReplacements();
@@ -98,7 +94,6 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
 
     @Override
     protected void initFromConfig() {
-        myDeleteMissingFiles.setValue(myConfig.isDeleteMissingFiles());
         myArtistDropWords.setValue(myConfig.getArtistDropWords());
         myDisabledMp4Codecs.setValue(myConfig.getDisabledMp4Codecs());
         myTrackImageImportType.setValue(IMPORT_TYPE_MAPPINGS.get(myConfig.getTrackImageImportType()));

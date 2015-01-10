@@ -1308,7 +1308,6 @@ public class MyTunesRssConfig {
                                     // ignore illegal config entry
                                 }
                             }
-                            itunesDatasourceConfig.setDeleteMissingFiles(JXPathUtils.getBooleanValue(datasourceContext, "deleteMissingFiles", true));
                             itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
                             itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
                             itunesDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
@@ -1700,7 +1699,6 @@ public class MyTunesRssConfig {
                             ignorePlaylistsElement.appendChild(DOMUtils.createTextElement(settings, "type", type.name()));
                         }
                     }
-                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "deleteMissingFiles", itunesDatasourceConfig.isDeleteMissingFiles()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "artistDropwords", itunesDatasourceConfig.getArtistDropWords()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "disabled-mp4-codecs", itunesDatasourceConfig.getDisabledMp4Codecs()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));

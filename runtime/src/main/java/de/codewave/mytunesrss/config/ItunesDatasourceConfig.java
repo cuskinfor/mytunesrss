@@ -52,7 +52,6 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     }
 
     private Set<ReplacementRule> myPathReplacements = new HashSet<>();
-    private boolean myDeleteMissingFiles = true;
     private Set<ItunesPlaylistType> myIgnorePlaylists = new HashSet<>();
     private String myArtistDropWords;
     private String myDisabledMp4Codecs = "";
@@ -70,7 +69,6 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         super(source);
         myPathReplacements = new HashSet<>(source.getPathReplacements());
         myIgnorePlaylists = new HashSet<>(source.getIgnorePlaylists());
-        myDeleteMissingFiles = source.isDeleteMissingFiles();
         myArtistDropWords = source.getArtistDropWords();
         myDisabledMp4Codecs = source.getDisabledMp4Codecs();
         myTrackImagePatterns = new ArrayList<>(source.getTrackImagePatterns());
@@ -94,14 +92,6 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
 
     public void addPathReplacement(ReplacementRule pathReplacement) {
         myPathReplacements.add(pathReplacement);
-    }
-
-    public boolean isDeleteMissingFiles() {
-        return myDeleteMissingFiles;
-    }
-
-    public void setDeleteMissingFiles(boolean deleteMissingFiles) {
-        myDeleteMissingFiles = deleteMissingFiles;
     }
 
     public Set<ItunesPlaylistType> getIgnorePlaylists() {
