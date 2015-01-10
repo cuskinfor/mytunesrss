@@ -79,6 +79,7 @@ public class TrackListener implements PListHandlerListener {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
         try {
+            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
             Long tsUpdate = myTrackTsUpdate.remove(trackId);
             if (processTrack(track, tsUpdate == null || myDatasourceConfig.getId().equals(myTrackSourceId.get(trackId)) ? tsUpdate : Long.valueOf(0))) {
                 myUpdatedCount++;
@@ -185,10 +186,7 @@ public class TrackListener implements PListHandlerListener {
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
                             statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), Long.valueOf(0)) : mp4Codec);
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
-                            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                             return true;
-                        } else {
-                            myTrackIdToPersId.put((Long) track.get("Track ID"), trackId);
                         }
                         return false;
                     }
