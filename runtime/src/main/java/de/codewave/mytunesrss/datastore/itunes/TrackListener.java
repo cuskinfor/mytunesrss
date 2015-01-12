@@ -122,11 +122,11 @@ public class TrackListener implements PListHandlerListener {
             if (StringUtils.isNotBlank(filename)) {
                 File file = MyTunesRssUtils.searchFile(filename);
                 if (file.isFile() && file.canRead()) {
-                    String mp4Codec = getMp4Codec(track, filename, tsUpdated);
-                    String contentType = TikaUtils.getContentType(file);
-                    MediaType mediaType = MediaType.get(contentType);
-                    if ((mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
-                        if (tsUpdated == null || dateModifiedTime >= tsUpdated.longValue() || dateAddedTime >= tsUpdated.longValue()) {
+                    if (tsUpdated == null || dateModifiedTime >= tsUpdated || dateAddedTime >= tsUpdated || file.lastModified() >= tsUpdated) {
+                        String mp4Codec = getMp4Codec(track, filename, tsUpdated);
+                        String contentType = TikaUtils.getContentType(file);
+                        MediaType mediaType = MediaType.get(contentType);
+                        if ((mediaType == MediaType.Audio || mediaType == MediaType.Video) && !isMp4CodecDisabled(mp4Codec)) {
                             InsertOrUpdateTrackStatement statement = tsUpdated != null ? new UpdateTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId()) : new InsertTrackStatement(TrackSource.ITunes, myDatasourceConfig.getId());
                             statement.clear();
                             statement.setId(trackId);
@@ -182,8 +182,8 @@ public class TrackListener implements PListHandlerListener {
                             statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), Long.valueOf(0)) : mp4Codec);
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
                         }
-                        return true;
                     }
+                    return true;
                 } else {
                     myMissingFiles++;
                     if (myMissingFilePaths.size() < MissingItunesFiles.MAX_MISSING_FILE_PATHS) {
