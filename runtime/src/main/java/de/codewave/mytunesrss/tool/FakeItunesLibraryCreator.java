@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.*;
 
 public class FakeItunesLibraryCreator {
@@ -45,10 +46,9 @@ public class FakeItunesLibraryCreator {
                         File fakeFile = new File(filename.substring(commonPrefix.length()));
                         File templateFile = findTemplate(templateDir, filename);
                         if (templateFile != null && templateFile.isFile() && templateFile.canRead()) {
-                            if (fakeFile.getParentFile().mkdirs()) {
-                                System.out.println("copying \"" + templateFile.getAbsolutePath() + "\" to \"" + fakeFile.getAbsolutePath() + "\".");
-                                FileUtils.copyFile(templateFile, fakeFile);
-                            }
+                            fakeFile.getParentFile().mkdirs();
+                            System.out.println("linking \"" + templateFile.getAbsolutePath() + "\" to \"" + fakeFile.getAbsolutePath() + "\".");
+                            Files.createSymbolicLink(fakeFile.toPath(), templateFile.toPath());
                         }
                     }
                 }
@@ -63,16 +63,24 @@ public class FakeItunesLibraryCreator {
         System.out.println("Templates for the following extensions were missing: " + Arrays.toString(missingTemplates.toArray(new String[missingTemplates.size()])));
     }
 
+    private static final Map<String, File> templateCache = new HashMap<>();
+
     private static File findTemplate(File templateDir, final String filename) {
+        final String extension = StringUtils.lowerCase(FilenameUtils.getExtension(filename));
+        if (templateCache.containsKey(extension)) {
+            return templateCache.get(extension);
+        }
         File[] templates = templateDir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return FilenameUtils.getExtension(name).equalsIgnoreCase(FilenameUtils.getExtension(filename));
+                return FilenameUtils.getExtension(name).equalsIgnoreCase(extension);
             }
         });
         if (templates.length > 0) {
+            templateCache.put(extension, templates[0]);
             return templates[0];
         }  else {
+            templateCache.put(extension, null);
             missingTemplates.add(StringUtils.lowerCase(FilenameUtils.getExtension(filename)));
             return null;
         }
