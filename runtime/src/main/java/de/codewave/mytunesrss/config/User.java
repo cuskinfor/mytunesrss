@@ -24,6 +24,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * de.codewave.mytunesrss.config.User
@@ -33,8 +35,13 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
 
     public void handleEvent(MyTunesRssEvent event) {
         if (event.getType() == MyTunesRssEvent.EventType.SERVER_STOPPED) {
-            if (myLastFmSession != null) {
-                LastFmUtils.sendSubmissions(myLastFmSession);
+            myLastFmSessionLock.lock();
+            try {
+                if (myLastFmSession != null) {
+                    LastFmUtils.sendSubmissions(myLastFmSession);
+                }
+            } finally {
+                myLastFmSessionLock.unlock();
             }
         }
     }
@@ -98,6 +105,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private boolean myEditWebSettings = true;
     private String myLastFmUsername;
     private byte[] myLastFmPasswordHash;
+    private Lock myLastFmSessionLock = new ReentrantLock();
     private LastFmSession myLastFmSession;
     private int myLastFmHardFailureCount;
     private long myLastFmHandshakeTime;
@@ -840,32 +848,37 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
             final long playTime = System.currentTimeMillis();
             Runnable runnable = new Runnable() {
                 public void run() {
-                    if (myLastFmSession == null && myLastFmHandshakeTime + myLastFmHandshakeWaitTime < System.currentTimeMillis()) {
-                        LOG.debug("Trying to create a new LastFM session for user \"" + getName() + "\".");
-                        myLastFmSession = LastFmUtils.doHandshake(User.this);
-                        myLastFmHandshakeTime = System.currentTimeMillis();
-                        if (myLastFmSession != null) {
-                            LOG.debug("Got LastFM session, adding user as event listener.");
-                            MyTunesRssEventManager.getInstance().addListener(User.this);
-                        } else {
-                            myLastFmHandshakeWaitTime = Math.min(myLastFmHandshakeWaitTime == 0 ? 60000 : myLastFmHandshakeWaitTime * 2, 7200000);
-                            LOG.warn("No LastFM session for user \"" + getName() + "\", setting handshake wait time to " +
-                                    (myLastFmHandshakeWaitTime / 1000) + " seconds.");
-                        }
-                    }
-                    if (myLastFmSession != null) {
-                        if (LastFmUtils.sendSubmissions(myLastFmSession) && LastFmUtils.sendNowPlaying(myLastFmSession, track)) {
-                            myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
-                        } else {
-                            myLastFmHardFailureCount++;
-                            LOG.warn("Hard LastFM failure (count = " + myLastFmHardFailureCount + ").");
-                            if (myLastFmHardFailureCount == 3) {
-                                LOG.debug("Critical LastFM failure count reached, destroying session and removing event listener.");
-                                myLastFmHardFailureCount = 0;
-                                myLastFmSession = null;
-                                MyTunesRssEventManager.getInstance().removeListener(User.this);
+                    myLastFmSessionLock.lock();
+                    try {
+                        if (myLastFmSession == null && myLastFmHandshakeTime + myLastFmHandshakeWaitTime < System.currentTimeMillis()) {
+                            LOG.debug("Trying to create a new LastFM session for user \"" + getName() + "\".");
+                            myLastFmSession = LastFmUtils.doHandshake(User.this);
+                            myLastFmHandshakeTime = System.currentTimeMillis();
+                            if (myLastFmSession != null) {
+                                LOG.debug("Got LastFM session, adding user as event listener.");
+                                MyTunesRssEventManager.getInstance().addListener(User.this);
+                            } else {
+                                myLastFmHandshakeWaitTime = Math.min(myLastFmHandshakeWaitTime == 0 ? 60000 : myLastFmHandshakeWaitTime * 2, 7200000);
+                                LOG.warn("No LastFM session for user \"" + getName() + "\", setting handshake wait time to " +
+                                        (myLastFmHandshakeWaitTime / 1000) + " seconds.");
                             }
                         }
+                        if (myLastFmSession != null) {
+                            if (LastFmUtils.sendSubmissions(myLastFmSession) && LastFmUtils.sendNowPlaying(myLastFmSession, track)) {
+                                myLastFmSession.offerSubmission(new LastFmSubmission(track, playTime));
+                            } else {
+                                myLastFmHardFailureCount++;
+                                LOG.warn("Hard LastFM failure (count = " + myLastFmHardFailureCount + ").");
+                                if (myLastFmHardFailureCount == 3) {
+                                    LOG.debug("Critical LastFM failure count reached, destroying session and removing event listener.");
+                                    myLastFmHardFailureCount = 0;
+                                    myLastFmSession = null;
+                                    MyTunesRssEventManager.getInstance().removeListener(User.this);
+                                }
+                            }
+                        }
+                    } finally {
+                        myLastFmSessionLock.unlock();
                     }
                 }
             };
