@@ -8,6 +8,7 @@
     <body>
 
         <release version="6.6.0" date="___D___">
+            <action dev="mdescher" type="fix">[MYTUNESRSS-526] Wrong email text for fatal error mail</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-525] Possible NPE in User class during LastFM communication</action>
             <action dev="mdescher" type="remove">Removed option to delete missing files in iTunes import (missing files now are always deleted).</action>
             <action dev="mdescher" type="fix">Correct invalid data source references when updating database.</action>
