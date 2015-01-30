@@ -10,8 +10,8 @@
     </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <connection>scm:svn:svn://svn.codewave.de/mytunesrss/trunk</connection>
-        <developerConnection>scm:svn:svn://svn.codewave.de/mytunesrss/trunk</developerConnection>
+        <connection>scm:git:git@git.codewave.de:codewave/mytunesrss.git</connection>
+        <developerConnection>scm:git:git@git.codewave.de:codewave/mytunesrss.git</developerConnection>
     </scm>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
