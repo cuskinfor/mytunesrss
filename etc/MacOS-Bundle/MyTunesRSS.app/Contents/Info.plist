@@ -29,7 +29,7 @@
         <key>LSApplicationCategoryType</key>
         <string>public.app-category.music</string>
         <key>JVMRuntime</key>
-        <string>jdk1.7.0_60.jdk</string>
+        <string>jdk1.8.0_31.jdk</string>
         <key>LSArchitecturePriority</key>
         <array>
             <string>x86_64</string>
