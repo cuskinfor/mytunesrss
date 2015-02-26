@@ -9,6 +9,7 @@ package de.codewave.mytunesrss.datastore.statement;
  */
 public class Genre {
     private String myName;
+    private String myNaturalSortName;
     private int myAlbumCount;
     private int myTrackCount;
     private int myArtistCount;
@@ -52,5 +53,13 @@ public class Genre {
 
     public void setHidden(boolean hidden) {
         myHidden = hidden;
+    }
+
+    public String getNaturalSortName() {
+        return myNaturalSortName;
+    }
+
+    public void setNaturalSortName(String naturalSortName) {
+        myNaturalSortName = naturalSortName;
     }
 }

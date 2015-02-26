@@ -70,6 +70,7 @@ public class FindGenresQuery extends MyTunesRssDataStoreQuery<QueryResult<Genre>
         public Genre create(ResultSet resultSet) throws SQLException {
             Genre genre = new Genre();
             genre.setName(resultSet.getString("NAME"));
+            genre.setNaturalSortName(resultSet.getString("NAT_SORT_NAME"));
             genre.setTrackCount(resultSet.getInt("TRACK_COUNT"));
             genre.setArtistCount(resultSet.getInt("ARTIST_COUNT"));
             genre.setAlbumCount(resultSet.getInt("ALBUM_COUNT"));

@@ -26,6 +26,7 @@ public class AlbumRepresentation implements RestRepresentation {
     private Integer myArtistCount;
     private String myImageHash;
     private String myName;
+    private String myNaturalSortName;
     private Integer myTrackCount;
     private Integer myYear;
 
@@ -50,6 +51,9 @@ public class AlbumRepresentation implements RestRepresentation {
         }
         if (IncludeExcludeInterceptor.isAttr("year")) {
             setYear(album.getYear());
+        }
+        if (IncludeExcludeInterceptor.isAttr("naturalSortName")) {
+            setNaturalSortName(album.getNaturalSortName());
         }
     }
 
@@ -194,5 +198,16 @@ public class AlbumRepresentation implements RestRepresentation {
 
     public void setYear(Integer year) {
         myYear = year;
+    }
+
+    /**
+     * Natural sort name.
+     */
+    public String getNaturalSortName() {
+        return myNaturalSortName;
+    }
+
+    public void setNaturalSortName(String naturalSortName) {
+        myNaturalSortName = naturalSortName;
     }
 }

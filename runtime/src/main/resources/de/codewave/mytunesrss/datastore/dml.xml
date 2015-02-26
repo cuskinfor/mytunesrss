@@ -6,7 +6,7 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS albumname, a.nat_sort_name AS nat_sort_name, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year
+            SELECT a.name AS albumname, a.nat_sort_name AS nat_sort_name, a.track_count AS track_count, a.artist_count AS artist_count, a.artist AS artist, a.image_hash AS image_hash, a.year AS year, a.nat_sort_name AS nat_sort_name
             FROM album a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
             <compilation>AND a.compilation = :compilation</compilation>
@@ -44,7 +44,7 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT a.name AS name, a.nat_sort_name AS nat_sort_name, a.track_count AS track_count, a.album_count AS album_count
+            SELECT a.name AS name, a.nat_sort_name AS nat_sort_name, a.track_count AS track_count, a.album_count AS album_count, a.nat_sort_name AS nat_sort_name
             FROM artist a<track>, track t</track><restricted>, link_track_playlist rltp</restricted>
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
@@ -81,7 +81,7 @@
     <statement name="findGenre">
         <sql>
             <![CDATA[
-            SELECT g.name AS name, g.nat_sort_name AS nat_sort_name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count, g.hidden AS hidden
+            SELECT g.name AS name, g.nat_sort_name AS nat_sort_name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count, g.hidden AS hidden, g.nat_sort_name AS nat_sort_name
             FROM genre g<restricted>, link_track_playlist rltp</restricted><track>, track t</track>
             WHERE {alwaysTrueCondition}
             <restricted>
@@ -109,7 +109,7 @@
         <parameter name="index" type="java.lang.Integer"/>
         <sql>
             <![CDATA[
-            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count, g.hidden AS hidden
+            SELECT g.name AS name, g.track_count AS track_count, g.artist_count AS artist_count, g.album_count AS album_count, g.hidden AS hidden, g.nat_sort_name AS nat_sort_name
             FROM genre g<restricted>, link_track_playlist rltp</restricted><track>, track t</track>
             WHERE {alwaysTrueCondition}
             <index>AND ({letterRegionByIndex})</index>
@@ -857,7 +857,7 @@
     </statement>
 
     <statement name="listAlbumsForNatSortUpdate">
-        <sql>SELECT name, artist, nat_sort_name FROM album</sql>
+        <sql>SELECT name, nat_sort_name FROM album</sql>
     </statement>
 
     <statement name="listArtistsForNatSortUpdate">

@@ -9,6 +9,7 @@ package de.codewave.mytunesrss.datastore.statement;
  */
 public class Album {
     private String myName;
+    private String myNaturalSortName;
     private int myArtistCount;
     private int myTrackCount;
     private String myArtist;
@@ -63,4 +64,11 @@ public class Album {
         myYear = year;
     }
 
+    public String getNaturalSortName() {
+        return myNaturalSortName;
+    }
+
+    public void setNaturalSortName(String naturalSortName) {
+        myNaturalSortName = naturalSortName;
+    }
 }

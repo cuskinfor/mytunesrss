@@ -5,6 +5,7 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -126,6 +127,7 @@ public class EditPlaylistResource extends RestResource {
                 album.setTrackCount(1);
                 album.setImageHash(track.getImageHash());
                 album.setName(track.getAlbum());
+                album.setNaturalSortName(track.getAlbum());
                 album.setYear(track.getYear());
                 playlistAlbums.add(album);
             }

@@ -8,6 +8,7 @@
     <body>
 
         <release version="6.6" date="2015-01-30">
+            <action dev="mdescher" type="add">[MYTUNESRSS-529] REST-API: album/artist/genre representation must contain nat_sort_name</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-526] Wrong email text for fatal error mail</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-525] Possible NPE in User class during LastFM communication</action>
             <action dev="mdescher" type="remove">Removed option to delete missing files in iTunes import (missing files now are always deleted).</action>

@@ -104,6 +104,7 @@ public class FindAlbumQuery extends MyTunesRssDataStoreQuery<QueryResult<Album>>
         public Album create(ResultSet resultSet) throws SQLException {
             Album album = new Album();
             album.setName(resultSet.getString("ALBUMNAME"));
+            album.setNaturalSortName(resultSet.getString("NAT_SORT_NAME"));
             album.setTrackCount(resultSet.getInt("TRACK_COUNT"));
             album.setArtistCount(resultSet.getInt("ARTIST_COUNT"));
             album.setArtist(resultSet.getString("ARTIST"));

@@ -77,6 +77,7 @@ public class FindArtistQuery extends MyTunesRssDataStoreQuery<QueryResult<Artist
         public Artist create(ResultSet resultSet) throws SQLException {
             Artist artist = new Artist();
             artist.setName(resultSet.getString("NAME"));
+            artist.setNaturalSortName(resultSet.getString("NAT_SORT_NAME"));
             artist.setAlbumCount(resultSet.getInt("ALBUM_COUNT"));
             artist.setTrackCount(resultSet.getInt("TRACK_COUNT"));
             return artist;

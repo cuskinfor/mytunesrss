@@ -21,6 +21,7 @@ public class ArtistRepresentation implements RestRepresentation {
     private URI myDownloadUri;
     private Integer myAlbumCount;
     private String myName;
+    private String myNaturalSortName;
     private Integer myTrackCount;
 
     public ArtistRepresentation() {
@@ -35,6 +36,9 @@ public class ArtistRepresentation implements RestRepresentation {
         }
         if (IncludeExcludeInterceptor.isAttr("trackCount")) {
             setTrackCount(artist.getTrackCount());
+        }
+        if (IncludeExcludeInterceptor.isAttr("naturalSortName")) {
+            setNaturalSortName(artist.getNaturalSortName());
         }
     }
 
@@ -135,5 +139,16 @@ public class ArtistRepresentation implements RestRepresentation {
 
     public void setTrackCount(Integer trackCount) {
         myTrackCount = trackCount;
+    }
+
+    /**
+     * Natural sort name.
+     */
+    public String getNaturalSortName() {
+        return myNaturalSortName;
+    }
+
+    public void setNaturalSortName(String naturalSortName) {
+        myNaturalSortName = naturalSortName;
     }
 }
