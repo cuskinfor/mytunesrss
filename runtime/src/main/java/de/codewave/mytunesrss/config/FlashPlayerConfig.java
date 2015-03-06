@@ -58,13 +58,21 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     public static Set<FlashPlayerConfig> getDefaults() {
         Set<FlashPlayerConfig> defaults = new HashSet<>();
         for (FlashPlayerConfig config : DEFAULTS) {
-            defaults.add((FlashPlayerConfig) config.clone());
+            try {
+                defaults.add((FlashPlayerConfig) config.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not clone flash player config!", e);
+            }
         }
         return defaults;
     }
 
     public static FlashPlayerConfig getDefault() {
-        return (FlashPlayerConfig) JW46.clone();
+        try {
+            return (FlashPlayerConfig) JW46.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Could not clone dcefault flash player config!", e);
+        }
     }
 
     private String myId;

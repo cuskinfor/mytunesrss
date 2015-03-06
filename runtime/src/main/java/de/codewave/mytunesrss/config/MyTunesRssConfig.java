@@ -1061,12 +1061,8 @@ public class MyTunesRssConfig {
     }
 
     public synchronized void loadFromContext(JXPathContext settings) {
-        try {
-            setVersion(MyTunesRss.VERSION);
-            load(settings);
-        } catch (IOException e) {
-            LOGGER.error("Could not read configuration file.", e);
-        }
+        setVersion(MyTunesRss.VERSION);
+        load(settings);
 
     }
 

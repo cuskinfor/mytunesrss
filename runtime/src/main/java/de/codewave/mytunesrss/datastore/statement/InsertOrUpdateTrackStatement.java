@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
@@ -224,11 +223,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
             myStatement.setInt("compilation", myCompilation ? 1 : 0);
             myStatement.setString("source_id", mySourceId);
             myStatement.execute();
-            try {
-                updateLuceneIndex();
-            } catch (IOException e) {
-                LOGGER.warn("Could not update lucene index for track \"" + myId + "\".", e);
-            }
+            updateLuceneIndex();
         } catch (SQLException e) {
             logError(myId, e);
         }

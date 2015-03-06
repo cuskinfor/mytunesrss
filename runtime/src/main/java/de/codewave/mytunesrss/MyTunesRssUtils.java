@@ -421,7 +421,11 @@ public class MyTunesRssUtils {
                     User template = MyTunesRss.CONFIG.getUser(ldapConfig.getTemplateUser());
                     if (template != null) {
                         LOGGER.debug("Using LDAP template user \"" + template.getName() + "\".");
-                        user = (User) template.clone();
+                        try {
+                            user = (User) template.clone();
+                        } catch (CloneNotSupportedException e) {
+                            throw new RuntimeException("Could not create user from template!", e);
+                        }
                         user.setName(userName);
                         user.setPasswordHash(MyTunesRss.SHA1_DIGEST.get().digest(UUID.randomUUID().toString().getBytes("UTF-8")));
                         user.setChangePassword(false);

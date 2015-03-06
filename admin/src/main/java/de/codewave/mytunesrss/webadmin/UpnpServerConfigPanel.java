@@ -200,10 +200,18 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
 
     @Override
     protected boolean beforeReset() {
-        myDefaultProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getDefaultClientProfile().clone();
+        try {
+            myDefaultProfile = MyTunesRss.MEDIA_SERVER_CONFIG.getDefaultClientProfile().clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException("Could not clone media server client profile!", e);
+        }
         myProfiles = new TreeSet<>();
         for (MediaServerClientProfile mediaServerClientProfile : MyTunesRss.MEDIA_SERVER_CONFIG.getClientProfiles()) {
-            myProfiles.add(mediaServerClientProfile.clone());
+            try {
+                myProfiles.add(mediaServerClientProfile.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not clone media server client profile!", e);
+            }
         }
         return true;
     }

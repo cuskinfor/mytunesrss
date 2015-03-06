@@ -257,18 +257,33 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                     @Override
                     protected void onOk(User template) {
                         getParent().removeWindow(this);
-                        User user = (User) template.clone();
+                        User user = null;
+                        try {
+                            user = (User) template.clone();
+                        } catch (CloneNotSupportedException e) {
+                            throw new RuntimeException("Could not create user from template!", e);
+                        }
                         user.setName(getBundleString("userConfigPanel.newUserName"));
                         editUser(user, true);
                     }
                 }.show(getWindow());
             } else {
-                User user = (User) myNoTemplateUser.clone();
+                User user = null;
+                try {
+                    user = (User) myNoTemplateUser.clone();
+                } catch (CloneNotSupportedException e) {
+                    throw new RuntimeException("Could not create user from template!", e);
+                }
                 user.setName(getBundleString("userConfigPanel.newUserName"));
                 editUser(user, true);
             }
         } else {
-            User user = (User) myNoTemplateUser.clone();
+            User user = null;
+            try {
+                user = (User) myNoTemplateUser.clone();
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not create user from template!", e);
+            }
             user.setName(getBundleString("userConfigPanel.newGroupName"));
             user.setGroup(true);
             editUser(user, true);

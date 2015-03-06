@@ -183,7 +183,11 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myTranscoderNumberGenerator.set(1);
         myTranscoderConfigs = new ArrayList<>();
         for (TranscoderConfig transcoderConfig : MyTunesRss.CONFIG.getTranscoderConfigs()) {
-            myTranscoderConfigs.add((TranscoderConfig) transcoderConfig.clone());
+            try {
+                myTranscoderConfigs.add((TranscoderConfig) transcoderConfig.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not clone transcoder config!", e);
+            }
         }
         return true;
     }

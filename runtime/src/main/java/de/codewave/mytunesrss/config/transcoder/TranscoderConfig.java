@@ -84,7 +84,11 @@ public class TranscoderConfig implements Cloneable {
     public static Collection<TranscoderConfig> getDefaultTranscoders() {
         Set<TranscoderConfig> deepClone = new HashSet<>(DEFAULT_TRANSCODERS.size());
         for (TranscoderConfig config : DEFAULT_TRANSCODERS) {
-            deepClone.add((TranscoderConfig) config.clone());
+            try {
+                deepClone.add((TranscoderConfig) config.clone());
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException("Could not clone transcoder config!", e);
+            }
         }
         return deepClone;
     }

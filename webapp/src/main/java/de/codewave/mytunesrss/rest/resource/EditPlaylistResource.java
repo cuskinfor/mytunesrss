@@ -28,6 +28,8 @@ import org.jboss.resteasy.spi.validation.ValidateRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.*;
@@ -267,7 +269,7 @@ public class EditPlaylistResource extends RestResource {
      */
     @POST
     @Path("save")
-    public void savePlaylist(
+    public Response savePlaylist(
             @Context HttpServletRequest request,
             @FormParam("name") @NotBlank(message = "NO_PLAYLIST_NAME") String playlistName,
             @FormParam("private") @DefaultValue("false") boolean userPrivate
@@ -287,6 +289,7 @@ public class EditPlaylistResource extends RestResource {
         MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         request.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
         request.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
+        return Response.created(UriBuilder.fromResource(PlaylistResource.class).build()).build();
     }
 
     /**
