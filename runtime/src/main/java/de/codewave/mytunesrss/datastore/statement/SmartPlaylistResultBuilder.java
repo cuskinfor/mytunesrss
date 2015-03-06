@@ -18,6 +18,7 @@ public class SmartPlaylistResultBuilder implements ResultBuilder<SmartPlaylist> 
 
     private Map<String, SmartPlaylist> smartPlaylists = new HashMap<>();
 
+    @Override
     public SmartPlaylist create(ResultSet resultSet) throws SQLException {
         SmartPlaylist smartPlaylist = smartPlaylists.get(resultSet.getString("ID"));
         if (smartPlaylist == null) {

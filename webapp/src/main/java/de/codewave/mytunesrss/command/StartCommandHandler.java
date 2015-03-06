@@ -11,6 +11,7 @@ import java.io.IOException;
  * de.codewave.mytunesrss.command.StartCommandHandler
  */
 public class StartCommandHandler extends MyTunesRssCommandHandler {
+    @Override
     public void execute() throws IOException, ServletException {
         forward(MyTunesRssCommand.ShowPortal);
     }

@@ -35,6 +35,7 @@ public class CompleteTest {
             for (int i = 0; i < maxThreads; i++) {
                 final String threadName = "selenium_" + CompleteTest.class.getSimpleName() + "_" + (i + 1);
                 threads[i] = new Thread(new Runnable() {
+                    @Override
                     public void run() {
                         try {
                             runLoop(UUID.randomUUID().toString(), "selenium", threadName, maxLoops);

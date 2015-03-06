@@ -8,7 +8,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
@@ -18,7 +17,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class RemoveOldEventsStatementTest {
     @Before
-    public void setUp() throws SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
+    public void setUp() throws SQLException, IOException, ClassNotFoundException {
         MyTunesRssTestUtils.before();
     }
 
@@ -49,7 +48,7 @@ public class RemoveOldEventsStatementTest {
         }
     }
 
-    private void createEvents() throws IOException, SQLException {
+    private void createEvents() throws SQLException {
         // insert 20 events (1 for today, 1 for yesterday, ...)
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
         try {

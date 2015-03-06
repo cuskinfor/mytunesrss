@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
  * de.codewave.mytunesrss.task.InitializeDatabaseCallable
  */
 public class DeleteDatabaseFilesCallable implements Callable<Void> {
+    @Override
     public Void call() throws IOException {
         String filename = "h2";
         String pathname = MyTunesRss.CACHE_DATA_PATH;

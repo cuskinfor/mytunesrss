@@ -12,13 +12,11 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -42,7 +40,7 @@ public class TrackListener implements PListHandlerListener {
     private ItunesDatasourceConfig myDatasourceConfig;
 
     public TrackListener(ItunesDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<Long, String> trackIdToPersId,
-                         Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId) throws SQLException {
+                         Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId) {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
@@ -75,6 +73,7 @@ public class TrackListener implements PListHandlerListener {
         return Collections.unmodifiableList(myMissingFilePaths);
     }
 
+    @Override
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map track = (Map) value;
         String trackId = calculateTrackId(track);
@@ -97,10 +96,11 @@ public class TrackListener implements PListHandlerListener {
 
     private String calculateTrackId(Map track) {
         String trackId = myLibraryListener.getLibraryId() + "_";
-        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID").toString();
+        trackId += track.get("Persistent ID") != null ? track.get("Persistent ID").toString() : "TrackID" + track.get("Track ID");
         return trackId;
     }
 
+    @Override
     public boolean beforeArrayAdd(List array, Object value) {
         throw new UnsupportedOperationException("method beforeArrayAdd of class ItunesLoader$TrackListener is not supported!");
     }
@@ -157,13 +157,13 @@ public class TrackListener implements PListHandlerListener {
                             statement.setTrackNumber((int) (track.get("Track Number") != null ? (Long) track.get("Track Number") : 0));
                             statement.setFileName(file.getAbsolutePath());
                             statement.setProtected(false); // TODO DRM detection
-                            boolean video = track.get("Has Video") != null && ((Boolean) track.get("Has Video")).booleanValue();
+                            boolean video = track.get("Has Video") != null && (Boolean) track.get("Has Video");
                             statement.setMediaType(video ? MediaType.Video : MediaType.Audio);
                             statement.setContentType(contentType);
                             if (video) {
                                 statement.setAlbum(null);
                                 statement.setArtist(null);
-                                boolean tvshow = track.get("TV Show") != null && ((Boolean) track.get("TV Show")).booleanValue();
+                                boolean tvshow = track.get("TV Show") != null && (Boolean) track.get("TV Show");
                                 statement.setVideoType(tvshow ? VideoType.TvShow : VideoType.Movie);
                                 if (tvshow) {
                                     statement.setSeries(StringUtils.trimToNull((String) track.get("Series")));
@@ -173,13 +173,13 @@ public class TrackListener implements PListHandlerListener {
                             }
                             statement.setGenre(StringUtils.trimToNull((String) track.get("Genre")));
                             statement.setComposer(StringUtils.trimToNull((String) track.get("Composer")));
-                            boolean compilation = track.get("Compilation") != null && ((Boolean) track.get("Compilation")).booleanValue();
+                            boolean compilation = track.get("Compilation") != null && (Boolean) track.get("Compilation");
                             statement.setCompilation(compilation || !StringUtils.equalsIgnoreCase(artist, effectiveAlbumArtist));
                             statement.setComment(StringUtils.trimToNull((String) track.get("Comments")));
-                            statement.setPos((int) (track.get("Disc Number") != null ? ((Long) track.get("Disc Number")).longValue() : 0),
-                                    (int) (track.get("Disc Count") != null ? ((Long) track.get("Disc Count")).longValue() : 0));
+                            statement.setPos((int) (track.get("Disc Number") != null ? (Long) track.get("Disc Number") : 0),
+                                    (int) (track.get("Disc Count") != null ? (Long) track.get("Disc Count") : 0));
                             statement.setYear(track.get("Year") != null ? ((Long) track.get("Year")).intValue() : -1);
-                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), Long.valueOf(0)) : mp4Codec);
+                            statement.setMp4Codec(mp4Codec == MP4_CODEC_NOT_CHECKED ? getMp4Codec(track, file.getName(), (long) 0) : mp4Codec);
                             myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert track \"" + name + "\" into database."));
                         }
                     }
@@ -209,7 +209,7 @@ public class TrackListener implements PListHandlerListener {
     }
 
     private String getMp4Codec(Map track, String filename, Long lastUpdateTime) {
-        if (lastUpdateTime != null && new File(filename).lastModified() < lastUpdateTime.longValue()) {
+        if (lastUpdateTime != null && new File(filename).lastModified() < lastUpdateTime) {
             return MP4_CODEC_NOT_CHECKED;
         }
         if (FileSupportUtils.isMp4(filename)) {

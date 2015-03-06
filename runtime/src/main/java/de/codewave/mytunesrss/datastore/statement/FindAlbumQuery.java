@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -27,7 +26,7 @@ import java.util.Map;
 public class FindAlbumQuery extends MyTunesRssDataStoreQuery<QueryResult<Album>> {
 
     public enum AlbumType {
-        COMPILATIONS(), ALBUMS(), ALL();
+        COMPILATIONS(), ALBUMS(), ALL()
     }
 
     private String myFilter;
@@ -63,6 +62,7 @@ public class FindAlbumQuery extends MyTunesRssDataStoreQuery<QueryResult<Album>>
         setForceEmptyResult(!user.isAudio());
     }
 
+    @Override
     public QueryResult<Album> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
@@ -101,6 +101,7 @@ public class FindAlbumQuery extends MyTunesRssDataStoreQuery<QueryResult<Album>>
             // intentionally left blank
         }
 
+        @Override
         public Album create(ResultSet resultSet) throws SQLException {
             Album album = new Album();
             album.setName(resultSet.getString("ALBUMNAME"));

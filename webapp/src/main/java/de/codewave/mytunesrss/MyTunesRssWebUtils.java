@@ -6,7 +6,6 @@ import de.codewave.mytunesrss.command.StatusCodeSender;
 import de.codewave.mytunesrss.command.WebAppScope;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.jsp.Error;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
@@ -18,8 +17,6 @@ import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,7 +70,7 @@ public class MyTunesRssWebUtils {
                 LOGGER.debug("Created session configuration.");
             }
             httpServletRequest.setAttribute("config", webConfig);
-            LOGGER.debug("Created request configuration: " + new HashMap<>(webConfig.getMap()).toString());
+            LOGGER.debug("Created request configuration: " + new HashMap<>(webConfig.getMap()));
         }
         String activeTranscodersFromRequest = MyTunesRssWebUtils.getActiveTranscodingFromRequest(httpServletRequest);
         if (activeTranscodersFromRequest != null) {
@@ -114,7 +111,8 @@ public class MyTunesRssWebUtils {
     public static UserAgent getUserAgent(HttpServletRequest request) {
         if (isUserAgentIphone(request)) {
             return UserAgent.Iphone;
-        } else if (isUserAgentNintendoWii(request)) {
+        }
+        if (isUserAgentNintendoWii(request)) {
             return UserAgent.NintendoWii;
         }
         return UserAgent.Unknown;
@@ -220,8 +218,7 @@ public class MyTunesRssWebUtils {
     public static String getCookieLanguage(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                Cookie cookie = cookies[i];
+            for (Cookie cookie : cookies) {
                 if ((MyTunesRss.APPLICATION_IDENTIFIER + "Language").equals(cookie.getName())) {
                     return StringUtils.trimToNull(Base64Utils.decodeToString(cookie.getValue()));
                 }

@@ -34,8 +34,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
-import org.apache.tika.config.TikaConfig;
-import org.apache.tika.exception.TikaException;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.h2.mvstore.FileStore;
@@ -104,25 +102,35 @@ public class MyTunesRssUtils {
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {
             return true;
-        } else if (o1 == null || o2 == null) {
+        }
+        if (o1 == null || o2 == null) {
             return false;
-        } else if (o1 instanceof byte[] && o2 instanceof byte[]) {
+        }
+        if (o1 instanceof byte[] && o2 instanceof byte[]) {
             return Arrays.equals((byte[]) o1, (byte[]) o2);
-        } else if (o1 instanceof char[] && o2 instanceof char[]) {
+        }
+        if (o1 instanceof char[] && o2 instanceof char[]) {
             return Arrays.equals((char[]) o1, (char[]) o2);
-        } else if (o1 instanceof short[] && o2 instanceof short[]) {
+        }
+        if (o1 instanceof short[] && o2 instanceof short[]) {
             return Arrays.equals((short[]) o1, (short[]) o2);
-        } else if (o1 instanceof int[] && o2 instanceof int[]) {
+        }
+        if (o1 instanceof int[] && o2 instanceof int[]) {
             return Arrays.equals((int[]) o1, (int[]) o2);
-        } else if (o1 instanceof long[] && o2 instanceof long[]) {
+        }
+        if (o1 instanceof long[] && o2 instanceof long[]) {
             return Arrays.equals((long[]) o1, (long[]) o2);
-        } else if (o1 instanceof float[] && o2 instanceof float[]) {
+        }
+        if (o1 instanceof float[] && o2 instanceof float[]) {
             return Arrays.equals((float[]) o1, (float[]) o2);
-        } else if (o1 instanceof double[] && o2 instanceof double[]) {
+        }
+        if (o1 instanceof double[] && o2 instanceof double[]) {
             return Arrays.equals((double[]) o1, (double[]) o2);
-        } else if (o1 instanceof boolean[] && o2 instanceof boolean[]) {
+        }
+        if (o1 instanceof boolean[] && o2 instanceof boolean[]) {
             return Arrays.equals((boolean[]) o1, (boolean[]) o2);
-        } else if (o1.getClass().isArray() && o2.getClass().isArray()) {
+        }
+        if (o1.getClass().isArray() && o2.getClass().isArray()) {
             return Arrays.equals((Object[]) o1, (Object[]) o2);
         }
         return o1.equals(o2);
@@ -291,9 +299,11 @@ public class MyTunesRssUtils {
     public static String getMemorySizeForDisplay(long bytes) {
         if (bytes >= GBYTE) {
             return GBYTE_STREAMED_FORMAT.format(bytes / GBYTE) + " GB";
-        } else if (bytes >= MBYTE) {
+        }
+        if (bytes >= MBYTE) {
             return MBYTE_STREAMED_FORMAT.format(bytes / MBYTE) + " MB";
-        } else if (bytes >= KBYTE) {
+        }
+        if (bytes >= KBYTE) {
             return KBYTE_STREAMED_FORMAT.format(bytes / KBYTE) + " KB";
         }
         return BYTE_STREAMED_FORMAT.format(bytes) + " Byte";
@@ -325,6 +335,7 @@ public class MyTunesRssUtils {
     public static SmartStatement createStatement(Connection connection, String name, final Map<String, Boolean> conditionals) throws SQLException {
         //noinspection unchecked
         return MyTunesRss.STORE.getSmartStatementFactory().createStatement(connection, name, (Map<String, Boolean>) Proxy.newProxyInstance(MyTunesRss.class.getClassLoader(), new Class[]{Map.class}, new InvocationHandler() {
+            @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
                 if ("get".equals(method.getName()) && args.length == 1 && args[0] instanceof String) {
                     //noinspection SuspiciousMethodCalls
@@ -500,7 +511,7 @@ public class MyTunesRssUtils {
         }
     }
 
-    public static void backupDatabase() throws IOException, SQLException {
+    public static void backupDatabase() throws SQLException {
         if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
             throw new IllegalStateException("Cannot backup non-default database.");
         }
@@ -510,6 +521,7 @@ public class MyTunesRssUtils {
         final File backupFile = DatabaseBackup.createBackupFile();
         LOGGER.info("Creating H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
         MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+            @Override
             public void execute(Connection connection) throws SQLException {
                 try (PreparedStatement preparedStatement = connection.prepareStatement("BACKUP TO ?")) {
                     preparedStatement.setString(1, backupFile.getAbsolutePath());
@@ -721,6 +733,7 @@ public class MyTunesRssUtils {
     private static void waitForProcess(final Process process, long maxWaitMillis) {
         try {
             Thread waitForProcessThread = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         process.waitFor();
@@ -977,6 +990,7 @@ public class MyTunesRssUtils {
         orphanedImageRemover.init();
         try {
             session.executeStatement(new DataStoreStatement() {
+                @Override
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeDataForSourceIds");
                     statement.setItems("sourceIds", sourceIds);
@@ -1223,6 +1237,7 @@ public class MyTunesRssUtils {
 
     public static void asyncPlayCountAndDateUpdate(final String trackId) {
         MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+            @Override
             public void run() {
                 StopWatch.start("Updating play count and refreshing play count/time related smart playlists.");
                 try {
@@ -1298,7 +1313,8 @@ public class MyTunesRssUtils {
     public static String virtualAlbumName(Album album) {
         if (isUnknown(album.getArtist()) && isUnknown(album.getName())) {
             return DEFAULT_NAME;
-        } else if (isUnknown(album.getArtist()) || album.getArtistCount() > 1) {
+        }
+        if (isUnknown(album.getArtist()) || album.getArtistCount() > 1) {
             return album.getName();
         }
         return album.getArtist() + " - " + album.getName();
@@ -1359,11 +1375,7 @@ public class MyTunesRssUtils {
                     luceneTrack.setGenre(track.getGenre());
                     luceneTrack.setName(track.getName());
                     luceneTrack.setSeries(track.getSeries());
-                    try {
-                        MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
-                    } catch (IOException e) {
-                        LOGGER.error("Could not update lucene index for track \"" + track.getId() + "\".", e);
-                    }
+                    MyTunesRss.LUCENE_TRACK_SERVICE.updateTrack(luceneTrack);
                 }
             } finally {
                 MyTunesRss.LUCENE_TRACK_SERVICE.flushTrackBuffer();
@@ -1383,6 +1395,7 @@ public class MyTunesRssUtils {
                 try {
                     final ZipArchiveOutputStream zipOutput = new ZipArchiveOutputStream(os);
                     de.codewave.utils.io.IOUtils.processFiles(new File(MyTunesRss.CACHE_DATA_PATH), new FileProcessor() {
+                                @Override
                                 public void process(File file) {
                                     try {
                                         ZipUtils.addToZip(dir + "/" + file.getName(), file, zipOutput);
@@ -1391,6 +1404,7 @@ public class MyTunesRssUtils {
                                     }
                                 }
                             }, new FileFilter() {
+                                @Override
                                 public boolean accept(File file) {
                                     return file.getName().startsWith("MyTunesRSS.log");
                                 }

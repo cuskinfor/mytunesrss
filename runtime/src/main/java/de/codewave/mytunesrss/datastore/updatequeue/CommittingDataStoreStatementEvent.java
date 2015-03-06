@@ -18,6 +18,7 @@ public class CommittingDataStoreStatementEvent extends DataStoreStatementEvent {
         super(statement, checkpointRelevant, exLogMsg);
     }
 
+    @Override
     public boolean execute(DataStoreSession session) {
         try {
             super.execute(session);

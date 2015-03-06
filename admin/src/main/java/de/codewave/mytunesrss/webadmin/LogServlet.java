@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 public class LogServlet extends HttpServlet {
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (!Boolean.TRUE.equals(request.getSession().getAttribute("MyTunesRSSWebAdmin"))) {
             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Please login to the MyTunesRSS web admin.");
@@ -36,11 +37,8 @@ public class LogServlet extends HttpServlet {
 
     private void sendPage(HttpServletResponse response) throws IOException {
         response.setContentType("text/html");
-        InputStream inStream = getClass().getResourceAsStream("logservlet.html");
-        try {
+        try (InputStream inStream = getClass().getResourceAsStream("logservlet.html")) {
             IOUtils.copy(inStream, response.getOutputStream());
-        } finally {
-            inStream.close();
         }
     }
 
@@ -50,6 +48,7 @@ public class LogServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         BlockingQueue<LoggingEvent> queue = MyTunesRss.LOG_QUEUE_MANAGER.createQueue();
         try {
+            //noinspection InfiniteLoopStatement
             for (LoggingEvent event = queue.poll(10000, TimeUnit.MILLISECONDS); true; event = queue.poll(10000, TimeUnit.MILLISECONDS)) {
                 if (event != null) {
                     writer.println("event: log");

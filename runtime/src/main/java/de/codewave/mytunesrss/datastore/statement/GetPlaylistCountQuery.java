@@ -24,6 +24,7 @@ public class GetPlaylistCountQuery extends AbstractFindPlaylistQuery<Integer> {
         super(user, types, id, containerId, includeHidden, matchingOwnerOnly);
     }
 
+    @Override
     public Integer execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = getConditionals();
         conditionals.put("selectAll", false);

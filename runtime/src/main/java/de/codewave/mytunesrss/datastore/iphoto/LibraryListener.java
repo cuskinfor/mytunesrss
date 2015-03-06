@@ -32,10 +32,12 @@ public class LibraryListener implements PListHandlerListener {
         return myLibraryId;
     }
 
+    @Override
     public boolean beforeArrayAdd(List array, Object value) {
         throw new UnsupportedOperationException("method beforeArrayAdd of iPhoto library listener is not implemented!");
     }
 
+    @Override
     public boolean beforeDictPut(Map dict, String key, Object value) {
         if ("Archive Path".equals(key)) {
             try {

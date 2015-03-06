@@ -4,7 +4,10 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssBase64Utils;
+import de.codewave.mytunesrss.MyTunesRssSendCounter;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
@@ -21,9 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.command.GetZipArchiveCommandHandler

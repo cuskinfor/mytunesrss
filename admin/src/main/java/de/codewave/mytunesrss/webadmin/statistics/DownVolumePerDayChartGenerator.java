@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class DownVolumePerDayChartGenerator extends TimeSeriesCharGenerator implements ReportChartGenerator {
+    @Override
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
         TimeSeries ts = new TimeSeries(getClass().getSimpleName());
         for (Map.Entry<Day, List<StatisticsEvent>> entry : eventsPerDay.entrySet()) {
@@ -32,6 +33,7 @@ public class DownVolumePerDayChartGenerator extends TimeSeriesCharGenerator impl
         return createTimeSeriesChart(timeSeriesCollection, bundle, "statisticsConfigPanel.chart.axisVolumeMib");
     }
 
+    @Override
     public StatEventType[] getEventTypes() {
         return new StatEventType[] {
                 StatEventType.DOWNLOAD

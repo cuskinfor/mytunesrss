@@ -65,6 +65,7 @@ public class SavePlaylistAttributesStatement implements DataStoreStatement {
         myUserPrivate = userPrivate;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePlaylistAttributes");
         statement.setString("id", myId);

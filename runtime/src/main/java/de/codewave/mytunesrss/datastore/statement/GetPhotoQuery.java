@@ -6,9 +6,7 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
@@ -16,8 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class GetPhotoQuery extends DataStoreQuery<Photo> {
 
@@ -27,10 +23,12 @@ public class GetPhotoQuery extends DataStoreQuery<Photo> {
         myId = id;
     }
 
+    @Override
     public Photo execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhoto");
         statement.setString("id", myId);
         return execute(statement, new ResultBuilder<Photo>() {
+            @Override
             public Photo create(ResultSet resultSet) throws SQLException {
                 Photo photo = new Photo();
                 photo.setId(resultSet.getString("id"));

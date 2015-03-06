@@ -12,7 +12,8 @@ import com.vaadin.terminal.Resource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.*;
 import de.codewave.mytunesrss.webadmin.MainWindow;
 import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
@@ -40,6 +41,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
     private Button myAddLocalDatasource;
     private Map<Long, DatasourceConfig> myConfigs;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("datasourcesConfigPanel.caption"), getComponentFactory().createGridLayout(1, 4, true, true));
@@ -65,6 +67,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myDatasources.removeAllItems();
         Collection<DatasourceConfig> configs = myConfigs == null ? MyTunesRssUtils.deepClone(MyTunesRss.CONFIG.getDatasources()) : myConfigs.values();
@@ -90,6 +93,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         smartTextField.setImmediate(true);
         smartTextField.setValue(datasource.getName());
         smartTextField.addListener(new FieldEvents.TextChangeListener() {
+            @Override
             public void textChange(FieldEvents.TextChangeEvent event) {
                 datasource.setName(event.getText());
             }
@@ -103,6 +107,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         checkBox.setEnabled(datasource.isUploadable());
         checkBox.setValue(datasource.isUploadable() && datasource.isUpload());
         checkBox.addListener(new Property.ValueChangeListener() {
+            @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 datasource.setUpload(((CheckBox) event.getProperty()).booleanValue());
             }
@@ -122,6 +127,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         }
     }
 
+    @Override
     protected void writeToConfig() {
         final Set<String> removedDatasourceIds = new HashSet<>(MyTunesRssUtils.toDatasourceIds(MyTunesRss.CONFIG.getDatasources()));
         removedDatasourceIds.removeAll(MyTunesRssUtils.toDatasourceIds(myConfigs.values()));
@@ -130,6 +136,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         // cleanup database in background
         if (!removedDatasourceIds.isEmpty()) {
             MyTunesRss.EXECUTOR_SERVICE.execute(new Runnable() {
+                @Override
                 public void run() {
                     DataStoreSession session = MyTunesRss.STORE.getTransaction();
                     try {
@@ -155,6 +162,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
         return true;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddLocalDatasource) {
             addOrEditLocalDataSource(null, null);
@@ -166,6 +174,7 @@ public class DatasourcesConfigPanel extends MyTunesRssConfigPanel {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.caption"), getBundleString("datasourcesConfigDialog.optionWindowDeleteDatasource.message"), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             Object id = findTableItemWithObject(myDatasources, clickEvent.getSource());

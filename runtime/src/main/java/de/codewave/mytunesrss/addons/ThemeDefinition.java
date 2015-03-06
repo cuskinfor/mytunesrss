@@ -45,6 +45,7 @@ public class ThemeDefinition implements Comparable<ThemeDefinition> {
         return myName != null ? myName.hashCode() : 0;
     }
 
+    @Override
     public int compareTo(ThemeDefinition o) {
         return myName.compareTo(o.getName());
     }

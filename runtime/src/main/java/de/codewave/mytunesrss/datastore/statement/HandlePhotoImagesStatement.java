@@ -35,6 +35,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
         myFile = file;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         try {
             Image image = getImage();
@@ -44,7 +45,7 @@ public class HandlePhotoImagesStatement implements DataStoreStatement {
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " entries in database.");
                 }
-                if (!imageSizes.contains(Integer.valueOf(128))) {
+                if (!imageSizes.contains(128)) {
                     if (LOGGER.isDebugEnabled()) {
                         LOGGER.debug("Inserting image with size 128.");
                     }

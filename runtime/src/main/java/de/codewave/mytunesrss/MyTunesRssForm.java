@@ -36,8 +36,9 @@ public class MyTunesRssForm {
     private JButton myStartUserBrowser;
     private JTextField myUserUrl;
 
-    public MyTunesRssForm() throws AWTException {
+    public MyTunesRssForm() {
         myStartAdminBrowser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
                 if (desktopWrapper.isSupported()) {
@@ -52,6 +53,7 @@ public class MyTunesRssForm {
             }
         });
         myStartUserBrowser.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 DesktopWrapper desktopWrapper = DesktopWrapperFactory.createDesktopWrapper();
                 if (desktopWrapper.isSupported()) {
@@ -66,11 +68,13 @@ public class MyTunesRssForm {
             }
         });
         myQuit.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 for (Component c : new Component[]{myStartAdminBrowser, myAdminUrl, myStartUserBrowser, myUserUrl, myQuit}) {
                     c.setEnabled(false);
                 }
                 new Thread(new Runnable() {
+                    @Override
                     public void run() {
                         MyTunesRssUtils.shutdownGracefully();
                     }

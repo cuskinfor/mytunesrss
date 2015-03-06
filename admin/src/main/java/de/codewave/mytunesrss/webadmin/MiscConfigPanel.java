@@ -48,6 +48,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
     private Form myGraphicsMagickForm;
     private Button myGraphicsMagickHomepageButton;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("miscConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));
@@ -110,6 +111,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
 
         myWebLoginMessage.setValue(MyTunesRss.CONFIG.getWebLoginMessage());
@@ -130,6 +132,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         myGraphicsMagickBinary.setValue(MyTunesRss.CONFIG.getGmExecutable() != null ? MyTunesRss.CONFIG.getGmExecutable().getAbsolutePath() : "");
     }
 
+    @Override
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setWebLoginMessage(myWebLoginMessage.getStringValue(null));
         MyTunesRss.CONFIG.setWebWelcomeMessage(myWebWelcomeMessage.getStringValue(null));
@@ -164,6 +167,7 @@ public class MiscConfigPanel extends MyTunesRssConfigPanel {
         return valid;
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myGraphicsMagickHomepageButton) {
             getWindow().open(new ExternalResource("http://www.graphicsmagick.org"));

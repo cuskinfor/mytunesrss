@@ -7,14 +7,10 @@ package de.codewave.mytunesrss.webadmin.transcoder;
 
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.config.MediaType;
-import de.codewave.mytunesrss.config.transcoder.FilenameTranscoderActivation;
 import de.codewave.mytunesrss.config.transcoder.MediaTypeTranscoderActivation;
 import de.codewave.mytunesrss.webadmin.MyTunesRssWebAdmin;
 import de.codewave.vaadin.ComponentFactory;
-import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
-import de.codewave.vaadin.validation.ValidRegExpValidator;
-import org.seamless.util.MimeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +45,12 @@ public class MediaTypeActivationPanel extends Panel implements Button.ClickListe
         initFromConfig(activation);
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent event) {
         ((ComponentContainer) getParent()).removeComponent(this);
     }
 
+    @Override
     public MediaTypeTranscoderActivation getConfig() {
         List<MediaType> types = new ArrayList<>();
         if (myAudioCheckbox.booleanValue()) {
@@ -64,12 +62,14 @@ public class MediaTypeActivationPanel extends Panel implements Button.ClickListe
         return new MediaTypeTranscoderActivation(types, myNegationCheckBox.booleanValue());
     }
 
+    @Override
     public void initFromConfig(MediaTypeTranscoderActivation config) {
         myAudioCheckbox.setValue(config.getMediaTypes().contains(MediaType.Audio));
         myVideoCheckbox.setValue(config.getMediaTypes().contains(MediaType.Video));
         myNegationCheckBox.setValue(config.isNegation());
     }
 
+    @Override
     public boolean isValid() {
         LOGGER.debug("Validating media type activation panel.");
         return VaadinUtils.isValid(myForm);

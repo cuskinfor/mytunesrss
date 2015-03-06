@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.datastore.statement.FindPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

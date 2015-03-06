@@ -29,14 +29,17 @@ public class MyTunesRssSessionInfo extends SessionManager.SessionInfo implements
         getUser().setQuotaDownBytes(getUser().getQuotaDownBytes() + bytes);
     }
 
+    @Override
     public void notifyBegin() {
         // intentionally left blank
     }
 
+    @Override
     public void notifyEnd() {
         // intentionally left blank
     }
 
+    @Override
     public void add(int i) {
         addBytesStreamed(i);
     }

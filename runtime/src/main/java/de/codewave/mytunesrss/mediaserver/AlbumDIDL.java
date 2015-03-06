@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.Container;
 
 import java.sql.SQLException;
@@ -18,13 +17,14 @@ import java.sql.SQLException;
 public class AlbumDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(final User user, DataStoreSession tx, final String oidParams, long firstResult, long maxResults) throws SQLException {
         final String album = decode(oidParams).get(0);
         final String artist = decode(oidParams).get(1);
         executeAndProcess(
                 tx,
                 FindTrackQuery.getForAlbum(user, new String[]{album}, new String[]{artist}, SortOrder.Album),
                 new DataStoreQuery.ResultProcessor<Track>() {
+                    @Override
                     public void process(Track track) {
                         String id = getObjectId(track);
                         addItem(createMusicTrack(user, track, id, getParentId(album, artist)));
@@ -44,7 +44,7 @@ public class AlbumDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         FindAlbumQuery findAlbumQuery = new FindAlbumQuery(
                 user, decode(oidParams).get(0), decode(oidParams).get(1), true, null, -1, Integer.MIN_VALUE, Integer.MAX_VALUE, false, false, FindAlbumQuery.AlbumType.ALL
         );

@@ -2,7 +2,10 @@ package de.codewave.mytunesrss;
 
 import org.apache.log4j.spi.LoggingEvent;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -28,8 +31,8 @@ public class LogQueueManager {
 
     public synchronized BlockingQueue<LoggingEvent> createQueue() {
         BlockingQueue<LoggingEvent> queue = new ArrayBlockingQueue<>(QUEUE_SIZE);
-        for (Iterator<LoggingEvent> iterator = myBacklog.iterator(); iterator.hasNext(); ) {
-            queue.offer(iterator.next());
+        for (LoggingEvent aMyBacklog : myBacklog) {
+            queue.offer(aMyBacklog);
         }
         myQueues.add(queue);
         return queue;

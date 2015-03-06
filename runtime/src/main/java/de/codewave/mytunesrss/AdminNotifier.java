@@ -63,7 +63,7 @@ public class AdminNotifier {
             PrintWriter pw = new PrintWriter(sw);
             t.printStackTrace(pw);
             String body = "Please go to the support configuration panel of your MyTunesRSS server and download a support archive. " +
-                    "Then forward this mail to support@codewave.de and attach the downloaded support archive.\n\n" + sw.toString();
+                    "Then forward this mail to support@codewave.de and attach the downloaded support archive.\n\n" + sw;
             sendAdminMail(subject, body);
         }
     }

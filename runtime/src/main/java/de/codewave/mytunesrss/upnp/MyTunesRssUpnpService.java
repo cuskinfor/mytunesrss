@@ -1,8 +1,6 @@
 package de.codewave.mytunesrss.upnp;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.RegistrationFeedback;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventListener;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
@@ -18,9 +16,11 @@ import org.fourthline.cling.model.DefaultServiceManager;
 import org.fourthline.cling.model.ValidationException;
 import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.message.UpnpResponse;
-import org.fourthline.cling.model.message.header.UDADeviceTypeHeader;
 import org.fourthline.cling.model.meta.*;
-import org.fourthline.cling.model.types.*;
+import org.fourthline.cling.model.types.DeviceType;
+import org.fourthline.cling.model.types.UDADeviceType;
+import org.fourthline.cling.model.types.UDAServiceType;
+import org.fourthline.cling.model.types.UDN;
 import org.fourthline.cling.support.connectionmanager.ConnectionManagerService;
 import org.fourthline.cling.support.igd.callback.PortMappingAdd;
 import org.fourthline.cling.support.igd.callback.PortMappingDelete;
@@ -32,7 +32,6 @@ import java.io.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -50,7 +49,7 @@ public class MyTunesRssUpnpService {
     private Set<RemoteDevice> myMediaRenderers = new HashSet<>();
     private Set<RemoteDevice> myInternetGatewayDevices = new HashSet<>();
 
-    public void start() throws ValidationException, IOException {
+    public void start() {
         myClingService = new UpnpServiceImpl();
         addMediaRendererListener();
         addInternetGatewayDeviceListener();

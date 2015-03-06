@@ -83,6 +83,7 @@ public class MulticastService extends Thread {
                     socket.setSoTimeout(2000);
                     buffer = new byte[1024];
                     DatagramPacket receivePacket = new DatagramPacket(buffer, buffer.length);
+                    //noinspection InfiniteLoopStatement
                     while (true) {
                         socket.receive(receivePacket);
                         String answer = new String(receivePacket.getData(), 0, receivePacket.getLength(), "UTF-8");
@@ -116,6 +117,7 @@ public class MulticastService extends Thread {
         return addresses;
     }
 
+    @Override
     public void run() {
         MulticastSocket socket = null;
         try {
@@ -140,10 +142,6 @@ public class MulticastService extends Thread {
                         LOG.error("Could not send multicast answer.", e);
                     }
                 }
-            }
-        } catch (UnknownHostException e) {
-            if (LOG.isErrorEnabled()) {
-                LOG.error("Could not initialize multicast service.", e);
             }
         } catch (IOException e) {
             if (LOG.isErrorEnabled()) {

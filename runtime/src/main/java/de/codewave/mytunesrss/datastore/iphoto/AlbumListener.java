@@ -42,10 +42,12 @@ public abstract class AlbumListener implements PListHandlerListener {
         myPhotoAlbumIds = new HashSet<>(MyTunesRss.STORE.executeQuery(new FindPhotoAlbumIdsQuery()));
     }
 
+    @Override
     public boolean beforeDictPut(Map dict, String key, Object value) {
         throw new UnsupportedOperationException("method beforeDictPut of photo album listener is not supported!");
     }
 
+    @Override
     public boolean beforeArrayAdd(List array, Object value) {
         try {
             insertAlbum((Map) value);

@@ -34,6 +34,7 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         super(caption, value);
     }
 
+    @Override
     public String getStringValue(String defaultValue) {
         Object o = getValue();
         if (o != null) {
@@ -42,6 +43,7 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         return defaultValue;
     }
 
+    @Override
     public int getIntegerValue(int defaultValue) {
         String s = getStringValue(null);
         if (StringUtils.isNotBlank(s)) {
@@ -54,6 +56,7 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         return defaultValue;
     }
 
+    @Override
     public long getLongValue(long defaultValue) {
         String s = getStringValue(null);
         if (StringUtils.isNotBlank(s)) {
@@ -66,7 +69,8 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         return defaultValue;
     }
 
-    public void setValue(Object newValue) throws ReadOnlyException, ConversionException {
+    @Override
+    public void setValue(Object newValue) {
         if (newValue instanceof String || newValue == null) {
             super.setValue(StringUtils.trimToEmpty((String)newValue));
         } else {
@@ -74,10 +78,12 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         }
     }
 
+    @Override
     public void setValue(String value, String defaultValue) {
         setValue(StringUtils.defaultIfEmpty(value, defaultValue));
     }
 
+    @Override
     public void setValue(Number value, long minValue, long maxValue, Object defaultValue) {
         if (value == null) {
             setValue(defaultValue);
@@ -88,6 +94,7 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         }
     }
 
+    @Override
     public byte[] getStringHashValue(MessageDigest digest) {
         Object o = getValue();
         if (o == null) {
@@ -99,10 +106,12 @@ public class SmartPasswordField extends PasswordField implements Comparable<Smar
         }
     }
 
+    @Override
     public void changeVariables(Object source, Map<String, Object> variables) {
         super.changeVariables(source, variables);    //To change body of overridden methods use File | Settings | File Templates.
     }
 
+    @Override
     public int compareTo(SmartField o) {
         if (o == null) {
             return -1;

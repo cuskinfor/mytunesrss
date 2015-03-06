@@ -51,6 +51,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         beforeReset();
     }
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("streamingConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
@@ -96,6 +97,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myTranscoderTable.removeAllItems();
         for (TranscoderConfig transcoderConfig : myTranscoderConfigs) {
@@ -123,6 +125,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("streamingConfigPanel.transcoder.deleteConfirmation.caption"), getBundleString("streamingConfigPanel.transcoder.deleteConfirmation.message", transcoderConfig.getName()), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             myTranscoderConfigs.remove(transcoderConfig);
@@ -136,6 +139,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         myTranscoderTable.addItem(new Object[] {transcoderConfig.getName(), editButton, deleteButton}, transcoderConfig);
     }
 
+    @Override
     protected void writeToConfig() {
         int maxGiB = myTranscodingCacheMaxGiB.getIntegerValue(1);
         MyTunesRss.CONFIG.setTranscodingCacheMaxGiB(maxGiB);
@@ -184,6 +188,7 @@ public class StreamingConfigPanel extends MyTunesRssConfigPanel {
         return true;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myVlcHomepageButton) {
             getWindow().open(new ExternalResource("http://www.videolan.org"));

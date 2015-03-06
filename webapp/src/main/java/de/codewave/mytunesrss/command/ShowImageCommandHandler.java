@@ -13,7 +13,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -136,6 +139,7 @@ public class ShowImageCommandHandler extends MyTunesRssCommandHandler {
                 SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoImageHashAndFile");
                 statement.setString("id", photoId);
                 QueryResult<File> queryResult = execute(statement, new ResultBuilder<File>() {
+                    @Override
                     public File create(ResultSet resultSet) throws SQLException {
                         return new File(resultSet.getString("file"));
                     }

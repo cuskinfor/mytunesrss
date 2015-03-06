@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.mediarenderercontrol;
 
-import org.apache.commons.lang3.StringUtils;
 import org.fourthline.cling.controlpoint.SubscriptionCallback;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
@@ -71,7 +70,7 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
                     URI transportUri = transportUriEventedValue.getValue();
                     if ((myTransportUri == null && transportUri != null) || (myTransportUri != null && transportUri == null) || (myTransportUri != null && !myTransportUri.equals(transportUri))) {
                         try {
-                            handleTransportUriChange(myTransportUri, transportUri);
+                            handleTransportUriChange(transportUri);
                         } finally {
                             myTransportUri = transportUri;
                         }
@@ -90,6 +89,6 @@ public abstract class AvTransportLastChangeSubscriptionCallback extends Subscrip
 
     abstract void handleTransportStateChange(TransportState previousTransportState, TransportState currentTransportState);
 
-    protected abstract void handleTransportUriChange(URI previousTransportUri, URI currentTransportUri);
+    protected abstract void handleTransportUriChange(URI currentTransportUri);
 
 }

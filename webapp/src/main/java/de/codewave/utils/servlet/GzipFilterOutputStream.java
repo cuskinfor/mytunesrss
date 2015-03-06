@@ -20,6 +20,7 @@ public class GzipFilterOutputStream extends ServletOutputStream {
         myZipOutputStream = new GzipCompressorOutputStream(delegate);
     }
 
+    @Override
     public void write(int b) throws IOException {
         myZipOutputStream.write(b);
     }

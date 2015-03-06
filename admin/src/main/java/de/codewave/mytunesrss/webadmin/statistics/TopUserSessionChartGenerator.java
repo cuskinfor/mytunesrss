@@ -51,6 +51,7 @@ public class TopUserSessionChartGenerator extends TopChartGenerator {
         return item + " = " + h + ":" + df.format(m) + ":" + df.format(s);
     }
 
+    @Override
     public StatEventType[] getEventTypes() {
         return new StatEventType[]{
                 StatEventType.SESSION_END

@@ -13,7 +13,6 @@ import de.codewave.utils.NotYetImplementedException;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang3.StringUtils;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchDIDL.class);
 
     @Override
-    void createDirectChildren(final User user, DataStoreSession tx, String searchCriteria, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(final User user, DataStoreSession tx, String searchCriteria, long firstResult, long maxResults) throws SQLException {
         String searchTerms = extractSearchTerms(searchCriteria);
         LOGGER.debug("Extracted search terms \"" + searchTerms + "\".");
         try {
@@ -57,7 +56,7 @@ public class SearchDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         throw new NotYetImplementedException();
     }
 

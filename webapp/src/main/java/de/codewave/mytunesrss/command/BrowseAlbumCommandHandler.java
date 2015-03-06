@@ -29,6 +29,7 @@ import java.util.List;
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler
  */
 public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
+    @Override
     public void executeAuthorized() throws IOException, ServletException, SQLException {
         if (isSessionAuthorized()) {
             String artist = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("artist"));
@@ -79,8 +80,8 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 i++;
             }
             getRequest().setAttribute("albums", albums);
-            Boolean singleGenre = Boolean.valueOf(StringUtils.isNotEmpty(genreName));
-            Boolean singleArtist = Boolean.valueOf(StringUtils.isNotEmpty(artist));
+            Boolean singleGenre = StringUtils.isNotEmpty(genreName);
+            Boolean singleArtist = StringUtils.isNotEmpty(artist);
             getRequest().setAttribute("singleGenre", singleGenre);
             getRequest().setAttribute("singleArtist", singleArtist);
             if (singleArtist || singleGenre) {
@@ -88,6 +89,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                 if (singleArtist) {
                     final String finalArtist = artist;
                     getRequest().setAttribute("allArtistGenreTrackCount", getTransaction().executeQuery(new DataStoreQuery<Object>() {
+                        @Override
                         public Object execute(Connection connection) throws SQLException {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findArtistTrackCount");
                             statement.setString("name", finalArtist);
@@ -95,7 +97,7 @@ public class BrowseAlbumCommandHandler extends MyTunesRssCommandHandler {
                             if (rs.next()) {
                                 return rs.getInt("TRACK_COUNT");
                             }
-                            return Long.valueOf(0);
+                            return (long) 0;
                         }
                     }));
                 } else {

@@ -16,6 +16,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import java.util.*;
 
 public class SessionDurationPerDayChartGenerator extends TimeSeriesCharGenerator implements ReportChartGenerator {
+    @Override
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
         TimeSeries tsMin = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMin"));
         TimeSeries tsMax = new TimeSeries(bundle.getString("statisticsConfigPanel.chart.seriesMax"));
@@ -56,12 +57,13 @@ public class SessionDurationPerDayChartGenerator extends TimeSeriesCharGenerator
     private long getMedian(List<StatisticsEvent> events) {
         List<Long> durations = new ArrayList<>();
         for (StatisticsEvent event : events) {
-            durations.add(Long.valueOf(((SessionEndEvent)event).myDuration / 1000)); // seconds
+            durations.add(((SessionEndEvent) event).myDuration / 1000); // seconds
         }
         Collections.sort(durations);
         return durations.get(durations.size() / 2);
     }
 
+    @Override
     public StatEventType[] getEventTypes() {
         return new StatEventType[] {
                 StatEventType.SESSION_END

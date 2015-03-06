@@ -85,9 +85,9 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
             int separatorIndex = objectID.indexOf(';');
             String oidParams = separatorIndex > 0 && separatorIndex < objectID.length() - 1 ? objectID.substring(separatorIndex + 1) : null;
             if (browseFlag == BrowseFlag.DIRECT_CHILDREN) {
-                content.initDirectChildren(oidParams, filter, firstResult, maxResults, orderBy);
+                content.initDirectChildren(oidParams, firstResult, maxResults);
             } else if (browseFlag == BrowseFlag.METADATA) {
-                content.initMetaData(oidParams, filter, firstResult, maxResults, orderBy);
+                content.initMetaData(oidParams);
             } else {
                 LOGGER.warn("Unexpected browse flag \"" + browseFlag.name() + "\".");
                 throw new ContentDirectoryException(ErrorCode.ARGUMENT_VALUE_INVALID, "Unexpected browse flag \"" + browseFlag.name() + "\".");
@@ -113,7 +113,7 @@ public class MyTunesRssContentDirectoryService extends AbstractContentDirectoryS
         LOGGER.debug("Received search request [containerID=\"{}\", searchCriteria=\"{}\", filter=\"{}\", firstResult={}, maxResults={}, orderBy=\"{}\"].", new Object[] {containerId, searchCriteria, filter, firstResult, maxResults, orderBy});
         try {
             SearchDIDL searchDIDL = new SearchDIDL();
-            searchDIDL.initDirectChildren(searchCriteria, filter, firstResult, maxResults, orderBy);
+            searchDIDL.initDirectChildren(searchCriteria, firstResult, maxResults);
             try {
                 return new BrowseResult(new DIDLParser().generate(searchDIDL), searchDIDL.getCount(), searchDIDL.getTotalMatches(), getSystemUpdateID().getValue());
             } catch (Exception e) {

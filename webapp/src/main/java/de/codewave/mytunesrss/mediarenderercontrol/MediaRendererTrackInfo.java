@@ -8,7 +8,7 @@ package de.codewave.mytunesrss.mediarenderercontrol;
 public class MediaRendererTrackInfo {
     private int myCurrentTrack;
     private int myLength = -1;
-    private int myCurrentTime = 0;
+    private int myCurrentTime;
     private boolean myPlaying;
     private int myVolume;
     private String myMediaRendererId;

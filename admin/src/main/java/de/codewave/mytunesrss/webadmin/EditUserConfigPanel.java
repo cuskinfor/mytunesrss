@@ -12,9 +12,8 @@ import com.vaadin.ui.*;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.DatasourceConfig;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
-import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.config.User;
+import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
@@ -89,6 +88,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         myNewUser = newUser;
     }
 
+    @Override
     public void attach() {
         super.attach();
         int rows = myUser.getParent() == null ? 8 : 5;
@@ -256,6 +256,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         if (myUser != null) {
             myDownloadLimitSize.setValue(myUser.getBytesQuota() / (1024 * 1024), 1, Integer.MAX_VALUE, "");
@@ -390,6 +391,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         return valid;
     }
 
+    @Override
     protected void writeToConfig() {
         long bytesQuota = myDownloadLimitSize.getLongValue(-1);
         myUser.setBytesQuota(bytesQuota > 0 ? bytesQuota * (1024 * 1024) : bytesQuota);
@@ -496,6 +498,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (!myNewUser && !StringUtils.equals(oldUsername, newUsername)) {
             try {
                 MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+                    @Override
                     public void execute(Connection connection) throws SQLException {
                         SmartStatement renameStatement = MyTunesRssUtils.createStatement(connection, "renamePlaylistOwner");
                         renameStatement.setString("oldUsername", oldUsername);
@@ -519,10 +522,12 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
         return myUserConfigPanel;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         super.buttonClick(clickEvent);
     }
 
+    @Override
     public void valueChange(Property.ValueChangeEvent event) {
         if (((EventObject) event).getSource() == myExpire) {
             myExpiration.setVisible((Boolean) event.getProperty().getValue());
@@ -562,6 +567,7 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
             return myDisplayDate;
         }
 
+        @Override
         public int compareTo(AlbumDate other) {
             return (int)Math.signum(myCompareDate - other.myCompareDate);
         }
@@ -573,9 +579,8 @@ public class EditUserConfigPanel extends MyTunesRssConfigPanel implements Proper
 
             AlbumDate albumDate = (AlbumDate) o;
 
-            if (myCompareDate != albumDate.myCompareDate) return false;
+            return myCompareDate == albumDate.myCompareDate;
 
-            return true;
         }
 
         @Override

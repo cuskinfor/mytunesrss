@@ -11,7 +11,7 @@ import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.StreamResource;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.mytunesrss.addons.ThemeDefinition;
@@ -59,6 +59,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private Button myRestoreDefaultJukeboxes;
     private Button myAddLanguage;
 
+    @Override
     public void attach() {
         super.attach();
         init(getApplication().getBundleString("addonsConfigPanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 5, true, true));
@@ -133,6 +134,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         refreshThemes();
         refreshLanguages();
@@ -166,6 +168,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myLanguagesTable.removeAllItems();
         List<LanguageDefinition> languages = new ArrayList<>(AddonsUtils.getLanguages(false));
         Collections.sort(languages, new Comparator<LanguageDefinition>() {
+            @Override
             public int compare(LanguageDefinition languageDefinition1, LanguageDefinition languageDefinition2) {
                 Locale adminLocale = AddonsConfigPanel.this.getApplication().getLocale();
                 return languageDefinition1.getLocale().getDisplayName(adminLocale).compareTo(languageDefinition2.getLocale().getDisplayName(adminLocale));
@@ -244,6 +247,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         myFlashPlayersTable.setPageLength(Math.min(myFlashPlayersTable.getItemIds().size(), 10));
     }
 
+    @Override
     protected void writeToConfig() {
         for (ExternalSiteDefinition site : MyTunesRss.CONFIG.getExternalSites()) {
             MyTunesRss.CONFIG.removeExternalSite(site);
@@ -263,6 +267,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         return true;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() instanceof TableRowButton) {
             final TableRowButton tableRowButton = (TableRowButton) clickEvent.getSource();
@@ -293,7 +298,8 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             } else {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
-                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData().toString() + ".message", tableRowButton.getItem().getItemProperty("name").getValue().toString()), yes, no) {
+                new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData() + ".caption"), getBundleString("addonsConfigPanel.optionWindow" + tableRowButton.getData() + ".message", tableRowButton.getItem().getItemProperty("name").getValue().toString()), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             if ("DeleteTheme".equals(tableRowButton.getData().toString())) {
@@ -303,11 +309,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                             } else if ("DeletePlayer".equals(tableRowButton.getData().toString())) {
                                 FlashPlayerConfig removedConfig = MyTunesRss.CONFIG.removeFlashPlayer((String) tableRowButton.getItemId());
                                 if (removedConfig != null) {
-                                    try {
-                                        FileUtils.deleteQuietly(removedConfig.getBaseDir());
-                                    } catch (IOException ignored) {
-                                        LOGGER.error("Could not get flash player base directory.");
-                                    }
+                                    FileUtils.deleteQuietly(removedConfig.getBaseDir());
                                 }
                             }
                             tableRowButton.deleteTableRow();
@@ -339,6 +341,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                 }
             }
             Collections.sort(localeRepresentations, new Comparator<LocaleRepresentation>() {
+                @Override
                 public int compare(LocaleRepresentation o1, LocaleRepresentation o2) {
                     return o1.toString().compareTo(o2.toString());
                 }
@@ -376,6 +379,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
             }
         }
         Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
+            @Override
             public InputStream getStream() {
                 return new ByteArrayInputStream(baos.toByteArray());
             }
@@ -386,13 +390,11 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
     private void sendJukebox(FlashPlayerConfig flashPlayerConfig) throws IOException {
         File jukeboxDir = new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer/" + flashPlayerConfig.getId());
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(baos);
-        try {
+        try (ZipArchiveOutputStream zipOutputStream = new ZipArchiveOutputStream(baos)) {
             ZipUtils.addFilesToZipRecursively("", jukeboxDir, null, zipOutputStream);
-        } finally {
-            zipOutputStream.close();
         }
         Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
+            @Override
             public InputStream getStream() {
                 return new ByteArrayInputStream(baos.toByteArray());
             }
@@ -416,6 +418,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         final AtomicBoolean error = new AtomicBoolean();
         try {
             de.codewave.utils.io.IOUtils.processFiles(themeDir, new FileProcessor() {
+                @Override
                 public void process(File file) {
                     if (!error.get() && file.isFile()) {
                         try {
@@ -434,6 +437,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
                     }
                 }
             }, new FileFilter() {
+                @Override
                 public boolean accept(File file) {
                     return "images".equals(file.getName()) || "styles".equals(file.getName()) || "images".equals(file.getParentFile().getName()) || "styles".equals(file.getParentFile().getName());
                 }
@@ -447,6 +451,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         }
         if (!error.get()) {
             Resource streamResource = new StreamResource(new StreamResource.StreamSource() {
+                @Override
                 public InputStream getStream() {
                     return new ByteArrayInputStream(baos.toByteArray());
                 }
@@ -485,6 +490,7 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         throw new IOException("Could not find theme dir for \"" + StringUtils.defaultString(name, "MYTUNESRSS_DEFAULT") + "\".");
     }
 
+    @Override
     public OutputStream receiveUpload(String filename, String mimeType) {
         try {
             return new FileOutputStream(new File(getUploadDir(), PREFIX + filename));
@@ -493,11 +499,13 @@ public class AddonsConfigPanel extends MyTunesRssConfigPanel implements Upload.R
         }
     }
 
+    @Override
     public void uploadFailed(Upload.FailedEvent event) {
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("addonsConfigPanel.error.uploadFailed");
         FileUtils.deleteQuietly(new File(getUploadDir(), PREFIX + event.getFilename()));
     }
 
+    @Override
     public void uploadSucceeded(Upload.SucceededEvent event) {
         if (event.getSource() == myUploadTheme) {
             AddonsUtils.AddFileResult result = AddonsUtils.addTheme(FilenameUtils.getBaseName(event.getFilename()), new File(getUploadDir(), PREFIX + event.getFilename()));

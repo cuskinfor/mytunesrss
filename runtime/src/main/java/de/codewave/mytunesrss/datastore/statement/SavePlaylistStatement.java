@@ -5,8 +5,6 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.event.MyTunesRssEvent;
-import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import de.codewave.utils.sql.SmartStatementExceptionHandler;
@@ -81,6 +79,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         myContainerId = containerId;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         if (myUpdate) {
             executeUpdate(connection);
@@ -116,6 +115,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
     }
 
     public static class ExceptionHandler implements SmartStatementExceptionHandler {
+        @Override
         public void handleException(SQLException sqlException, boolean b) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Could not insert/update playlist", sqlException);

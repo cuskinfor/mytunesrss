@@ -5,5 +5,5 @@
 package de.codewave.mytunesrss.command;
 
 public enum WebAppScope {
-    Request(), Session(), Application();
+    Request(), Session(), Application()
 }

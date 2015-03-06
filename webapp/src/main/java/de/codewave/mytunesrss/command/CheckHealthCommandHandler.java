@@ -18,6 +18,7 @@ import java.sql.SQLException;
 public class CheckHealthCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CheckHealthCommandHandler.class);
 
+    @Override
     public void execute() throws SQLException, IOException {
         if (LOG.isInfoEnabled()) {
             LOG.info("Health check servlet called.");

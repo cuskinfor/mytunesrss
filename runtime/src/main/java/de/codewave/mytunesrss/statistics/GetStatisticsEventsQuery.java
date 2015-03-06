@@ -53,6 +53,7 @@ public class GetStatisticsEventsQuery extends DataStoreQuery<QueryResult<Statist
         AnnotationIntrospector introspector = new JaxbAnnotationIntrospector();
         mapper.getDeserializationConfig().withAnnotationIntrospector(introspector);
         return execute(statement, new ResultBuilder<StatisticsEvent>() {
+            @Override
             public StatisticsEvent create(ResultSet resultSet) throws SQLException {
                 try {
                     AbstractEvent event = (AbstractEvent) mapper.readValue(resultSet.getString("data"), StatEventType.getEventClass(resultSet.getInt("type")));

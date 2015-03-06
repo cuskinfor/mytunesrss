@@ -27,6 +27,7 @@ public class RemoveImagesForDataSourcesStatement implements DataStoreStatement {
         myDataSourceIds = dataSourceIds;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeImagesForDataSources");
         statement.setItems("source_id", myDataSourceIds);

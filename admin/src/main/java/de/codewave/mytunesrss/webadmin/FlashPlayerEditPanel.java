@@ -2,8 +2,8 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.validator.AbstractStringValidator;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.FlashPlayerConfig;
 import de.codewave.mytunesrss.config.PlaylistFileType;
 import de.codewave.utils.io.ZipUtils;
 import de.codewave.vaadin.SmartTextField;
@@ -79,6 +79,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myIllegalNames.remove(flashPlayerConfig.getName().toLowerCase(Locale.ENGLISH));
     }
 
+    @Override
     public void attach() {
         super.attach();
         init(null, getComponentFactory().createGridLayout(1, 3, true, true));
@@ -150,6 +151,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         myImageSize.setValue(myFlashPlayerConfig.getImageSize());
     }
 
+    @Override
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
@@ -170,9 +172,11 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         getWindow().getParent().removeWindow(getWindow());
     }
 
+    @Override
     public void uploadStarted(Upload.StartedEvent event) {
     }
 
+    @Override
     public void uploadFailed(Upload.FailedEvent event) {
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
@@ -182,6 +186,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         return MyTunesRss.TEMP_CACHE.getBaseDir();
     }
 
+    @Override
     public OutputStream receiveUpload(String filename, String MIMEType) {
         try {
             return new FileOutputStream(new File(getUploadDir(), filename));
@@ -190,6 +195,7 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
         }
     }
 
+    @Override
     public void uploadSucceeded(Upload.SucceededEvent event) {
         try {
             File uploadFile = new File(getUploadDir(), event.getFilename());
@@ -209,11 +215,6 @@ public class FlashPlayerEditPanel extends MyTunesRssConfigPanel implements Uploa
             } else {
                 ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.invalidArchive");
             }
-        } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Could not upload data.", e);
-            }
-            ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("flashPlayerEditPanel.error.uploadFailed");
         } finally {
             FileUtils.deleteQuietly(new File(getUploadDir(), event.getFilename()));
         }

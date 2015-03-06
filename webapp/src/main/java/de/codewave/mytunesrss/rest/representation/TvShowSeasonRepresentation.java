@@ -23,9 +23,6 @@ public class TvShowSeasonRepresentation implements RestRepresentation, Comparabl
     private Integer myEpisodeCount;
     private Integer myName;
 
-    public TvShowSeasonRepresentation() {
-    }
-
     /**
      * URI of the episodes for this tv show season.
      */
@@ -81,6 +78,7 @@ public class TvShowSeasonRepresentation implements RestRepresentation, Comparabl
         myName = name;
     }
 
+    @Override
     public int compareTo(TvShowSeasonRepresentation o) {
         return myName.compareTo(o.myName);
     }
@@ -92,9 +90,8 @@ public class TvShowSeasonRepresentation implements RestRepresentation, Comparabl
 
         TvShowSeasonRepresentation that = (TvShowSeasonRepresentation) o;
 
-        if (!myName.equals(that.myName)) return false;
+        return myName.equals(that.myName);
 
-        return true;
     }
 
     @Override

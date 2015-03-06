@@ -17,6 +17,7 @@ public class UpdateDatabaseVersionStatement implements DataStoreStatement {
         myVersion = version;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateDatabaseVersion");
         statement.setString("version", myVersion);

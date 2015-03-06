@@ -13,10 +13,12 @@ import java.sql.SQLException;
 public class StatisticsDatabaseWriter implements StatisticsEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatisticsDatabaseWriter.class);
 
+    @Override
     public void handleEvent(final StatisticsEvent event) {
         if (MyTunesRss.CONFIG.getStatisticKeepTime() > 0) {
             // write events only in case the keep time is greater than 0
             new Thread(new Runnable() {
+                @Override
                 public void run() {
                     DataStoreSession tx = MyTunesRss.STORE.getTransaction();
                     try {

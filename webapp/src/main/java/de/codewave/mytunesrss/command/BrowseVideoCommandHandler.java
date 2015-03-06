@@ -58,7 +58,7 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
                                                                                                                                 false,
                                                                                                                                 true));
                 getRequest().setAttribute("editablePlaylists", playlistsQueryResult.getResults());
-                forward(getResource(tracks));
+                forward(getResource());
             }
         } else {
             forward(MyTunesRssResource.Login);
@@ -69,5 +69,5 @@ public abstract class BrowseVideoCommandHandler extends MyTunesRssCommandHandler
 
     protected abstract DataStoreQuery<QueryResult<Track>> getQuery();
 
-    protected abstract MyTunesRssResource getResource(List<? extends Track> tracks);
+    protected abstract MyTunesRssResource getResource();
 }

@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss.mediaserver;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.FindPhotoAlbumIdsQuery;
 import de.codewave.mytunesrss.datastore.statement.GetPhotoAlbumsQuery;
@@ -8,8 +7,6 @@ import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.lang3.StringUtils;
-import org.fourthline.cling.support.model.SortCriterion;
-import org.omg.CORBA._PolicyStub;
 
 import java.sql.SQLException;
 import java.text.DateFormat;
@@ -19,7 +16,7 @@ import java.util.Date;
 public class PhotoAlbumsDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(User user, DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(User user, DataStoreSession tx, final String oidParams, long firstResult, long maxResults) throws SQLException {
         if (StringUtils.isBlank(oidParams)) {
             FindPhotoAlbumIdsQuery findPhotoAlbumIdsQuery = new FindPhotoAlbumIdsQuery();
             int photoAlbumCount = tx.executeQuery(findPhotoAlbumIdsQuery).size();
@@ -59,7 +56,7 @@ public class PhotoAlbumsDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         if (StringUtils.isBlank(oidParams)) {
             addContainer(createSimpleContainer(ObjectID.PhotoAlbums.getValue(), ObjectID.Root.getValue(), getClientProfile().getPhotoSizes().size()));
         } else {

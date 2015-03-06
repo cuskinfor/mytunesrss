@@ -20,13 +20,16 @@ public class MigrationTest {
     public void testStoreInitWithMigration() throws ClassNotFoundException, IOException, SQLException {
         File tempDir = MyTunesRssTestUtils.createTempDir();
         IOUtils.copy(getClass().getResourceAsStream("/testdatabase/MyTunesRSS.h2.db"), new FileOutputStream(new File(tempDir, "MyTunesRSS.h2.db")));
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.VERSION = "999.999.999";
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);
         MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:file:" + tempDir.getAbsolutePath() + "/MyTunesRSS;DB_CLOSE_DELAY=-1");
         MyTunesRss.CONFIG.setDatabaseUser("sa");
         MyTunesRss.CONFIG.setDatabasePassword("");
         Class.forName("org.h2.Driver");
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.STORE = new MyTunesRssDataStore();
         MyTunesRss.STORE.init();
         DataStoreSession session = MyTunesRss.STORE.getTransaction();

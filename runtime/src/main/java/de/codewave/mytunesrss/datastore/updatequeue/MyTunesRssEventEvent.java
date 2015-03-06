@@ -13,20 +13,24 @@ public class MyTunesRssEventEvent implements DatabaseUpdateEvent {
         myEvent = event;
     }
 
+    @Override
     public boolean execute(DataStoreSession transaction) {
         MyTunesRss.LAST_DATABASE_EVENT.set(myEvent);
         MyTunesRssEventManager.getInstance().fireEvent(myEvent);
         return true;
     }
 
+    @Override
     public boolean isCheckpointRelevant() {
         return false;
     }
 
+    @Override
     public boolean isStartTransaction() {
         return false;
     }
 
+    @Override
     public boolean isTerminate() {
         return false;
     }

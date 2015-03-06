@@ -106,7 +106,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
 
     protected void forward(MyTunesRssResource resource) throws IOException, ServletException {
         prepareRequestForResource();
-        resource.beforeForward(getRequest(), getResponse());
+        resource.beforeForward(getRequest());
         getRequest().setAttribute("userAgent", MyTunesRssWebUtils.getUserAgent(getRequest()).name());
         forward(resource.getValue());
     }
@@ -156,7 +156,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
     }
 
     private ResourceBundle retrieveBundle(File language, Locale locale) {
-        ResourceBundle bundle = (ResourceBundle) getSession().getServletContext().getAttribute("LanguageBundle." + locale.toString());
+        ResourceBundle bundle = (ResourceBundle) getSession().getServletContext().getAttribute("LanguageBundle." + locale);
         if (bundle == null) {
             try {
                 bundle = new PropertyResourceBundle(new FileInputStream(language));
@@ -165,7 +165,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
                     LOG.error("Could not read language file \"" + language.getAbsolutePath() + "\".");
                 }
             }
-            getSession().getServletContext().setAttribute("LanguageBundle." + locale.toString(), bundle);
+            getSession().getServletContext().setAttribute("LanguageBundle." + locale, bundle);
         }
         return bundle;
     }
@@ -182,6 +182,7 @@ public abstract class MyTunesRssCommandHandler extends CommandHandler {
         getResponse().sendRedirect(url.replace("&amp;", "&"));
     }
 
+    @Override
     public void execute() throws Exception {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Command handler \"" + this.getClass().getName() + "\" called (\"" + getRequest().getScheme() + "://" +

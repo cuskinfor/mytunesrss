@@ -9,7 +9,6 @@ import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.StreamResource;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Form;
-import com.vaadin.ui.Label;
 import com.vaadin.ui.Select;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
@@ -35,6 +34,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel {
     private Button myShowLog;
     private Button myGetLogs;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("supportConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -54,10 +54,12 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myLogLevel.setValue(MyTunesRss.CONFIG.getCodewaveLogLevel());
     }
 
+    @Override
     protected void writeToConfig() {
         if (!MyTunesRss.CONFIG.getCodewaveLogLevel().equals(myLogLevel.getValue())) {
             MyTunesRss.CONFIG.setCodewaveLogLevel((Level) myLogLevel.getValue());
@@ -66,6 +68,7 @@ public class SupportConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.save();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myGetLogs) {
             getWindow().open(new StreamResource(new StreamResource.StreamSource() {

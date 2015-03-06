@@ -1,5 +1,5 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 public enum SortOrder {
-    Album(), Artist(), KeepOrder(), Movie(), TvShow(), Photos();
+    Album(), Artist(), KeepOrder(), Movie(), TvShow(), Photos()
 }

@@ -7,12 +7,9 @@ package de.codewave.mytunesrss.command;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.Playlist;
-import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**

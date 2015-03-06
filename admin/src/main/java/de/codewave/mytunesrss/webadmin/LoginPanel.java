@@ -19,6 +19,7 @@ public class LoginPanel extends Panel implements Button.ClickListener {
 
     private SmartPasswordField myPassword;
 
+    @Override
     public void attach() {
         super.attach();
         setCaption(getApplication().getBundleString("loginPanel.caption"));
@@ -31,10 +32,12 @@ public class LoginPanel extends Panel implements Button.ClickListener {
         addComponent(loginButton);
     }
 
+    @Override
     public MyTunesRssWebAdmin getApplication() {
         return (MyTunesRssWebAdmin) super.getApplication();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (Arrays.equals(MyTunesRss.CONFIG.getAdminPasswordHash(), myPassword.getStringHashValue(MyTunesRss.SHA1_DIGEST.get()))) {
             getApplication().setUser("USER"); // we just need any non-NULL objects here

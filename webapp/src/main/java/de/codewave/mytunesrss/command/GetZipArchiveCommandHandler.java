@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -107,7 +106,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
     }
 
     private void createZipArchive(User user, OutputStream outputStream, QueryResult<Track> tracks, String baseName,
-                                  FileSender.ByteSentCounter counter) throws IOException, SQLException {
+                                  FileSender.ByteSentCounter counter) throws IOException {
         ZipArchiveOutputStream zipStream = new ZipArchiveOutputStream(outputStream);
         zipStream.setLevel(ZipArchiveOutputStream.STORED);
         zipStream.setComment("MyTunesRSS v" + MyTunesRss.VERSION + " (http://www.codewave.de)");
@@ -144,15 +143,12 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
                 entryNames.add(entryName);
                 ZipArchiveEntry entry = new ZipArchiveEntry(baseName + "/" + entryName);
                 zipStream.putArchiveEntry(entry);
-                InputStream file = new FileInputStream(track.getFile());
-                try {
+                try (InputStream file = new FileInputStream(track.getFile())) {
                     for (int length = file.read(buffer); length >= 0; length = file.read(buffer)) {
                         if (length > 0) {
                             zipStream.write(buffer, 0, length);
                         }
                     }
-                } finally {
-                    file.close();
                 }
                 zipStream.closeArchiveEntry();
                 playlistBuilder.add(track, trackArtist, trackAlbum, entryName);
@@ -196,7 +192,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         zipStream.close();
     }
 
-    private static interface PlaylistBuilder {
+    private interface PlaylistBuilder {
         void add(Track track, String trackArtist, String trackAlbum, String entryName);
         String getSuffix();
     }
@@ -207,6 +203,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
 
         private StringBuilder playlist = new StringBuilder().append("#EXTM3U").append(lineSeparator);
 
+        @Override
         public void add(Track track, String trackArtist, String trackAlbum, String entryName) {
             playlist.append("#EXTINF:").append(track.getTime()).append(",").append(trackArtist).append(" - ").append(track.getName()).append(
                     lineSeparator);
@@ -217,6 +214,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
             return playlist.toString();
         }
 
+        @Override
         public String getSuffix() {
             return "m3u";
         }
@@ -235,6 +233,7 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
             playlist.append("  <trackList>").append(lineSeparator);
         }
 
+        @Override
         public void add(Track track, String trackArtist, String trackAlbum, String entryName) {
             playlist.append("      <track>").append(lineSeparator);
             playlist.append("        <location>file:").append(StringEscapeUtils.escapeXml(entryName)).append("</location>").append(lineSeparator);
@@ -252,9 +251,10 @@ public class GetZipArchiveCommandHandler extends BandwidthThrottlingCommandHandl
         }
 
         public String toString() {
-            return playlist.toString() + lineSeparator + "  </tracklist>" + lineSeparator + "</playlist>" + lineSeparator;
+            return playlist + lineSeparator + "  </tracklist>" + lineSeparator + "</playlist>" + lineSeparator;
         }
 
+        @Override
         public String getSuffix() {
             return "xspf";
         }

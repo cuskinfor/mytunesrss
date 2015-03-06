@@ -4,7 +4,6 @@ import de.codewave.mytunesrss.datastore.itunes.ItunesLoader;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.PListHandlerListener;
 import de.codewave.utils.xml.XmlUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.xml.sax.SAXException;

@@ -20,7 +20,7 @@ public class UpdateImageForTrackStatement {
         myHash = hash;
     }
 
-    public void execute(Connection connection) throws SQLException {
+    public void execute(Connection connection) {
         try {
             if (myStatement == null) {
                 myStatement = MyTunesRssUtils.createStatement(connection, "updateImageForTrack");

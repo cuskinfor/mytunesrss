@@ -27,6 +27,7 @@ public class FetchOffsetAndSizeInterceptor implements PostProcessInterceptor, Ac
     @Context
     private HttpServletRequest myRequest;
 
+    @Override
     public void postProcess(ServerResponse response) {
         Object entity = response.getEntity();
         if (entity != null) {
@@ -46,8 +47,8 @@ public class FetchOffsetAndSizeInterceptor implements PostProcessInterceptor, Ac
                 if (List.class.isAssignableFrom(entity.getClass())) {
                     List list = (List) entity;
                     LOGGER.debug("Using fetch offset " + fetchOffset + " and fetch size " + fetchSize + " on a list with " + list.size() + " elements.");
-                    long offset = fetchOffset != null ? fetchOffset.longValue() : 0;
-                    long size = fetchSize != null ? fetchSize.longValue() : Long.MAX_VALUE;
+                    long offset = fetchOffset != null ? fetchOffset : 0;
+                    long size = fetchSize != null ? fetchSize : Long.MAX_VALUE;
                     response.getMetadata().add("X-MyTunesRSS-TotalNumberOfElements", list.size());
                     for (int i = 0; i < offset && !list.isEmpty(); i++) {
                         list.remove(0);
@@ -62,6 +63,7 @@ public class FetchOffsetAndSizeInterceptor implements PostProcessInterceptor, Ac
         }
     }
 
+    @Override
     public boolean accept(Class declaring, Method method) {
         return List.class.isAssignableFrom(method.getReturnType());
     }

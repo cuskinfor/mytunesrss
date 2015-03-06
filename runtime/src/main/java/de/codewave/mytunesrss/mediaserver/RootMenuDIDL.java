@@ -9,9 +9,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreSession;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.Container;
 import org.fourthline.cling.support.model.container.StorageFolder;
 import org.slf4j.Logger;
@@ -26,7 +23,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
     private static final Logger LOGGER = LoggerFactory.getLogger(RootMenuDIDL.class);
 
     @Override
-    void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(User user, DataStoreSession tx, String oidParams, long firstResult, long maxResults) throws SQLException {
         SystemInformation systemInformation = tx.executeQuery(new GetSystemInformationQuery());
         GetPlaylistCountQuery getPlaylistCountQuery = new GetPlaylistCountQuery(user, PlaylistFolderDIDL.PLAYLIST_TYPES, null, "ROOT", false, false);
         int playlistCount = tx.executeQuery(getPlaylistCountQuery);
@@ -70,7 +67,7 @@ public class RootMenuDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         addContainer(createSimpleContainer("0", "", "MyTunesRSS", 7));
         myTotalMatches = 1;
     }

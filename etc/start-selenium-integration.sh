@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 mkdir -p $1
 cp -R ../../../selenium/etc/prefs-cache-h2/* $1
 mkdir -p ../../selenium/etc/iPhoto/images

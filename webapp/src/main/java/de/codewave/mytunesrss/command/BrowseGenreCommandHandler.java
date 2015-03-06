@@ -9,7 +9,6 @@ import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +23,7 @@ import java.util.List;
  * de.codewave.mytunesrss.command.BrowseAlbumCommandHandler
  */
 public class BrowseGenreCommandHandler extends MyTunesRssCommandHandler {
+    @Override
     public void executeAuthorized() throws IOException, ServletException, SQLException {
         if (isSessionAuthorized()) {
             String page = getRequest().getParameter("page");

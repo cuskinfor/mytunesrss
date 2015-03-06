@@ -9,8 +9,6 @@ import com.vaadin.ui.Select;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.event.MyTunesRssEvent;
-import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.mediaserver.MediaServerClientProfile;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -38,7 +36,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myPhotoSizesField;
     private SmartTextField myMaxSearchResultsField;
     private SmartTextField mySearchMatchAccuracyField;
-    private LinkedHashMap<String, CheckBox> myTranscoderCheckboxes = new LinkedHashMap<>();
+    private Map<String, CheckBox> myTranscoderCheckboxes = new LinkedHashMap<>();
     private Form myGeneralForm;
     private Form myActivationForm;
     private Form myPhotosForm;
@@ -53,6 +51,7 @@ public class UpnpServerClientProfileConfigPanel extends MyTunesRssConfigPanel {
         myDefaultProfile = defaultProfile;
     }
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("upnpServerConfigPanel.clientProfileConfigPanel.caption"), getComponentFactory().createGridLayout(1, 6, true, true));

@@ -38,6 +38,7 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
 
     private AtomicBoolean myTerminated = new AtomicBoolean(false);
 
+    @Override
     public synchronized void run() {
         try {
             final Set<String> sourceIds = new HashSet<>();
@@ -55,6 +56,7 @@ public class PhotoThumbnailGeneratorRunnable implements Runnable {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosWithMissingThumbnails");
                             statement.setItems("sourceIds", sourceIds);
                             return execute(statement, new ResultBuilder<SimplePhoto>() {
+                                @Override
                                 public SimplePhoto create(ResultSet resultSet) throws SQLException {
                                     return new SimplePhoto(resultSet.getString("id"), resultSet.getString("file"));
                                 }

@@ -30,7 +30,7 @@ public class DownloadTrackCommandHandler extends PlayTrackCommandHandler {
     }
 
     @Override
-    protected StreamSender handleInitialRequest(final Track track, File file) throws IOException {
+    protected StreamSender handleInitialRequest(final Track track, File file) {
         addResponseHeader(track, file);
         StreamSender streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.DownloadTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace("/" + MyTunesRssCommand.DownloadTrack.getName(), "initial=false")));
         streamSender.setStreamListener(new StreamListener() {

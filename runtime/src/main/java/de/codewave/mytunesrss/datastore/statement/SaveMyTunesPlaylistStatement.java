@@ -22,6 +22,7 @@ public class SaveMyTunesPlaylistStatement extends SavePlaylistStatement {
         setUserPrivate(userPrivate);
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         if (StringUtils.isEmpty(myId)) {
             ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "nextPlaylistId").executeQuery();

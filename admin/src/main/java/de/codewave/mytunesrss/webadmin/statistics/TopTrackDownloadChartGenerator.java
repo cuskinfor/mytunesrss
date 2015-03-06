@@ -21,6 +21,7 @@ import java.util.*;
 
 public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
 
+    @Override
     public StatEventType[] getEventTypes() {
         return new StatEventType[]{
                 StatEventType.DOWNLOAD
@@ -53,6 +54,7 @@ public abstract class TopTrackDownloadChartGenerator extends TopChartGenerator {
         return tracks;
     }
 
+    @Override
     protected Map<String, MutableLong> getItemsWithCount(Map<Day, List<StatisticsEvent>> eventsPerDay) throws SQLException {
         Map<String, MutableLong> items = new HashMap<>();
         for (Track track : getFlatTrackList(eventsPerDay)) {

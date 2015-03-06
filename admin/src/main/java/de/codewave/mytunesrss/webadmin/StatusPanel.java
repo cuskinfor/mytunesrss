@@ -76,6 +76,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
     private Refresher myRefresher;
     private Button myQuitMyTunesRss;
 
+    @Override
     public void attach() {
         super.attach();
         MyTunesRssEventManager.getInstance().addListener(this);
@@ -219,10 +220,12 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         MyTunesRssEventManager.getInstance().removeListener(this);
     }
 
+    @Override
     public MyTunesRssWebAdmin getApplication() {
         return (MyTunesRssWebAdmin) super.getApplication();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myLogout) {
             getApplication().close();
@@ -267,6 +270,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myBackupDatabase.setEnabled(false);
                     myDatabaseMaintenance.setEnabled(false);
                     new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(datasources, ignoreTimestamps);
@@ -287,6 +291,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                     myBackupDatabase.setEnabled(false);
                     myDatabaseMaintenance.setEnabled(false);
                     new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningImageRemoval"));
                             MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
@@ -352,6 +357,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
             final Button yes = new Button(getApplication().getBundleString("button.yes"));
             Button no = new Button(getApplication().getBundleString("button.no"));
             new OptionWindow(30, Sizeable.UNITS_EM, null, getApplication().getBundleString("statusPanel.warn.quit.caption"), getApplication().getBundleString("statusPanel.warn.quit.message"), yes, no) {
+                @Override
                 public void clicked(Button button) {
                     if (button == yes) {
                         Label label = new Label(StatusPanel.this.getApplication().getBundleString("statusPanel.info.quitMyTunesRss"));
@@ -359,6 +365,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
                         label.addStyleName("goodbye");
                         ((MainWindow) VaadinUtils.getApplicationWindow(this)).showComponent(label);
                         new Thread(new Runnable() {
+                            @Override
                             public void run() {
                                 MyTunesRssUtils.shutdownGracefully();
                             }
@@ -369,6 +376,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         }
     }
 
+    @Override
     public void handleEvent(MyTunesRssEvent event) {
         Application application = getApplication();
         if (application != null) {
@@ -420,6 +428,7 @@ public class StatusPanel extends Panel implements Button.ClickListener, MyTunesR
         return getApplication().getBundleString("statusPanel.databaseStatusUnknown");
     }
 
+    @Override
     public void refresh(Refresher source) {
         refreshAlert();
         // refresh internal addresses

@@ -15,6 +15,7 @@ import java.io.IOException;
 public class EncodingFilter implements Filter {
     private String myEncoding;
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         String encoding = filterConfig.getInitParameter("encoding");
         if (StringUtils.isEmpty(encoding)) {
@@ -23,6 +24,7 @@ public class EncodingFilter implements Filter {
         myEncoding = encoding;
     }
 
+    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         if (StringUtils.isBlank(servletRequest.getCharacterEncoding())) {
@@ -31,6 +33,7 @@ public class EncodingFilter implements Filter {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
+    @Override
     public void destroy() {
         // intentionally left blank
     }

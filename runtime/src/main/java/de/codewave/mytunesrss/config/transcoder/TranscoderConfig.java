@@ -218,13 +218,15 @@ public class TranscoderConfig implements Cloneable {
     }
 
     @Override
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
         TranscoderConfig clone = null;
         try {
             clone = (TranscoderConfig) super.clone();
         } catch (CloneNotSupportedException ignored) {
+            //noinspection CloneCallsConstructors
             clone = new TranscoderConfig();
         }
+        //noinspection CloneCallsConstructors
         clone.myTranscoderActivations = new ArrayList<>();
         for (TranscoderActivation activation : myTranscoderActivations) {
             try {

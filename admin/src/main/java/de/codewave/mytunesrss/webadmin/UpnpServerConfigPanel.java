@@ -36,6 +36,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
         beforeReset();
     }
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("upnpServerConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -156,6 +157,7 @@ public class UpnpServerConfigPanel extends MyTunesRssConfigPanel {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("upnpServerConfigPanel.profile.delete.caption"), getBundleString("upnpServerConfigPanel.profile.delete.message", mediaServerClientProfile.getName()), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             myProfilesTable.removeItem(mediaServerClientProfile);

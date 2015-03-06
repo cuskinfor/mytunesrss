@@ -76,10 +76,12 @@ public enum MyTunesRssCommand implements Command {
         myCommandHandlerClass = commandHandlerClass;
     }
 
+    @Override
     public String getName() {
         return myName;
     }
 
+    @Override
     public Class<? extends CommandHandler> getCommandHandlerClass() {
         return myCommandHandlerClass;
     }

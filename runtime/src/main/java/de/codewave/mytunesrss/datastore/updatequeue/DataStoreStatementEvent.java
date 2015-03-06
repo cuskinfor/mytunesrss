@@ -27,6 +27,7 @@ public class DataStoreStatementEvent extends DataStoreEvent {
         myExLogMsg = exLogMsg;
     }
 
+    @Override
     public boolean execute(DataStoreSession session) {
         try {
             session.executeStatement(myStatement);

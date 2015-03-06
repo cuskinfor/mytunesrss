@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss;
 
-import com.google.common.io.Files;
 import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
@@ -9,7 +8,6 @@ import de.codewave.utils.sql.DataStoreSession;
 
 import java.io.File;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.UUID;
 
@@ -25,7 +23,7 @@ public class MyTunesRssTestUtils {
         return tempDir;
     }
 
-    public static void before() throws ClassNotFoundException, IOException, SQLException, NoSuchAlgorithmException {
+    public static void before() throws ClassNotFoundException, IOException, SQLException {
         MyTunesRss.VERSION = "1.0.0";
         MyTunesRss.CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);

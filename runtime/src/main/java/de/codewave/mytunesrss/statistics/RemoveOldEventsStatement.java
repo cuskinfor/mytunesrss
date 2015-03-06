@@ -18,6 +18,7 @@ import java.util.GregorianCalendar;
 public class RemoveOldEventsStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(RemoveOldEventsStatement.class);
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeOldStatisticEvents");
         Calendar calendar = new GregorianCalendar();

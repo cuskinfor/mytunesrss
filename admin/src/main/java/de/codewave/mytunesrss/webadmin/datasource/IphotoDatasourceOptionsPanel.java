@@ -69,11 +69,13 @@ public class IphotoDatasourceOptionsPanel extends DatasourceOptionsPanel {
         setTablePageLengths();
     }
 
+    @Override
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");
             return false;
-        } else if (!myImportRolls.booleanValue() && !myImportAlbums.booleanValue()) {
+        }
+        if (!myImportRolls.booleanValue() && !myImportAlbums.booleanValue()) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("datasourceOptionsPanel.error.importRollsOrAlbums");
             return false;
         }

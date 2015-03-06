@@ -28,7 +28,7 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
         return file.isFile() && file.getName().startsWith("h2-backup-") && file.getName().endsWith(".zip");
     }
 
-    public static File createBackupFile() throws IOException {
+    public static File createBackupFile() {
         return new File(MyTunesRss.CACHE_DATA_PATH, "h2-backup-" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".zip");
     }
 
@@ -59,6 +59,7 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
         return myFile;
     }
 
+    @Override
     public int compareTo(DatabaseBackup databaseBackup) {
         return (int) Math.signum(databaseBackup.myDate - myDate);
     }
@@ -70,9 +71,8 @@ public class DatabaseBackup implements Comparable<DatabaseBackup> {
 
         DatabaseBackup that = (DatabaseBackup) o;
 
-        if (myDate != that.myDate) return false;
+        return myDate == that.myDate;
 
-        return true;
     }
 
     @Override

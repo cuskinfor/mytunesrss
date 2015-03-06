@@ -21,6 +21,7 @@ public class DatabaseMaintenanceRunnable implements Runnable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseMaintenanceRunnable.class);
 
+    @Override
     public void run() {
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
         try {

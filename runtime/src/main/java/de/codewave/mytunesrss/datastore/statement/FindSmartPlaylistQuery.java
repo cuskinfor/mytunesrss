@@ -22,6 +22,7 @@ public class FindSmartPlaylistQuery extends DataStoreQuery<SmartPlaylist> {
         myId = id;
     }
 
+    @Override
     public SmartPlaylist execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findSmartPlaylistById");
         statement.setString("id", myId);

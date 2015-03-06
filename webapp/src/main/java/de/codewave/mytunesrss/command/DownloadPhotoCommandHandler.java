@@ -11,6 +11,7 @@ import java.io.IOException;
 
 public class DownloadPhotoCommandHandler extends ShowPhotoCommandHandler {
 
+    @Override
     protected void sendResponse(StreamSender sender, String filename) throws IOException {
         getResponse().setHeader("Content-Disposition", "attachment; filename=\"" + filename + "\"");
         sender.sendGetResponse(getRequest(), getResponse(), false);

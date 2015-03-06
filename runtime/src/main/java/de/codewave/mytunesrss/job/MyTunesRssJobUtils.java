@@ -56,11 +56,7 @@ public class MyTunesRssJobUtils {
                             null,
                             cronTrigger);
                     MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
-                } catch (ParseException e) {
-                    if (LOG.isWarnEnabled()) {
-                        LOG.warn("Could not schedule database update job for cron expression \"" + cronTrigger + "\".", e);
-                    }
-                } catch (SchedulerException e) {
+                } catch (ParseException | SchedulerException e) {
                     if (LOG.isWarnEnabled()) {
                         LOG.warn("Could not schedule database update job for cron expression \"" + cronTrigger + "\".", e);
                     }
@@ -80,11 +76,7 @@ public class MyTunesRssJobUtils {
                                 null,
                                 cronTrigger);
                         MyTunesRss.QUARTZ_SCHEDULER.scheduleJob(trigger);
-                    } catch (ParseException e) {
-                        if (LOG.isWarnEnabled()) {
-                            LOG.warn("Could not schedule database backup job for cron expression \"" + cronTrigger + "\".", e);
-                        }
-                    } catch (SchedulerException e) {
+                    } catch (ParseException | SchedulerException e) {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("Could not schedule database backup job for cron expression \"" + cronTrigger + "\".", e);
                         }

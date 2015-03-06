@@ -18,6 +18,7 @@ public class DatabaseUpdateJob implements Job {
      * @param jobExecutionContext
      * @throws JobExecutionException
      */
+    @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         try {
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseUpdate(MyTunesRss.CONFIG.getDatasources(), false);

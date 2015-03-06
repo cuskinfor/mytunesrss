@@ -12,6 +12,7 @@ import java.sql.SQLException;
  * Result builder for tracks.
  */
 public class TrackResultBuilder implements ResultBuilder<Track> {
+    @Override
     public Track create(ResultSet resultSet) throws SQLException {
         Track track = new Track();
         track.setSource(TrackSource.valueOf(resultSet.getString("SOURCE")));

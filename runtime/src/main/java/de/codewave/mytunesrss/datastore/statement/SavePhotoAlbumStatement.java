@@ -57,6 +57,7 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
         myAdd = add;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         if (myUpdate) {
             executeUpdate(connection);
@@ -95,6 +96,7 @@ public class SavePhotoAlbumStatement implements DataStoreStatement {
     }
 
     public static class ExceptionHandler implements SmartStatementExceptionHandler {
+        @Override
         public void handleException(SQLException sqlException, boolean b) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Could not insert/update photo album", sqlException);

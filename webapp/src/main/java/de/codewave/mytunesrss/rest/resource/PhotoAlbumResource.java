@@ -17,7 +17,6 @@ import de.codewave.mytunesrss.rest.representation.PhotoRepresentation;
 import de.codewave.mytunesrss.rest.representation.QueryResultIterable;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +64,7 @@ public class PhotoAlbumResource extends RestResource {
             }
         }
         return new QueryResultIterable<>(photos, new QueryResultIterable.ResultTransformer<Photo, PhotoRepresentation>() {
+            @Override
             public PhotoRepresentation transform(Photo photo) {
                 PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
                 if (IncludeExcludeInterceptor.isAttr("thumbnailImageUri")) {

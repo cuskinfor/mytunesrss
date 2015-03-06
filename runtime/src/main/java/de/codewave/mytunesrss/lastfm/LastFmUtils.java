@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.lastfm;
 
-import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import org.apache.commons.codec.binary.Hex;
@@ -28,7 +28,7 @@ public class LastFmUtils {
      * Do the handshake an return a new session which can be used for further requests.
      *
      * @param user The mytunesrss user.
-     * @return The last.fm session or <code>null</code> for any hard error.
+     * @return The last.fm session or {@code null} for any hard error.
      */
     public static LastFmSession doHandshake(User user) {
         LOG.debug("Handshaking with last.fm for user \"" + user.getName() + "\" using last.fm user \"" + user.getLastFmUsername() + "\".");

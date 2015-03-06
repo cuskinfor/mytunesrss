@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.ResourceBundle;
 
 public class SessionsPerDayChartGenerator extends TimeSeriesCharGenerator implements ReportChartGenerator {
+    @Override
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) {
         TimeSeries ts = new TimeSeries(getClass().getSimpleName());
         for (Map.Entry<Day, List<StatisticsEvent>> entry : eventsPerDay.entrySet()) {
@@ -26,6 +27,7 @@ public class SessionsPerDayChartGenerator extends TimeSeriesCharGenerator implem
         return createTimeSeriesChart(timeSeriesCollection, bundle, "statisticsConfigPanel.chart.axisSessions");
     }
 
+    @Override
     public StatEventType[] getEventTypes() {
         return new StatEventType[] {
                 StatEventType.SESSION_START

@@ -15,6 +15,7 @@ public class TopArtistChartGenerator extends TopTrackDownloadChartGenerator {
         return "statisticsConfigPanel.reportType.topArtist";
     }
 
+    @Override
     protected String getItem(Track track) {
         return track.getMediaType() == MediaType.Audio ? track.getArtist() : null;
     }

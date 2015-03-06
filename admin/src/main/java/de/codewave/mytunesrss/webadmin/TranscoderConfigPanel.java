@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.webadmin;
 
 import com.vaadin.data.validator.RegexpValidator;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.transcoder.*;
 import de.codewave.mytunesrss.webadmin.transcoder.*;
 import de.codewave.vaadin.SmartTextField;
@@ -48,6 +47,7 @@ public class TranscoderConfigPanel extends MyTunesRssConfigPanel {
         myAfterWriteRunnable = afterWriteRunnable;
     }
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("transcoderConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -85,6 +85,7 @@ public class TranscoderConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myNameTextField.setValue(myTranscoderConfig.getName(), "");
         mySuffixTextField.setValue(myTranscoderConfig.getTargetSuffix(), "");
@@ -133,6 +134,7 @@ public class TranscoderConfigPanel extends MyTunesRssConfigPanel {
         return config;
     }
 
+    @Override
     protected void writeToConfig() {
         fillConfigFromForm(myTranscoderConfig);
         if (myAfterWriteRunnable != null) {
@@ -157,6 +159,7 @@ public class TranscoderConfigPanel extends MyTunesRssConfigPanel {
         return valid;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myAddFilenameActivationButton) {
             myActivationsPanel.removeComponent(myAddActivationButtons);

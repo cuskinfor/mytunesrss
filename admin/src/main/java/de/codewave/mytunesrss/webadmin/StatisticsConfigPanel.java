@@ -35,6 +35,7 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
     private Select myReportType;
     private Button myGenerateReport;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("statisticsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -78,10 +79,12 @@ public class StatisticsConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myStatisticsKeepTime.setValue(MyTunesRss.CONFIG.getStatisticKeepTime(), 0, 999, 400);
     }
 
+    @Override
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setStatisticKeepTime(myStatisticsKeepTime.getIntegerValue(60));
         MyTunesRss.CONFIG.save();

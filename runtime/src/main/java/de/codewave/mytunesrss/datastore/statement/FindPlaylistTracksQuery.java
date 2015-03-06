@@ -55,6 +55,7 @@ public class FindPlaylistTracksQuery extends DataStoreQuery<QueryResult<Track>> 
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
+    @Override
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<>();

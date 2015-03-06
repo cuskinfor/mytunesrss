@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.rest.resource.EditPlaylistResource;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 import java.text.SimpleDateFormat;
@@ -60,7 +59,7 @@ public enum MyTunesRssResource {
         return myValue;
     }
 
-    public void beforeForward(HttpServletRequest request, HttpServletResponse response) {
+    public void beforeForward(HttpServletRequest request) {
         Playlist playlist = (Playlist) request.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
         if (playlist != null) {
             request.setAttribute("stateEditPlaylist", true);

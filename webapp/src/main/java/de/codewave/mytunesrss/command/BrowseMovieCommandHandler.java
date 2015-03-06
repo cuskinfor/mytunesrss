@@ -27,7 +27,7 @@ public class BrowseMovieCommandHandler extends BrowseVideoCommandHandler {
     }
 
     @Override
-    protected MyTunesRssResource getResource(List<? extends Track> tracks) {
+    protected MyTunesRssResource getResource() {
         return MyTunesRssResource.BrowseMovie;
     }
 }

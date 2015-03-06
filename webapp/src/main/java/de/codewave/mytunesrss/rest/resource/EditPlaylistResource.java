@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.rest.resource;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.datastore.statement.*;
@@ -53,7 +52,7 @@ public class EditPlaylistResource extends RestResource {
     public PlaylistRepresentation getPlaylist(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
-    ) throws SQLException {
+    ) {
         return toPlaylistRepresentation(uriInfo, request, (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST));
     }
 
@@ -74,7 +73,7 @@ public class EditPlaylistResource extends RestResource {
             @Context HttpServletRequest request,
             @QueryParam("from") @DefaultValue("0") int from,
             @QueryParam("count") @DefaultValue("0") int count
-    ) throws SQLException {
+    ) {
         List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         List<TrackRepresentation> trackRepresentations = new ArrayList<>();
         if (from >= 0 && from < playlistTracks.size()) {
@@ -103,7 +102,7 @@ public class EditPlaylistResource extends RestResource {
             @Context HttpServletRequest request,
             @QueryParam("from") @DefaultValue("0") int from,
             @QueryParam("count") @DefaultValue("0") int count
-    ) throws SQLException {
+    ) {
         List<Track> playlistTracks = (List<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         List<Album> playlistAlbums = new ArrayList<>();
         for (Track track : playlistTracks) {
@@ -133,6 +132,7 @@ public class EditPlaylistResource extends RestResource {
             }
         }
         Collections.sort(playlistAlbums, new Comparator<Album>() {
+            @Override
             public int compare(Album a1, Album a2) {
                 return StringUtils.trimToEmpty(a1.getName()).compareTo(StringUtils.trimToEmpty(a2.getName()));
             }
@@ -271,7 +271,7 @@ public class EditPlaylistResource extends RestResource {
             @Context HttpServletRequest request,
             @FormParam("name") @NotBlank(message = "NO_PLAYLIST_NAME") String playlistName,
             @FormParam("private") @DefaultValue("false") boolean userPrivate
-    ) throws SQLException, MyTunesRssRestException {
+    ) throws SQLException {
         Playlist playlist = (Playlist) request.getSession().getAttribute(KEY_EDIT_PLAYLIST);
         Collection<Track> playlistTracks = (Collection<Track>) request.getSession().getAttribute(KEY_EDIT_PLAYLIST_TRACKS);
         SavePlaylistStatement statement = new SaveMyTunesPlaylistStatement(MyTunesRssWebUtils.getAuthUser(request).getName(), userPrivate);

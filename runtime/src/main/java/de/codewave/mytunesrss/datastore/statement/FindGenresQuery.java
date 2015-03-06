@@ -7,7 +7,6 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
@@ -43,6 +42,7 @@ public class FindGenresQuery extends MyTunesRssDataStoreQuery<QueryResult<Genre>
         }
     }
 
+    @Override
     public QueryResult<Genre> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("index", MyTunesRssUtils.isLetterPagerIndex(myIndex));
@@ -67,6 +67,7 @@ public class FindGenresQuery extends MyTunesRssDataStoreQuery<QueryResult<Genre>
             // intentionally left blank
         }
 
+        @Override
         public Genre create(ResultSet resultSet) throws SQLException {
             Genre genre = new Genre();
             genre.setName(resultSet.getString("NAME"));

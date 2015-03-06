@@ -5,7 +5,10 @@
 
 package de.codewave.mytunesrss.webadmin.datasource;
 
-import com.vaadin.ui.*;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Form;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.Select;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.config.WatchfolderDatasourceConfig;
@@ -14,7 +17,9 @@ import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
 import de.codewave.vaadin.validation.ValidRegExpValidator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
 
@@ -167,6 +172,7 @@ public class WatchfolderDatasourceOptionsPanel extends DatasourceOptionsPanel {
         setTablePageLengths();
     }
 
+    @Override
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myFallbackForm, myIncludeExcludeForm, myTrackImagePatternsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");

@@ -19,14 +19,17 @@ public class TableItemIterator implements Iterator<Item> {
         myItemIdsIterator = table.getItemIds().iterator();
     }
 
+    @Override
     public boolean hasNext() {
         return myItemIdsIterator.hasNext();
     }
 
+    @Override
     public Item next() {
         return myTable.getItem(myItemIdsIterator.next());
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException("Remove is not supported by this iterator.");
     }

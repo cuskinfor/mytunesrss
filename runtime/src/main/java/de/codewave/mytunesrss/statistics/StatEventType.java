@@ -19,7 +19,7 @@ public enum StatEventType {
     private int myValue;
     private Class myClazz;
 
-    private StatEventType(int value, Class clazz) {
+    StatEventType(int value, Class clazz) {
         myValue = value;
         myClazz = clazz;
     }

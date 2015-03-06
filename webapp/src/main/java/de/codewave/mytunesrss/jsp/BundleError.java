@@ -26,6 +26,7 @@ public class BundleError extends Error {
         return myKey;
     }
 
+    @Override
     public boolean isLocalized() {
         return false;
     }

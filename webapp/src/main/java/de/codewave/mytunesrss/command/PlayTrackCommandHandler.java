@@ -83,7 +83,7 @@ public class PlayTrackCommandHandler extends BandwidthThrottlingCommandHandler {
         }
     }
 
-    protected StreamSender handleInitialRequest(final Track track, File file) throws IOException {
+    protected StreamSender handleInitialRequest(final Track track, File file) {
         StreamSender streamSender = new RedirectSender(MyTunesRssWebUtils.getCommandCall(getRequest(), MyTunesRssCommand.PlayTrack) + "/" + MyTunesRssUtils.encryptPathInfo(getRequest().getPathInfo().replace("/" + MyTunesRssCommand.PlayTrack.getName(), "initial=false")));
         MyTunesRssUtils.asyncPlayCountAndDateUpdate(track.getId());
         getAuthUser().playLastFmTrack(track);

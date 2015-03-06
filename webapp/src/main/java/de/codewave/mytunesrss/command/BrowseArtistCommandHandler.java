@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.OffHeapSessionStore;
 import de.codewave.mytunesrss.Pager;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
@@ -25,6 +24,7 @@ import java.util.List;
  * de.codewave.mytunesrss.command.BrowseArtistCommandHandler
  */
 public class BrowseArtistCommandHandler extends MyTunesRssCommandHandler {
+    @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         if (isSessionAuthorized()) {
             String album = MyTunesRssBase64Utils.decodeToString(getRequest().getParameter("album"));

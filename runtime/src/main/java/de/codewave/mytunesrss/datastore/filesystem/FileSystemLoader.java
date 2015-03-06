@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Map;
 
@@ -21,7 +20,7 @@ import java.util.Map;
 public class FileSystemLoader {
     private static final Logger LOG = LoggerFactory.getLogger(FileSystemLoader.class);
 
-    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, MVStore mvStore) throws IOException, SQLException {
+    public static void loadFromFileSystem(final Thread watchdogThread, final WatchfolderDatasourceConfig datasource, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, MVStore mvStore) throws SQLException {
         MyTunesRssFileProcessor fileProcessor = null;
         File baseDir = new File(datasource.getDefinition());
         if (baseDir != null && baseDir.isDirectory()) {
@@ -30,6 +29,7 @@ public class FileSystemLoader {
                 LOG.info("Processing files from: \"" + baseDir + "\".");
             }
             IOUtils.processFiles(baseDir, fileProcessor, new FileFilter() {
+                @Override
                 public boolean accept(File file) {
                     if (watchdogThread.isInterrupted()) {
                         Thread.currentThread().interrupt();
@@ -47,6 +47,7 @@ public class FileSystemLoader {
             if (datasource.isImportPlaylists()) {
                 PlaylistFileProcessor playlistFileProcessor = new PlaylistFileProcessor(datasource, queue, fileProcessor.getExistingIds());
                 IOUtils.processFiles(baseDir, playlistFileProcessor, new FileFilter() {
+                    @Override
                     public boolean accept(File file) {
                         if (watchdogThread.isInterrupted()) {
                             Thread.currentThread().interrupt();

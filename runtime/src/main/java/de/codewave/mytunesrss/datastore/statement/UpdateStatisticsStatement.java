@@ -15,6 +15,7 @@ import java.sql.SQLException;
  * de.codewave.mytunesrss.datastore.statement.UpdateStatisticsStatement
  */
 public class UpdateStatisticsStatement implements DataStoreStatement {
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updateStatistics");
         statement.execute();

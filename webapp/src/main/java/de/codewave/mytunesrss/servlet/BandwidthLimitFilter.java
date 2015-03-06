@@ -15,7 +15,7 @@ public class BandwidthLimitFilter implements Filter {
     private static final ThreadLocal<Integer> LIMIT = new ThreadLocal<Integer>() {
         @Override
         protected Integer initialValue() {
-            return Integer.valueOf(0); // no limit
+            return 0; // no limit
         }
     };
 
@@ -25,13 +25,15 @@ public class BandwidthLimitFilter implements Filter {
      * @param limit Limit in bytes per second.
      */
     public static void setLimit(int limit) {
-        LIMIT.set(Integer.valueOf(limit));
+        LIMIT.set(limit);
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // nothing to initialize
     }
 
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         setLimit(0); // no limit
         try {
@@ -41,7 +43,7 @@ public class BandwidthLimitFilter implements Filter {
 
                 @Override
                 public ServletOutputStream getOutputStream() throws IOException {
-                    final int limit = LIMIT.get().intValue();
+                    final int limit = LIMIT.get();
                     if (limit > 0) {
                         if (throttlingStream == null) {
                             throttlingStream = new ThrottlingServletOutputStream(super.getOutputStream(), limit);
@@ -57,6 +59,7 @@ public class BandwidthLimitFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
         // nothing to destroy
     }

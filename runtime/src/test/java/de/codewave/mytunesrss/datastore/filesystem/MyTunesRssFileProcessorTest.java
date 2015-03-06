@@ -17,7 +17,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 
 import static org.junit.Assert.assertEquals;
@@ -28,7 +27,7 @@ public class MyTunesRssFileProcessorTest {
     private File myFile;
 
     @Before
-    public void before() throws URISyntaxException, SQLException, IOException, ClassNotFoundException, NoSuchAlgorithmException {
+    public void before() throws URISyntaxException, SQLException, IOException, ClassNotFoundException {
         MyTunesRssTestUtils.before();
         myProcessor = new MyTunesRssFileProcessor(new WatchfolderDatasourceConfig("id1", "wfname", "dummy1"), new DatabaseUpdateQueue(2500), null, null, null, null, new MVStore.Builder().fileStore(new OffHeapStore()).open());
         myFile = new File(getClass().getResource("/de/codewave/mytunesrss/MyTunesRss.class").toURI());

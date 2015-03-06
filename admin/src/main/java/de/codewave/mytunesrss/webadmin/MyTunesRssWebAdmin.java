@@ -45,6 +45,7 @@ public class MyTunesRssWebAdmin extends Application {
 
     private ValidatorFactory myValidatorFactory;
 
+    @Override
     public void init() {
         myComponentFactory = new ComponentFactory(BUNDLE_NAME, getLocale());
         myValidatorFactory = new ValidatorFactory(BUNDLE_NAME, getLocale());

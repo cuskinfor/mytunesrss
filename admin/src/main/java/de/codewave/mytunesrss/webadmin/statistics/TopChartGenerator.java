@@ -19,10 +19,12 @@ public abstract class TopChartGenerator implements ReportChartGenerator {
 
     private static final int MAX_SLICES = 10;
 
+    @Override
     public JFreeChart generate(Map<Day, List<StatisticsEvent>> eventsPerDay, ResourceBundle bundle) throws SQLException {
         final Map<String, MutableLong> itemsWithCount = getItemsWithCount(eventsPerDay);
         List<String> items = new ArrayList<>(itemsWithCount.keySet());
         Collections.sort(items, new Comparator<String>() {
+            @Override
             public int compare(String id1, String id2) {
                 return itemsWithCount.get(id2).compareTo(itemsWithCount.get(id1));
             }

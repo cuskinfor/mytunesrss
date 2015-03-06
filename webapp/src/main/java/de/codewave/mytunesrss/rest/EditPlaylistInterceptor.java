@@ -26,6 +26,7 @@ public class EditPlaylistInterceptor implements PreProcessInterceptor, AcceptedB
     @Context
     private HttpServletRequest myRequest;
 
+    @Override
     public ServerResponse preProcess(HttpRequest request, ResourceMethod method) {
         if (myRequest.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST) == null) {
             throw new MyTunesRssRestException(HttpServletResponse.SC_PRECONDITION_FAILED, "NOT_EDITING_PLAYLIST");
@@ -33,6 +34,7 @@ public class EditPlaylistInterceptor implements PreProcessInterceptor, AcceptedB
         return null;
     }
 
+    @Override
     public boolean accept(Class declaring, Method method) {
         return declaring.equals(EditPlaylistResource.class);
     }

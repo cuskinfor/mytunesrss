@@ -12,7 +12,6 @@ import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
-import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
@@ -29,7 +28,8 @@ import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
 import de.codewave.utils.maven.MavenUtils;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreStatement;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -40,7 +40,6 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
-import org.fourthline.cling.model.ValidationException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -166,8 +165,8 @@ public class MyTunesRss {
     public static String CACHE_DATA_PATH;
     public static String PREFERENCES_DATA_PATH;
     public static final Mp4Parser MP4_PARSER = new Mp4Parser();
-    public static boolean RUN_DATABASE_REFRESH_ON_STARTUP = false;
-    public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP = false;
+    public static boolean RUN_DATABASE_REFRESH_ON_STARTUP;
+    public static boolean REBUILD_LUCENE_INDEX_ON_STARTUP;
     public static final Set<Process> SPAWNED_PROCESSES = new HashSet<>();
     public static String HEAPDUMP_FILENAME;
     public static ClassLoader EXTRA_CLASSLOADER;
@@ -175,7 +174,7 @@ public class MyTunesRss {
     public static MediaServerConfig MEDIA_SERVER_CONFIG;
     public static MyTunesRssUpnpService UPNP_SERVICE;
 
-    public static void main(final String[] args) throws IOException, AWTException, SchedulerException, ClassNotFoundException, SQLException, InstantiationException, IllegalAccessException, DatabaseJobRunningException, ValidationException {
+    public static void main(final String[] args) throws IOException, SchedulerException, SQLException, DatabaseJobRunningException {
         PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
         PrefsUtils.MAC_PREFS_BASE = System.getProperty("ApplicationSupportDirectory");
         processArguments(args);
@@ -309,6 +308,7 @@ public class MyTunesRss {
                     info.destroy();
                 }
             }
+            //noinspection InfiniteLoopStatement
             while (true) {
                 try {
                     Thread.sleep(3600000); // sleep one hour
@@ -388,11 +388,13 @@ public class MyTunesRss {
 
     private static void startShutdownListener(final int port) {
         Thread thread = new Thread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(port, 0, InetAddress.getByName(null));
                     LOGGER.info("Started shutdown listener on port " + port + ".");
                     MyTunesRssUtils.showErrorMessage("Started shutdown listener on port " + port + ".");
+                    //noinspection InfiniteLoopStatement
                     while (true) {
                         Socket socket = null;
                         try {
@@ -435,11 +437,11 @@ public class MyTunesRss {
         thread.start();
     }
 
-    private static void initMainWindow() throws AWTException {
+    private static void initMainWindow() {
         FORM = new MyTunesRssForm();
     }
 
-    private static void createMissingPrefDirs() throws IOException {
+    private static void createMissingPrefDirs() {
         for (String dir : new String[]{"lib", "themes", "languages", "flashplayer"}) {
             File file = new File(MyTunesRss.PREFERENCES_DATA_PATH, dir);
             if (!file.exists()) {
@@ -486,10 +488,12 @@ public class MyTunesRss {
                 LOG_QUEUE_MANAGER.offer(event);
             }
 
+            @Override
             public boolean requiresLayout() {
                 return false;
             }
 
+            @Override
             public void close() {
                 // nothing to do here
             }
@@ -524,10 +528,8 @@ public class MyTunesRss {
                                 public boolean accept(File file) {
                                     if (file.getName().startsWith("MyTunesRSS.log") || file.getName().startsWith("VLC.log") || file.getName().startsWith("GM.log")) {
                                         return false;
-                                    } else if ("accesslogs".equals(file.getParentFile().getName())) {
-                                        return false;
                                     }
-                                    return true;
+                                    return !"accesslogs".equals(file.getParentFile().getName());
                                 }
                             });
                         }
@@ -544,7 +546,7 @@ public class MyTunesRss {
         }
     }
 
-    private static void initializeDatabase() throws IOException, SQLException, ClassNotFoundException, IllegalAccessException, InstantiationException {
+    private static void initializeDatabase() throws IOException, SQLException {
         boolean backupAfterSuccessfulInit = true;
         while (true) {
             try {
@@ -633,7 +635,7 @@ public class MyTunesRss {
         }
     }
 
-    private static void recreateDefaultDatabase() throws IOException {
+    private static void recreateDefaultDatabase() {
         LOGGER.info("Recreating default database.");
         CONFIG.setDatabaseType(DatabaseType.h2);
         CONFIG.setDefaultDatabaseSettings();
@@ -686,7 +688,7 @@ public class MyTunesRss {
         }
     }
 
-    private static void logSystemInfo() throws IOException {
+    private static void logSystemInfo() {
         if (LOGGER.isInfoEnabled()) {
             LOGGER.info("Operating system: " + SystemUtils.OS_NAME + ", " + SystemUtils.OS_VERSION + ", " + SystemUtils.OS_ARCH);
             LOGGER.info("Java: " + SystemUtils.JAVA_VERSION + "(" + SystemUtils.JAVA_HOME + ")");
@@ -702,7 +704,7 @@ public class MyTunesRss {
         }
     }
 
-    private static void loadConfig() throws IOException {
+    private static void loadConfig() {
         CONFIG = new MyTunesRssConfig();
         CONFIG.load();
         MEDIA_SERVER_CONFIG = MediaServerConfig.load();

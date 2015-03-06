@@ -21,6 +21,7 @@ public class RenameGenresStatement implements DataStoreStatement {
         myMappings = mappings;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         StopWatch.start("Renaming genres");
         try {

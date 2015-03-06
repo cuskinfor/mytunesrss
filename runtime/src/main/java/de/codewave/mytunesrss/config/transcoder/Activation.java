@@ -17,7 +17,7 @@ public enum Activation {
 
     private Class<? extends TranscoderActivation> myClazz;
 
-    private Activation(Class<? extends TranscoderActivation> clazz) {
+    Activation(Class<? extends TranscoderActivation> clazz) {
         myClazz = clazz;
     }
 

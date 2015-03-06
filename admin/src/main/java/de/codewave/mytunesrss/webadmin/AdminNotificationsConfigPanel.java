@@ -33,6 +33,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
     private CheckBox myNotifyOnOutdatedItunesXml;
     private CheckBox myNotifyOnSkippedDatabaseUpdate;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("adminNotificationsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 3, true, true));
@@ -70,6 +71,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myAdminEmail.setValue(MyTunesRss.CONFIG.getAdminEmail());
         myNotifyOnDatabaseUpdate.setValue(MyTunesRss.CONFIG.isNotifyOnDatabaseUpdate());
@@ -85,6 +87,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         myNotifyOnSkippedDatabaseUpdate.setValue(MyTunesRss.CONFIG.isNotifyOnSkippedDatabaseUpdate());
     }
 
+    @Override
     protected void writeToConfig() {
         MyTunesRss.CONFIG.setAdminEmail(myAdminEmail.getStringValue(null));
         MyTunesRss.CONFIG.setNotifyOnDatabaseUpdate((Boolean) myNotifyOnDatabaseUpdate.getValue());
@@ -110,6 +113,7 @@ public class AdminNotificationsConfigPanel extends MyTunesRssConfigPanel {
         return valid;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         super.buttonClick(clickEvent);
     }

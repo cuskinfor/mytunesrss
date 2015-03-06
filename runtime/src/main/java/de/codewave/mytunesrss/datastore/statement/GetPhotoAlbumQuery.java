@@ -23,19 +23,20 @@ public class GetPhotoAlbumQuery extends DataStoreQuery<QueryResult<PhotoAlbum>> 
         myId = id;
     }
 
+    @Override
     public QueryResult<PhotoAlbum> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotoAlbum");
         statement.setString("id", myId);
         return execute(statement, new ResultBuilder<PhotoAlbum>() {
+            @Override
             public PhotoAlbum create(ResultSet resultSet) throws SQLException {
-                PhotoAlbum photoAlbum = new PhotoAlbum(
+                return new PhotoAlbum(
                         resultSet.getString("id"),
                         resultSet.getString("name"),
                         resultSet.getLong("first_date"),
                         resultSet.getLong("last_date"),
                         resultSet.getInt("photo_count")
                 );
-                return photoAlbum;
             }
         });
     }

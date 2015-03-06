@@ -19,6 +19,7 @@ import java.io.IOException;
 public class PathInfoDecryptionFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(PathInfoDecryptionFilter.class);
 
+    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         if (MyTunesRss.CONFIG.getPathInfoKey() != null) {
@@ -27,10 +28,12 @@ public class PathInfoDecryptionFilter implements Filter {
         filterChain.doFilter(servletRequest, servletResponse);
     }
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // intentionally left blank
     }
 
+    @Override
     public void destroy() {
         // intentionally left blank
     }

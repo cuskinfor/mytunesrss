@@ -4,19 +4,17 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultBuilder;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery
@@ -37,6 +35,7 @@ public class FindPlaylistQuery extends AbstractFindPlaylistQuery<QueryResult<Pla
         super(user, types, id, containerId, includeHidden, matchingOwnerOnly);
     }
 
+    @Override
     public QueryResult<Playlist> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = getConditionals();
         conditionals.put("selectAll", true);
@@ -46,10 +45,8 @@ public class FindPlaylistQuery extends AbstractFindPlaylistQuery<QueryResult<Pla
     }
 
     public static class PlaylistResultBuilder implements ResultBuilder<Playlist> {
-        public PlaylistResultBuilder() {
-            // intentionally left blank
-        }
 
+        @Override
         public Playlist create(ResultSet resultSet) throws SQLException {
             Playlist playlist = new Playlist();
             playlist.setId(resultSet.getString("ID"));

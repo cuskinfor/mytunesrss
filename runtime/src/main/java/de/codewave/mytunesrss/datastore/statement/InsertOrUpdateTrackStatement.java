@@ -4,8 +4,13 @@
 
 package de.codewave.mytunesrss.datastore.statement;
 
-import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.config.*;
+import de.codewave.mytunesrss.FileSupportUtils;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.CommonTrackDatasourceConfig;
+import de.codewave.mytunesrss.config.DatasourceConfig;
+import de.codewave.mytunesrss.config.MediaType;
+import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
@@ -174,6 +179,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myContentType = contentType;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         try {
             DatasourceConfig config = MyTunesRss.CONFIG.getDatasource(mySourceId);
@@ -228,7 +234,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         }
     }
 
-    private void updateLuceneIndex() throws IOException, SQLException {
+    private void updateLuceneIndex() {
         LuceneTrack luceneTrack = newLuceneTrack();
         luceneTrack.setId(myId);
         luceneTrack.setSourceId(mySourceId);

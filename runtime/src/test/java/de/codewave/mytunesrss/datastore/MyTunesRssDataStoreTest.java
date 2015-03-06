@@ -5,10 +5,10 @@
 
 package de.codewave.mytunesrss.datastore;
 
-import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.MyTunesRssTestUtils;
+import de.codewave.mytunesrss.config.DatabaseType;
+import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.InsertPhotoStatement;
 import de.codewave.utils.sql.DataStoreSession;
@@ -37,13 +37,16 @@ public class MyTunesRssDataStoreTest {
 
     @Before
     public void setUp() throws SQLException, IOException, ClassNotFoundException {
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.VERSION = "1.0.0";
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);
-        MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:file:/tmp/" + UUID.randomUUID().toString() + ";DB_CLOSE_DELAY=-1");
+        MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:file:/tmp/" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
         MyTunesRss.CONFIG.setDatabaseUser("sa");
         MyTunesRss.CONFIG.setDatabasePassword("");
         Class.forName("org.h2.Driver");
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.STORE = new MyTunesRssDataStore();
         MyTunesRss.STORE.init();
         DataStoreSession session = MyTunesRss.STORE.getTransaction();
@@ -75,11 +78,9 @@ public class MyTunesRssDataStoreTest {
    }
 
     private static class InsertRunnable implements Runnable {
+        @Override
         public void run() {
-            while (true) {
-                if (Thread.interrupted()) {
-                    break;
-                }
+            while (!Thread.interrupted()) {
                 DataStoreSession session = MyTunesRss.STORE.getTransaction();
                 try {
                     InsertPhotoStatement insertPhotoStatement = createInsertPhotoStatement();
@@ -103,11 +104,9 @@ public class MyTunesRssDataStoreTest {
     }
 
     private static class DestroyInitRunnable implements Runnable {
+        @Override
         public void run() {
-            while (true) {
-                if (Thread.interrupted()) {
-                    break;
-                }
+            while (!Thread.interrupted()) {
                 try {
                     Thread.sleep(500);
                     MyTunesRss.STORE.destroy();
@@ -115,10 +114,7 @@ public class MyTunesRssDataStoreTest {
                     MyTunesRss.STORE.init();
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
-                } catch (IOException e) {
-                    LOGGER.error("Bang!", e);
-                    Thread.currentThread().interrupt();
-                } catch (SQLException e) {
+                } catch (IOException | SQLException e) {
                     LOGGER.error("Bang!", e);
                     Thread.currentThread().interrupt();
                 }

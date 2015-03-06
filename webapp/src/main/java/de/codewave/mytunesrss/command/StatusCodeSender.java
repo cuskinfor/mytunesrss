@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 public class StatusCodeSender extends StreamSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(StatusCodeSender.class);
@@ -20,12 +19,12 @@ public class StatusCodeSender extends StreamSender {
     private int myStatusCode;
     private String myMessage;
 
-    public StatusCodeSender(int statusCode) throws MalformedURLException {
+    public StatusCodeSender(int statusCode) {
         super(null, null, -1);
         myStatusCode = statusCode;
     }
 
-    public StatusCodeSender(int statusCode, String message) throws MalformedURLException {
+    public StatusCodeSender(int statusCode, String message) {
         super(null, null, -1);
         myStatusCode = statusCode;
         myMessage = message;

@@ -7,7 +7,10 @@ package de.codewave.mytunesrss.datastore.statement;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.QueryResult;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.ResultSetType;
+import de.codewave.utils.sql.SmartStatement;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -38,6 +41,7 @@ public class FindGenreQuery extends MyTunesRssDataStoreQuery<Genre> {
         }
     }
 
+    @Override
     public Genre execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("track", !myRestrictedPlaylistIds.isEmpty() || !myExcludedPlaylistIds.isEmpty());
@@ -62,6 +66,7 @@ public class FindGenreQuery extends MyTunesRssDataStoreQuery<Genre> {
             // intentionally left blank
         }
 
+        @Override
         public Genre create(ResultSet resultSet) throws SQLException {
             Genre genre = new Genre();
             genre.setName(resultSet.getString("NAME"));

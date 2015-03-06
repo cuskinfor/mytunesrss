@@ -6,7 +6,6 @@
 package de.codewave.mytunesrss.command;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +28,6 @@ public class ShortenUrlCommandHandler extends MyTunesRssCommandHandler {
                 if (postMethod.getStatusCode() == 201) {
                     getResponse().getWriter().print(postMethod.getResponseHeader("Location").getValue());
                 }
-            } catch (HttpException e) {
-                LOGGER.error("Could not shorten URL.", e);
-                getResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             } catch (IOException e) {
                 LOGGER.error("Could not shorten URL.", e);
                 getResponse().sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());

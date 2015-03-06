@@ -41,7 +41,7 @@ import java.util.concurrent.Callable;
 public class DatabaseBuilderCallable implements Callable<Boolean> {
 
     public enum State {
-        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle(), UpdatingTracksFromIphoto(), UpdatingTracksFromAperture();
+        UpdatingTracksFromItunes(), UpdatingTracksFromFolder(), UpdatingTrackImages(), Idle(), UpdatingTracksFromIphoto(), UpdatingTracksFromAperture()
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseBuilderCallable.class);
@@ -86,6 +86,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
     }
 
+    @Override
     public Boolean call() throws Exception {
         myQueue.start();
         Boolean result = Boolean.FALSE;
@@ -133,12 +134,10 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     MyTunesRss.CONFIG.save();
                 }
                 myQueue.offer(new CommittingDataStoreStatementEvent(new DataStoreStatement() {
+                    @Override
                     public void execute(Connection connection) throws SQLException {
-                        Statement statement = connection.createStatement();
-                        try {
+                        try (Statement statement = connection.createStatement()) {
                             statement.execute("UPDATE system_information SET lastupdate = " + timeUpdateStart);
-                        } finally {
-                            statement.close();
                         }
                     }
                 }, false));
@@ -148,6 +147,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                     LOGGER.info("Update took " + (System.currentTimeMillis() - timeUpdateStart) + " ms.");
                 }
                 myQueue.offer(new DataStoreEvent() {
+                    @Override
                     public boolean execute(DataStoreSession session) {
                         try {
                             MyTunesRss.ADMIN_NOTIFY.notifyDatabaseUpdate((System.currentTimeMillis() - timeUpdateStart), missingItunesFiles, MyTunesRss.STORE.executeQuery(new GetSystemInformationQuery()));
@@ -157,6 +157,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
                         return true;
                     }
 
+                    @Override
                     public boolean isCheckpointRelevant() {
                         return false;
                     }
@@ -181,6 +182,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         StopWatch.start("Fetching existing tracks");
         try {
             MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
+                @Override
                 public Void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksIdSourceIdAndUpdateTs");
                     ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
@@ -199,6 +201,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         final Map<String, String> photoSourceId = MyTunesRssUtils.openMvMap(mvStore, "photoSourceId");
         try {
             MyTunesRss.STORE.executeQuery(new DataStoreQuery<Void>() {
+                @Override
                 public Void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getPhotosIdSourceIdAndUpdateTs");
                     ResultSet rs = statement.executeQuery(ResultSetType.TYPE_FORWARD_ONLY, 10000);
@@ -216,21 +219,25 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
             try {
                 for (DatasourceConfig datasource : myDatasources) {
                     if (datasource.getType() == DatasourceType.Itunes && !Thread.currentThread().isInterrupted()) {
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         myState = State.UpdatingTracksFromItunes;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningItunes");
                         myQueue.offer(new MyTunesRssEventEvent(event));
                         missingItunesFiles.put(new File(datasource.getDefinition()).getCanonicalPath(), ItunesLoader.loadFromITunes(Thread.currentThread(), (ItunesDatasourceConfig) datasource, myQueue, trackTsUpdate, trackSourceId, mvStore));
                     } else if (datasource.getType() == DatasourceType.Iphoto && !Thread.currentThread().isInterrupted()) {
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         myState = State.UpdatingTracksFromIphoto;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningIphoto");
                         myQueue.offer(new MyTunesRssEventEvent(event));
                         IphotoLoader.loadFromIPhoto(Thread.currentThread(), (IphotoDatasourceConfig) datasource, myQueue, photoTsUpdate, photoSourceId, mvStore);
                     } else if (datasource.getType() == DatasourceType.Aperture && !Thread.currentThread().isInterrupted()) {
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         myState = State.UpdatingTracksFromAperture;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningAperture");
                         myQueue.offer(new MyTunesRssEventEvent(event));
                         ApertureLoader.loadFromAperture(Thread.currentThread(), (ApertureDatasourceConfig) datasource, myQueue, photoTsUpdate, photoSourceId, mvStore);
                     } else if (datasource.getType() == DatasourceType.Watchfolder && !Thread.currentThread().isInterrupted()) {
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         myState = State.UpdatingTracksFromFolder;
                         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRunningFolder");
                         myQueue.offer(new MyTunesRssEventEvent(event));
@@ -245,6 +252,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         if (!Thread.currentThread().isInterrupted()) {
             // Add all removed data sources to the list of updated ones, so all tracks, photos, etc. from those data sources is removed now
             Set<String> dataSourceIdsFromDatabase = MyTunesRss.STORE.executeQuery(new DataStoreQuery<Set<String>>() {
+                @Override
                 public Set<String> execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getDataSourceIds");
                     ResultSet rs = statement.executeQuery();
@@ -275,6 +283,7 @@ public class DatabaseBuilderCallable implements Callable<Boolean> {
         }
         if (!Thread.currentThread().isInterrupted()) {
             myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
+                @Override
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "cleanupPlaylistsAndPhotoAlbumsAfterUpdate");
                     statement.setItems("source_id", updatedDataSourceIds);

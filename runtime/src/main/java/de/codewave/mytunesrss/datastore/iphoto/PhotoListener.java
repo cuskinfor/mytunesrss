@@ -6,9 +6,9 @@
 package de.codewave.mytunesrss.datastore.iphoto;
 
 import de.codewave.mytunesrss.MyTunesRssBase64Utils;
-import de.codewave.mytunesrss.TikaUtils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.TikaUtils;
 import de.codewave.mytunesrss.config.CompiledReplacementRule;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.PhotoDatasourceConfig;
@@ -21,12 +21,10 @@ import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
 import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,10 +46,10 @@ public abstract class PhotoListener implements PListHandlerListener {
     private Thread myWatchdogThread;
     private Set<CompiledReplacementRule> myPathReplacements;
     private PhotoDatasourceConfig myDatasourceConfig;
-    protected long myXmlModDate;
+    private long myXmlModDate;
 
     public PhotoListener(PhotoDatasourceConfig datasourceConfig, Thread watchdogThread, DatabaseUpdateQueue queue, LibraryListener libraryListener, Map<String, String> photoIdToPersId,
-                         Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId) throws SQLException {
+                         Map<String, Long> photoTsUpdate, Map<String, String> photoSourceId, long xmlModDate) {
         myDatasourceConfig = datasourceConfig;
         myWatchdogThread = watchdogThread;
         myQueue = queue;
@@ -59,6 +57,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         myPhotoIdToPersId = photoIdToPersId;
         myPhotoTsUpdate = photoTsUpdate;
         myPhotoSourceId = photoSourceId;
+        myXmlModDate = xmlModDate;
         myPathReplacements = new HashSet<>();
         for (ReplacementRule pathReplacement : myDatasourceConfig.getPathReplacements()) {
             myPathReplacements.add(new CompiledReplacementRule(pathReplacement));
@@ -69,6 +68,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         return myUpdatedCount;
     }
 
+    @Override
     public boolean beforeDictPut(Map dict, String key, Object value) {
         Map photo = (Map) value;
         String photoId = calculatePhotoId(key, photo);
@@ -96,6 +96,7 @@ public abstract class PhotoListener implements PListHandlerListener {
         return photoId;
     }
 
+    @Override
     public boolean beforeArrayAdd(List array, Object value) {
         throw new UnsupportedOperationException("method beforeArrayAdd of iPhoto photo listener is not supported!");
     }
@@ -111,7 +112,7 @@ public abstract class PhotoListener implements PListHandlerListener {
             String filename = applyReplacements(getImagePath(photo));
             if (StringUtils.isNotBlank(filename)) {
                 File file = MyTunesRssUtils.searchFile(filename);
-                if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated.longValue() || file.lastModified() >= tsUpdated.longValue())) {
+                if (file.isFile() && (tsUpdated == null || myXmlModDate >= tsUpdated || file.lastModified() >= tsUpdated)) {
                     if (TikaUtils.getMediaType(new File(filename)) == MediaType.Image) {
                         InsertOrUpdatePhotoStatement statement = tsUpdated != null ? new UpdatePhotoStatement(myDatasourceConfig.getId()) : new InsertPhotoStatement(myDatasourceConfig.getId());
                         statement.clear();
@@ -125,14 +126,14 @@ public abstract class PhotoListener implements PListHandlerListener {
                         // 2) exif date
                         // 3) modification date from xml
                         if (dateAsTimerInterval != null) {
-                            createDate = Long.valueOf((dateAsTimerInterval.longValue() * 1000L) + 978303600000L);
+                            createDate = (dateAsTimerInterval.longValue() * 1000L) + 978303600000L;
                         } else {
                             createDate = MyTunesRssExifUtils.getCreateDate(file);
                             if (createDate == null && modDateAsTimerInterval != null) {
-                                createDate = Long.valueOf((modDateAsTimerInterval.longValue() * 1000L) + 978303600000L);
+                                createDate = (modDateAsTimerInterval.longValue() * 1000L) + 978303600000L;
                             }
                         }
-                        statement.setDate(createDate != null ? createDate.longValue() : 0);
+                        statement.setDate(createDate != null ? createDate : 0);
                         statement.setFile(filename);
                         myQueue.offer(new DataStoreStatementEvent(statement, true, "Could not insert photo \"" + name + "\" into database"));
                         //HandlePhotoImagesStatement handlePhotoImagesStatement = new HandlePhotoImagesStatement(file, photoId, 0);

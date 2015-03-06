@@ -25,6 +25,7 @@ public class RemoveStatisticEventsJob implements Job {
      * @throws org.quartz.JobExecutionException
      *
      */
+    @Override
     public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {

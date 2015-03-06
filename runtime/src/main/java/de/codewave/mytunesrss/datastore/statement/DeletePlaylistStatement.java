@@ -23,6 +23,7 @@ public class DeletePlaylistStatement implements DataStoreStatement {
         myId = id;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "deletePlaylistById");
         statement.setString("id", myId);

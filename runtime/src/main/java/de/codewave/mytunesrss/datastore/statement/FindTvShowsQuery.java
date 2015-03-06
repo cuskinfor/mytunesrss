@@ -6,9 +6,10 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRssUtils;
-import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.User;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.QueryResult;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.SmartStatement;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,6 +34,7 @@ public class FindTvShowsQuery extends MyTunesRssDataStoreQuery<QueryResult<TvSho
         }
     }
 
+    @Override
     public QueryResult<TvShow> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("restricted", !myRestrictedPlaylistIds.isEmpty());
@@ -50,6 +52,7 @@ public class FindTvShowsQuery extends MyTunesRssDataStoreQuery<QueryResult<TvSho
             // intentionally left blank
         }
 
+        @Override
         public TvShow create(ResultSet resultSet) throws SQLException {
             TvShow tvShow = new TvShow();
             tvShow.setName(resultSet.getString("SERIES"));

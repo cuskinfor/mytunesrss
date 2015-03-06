@@ -18,6 +18,7 @@ import java.io.IOException;
  */
 public class DoLoginCommandHandler extends MyTunesRssCommandHandler {
 
+    @Override
     public void execute() throws Exception {
         String userName = getRequest().getParameter("username");
         String password = getRequest().getParameter("password");

@@ -62,7 +62,7 @@ public class WebConfig {
             CFG_SHOW_EXTERNAL_SITES, CFG_KEEP_ALIVE, CFG_SHOW_ADD_TO_PLAYLIST, CFG_PHOTO_SIZE,
             CFG_MAX_SEARCH_RESULTS, CFG_PHOTO_JPEG_QUALITY};
 
-    public static enum PlaylistType {
+    public enum PlaylistType {
         M3u(), Xspf(), Json(), JwMediaRss();
 
         public String getFileSuffix() {
@@ -182,8 +182,7 @@ public class WebConfig {
     private String getCookieValue(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (int i = 0; i < cookies.length; i++) {
-                Cookie cookie = cookies[i];
+            for (Cookie cookie : cookies) {
                 if (CONFIG_COOKIE_NAME.equals(cookie.getName())) {
                     return cookie.getValue();
                 }
@@ -229,7 +228,7 @@ public class WebConfig {
     }
 
     public String createCookieValue() {
-        StringBuffer value = new StringBuffer();
+        StringBuilder value = new StringBuilder();
         for (Map.Entry<String, String> entry : myConfigValues.entrySet()) {
             if (entry.getKey() != null && entry.getValue() != null) {
                 value.append(";").append(entry.getKey()).append("=").append(entry.getValue());

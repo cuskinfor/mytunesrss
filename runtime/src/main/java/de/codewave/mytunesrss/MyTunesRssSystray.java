@@ -22,11 +22,12 @@ public class MyTunesRssSystray {
     private UUID myUUID;
     private JFrame myFrame;
 
-    public MyTunesRssSystray(JFrame frame) throws AWTException {
+    public MyTunesRssSystray(JFrame frame) {
         myFrame = frame;
         String resourceName = SystemUtils.IS_OS_WINDOWS ? "/de/codewave/mytunesrss/SysTrayWindows.png" : "/de/codewave/mytunesrss/SysTray.png";
         Image image = Toolkit.getDefaultToolkit().createImage(MyTunesRss.class.getResource(resourceName));
         myUUID = SystrayUtils.add(image, null, null, new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 LOGGER.debug("Showing root myFrame from system tray.");
                 if (myFrame.getExtendedState() == JFrame.ICONIFIED) {

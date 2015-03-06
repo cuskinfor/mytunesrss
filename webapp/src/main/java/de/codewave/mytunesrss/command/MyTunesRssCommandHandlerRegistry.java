@@ -10,6 +10,7 @@ import de.codewave.utils.servlet.CommandHandlerRegistry;
  * de.codewave.mytunesrss.command.MyTunesRssCommandHandlerRegistry
  */
 public class MyTunesRssCommandHandlerRegistry extends CommandHandlerRegistry {
+    @Override
     protected void init() {
         registerCommands(MyTunesRssCommand.values());
         setDefaultCommandHandler(StartCommandHandler.class);

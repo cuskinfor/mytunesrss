@@ -74,6 +74,7 @@ public abstract class DatasourcesSelectionPanel extends MyTunesRssConfigPanel {
         getWindow().getParent().removeWindow(getWindow());
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myContinueButton) {
             Collection<DatasourceConfig> datasources = getSelectedDatasources();

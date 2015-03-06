@@ -57,6 +57,7 @@ public abstract class TextFieldWindow extends Window implements Button.ClickList
         panel.addComponent(myOkButton);
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myOkButton) {
             onOk((String) myTextField.getValue());

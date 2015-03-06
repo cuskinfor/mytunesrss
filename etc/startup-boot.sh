@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 #
 # MyTunesRSS startup script for system boot
 #
@@ -43,11 +45,11 @@ SHUTDOWN_PORT=55555
 case "$1" in
   start)
         cd [... insert MyTunesRSS install dir here ...]
-        java $VM_OPTIONS $BOOT_CP $XML_PARSER $MYTUNESRSS_PROPS -jar mytunesrss.jar -shutdownPort $SHUTDOWN_PORT
+        java ${VM_OPTIONS} ${BOOT_CP} ${XML_PARSER} ${MYTUNESRSS_PROPS} -jar mytunesrss.jar -shutdownPort ${SHUTDOWN_PORT}
         ;;
   stop)
         cd [... insert MyTunesRSS install dir here ...]
-        java -jar mytunesrss.jar -shutdown $SHUTDOWN_PORT
+        java -jar mytunesrss.jar -shutdown ${SHUTDOWN_PORT}
         ;;
   restart|reload|force-reload)
         echo "Error: argument '$1' not supported" >&2

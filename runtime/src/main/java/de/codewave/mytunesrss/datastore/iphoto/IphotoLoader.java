@@ -51,7 +51,7 @@ public class IphotoLoader {
                 handler.addListener("/plist/dict", libraryListener);
                 // first add all photos
                 handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
-                LOG.info("Parsing iPhoto (photos): \"" + iPhotoLibraryXml.toString() + "\".");
+                LOG.info("Parsing iPhoto (photos): \"" + iPhotoLibraryXml + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 // then add albums and rolls
                 handler.removeListener("/plist/dict[Master Image List]/dict");
@@ -65,14 +65,10 @@ public class IphotoLoader {
                     rollListener = new RollListener(config, executionThread, queue, libraryListener, photoIdToPersId);
                     handler.addListener("/plist/dict[List of Rolls]/array", rollListener);
                 }
-                LOG.info("Parsing iPhoto (albums/rolls): \"" + iPhotoLibraryXml.toString() + "\".");
+                LOG.info("Parsing iPhoto (albums/rolls): \"" + iPhotoLibraryXml + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " iPhoto photos.");
-            } catch (IOException e) {
-                LOG.error("Could not read data from iPhoto xml file.", e);
-            } catch (ParserConfigurationException e) {
-                LOG.error("Could not read data from iPhoto xml file.", e);
-            } catch (SAXException e) {
+            } catch (IOException | SAXException | ParserConfigurationException e) {
                 LOG.error("Could not read data from iPhoto xml file.", e);
             }
         }

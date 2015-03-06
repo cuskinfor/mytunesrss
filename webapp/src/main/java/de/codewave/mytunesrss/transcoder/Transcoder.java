@@ -10,7 +10,6 @@ import de.codewave.utils.servlet.StreamSender;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -35,7 +34,7 @@ public class Transcoder {
         myTrack = track;
     }
 
-    public StreamSender getStreamSender(File originalFile, long ifModifiedSince) throws IOException {
+    public StreamSender getStreamSender(File originalFile, long ifModifiedSince) {
         if (ifModifiedSince != -1 && !isModifiedSince(originalFile, ifModifiedSince)) {
             // not modified
             return new StatusCodeSender(HttpServletResponse.SC_NOT_MODIFIED);
@@ -49,7 +48,7 @@ public class Transcoder {
         return !cacheFile.isFile() || (originalFile.isFile() && originalFile.lastModified() > cacheFile.lastModified()) || (cacheFile.lastModified() / 1000 > ts / 1000);
     }
 
-    public InputStream getStream(File originalFile, long ifModifiedSince) throws IOException {
+    public InputStream getStream(File originalFile, long ifModifiedSince) {
         File cacheFile = getCacheFile();
         if (originalFile.isFile() && cacheFile.isFile() && originalFile.lastModified() > cacheFile.lastModified()) {
             // cached file is outdated

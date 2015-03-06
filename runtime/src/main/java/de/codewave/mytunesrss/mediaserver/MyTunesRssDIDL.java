@@ -11,7 +11,10 @@ import de.codewave.mytunesrss.MyTunesRssBase64Utils;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.Album;
+import de.codewave.mytunesrss.datastore.statement.Photo;
+import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.DataStoreSession;
 import org.apache.commons.io.FilenameUtils;
@@ -41,25 +44,25 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
     public static final DLNAProfiles[] DLNA_JPEG_PROFILES = new DLNAProfiles[]{DLNAProfiles.JPEG_MED, DLNAProfiles.JPEG_SM, DLNAProfiles.JPEG_TN};
     public static final DLNAProfiles[] DLNA_PNG_PROFILES = new DLNAProfiles[]{DLNAProfiles.PNG_LRG, DLNAProfiles.PNG_LRG, DLNAProfiles.PNG_TN};
 
-    final void initDirectChildren(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    final void initDirectChildren(String oidParams, long firstResult, long maxResults) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createDirectChildren(getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
+            createDirectChildren(getUser(), tx, oidParams, firstResult, maxResults);
         } finally {
             tx.rollback();
         }
     }
 
-    final void initMetaData(String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    final void initMetaData(String oidParams) throws SQLException {
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
-            createMetaData(getUser(), tx, oidParams, filter, firstResult, maxResults, orderby);
+            createMetaData(getUser(), tx, oidParams);
         } finally {
             tx.rollback();
         }
     }
 
-    abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException;
+    abstract void createDirectChildren(User user, DataStoreSession tx, String oidParams, long firstResult, long maxResults) throws SQLException;
 
     protected Container createSimpleContainer(String id , String parentId, String title, int childCount) {
         Container container = createSimpleContainer(id, parentId, childCount);
@@ -149,7 +152,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         return null;
     }
 
-    abstract void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException;
+    abstract void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException;
 
     abstract long getTotalMatches();
 
@@ -177,7 +180,7 @@ public abstract class MyTunesRssDIDL extends DIDLContent {
         builder.append(hours).append(":");
         builder.append(StringUtils.leftPad(Integer.toString(minutes), 2, '0')).append(":");
         builder.append(StringUtils.leftPad(Integer.toString(seconds), 2, '0')).append(".000");
-        LOGGER.debug("Human readable of \"" + time + "\" is \"" + builder.toString() + "\".");
+        LOGGER.debug("Human readable of \"" + time + "\" is \"" + builder + "\".");
         return builder.toString();
     }
 

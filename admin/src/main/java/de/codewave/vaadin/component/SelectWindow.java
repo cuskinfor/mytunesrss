@@ -59,6 +59,7 @@ public abstract class SelectWindow<T> extends Window implements Button.ClickList
         panel.addComponent(myOkButton);
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myOkButton) {
             onOk((T) mySelect.getValue());

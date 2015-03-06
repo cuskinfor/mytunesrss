@@ -48,6 +48,7 @@ public abstract class InsertOrUpdatePhotoStatement implements DataStoreStatement
         myStatement = statement;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         try {
             if (myStatement == null) {

@@ -34,6 +34,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private static class MusicFolderListener implements PListHandlerListener {
         private String myMusicFolder;
 
+        @Override
         public boolean beforeDictPut(Map dict, String key, Object value) {
             if ("Music Folder".equals(key)) {
                 myMusicFolder = value.toString();
@@ -42,6 +43,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
             return true;
         }
 
+        @Override
         public boolean beforeArrayAdd(List array, Object value) {
             return false;
         }
@@ -58,7 +60,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
     private List<String> myTrackImagePatterns = new ArrayList<>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private String myMusicFolderFilename;
-    private boolean myUseSingleImageInFolder = false;
+    private boolean myUseSingleImageInFolder;
 
     public ItunesDatasourceConfig(String id, String name, String definition) {
         super(id, StringUtils.defaultIfBlank(name, "iTunes"), definition);
@@ -110,34 +112,42 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         myIgnorePlaylists.clear();
     }
 
+    @Override
     public String getArtistDropWords() {
         return myArtistDropWords;
     }
 
+    @Override
     public void setArtistDropWords(String artistDropWords) {
         myArtistDropWords = artistDropWords;
     }
 
+    @Override
     public String getDisabledMp4Codecs() {
         return myDisabledMp4Codecs;
     }
 
+    @Override
     public void setDisabledMp4Codecs(String disabledMp4Codecs) {
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
+    @Override
     public List<String> getTrackImagePatterns() {
         return new ArrayList<>(myTrackImagePatterns);
     }
 
+    @Override
     public void setTrackImagePatterns(List<String> trackImageMappings) {
         this.myTrackImagePatterns = new ArrayList<>(trackImageMappings);
     }
 
+    @Override
     public ImageImportType getTrackImageImportType() {
         return myTrackImageImportType;
     }
 
+    @Override
     public void setTrackImageImportType(ImageImportType trackImageImportType) {
         myTrackImageImportType = trackImageImportType;
     }
@@ -192,6 +202,7 @@ public class ItunesDatasourceConfig extends DatasourceConfig implements CommonTr
         return getAutoAddToItunesFolder() != null;
     }
 
+    @Override
     public boolean isUseSingleImageInFolder() {
         return myUseSingleImageInFolder;
     }

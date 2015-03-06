@@ -26,6 +26,7 @@ import java.util.Set;
 public class MaintenanceRunnable implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(MaintenanceRunnable.class);
 
+    @Override
     public void run() {
         try {
             LOGGER.debug("Starting maintenance job.");
@@ -44,6 +45,7 @@ public class MaintenanceRunnable implements Runnable {
         }
         try {
             MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+                @Override
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "deleteOrphanedPlaylists");
                     statement.setItems("existingUsers", userNames.toArray(new String[userNames.size()]));

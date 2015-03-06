@@ -20,6 +20,7 @@ import java.sql.SQLException;
 public class CreateAllTablesStatement implements DataStoreStatement {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreateAllTablesStatement.class);
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         LOGGER.debug("Creating all tables. Executing pre-create statement.");
         MyTunesRssUtils.createStatement(connection, "preCreateAllTables").execute();

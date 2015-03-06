@@ -2,7 +2,6 @@ package de.codewave.vaadin.validation;
 
 import com.vaadin.data.validator.AbstractValidator;
 import de.codewave.mytunesrss.mediaserver.Network;
-import org.apache.commons.lang3.StringUtils;
 
 public class NetworkValidator extends AbstractValidator {
     public NetworkValidator(String errorMessage) {

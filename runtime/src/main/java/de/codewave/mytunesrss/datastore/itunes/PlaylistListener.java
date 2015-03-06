@@ -1,8 +1,8 @@
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.ShutdownRequestedException;
+import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.FindPlaylistQuery;
 import de.codewave.mytunesrss.datastore.statement.PlaylistType;
 import de.codewave.mytunesrss.datastore.statement.SaveITunesPlaylistStatement;
@@ -40,10 +40,12 @@ public class PlaylistListener implements PListHandlerListener {
         myIgnores.add(ItunesPlaylistType.Master); // always ignore "Master" playlist
     }
 
+    @Override
     public boolean beforeDictPut(Map dict, String key, Object value) {
         throw new UnsupportedOperationException("method beforeDictPut of class ItunesLoader$PlaylistListener is not supported!");
     }
 
+    @Override
     public boolean beforeArrayAdd(List array, Object value) {
         try {
             insertPlaylist((Map) value);
@@ -63,26 +65,25 @@ public class PlaylistListener implements PListHandlerListener {
 
         boolean ignore = false;
         for (ItunesPlaylistType type : myIgnores) {
-            ignore = playlist.get(type.toString()) != null && ((Boolean) playlist.get(type.toString())).booleanValue();
+            ignore = playlist.get(type.toString()) != null && (Boolean) playlist.get(type.toString());
             if (ignore) {
                 break;
             }
         }
-        boolean folder = playlist.get("Folder") != null && ((Boolean) playlist.get("Folder")).booleanValue();
+        boolean folder = playlist.get("Folder") != null && (Boolean) playlist.get("Folder");
         boolean smart = playlist.get("Smart Info") != null;
 
         if (!ignore && (!smart || !myIgnores.contains(ItunesPlaylistType.SmartPlaylists))) {
             String playlistId = playlist.get("Playlist Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
-                    "Playlist Persistent ID").toString() :
-                    myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID").toString();
+                    "Playlist Persistent ID") :
+                    myLibraryListener.getLibraryId() + "_" + "PlaylistID" + playlist.get("Playlist ID");
             String name = (String) playlist.get("Name");
             String containerId = playlist.get("Parent Persistent ID") != null ? myLibraryListener.getLibraryId() + "_" + playlist.get(
                     "Parent Persistent ID") : null;
             List<Map> items = (List<Map>) playlist.get("Playlist Items");
             List<String> tracks = new ArrayList<>();
             if (items != null && !items.isEmpty()) {
-                for (Iterator<Map> itemIterator = items.iterator(); itemIterator.hasNext();) {
-                    Map item = itemIterator.next();
+                for (Map item : items) {
                     Long trackId = (Long) item.get("Track ID");
                     if (trackId != null && StringUtils.isNotBlank(myTrackIdToPersId.get(trackId))) {
                         tracks.add(myTrackIdToPersId.get(trackId));

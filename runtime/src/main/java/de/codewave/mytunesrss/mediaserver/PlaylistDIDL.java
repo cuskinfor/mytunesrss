@@ -10,14 +10,13 @@ import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
-import org.fourthline.cling.support.model.SortCriterion;
 
 import java.sql.SQLException;
 
 public class PlaylistDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(final User user, final DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(final User user, final DataStoreSession tx, final String oidParams, long firstResult, long maxResults) throws SQLException {
         FindPlaylistTracksQuery findPlaylistTracksQuery = new FindPlaylistTracksQuery(user, decode(oidParams).get(0), SortOrder.KeepOrder, (int)firstResult, (int)maxResults);
         findPlaylistTracksQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
         tx.executeQuery(findPlaylistTracksQuery).processRemainingResults(new DataStoreQuery.ResultProcessor<Track>() {
@@ -39,7 +38,7 @@ public class PlaylistDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, null, decode(oidParams).get(0), null, false, false);
         findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         Playlist playlist = tx.executeQuery(findPlaylistQuery).nextResult();

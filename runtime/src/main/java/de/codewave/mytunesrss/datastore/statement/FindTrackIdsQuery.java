@@ -25,6 +25,7 @@ public class FindTrackIdsQuery extends DataStoreQuery<Collection<String>> {
         mySource = source;
     }
 
+    @Override
     public Collection<String> execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "findTrackIdsForSource");
         statement.setString("source", mySource);

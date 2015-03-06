@@ -28,7 +28,6 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.io.TikaInputStream;
-import org.apache.tika.metadata.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,9 +89,10 @@ public class UploadCommandHandler extends MyTunesRssCommandHandler {
     }
 
     // TODO: Each upload will trigger a db update. While one is waiting to be scheduled all subsequent ones should be ignored
-    private void triggerDatabaseUpdate(final DatasourceConfig datasource, final List<File> uploadedFiles, final long lastModifiedBeforeUpload) throws DatabaseJobRunningException {
+    private void triggerDatabaseUpdate(final DatasourceConfig datasource, final List<File> uploadedFiles, final long lastModifiedBeforeUpload) {
         final long startTime = System.currentTimeMillis();
         MyTunesRss.EXECUTOR_SERVICE.schedule(new Runnable() {
+            @Override
             public void run() {
                 // remove all files from the list that have been consumed by iTunes
                 for (Iterator<File> iterFiles = uploadedFiles.iterator(); iterFiles.hasNext(); ) {

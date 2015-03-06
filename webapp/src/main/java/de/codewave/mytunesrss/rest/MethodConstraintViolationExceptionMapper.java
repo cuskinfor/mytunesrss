@@ -14,6 +14,7 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class MethodConstraintViolationExceptionMapper implements ExceptionMapper<MethodConstraintViolationException> {
+    @Override
     public Response toResponse(MethodConstraintViolationException exception) {
         Response.ResponseBuilder responseBuilder = Response.status(HttpServletResponse.SC_BAD_REQUEST).entity(exception.getConstraintViolations().iterator().next().getMessage());
         return responseBuilder.build();

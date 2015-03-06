@@ -19,6 +19,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         myDelegate = delegate;
     }
 
+    @Override
     public int size() {
         boolean interrupted = Thread.interrupted();
         try {
@@ -30,6 +31,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public boolean isEmpty() {
         boolean interrupted = Thread.interrupted();
         try {
@@ -41,6 +43,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public boolean containsKey(Object o) {
         boolean interrupted = Thread.interrupted();
         try {
@@ -52,6 +55,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public boolean containsValue(Object o) {
         boolean interrupted = Thread.interrupted();
         try {
@@ -63,6 +67,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public V get(Object o) {
         boolean interrupted = Thread.interrupted();
         try {
@@ -74,6 +79,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public V put(K k, V v) {
         boolean interrupted = Thread.interrupted();
         try {
@@ -85,6 +91,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public V remove(Object o) {
         boolean interrupted = Thread.interrupted();
         try {
@@ -96,6 +103,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         boolean interrupted = Thread.interrupted();
         try {
@@ -107,6 +115,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public void clear() {
         boolean interrupted = Thread.interrupted();
         try {
@@ -118,6 +127,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public Set<K> keySet() {
         boolean interrupted = Thread.interrupted();
         try {
@@ -129,6 +139,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public Collection<V> values() {
         boolean interrupted = Thread.interrupted();
         try {
@@ -140,6 +151,7 @@ public class InterruptSafeMvMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
     public Set<Entry<K, V>> entrySet() {
         boolean interrupted = Thread.interrupted();
         try {

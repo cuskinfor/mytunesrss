@@ -18,6 +18,7 @@ import java.sql.SQLException;
 public class MaintenanceStatement implements DataStoreStatement {
     private static final Logger LOG = LoggerFactory.getLogger(MaintenanceStatement.class);
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "maintenance");
         StopWatch.start("Database maintenance");

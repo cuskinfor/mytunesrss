@@ -5,10 +5,10 @@
 package de.codewave.mytunesrss.command;
 
 import de.codewave.mytunesrss.*;
-import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
+import de.codewave.mytunesrss.lucene.LuceneQueryParserException;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
@@ -111,7 +111,7 @@ public class BrowseTrackCommandHandler extends MyTunesRssCommandHandler {
                 } finally {
                     StopWatch.stop();
                 }
-                getRequest().setAttribute("sortOrderLink", Boolean.valueOf(!enhancedTracks.isSimpleResult()) && sortOrderValue != SortOrder.KeepOrder);
+                getRequest().setAttribute("sortOrderLink", !enhancedTracks.isSimpleResult() && sortOrderValue != SortOrder.KeepOrder);
                 tracks = (List<TrackUtils.EnhancedTrack>)enhancedTracks.getTracks();
                 if (pageSize > 0 && tracks.size() > pageSize) {
                     tracks.get(0).setContinuation(!tracks.get(0).isNewSection());

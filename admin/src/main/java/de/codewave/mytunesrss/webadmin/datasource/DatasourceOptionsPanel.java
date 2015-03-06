@@ -8,7 +8,6 @@ package de.codewave.mytunesrss.webadmin.datasource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
 import de.codewave.mytunesrss.ImageImportType;
-import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
 import de.codewave.mytunesrss.config.VideoType;
 import de.codewave.mytunesrss.webadmin.MyTunesRssConfigPanel;
@@ -50,9 +49,8 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
 
             VideoTypeRepresentation that = (VideoTypeRepresentation) o;
 
-            if (myVideoType != that.myVideoType) return false;
+            return myVideoType == that.myVideoType;
 
-            return true;
         }
 
         @Override
@@ -168,6 +166,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
         myPathReplacements.addItem(new Object[]{searchTextField, new SmartTextField(null, replacement.getReplacement()), getComponentFactory().createButton("button.delete", this)}, myItemIdGenerator.getAndIncrement());
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddPathReplacement) {
             addPathReplacement(new ReplacementRule("^.*$", "$0"));
@@ -176,6 +175,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
             final Button yes = new Button(getBundleString("button.yes"));
             Button no = new Button(getBundleString("button.no"));
             new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourcesConfigDialog.optionWindowDeletePathReplacement.caption"), getBundleString("datasourcesConfigDialog.optionWindowDeletePathReplacement.message"), yes, no) {
+                @Override
                 public void clicked(Button button) {
                     if (button == yes) {
                         myPathReplacements.removeItem(findTableItemWithObject(myPathReplacements, clickEvent.getSource()));
@@ -190,6 +190,7 @@ public abstract class DatasourceOptionsPanel extends MyTunesRssConfigPanel {
             final Button yes = new Button(getBundleString("button.yes"));
             Button no = new Button(getBundleString("button.no"));
             new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.caption"), getBundleString("datasourceOptionsPanel.optionWindowDeleteTrackImageMapping.message"), yes, no) {
+                @Override
                 public void clicked(Button button) {
                     if (button == yes) {
                         myTrackImagePatternsTable.removeItem(findTableItemWithObject(myTrackImagePatternsTable, clickEvent.getSource()));

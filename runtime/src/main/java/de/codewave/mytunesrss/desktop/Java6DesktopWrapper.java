@@ -18,6 +18,7 @@ public class Java6DesktopWrapper implements DesktopWrapper {
         Desktop.getDesktop(); // just to check if it exsist
     }
 
+    @Override
     public void openBrowser(URI uri) {
         try {
             Desktop.getDesktop().browse(uri);
@@ -26,6 +27,7 @@ public class Java6DesktopWrapper implements DesktopWrapper {
         }
     }
 
+    @Override
     public boolean isSupported() {
         return true;
     }

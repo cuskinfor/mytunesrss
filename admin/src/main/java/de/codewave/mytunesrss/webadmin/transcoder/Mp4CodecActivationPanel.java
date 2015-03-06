@@ -37,20 +37,24 @@ public class Mp4CodecActivationPanel extends Panel implements Button.ClickListen
         initFromConfig(activation);
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent event) {
         ((ComponentContainer) getParent()).removeComponent(this);
     }
 
 
+    @Override
     public Mp4CodecTranscoderActivation getConfig() {
         return new Mp4CodecTranscoderActivation(myCodecsTextField.getStringValue(""), myNegationCheckBox.booleanValue());
     }
 
+    @Override
     public void initFromConfig(Mp4CodecTranscoderActivation config) {
         myCodecsTextField.setValue(StringUtils.join(config.getCodecs(), ','), "");
         myNegationCheckBox.setValue(config.isNegation());
     }
 
+    @Override
     public boolean isValid() {
         LOGGER.debug("Validating MP4 codec activation panel.");
         return VaadinUtils.isValid(myForm);

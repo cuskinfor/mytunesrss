@@ -6,9 +6,6 @@
 package de.codewave.mytunesrss.mediaserver;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.User;
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.map.AnnotationIntrospector;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -17,7 +14,6 @@ import org.codehaus.jackson.xc.JaxbAnnotationIntrospector;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

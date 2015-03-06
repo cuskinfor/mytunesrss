@@ -13,21 +13,16 @@
 
 package de.codewave.mytunesrss.jetty;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import org.eclipse.jetty.http.gzip.GzipResponseWrapper;
+import org.eclipse.jetty.http.gzip.GzipStream;
+import org.eclipse.jetty.io.UncheckedPrintWriter;
+import org.eclipse.jetty.servlets.GzipFilter;
 
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import org.eclipse.jetty.http.gzip.GzipResponseWrapper;
-import org.eclipse.jetty.http.gzip.GzipStream;
-import org.eclipse.jetty.io.UncheckedPrintWriter;
-import org.eclipse.jetty.servlets.GzipFilter;
+import java.io.*;
 
 
 
@@ -45,7 +40,7 @@ import org.eclipse.jetty.servlets.GzipFilter;
  */
 public class IncludableGzipFilter extends GzipFilter
 {
-    boolean _uncheckedPrintWriter=false;
+    boolean _uncheckedPrintWriter;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException
@@ -54,7 +49,7 @@ public class IncludableGzipFilter extends GzipFilter
 
         String tmp=filterConfig.getInitParameter("uncheckedPrintWriter");
         if (tmp!=null)
-            _uncheckedPrintWriter=Boolean.valueOf(tmp).booleanValue();
+            _uncheckedPrintWriter= Boolean.valueOf(tmp);
     }
 
     @Override

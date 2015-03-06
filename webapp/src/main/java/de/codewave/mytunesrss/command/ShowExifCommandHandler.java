@@ -5,14 +5,9 @@
 
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.GetPhotoQuery;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.meta.MyTunesRssExifUtils;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.QueryResult;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sanselan.ImageReadException;
 import org.apache.sanselan.formats.tiff.TiffField;
@@ -25,9 +20,6 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 

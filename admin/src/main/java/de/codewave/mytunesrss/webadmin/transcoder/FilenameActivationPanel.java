@@ -36,19 +36,23 @@ public class FilenameActivationPanel extends Panel implements Button.ClickListen
         initFromConfig(activation);
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent event) {
         ((ComponentContainer) getParent()).removeComponent(this);
     }
 
+    @Override
     public FilenameTranscoderActivation getConfig() {
         return new FilenameTranscoderActivation(myPatternTextField.getStringValue(""), myNegationCheckBox.booleanValue());
     }
 
+    @Override
     public void initFromConfig(FilenameTranscoderActivation config) {
         myPatternTextField.setValue(config.getPattern(), "");
         myNegationCheckBox.setValue(config.isNegation());
     }
 
+    @Override
     public boolean isValid() {
         LOGGER.debug("Validating filename activation panel.");
         return VaadinUtils.isValid(myForm);

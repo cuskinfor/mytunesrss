@@ -9,8 +9,8 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.ExternalResource;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.DatabaseType;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.job.MyTunesRssJobUtils;
 import de.codewave.vaadin.SmartPasswordField;
@@ -39,6 +39,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
     private CheckBox myBackupAfterInit;
     private Button myHelpButton;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("databaseConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
@@ -99,6 +100,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         DatabaseType databaseType = MyTunesRss.CONFIG.getDatabaseType();
         myDatabaseType.select(databaseType);
@@ -197,8 +199,8 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
     }
 
+    @Override
     protected void writeToConfig() {
-        //noinspection OverlyStrongTypeCast
         MyTunesRss.CONFIG.setDatabaseType((DatabaseType) myDatabaseType.getValue());
         MyTunesRss.CONFIG.setDatabaseDriver(myDatabaseDriver.getStringValue(null));
         MyTunesRss.CONFIG.setDatabaseConnection(myDatabaseConnection.getStringValue(null));
@@ -227,6 +229,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         return triggerItem.getKey();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myHelpButton) {
             getWindow().open(new ExternalResource("http://kb.mytunesrss.com/dbhelp"));
@@ -241,6 +244,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("databaseConfigDialog.optionWindowDeleteCronTrigger.caption"), getBundleString("databaseConfigDialog.optionWindowDeleteCronTrigger.message"), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             if (updateTriggerToDelete != null) {
@@ -259,6 +263,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         }
     }
 
+    @Override
     protected boolean beforeSave() {
         if (VaadinUtils.isValid(myDatabaseTypeForm)) {
             String errorKey = validateDatabaseConnection();
@@ -311,6 +316,7 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         return null;
     }
 
+    @Override
     public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
         if (((EventObject) valueChangeEvent).getSource() == myDatabaseType) {
             showHideDatabaseDetails((DatabaseType) valueChangeEvent.getProperty().getValue());
@@ -380,9 +386,6 @@ public class DatabaseConfigPanel extends MyTunesRssConfigPanel implements Proper
         if (myDatabaseUser.isEnabled() && !newUser.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabaseUser()))) {
             return true;
         }
-        if (myDatabasePassword.isEnabled() && !newPass.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabasePassword()))) {
-            return true;
-        }
-        return false;
+        return myDatabasePassword.isEnabled() && !newPass.equals(StringUtils.trimToEmpty(MyTunesRss.CONFIG.getDatabasePassword()));
     }
 }

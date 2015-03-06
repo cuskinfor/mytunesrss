@@ -29,9 +29,8 @@ public class MyTunesRssExifUtils {
     private static ThreadLocal<SimpleDateFormat> EXIF_DATE_FORMAT = new ThreadLocal<SimpleDateFormat>() {
         @Override
         protected SimpleDateFormat initialValue() {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
             //sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-            return sdf;
+            return new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
         }
     };
 

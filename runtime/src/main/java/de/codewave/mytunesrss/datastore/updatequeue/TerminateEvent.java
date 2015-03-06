@@ -7,12 +7,11 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 public class TerminateEvent extends CheckpointEvent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TerminateEvent.class);
 
+    @Override
     public boolean execute(DataStoreSession session) {
         try {
             refreshAccessories(session);
@@ -27,6 +26,7 @@ public class TerminateEvent extends CheckpointEvent {
         return false;
     }
 
+    @Override
     public boolean isTerminate() {
         return true;
     }

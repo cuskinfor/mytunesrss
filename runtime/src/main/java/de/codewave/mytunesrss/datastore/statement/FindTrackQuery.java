@@ -222,6 +222,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
         mySeason = season;
     }
 
+    @Override
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<>();

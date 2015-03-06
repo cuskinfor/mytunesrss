@@ -21,6 +21,7 @@ public class CorsInterceptor implements PostProcessInterceptor {
     @Context
     private HttpServletRequest myRequest;
 
+    @Override
     public void postProcess(ServerResponse serverResponse) {
         String origin = myRequest.getHeader("origin");
         if (StringUtils.isNotBlank(origin) && !"null".equalsIgnoreCase(origin)) {

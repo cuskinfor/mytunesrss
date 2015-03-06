@@ -8,7 +8,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.TikaUtils;
 import de.codewave.mytunesrss.config.MediaType;
 import de.codewave.mytunesrss.config.VideoType;
-import org.apache.tika.metadata.Metadata;
 
 import java.io.File;
 import java.io.Serializable;

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 
 /**
  * de.codewave.mytunesrss.meta.MyTunesRssMp3Utils
@@ -59,18 +58,11 @@ public class MyTunesRssMp3Utils {
     }
 
     public static int calculateTimeFromMp3AudioFrames(File file) {
-        try {
-            FileInputStream fileInputStream = new FileInputStream(file);
-            try {
-                int seconds = Mp3Utils.getMp3Info(fileInputStream).getDurationSeconds();
-                LOGGER.debug("Calculated duration from MP3 audio frames: " + seconds + " seconds.");
-                return seconds;
-            } catch (Exception e) {
-                LOGGER.warn("Could not calculate duration from MP3 audio frames.", e);
-            } finally {
-                fileInputStream.close();
-            }
-        } catch (IOException e) {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            int seconds = Mp3Utils.getMp3Info(fileInputStream).getDurationSeconds();
+            LOGGER.debug("Calculated duration from MP3 audio frames: " + seconds + " seconds.");
+            return seconds;
+        } catch (Exception e) {
             LOGGER.warn("Could not calculate duration from MP3 audio frames.", e);
         }
         return 0;

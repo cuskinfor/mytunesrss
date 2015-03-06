@@ -11,7 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class FileSystemCache implements Runnable {
 
@@ -98,11 +101,13 @@ public class FileSystemCache implements Runnable {
         long startTime = System.currentTimeMillis();
         List<CacheItem> items = listItems();
         Collections.sort(items, new Comparator<CacheItem>() {
+            @Override
             public int compare(CacheItem item1, CacheItem item2) {
                 long diff = item1.getLastAccessTime() - item2.getLastAccessTime();
                 if (diff < 0) {
                     return -1;
-                } else if (diff > 0) {
+                }
+                if (diff > 0) {
                     return 1;
                 }
                 return 0;
@@ -189,6 +194,7 @@ public class FileSystemCache implements Runnable {
         return File.createTempFile("mytunesrss_", ".tmp", getBaseDir());
     }
 
+    @Override
     public void run() {
         while (!Thread.interrupted()) {
             try {

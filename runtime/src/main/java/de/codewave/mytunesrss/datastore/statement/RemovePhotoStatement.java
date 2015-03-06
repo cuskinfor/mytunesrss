@@ -6,10 +6,10 @@
 package de.codewave.mytunesrss.datastore.statement;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.StopWatch;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
-import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
 import org.slf4j.Logger;
@@ -34,6 +34,7 @@ public class RemovePhotoStatement implements DataStoreStatement {
         myDataSourceIds = dataSourceIds;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseUpdateRemovingPhotos");
         MyTunesRssEventManager.getInstance().fireEvent(event);

@@ -33,6 +33,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class User implements MyTunesRssEventListener, Cloneable, Comparable<User> {
     private static final Logger LOG = LoggerFactory.getLogger(User.class);
 
+    @Override
     public void handleEvent(MyTunesRssEvent event) {
         if (event.getType() == MyTunesRssEvent.EventType.SERVER_STOPPED) {
             myLastFmSessionLock.lock();
@@ -50,6 +51,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         return myForceTranscoders != null && !myForceTranscoders.isEmpty();
     }
 
+    @Override
     public int compareTo(User o) {
         return myName == null ? -1 : myName.compareTo(o.myName);
     }
@@ -119,8 +121,8 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     private Set<String> myForceTranscoders = new HashSet<>();
     private long myExpiration;
     private boolean myYahooPlayer = true;
-    private boolean myGroup = false;
-    private boolean myCreatePublicPlaylists = false;
+    private boolean myGroup;
+    private boolean myCreatePublicPlaylists;
     private boolean myPhotos = true;
     private boolean myShare = true;
     private boolean myDownloadPhotoAlbum = true;
@@ -847,6 +849,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
         if (isLastFmAccount()) {
             final long playTime = System.currentTimeMillis();
             Runnable runnable = new Runnable() {
+                @Override
                 public void run() {
                     myLastFmSessionLock.lock();
                     try {
@@ -901,7 +904,7 @@ public class User implements MyTunesRssEventListener, Cloneable, Comparable<User
     }
 
     @Override
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
         try {
             User clone = (User)super.clone();
             clone.setDownBytes(0);

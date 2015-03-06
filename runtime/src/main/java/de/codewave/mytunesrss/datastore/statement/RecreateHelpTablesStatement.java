@@ -31,6 +31,7 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
         myCommit = commit;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
 
         if (myRecreateAlbums) {

@@ -29,6 +29,7 @@ public class ShowPortalCommandHandler extends MyTunesRssCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShowPortalCommandHandler.class);
 
+    @Override
     public void executeAuthorized() throws SQLException, IOException, ServletException {
         if (isSessionAuthorized()) {
             String refreshSmartPlaylistId = getRequestParameter("refreshSmartPlaylistId", null);

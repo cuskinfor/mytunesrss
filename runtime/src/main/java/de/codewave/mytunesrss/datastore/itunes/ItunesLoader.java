@@ -4,9 +4,9 @@
 
 package de.codewave.mytunesrss.datastore.itunes;
 
-import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
+import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.datastore.updatequeue.DatabaseUpdateQueue;
 import de.codewave.utils.xml.PListHandler;
 import de.codewave.utils.xml.XmlUtils;
@@ -61,7 +61,7 @@ public class ItunesLoader {
      * @return Number of missing files.
      * @throws SQLException
      */
-    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, MVStore mvStore) throws SQLException, MalformedURLException {
+    public static MissingItunesFiles loadFromITunes(Thread executionThread, ItunesDatasourceConfig config, DatabaseUpdateQueue queue, Map<String, Long> trackTsUpdate, Map<String, String> trackSourceId, MVStore mvStore) throws MalformedURLException {
         TrackListener trackListener = null;
         PlaylistListener playlistListener = null;
         File iTunesXmlFile = new File(config.getDefinition());
@@ -86,7 +86,7 @@ public class ItunesLoader {
         handler.addListener("/plist/dict[Tracks]/dict", trackListener);
         handler.addListener("/plist/dict[Playlists]/array", playlistListener);
         try {
-            LOG.info("Parsing iTunes: \"" + iTunesLibraryXml.toString() + "\".");
+            LOG.info("Parsing iTunes: \"" + iTunesLibraryXml + "\".");
             XmlUtils.parseApplePList(iTunesLibraryXml, handler);
         } catch (IOException | ParserConfigurationException | SAXException e) {
             LOG.error("Could not read data from iTunes xml file.", e);

@@ -10,7 +10,6 @@ import com.vaadin.event.FieldEvents;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.TextField;
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.addons.AddonsUtils;
 import de.codewave.mytunesrss.addons.LanguageDefinition;
 import de.codewave.vaadin.SmartTextField;
@@ -38,6 +37,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         myEditLang = editLang;
     }
 
+    @Override
     public void attach() {
         super.attach();
         init(getApplication().getBundleString("editLanguagePanel.caption"), getApplication().getComponentFactory().createGridLayout(1, 2, true, true));
@@ -58,6 +58,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         initFromConfig();
     }
 
+    @Override
     protected void initFromConfig() {
         myEditorTable.removeAllItems();
         Properties refProps = new Properties();
@@ -79,6 +80,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
                 textField.setValue(editProps.getProperty(key));
                 myEditorTable.addItem(new Object[]{key, refProps.getProperty(key), textField}, key);
                 textField.addListener(new FieldEvents.BlurListener() {
+                    @Override
                     public void blur(FieldEvents.BlurEvent event) {
                         TextField textField =(TextField) event.getSource();
                         if (StringUtils.isBlank((CharSequence) textField.getValue())) {
@@ -109,6 +111,7 @@ public class EditLanguagePanel extends MyTunesRssConfigPanel {
         myEditorTable.setPageLength(Math.min(myEditorTable.getItemIds().size(), 40));
     }
 
+    @Override
     protected void writeToConfig() {
         Properties props = new Properties();
         for (Object id : myEditorTable.getItemIds()) {

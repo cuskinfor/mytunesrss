@@ -62,7 +62,7 @@ public class BrowseTvShowCommandHandler extends BrowseVideoCommandHandler {
     }
 
     @Override
-    protected MyTunesRssResource getResource(List<? extends Track> tracks) {
+    protected MyTunesRssResource getResource() {
         return MyTunesRssResource.BrowseTvShow;
     }
 

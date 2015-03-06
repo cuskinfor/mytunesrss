@@ -1,7 +1,5 @@
 package de.codewave.vaadin;
 
-import com.vaadin.data.Property;
-
 import java.security.MessageDigest;
 import java.util.Map;
 
@@ -12,7 +10,7 @@ public interface SmartField {
 
     long getLongValue(long defaultValue);
 
-    void setValue(Object newValue) throws Property.ReadOnlyException, Property.ConversionException;
+    void setValue(Object newValue);
 
     void setValue(String value, String defaultValue);
 

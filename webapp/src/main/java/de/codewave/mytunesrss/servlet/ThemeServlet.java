@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 
 /**
@@ -60,7 +59,7 @@ public class ThemeServlet extends HttpServlet {
         }
     }
 
-    protected void doGetStyle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+    protected void doGetStyle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
         File stylesheet = getFile(httpServletRequest);
         long ifModifiedSince = httpServletRequest.getDateHeader("If-Modified-Since");
         if (ifModifiedSince > -1 && stylesheet.lastModified() / 1000 <= ifModifiedSince / 1000) {
@@ -73,16 +72,13 @@ public class ThemeServlet extends HttpServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending stylesheet \"" + stylesheet.getAbsolutePath() + "\".");
             }
-            Reader inReader = new InputStreamReader(new FileInputStream(stylesheet), Charset.forName("UTF-8"));
-            try {
+            try (Reader inReader = new InputStreamReader(new FileInputStream(stylesheet), Charset.forName("UTF-8"))) {
                 IOUtils.copy(inReader, httpServletResponse.getWriter());
-            } finally {
-                inReader.close();
             }
         }
     }
 
-    protected void doGetImage(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws ServletException, IOException {
+    protected void doGetImage(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         File image = getFile(httpServletRequest);
         long ifModifiedSince = httpServletRequest.getDateHeader("If-Modified-Since");
         if (ifModifiedSince > -1 && image.lastModified() / 1000 <= ifModifiedSince / 1000) {

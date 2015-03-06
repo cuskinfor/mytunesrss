@@ -36,7 +36,7 @@ public class OrphanedImageRemover {
                     while (rs.next()) {
                         String hash = rs.getString(1);
                         if (StringUtils.isNotBlank(hash)) {
-                            hashes.put(hash, Byte.valueOf((byte) 0));
+                            hashes.put(hash, (byte) 0);
                         }
                     }
                     return null;

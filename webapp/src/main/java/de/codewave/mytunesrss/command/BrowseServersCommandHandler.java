@@ -28,6 +28,7 @@ public class BrowseServersCommandHandler extends MyTunesRssCommandHandler {
             if (servers == null) {
                 servers = new ArrayList<>(MulticastService.getOtherInstances());
                 Collections.sort(servers, new Comparator<RemoteServer>() {
+                    @Override
                     public int compare(RemoteServer server1, RemoteServer server2) {
                         return server1.getName().compareTo(server2.getName());
                     }

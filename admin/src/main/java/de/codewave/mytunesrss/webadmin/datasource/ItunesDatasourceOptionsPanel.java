@@ -6,7 +6,10 @@
 package de.codewave.mytunesrss.webadmin.datasource;
 
 import com.vaadin.data.Property;
-import com.vaadin.ui.*;
+import com.vaadin.ui.CheckBox;
+import com.vaadin.ui.Form;
+import com.vaadin.ui.Panel;
+import com.vaadin.ui.Table;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ItunesDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
@@ -43,6 +46,7 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         List<ItunesPlaylistType> types = new ArrayList<>(Arrays.asList(ItunesPlaylistType.values()));
         types.remove(ItunesPlaylistType.Master); // "Master" type is always ignored
         Collections.sort(types, new Comparator<ItunesPlaylistType>() {
+            @Override
             public int compare(ItunesPlaylistType o1, ItunesPlaylistType o2) {
                 return o1.toString().compareTo(o2.toString());
             }
@@ -116,11 +120,13 @@ public class ItunesDatasourceOptionsPanel extends DatasourceOptionsPanel {
         setTablePageLengths();
     }
 
+    @Override
     protected void setTablePageLengths() {
         super.setTablePageLengths();
         myIgnoreItunesPlaylists.setPageLength(Math.min(myIgnoreItunesPlaylists.getItemIds().size(), 10));
     }
 
+    @Override
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myPathReplacements, myIgnoreItunesPlaylists, myMiscOptionsForm, myTrackImagePatternsTable)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");

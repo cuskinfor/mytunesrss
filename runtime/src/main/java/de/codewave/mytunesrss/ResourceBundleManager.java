@@ -14,12 +14,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class ResourceBundleManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceBundleManager.class);
 
-    private ConcurrentHashMap<String, ResourceBundle> myCache = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, ResourceBundle> myCache = new ConcurrentHashMap<>();
 
     private ClassLoader myLoader;
 
@@ -40,7 +41,7 @@ public class ResourceBundleManager {
     }
 
     private String getCacheKey(Locale locale, String bundleName) {
-        return bundleName + "_" + locale.toString();
+        return bundleName + "_" + locale;
     }
 
     private ResourceBundle loadBundle(Locale locale, String bundleName) {

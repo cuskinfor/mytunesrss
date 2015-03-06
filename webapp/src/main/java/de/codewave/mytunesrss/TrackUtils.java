@@ -58,10 +58,9 @@ public class TrackUtils {
             if ((sortOrder == SortOrder.Album && newAlbum) || (sortOrder == SortOrder.Artist && newArtist)) {// new section begins
                 finishSection(transaction, sectionTracks, variousPerSection);
                 break; // now we are done with the last section
-            } else {
-                if ((sortOrder == SortOrder.Album && !track.getArtist().equals(track.getAlbumArtist())) || (sortOrder == SortOrder.Artist && newAlbum)) {
-                    variousPerSection = true;
-                }
+            }
+            if ((sortOrder == SortOrder.Album && !track.getArtist().equals(track.getAlbumArtist())) || (sortOrder == SortOrder.Artist && newAlbum)) {
+                variousPerSection = true;
             }
             sectionTracks.add(enhancedTrack);
             lastAlbum = track.getAlbum();
@@ -144,6 +143,7 @@ public class TrackUtils {
             final String sectionHash = MyTunesRssBase64Utils.encode(MyTunesRss.SHA1_DIGEST.get().digest(MiscUtils.getUtf8Bytes(sectionIds)));
             LOGGER.debug("Trying to create temporary playlist with id \"" + sectionHash + "\".");
             transaction.executeStatement(new DataStoreStatement() {
+                @Override
                 public void execute(Connection connection) throws SQLException {
                     SmartStatement statement = MyTunesRssUtils.createStatement(connection, "removeTempPlaylistWithId");
                     statement.setString("id", sectionHash);
@@ -163,7 +163,7 @@ public class TrackUtils {
     }
 
     private static String sectionIdsToString(List<? extends Track> sectionTracks) {
-        StringBuffer sectionIds = new StringBuffer();
+        StringBuilder sectionIds = new StringBuilder();
         for (Iterator<? extends Track> iterator = sectionTracks.iterator(); iterator.hasNext();) {
             Track enhancedTrack = iterator.next();
             sectionIds.append(enhancedTrack.getId());
@@ -275,10 +275,8 @@ public class TrackUtils {
             if (mySimple != that.mySimple) return false;
             if (mySectionIds != null ? !mySectionIds.equals(that.mySectionIds) : that.mySectionIds != null)
                 return false;
-            if (mySectionPlaylistId != null ? !mySectionPlaylistId.equals(that.mySectionPlaylistId) : that.mySectionPlaylistId != null)
-                return false;
+            return !(mySectionPlaylistId != null ? !mySectionPlaylistId.equals(that.mySectionPlaylistId) : that.mySectionPlaylistId != null);
 
-            return true;
         }
 
         @Override
@@ -379,10 +377,8 @@ public class TrackUtils {
                 return false;
             if (mySeriesSectionIds != null ? !mySeriesSectionIds.equals(that.mySeriesSectionIds) : that.mySeriesSectionIds != null)
                 return false;
-            if (mySeriesSectionPlaylistId != null ? !mySeriesSectionPlaylistId.equals(that.mySeriesSectionPlaylistId) : that.mySeriesSectionPlaylistId != null)
-                return false;
+            return !(mySeriesSectionPlaylistId != null ? !mySeriesSectionPlaylistId.equals(that.mySeriesSectionPlaylistId) : that.mySeriesSectionPlaylistId != null);
 
-            return true;
         }
 
         @Override

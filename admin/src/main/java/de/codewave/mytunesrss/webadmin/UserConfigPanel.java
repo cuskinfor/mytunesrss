@@ -10,8 +10,8 @@ import com.vaadin.data.Property;
 import com.vaadin.terminal.Sizeable;
 import com.vaadin.terminal.ThemeResource;
 import com.vaadin.ui.*;
-import de.codewave.mytunesrss.config.LdapAuthMethod;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.LdapAuthMethod;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.vaadin.SmartTextField;
 import de.codewave.vaadin.VaadinUtils;
@@ -44,6 +44,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
     private boolean myInitialized;
     private User myNoTemplateUser;
 
+    @Override
     public void attach() {
         super.attach();
         if (!myInitialized) {
@@ -134,6 +135,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         return users;
     }
 
+    @Override
     protected void initFromConfig() {
         initUsersAndGroupsTable();
         myLdapHost.setValue(MyTunesRss.CONFIG.getLdapConfig().getHost());
@@ -170,6 +172,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         setTablePageLengths();
     }
 
+    @Override
     protected void writeToConfig() {
         MyTunesRss.CONFIG.getLdapConfig().setHost(myLdapHost.getStringValue(null));
         MyTunesRss.CONFIG.getLdapConfig().setPort(myLdapPort.getIntegerValue(-1));
@@ -196,6 +199,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         return valid;
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddUser) {
             createUser(false);
@@ -210,6 +214,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteUser.caption"), getBundleString("userConfigPanel.optionWindowDeleteUser.message", user.getName()), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             MyTunesRss.CONFIG.removeUser(user);
@@ -228,6 +233,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
                 final Button yes = new Button(getBundleString("button.yes"));
                 Button no = new Button(getBundleString("button.no"));
                 new OptionWindow(30, Sizeable.UNITS_EM, null, getBundleString("userConfigPanel.optionWindowDeleteGroup.caption"), getBundleString("userConfigPanel.optionWindowDeleteGroup.message", group.getName()), yes, no) {
+                    @Override
                     public void clicked(Button button) {
                         if (button == yes) {
                             MyTunesRss.CONFIG.removeUser(group);
@@ -299,6 +305,7 @@ public class UserConfigPanel extends MyTunesRssConfigPanel {
         select.setNullSelectionAllowed(true);
         select.setValue(user.getParent());
         select.addListener(new Property.ValueChangeListener() {
+            @Override
             public void valueChange(Property.ValueChangeEvent event) {
                 user.setParent((User)event.getProperty().getValue());
                 MyTunesRss.CONFIG.save();

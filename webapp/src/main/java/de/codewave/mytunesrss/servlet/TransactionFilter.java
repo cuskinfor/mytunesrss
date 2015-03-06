@@ -14,10 +14,12 @@ import java.io.IOException;
 public class TransactionFilter implements Filter {
     private static final ThreadLocal<DataStoreSession> TRANSACTIONS = new ThreadLocal<>();
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // intentionally left blank
     }
 
+    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain)
             throws IOException, ServletException {
         ServletContext servletContext = ((HttpServletRequest)servletRequest).getSession().getServletContext();
@@ -32,6 +34,7 @@ public class TransactionFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
         // intentionally left blank
     }

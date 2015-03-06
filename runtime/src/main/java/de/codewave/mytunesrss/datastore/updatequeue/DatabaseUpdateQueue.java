@@ -34,6 +34,7 @@ public class DatabaseUpdateQueue implements Runnable {
         }
     }
 
+    @Override
     public synchronized void run() {
         long txBegin = System.currentTimeMillis();
         long checkpointStartTime = 0;

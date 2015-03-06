@@ -19,14 +19,17 @@ public class MyTunesRssSendCounter implements StreamSender.ByteSentCounter {
         mySessionInfo = sessionInfo;
     }
 
+    @Override
     public void add(int count) {
         myCount += count;
         ((StreamSender.ByteSentCounter) mySessionInfo).add(count);
     }
 
+    @Override
     public void notifyBegin() {
     }
 
+    @Override
     public void notifyEnd() {
         StatisticsEventManager.getInstance().fireEvent(new DownloadEvent(myUser.getName(), null,  myCount));
     }

@@ -22,7 +22,6 @@ import de.codewave.utils.MiscUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tika.mime.MediaType;
 import org.codehaus.jackson.io.JsonStringEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -212,6 +211,7 @@ public class MyTunesFunctions {
             langs.add(new String[]{code, LanguageDefinition.getLocaleFromCode(code).getDisplayName(displayLocale)});
         }
         Collections.sort(langs, new Comparator<String[]>() {
+            @Override
             public int compare(String[] o1, String[] o2) {
                 return o1[1].compareTo(o2[1]);
             }
@@ -341,7 +341,7 @@ public class MyTunesFunctions {
                 if (item instanceof String) {
                     builder.append("'").append(MyTunesFunctions.escapeEcmaScript((String) item)).append("'");
                 } else {
-                    builder.append(item.toString());
+                    builder.append(item);
                 }
                 builder.append(",");
             }
@@ -350,7 +350,7 @@ public class MyTunesFunctions {
                 if (item instanceof String) {
                     builder.append("'").append(MyTunesFunctions.escapeEcmaScript((String) item)).append("'");
                 } else {
-                    builder.append(item.toString());
+                    builder.append(item);
                 }
                 builder.append(",");
             }

@@ -4,7 +4,8 @@
 
 package de.codewave.mytunesrss.server;
 
-import de.codewave.mytunesrss.*;
+import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.config.MyTunesRssConfig;
 import de.codewave.mytunesrss.datastore.MyTunesRssDataStore;
 import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
@@ -242,6 +243,7 @@ public class WebServer {
             List<MyTunesRssSessionInfo> sessionInfos = new ArrayList<>((Collection<MyTunesRssSessionInfo>) SessionManager
                     .getAllSessionInfo(myContext.getServletContext()));
             Collections.sort(sessionInfos, new Comparator<MyTunesRssSessionInfo>() {
+                @Override
                 public int compare(MyTunesRssSessionInfo sessionInfo, MyTunesRssSessionInfo sessionInfo1) {
                     return (int) (sessionInfo.getConnectTime() - sessionInfo1.getConnectTime());
                 }

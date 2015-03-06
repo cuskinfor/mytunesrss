@@ -38,6 +38,7 @@ public class FindPhotoQuery extends DataStoreQuery<QueryResult<Photo>> {
         // intentionally left blank
     }
 
+    @Override
     public QueryResult<Photo> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("excluded", myUser != null && !myUser.getExcludedPhotoAlbumIds().isEmpty());
@@ -51,6 +52,7 @@ public class FindPhotoQuery extends DataStoreQuery<QueryResult<Photo>> {
             statement.setItems("excludedDataSourceIds", myUser.getExcludedDataSourceIds());
         }
         return execute(statement, new ResultBuilder<Photo>() {
+            @Override
             public Photo create(ResultSet resultSet) throws SQLException {
                 Photo photo = new Photo();
                 photo.setId(resultSet.getString("id"));

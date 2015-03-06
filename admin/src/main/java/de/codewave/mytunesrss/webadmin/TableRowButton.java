@@ -23,6 +23,7 @@ public class TableRowButton extends Button {
         return myItemId;
     }
 
+    @Override
     public Object getData() {
         return myData;
     }

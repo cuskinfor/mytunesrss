@@ -37,10 +37,12 @@ public abstract class PhotoDatasourceConfig extends DatasourceConfig implements 
         myPathReplacements.add(pathReplacement);
     }
 
+    @Override
     public ImageImportType getPhotoThumbnailImportType() {
         return myPhotoThumbnailImportType;
     }
 
+    @Override
     public void setPhotoThumbnailImportType(ImageImportType photoThumbnailImportType) {
         myPhotoThumbnailImportType = photoThumbnailImportType;
     }

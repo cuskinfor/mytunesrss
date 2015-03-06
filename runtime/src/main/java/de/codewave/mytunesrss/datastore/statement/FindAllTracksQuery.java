@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.config.User;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.SmartStatement;
-import org.apache.commons.lang3.StringUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -51,6 +50,7 @@ public class FindAllTracksQuery extends DataStoreQuery<QueryResult<Track>> {
         myPermittedDataSources = FindTrackQuery.getPermittedDataSources(user);
     }
 
+    @Override
     public QueryResult<Track> execute(Connection connection) throws SQLException {
         SmartStatement statement;
         Map<String, Boolean> conditionals = new HashMap<>();

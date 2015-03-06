@@ -19,6 +19,7 @@ import java.sql.SQLException;
 public class GetSystemInformationQuery extends DataStoreQuery<SystemInformation> {
     private static final Logger LOG = LoggerFactory.getLogger(GetSystemInformationQuery.class);
 
+    @Override
     public SystemInformation execute(Connection connection) {
         try {
             ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "getSystemInformation").executeQuery();

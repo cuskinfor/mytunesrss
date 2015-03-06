@@ -12,7 +12,6 @@ import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.AlbumRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.jboss.resteasy.annotations.GZIP;

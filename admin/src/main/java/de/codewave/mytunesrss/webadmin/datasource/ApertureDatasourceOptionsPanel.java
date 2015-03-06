@@ -5,7 +5,7 @@
 
 package de.codewave.mytunesrss.webadmin.datasource;
 
-import com.vaadin.ui.*;
+import com.vaadin.ui.Form;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.config.ApertureDatasourceConfig;
 import de.codewave.mytunesrss.config.ReplacementRule;
@@ -58,6 +58,7 @@ public class ApertureDatasourceOptionsPanel extends DatasourceOptionsPanel {
         setTablePageLengths();
     }
 
+    @Override
     protected boolean beforeSave() {
         if (!VaadinUtils.isValid(myPathReplacements, myMiscOptionsForm)) {
             ((MainWindow) VaadinUtils.getApplicationWindow(this)).showError("error.formInvalid");

@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URLConnection;
 
 /**
  * de.codewave.mytunesrss.servlet.ThemeServlet
@@ -47,12 +46,9 @@ public class FlashPlayerServlet extends HttpServlet {
                 LOG.debug("Flash player file \"" + resourcePath + "\" requested.");
             }
             httpServletResponse.setContentType("text/html");
-            InputStream htmlInputStream = new FileInputStream(getFile(resourcePath));
-            try {
+            try (InputStream htmlInputStream = new FileInputStream(getFile(resourcePath))) {
                 String html = IOUtils.toString(htmlInputStream);
                 httpServletResponse.getWriter().println(html.replace("{PLAYLIST_URL}", httpServletRequest.getParameter("url")));
-            } finally {
-                htmlInputStream.close();
             }
         } else {
             String resourcePath = httpServletRequest.getRequestURI().substring(StringUtils.trimToEmpty(httpServletRequest.getContextPath()).length());
@@ -70,11 +66,8 @@ public class FlashPlayerServlet extends HttpServlet {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Sending flash player file \"" + file.getAbsolutePath() + "\" with content-type \"" + contentType + "\" and length \"" + length + "\".");
             }
-            FileInputStream inStream = new FileInputStream(file);
-            try {
+            try (FileInputStream inStream = new FileInputStream(file)) {
                 IOUtils.copy(inStream, httpServletResponse.getOutputStream());
-            } finally {
-                inStream.close();
             }
         }
     }

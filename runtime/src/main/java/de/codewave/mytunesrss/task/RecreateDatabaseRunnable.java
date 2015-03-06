@@ -21,6 +21,7 @@ public class RecreateDatabaseRunnable implements Runnable {
 
     private InitializeDatabaseCallable myInitializeDatabaseCallable = new InitializeDatabaseCallable();
 
+    @Override
     public void run() {
         MyTunesRss.EXECUTOR_SERVICE.cancelImageGenerators();
         try {
@@ -34,9 +35,7 @@ public class RecreateDatabaseRunnable implements Runnable {
             MyTunesRss.STORE.destroy();
             myInitializeDatabaseCallable.call();
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
-        } catch (SQLException e) {
-            LOGGER.error("Could not recreate database.", e);
-        } catch (IOException e) {
+        } catch (SQLException | IOException e) {
             LOGGER.error("Could not recreate database.", e);
         } finally {
             MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();

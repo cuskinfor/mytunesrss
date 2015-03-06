@@ -8,7 +8,6 @@ import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
 import org.apache.commons.lang3.StringUtils;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.container.PlaylistContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,7 @@ public class PlaylistFolderDIDL extends MyTunesRssContainerDIDL {
     private static final Logger LOGGER = LoggerFactory.getLogger(PlaylistFolderDIDL.class);
 
     @Override
-    void createDirectChildren(final User user, final DataStoreSession tx, final String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(final User user, final DataStoreSession tx, final String oidParams, long firstResult, long maxResults) throws SQLException {
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, PLAYLIST_TYPES, null, StringUtils.isEmpty(oidParams) ? "ROOT" : decode(oidParams).get(0), false, false);
         findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 100);
         executeAndProcess(
@@ -71,7 +70,7 @@ public class PlaylistFolderDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(user, null, decode(oidParams).get(0), null, false, false);
         findPlaylistQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         Playlist playlist = tx.executeQuery(findPlaylistQuery).nextResult();

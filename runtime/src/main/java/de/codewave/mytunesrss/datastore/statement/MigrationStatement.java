@@ -21,6 +21,7 @@ import java.sql.SQLException;
 public class MigrationStatement implements DataStoreStatement {
     private static final Logger LOG = LoggerFactory.getLogger(MigrationStatement.class);
 
+    @Override
     public void execute(final Connection connection) throws SQLException {
         Version databaseVersion = new Version(getVersion(connection));
         if (LOG.isInfoEnabled()) {
@@ -261,6 +262,7 @@ public class MigrationStatement implements DataStoreStatement {
                         MyTunesRssUtils.createStatement(connection, "migrate_4.3_part_2").execute();
                         databaseVersion = new Version("4.3");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         MyTunesRss.RUN_DATABASE_REFRESH_ON_STARTUP = true; // force a database refresh to insert the source ids!
                     }
                     // migration for 4.9
@@ -292,6 +294,7 @@ public class MigrationStatement implements DataStoreStatement {
                         MyTunesRssUtils.createStatement(connection, "migrate_5.0.0_part_2").execute();
                         databaseVersion = new Version("5.0.0");
                         new UpdateDatabaseVersionStatement(databaseVersion.toString()).execute(connection);
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         MyTunesRss.REBUILD_LUCENE_INDEX_ON_STARTUP = true;
                     }
                     // migration for 5.0.2

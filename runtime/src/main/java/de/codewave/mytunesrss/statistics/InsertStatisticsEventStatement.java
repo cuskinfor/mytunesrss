@@ -22,6 +22,7 @@ public class InsertStatisticsEventStatement implements DataStoreStatement {
         myEvent = event;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         String json;
         try {

@@ -29,7 +29,7 @@ public class TranscoderStream extends InputStream {
     private AtomicBoolean closed = new AtomicBoolean();
     private File myInputFile;
 
-    TranscoderStream(TranscoderConfig transcoderConfig, File inputFile, File cacheFile) throws IOException {
+    TranscoderStream(TranscoderConfig transcoderConfig, File inputFile, File cacheFile) {
         myTranscoderConfig = transcoderConfig;
         myInputFile = inputFile;
         myCacheFile = cacheFile;
@@ -64,6 +64,7 @@ public class TranscoderStream extends InputStream {
         }
     }
 
+    @Override
     public int read() throws IOException {
         if (myInputStream == null) {
             init();
@@ -117,11 +118,8 @@ public class TranscoderStream extends InputStream {
             }
         }
         if (myCacheOutputStream != null) {
-            LimitedInputStream limitedInputStream = new LimitedInputStream(myInputStream, l);
-            try {
+            try (LimitedInputStream limitedInputStream = new LimitedInputStream(myInputStream, l)) {
                 return IOUtils.copyLarge(limitedInputStream, myCacheOutputStream);
-            } finally {
-                limitedInputStream.close();
             }
         } else {
             return myInputStream.skip(l);
@@ -165,6 +163,7 @@ public class TranscoderStream extends InputStream {
                 if (myCacheOutputStream != null) {
                     LOGGER.debug("Cache file has been written.");
                     new Thread(new Runnable() {
+                        @Override
                         public void run() {
                             try {
                                 LOGGER.debug("Copying remaining transcoder stream contents into cache file.");

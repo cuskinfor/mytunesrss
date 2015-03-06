@@ -34,6 +34,7 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DoLoginWithOpenIdCommandHandler.class);
 
+    @Override
     public void execute() throws Exception {
         if (!MyTunesRss.CONFIG.isDisableWebLogin() && MyTunesRss.CONFIG.isOpenIdActive() && !isSessionAuthorized()) {
             String openId = getRequest().getParameter("openId");
@@ -64,13 +65,7 @@ public class DoLoginWithOpenIdCommandHandler extends DoLoginCommandHandler {
                 authReq.addExtension(fetchRequest);
                 redirect(authReq.getDestinationUrl(true));
                 return; // done
-            } catch (DiscoveryException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId, e);
-            } catch (MessageException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId, e);
-            } catch (ConsumerException e) {
-                LOGGER.debug("No open id login possible with username \"" + openId, e);
-            } catch (IOException e) {
+            } catch (DiscoveryException | IOException | ConsumerException | MessageException e) {
                 LOGGER.debug("No open id login possible with username \"" + openId, e);
             }
             addError(new BundleError("error.openIdProviderFailure"));

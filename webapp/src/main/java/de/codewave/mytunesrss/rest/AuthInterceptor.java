@@ -33,6 +33,7 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
     @Context
     private HttpServletRequest myRequest;
 
+    @Override
     public ServerResponse preProcess(HttpRequest request, ResourceMethod method) {
         if (MyTunesRssWebUtils.getAuthUser(myRequest) == null) {
             if (MyTunesRssWebUtils.isAuthorized(MyTunesRssWebUtils.getRememberedUsername(myRequest), MyTunesRssWebUtils.getRememberedPasswordHash(myRequest))) {
@@ -63,6 +64,7 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
         }
     }
 
+    @Override
     public boolean accept(Class declaring, Method method) {
         if (declaring.equals(LibraryResource.class) && "getLibrary".equals(method.getName())) {
             return false;
@@ -70,9 +72,6 @@ public class AuthInterceptor implements PreProcessInterceptor, AcceptedByMethod 
         if (declaring.equals(SessionResource.class) && "loginOrPing".equals(method.getName())) {
             return false;
         }
-        if ("handleCorsOptions".equals(method.getName())) {
-            return false;
-        }
-        return true;
+        return !"handleCorsOptions".equals(method.getName());
     }
 }

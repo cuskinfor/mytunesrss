@@ -1,6 +1,9 @@
 package de.codewave.mytunesrss.command;
 
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
+import de.codewave.mytunesrss.datastore.statement.SaveMyTunesSmartPlaylistStatement;
+import de.codewave.mytunesrss.datastore.statement.SmartFieldType;
+import de.codewave.mytunesrss.datastore.statement.SmartInfo;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import org.apache.commons.lang3.StringUtils;
@@ -92,7 +95,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         forward(MyTunesRssResource.EditSmartPlaylist);
     }
 
-    protected Map<String, Object> createRedisplayModel(String remove, Map<String, String> add) throws IOException, ServletException {
+    protected Map<String, Object> createRedisplayModel(String remove, Map<String, String> add) {
         Map<String, Object> playlistModel = new HashMap<>();
         playlistModel.put("name", getRequestParameter("smartPlaylist.playlist.name", null));
         playlistModel.put("id", getRequestParameter("smartPlaylist.playlist.id", null));
@@ -125,6 +128,7 @@ public class SaveSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
     private void sortModelSmartInfos(Map<String, Object> model) {
         List<Map<String, String>> smartInfos = (List<Map<String, String>>) model.get("smartInfos");
         Collections.sort(smartInfos, new Comparator<Map<String, String>>() {
+            @Override
             public int compare(Map<String, String> o1, Map<String, String> o2) {
                 try {
                     int v1 = EditSmartPlaylistCommandHandler.getSmartTypeSortValue(SmartFieldType.valueOf(o1.get("fieldType")), Boolean.valueOf(o1.get("invert")));

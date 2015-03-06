@@ -35,7 +35,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
         DEFAULTS.add(SIMPLE);
     }
 
-    private static final String getPlayerCode(String file) {
+    private static String getPlayerCode(String file) {
         InputStream stream = FlashPlayerConfig.class.getResourceAsStream(file);
         try {
             return StringUtils.join(IOUtils.readLines(stream), System.getProperty("line.separator"));
@@ -56,7 +56,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     }
 
     public static Set<FlashPlayerConfig> getDefaults() {
-        HashSet<FlashPlayerConfig> defaults = new HashSet<>();
+        Set<FlashPlayerConfig> defaults = new HashSet<>();
         for (FlashPlayerConfig config : DEFAULTS) {
             defaults.add((FlashPlayerConfig) config.clone());
         }
@@ -148,9 +148,8 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
 
         FlashPlayerConfig that = (FlashPlayerConfig) o;
 
-        if (myId != null ? !myId.equals(that.myId) : that.myId != null) return false;
+        return !(myId != null ? !myId.equals(that.myId) : that.myId != null);
 
-        return true;
     }
 
     @Override
@@ -158,6 +157,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
         return myId != null ? myId.hashCode() : 0;
     }
 
+    @Override
     public int compareTo(FlashPlayerConfig o) {
         if (o == null || o.myName == null) {
             return 1;
@@ -169,7 +169,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
     }
 
     @Override
-    public Object clone() {
+    public Object clone() throws CloneNotSupportedException {
         try {
             FlashPlayerConfig clone = (FlashPlayerConfig) super.clone();
             clone.myId = myId;
@@ -185,7 +185,7 @@ public class FlashPlayerConfig implements Comparable<FlashPlayerConfig>, Cloneab
         }
     }
 
-    public File getBaseDir() throws IOException {
+    public File getBaseDir() {
         return new File(MyTunesRss.PREFERENCES_DATA_PATH + "/flashplayer", myId);
     }
 

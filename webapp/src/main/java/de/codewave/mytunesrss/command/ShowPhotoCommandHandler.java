@@ -13,10 +13,6 @@ import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.utils.servlet.FileSender;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
-import de.codewave.utils.sql.DataStoreQuery;
-import de.codewave.utils.sql.QueryResult;
-import de.codewave.utils.sql.ResultBuilder;
-import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +23,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public class ShowPhotoCommandHandler extends BandwidthThrottlingCommandHandler {
 

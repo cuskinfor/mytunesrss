@@ -26,6 +26,7 @@ public class LocalizedError extends Error {
         return myMessage;
     }
 
+    @Override
     public boolean isLocalized() {
         return true;
     }

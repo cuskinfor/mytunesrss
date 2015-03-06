@@ -40,20 +40,24 @@ public class Mp3BitRateActivationPanel extends Panel implements Button.ClickList
         initFromConfig(activation);
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent event) {
         ((ComponentContainer) getParent()).removeComponent(this);
     }
 
+    @Override
     public Mp3BitRateTranscoderActivation getConfig() {
         return new Mp3BitRateTranscoderActivation(myMinBitRateTextField.getIntegerValue(0), myMaxBitRateTextField.getIntegerValue(Integer.MAX_VALUE), myNegationCheckBox.booleanValue());
     }
 
+    @Override
     public void initFromConfig(Mp3BitRateTranscoderActivation config) {
         myMinBitRateTextField.setValue(config.getMinBitRate());
         myMaxBitRateTextField.setValue(config.getMaxBitRate());
         myNegationCheckBox.setValue(config.isNegation());
     }
 
+    @Override
     public boolean isValid() {
         LOGGER.debug("Validating MP3 bitrate activation panel.");
         return VaadinUtils.isValid(myForm);

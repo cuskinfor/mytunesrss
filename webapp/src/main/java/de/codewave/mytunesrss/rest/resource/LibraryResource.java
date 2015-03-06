@@ -322,6 +322,7 @@ public class LibraryResource extends RestResource {
         photoAlbumsQuery.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1000);
         QueryResult<PhotoAlbum> queryResult = TransactionFilter.getTransaction().executeQuery(photoAlbumsQuery);
         return new QueryResultIterable<>(queryResult, new QueryResultIterable.ResultTransformer<PhotoAlbum, PhotoAlbumRepresentation>() {
+            @Override
             public PhotoAlbumRepresentation transform(PhotoAlbum photoAlbum) {
                 PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
                 if (IncludeExcludeInterceptor.isAttr("photosUri")) {

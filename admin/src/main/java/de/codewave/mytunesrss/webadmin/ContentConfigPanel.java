@@ -41,6 +41,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
     private Map<String, String> oldGenreMappings = new HashMap<>();
     private Button myReindexButton;
 
+    @Override
     public void attach() {
         super.attach();
         init(getBundleString("contentsConfigPanel.caption"), getComponentFactory().createGridLayout(1, 5, true, true));
@@ -100,6 +101,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         myGenreMappings.setPageLength(Math.min(myGenreMappings.getItemIds().size(), 10));
     }
 
+    @Override
     protected void initFromConfig() {
         myPlaylists.removeAllItems();
         myGenres.removeAllItems();
@@ -157,6 +159,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         return true;
     }
 
+    @Override
     protected void writeToConfig() {
         MyTunesRss.CONFIG.clearGenreMappings();
         for (Object itemId : myGenreMappings.getItemIds()) {
@@ -170,6 +173,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
             final MainWindow applicationWindow = (MainWindow) VaadinUtils.getApplicationWindow(this);
             applicationWindow.showBlockingMessage("contentsConfigPanel.info.updatingDatabase");
             MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseJob(new Callable<Void>() {
+                @Override
                 public Void call() {
                     try {
                         if (hiddenPlaylistsChanged) {
@@ -212,6 +216,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
                                     DataStoreSession session = MyTunesRss.STORE.getTransaction();
                                     try {
                                         session.executeStatement(new DataStoreStatement() {
+                                            @Override
                                             public void execute(Connection connection) throws SQLException {
                                                 SmartStatement stmt = MyTunesRssUtils.createStatement(connection, "updateGenreHiddenAttribute");
                                                 stmt.setString("name", genre.getName());
@@ -309,6 +314,7 @@ public class ContentConfigPanel extends MyTunesRssConfigPanel {
         myGenreMappings.addItem(new Object[]{fromTextField, toTextField, delButton}, UUID.randomUUID().toString());
     }
 
+    @Override
     public void buttonClick(final Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddGenreMapping) {
             addGenreMapping("", "");

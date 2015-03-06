@@ -16,6 +16,7 @@ public class MyTunesRssUncaughtHandler implements Thread.UncaughtExceptionHandle
 
     private AtomicBoolean executed = new AtomicBoolean(false);
     
+    @Override
     public void uncaughtException(Thread t, final Throwable e) {
         if (!executed.getAndSet(true)) {
             String message = "Uncaught exception in thread \"" + t.getName() + "\": \"" + e.getMessage() + "\".";

@@ -32,7 +32,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -122,7 +121,7 @@ public class MyTunesRssConfig {
     private String myFacebookApiKey = "102138059883364";
     private int myNumberKeepDatabaseBackups;
     private boolean myBackupDatabaseAfterInit;
-    private boolean myHeadless = false;
+    private boolean myHeadless;
     private boolean myVlcEnabled;
     private File myVlcExecutable;
     private String myRssDescription;
@@ -948,7 +947,7 @@ public class MyTunesRssConfig {
 
     public synchronized void setOnDemandThumbnailGenerationThreads(int onDemandThumbnailGenerationThreads) {
         myOnDemandThumbnailGenerationThreads = onDemandThumbnailGenerationThreads;
-        MyTunesRss.EXECUTOR_SERVICE.setOnDemandThumbnailGeneratorThreads(onDemandThumbnailGenerationThreads);
+        MyTunesRss.EXECUTOR_SERVICE.setOnDemandThumbnailGeneratorThreads();
     }
 
     public synchronized int getOnDemandThumbnailGenerationTimeoutSeconds() {
@@ -1071,7 +1070,7 @@ public class MyTunesRssConfig {
 
     }
 
-    private void load(JXPathContext settings) throws IOException {
+    private void load(JXPathContext settings) {
         setAdminPasswordHash(JXPathUtils.getByteArray(settings, "adminPassword", getAdminPasswordHash()));
         setAdminHost(JXPathUtils.getStringValue(settings, "adminHost", getAdminHost()));
         setAdminPort(JXPathUtils.getIntValue(settings, "adminPort", getAdminPort()));
@@ -1255,106 +1254,101 @@ public class MyTunesRssConfig {
                     dataSources.add(DatasourceConfig.create(UUID.randomUUID().toString(), null, definition));
                 }
             } else {
-                try {
-                    DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
-                    String id = JXPathUtils.getStringValue(datasourceContext, "id", UUID.randomUUID().toString());
-                    String definition = JXPathUtils.getStringValue(datasourceContext, "definition", "");
-                    String name = JXPathUtils.getStringValue(datasourceContext, "name", null);
-                    switch (type) {
-                        case Watchfolder:
-                            WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(id, name, definition);
-                            watchfolderDatasourceConfig.setMinFileSize(JXPathUtils.getLongValue(datasourceContext, "minFileSize", 0));
-                            watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
-                            watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
-                            watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
-                            watchfolderDatasourceConfig.setTitleFallback(JXPathUtils.getStringValue(datasourceContext, "titleFallback", WatchfolderDatasourceConfig.DEFAULT_TITLE_FALLBACK));
-                            watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", WatchfolderDatasourceConfig.DEFAULT_ALBUM_FALLBACK));
-                            watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", WatchfolderDatasourceConfig.DEFAULT_ARTIST_FALLBACK));
-                            watchfolderDatasourceConfig.setSeriesFallback(JXPathUtils.getStringValue(datasourceContext, "seriesFallback", WatchfolderDatasourceConfig.DEFAULT_SERIES_FALLBACK));
-                            watchfolderDatasourceConfig.setSeasonFallback(JXPathUtils.getStringValue(datasourceContext, "seasonFallback", WatchfolderDatasourceConfig.DEFAULT_SEASON_FALLBACK));
-                            watchfolderDatasourceConfig.setEpisodeFallback(JXPathUtils.getStringValue(datasourceContext, "episodeFallback", WatchfolderDatasourceConfig.DEFAULT_EPISODE_FALLBACK));
-                            watchfolderDatasourceConfig.setVideoType(VideoType.valueOf(JXPathUtils.getStringValue(datasourceContext, "videoType", VideoType.Movie.name())));
-                            watchfolderDatasourceConfig.setPhotoAlbumPattern(JXPathUtils.getStringValue(datasourceContext, "photoAlbumPattern", WatchfolderDatasourceConfig.DEFAULT_PHOTO_ALBUM_PATTERN));
-                            watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
-                            watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
-                            watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(datasourceContext, "id3v2-track-comment", ""));
-                            watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
-                            watchfolderDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
-                            watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
-                            watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
-                            watchfolderDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
-                            watchfolderDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
-                            watchfolderDatasourceConfig.setImportPlaylists(JXPathUtils.getBooleanValue(datasourceContext, "import-playlists", true));
-                            dataSources.add(watchfolderDatasourceConfig);
-                            break;
-                        case Itunes:
-                            ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(id, name, definition);
-                            Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
-                            itunesDatasourceConfig.clearPathReplacements();
-                            while (pathReplacementsIterator.hasNext()) {
-                                JXPathContext pathReplacementContext = pathReplacementsIterator.next();
-                                String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
-                                String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-                                itunesDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
+                DatasourceType type = DatasourceType.valueOf(JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()));
+                String id = JXPathUtils.getStringValue(datasourceContext, "id", UUID.randomUUID().toString());
+                String definition = JXPathUtils.getStringValue(datasourceContext, "definition", "");
+                String name = JXPathUtils.getStringValue(datasourceContext, "name", null);
+                switch (type) {
+                    case Watchfolder:
+                        WatchfolderDatasourceConfig watchfolderDatasourceConfig = new WatchfolderDatasourceConfig(id, name, definition);
+                        watchfolderDatasourceConfig.setMinFileSize(JXPathUtils.getLongValue(datasourceContext, "minFileSize", 0));
+                        watchfolderDatasourceConfig.setMaxFileSize(JXPathUtils.getLongValue(datasourceContext, "maxFileSize", 0));
+                        watchfolderDatasourceConfig.setIncludePattern(JXPathUtils.getStringValue(datasourceContext, "include", null));
+                        watchfolderDatasourceConfig.setExcludePattern(JXPathUtils.getStringValue(datasourceContext, "exclude", null));
+                        watchfolderDatasourceConfig.setTitleFallback(JXPathUtils.getStringValue(datasourceContext, "titleFallback", WatchfolderDatasourceConfig.DEFAULT_TITLE_FALLBACK));
+                        watchfolderDatasourceConfig.setAlbumFallback(JXPathUtils.getStringValue(datasourceContext, "albumFallback", WatchfolderDatasourceConfig.DEFAULT_ALBUM_FALLBACK));
+                        watchfolderDatasourceConfig.setArtistFallback(JXPathUtils.getStringValue(datasourceContext, "artistFallback", WatchfolderDatasourceConfig.DEFAULT_ARTIST_FALLBACK));
+                        watchfolderDatasourceConfig.setSeriesFallback(JXPathUtils.getStringValue(datasourceContext, "seriesFallback", WatchfolderDatasourceConfig.DEFAULT_SERIES_FALLBACK));
+                        watchfolderDatasourceConfig.setSeasonFallback(JXPathUtils.getStringValue(datasourceContext, "seasonFallback", WatchfolderDatasourceConfig.DEFAULT_SEASON_FALLBACK));
+                        watchfolderDatasourceConfig.setEpisodeFallback(JXPathUtils.getStringValue(datasourceContext, "episodeFallback", WatchfolderDatasourceConfig.DEFAULT_EPISODE_FALLBACK));
+                        watchfolderDatasourceConfig.setVideoType(VideoType.valueOf(JXPathUtils.getStringValue(datasourceContext, "videoType", VideoType.Movie.name())));
+                        watchfolderDatasourceConfig.setPhotoAlbumPattern(JXPathUtils.getStringValue(datasourceContext, "photoAlbumPattern", WatchfolderDatasourceConfig.DEFAULT_PHOTO_ALBUM_PATTERN));
+                        watchfolderDatasourceConfig.setIgnoreFileMeta(JXPathUtils.getBooleanValue(datasourceContext, "ignoreFileMeta", false));
+                        watchfolderDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
+                        watchfolderDatasourceConfig.setId3v2TrackComment(JXPathUtils.getStringValue(datasourceContext, "id3v2-track-comment", ""));
+                        watchfolderDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
+                        watchfolderDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
+                        watchfolderDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
+                        watchfolderDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                        watchfolderDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
+                        watchfolderDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
+                        watchfolderDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
+                        watchfolderDatasourceConfig.setImportPlaylists(JXPathUtils.getBooleanValue(datasourceContext, "import-playlists", true));
+                        dataSources.add(watchfolderDatasourceConfig);
+                        break;
+                    case Itunes:
+                        ItunesDatasourceConfig itunesDatasourceConfig = new ItunesDatasourceConfig(id, name, definition);
+                        Iterator<JXPathContext> pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                        itunesDatasourceConfig.clearPathReplacements();
+                        while (pathReplacementsIterator.hasNext()) {
+                            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                            itunesDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
+                        }
+                        Iterator<JXPathContext> ignorePlaylistsIterator = JXPathUtils.getContextIterator(datasourceContext, "ignore-playlists/type");
+                        itunesDatasourceConfig.clearIgnorePlaylists();
+                        while (ignorePlaylistsIterator.hasNext()) {
+                            JXPathContext ignorePlaylistsContext = ignorePlaylistsIterator.next();
+                            try {
+                                itunesDatasourceConfig.addIgnorePlaylist(ItunesPlaylistType.valueOf(JXPathUtils.getStringValue(ignorePlaylistsContext, ".", ItunesPlaylistType.Master.name())));
+                            } catch (IllegalArgumentException ignored) {
+                                // ignore illegal config entry
                             }
-                            Iterator<JXPathContext> ignorePlaylistsIterator = JXPathUtils.getContextIterator(datasourceContext, "ignore-playlists/type");
-                            itunesDatasourceConfig.clearIgnorePlaylists();
-                            while (ignorePlaylistsIterator.hasNext()) {
-                                JXPathContext ignorePlaylistsContext = ignorePlaylistsIterator.next();
-                                try {
-                                    itunesDatasourceConfig.addIgnorePlaylist(ItunesPlaylistType.valueOf(JXPathUtils.getStringValue(ignorePlaylistsContext, ".", ItunesPlaylistType.Master.name())));
-                                } catch (IllegalArgumentException ignored) {
-                                    // ignore illegal config entry
-                                }
-                            }
-                            itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
-                            itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
-                            itunesDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
-                            itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
-                            itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
-                            itunesDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
-                            itunesDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
-                            dataSources.add(itunesDatasourceConfig);
-                            break;
-                        case Iphoto:
-                            IphotoDatasourceConfig iphotoDatasourceConfig = new IphotoDatasourceConfig(id, name, definition);
-                            pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
-                            iphotoDatasourceConfig.clearPathReplacements();
-                            while (pathReplacementsIterator.hasNext()) {
-                                JXPathContext pathReplacementContext = pathReplacementsIterator.next();
-                                String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
-                                String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-                                iphotoDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
-                            }
-                            iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
-                            iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
-                            iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
-                            dataSources.add(iphotoDatasourceConfig);
-                            break;
-                        case Aperture:
-                            ApertureDatasourceConfig apertureDatasourceConfig = new ApertureDatasourceConfig(id, name, definition);
-                            pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
-                            apertureDatasourceConfig.clearPathReplacements();
-                            while (pathReplacementsIterator.hasNext()) {
-                                JXPathContext pathReplacementContext = pathReplacementsIterator.next();
-                                String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
-                                String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
-                                apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
-                            }
-                            apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
-                            apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
-                            dataSources.add(apertureDatasourceConfig);
-                            break;
-                        default:
-                            throw new IllegalArgumentException("Unknown datasource type!");
-                    }
-                } catch (IllegalArgumentException ignored) {
-                    if (LOGGER.isWarnEnabled()) {
-                        LOGGER.warn("Illegal data source of type \"" + JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()) + "\" ignored.");
-                    }
-
+                        }
+                        itunesDatasourceConfig.setArtistDropWords(JXPathUtils.getStringValue(datasourceContext, "artistDropwords", ""));
+                        itunesDatasourceConfig.setDisabledMp4Codecs(JXPathUtils.getStringValue(datasourceContext, "disabled-mp4-codecs", ""));
+                        itunesDatasourceConfig.setTrackImagePatterns(readTrackImagePatterns(datasourceContext));
+                        itunesDatasourceConfig.setTrackImageImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "track-image-import", ImageImportType.Auto.name())));
+                        itunesDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
+                        itunesDatasourceConfig.setUpload(JXPathUtils.getBooleanValue(datasourceContext, "upload", false));
+                        itunesDatasourceConfig.setUseSingleImageInFolder(JXPathUtils.getBooleanValue(datasourceContext, "use-single-image", false));
+                        dataSources.add(itunesDatasourceConfig);
+                        break;
+                    case Iphoto:
+                        IphotoDatasourceConfig iphotoDatasourceConfig = new IphotoDatasourceConfig(id, name, definition);
+                        pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                        iphotoDatasourceConfig.clearPathReplacements();
+                        while (pathReplacementsIterator.hasNext()) {
+                            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                            iphotoDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
+                        }
+                        iphotoDatasourceConfig.setImportRolls(JXPathUtils.getBooleanValue(datasourceContext, "importRolls", true));
+                        iphotoDatasourceConfig.setImportAlbums(JXPathUtils.getBooleanValue(datasourceContext, "importAlbums", true));
+                        iphotoDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                        iphotoDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
+                        dataSources.add(iphotoDatasourceConfig);
+                        break;
+                    case Aperture:
+                        ApertureDatasourceConfig apertureDatasourceConfig = new ApertureDatasourceConfig(id, name, definition);
+                        pathReplacementsIterator = JXPathUtils.getContextIterator(datasourceContext, "path-replacements/replacement");
+                        apertureDatasourceConfig.clearPathReplacements();
+                        while (pathReplacementsIterator.hasNext()) {
+                            JXPathContext pathReplacementContext = pathReplacementsIterator.next();
+                            String search = JXPathUtils.getStringValue(pathReplacementContext, "search", null);
+                            String replacement = JXPathUtils.getStringValue(pathReplacementContext, "replacement", null);
+                            apertureDatasourceConfig.addPathReplacement(new ReplacementRule(search, replacement));
+                        }
+                        apertureDatasourceConfig.setPhotoThumbnailImportType(ImageImportType.valueOf(JXPathUtils.getStringValue(datasourceContext, "photo-thumbnail-import", ImageImportType.OnDemand.name())));
+                        apertureDatasourceConfig.setLastUpdate(JXPathUtils.getLongValue(datasourceContext, "last-update", 0));
+                        dataSources.add(apertureDatasourceConfig);
+                        break;
+                    default:
+                        if (LOGGER.isWarnEnabled()) {
+                            LOGGER.warn("Illegal data source of type \"" + JXPathUtils.getStringValue(datasourceContext, "type", DatasourceType.Itunes.name()) + "\" ignored.");
+                        }
                 }
             }
         }
@@ -1371,7 +1365,7 @@ public class MyTunesRssConfig {
         return patterns;
     }
 
-    private void loadDatabaseSettings(JXPathContext settings) throws IOException {
+    private void loadDatabaseSettings(JXPathContext settings) {
         DatabaseType databaseType = DatabaseType.valueOf(JXPathUtils.getStringValue(settings, "database/type", DatabaseType.h2.name()));
         setDatabaseType(databaseType);
         setDefaultDatabaseSettings();
@@ -1388,7 +1382,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    public synchronized void setDefaultDatabaseSettings() throws IOException {
+    public synchronized void setDefaultDatabaseSettings() {
         if (getDatabaseType() == DatabaseType.h2) {
             setDatabaseDriver("org.h2.Driver");
             setDatabaseConnection("jdbc:h2:file:" + MyTunesRss.CACHE_DATA_PATH + "/" + "h2/MyTunesRSS;MAX_LOG_SIZE=64;MULTI_THREADED=1");
@@ -1413,7 +1407,7 @@ public class MyTunesRssConfig {
         }
     }
 
-    private static File getSettingsFile() throws IOException {
+    private static File getSettingsFile() {
         String filename = "settings.xml";
         return new File(MyTunesRss.PREFERENCES_DATA_PATH + "/" + filename);
     }
@@ -1647,16 +1641,16 @@ public class MyTunesRssConfig {
     private void writeDataSources(Document settings, Element root) {
         Element dataSources = settings.createElement("datasources");
         root.appendChild(dataSources);
-        for (int i = 0; i < myDatasources.size(); i++) {
+        for (DatasourceConfig myDatasource : myDatasources) {
             Element dataSource = settings.createElement("datasource");
             dataSources.appendChild(dataSource);
-            dataSource.appendChild(DOMUtils.createTextElement(settings, "type", myDatasources.get(i).getType().name()));
-            dataSource.appendChild(DOMUtils.createTextElement(settings, "name", myDatasources.get(i).getName()));
-            dataSource.appendChild(DOMUtils.createTextElement(settings, "definition", myDatasources.get(i).getDefinition()));
-            dataSource.appendChild(DOMUtils.createTextElement(settings, "id", myDatasources.get(i).getId()));
-            switch (myDatasources.get(i).getType()) {
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "type", myDatasource.getType().name()));
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "name", myDatasource.getName()));
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "definition", myDatasource.getDefinition()));
+            dataSource.appendChild(DOMUtils.createTextElement(settings, "id", myDatasource.getId()));
+            switch (myDatasource.getType()) {
                 case Watchfolder:
-                    WatchfolderDatasourceConfig watchfolderDatasourceConfig = (WatchfolderDatasourceConfig) myDatasources.get(i);
+                    WatchfolderDatasourceConfig watchfolderDatasourceConfig = (WatchfolderDatasourceConfig) myDatasource;
                     dataSource.appendChild(DOMUtils.createLongElement(settings, "minFileSize", watchfolderDatasourceConfig.getMinFileSize()));
                     dataSource.appendChild(DOMUtils.createLongElement(settings, "maxFileSize", watchfolderDatasourceConfig.getMaxFileSize()));
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "include", watchfolderDatasourceConfig.getIncludePattern()));
@@ -1678,10 +1672,10 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", watchfolderDatasourceConfig.isUseSingleImageInFolder()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "import-playlists", watchfolderDatasourceConfig.isImportPlaylists()));
                     writeTrackImagePatterns(settings, dataSource, watchfolderDatasourceConfig);
-                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasource.isUpload()));
                     break;
                 case Itunes:
-                    ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasources.get(i);
+                    ItunesDatasourceConfig itunesDatasourceConfig = (ItunesDatasourceConfig) myDatasource;
                     if (itunesDatasourceConfig.getPathReplacements() != null && !itunesDatasourceConfig.getPathReplacements().isEmpty()) {
                         Element pathReplacementsElement = settings.createElement("path-replacements");
                         dataSource.appendChild(pathReplacementsElement);
@@ -1704,10 +1698,10 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "track-image-import", itunesDatasourceConfig.getTrackImageImportType().name()));
                     dataSource.appendChild(DOMUtils.createBooleanElement(settings, "use-single-image", itunesDatasourceConfig.isUseSingleImageInFolder()));
                     writeTrackImagePatterns(settings, dataSource, itunesDatasourceConfig);
-                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasources.get(i).isUpload()));
+                    dataSource.appendChild(DOMUtils.createBooleanElement(settings, "upload", myDatasource.isUpload()));
                     break;
                 case Iphoto:
-                    IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasources.get(i);
+                    IphotoDatasourceConfig iphotoDatasourceConfig = (IphotoDatasourceConfig) myDatasource;
                     if (iphotoDatasourceConfig.getPathReplacements() != null && !iphotoDatasourceConfig.getPathReplacements().isEmpty()) {
                         Element pathReplacementsElement = settings.createElement("path-replacements");
                         dataSource.appendChild(pathReplacementsElement);
@@ -1723,7 +1717,7 @@ public class MyTunesRssConfig {
                     dataSource.appendChild(DOMUtils.createTextElement(settings, "photo-thumbnail-import", iphotoDatasourceConfig.getPhotoThumbnailImportType().name()));
                     break;
                 case Aperture:
-                    ApertureDatasourceConfig apertureDatasourceConfig = (ApertureDatasourceConfig) myDatasources.get(i);
+                    ApertureDatasourceConfig apertureDatasourceConfig = (ApertureDatasourceConfig) myDatasource;
                     if (apertureDatasourceConfig.getPathReplacements() != null && !apertureDatasourceConfig.getPathReplacements().isEmpty()) {
                         Element pathReplacementsElement = settings.createElement("path-replacements");
                         dataSource.appendChild(pathReplacementsElement);
@@ -1773,6 +1767,7 @@ public class MyTunesRssConfig {
         }
         if (current.compareTo(new Version("6.3.2")) < 0) {
             setVersion("6.3.2");
+            //noinspection AssignmentToStaticFieldFromInstanceMethod
             MyTunesRss.REBUILD_LUCENE_INDEX_ON_STARTUP = true;
         }
     }

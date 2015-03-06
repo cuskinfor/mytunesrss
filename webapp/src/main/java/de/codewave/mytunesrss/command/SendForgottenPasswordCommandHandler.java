@@ -21,6 +21,7 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
 
     private Random myRandom = new Random(System.currentTimeMillis());
 
+    @Override
     public void execute() throws IOException, ServletException {
         String userName = getRequest().getParameter("username");
         if (StringUtils.isNotEmpty(userName)) {
@@ -61,7 +62,7 @@ public class SendForgottenPasswordCommandHandler extends MyTunesRssCommandHandle
      * @param user     The user.
      * @param password The new password.
      *
-     * @return Either <code>null</code> or an error object.
+     * @return Either {@code null} or an error object.
      */
     private de.codewave.mytunesrss.jsp.Error sendPasswordToUser(User user, StringBuilder password) {
         de.codewave.mytunesrss.jsp.Error error = null;

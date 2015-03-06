@@ -6,5 +6,5 @@
 package de.codewave.mytunesrss.config;
 
 public enum LdapAuthMethod {
-    SIMPLE();
+    SIMPLE()
 }

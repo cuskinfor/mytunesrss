@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreSession;
 import de.codewave.utils.sql.ResultSetType;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.Item;
 
 import java.sql.SQLException;
@@ -20,13 +19,13 @@ public abstract class MyTunesRssItemDIDL extends MyTunesRssDIDL {
     private long myTotalMatches;
 
     @Override
-    void createDirectChildren(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) {
+    void createDirectChildren(User user, DataStoreSession tx, String oidParams, long firstResult, long maxResults) {
         // no children available, it is not a container
         myTotalMatches = 0;
     }
 
     @Override
-    void createMetaData(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(final User user, DataStoreSession tx, String oidParams) throws SQLException {
         FindTrackQuery query = FindTrackQuery.getForIds(new String[]{ decode(oidParams).get(0) });
         query.setFetchOptions(ResultSetType.TYPE_FORWARD_ONLY, 1);
         Item item = createItem(tx.executeQuery(query).nextResult(), user, oidParams);

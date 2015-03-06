@@ -6,7 +6,7 @@ import de.codewave.utils.xml.PListHandlerListener;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Map;
 
 /**
  * de.codewave.mytunesrss.datastore.itunes.PlaylistListenerr
@@ -23,6 +23,7 @@ public class IphotoAlbumListener extends AlbumListener implements PListHandlerLi
         super(datasourceConfig, watchdogThread, queue, libraryListener, photoIdToPersId);
     }
 
+    @Override
     protected boolean useAlbum(String albumType) {
         return !ArrayUtils.contains(IGNORE_TYPES, albumType);
     }

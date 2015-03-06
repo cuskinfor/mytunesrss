@@ -22,13 +22,15 @@ public class FindTrackQueryTest {
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         MyTunesRssTestUtils.after();
     }
 
     @Test
     public void testQueries() throws SQLException, IOException {
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.CACHE_DATA_PATH = MyTunesRssTestUtils.createTempDir().getAbsolutePath();
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.PREFERENCES_DATA_PATH = MyTunesRssTestUtils.createTempDir().getAbsolutePath();
         MyTunesRss.LUCENE_TRACK_SERVICE.deleteLuceneIndex();
         for (SortOrder sortOrder : SortOrder.values()) {

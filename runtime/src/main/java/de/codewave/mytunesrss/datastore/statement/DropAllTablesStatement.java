@@ -21,6 +21,7 @@ public class DropAllTablesStatement implements DataStoreStatement {
     
     private static final Logger LOGGER = LoggerFactory.getLogger(DropAllTablesStatement.class);
     
+    @Override
     public void execute(Connection connection) throws SQLException {
         MyTunesRssUtils.createStatement(connection, "dropAllTables").execute();
         try {

@@ -44,6 +44,7 @@ public class GetPhotoAlbumsQuery extends DataStoreQuery<QueryResult<PhotoAlbum>>
         myExcludedDataSourceIds = user.getExcludedDataSourceIds();
     }
 
+    @Override
     public QueryResult<PhotoAlbum> execute(Connection connection) throws SQLException {
         Map<String, Boolean> conditionals = new HashMap<>();
         conditionals.put("excluded", !myExcludedPhotoAlbumIds.isEmpty());
@@ -55,15 +56,15 @@ public class GetPhotoAlbumsQuery extends DataStoreQuery<QueryResult<PhotoAlbum>>
         statement.setItems("excludedPhotoAlbumIds", myExcludedPhotoAlbumIds);
         statement.setItems("excludedDataSourceIds", myExcludedDataSourceIds);
         return execute(statement, new ResultBuilder<PhotoAlbum>() {
+            @Override
             public PhotoAlbum create(ResultSet resultSet) throws SQLException {
-                PhotoAlbum photoAlbum = new PhotoAlbum(
+                return new PhotoAlbum(
                         resultSet.getString("id"),
                         resultSet.getString("name"),
                         resultSet.getLong("first_date"),
                         resultSet.getLong("last_date"),
                         resultSet.getInt("photo_count")
                 );
-                return photoAlbum;
             }
         });
     }

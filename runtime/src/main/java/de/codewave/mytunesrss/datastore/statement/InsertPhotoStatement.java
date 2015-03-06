@@ -27,6 +27,7 @@ public class InsertPhotoStatement extends InsertOrUpdatePhotoStatement {
         }
     }
 
+    @Override
     protected String getStatementName() {
         return "insertPhoto";
     }

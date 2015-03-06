@@ -19,7 +19,7 @@ public class DesktopWrapperFactory {
      *
      * @return A desktop wrapper.
      */
-    public static final DesktopWrapper createDesktopWrapper() {
+    public static DesktopWrapper createDesktopWrapper() {
         try {
             return new Java6DesktopWrapper();
         } catch (Throwable e) {

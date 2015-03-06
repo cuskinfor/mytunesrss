@@ -26,6 +26,7 @@ public class OnDemandPhotoThumbnailGeneratorCallable implements Callable<String>
         myFile = file;
     }
 
+    @Override
     public String call() throws SQLException {
         HandlePhotoImagesStatement statement = new HandlePhotoImagesStatement(myFile, myId);
         MyTunesRss.STORE.executeStatement(statement);

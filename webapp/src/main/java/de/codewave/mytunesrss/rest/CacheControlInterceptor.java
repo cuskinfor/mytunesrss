@@ -9,12 +9,10 @@ import de.codewave.mytunesrss.MyTunesRssWebUtils;
 import org.jboss.resteasy.annotations.interception.ServerInterceptor;
 import org.jboss.resteasy.core.ResourceMethod;
 import org.jboss.resteasy.core.ServerResponse;
-import org.jboss.resteasy.spi.Failure;
 import org.jboss.resteasy.spi.HttpRequest;
 import org.jboss.resteasy.spi.interception.PostProcessInterceptor;
 import org.jboss.resteasy.spi.interception.PreProcessInterceptor;
 
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.Provider;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -47,7 +45,8 @@ public class CacheControlInterceptor implements PreProcessInterceptor, PostProce
         return IF_MODIFIED_SINCE.get();
     }
 
-    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) throws Failure, WebApplicationException {
+    @Override
+    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) {
         IF_MODIFIED_SINCE.remove();
         List<String> header = httpRequest.getHttpHeaders().getRequestHeader("If-Modified-Since");
         if (header != null && !header.isEmpty()) {
@@ -60,6 +59,7 @@ public class CacheControlInterceptor implements PreProcessInterceptor, PostProce
         return null;
     }
 
+    @Override
     public void postProcess(ServerResponse serverResponse) {
         try {
             if (LAST_MODIFIED.get() != null) {

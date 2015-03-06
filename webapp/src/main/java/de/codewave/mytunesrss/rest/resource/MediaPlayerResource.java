@@ -32,8 +32,8 @@ import java.util.List;
 @RequiredUserPermissions({UserPermission.RemoteControl})
 public class MediaPlayerResource extends RestResource {
 
-    public static enum Action {
-        PLAY(), PAUSE(), STOP(), SEEK(), SHUFFLE(), NEXT(), PREVIOUS(), TOGGLE_PLAY_PAUSE();
+    public enum Action {
+        PLAY(), PAUSE(), STOP(), SEEK(), SHUFFLE(), NEXT(), PREVIOUS(), TOGGLE_PLAY_PAUSE()
     }
 
     private MediaRendererController getController() {
@@ -143,7 +143,7 @@ public class MediaPlayerResource extends RestResource {
      */
     @DELETE
     @Path("playlist")
-    public void clearPlaylist() throws Exception {
+    public void clearPlaylist() {
         getController().clearPlaylist();
     }
 
@@ -170,7 +170,7 @@ public class MediaPlayerResource extends RestResource {
             @FormParam("action") Action action,
             @FormParam("track") @DefaultValue("-1") int track,
             @FormParam("seek") Integer seek
-    ) throws Exception {
+    ) {
         if (volume != null) {
             getController().setVolume(volume);
         }
@@ -239,7 +239,7 @@ public class MediaPlayerResource extends RestResource {
     public List<TrackRepresentation> getPlaylist(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request
-    ) throws Exception {
+    ) {
         return toTrackRepresentations(uriInfo, request, getController().getPlaylist());
     }
 
@@ -267,7 +267,7 @@ public class MediaPlayerResource extends RestResource {
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
             @PathParam("index") int index
-    ) throws Exception {
+    ) {
         return toTrackRepresentation(uriInfo, request, getController().getTrack(index));
     }
 
@@ -280,7 +280,7 @@ public class MediaPlayerResource extends RestResource {
      */
     @GET
     @Produces("application/json")
-    public MediaPlayerRepresentation getStatus() throws Exception {
+    public MediaPlayerRepresentation getStatus() {
         return new MediaPlayerRepresentation(getController().getCurrentTrackInfo(), getController().getPlaylistVersion());
     }
 

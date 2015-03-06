@@ -10,7 +10,10 @@ import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.HandleTrackImagesStatement;
 import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
 import de.codewave.mytunesrss.datastore.statement.TrackSource;
-import de.codewave.utils.sql.*;
+import de.codewave.utils.sql.DataStoreQuery;
+import de.codewave.utils.sql.ResultBuilder;
+import de.codewave.utils.sql.ResultSetType;
+import de.codewave.utils.sql.SmartStatement;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,6 +45,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
 
     private AtomicBoolean myTerminated = new AtomicBoolean(false);
 
+    @Override
     public synchronized void run() {
         try {
             final Set<String> sourceIds = new HashSet<>();
@@ -60,6 +64,7 @@ public class TrackImageGeneratorRunnable implements Runnable {
                             SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTracksWithMissingImages");
                             statement.setItems("sourceIds", sourceIds);
                             return execute(statement, new ResultBuilder<SimpleTrack>() {
+                                @Override
                                 public SimpleTrack create(ResultSet resultSet) throws SQLException {
                                     return new SimpleTrack(resultSet.getString("id"), resultSet.getString("file"), TrackSource.valueOf(resultSet.getString("source")), resultSet.getString("source_id"));
                                 }

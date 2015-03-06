@@ -13,7 +13,6 @@ import de.codewave.mytunesrss.rest.UserPermission;
 import de.codewave.mytunesrss.rest.representation.PlaylistRepresentation;
 import de.codewave.mytunesrss.rest.representation.TrackRepresentation;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 import de.codewave.utils.sql.ResultSetType;
 import org.jboss.resteasy.annotations.GZIP;
@@ -28,7 +27,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @ValidateRequest
 @Path("playlist")
@@ -46,7 +47,7 @@ public class PlaylistResource extends RestResource {
     @Path("edit")
     public Response startEditNewPlaylist(
             @Context HttpServletRequest request
-    ) throws SQLException {
+    ) {
         request.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST, new Playlist());
         request.getSession().setAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST_TRACKS, new ArrayList<Track>());
         return Response.created(UriBuilder.fromResource(EditPlaylistResource.class).build()).build();

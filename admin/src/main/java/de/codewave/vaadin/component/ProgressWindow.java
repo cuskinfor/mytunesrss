@@ -6,7 +6,7 @@ import com.vaadin.ui.*;
 
 public class ProgressWindow extends Window implements Refresher.RefreshListener {
 
-    public static interface Task extends Runnable {
+    public interface Task extends Runnable {
         void onWindowClosed();
     }
 
@@ -53,6 +53,7 @@ public class ProgressWindow extends Window implements Refresher.RefreshListener 
         parent.addWindow(this);
     }
 
+    @Override
     public void refresh(Refresher refresher) {
         if (!myThread.isAlive()) {
             getParent().removeWindow(this);

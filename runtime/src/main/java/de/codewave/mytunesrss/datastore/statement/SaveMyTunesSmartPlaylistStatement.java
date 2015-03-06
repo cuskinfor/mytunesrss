@@ -33,6 +33,7 @@ public class SaveMyTunesSmartPlaylistStatement extends SavePlaylistStatement {
         mySmartInfos = smartInfos;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         try {
             handleIdAndUpdate(connection);

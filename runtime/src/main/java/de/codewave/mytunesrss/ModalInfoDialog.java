@@ -27,6 +27,7 @@ public class ModalInfoDialog {
     public void show(final long delayMillis) {
         if (!MyTunesRssUtils.isHeadless()) {
             myThread = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     try {
                         Thread.sleep(delayMillis);
@@ -47,6 +48,7 @@ public class ModalInfoDialog {
     public void destroy() {
         if (!MyTunesRssUtils.isHeadless()) {
             Thread thread = new Thread(new Runnable() {
+                @Override
                 public void run() {
                     myCancelled.set(true);
                     myThread.interrupt();

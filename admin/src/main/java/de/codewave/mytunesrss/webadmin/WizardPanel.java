@@ -10,8 +10,8 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import de.codewave.mytunesrss.DatabaseJobRunningException;
-import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.webadmin.datasource.DatasourcesConfigPanel;
 import de.codewave.vaadin.SmartField;
@@ -40,6 +40,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
     private Button myFinishButton;
     private Button mySkipButton;
 
+    @Override
     public void attach() {
         super.attach();
         setCaption(getApplication().getBundleString("wizardPanel.caption"));
@@ -68,10 +69,12 @@ public class WizardPanel extends Panel implements Button.ClickListener {
         mainButtons.addComponent(mySkipButton);
     }
 
+    @Override
     public MyTunesRssWebAdmin getApplication() {
         return (MyTunesRssWebAdmin) super.getApplication();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getSource() == myAddDatasourceButton) {
             new ServerSideFileChooserWindow(50, Sizeable.UNITS_EM, null, getApplication().getBundleString("datasourcesConfigPanel.caption.selectLocalDatasource"), null, ServerSideFileChooser.PATTERN_ALL, DatasourcesConfigPanel.XML_FILE_PATTERN, false, getApplication().getServerSideFileChooserLabels()) {
@@ -107,6 +110,7 @@ public class WizardPanel extends Panel implements Button.ClickListener {
                         }
                         applicationWindow.showBlockingMessage("wizard.working.message");
                         Thread wizardWatchdog = new Thread(new Runnable() {
+                            @Override
                             public void run() {
                                 while (MyTunesRss.EXECUTOR_SERVICE.isDatabaseJobRunning()) {
                                     try {

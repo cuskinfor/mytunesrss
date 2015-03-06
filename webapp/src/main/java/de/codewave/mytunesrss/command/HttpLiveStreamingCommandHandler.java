@@ -125,30 +125,25 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
         File playlistFile = new File(dir, "playlist.m3u8");
         long startTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - startTime < timeoutMillis) {
-            try {
-                LOGGER.debug("Reading playlist file \"" + playlistFile.getAbsolutePath() + "\".");
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(playlistFile), "UTF-8"));
-                try {
-                    int segments = 0;
-                    for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
-                        LOGGER.debug("Read line \"" + line + "\" from playlistFile file.");
-                        if (StringUtils.trimToEmpty(StringUtils.lowerCase(line)).startsWith("#extinf")) {
-                            LOGGER.debug("Found segment " + (segments + 1) + ".");
-                            segments++;
-                            if (segments == 3) {
-                                LOGGER.debug("Enough segments found, returning playlist file after " + (System.currentTimeMillis() - startTime) + " milliseconds.");
-                                return playlistFile;
-                            }
+            LOGGER.debug("Reading playlist file \"" + playlistFile.getAbsolutePath() + "\".");
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(new FileInputStream(playlistFile), "UTF-8"))) {
+                int segments = 0;
+                for (String line = bufferedReader.readLine(); line != null; line = bufferedReader.readLine()) {
+                    LOGGER.debug("Read line \"" + line + "\" from playlistFile file.");
+                    if (StringUtils.trimToEmpty(StringUtils.lowerCase(line)).startsWith("#extinf")) {
+                        LOGGER.debug("Found segment " + (segments + 1) + ".");
+                        segments++;
+                        if (segments == 3) {
+                            LOGGER.debug("Enough segments found, returning playlist file after " + (System.currentTimeMillis() - startTime) + " milliseconds.");
+                            return playlistFile;
                         }
                     }
-                } catch (IOException e) {
-                    LOGGER.debug("Caught IOException while waiting for playlist file.", e);
-                } finally {
-                    LOGGER.debug("Closing playlist file reader.");
-                    bufferedReader.close();
                 }
             } catch (IOException e) {
                 LOGGER.debug("Caught IOException while waiting for playlist file.", e);
+            } finally {
+                LOGGER.debug("Closing playlist file reader.");
+
             }
             try {
                 LOGGER.debug("Sleeping a while before trying again to read playlist file.");
@@ -171,6 +166,7 @@ public class HttpLiveStreamingCommandHandler extends BandwidthThrottlingCommandH
             myVideoFile = videoFile;
         }
 
+        @Override
         public void run() {
             Process process = null;
             try {

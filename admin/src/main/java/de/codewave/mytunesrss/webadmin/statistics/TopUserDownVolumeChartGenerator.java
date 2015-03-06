@@ -57,6 +57,7 @@ public class TopUserDownVolumeChartGenerator extends TopChartGenerator {
         }
     }
 
+    @Override
     public StatEventType[] getEventTypes() {
         return new StatEventType[]{
                 StatEventType.DOWNLOAD

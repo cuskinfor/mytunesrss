@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.datastore.statement.FindTvShowEpisodesQuery;
 import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.DataStoreSession;
-import org.fourthline.cling.support.model.SortCriterion;
 import org.fourthline.cling.support.model.item.Movie;
 
 import java.sql.SQLException;
@@ -18,11 +17,12 @@ import java.sql.SQLException;
 public class TvShowSeasonDIDL extends MyTunesRssContainerDIDL {
 
     @Override
-    void createDirectChildren(final User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createDirectChildren(final User user, DataStoreSession tx, String oidParams, long firstResult, long maxResults) throws SQLException {
         executeAndProcess(
                 tx,
                 new FindTvShowEpisodesQuery(user, decode(oidParams).get(0), Integer.parseInt(decode(oidParams).get(1))),
                 new DataStoreQuery.ResultProcessor<Track>() {
+                    @Override
                     public void process(Track track) {
                         Movie movie = createMovieTrack(
                                 user,
@@ -42,7 +42,7 @@ public class TvShowSeasonDIDL extends MyTunesRssContainerDIDL {
     }
 
     @Override
-    void createMetaData(User user, DataStoreSession tx, String oidParams, String filter, long firstResult, long maxResults, SortCriterion[] orderby) throws SQLException {
+    void createMetaData(User user, DataStoreSession tx, String oidParams) throws SQLException {
         FindTvShowEpisodesQuery episodesQuery = new FindTvShowEpisodesQuery(user, decode(oidParams).get(0), Integer.parseInt(decode(oidParams).get(1)));
         int episodesCount = tx.executeQuery(episodesQuery).getResultSize();
         addContainer(createSimpleContainer(ObjectID.TvShowSeason.getValue() + ";" + oidParams, ObjectID.TvShow.getValue() + ";" + encode(decode(oidParams).get(0)), episodesCount));

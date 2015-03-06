@@ -43,6 +43,7 @@ public class AddonsUtils {
         }
         List<ThemeDefinition> themes = new ArrayList<>(themeSet);
         Collections.sort(themes, new Comparator<ThemeDefinition>() {
+            @Override
             public int compare(ThemeDefinition o1, ThemeDefinition o2) {
                 return o1.getName().compareTo(o2.getName());
             }
@@ -64,6 +65,7 @@ public class AddonsUtils {
         Collection<ThemeDefinition> themes = new HashSet<>();
         if (themesDir.isDirectory()) {
             String[] themeFileNames = themesDir.list(new FilenameFilter() {
+                @Override
                 public boolean accept(File dir, String name) {
                     return new File(dir, name + "/images").isDirectory() && new File(dir, name + "/styles").isDirectory();
                 }
@@ -84,27 +86,22 @@ public class AddonsUtils {
 
     public static Collection<LanguageDefinition> getLanguages(boolean builtinLanguages) {
         Set<LanguageDefinition> languageSet = new HashSet<>();
-        try {
-            File languagesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages");
-            if (!languagesDir.exists() && builtinLanguages) {
-                if (!languagesDir.mkdirs()) {
-                    LOGGER.warn("Could not create folder for languages.");
-                }
-            }
-            if (builtinLanguages) {
-                languageSet.add(new LanguageDefinition().setCode("de"));
-                languageSet.add(new LanguageDefinition().setCode("en"));
-                languageSet.addAll(getLanguagesFromDir(languagesDir));
-            }
-            languagesDir = getUserLanguagesDir();
-            languageSet.addAll(getLanguagesFromDir(languagesDir));
-        } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Problem reading existing themes and languages.", e);
+        File languagesDir = new File(MyTunesRssUtils.getBuiltinAddonsPath() + "/languages");
+        if (!languagesDir.exists() && builtinLanguages) {
+            if (!languagesDir.mkdirs()) {
+                LOGGER.warn("Could not create folder for languages.");
             }
         }
+        if (builtinLanguages) {
+            languageSet.add(new LanguageDefinition().setCode("de"));
+            languageSet.add(new LanguageDefinition().setCode("en"));
+            languageSet.addAll(getLanguagesFromDir(languagesDir));
+        }
+        languagesDir = getUserLanguagesDir();
+        languageSet.addAll(getLanguagesFromDir(languagesDir));
         List<LanguageDefinition> languages = new ArrayList<>(languageSet);
         Collections.sort(languages, new Comparator<LanguageDefinition>() {
+            @Override
             public int compare(LanguageDefinition o1, LanguageDefinition o2) {
                 return o1.getCode().compareTo(o2.getCode());
             }
@@ -122,10 +119,11 @@ public class AddonsUtils {
         return languagesDir;
     }
 
-    private static Collection<LanguageDefinition> getLanguagesFromDir(File languagesDir) throws IOException {
+    private static Collection<LanguageDefinition> getLanguagesFromDir(File languagesDir) {
         Collection<LanguageDefinition> languages = new HashSet<>();
         if (languagesDir.isDirectory()) {
             String[] languageFileNames = languagesDir.list(new FilenameFilter() {
+                @Override
                 public boolean accept(File dir, String name) {
                     return name.startsWith("MyTunesRssWeb_") && name.endsWith(".properties");
                 }
@@ -417,8 +415,8 @@ public class AddonsUtils {
         return fileNames;
     }
 
-    public static enum AddFileResult {
-        ExtractFailed(), InvalidFile(), Ok(), SaveFailed();
+    public enum AddFileResult {
+        ExtractFailed(), InvalidFile(), Ok(), SaveFailed()
     }
 
     public static void storeLanguage(LanguageDefinition definition, Properties language) throws IOException {

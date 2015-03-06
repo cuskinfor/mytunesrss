@@ -18,6 +18,7 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckpointEvent.class);
 
+    @Override
     public boolean execute(DataStoreSession session) {
         session.commit();
         try {
@@ -81,14 +82,17 @@ public class CheckpointEvent implements DatabaseUpdateEvent {
         }
     }
 
+    @Override
     public boolean isCheckpointRelevant() {
         return false;
     }
 
+    @Override
     public boolean isTerminate() {
         return false;
     }
 
+    @Override
     public boolean isStartTransaction() {
         return true;
     }

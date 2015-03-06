@@ -75,6 +75,7 @@ public abstract class DatasourceConfig implements Comparable<DatasourceConfig> {
 
     public abstract DatasourceType getType();
 
+    @Override
     public int compareTo(DatasourceConfig other) {
         return getDefinition().compareTo(other.getDefinition());
     }

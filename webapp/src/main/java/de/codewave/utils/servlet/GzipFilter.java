@@ -19,6 +19,7 @@ public class GzipFilter implements Filter {
      *
      * @param filterConfig The filter configuration.
      */
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // intentionally left blank
     }
@@ -33,6 +34,7 @@ public class GzipFilter implements Filter {
      * @throws IOException      Any IO exception from the chain.
      * @throws ServletException Any servlet exception from the chain.
      */
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (response instanceof HttpServletResponse && request instanceof HttpServletRequest && ((HttpServletRequest)request).getHeader(
                 "Accept-Encoding") != null && ((HttpServletRequest)request).getHeader("Accept-Encoding").contains("gzip")) {
@@ -46,6 +48,7 @@ public class GzipFilter implements Filter {
     /**
      * Destroy the servlet filter.
      */
+    @Override
     public void destroy() {
         // intentionally left blank
     }

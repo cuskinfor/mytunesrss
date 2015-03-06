@@ -15,6 +15,7 @@ public abstract class AbstractEvent implements StatisticsEvent {
         myEventType = eventType;
     }
 
+    @Override
     @XmlTransient
     @JsonIgnore
     public long getEventTime() {
@@ -25,12 +26,14 @@ public abstract class AbstractEvent implements StatisticsEvent {
         myEventTime = eventTime;
     }
 
+    @Override
     @XmlTransient
     @JsonIgnore
     public StatEventType getType() {
         return myEventType;
     }
 
+    @Override
     public String toJson() throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.getSerializationConfig().withAnnotationIntrospector(new JaxbAnnotationIntrospector());

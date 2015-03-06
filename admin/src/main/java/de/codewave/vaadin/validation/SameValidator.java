@@ -19,6 +19,7 @@ public class SameValidator extends AbstractValidator {
         myOtherField = otherField;
     }
 
+    @Override
     public boolean isValid(Object o) {
         Object otherValue = myOtherField.getValue();
         if (otherValue == o) {

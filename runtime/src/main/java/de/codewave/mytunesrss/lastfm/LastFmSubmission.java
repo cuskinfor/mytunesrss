@@ -38,6 +38,7 @@ public class LastFmSubmission implements Delayed {
         myTrack = track;
     }
 
+    @Override
     public long getDelay(TimeUnit unit) {
         if (!myFinished) {
             long delay = myPlaybackStartTime + (1000L * myTrack.getTime()) - System.currentTimeMillis();
@@ -48,6 +49,7 @@ public class LastFmSubmission implements Delayed {
         return 0;
     }
 
+    @Override
     public int compareTo(Delayed o) {
         return (int) (getDelay(TimeUnit.MILLISECONDS) - o.getDelay(TimeUnit.MILLISECONDS));
     }
@@ -59,9 +61,8 @@ public class LastFmSubmission implements Delayed {
 
         LastFmSubmission that = (LastFmSubmission) o;
 
-        if (getDelay(TimeUnit.MILLISECONDS) != that.getDelay(TimeUnit.MILLISECONDS)) return false;
+        return getDelay(TimeUnit.MILLISECONDS) == that.getDelay(TimeUnit.MILLISECONDS);
 
-        return true;
     }
 
     @Override

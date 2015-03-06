@@ -1,6 +1,5 @@
 package de.codewave.mytunesrss;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.tika.config.TikaConfig;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.io.TikaInputStream;

@@ -45,6 +45,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
             return name;
         }
 
+        @Override
         public int compareTo(TableEntry tableEntry) {
             if (order != tableEntry.order) {
                 return order - tableEntry.order;
@@ -60,9 +61,8 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
             TableEntry that = (TableEntry) o;
 
             if (order != that.order) return false;
-            if (name != null ? !name.equals(that.name) : that.name != null) return false;
+            return !(name != null ? !name.equals(that.name) : that.name != null);
 
-            return true;
         }
 
         @Override
@@ -131,6 +131,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
             myRootsInput = new Select(labels.getRoots(), Arrays.asList(myRootFiles));
             myRootsInput.setNullSelectionAllowed(false);
             myRootSelectionListener = new Property.ValueChangeListener() {
+                @Override
                 public void valueChange(Property.ValueChangeEvent valueChangeEvent) {
                     myCurrentDir = (File) myRootsInput.getValue();
                     setFiles(false);
@@ -212,14 +213,17 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         myChooser.sort();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == myOk) {
             File file = (File) myChooser.getValue();
             if (isAllowedSelect(file)) {
+                //noinspection AssignmentToStaticFieldFromInstanceMethod
                 theLastSelectedDir = myCurrentDir;
                 onFileSelected(file);
             }
         } else if (clickEvent.getButton() == myCancel) {
+            //noinspection AssignmentToStaticFieldFromInstanceMethod
             theLastSelectedDir = myCurrentDir;
             onCancel();
         } else if (clickEvent.getButton() == myCreateDir) {
@@ -243,6 +247,7 @@ public abstract class ServerSideFileChooser extends CustomComponent implements B
         return false;
     }
 
+    @Override
     public void itemClick(ItemClickEvent itemClickEvent) {
         File file = (File) itemClickEvent.getItemId();
         myOk.setEnabled(isAllowedSelect(file));

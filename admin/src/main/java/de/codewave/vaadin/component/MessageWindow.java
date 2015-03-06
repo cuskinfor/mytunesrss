@@ -47,12 +47,13 @@ public abstract class MessageWindow extends Window implements Button.ClickListen
         }
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         getParent().removeWindow(this);
-        onClick(clickEvent.getButton());
+        onClick();
     }
 
-    protected abstract void onClick(Button button);
+    protected abstract void onClick();
 
 
 }

@@ -35,14 +35,14 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
     private String myEpisodeFallback = DEFAULT_EPISODE_FALLBACK;
     private VideoType myVideoType = VideoType.Movie;
     private String myPhotoAlbumPattern = DEFAULT_PHOTO_ALBUM_PATTERN;
-    private boolean myIgnoreFileMeta = false;
+    private boolean myIgnoreFileMeta;
     private String myArtistDropWords = "";
     private String myId3v2TrackComment = "";
     private String myDisabledMp4Codecs = "";
     private List<String> myTrackImagePatterns = new ArrayList<>();
     private ImageImportType myTrackImageImportType = ImageImportType.Auto;
     private ImageImportType myPhotoThumbnailImportType = ImageImportType.OnDemand;
-    private boolean myUseSingleImageInFolder = false;
+    private boolean myUseSingleImageInFolder;
     private boolean myImportPlaylists = true;
 
     public WatchfolderDatasourceConfig(WatchfolderDatasourceConfig source) {
@@ -199,10 +199,12 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myIgnoreFileMeta = ignoreFileMeta;
     }
 
+    @Override
     public String getArtistDropWords() {
         return myArtistDropWords;
     }
 
+    @Override
     public void setArtistDropWords(String artistDropWords) {
         myArtistDropWords = artistDropWords;
     }
@@ -215,34 +217,42 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         myId3v2TrackComment = id3v2TrackComment;
     }
 
+    @Override
     public String getDisabledMp4Codecs() {
         return myDisabledMp4Codecs;
     }
 
+    @Override
     public void setDisabledMp4Codecs(String disabledMp4Codecs) {
         myDisabledMp4Codecs = disabledMp4Codecs;
     }
 
+    @Override
     public List<String> getTrackImagePatterns() {
         return new ArrayList<>(myTrackImagePatterns);
     }
 
+    @Override
     public void setTrackImagePatterns(List<String> trackImagePatterns) {
         this.myTrackImagePatterns = new ArrayList<>(trackImagePatterns);
     }
 
+    @Override
     public ImageImportType getTrackImageImportType() {
         return myTrackImageImportType;
     }
 
+    @Override
     public void setTrackImageImportType(ImageImportType trackImageImportType) {
         myTrackImageImportType = trackImageImportType;
     }
 
+    @Override
     public ImageImportType getPhotoThumbnailImportType() {
         return myPhotoThumbnailImportType;
     }
 
+    @Override
     public void setPhotoThumbnailImportType(ImageImportType photoThumbnailImportType) {
         myPhotoThumbnailImportType = photoThumbnailImportType;
     }
@@ -252,6 +262,7 @@ public class WatchfolderDatasourceConfig extends DatasourceConfig implements Com
         return true;
     }
 
+    @Override
     public boolean isUseSingleImageInFolder() {
         return myUseSingleImageInFolder;
     }

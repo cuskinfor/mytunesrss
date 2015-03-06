@@ -15,6 +15,7 @@ public class TopNameChartGenerator extends TopTrackDownloadChartGenerator {
         return "statisticsConfigPanel.reportType.topName";
     }
 
+    @Override
     protected String getItem(Track track) {
         switch (track.getMediaType()) {
             case Audio:

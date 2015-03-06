@@ -17,6 +17,7 @@ public class UpdatePlayCountAndDateStatement implements DataStoreStatement {
         myIds = ids != null ? ids.clone() : null;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "updatePlayCountAndDate");
         statement.setItems("id", myIds);

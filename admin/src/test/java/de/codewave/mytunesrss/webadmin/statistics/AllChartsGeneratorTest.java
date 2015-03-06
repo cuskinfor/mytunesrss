@@ -41,19 +41,23 @@ public class AllChartsGeneratorTest {
 
     @Before
     public void before() throws ClassNotFoundException, IOException, SQLException {
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.VERSION = Integer.toString(Integer.MAX_VALUE);
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.CONFIG = new MyTunesRssConfig();
         MyTunesRss.CONFIG.setDatabaseType(DatabaseType.h2);
         MyTunesRss.CONFIG.setDatabaseConnection("jdbc:h2:mem:" + UUID.randomUUID() + ";DB_CLOSE_DELAY=-1");
         MyTunesRss.CONFIG.setDatabaseUser("sa");
         MyTunesRss.CONFIG.setDatabasePassword("");
         Class.forName("org.h2.Driver");
+        //noinspection AssignmentToStaticFieldFromInstanceMethod
         MyTunesRss.STORE = new MyTunesRssDataStore();
         new InitializeDatabaseCallable().call();
         DataStoreSession tx = MyTunesRss.STORE.getTransaction();
         try {
             for (final String line : IOUtils.readLines(getClass().getResourceAsStream("/statistics.sql"))) {
                 tx.executeStatement(new DataStoreStatement() {
+                    @Override
                     public void execute(Connection connection) throws SQLException {
                         Statement statement = connection.createStatement();
                         statement.execute(line);
@@ -103,8 +107,7 @@ public class AllChartsGeneratorTest {
     public static void saveToFile(JFreeChart chart,
                                   File file,
                                   int width,
-                                  int height,
-                                  double quality) throws IOException {
+                                  int height) throws IOException {
         BufferedImage img = draw(chart, width, height);
 
         ImageIO.write(img, "jpeg", file);
@@ -143,7 +146,7 @@ public class AllChartsGeneratorTest {
             File file = File.createTempFile("MyTunesRSS_" + generator.getClass().getSimpleName(), ".jpg");
             file.deleteOnExit();
             System.out.println("writing file \"" + file + "\".");
-            saveToFile(chart, file, 1024, 768, 100);
+            saveToFile(chart, file, 1024, 768);
         }
     }
 }

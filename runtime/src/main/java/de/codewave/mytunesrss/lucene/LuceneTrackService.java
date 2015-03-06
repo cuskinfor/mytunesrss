@@ -54,9 +54,8 @@ public class LuceneTrackService {
 
             ScoredTrack that = (ScoredTrack) o;
 
-            if (!myId.equals(that.myId)) return false;
+            return myId.equals(that.myId);
 
-            return true;
         }
 
         @Override
@@ -172,7 +171,7 @@ public class LuceneTrackService {
         return document;
     }
 
-    public synchronized void updateTrack(LuceneTrack track) throws IOException {
+    public synchronized void updateTrack(LuceneTrack track) {
         myTrackBuffer.add(track);
         if (myTrackBuffer.size() >= MAX_TRACK_BUFFER) {
             flushTrackBuffer();
@@ -336,7 +335,7 @@ public class LuceneTrackService {
         return finalQuery;
     }
 
-    public Collection<ScoredTrack> searchTracks(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException, ParseException {
+    public Collection<ScoredTrack> searchTracks(Collection<SmartInfo> smartInfos, int fuzziness, int maxResults) throws IOException {
         Directory directory = null;
         IndexReader indexReader = null;
         IndexSearcher indexSearcher = null;

@@ -9,7 +9,10 @@ package de.codewave.mytunesrss;
 
 import de.codewave.mytunesrss.config.DatasourceConfig;
 import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
-import de.codewave.mytunesrss.task.*;
+import de.codewave.mytunesrss.task.BackupDatabaseRunnable;
+import de.codewave.mytunesrss.task.DatabaseBuilderCallable;
+import de.codewave.mytunesrss.task.DatabaseMaintenanceRunnable;
+import de.codewave.mytunesrss.task.RecreateDatabaseRunnable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,10 +130,7 @@ public class MyTunesRssExecutorService {
         if (DATABASE_UPDATE_FUTURE != null && !DATABASE_UPDATE_FUTURE.isDone()) {
             return true;
         }
-        if (DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone()) {
-            return true;
-        }
-        return false;
+        return DATABASE_RESET_FUTURE != null && !DATABASE_RESET_FUTURE.isDone();
     }
 
     public synchronized void cancelDatabaseBackupJob() {
@@ -276,7 +276,7 @@ public class MyTunesRssExecutorService {
         return null;
     }
 
-    public synchronized void setOnDemandThumbnailGeneratorThreads(int threadCount) {
+    public synchronized void setOnDemandThumbnailGeneratorThreads() {
         ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationThreads());
     }
 

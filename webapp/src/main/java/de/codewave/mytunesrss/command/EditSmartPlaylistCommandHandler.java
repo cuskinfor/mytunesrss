@@ -25,6 +25,7 @@ public class EditSmartPlaylistCommandHandler extends MyTunesRssCommandHandler {
         }
         List<SmartInfo> sortedInfos = new ArrayList<>(smartPlaylist.getSmartInfos());
         Collections.sort(sortedInfos, new Comparator<SmartInfo>() {
+            @Override
             public int compare(SmartInfo o1, SmartInfo o2) {
                 return getSmartTypeSortValue(o1.getFieldType(), o1.isInvert()) - getSmartTypeSortValue(o2.getFieldType(), o2.isInvert());
             }

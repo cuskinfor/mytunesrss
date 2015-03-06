@@ -31,7 +31,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.*;
 
 /**
@@ -83,6 +82,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
         return myInsertedImageHash;
     }
 
+    @Override
     public void execute(Connection connection) {
         String imageHash = "";
         String cacheKey = null;
@@ -105,25 +105,25 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         if (LOGGER.isDebugEnabled()) {
                             LOGGER.debug("Image with hash \"" + imageHash + "\" has " + imageSizes.size() + " files.");
                         }
-                        if (!imageSizes.contains(Integer.valueOf(32))) {
+                        if (!imageSizes.contains(32)) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Saving image with size 32.");
                             }
                             MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 32, "image/jpg"), 32, (float) MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                         }
-                        if (!imageSizes.contains(Integer.valueOf(64))) {
+                        if (!imageSizes.contains(64)) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Saving image with size 64.");
                             }
                             MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 64, "image/jpg"), 64, (float) MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                         }
-                        if (!imageSizes.contains(Integer.valueOf(128))) {
+                        if (!imageSizes.contains(128)) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Saving image with size 128.");
                             }
                             MyTunesRssUtils.resizeImageWithMaxSize(image, MyTunesRssUtils.getSaveImageFile(imageHash, 128, "image/jpg"), 128, (float) MyTunesRss.CONFIG.getJpegQuality(), "track=" + myFile.getAbsolutePath());
                         }
-                        if (!imageSizes.contains(Integer.valueOf(256))) {
+                        if (!imageSizes.contains(256)) {
                             if (LOGGER.isDebugEnabled()) {
                                 LOGGER.debug("Saving image with size 256.");
                             }
@@ -133,7 +133,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                         if (originalSize > 256) {
                             // upper limit for image size is 2048
                             int bigImageSize = originalSize <= 2048 ? originalSize : 2048;
-                            if (!imageSizes.contains(Integer.valueOf(bigImageSize))) {
+                            if (!imageSizes.contains(bigImageSize)) {
                                 if (LOGGER.isDebugEnabled()) {
                                     LOGGER.debug("Saving image with size " + bigImageSize + ".");
                                 }
@@ -169,35 +169,31 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
                 LOGGER.info("Unknown problem handling images for track \"" + myTrackId + "\".");
             }
         } finally {
-            try {
-                File imageDir = MyTunesRssUtils.getImageDir(imageHash);
-                int imageCount = MyTunesRssUtils.getImageSizes(imageHash).size();
-                if (imageDir != null && imageDir.isDirectory()) {
-                    LOGGER.debug("Image directory \"" + imageDir.getAbsolutePath() + "\" contains " + imageCount + " images.");
-                }
-                if (StringUtils.isNotBlank(imageHash) && imageCount == 0) {
-                    // We actually have no images, e.g. all resizings and even storing the original failed. So we
-                    // delete empty directories we created and set the image hash to a blank string for the database.
-                    LOGGER.info("Deleting empty image directory \"" + imageDir.getAbsolutePath() + "\".");
-                    try {
-                        for (File dir = imageDir; dir != null; dir = dir.getParentFile()) {
-                            LOGGER.debug("Trying to delete image directory \"" + dir.getAbsolutePath() + "\".");
-                            if (!dir.delete()) {
-                                // directory probably not empty, break loop
-                                LOGGER.debug("Failed to delete image directory \"" + dir.getAbsolutePath() + "\".");
-                                break;
-                            }
-                        }
-                    } catch (RuntimeException e) {
-                        LOGGER.warn("Could not delete empty image thumbnail directories.", e);
-                    }
-                    imageHash = "";
-                }
-                new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
-                myInsertedImageHash = imageHash;
-            } catch (SQLException e) {
-                LOGGER.error("Could not update image for track \"" + myTrackId + "\".", e);
+            File imageDir = MyTunesRssUtils.getImageDir(imageHash);
+            int imageCount = MyTunesRssUtils.getImageSizes(imageHash).size();
+            if (imageDir != null && imageDir.isDirectory()) {
+                LOGGER.debug("Image directory \"" + imageDir.getAbsolutePath() + "\" contains " + imageCount + " images.");
             }
+            if (StringUtils.isNotBlank(imageHash) && imageCount == 0) {
+                // We actually have no images, e.g. all resizings and even storing the original failed. So we
+                // delete empty directories we created and set the image hash to a blank string for the database.
+                LOGGER.info("Deleting empty image directory \"" + imageDir.getAbsolutePath() + "\".");
+                try {
+                    for (File dir = imageDir; dir != null; dir = dir.getParentFile()) {
+                        LOGGER.debug("Trying to delete image directory \"" + dir.getAbsolutePath() + "\".");
+                        if (!dir.delete()) {
+                            // directory probably not empty, break loop
+                            LOGGER.debug("Failed to delete image directory \"" + dir.getAbsolutePath() + "\".");
+                            break;
+                        }
+                    }
+                } catch (RuntimeException e) {
+                    LOGGER.warn("Could not delete empty image thumbnail directories.", e);
+                }
+                imageHash = "";
+            }
+            new UpdateImageForTrackStatement(myTrackId, imageHash).execute(connection);
+            myInsertedImageHash = imageHash;
         }
     }
 
@@ -277,6 +273,7 @@ public class HandleTrackImagesStatement implements DataStoreStatement {
     private File[] getImagesInFolder(File folder) {
         LOGGER.debug("Fetching images for folder \"" + folder.getAbsolutePath() + "\".");
         File[] files = folder.listFiles(new FileFilter() {
+            @Override
             public boolean accept(File file) {
                 return file.isFile() && IMAGE_TO_MIME.keySet().contains(StringUtils.lowerCase(FilenameUtils.getExtension(file.getName())));
             }

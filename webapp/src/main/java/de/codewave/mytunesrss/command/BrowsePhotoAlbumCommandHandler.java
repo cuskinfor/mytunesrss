@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.datastore.statement.GetPhotoAlbumsQuery;
 import de.codewave.mytunesrss.datastore.statement.PhotoAlbum;
 import de.codewave.mytunesrss.jsp.BundleError;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
-import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.QueryResult;
 
 public class BrowsePhotoAlbumCommandHandler extends MyTunesRssCommandHandler {

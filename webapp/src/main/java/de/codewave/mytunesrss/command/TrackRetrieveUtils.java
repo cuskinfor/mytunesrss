@@ -78,7 +78,8 @@ public class TrackRetrieveUtils {
 
         if (albums != null && albums.length > 0) {
             return FindTrackQuery.getForAlbum(user, albums, albumArtists != null ? albumArtists : new String[0], sortOrderValue);
-        } else if (artists != null && artists.length > 0) {
+        }
+        if (artists != null && artists.length > 0) {
             if (fullAlbums) {
                 Collection<String> albumNames = new HashSet<>();
                 for (String artist : artists) { // full albums should not happen with more than one artist, otherwise this solution would be rather slow
@@ -95,7 +96,8 @@ public class TrackRetrieveUtils {
             } else {
                 return FindTrackQuery.getForArtist(user, artists, sortOrderValue);
             }
-        } else if (StringUtils.isNotEmpty(genre)) {
+        }
+        if (StringUtils.isNotEmpty(genre)) {
             if (fullAlbums) {
                 FindAlbumQuery findAlbumQuery = new FindAlbumQuery(user, null, null, false, new String[] {genre}, -1, -1, -1, false, false, FindAlbumQuery.AlbumType.ALL);
                 QueryResult<Album> albumsWithGenre = session.executeQuery(findAlbumQuery);
@@ -109,13 +111,15 @@ public class TrackRetrieveUtils {
             } else {
                 return FindTrackQuery.getForGenre(user, new String[] {genre}, sortOrderValue);
             }
-        } else if (StringUtils.isNotEmpty(playlistId)) {
+        }
+        if (StringUtils.isNotEmpty(playlistId)) {
             if (keepPlaylistOrder) {
                 return new FindPlaylistTracksQuery(user, playlistId, null);
             } else {
                 return new FindPlaylistTracksQuery(user, playlistId, sortOrderValue);
             }
-        } else if (series != null) {
+        }
+        if (series != null) {
             return season > -1 ? FindTrackQuery.getTvShowSeriesSeasonEpisodes(user, series, season) : FindTrackQuery.getTvShowSeriesEpisodes(user, series);
         }
         return null;

@@ -7,7 +7,6 @@ import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.lucene.LuceneTrackService;
 import de.codewave.utils.sql.*;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -51,6 +50,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
         myPlaylistId = playlistId;
     }
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         boolean anyPlaylistRefreshed = false;
         if (mySmartInfos == null || mySmartInfos.isEmpty() || StringUtils.isBlank(myPlaylistId)) {
@@ -231,6 +231,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         @Override
                         public QueryResult<String> execute(Connection connection) throws SQLException {
                             return execute(queryStatement, new ResultBuilder<String>() {
+                                @Override
                                 public String create(ResultSet resultSet) throws SQLException {
                                     return resultSet.getString(1);
                                 }
@@ -247,7 +248,7 @@ public class RefreshSmartPlaylistsStatement implements DataStoreStatement {
                         statement.execute();
                     }
                     return true;
-                } catch (IOException | ParseException e) {
+                } catch (IOException e) {
                     if (LOGGER.isErrorEnabled()) {
                         LOGGER.error("Could update smart playlist.", e);
                     }

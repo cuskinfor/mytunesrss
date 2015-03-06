@@ -16,7 +16,6 @@ import de.codewave.utils.sql.DataStoreSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.*;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -33,6 +32,7 @@ public class InitializeDatabaseCallable implements Callable<Void> {
     private Version myVersion;
     private Exception myException;
 
+    @Override
     public Void call() throws IOException, SQLException {
         try {
             LOGGER.debug("Initializing the database.");
@@ -66,10 +66,12 @@ public class InitializeDatabaseCallable implements Callable<Void> {
         } catch (IOException e) {
             LOGGER.error("Could not initialize database.", e);
             MyTunesRss.STORE.destroy();
+            //noinspection AssignmentToStaticFieldFromInstanceMethod
             MyTunesRss.STORE = new MyTunesRssDataStore();
             myException = e;
         } catch (SQLException e) {
             MyTunesRss.STORE.destroy();
+            //noinspection AssignmentToStaticFieldFromInstanceMethod
             MyTunesRss.STORE = new MyTunesRssDataStore();
             LOGGER.error("Could not initialize database.", e);
             myException = e;
@@ -89,7 +91,8 @@ public class InitializeDatabaseCallable implements Callable<Void> {
     private void loadVersion(DataStoreSession session) throws SQLException {
         try {
             myVersion = session.executeQuery(new DataStoreQuery<Version>() {
-                public Version execute(Connection connection) throws SQLException {
+                @Override
+                public Version execute(Connection connection) {
                     try {
                         ResultSet resultSet = MyTunesRssUtils.createStatement(connection, "initialize").executeQuery();
                         if (resultSet.next()) {

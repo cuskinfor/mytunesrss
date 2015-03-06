@@ -5,7 +5,10 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.command.MyTunesRssCommand;
 import de.codewave.mytunesrss.config.User;
 import de.codewave.mytunesrss.config.transcoder.TranscoderConfig;
-import de.codewave.mytunesrss.datastore.statement.*;
+import de.codewave.mytunesrss.datastore.statement.FindPlaylistTracksQuery;
+import de.codewave.mytunesrss.datastore.statement.FindTrackQuery;
+import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.mytunesrss.datastore.statement.Track;
 import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.mytunesrss.upnp.DeviceRegistryCallback;
 import de.codewave.utils.MiscUtils;
@@ -18,10 +21,13 @@ import org.fourthline.cling.model.action.ActionInvocation;
 import org.fourthline.cling.model.gena.CancelReason;
 import org.fourthline.cling.model.gena.GENASubscription;
 import org.fourthline.cling.model.message.UpnpResponse;
-import org.fourthline.cling.model.meta.*;
+import org.fourthline.cling.model.meta.RemoteDevice;
+import org.fourthline.cling.model.meta.RemoteService;
 import org.fourthline.cling.model.types.UDAServiceId;
 import org.fourthline.cling.support.avtransport.callback.*;
-import org.fourthline.cling.support.model.*;
+import org.fourthline.cling.support.model.PositionInfo;
+import org.fourthline.cling.support.model.SeekMode;
+import org.fourthline.cling.support.model.TransportState;
 import org.fourthline.cling.support.renderingcontrol.callback.GetVolume;
 import org.fourthline.cling.support.renderingcontrol.callback.SetVolume;
 import org.slf4j.Logger;
@@ -358,7 +364,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
                 @Override
                 public void received(ActionInvocation actionInvocation, int currentVolume) {
                     Long maxVolume = Math.max(myMaxVolume, 1);
-                    trackInfo.setVolume((int) (((long) currentVolume * 100L) / maxVolume.longValue()));
+                    trackInfo.setVolume((int) (((long) currentVolume * 100L) / maxVolume));
                 }
 
                 @Override
@@ -418,7 +424,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
         return playlist;
     }
 
-    public synchronized Track getTrack(int index) throws Exception {
+    public synchronized Track getTrack(int index) {
         if (index < 0 || index >= myTracks.size()) {
             return null;
         }
@@ -455,7 +461,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
             mySubscriptionCallback = new AvTransportLastChangeSubscriptionCallback(getAvTransport()) {
 
                 private volatile boolean active;
-                private volatile boolean endCalled = false;
+                private volatile boolean endCalled;
 
                 @Override
                 public synchronized void end() {
@@ -471,7 +477,7 @@ public class MediaRendererController implements DeviceRegistryCallback {
                 }
 
                 @Override
-                protected void handleTransportUriChange(URI previousTransportUri, URI currentTransportUri) {
+                protected void handleTransportUriChange(URI currentTransportUri) {
                     if (active && !endCalled) {
                         MediaRendererController.this.myCurrentRendererTransportUri = currentTransportUri;
                         if (currentTransportUri == null || !currentTransportUri.equals(getPlaybackUri(myCurrentTrack.get(), getAvTransport()))) {

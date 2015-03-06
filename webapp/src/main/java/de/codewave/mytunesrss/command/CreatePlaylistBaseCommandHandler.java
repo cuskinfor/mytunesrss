@@ -12,8 +12,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -22,7 +20,7 @@ import java.sql.SQLException;
 public class CreatePlaylistBaseCommandHandler extends MyTunesRssCommandHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(CreatePlaylistBaseCommandHandler.class);
 
-    protected QueryResult<Track> getTracks() throws SQLException, IOException, ServletException {
+    protected QueryResult<Track> getTracks() throws SQLException {
         String[] trackIds = getNonEmptyParameterValues("track");
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Track ids from 'track' parameter: " + StringUtils.join(trackIds, ", "));

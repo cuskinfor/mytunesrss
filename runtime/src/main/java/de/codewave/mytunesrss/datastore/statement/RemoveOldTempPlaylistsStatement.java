@@ -18,6 +18,7 @@ public class RemoveOldTempPlaylistsStatement implements DataStoreStatement {
     private static final int DEFAULT_KEEP = 10000;
     private static final long ONE_YEAR = 365L * 24L * 3600L * 1000L;
 
+    @Override
     public void execute(Connection connection) throws SQLException {
         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "getTempPlaylistCreationTime");
         ResultSet rs = statement.executeQuery();

@@ -16,7 +16,7 @@ public class ProgressRequestWrapper extends HttpServletRequestWrapper {
     private int myByteCount;
     private int myPercentage;
 
-    public ProgressRequestWrapper(HttpServletRequest httpServletRequest) throws IOException {
+    public ProgressRequestWrapper(HttpServletRequest httpServletRequest) {
         super(httpServletRequest);
     }
 
@@ -24,6 +24,7 @@ public class ProgressRequestWrapper extends HttpServletRequestWrapper {
     public ServletInputStream getInputStream() throws IOException {
         final ServletInputStream originalInputStream = super.getInputStream();
         return new ServletInputStream() {
+            @Override
             public int read() throws IOException {
                 countByte();
                 return originalInputStream.read();

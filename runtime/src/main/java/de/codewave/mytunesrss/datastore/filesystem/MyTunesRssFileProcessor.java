@@ -34,7 +34,6 @@ import org.apache.sanselan.common.IImageMetadata;
 import org.apache.sanselan.formats.jpeg.JpegImageMetadata;
 import org.apache.sanselan.formats.tiff.TiffField;
 import org.apache.sanselan.formats.tiff.constants.TiffConstants;
-import org.apache.tika.metadata.Metadata;
 import org.h2.mvstore.MVStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +89,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
         return myUpdatedCount;
     }
 
+    @Override
     public void process(File file) {
         try {
             if (file.isFile()) {
@@ -101,8 +101,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                     if (existing) {
                         myExistingIds.put(fileId, (byte) 0);
                     }
-                    long trackUpdateTs = existingTrack && myDatasourceConfig.getId().equals(myTrackSourceId.get(fileId)) ? myTrackTsUpdate.get(fileId).longValue() : 0;
-                    long photoUpdateTs = existingPhoto && myDatasourceConfig.getId().equals(myPhotoSourceId.get(fileId)) ? myPhotoTsUpdate.get(fileId).longValue() : 0;
+                    long trackUpdateTs = existingTrack && myDatasourceConfig.getId().equals(myTrackSourceId.get(fileId)) ? myTrackTsUpdate.get(fileId) : 0;
+                    long photoUpdateTs = existingPhoto && myDatasourceConfig.getId().equals(myPhotoSourceId.get(fileId)) ? myPhotoTsUpdate.get(fileId) : 0;
                     if (!existing || (existingTrack && trackUpdateTs < file.lastModified()) || (existingPhoto && photoUpdateTs < file.lastModified()) || (FileSupportUtils.isMp4(file) && myDisabledMp4Codecs.length > 0)) {
                         String contentType = TikaUtils.getContentType(file);
                         MediaType mediaType = MediaType.get(contentType);
@@ -126,6 +126,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                             try {
                                 final String albumId = new String(Hex.encodeHex(MessageDigest.getInstance("SHA-1").digest(albumName.getBytes("UTF-8"))));
                                 myQueue.offer(new DataStoreStatementEvent(new DataStoreStatement() {
+                                    @Override
                                     public void execute(Connection connection) throws SQLException {
                                         SmartStatement statement = MyTunesRssUtils.createStatement(connection, "touchPhotoAlbum");
                                         statement.setString("id", albumId);
@@ -209,7 +210,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                         LOGGER.debug("EXIF create date for \"" + photoFile.getAbsolutePath() + "\" is \"" + value + "\".");
                     }
                     Long createDate = MyTunesRssExifUtils.getCreateDate(photoFile);
-                    statement.setDate(createDate != null ? createDate.longValue() : -1);
+                    statement.setDate(createDate != null ? createDate : -1);
                 }
             }
         } catch (ImageReadException ignored) {
@@ -224,6 +225,7 @@ public class MyTunesRssFileProcessor implements FileProcessor {
             boolean update = myPhotoAlbumIds.contains(albumId);
             if (update) {
                 myQueue.offer(new DataStoreEvent() {
+                    @Override
                     public boolean execute(DataStoreSession session) {
                         try {
                             if (session.executeQuery(new DataStoreQuery<QueryResult<Boolean>>() {
@@ -233,7 +235,8 @@ public class MyTunesRssFileProcessor implements FileProcessor {
                                     checkPhotoAlbumLinkStatement.setString("album", albumId);
                                     checkPhotoAlbumLinkStatement.setString("photo", photoFileId);
                                     return execute(checkPhotoAlbumLinkStatement, new ResultBuilder<Boolean>() {
-                                        public Boolean create(ResultSet resultSet) throws SQLException {
+                                        @Override
+                                        public Boolean create(ResultSet resultSet) {
                                             return true;
                                         }
                                     });

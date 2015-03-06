@@ -6,18 +6,12 @@
 package de.codewave.mytunesrss;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.log4j.lf5.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 
 public class FetchExternalAddressRunnable implements Runnable {
 
@@ -28,12 +22,14 @@ public class FetchExternalAddressRunnable implements Runnable {
 
     private HttpClient myHttpClient = MyTunesRssUtils.createHttpClient();
 
+    @Override
     public void run() {
         try {
             if (MyTunesRss.WEBSERVER.isRunning()) {
                 GetMethod getMethod = new GetMethod(GET_IP_URI);
                 try {
                     if (myHttpClient.executeMethod(getMethod) == 200) {
+                        //noinspection AssignmentToStaticFieldFromInstanceMethod
                         EXTERNAL_ADDRESS = "http://" + StringUtils.trim(getMethod.getResponseBodyAsString()) + ":" + MyTunesRss.CONFIG.getPort();
                     }
                 } catch (IOException e) {
@@ -42,6 +38,7 @@ public class FetchExternalAddressRunnable implements Runnable {
                     getMethod.releaseConnection();
                 }
             } else {
+                //noinspection AssignmentToStaticFieldFromInstanceMethod
                 EXTERNAL_ADDRESS =  null;
             }
         } catch (RuntimeException e) {

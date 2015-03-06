@@ -51,14 +51,14 @@ public class ApertureLoader {
                 handler.addListener("/plist/dict", libraryListener);
                 // first add all photos
                 handler.addListener("/plist/dict[Master Image List]/dict", photoListener);
-                LOG.info("Parsing Aperture (photos): \"" + iPhotoLibraryXml.toString() + "\".");
+                LOG.info("Parsing Aperture (photos): \"" + iPhotoLibraryXml + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 // then add albums
                 handler.removeListener("/plist/dict[Master Image List]/dict");
                 IphotoAlbumListener albumListener = null;
                 albumListener = new ApertureAlbumListener(config, executionThread, queue, libraryListener, photoIdToPersId);
                 handler.addListener("/plist/dict[List of Albums]/array", albumListener);
-                LOG.info("Parsing Aperture (albums): \"" + iPhotoLibraryXml.toString() + "\".");
+                LOG.info("Parsing Aperture (albums): \"" + iPhotoLibraryXml + "\".");
                 XmlUtils.parseApplePList(iPhotoLibraryXml, handler);
                 LOG.info("Inserted/updated " + photoListener.getUpdatedCount() + " Aperture photos.");
             } catch (IOException | SAXException | ParserConfigurationException e) {

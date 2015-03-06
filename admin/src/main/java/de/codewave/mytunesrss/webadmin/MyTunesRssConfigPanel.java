@@ -77,6 +77,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         getApplication().getComponentFactory().setOptional(field);
     }
 
+    @Override
     public MyTunesRssWebAdmin getApplication() {
         return (MyTunesRssWebAdmin) super.getApplication();
     }
@@ -121,6 +122,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         return new StatusPanel();
     }
 
+    @Override
     public void buttonClick(Button.ClickEvent clickEvent) {
         if (clickEvent.getButton() == mySave) {
             if (beforeSave()) {
@@ -158,6 +160,7 @@ public abstract class MyTunesRssConfigPanel extends Panel implements Button.Clic
         return tableRowButton;
     }
 
+    @Override
     public void refresh(Refresher source) {
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkUnhandledException();
         ((MainWindow) VaadinUtils.getApplicationWindow(this)).checkImportantMessage();
