@@ -29,7 +29,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.*;
@@ -289,7 +288,7 @@ public class EditPlaylistResource extends RestResource {
         MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MEDIA_SERVER_UPDATE));
         request.getSession().removeAttribute(KEY_EDIT_PLAYLIST);
         request.getSession().removeAttribute(KEY_EDIT_PLAYLIST_TRACKS);
-        return Response.created(UriBuilder.fromResource(PlaylistResource.class).build()).build();
+        return Response.created(PlaylistResource.GET_PLAYLIST_URI_BUILDER.clone().build(statement.getId())).build();
     }
 
     /**

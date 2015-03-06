@@ -36,6 +36,18 @@ import java.util.List;
 @RequiredUserPermissions({UserPermission.Playlist})
 public class PlaylistResource extends RestResource {
 
+    static final UriBuilder GET_PLAYLIST_URI_BUILDER;
+
+    static {
+        try {
+            GET_PLAYLIST_URI_BUILDER = UriBuilder.
+                    fromResource(PlaylistResource.class).
+                    path(PlaylistResource.class.getMethod("getPlaylist", UriInfo.class, HttpServletRequest.class, String.class));
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException("Could not find resource method!", e);
+        }
+    }
+
     /**
      * Start editing a new, blank playlist.
      *
@@ -134,7 +146,7 @@ public class PlaylistResource extends RestResource {
             @PathParam("playlist") String playlist
     ) throws SQLException {
         QueryResult<Playlist> queryResult = TransactionFilter.getTransaction().executeQuery(new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), null, playlist, null, true, false));
-        return queryResult.getResultSize() == 1 ? toPlaylistRepresentation(uriInfo, request, queryResult.getResult(1)) : null;
+        return queryResult.getResultSize() == 1 ? toPlaylistRepresentation(uriInfo, request, queryResult.getResult(0)) : null;
     }
 
     /**

@@ -35,7 +35,7 @@ public abstract class SavePlaylistStatement implements DataStoreStatement {
         mySourceId = sourceId;
     }
 
-    protected String getId() {
+    public String getId() {
         return myId;
     }
 
