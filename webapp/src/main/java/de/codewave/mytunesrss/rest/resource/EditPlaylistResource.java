@@ -263,6 +263,9 @@ public class EditPlaylistResource extends RestResource {
      *
      * @param playlistName Name of the playlist.
      * @param userPrivate  "true" to save as a user private list or "false" to save as a public list.
+     *
+     * @return URI of the saved playlist is returned in the "Location" HTTP response header.
+     *
      * @throws SQLException
      * @throws MyTunesRssRestException
      */

@@ -71,7 +71,7 @@ public class PlaylistResource extends RestResource {
      * @param uriInfo
      * @param playlist The ID of the playlist to edit.
      *
-     * @return URI of the new playlist.
+     * @return URI of the edit-mode playlist is returned in the "Location" HTTP response header.
      *
      * @throws SQLException
      */
@@ -130,6 +130,8 @@ public class PlaylistResource extends RestResource {
     /**
      * Get the representation of a playlist.
      *
+     * @param uriInfo
+     * @param request
      * @param playlist A playlist ID.
      *
      * @return The playlist.
@@ -152,6 +154,8 @@ public class PlaylistResource extends RestResource {
     /**
      * Get the tracks of a playlist.
      *
+     * @param uriInfo
+     * @param request
      * @param playlist A playlist ID.
      * @param sortOrder Sort order of the results (One of "Album", "Artist", "KeepOrder").
      *
@@ -178,6 +182,8 @@ public class PlaylistResource extends RestResource {
     /**
      * Get children playlist (for iTunes folders).
      *
+     * @param uriInfo
+     * @param request
      * @param playlist A playlist ID (should be an iTunes folder).
      * @param includeHidden "true" to include hidden playlists which should not be shown in user interfaces.
      * @param matchingOwner "true" to return playlists owned by the currently logged in user only.
@@ -208,6 +214,7 @@ public class PlaylistResource extends RestResource {
     /**
      * Delete a playlist. Only playlists of the currently logged in user can be deleted.
      *
+     * @param request
      * @param playlist A playlist ID (should be a MyTunesRSS playlist owned by the current user).
      *
      * @throws SQLException
