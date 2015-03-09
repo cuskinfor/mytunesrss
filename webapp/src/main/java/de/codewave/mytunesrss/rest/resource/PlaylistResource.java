@@ -205,6 +205,13 @@ public class PlaylistResource extends RestResource {
         return toPlaylistRepresentations(uriInfo, request, queryResult);
     }
 
+    /**
+     * Delete a playlist. Only playlists of the currently logged in user can be deleted.
+     *
+     * @param playlist A playlist ID (should be a MyTunesRSS playlist owned by the current user).
+     *
+     * @throws SQLException
+     */
     @DELETE
     @Path("{playlist}")
     @RequiredUserPermissions({UserPermission.CreatePlaylists})
