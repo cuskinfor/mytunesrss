@@ -7,6 +7,10 @@
 
     <body>
 
+        <release version="6.8" date="___D___">
+            <action dev="mdescher" type="add">REST-API: Added missing function to delete playlists.</action>
+        </release>
+
         <release version="6.7" date="2015-03-06">
             <action dev="mdescher" type="add">[MYTUNESRSS-530] REST-API: Return playlist URI when saving an edited playlist</action>
             <action dev="mdescher" type="add">[MYTUNESRSS-529] REST-API: album/artist/genre representation must contain nat_sort_name</action>

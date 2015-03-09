@@ -205,4 +205,20 @@ public class PlaylistResource extends RestResource {
         return toPlaylistRepresentations(uriInfo, request, queryResult);
     }
 
+    @DELETE
+    @Path("{playlist}")
+    @RequiredUserPermissions({UserPermission.CreatePlaylists})
+    public void deletePlaylist(
+            @Context HttpServletRequest request,
+            @PathParam("playlist") String playlist
+    ) throws SQLException {
+        FindPlaylistQuery findPlaylistQuery = new FindPlaylistQuery(MyTunesRssWebUtils.getAuthUser(request), null, playlist, null, true, true);
+        if (TransactionFilter.getTransaction().executeQuery(findPlaylistQuery).getRemainingResults().isEmpty()) {
+            throw new MyTunesRssRestException(HttpServletResponse.SC_FORBIDDEN, "PLAYLIST_NOT_OWNER");
+        }
+        DeletePlaylistStatement deletePlaylistStatement = new DeletePlaylistStatement();
+        deletePlaylistStatement.setId(playlist);
+        TransactionFilter.getTransaction().executeStatement(deletePlaylistStatement);
+    }
+
 }
