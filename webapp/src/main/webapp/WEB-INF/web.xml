@@ -60,6 +60,13 @@
         <display-name>OffHeapSessionStoreListener</display-name>
         <listener-class>de.codewave.mytunesrss.OffHeapSessionStoreListener</listener-class>
     </listener>
+    <!-- Filter for adding custom headers -->
+    <filter>
+        <description>Filter for adding custom headers.</description>
+        <display-name>CustomHeaderFilter</display-name>
+        <filter-name>CustomHeaderFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.CustomHeaderFilter</filter-class>
+    </filter>
     <!-- Off heap session store filter -->
     <filter>
         <description>Off heap session store filter.</description>
@@ -170,6 +177,10 @@
     <filter-mapping>
         <filter-name>TransactionFilter</filter-name>
         <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CustomHeaderFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>

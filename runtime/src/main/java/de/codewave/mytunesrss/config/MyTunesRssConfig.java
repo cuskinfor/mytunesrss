@@ -141,6 +141,7 @@ public class MyTunesRssConfig {
     private boolean myUpnpMediaServerActive;
     private String myUpnpMediaServerName;
     private int myUpnpMediaServerLockTimeoutSeconds = 10;
+    private Map<String, String> myCustomWebHeaders = new HashMap<>();
 
     /**
      * Get a shallow copy of the list of data sources. The list is a copy of the original list containing references to
@@ -982,6 +983,14 @@ public class MyTunesRssConfig {
         myGenreMappings.put(fromGenre, toGenre);
     }
 
+    public Map<String, String> getCustomWebHeaders() {
+        return myCustomWebHeaders;
+    }
+
+    public void setCustomWebHeaders(Map<String, String> customWebHeaders) {
+        myCustomWebHeaders = customWebHeaders;
+    }
+
     public synchronized boolean isAdminAccessLogExtended() {
         return myAdminAccessLogExtended;
     }
@@ -1212,6 +1221,13 @@ public class MyTunesRssConfig {
             addGenreMapping(JXPathUtils.getStringValue(genreMappingContext, "from", ""), JXPathUtils.getStringValue(genreMappingContext, "to", ""));
         }
         myGenreMappings.remove(""); // if the default was used for any 'from' key
+        myCustomWebHeaders.clear();
+        Iterator<JXPathContext> customWebHeadersIterator = JXPathUtils.getContextIterator(settings, "custom-web-headers/header");
+        while (customWebHeadersIterator.hasNext()) {
+            JXPathContext customWebHeadersContext = customWebHeadersIterator.next();
+            myCustomWebHeaders.put(JXPathUtils.getStringValue(customWebHeadersContext, "name", ""), JXPathUtils.getStringValue(customWebHeadersContext, "value", ""));
+        }
+        myCustomWebHeaders.remove(""); // if the default was used for any 'name' key
         setUpnpMediaServerActive(JXPathUtils.getBooleanValue(settings, "upnp-server-active", true));
         setUpnpMediaServerName(JXPathUtils.getStringValue(settings, "upnp-server-name", null));
         setUpnpMediaServerLockTimeoutSeconds(JXPathUtils.getIntValue(settings, "upnp-server-timeout", 10));
@@ -1611,6 +1627,16 @@ public class MyTunesRssConfig {
                     genreMappingsElement.appendChild(genreMappingElement);
                     genreMappingElement.appendChild(DOMUtils.createTextElement(settings, "from", genreMapping.getKey()));
                     genreMappingElement.appendChild(DOMUtils.createTextElement(settings, "to", genreMapping.getValue()));
+                }
+            }
+            if (!getCustomWebHeaders().isEmpty()) {
+                Element customWebHeadersElement = settings.createElement("custom-web-headers");
+                root.appendChild(customWebHeadersElement);
+                for (Map.Entry<String, String> customWebHeader : getCustomWebHeaders().entrySet()) {
+                    Element customWebHeaderElement = settings.createElement("header");
+                    customWebHeadersElement.appendChild(customWebHeaderElement);
+                    customWebHeaderElement.appendChild(DOMUtils.createTextElement(settings, "name", customWebHeader.getKey()));
+                    customWebHeaderElement.appendChild(DOMUtils.createTextElement(settings, "value", customWebHeader.getValue()));
                 }
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "upnp-server-active", isUpnpMediaServerActive()));
