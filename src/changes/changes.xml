@@ -8,6 +8,7 @@
     <body>
 
         <release version="6.8" date="___D___">
+            <action dev="mdescher" type="fix">[MYTUNESRSS-532] REST-API: Wrong order when adding tracks to media player via tracklist parameter</action>
             <action dev="mdescher" type="add">[MYTUNESRSS-531] Option to add arbitrary response headers</action>
             <action dev="mdescher" type="add">REST-API: Added missing function to delete playlists.</action>
         </release>

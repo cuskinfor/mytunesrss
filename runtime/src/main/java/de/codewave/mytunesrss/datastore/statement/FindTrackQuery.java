@@ -29,7 +29,7 @@ public class FindTrackQuery extends MyTunesRssDataStoreQuery<QueryResult<Track>>
     public static FindTrackQuery getForIds(String[] trackIds) {
         FindTrackQuery query = new FindTrackQuery();
         query.myScoredTracks = new HashMap<>();
-        int i = Integer.MAX_VALUE;
+        int i = trackIds.length;
         for (String trackId : trackIds) {
             query.myScoredTracks.put(trackId, (float) i--);
         }
