@@ -857,7 +857,7 @@
     </statement>
 
     <statement name="listAlbumsForNatSortUpdate">
-        <sql>SELECT name, nat_sort_name FROM album</sql>
+        <sql>SELECT name, artist, nat_sort_name FROM album</sql>
     </statement>
 
     <statement name="listArtistsForNatSortUpdate">
