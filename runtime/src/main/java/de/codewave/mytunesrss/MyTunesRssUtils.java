@@ -1085,7 +1085,7 @@ public class MyTunesRssUtils {
         if (file.exists() && !file.delete()) {
             LOGGER.debug("Could not delete file \"" + file.getAbsolutePath() + "\".");
         }
-        return new MVStore.Builder().fileStore(new FileStore()).fileName(file.getAbsolutePath());
+        return new MVStore.Builder().fileName(file.getAbsolutePath());
     }
 
     public static void removeMvStoreFile(String filename) {

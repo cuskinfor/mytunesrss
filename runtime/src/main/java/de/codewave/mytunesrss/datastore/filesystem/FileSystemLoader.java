@@ -35,7 +35,7 @@ public class FileSystemLoader {
                         Thread.currentThread().interrupt();
                         throw new ShutdownRequestedException();
                     }
-                    return file.isDirectory() || datasource.isIncluded(file);
+                    return file.isDirectory() || (datasource.isIncluded(file) && !isPlaylist(file));
                 }
             });
             for (String id : fileProcessor.getExistingIds()) {
@@ -53,7 +53,7 @@ public class FileSystemLoader {
                             Thread.currentThread().interrupt();
                             throw new ShutdownRequestedException();
                         }
-                        return file.isDirectory() || (datasource.isIncluded(file) && "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase())));
+                        return file.isDirectory() || (datasource.isIncluded(file) && isPlaylist(file));
                     }
                 });
             }
@@ -61,5 +61,9 @@ public class FileSystemLoader {
                 LOG.info("Inserted/updated " + fileProcessor.getUpdatedCount() + " file system tracks.");
             }
         }
+    }
+
+    private static boolean isPlaylist(File file) {
+        return "m3u".equals(FilenameUtils.getExtension(file.getName().toLowerCase()));
     }
 }
