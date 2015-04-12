@@ -2,11 +2,6 @@
     <modelVersion>4.0.0</modelVersion>
     <artifactId>selenium</artifactId>
     <name>Codewave MyTunesRSS Selenium Integration Tests</name>
-    <distributionManagement>
-        <site>
-            <url>/Users/mdescher/Sites/java-projects/mytunesrss/selenium</url>
-        </site>
-    </distributionManagement>
     <inceptionYear>2011</inceptionYear>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
@@ -14,32 +9,6 @@
         <version>6.8-SNAPSHOT</version>
         <relativePath>../mytunesrss-pom/pom.xml</relativePath>
     </parent>
-    <repositories>
-        <repository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>

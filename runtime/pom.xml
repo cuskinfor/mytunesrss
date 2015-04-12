@@ -3,11 +3,6 @@
     <artifactId>runtime</artifactId>
     <packaging>jar</packaging>
     <name>Codewave MyTunesRSS Runtime</name>
-    <distributionManagement>
-        <site>
-            <url>/Users/mdescher/Sites/java-projects/mytunesrss/runtime</url>
-        </site>
-    </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
@@ -15,32 +10,6 @@
         <version>6.8-SNAPSHOT</version>
         <relativePath>../mytunesrss-pom/pom.xml</relativePath>
     </parent>
-    <repositories>
-        <repository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <properties>
         <uidesigner />
     </properties>

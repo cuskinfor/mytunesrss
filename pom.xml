@@ -3,51 +3,18 @@
     <artifactId>mytunesrss</artifactId>
     <packaging>pom</packaging>
     <name>Codewave MyTunesRSS</name>
-    <distributionManagement>
-        <site>
-            <url>/Users/mdescher/Sites/java-projects/mytunesrss</url>
-        </site>
-    </distributionManagement>
     <inceptionYear>2006</inceptionYear>
     <scm>
-        <connection>scm:git:git@git.codewave.de:codewave/mytunesrss.git</connection>
-        <developerConnection>scm:git:git@git.codewave.de:codewave/mytunesrss.git</developerConnection>
-        <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git@bitbucket.org:mdescher/mytunesrss.git</connection>
+        <developerConnection>scm:git:git@bitbucket.org:mdescher/mytunesrss.git</developerConnection>
+        <tag>head</tag>
+    </scm>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
         <artifactId>mytunesrss-pom</artifactId>
         <version>6.8-SNAPSHOT</version>
         <relativePath>mytunesrss-pom/pom.xml</relativePath>
     </parent>
-    <repositories>
-        <repository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>always</updatePolicy>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <modules>
         <module>runtime</module>
         <module>webapp</module>

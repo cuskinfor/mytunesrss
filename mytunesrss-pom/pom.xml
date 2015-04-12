@@ -5,23 +5,17 @@
     <packaging>pom</packaging>
     <version>6.8-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Common POM</name>
-    <distributionManagement>
-        <site>
-            <url>/Users/mdescher/Sites/java-projects/mytunesrss/runtime</url>
-        </site>
-    </distributionManagement>
     <inceptionYear>2012</inceptionYear>
     <parent>
         <groupId>de.codewave</groupId>
         <artifactId>codewave-base</artifactId>
-        <version>4.2</version>
-        <relativePath />
+        <version>5.1</version>
     </parent>
     <repositories>
         <repository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
+            <id>codewave</id>
+            <name>Codewave Repository</name>
+            <url>http://nexus-codewave.rhcloud.com/nexus/content/groups/codewave</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -39,14 +33,14 @@
     </repositories>
     <pluginRepositories>
         <pluginRepository>
-            <id>codewave-nexus</id>
-            <name>Codewave Maven Repository</name>
-            <url>http://nexus.codewave.de/nexus/content/groups/public</url>
+            <id>codewave</id>
+            <name>Codewave Repository</name>
+            <url>http://nexus-codewave.rhcloud.com/nexus/content/groups/codewave</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
             <snapshots>
-                <enabled>true</enabled>
+                <enabled>false</enabled>
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
@@ -72,7 +66,7 @@
             <dependency>
                 <groupId>de.codewave.apple-extensions</groupId>
                 <artifactId>apple-extensions</artifactId>
-                <version>1.0.1</version>
+                <version>1.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -152,12 +146,12 @@
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>codewave-utils</artifactId>
-                <version>2.2</version>
+                <version>2.3</version>
             </dependency>
             <dependency>
                 <groupId>de.codewave</groupId>
                 <artifactId>camel</artifactId>
-                <version>2.2</version>
+                <version>2.3</version>
             </dependency>
             <dependency>
                 <groupId>com.intellij</groupId>
@@ -223,7 +217,7 @@
             <dependency>
                 <groupId>de.codewave.systray</groupId>
                 <artifactId>systray</artifactId>
-                <version>1.2</version>
+                <version>1.3</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
@@ -346,7 +340,7 @@
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-java</artifactId>
-                <version>2.43.1</version>
+                <version>2.45.0</version>
             </dependency>
             <dependency>
                 <groupId>commons-fileupload</groupId>

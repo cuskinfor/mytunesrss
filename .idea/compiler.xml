@@ -49,12 +49,11 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="admin" target="1.7" />
-      <module name="mytunesrss" target="1.7" />
-      <module name="mytunesrss-pom" target="1.7" />
+      <module name="mytunesrss" target="1.5" />
+      <module name="mytunesrss-pom" target="1.5" />
       <module name="runtime" target="1.7" />
       <module name="selenium" target="1.7" />
       <module name="webapp" target="1.7" />
     </bytecodeTargetLevel>
   </component>
 </project>
-
