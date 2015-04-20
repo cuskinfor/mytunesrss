@@ -90,6 +90,9 @@ public class MyTunesRss {
     // Alternative log4j configuration location (e.g. -logConfig ../etc/log4j-develop.xml)
     public static final String CMD_LOGCONFIG = "logConfig";
 
+    // Shutdown host, send "SHUTDOWN" to this host to shutdown MyTunesRSS (e.g. -shutdownHost 12345)
+    public static final String CMD_SHUTDOWN_HOST = "shutdownHost";
+
     // Shutdown port, send "SHUTDOWN" to this port to shutdown MyTunesRSS (e.g. -shutdownPort 12345)
     public static final String CMD_SHUTDOWN_PORT = "shutdownPort";
 
@@ -112,7 +115,6 @@ public class MyTunesRss {
     public static final long STARTUP_TIME = System.currentTimeMillis();
     private static final BlockingQueue<MessageWithParameters> IMPORTANT_ADMIN_MESSAGE = new ArrayBlockingQueue<>(10);
     public static String VERSION;
-    public static final String UPDATE_URL = "http://www.codewave.de/tools/autoupdate/mytunesrss.xml";
     public static MyTunesRssDataStore STORE = new MyTunesRssDataStore();
     public static MyTunesRssConfig CONFIG;
     public static WebServer WEBSERVER = new WebServer();
@@ -185,7 +187,7 @@ public class MyTunesRss {
         if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
             try {
                 Integer port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN)[0]);
-                Socket socket = new Socket(InetAddress.getByName(null), port);
+                Socket socket = new Socket(InetAddress.getByName(COMMAND_LINE_ARGS.containsKey(CMD_SHUTDOWN_HOST) ? COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_HOST)[0] : "127.0.0.1"), port);
                 socket.getOutputStream().write("SHUTDOWN".getBytes("US-ASCII"));
                 socket.getOutputStream().flush();
                 try {
@@ -259,8 +261,9 @@ public class MyTunesRss {
         }
         if (!SHUTDOWN_IN_PROGRESS.get() && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT).length > 0) {
             try {
+                String host = COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_HOST) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_HOST).length > 0 ? StringUtils.defaultIfBlank(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_HOST)[0], "127.0.0.1") : "127.0.0.1";
                 int port = Integer.parseInt(COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0]);
-                startShutdownListener(port);
+                startShutdownListener(host, port);
             } catch (NumberFormatException e) {
                 LOGGER.warn("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0] + "\" specified.", e);
                 MyTunesRssUtils.showErrorMessage("Illegal shutdown port \"" + COMMAND_LINE_ARGS.get(CMD_SHUTDOWN_PORT)[0] + "\" specified.");
@@ -386,14 +389,14 @@ public class MyTunesRss {
         }
     }
 
-    private static void startShutdownListener(final int port) {
+    private static void startShutdownListener(final String host, final int port) {
         Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
-                    ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(port, 0, InetAddress.getByName(null));
-                    LOGGER.info("Started shutdown listener on port " + port + ".");
-                    MyTunesRssUtils.showErrorMessage("Started shutdown listener on port " + port + ".");
+                    ServerSocket serverSocket = ServerSocketFactory.getDefault().createServerSocket(port, 0, InetAddress.getByName(host));
+                    LOGGER.info("Started shutdown listener on host \"" + host + "\" and port " + port + ".");
+                    MyTunesRssUtils.showErrorMessage("Started shutdown listener on host \"" + host + "\" and port " + port + ".");
                     //noinspection InfiniteLoopStatement
                     while (true) {
                         Socket socket = null;
