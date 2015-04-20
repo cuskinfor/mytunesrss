@@ -36,7 +36,6 @@ import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggerRepository;
 import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
-import org.h2.mvstore.FileStore;
 import org.h2.mvstore.MVStore;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -1062,7 +1061,7 @@ public class MyTunesRssUtils {
     }
 
     public static RequestLogHandler createJettyAccessLogHandler(String prefix, int retainDays, boolean extended, String tz) {
-        File accessLogDir = new File(MyTunesRss.CACHE_DATA_PATH + "/accesslogs");
+        File accessLogDir = new File(System.getProperty("MyTunesRSS.logDir") + "/accesslogs");
         if (!accessLogDir.exists() && !accessLogDir.mkdirs()) {
             LOGGER.warn("Could not create folder for access logs.");
         }

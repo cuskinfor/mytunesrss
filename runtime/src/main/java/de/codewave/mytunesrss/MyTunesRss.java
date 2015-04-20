@@ -84,6 +84,9 @@ public class MyTunesRss {
     // Location of the preferfences data path (e.g. -prefDataPath /var/mytunesrss/prefs)
     public static final String CMD_PREFS_PATH = "prefsDataPath";
 
+    // Location where log files should be writtin to (e.g. -logDir /var/log/mytunesrss)
+    public static final String CMD_LOG_DIR = "logDir";
+
     // Headless mode (no GUI elements)
     public static final String CMD_HEADLESS = "headless";
 
@@ -177,12 +180,6 @@ public class MyTunesRss {
     public static MyTunesRssUpnpService UPNP_SERVICE;
 
     public static void main(final String[] args) throws IOException, SchedulerException, SQLException, DatabaseJobRunningException {
-        PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
-        PrefsUtils.MAC_PREFS_BASE = System.getProperty("ApplicationSupportDirectory");
-        processArguments(args);
-        CACHE_DATA_PATH = getCacheDataPath();
-        PREFERENCES_DATA_PATH = getPreferencesDataPath();
-        INTERNAL_MYSQL_SERVER_PATH = new File(MyTunesRss.CACHE_DATA_PATH + "/mysqldb");
         // shutdown command
         if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
             try {
@@ -204,6 +201,12 @@ public class MyTunesRss {
             }
             System.exit(0);
         }
+        PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
+        PrefsUtils.MAC_PREFS_BASE = System.getProperty("ApplicationSupportDirectory");
+        processArguments(args);
+        CACHE_DATA_PATH = getCacheDataPath();
+        PREFERENCES_DATA_PATH = getPreferencesDataPath();
+        INTERNAL_MYSQL_SERVER_PATH = new File(MyTunesRss.CACHE_DATA_PATH + "/mysqldb");
         // locking
         if (MyTunesRssUtils.lockInstance(3000)) {
             if (!MyTunesRssUtils.isHeadless()) {
@@ -479,7 +482,8 @@ public class MyTunesRss {
     }
 
     private static void prepareLogging() {
-        System.setProperty("MyTunesRSS.logDir", MyTunesRss.CACHE_DATA_PATH);
+        String logDir = COMMAND_LINE_ARGS.get(CMD_LOG_DIR) != null && COMMAND_LINE_ARGS.get(CMD_LOG_DIR).length == 1 && COMMAND_LINE_ARGS.get(CMD_LOG_DIR)[0] != null ? COMMAND_LINE_ARGS.get(CMD_LOG_DIR)[0] : null;
+        System.setProperty("MyTunesRSS.logDir", StringUtils.defaultIfBlank(logDir, MyTunesRss.CACHE_DATA_PATH));
         if (COMMAND_LINE_ARGS.get(CMD_LOGCONFIG) != null && COMMAND_LINE_ARGS.get(CMD_LOGCONFIG).length == 1 && COMMAND_LINE_ARGS.get(CMD_LOGCONFIG)[0] != null) {
             DOMConfigurator.configure(COMMAND_LINE_ARGS.get(CMD_LOGCONFIG)[0]);
         } else {

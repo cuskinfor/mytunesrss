@@ -91,7 +91,7 @@ public class WebServer {
                         .deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
             }
             myContext.setTempDirectory(workDir);
-            myContext.setSystemClasses((String[]) ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
+            myContext.setSystemClasses(ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
             myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
             myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
             myContext.setHandler(MyTunesRssUtils.createJettyAccessLogHandler("user", MyTunesRss.CONFIG.getUserAccessLogRetainDays(), MyTunesRss.CONFIG.isUserAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz()));

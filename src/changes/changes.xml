@@ -8,6 +8,7 @@
     <body>
 
         <release version="6.8" date="___D___">
+            <action dev="mdescher" type="add">Add logDir command line option.</action>
             <action dev="mdescher" type="add">Add shutdownHost command line option.</action>
             <action dev="mdescher" type="update">Explicitly exclude playlists (m3u) from scanning tracks in watch folders.</action>
             <action dev="mdescher" type="fix">[MYTUNESRSS-532] REST-API: Wrong order when adding tracks to media player via tracklist parameter</action>
