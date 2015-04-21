@@ -78,23 +78,23 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     public void setAlbum(String album) {
-        myAlbum = album;
+        myAlbum = stripAsciiControl(album);
     }
 
     public void setSortAlbum(String sortAlbum) {
-        mySortAlbum = sortAlbum;
+        mySortAlbum = stripAsciiControl(sortAlbum);
     }
 
     public void setArtist(String artist) {
-        myArtist = artist;
+        myArtist = stripAsciiControl(artist);
     }
 
     public void setAlbumArtist(String albumArtist) {
-        myAlbumArtist = albumArtist;
+        myAlbumArtist = stripAsciiControl(albumArtist);
     }
 
     public void setSortAlbumArtist(String sortAlbumArtist) {
-        mySortAlbumArtist = sortAlbumArtist;
+        mySortAlbumArtist = stripAsciiControl(sortAlbumArtist);
     }
 
     public void setFileName(String fileName) {
@@ -106,7 +106,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     public void setName(String name) {
-        myName = name;
+        myName = stripAsciiControl(name);
     }
 
     public void setTime(int time) {
@@ -130,7 +130,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     public void setGenre(String genre) {
-        myGenre = genre;
+        myGenre = stripAsciiControl(genre);
     }
 
     public void setMp4Codec(String mp4Codec) {
@@ -138,7 +138,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     public void setComment(String comment) {
-        myComment = comment;
+        myComment = stripAsciiControl(comment);
     }
 
     public void setPos(int number, int size) {
@@ -155,7 +155,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     public void setSeries(String series) {
-        mySeries = series;
+        mySeries = stripAsciiControl(series);
     }
 
     public void setSeason(int season) {
@@ -167,7 +167,7 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     public void setComposer(String composer) {
-        myComposer = composer;
+        myComposer = stripAsciiControl(composer);
     }
 
     public void setCompilation(boolean compilation) {
@@ -273,5 +273,17 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
         myEpisode = 0;
         myComposer = null;
         myCompilation = false;
+    }
+
+    private String stripAsciiControl(String s) {
+        StringBuilder stringBuilder = new StringBuilder();
+        for (char c : s.toCharArray()) {
+            if ((c >= 32 && c != 127) || c == 10 || c == 13) {
+                stringBuilder.append(c);
+            } else {
+                LOGGER.debug("Stripped ASCII control " + (int)c + " from \"" + s + "\".");
+            }
+        }
+        return stringBuilder.toString();
     }
 }
