@@ -180,6 +180,7 @@ public class MyTunesRss {
     public static MyTunesRssUpnpService UPNP_SERVICE;
 
     public static void main(final String[] args) throws IOException, SchedulerException, SQLException, DatabaseJobRunningException {
+        processArguments(args);
         // shutdown command
         if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
             try {
@@ -203,7 +204,6 @@ public class MyTunesRss {
         }
         PrefsUtils.MAC_CACHES_BASE = System.getProperty("CachesDirectory");
         PrefsUtils.MAC_PREFS_BASE = System.getProperty("ApplicationSupportDirectory");
-        processArguments(args);
         CACHE_DATA_PATH = getCacheDataPath();
         PREFERENCES_DATA_PATH = getPreferencesDataPath();
         INTERNAL_MYSQL_SERVER_PATH = new File(MyTunesRss.CACHE_DATA_PATH + "/mysqldb");
