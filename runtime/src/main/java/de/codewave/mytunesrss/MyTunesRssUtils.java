@@ -78,6 +78,7 @@ import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 
@@ -528,6 +529,47 @@ public class MyTunesRssUtils {
             public void execute(Connection connection) throws SQLException {
                 try (PreparedStatement preparedStatement = connection.prepareStatement("BACKUP TO ?")) {
                     preparedStatement.setString(1, backupFile.getAbsolutePath());
+                    preparedStatement.execute();
+                }
+            }
+        });
+    }
+
+    public static File exportDatabase() throws SQLException {
+        if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
+            throw new IllegalStateException("Cannot export non-default database.");
+        }
+        if (!MyTunesRss.STORE.isInitialized()) {
+            throw new IllegalStateException("Database must already be initialized for starting an export.");
+        }
+        final File exportFile = new File(MyTunesRss.CACHE_DATA_PATH, "h2-export-" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".sql");
+        LOGGER.info("Exporting H2 database to \"" + exportFile.getAbsolutePath() + "\".");
+        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("SCRIPT SIMPLE ?")) {
+                    preparedStatement.setString(1, exportFile.getAbsolutePath());
+                    preparedStatement.execute();
+                }
+            }
+        });
+        return exportFile;
+    }
+
+    public static void importDatabase(final File importFile) throws IOException, SQLException {
+        if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
+            throw new IllegalStateException("Cannot import into non-default database.");
+        }
+        if (MyTunesRss.STORE.isInitialized()) {
+            MyTunesRss.STORE.destroy();
+        }
+        new DeleteDatabaseFilesCallable().call();
+        MyTunesRss.STORE.init();
+        MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
+            @Override
+            public void execute(Connection connection) throws SQLException {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("RUNSCRIPT ?")) {
+                    preparedStatement.setString(1, importFile.getAbsolutePath());
                     preparedStatement.execute();
                 }
             }

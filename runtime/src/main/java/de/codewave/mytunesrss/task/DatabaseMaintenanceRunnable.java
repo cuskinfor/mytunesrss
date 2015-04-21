@@ -6,12 +6,15 @@
 package de.codewave.mytunesrss.task;
 
 import de.codewave.mytunesrss.MyTunesRss;
+import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.MaintenanceStatement;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
 /**
@@ -29,7 +32,20 @@ public class DatabaseMaintenanceRunnable implements Runnable {
             MyTunesRssEventManager.getInstance().fireEvent(event);
             MyTunesRss.LAST_DATABASE_EVENT.set(event);
             MyTunesRss.STORE.executeStatement(new MaintenanceStatement());
-        } catch (SQLException e) {
+            if (MyTunesRss.CONFIG.isDefaultDatabase()) {
+                MyTunesRssUtils.backupDatabase();
+                MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
+                File file = MyTunesRssUtils.exportDatabase();
+                try {
+                    MyTunesRssUtils.importDatabase(file);
+                } finally {
+                    if (!file.delete()) {
+                        LOGGER.warn("Could not delete database export file \"" + file.getAbsolutePath() + "\".");
+                        file.deleteOnExit();
+                    }
+                }
+            }
+        } catch (SQLException | IOException e) {
             LOGGER.error("Error during database maintenance.", e);
         } finally {
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
