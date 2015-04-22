@@ -8,6 +8,8 @@ package de.codewave.mytunesrss.task;
 import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.datastore.statement.MaintenanceStatement;
+import de.codewave.mytunesrss.datastore.statement.RecreateHelpTablesStatement;
+import de.codewave.mytunesrss.datastore.statement.RefreshSmartPlaylistsStatement;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import org.slf4j.Logger;
@@ -32,7 +34,6 @@ public class DatabaseMaintenanceRunnable implements Runnable {
             MyTunesRssEventManager.getInstance().fireEvent(event);
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MAINTENANCE_START));
             MyTunesRss.LAST_DATABASE_EVENT.set(event);
-            MyTunesRss.STORE.executeStatement(new MaintenanceStatement());
             if (MyTunesRss.CONFIG.isDefaultDatabase()) {
                 MyTunesRssUtils.backupDatabase();
                 File file = MyTunesRssUtils.exportDatabase();
@@ -45,6 +46,9 @@ public class DatabaseMaintenanceRunnable implements Runnable {
                     }
                 }
             }
+            MyTunesRss.STORE.executeStatement(new RecreateHelpTablesStatement(true, true, true, true));
+            MyTunesRss.STORE.executeStatement(new RefreshSmartPlaylistsStatement(RefreshSmartPlaylistsStatement.UpdateType.DEFAULT));
+            MyTunesRss.STORE.executeStatement(new MaintenanceStatement());
         } catch (SQLException | IOException e) {
             LOGGER.error("Error during database maintenance.", e);
         } finally {
