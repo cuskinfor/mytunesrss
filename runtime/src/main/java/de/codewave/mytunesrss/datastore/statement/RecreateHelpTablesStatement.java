@@ -4,8 +4,6 @@ import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.StopWatch;
 import de.codewave.utils.sql.DataStoreStatement;
 import de.codewave.utils.sql.SmartStatement;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -16,8 +14,6 @@ import java.util.List;
  * de.codewave.mytunesrss.datastore.statement.CreateAllTablesStatement
  */
 public class RecreateHelpTablesStatement implements DataStoreStatement {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RecreateHelpTablesStatement.class);
 
     private final boolean myRecreateAlbums;
     private final boolean myRecreateArtists;
@@ -87,5 +83,14 @@ public class RecreateHelpTablesStatement implements DataStoreStatement {
             }
         }
 
+        StopWatch.start("Updating statistics");
+        try {
+            MyTunesRssUtils.createStatement(connection, "updateStatistics").execute();
+            if (myCommit) {
+                connection.commit();
+            }
+        } finally {
+            StopWatch.stop();
+        }
     }
 }
