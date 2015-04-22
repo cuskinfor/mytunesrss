@@ -5,7 +5,6 @@
 
 package de.codewave.mytunesrss.task;
 
-import de.codewave.mytunesrss.MyTunesRss;
 import de.codewave.mytunesrss.MyTunesRssUtils;
 import de.codewave.mytunesrss.event.MyTunesRssEvent;
 import de.codewave.mytunesrss.event.MyTunesRssEventManager;
@@ -26,7 +25,6 @@ public class BackupDatabaseRunnable implements Runnable {
     public void run() {
         try {
             MyTunesRssUtils.backupDatabase();
-            MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
         } catch (SQLException | IOException e) {
             LOGGER.error("Error while backing up database.", e);

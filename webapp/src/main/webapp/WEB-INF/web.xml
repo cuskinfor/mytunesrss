@@ -62,6 +62,13 @@
     </listener>
     <!-- Filter for adding custom headers -->
     <filter>
+        <description>Maintenance mode filter.</description>
+        <display-name>MaintenanceFilter</display-name>
+        <filter-name>MaintenanceFilter</filter-name>
+        <filter-class>de.codewave.mytunesrss.servlet.MaintenanceFilter</filter-class>
+    </filter>
+    <!-- Filter for adding custom headers -->
+    <filter>
         <description>Filter for adding custom headers.</description>
         <display-name>CustomHeaderFilter</display-name>
         <filter-name>CustomHeaderFilter</filter-name>
@@ -181,6 +188,18 @@
     <filter-mapping>
         <filter-name>CustomHeaderFilter</filter-name>
         <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>MaintenanceFilter</filter-name>
+        <url-pattern>/mytunesrss/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>MaintenanceFilter</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>MaintenanceFilter</filter-name>
+        <url-pattern>/flashplayer/*</url-pattern>
     </filter-mapping>
     <servlet>
         <description>Command dispatcher servlet</description>

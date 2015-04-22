@@ -54,8 +54,14 @@ public class MyTunesRssExecutorService {
     public AtomicBoolean PLAY_COUNT_UPDATED = new AtomicBoolean(false);
     
     public volatile long LAST_SCHEDULED_PLAYLIST_UPDATE;
-    
+
     public synchronized void shutdown() throws InterruptedException {
+        for (final ExecutorService executorService : new ExecutorService[] {DATABASE_JOB_EXECUTOR, LUCENE_UPDATE_EXECUTOR, GENERAL_EXECUTOR, ON_DEMAND_THUMBNAIL_GENERATOR}) {
+            executorService.shutdown();
+        }
+    }
+
+    public synchronized void shutdownNow() throws InterruptedException {
         Collection<Thread> threads = new ArrayList<>();
         for (final ExecutorService executorService : new ExecutorService[] {DATABASE_JOB_EXECUTOR, LUCENE_UPDATE_EXECUTOR, GENERAL_EXECUTOR, ON_DEMAND_THUMBNAIL_GENERATOR}) {
             Thread thread = new Thread(new Runnable() {
@@ -277,6 +283,9 @@ public class MyTunesRssExecutorService {
     }
 
     public synchronized void setOnDemandThumbnailGeneratorThreads() {
+        if (ON_DEMAND_THUMBNAIL_GENERATOR != null) {
+            ON_DEMAND_THUMBNAIL_GENERATOR.shutdown();
+        }
         ON_DEMAND_THUMBNAIL_GENERATOR = Executors.newFixedThreadPool(MyTunesRss.CONFIG.getOnDemandThumbnailGenerationThreads());
     }
 

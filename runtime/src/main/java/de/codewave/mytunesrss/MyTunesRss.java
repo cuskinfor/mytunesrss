@@ -635,9 +635,14 @@ public class MyTunesRss {
             }
 
             if (backupAfterSuccessfulInit && MyTunesRss.CONFIG.isBackupDatabaseAfterInit() && MyTunesRss.CONFIG.isDefaultDatabase()) {
-                MyTunesRss.EXECUTOR_SERVICE.scheduleDatabaseBackup();
+                ModalInfoDialog info = new ModalInfoDialog(MyTunesRssUtils.getBundleString(Locale.getDefault(), "taskinfo.backupDatabase"));
+                info.show(2000L);
+                try {
+                    MyTunesRssUtils.backupDatabase();
+                } finally {
+                    info.destroy();
+                }
             }
-            MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
             break; // ok, continue with main flow
         }
     }

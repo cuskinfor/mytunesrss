@@ -10,6 +10,7 @@ import de.codewave.mytunesrss.datastore.DatabaseBackup;
 import de.codewave.mytunesrss.datastore.OrphanedImageRemover;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.datastore.statement.SortOrder;
+import de.codewave.mytunesrss.event.MyTunesRssEventManager;
 import de.codewave.mytunesrss.lucene.AddLuceneTrack;
 import de.codewave.mytunesrss.lucene.LuceneTrack;
 import de.codewave.mytunesrss.mediaserver.MediaServerConfig;
@@ -98,6 +99,7 @@ public class MyTunesRssUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MyTunesRssUtils.class);
     private static final int IMAGE_PATH_SPLIT_SIZE = 6;
+    private static final MaintenanceGate MAINTENANCE_GATE = new MaintenanceGate();
 
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null && o2 == null) {
@@ -210,7 +212,6 @@ public class MyTunesRssUtils {
         }
         //noinspection finally
         try {
-            LOGGER.info("Cancelling database jobs.");
             if (MyTunesRss.WEBSERVER != null && MyTunesRss.WEBSERVER.isRunning()) {
                 LOGGER.info("Stopping user interface server.");
                 MyTunesRss.stopWebserver();
@@ -219,11 +220,15 @@ public class MyTunesRssUtils {
                 LOGGER.info("Stopping admin interface server.");
                 MyTunesRss.stopAdminServer();
             }
-            LOGGER.info("Shutting down executor services.");
             MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getPort());
             MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getSslPort());
             MyTunesRss.UPNP_SERVICE.removeInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getAdminPort());
             MyTunesRss.EXECUTOR_SERVICE.shutdown();
+            LOGGER.info("Waiting for non-maintenance mode.");
+            MAINTENANCE_GATE.blockUntilMaintenanceFinished();
+            MyTunesRssEventManager.getInstance().removeListener(MAINTENANCE_GATE);
+            LOGGER.info("Shutting down executor services.");
+            MyTunesRss.EXECUTOR_SERVICE.shutdownNow();
             if (MyTunesRss.QUARTZ_SCHEDULER != null) {
                 try {
                     LOGGER.info("Shutting down quartz scheduler.");
@@ -515,7 +520,7 @@ public class MyTunesRssUtils {
         }
     }
 
-    public static void backupDatabase() throws SQLException {
+    public static void backupDatabase() throws SQLException, IOException {
         if (!MyTunesRss.CONFIG.isDefaultDatabase()) {
             throw new IllegalStateException("Cannot backup non-default database.");
         }
@@ -533,6 +538,8 @@ public class MyTunesRssUtils {
                 }
             }
         });
+        LOGGER.info("Created H2 database backup \"" + backupFile.getAbsolutePath() + "\".");
+        MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
     }
 
     public static File exportDatabase() throws SQLException {
@@ -547,12 +554,13 @@ public class MyTunesRssUtils {
         MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
             @Override
             public void execute(Connection connection) throws SQLException {
-                try (PreparedStatement preparedStatement = connection.prepareStatement("SCRIPT SIMPLE ?")) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("SCRIPT SIMPLE TO ?")) {
                     preparedStatement.setString(1, exportFile.getAbsolutePath());
                     preparedStatement.execute();
                 }
             }
         });
+        LOGGER.info("Exported H2 database to \"" + exportFile.getAbsolutePath() + "\".");
         return exportFile;
     }
 
@@ -563,17 +571,19 @@ public class MyTunesRssUtils {
         if (MyTunesRss.STORE.isInitialized()) {
             MyTunesRss.STORE.destroy();
         }
+        LOGGER.info("Deleting H2 database files and importing from \"" + importFile.getAbsolutePath() + "\".");
         new DeleteDatabaseFilesCallable().call();
         MyTunesRss.STORE.init();
         MyTunesRss.STORE.executeStatement(new DataStoreStatement() {
             @Override
             public void execute(Connection connection) throws SQLException {
-                try (PreparedStatement preparedStatement = connection.prepareStatement("RUNSCRIPT ?")) {
+                try (PreparedStatement preparedStatement = connection.prepareStatement("RUNSCRIPT FROM ?")) {
                     preparedStatement.setString(1, importFile.getAbsolutePath());
                     preparedStatement.execute();
                 }
             }
         });
+        LOGGER.info("Imported H2 database from \"" + importFile.getAbsolutePath() + "\".");
     }
 
     public static void restoreDatabaseBackup(DatabaseBackup backup) throws IOException {
@@ -607,7 +617,7 @@ public class MyTunesRssUtils {
         return backups;
     }
 
-    public static void removeAllButLatestDatabaseBackups(int numberOfBackupsToKeep) throws IOException {
+    private static void removeAllButLatestDatabaseBackups(int numberOfBackupsToKeep) throws IOException {
         List<DatabaseBackup> backups = findDatabaseBackups();
         if (backups.size() > numberOfBackupsToKeep) {
             LOGGER.info("Deleting " + (backups.size() - numberOfBackupsToKeep) + " old database backup files.");

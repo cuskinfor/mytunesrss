@@ -30,11 +30,11 @@ public class DatabaseMaintenanceRunnable implements Runnable {
         try {
             MyTunesRssEvent event = MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_STATE_CHANGED, "event.databaseMaintenance");
             MyTunesRssEventManager.getInstance().fireEvent(event);
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MAINTENANCE_START));
             MyTunesRss.LAST_DATABASE_EVENT.set(event);
             MyTunesRss.STORE.executeStatement(new MaintenanceStatement());
             if (MyTunesRss.CONFIG.isDefaultDatabase()) {
                 MyTunesRssUtils.backupDatabase();
-                MyTunesRssUtils.removeAllButLatestDatabaseBackups(MyTunesRss.CONFIG.getNumberKeepDatabaseBackups());
                 File file = MyTunesRssUtils.exportDatabase();
                 try {
                     MyTunesRssUtils.importDatabase(file);
@@ -48,6 +48,7 @@ public class DatabaseMaintenanceRunnable implements Runnable {
         } catch (SQLException | IOException e) {
             LOGGER.error("Error during database maintenance.", e);
         } finally {
+            MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.MAINTENANCE_STOP));
             MyTunesRssEventManager.getInstance().fireEvent(MyTunesRssEvent.create(MyTunesRssEvent.EventType.DATABASE_UPDATE_FINISHED));
             MyTunesRss.EXECUTOR_SERVICE.scheduleImageGenerators();
         }
