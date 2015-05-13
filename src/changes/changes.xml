@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.8" date="___D___">
+        <release version="6.8" date="2015-05-13">
             <action dev="mdescher" type="add">Added backup, export and re-import of H2 database to maintenance (for default H2 database only).</action>
             <action dev="mdescher" type="add">Strip ASCII control characters except CR and LF from all data inserted into the track table.</action>
             <action dev="mdescher" type="add">Add logDir command line option.</action>
