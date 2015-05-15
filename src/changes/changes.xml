@@ -7,7 +7,7 @@
 
     <body>
 
-        <release version="6.8.1" date="___D___">
+        <release version="6.8.1" date="2015-05-15">
             <action dev="mdescher" type="fix">Fixed possible NPE when stripping control characters.</action>
         </release>
 
