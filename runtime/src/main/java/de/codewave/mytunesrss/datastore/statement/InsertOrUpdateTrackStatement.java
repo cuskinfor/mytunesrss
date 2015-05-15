@@ -276,6 +276,9 @@ public abstract class InsertOrUpdateTrackStatement implements DataStoreStatement
     }
 
     private String stripAsciiControl(String s) {
+        if (s == null) {
+            return null;
+        }
         StringBuilder stringBuilder = new StringBuilder();
         for (char c : s.toCharArray()) {
             if ((c >= 32 && c != 127) || c == 10 || c == 13) {
