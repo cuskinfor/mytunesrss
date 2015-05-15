@@ -7,12 +7,12 @@
     <scm>
         <connection>scm:git:git@bitbucket.org:mdescher/mytunesrss.git</connection>
         <developerConnection>scm:git:git@bitbucket.org:mdescher/mytunesrss.git</developerConnection>
-        <tag>head</tag>
+        <tag>mytunesrss-6.8.1</tag>
     </scm>
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
         <artifactId>mytunesrss-pom</artifactId>
-        <version>6.9-SNAPSHOT</version>
+        <version>6.8.1</version>
         <relativePath>mytunesrss-pom/pom.xml</relativePath>
     </parent>
     <modules>
