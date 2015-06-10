@@ -63,17 +63,11 @@ public class InitializeDatabaseCallable implements Callable<Void> {
             } finally {
                 session.rollback();
             }
-        } catch (IOException e) {
+        } catch (IOException | SQLException e) {
             LOGGER.error("Could not initialize database.", e);
             MyTunesRss.STORE.destroy();
             //noinspection AssignmentToStaticFieldFromInstanceMethod
             MyTunesRss.STORE = new MyTunesRssDataStore();
-            myException = e;
-        } catch (SQLException e) {
-            MyTunesRss.STORE.destroy();
-            //noinspection AssignmentToStaticFieldFromInstanceMethod
-            MyTunesRss.STORE = new MyTunesRssDataStore();
-            LOGGER.error("Could not initialize database.", e);
             myException = e;
         }
         return null;
