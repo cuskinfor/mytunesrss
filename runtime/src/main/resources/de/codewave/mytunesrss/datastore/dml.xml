@@ -171,7 +171,7 @@
             </track>
             <mediatype>AND t.mediatype IN (:mediaTypes[])</mediatype>
             <datasource>AND t.source_id IN (:datasources[])</datasource>
-            GROUP BY id<selectAll>, name, type, track_count, user_private, hidden, user_owner, container_id</selectAll>
+            GROUP BY p.id<selectAll>, p.name, type, track_count, user_private, hidden, user_owner, container_id</selectAll>
             <selectAll>ORDER BY LOWER(p.name)</selectAll>
             ]]>
         </sql>
