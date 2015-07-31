@@ -7,6 +7,10 @@
 
     <body>
 
+        <release version="___" date="___">
+            <action dev="mdescher" type="add">Added OPML support for playlists, albums of an artist and albums of a genre.</action>
+        </release>
+
         <release version="6.8.2" date="2015-07-13">
             <action dev="mdescher" type="fix">Fixed SQL exception when using certain user setting with a postgres database</action>
         </release>

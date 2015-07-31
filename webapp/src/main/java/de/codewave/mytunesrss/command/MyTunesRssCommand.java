@@ -65,7 +65,8 @@ public enum MyTunesRssCommand implements Command {
     CloseWindow("closeWindow", CloseWindowCommandHandler.class),
     ShowExif("showExif", ShowExifCommandHandler.class),
     ValidateOpenId("validateOpenId", ValidateOpenIdCommandHandler.class),
-    ClearRemotePlaylist("clearRemotePlaylist", ClearRemotePlaylistCommandHandler.class);
+    ClearRemotePlaylist("clearRemotePlaylist", ClearRemotePlaylistCommandHandler.class),
+    CreatePlaylistOpml("createPlaylistOpml", CreatePlaylistOpmlCommandHandler.class);
 
 
     private String myName;

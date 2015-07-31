@@ -13,11 +13,13 @@ import de.codewave.mytunesrss.server.MyTunesRssSessionInfo;
 import de.codewave.mytunesrss.servlet.WebConfig;
 import de.codewave.mytunesrss.transcoder.Transcoder;
 import de.codewave.utils.Base64Utils;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.servlet.ServletUtils;
 import de.codewave.utils.servlet.SessionManager;
 import de.codewave.utils.servlet.StreamSender;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
+import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -121,6 +124,15 @@ public class MyTunesRssWebUtils {
     public static String getCommandCall(HttpServletRequest request, MyTunesRssCommand command) {
         String servletUrl = getServletUrl(request);
         return MyTunesRssWebUtils.getApplicationUrl(request) + servletUrl.substring(servletUrl.lastIndexOf("/")) + "/" + command.getName();
+    }
+
+    public static String getAuthCommandCall(HttpServletRequest request, MyTunesRssCommand command) {
+        StringBuilder builder = new StringBuilder(MyTunesRssWebUtils.getCommandCall(request, command));
+        User authUser = MyTunesRssWebUtils.getAuthUser(request);
+        if (authUser != null) {
+            builder.append("/").append(MyTunesRssUtils.encryptPathInfo("auth=" + MiscUtils.getUtf8UrlEncoded(MyTunesRssBase64Utils.encode(authUser.getName()) + " " + MyTunesRssBase64Utils.encode(authUser.getPasswordHash()))));
+        }
+        return builder.toString();
     }
 
     public static String getResourceCommandCall(HttpServletRequest request, MyTunesRssResource resource) {

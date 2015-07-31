@@ -33,6 +33,8 @@
 
 <head>
 
+    <!-- OPML: ${permFeedServletUrl}/createPlaylistOpml/${auth} -->
+
     <jsp:include page="incl_head.jsp"/>
 
     <link rel="search" type="application/opensearchdescription+xml" href="${servletUrl}/openSearch?username=${mtfn:encode64(authUser.name)}&auth=${mtfn:encode64(auth)}" title="MyTunesRSS" />
