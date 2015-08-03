@@ -33,8 +33,6 @@
 
 <head>
 
-    <!-- OPML: ${permFeedServletUrl}/createPlaylistOpml/${auth}/MyTunesRSS.opml -->
-
     <jsp:include page="incl_head.jsp"/>
 
     <link rel="search" type="application/opensearchdescription+xml" href="${servletUrl}/openSearch?username=${mtfn:encode64(authUser.name)}&auth=${mtfn:encode64(auth)}" title="MyTunesRSS" />
@@ -182,6 +180,9 @@
                 </td>
             </tr>
         </c:if>
+
+        <tr><td colspan="3"><a href="${permFeedServletUrl}/createPlaylistOpml/${auth}/<mt:encrypt>_cdi=MyTunesRSS.opml</mt:encrypt>/MyTunesRSS.opml">OPML 1</a></td></tr>
+        <tr><td colspan="3"><a href="${permFeedServletUrl}/createPlaylistOpml/${auth}/<mt:encrypt>_cdi=MyTunesRSS.opml</mt:encrypt>">OPML 2</a></td></tr>
 
         <c:forEach items="${playlists}" var="playlist" varStatus="loopStatus">
             <tr class="${cwfn:choose(loopStatus.index % 2 == 0, 'even', 'odd')}">

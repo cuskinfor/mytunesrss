@@ -8,6 +8,7 @@ import de.codewave.mytunesrss.*;
 import de.codewave.mytunesrss.datastore.statement.*;
 import de.codewave.mytunesrss.jsp.MyTunesRssResource;
 import de.codewave.mytunesrss.jsp.OpmlItem;
+import de.codewave.utils.MiscUtils;
 import de.codewave.utils.jsp.CodewaveFunctions;
 import de.codewave.utils.sql.DataStoreQuery;
 import de.codewave.utils.sql.ResultSetType;
@@ -31,7 +32,9 @@ public class CreatePlaylistOpmlCommandHandler extends MyTunesRssCommandHandler {
         getTransaction().executeQuery(query).processRemainingResults(new DataStoreQuery.ResultProcessor<Playlist>() {
             @Override
             public void process(Playlist playlist) {
-                String xmlUrl = MyTunesRssWebUtils.getAuthCommandCall(getRequest(), MyTunesRssCommand.CreateRss) + "/" + MyTunesRssUtils.encryptPathInfo("playlist=" + playlist.getId());
+                String filename = playlist.getName() + ".xml";
+                String pathInfo = "playlist=" + playlist.getId() + "/_cdi=" + filename;
+                String xmlUrl = MyTunesRssWebUtils.getAuthCommandCall(getRequest(), MyTunesRssCommand.CreateRss) + "/" + MyTunesRssUtils.encryptPathInfo(pathInfo) + "/" + MiscUtils.getUtf8UrlEncoded(filename);
                 OpmlItem item = new OpmlItem(playlist.getName(), xmlUrl);
                 items.add(item);
             }
@@ -39,7 +42,6 @@ public class CreatePlaylistOpmlCommandHandler extends MyTunesRssCommandHandler {
         getRequest().setAttribute("creationDate", System.currentTimeMillis());
         getRequest().setAttribute("title", "MyTunesRSS");
         getRequest().setAttribute("items", items);
-        getResponse().setHeader("Content-Disposition", "attachment; filename=\"MyTunesRSS.opml\"");
         forward(MyTunesRssResource.Opml);
     }
 
