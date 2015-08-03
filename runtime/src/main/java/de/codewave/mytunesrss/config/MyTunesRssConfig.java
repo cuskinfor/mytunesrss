@@ -124,7 +124,6 @@ public class MyTunesRssConfig {
     private boolean myHeadless;
     private boolean myVlcEnabled;
     private File myVlcExecutable;
-    private String myRssDescription;
     private File myGmExecutable;
     private boolean myGmEnabled;
     private long myImageExpirationMillis;
@@ -910,14 +909,6 @@ public class MyTunesRssConfig {
         myVlcEnabled = vlcEnabled;
     }
 
-    public synchronized String getRssDescription() {
-        return myRssDescription;
-    }
-
-    public synchronized void setRssDescription(String rssDescription) {
-        myRssDescription = rssDescription;
-    }
-
     public synchronized long getImageExpirationMillis() {
         return myImageExpirationMillis;
     }
@@ -1203,7 +1194,6 @@ public class MyTunesRssConfig {
         String gm = JXPathUtils.getStringValue(settings, "gm", MyTunesRssUtils.findGraphicsMagickExecutable());
         setGmExecutable(gm != null ? new File(gm) : null);
         setGmEnabled(JXPathUtils.getBooleanValue(settings, "gm-enabled", true));
-        setRssDescription(JXPathUtils.getStringValue(settings, "rss-description", "Visit http://www.codewave.de for more information."));
         setImageExpirationMillis(JXPathUtils.getLongValue(settings, "image-expiration-millis", 1000 * 3600 * 48)); // default to 48 hours
         setRestApiJsExpirationMillis(JXPathUtils.getLongValue(settings, "restapijs-expiration-millis", 1000 * 3600 * 1)); // default to 1 hour
         setJpegQuality(JXPathUtils.getIntValue(settings, "jpeg-quality", 80));
@@ -1608,7 +1598,6 @@ public class MyTunesRssConfig {
             }
             root.appendChild(DOMUtils.createBooleanElement(settings, "vlc-enabled", isVlcEnabled()));
             root.appendChild(DOMUtils.createBooleanElement(settings, "gm-enabled", isGmEnabled()));
-            root.appendChild(DOMUtils.createTextElement(settings, "rss-description", getRssDescription()));
             root.appendChild(DOMUtils.createLongElement(settings, "image-expiration-millis", getImageExpirationMillis()));
             root.appendChild(DOMUtils.createLongElement(settings, "restapijs-expiration-millis", getRestApiJsExpirationMillis()));
             root.appendChild(DOMUtils.createIntElement(settings, "jpeg-quality", getJpegQuality()));

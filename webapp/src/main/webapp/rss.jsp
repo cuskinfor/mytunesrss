@@ -11,7 +11,7 @@
                 <link>${feedUrl}</link>
             </image>
         </c:if>
-        <description><c:out value="${globalConfig.rssDescription}"/></description><c:forEach items="${tracks}" var="track">
+        <description><c:out value="${channel}"/></description><c:forEach items="${tracks}" var="track">
             <item>
                 <title><c:out value="${track.name}"/></title>
                 <description><c:if test="${!empty(track.imageHash)}">&lt;img src="${permServletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=128</mt:encrypt>" /&gt;&lt;br/&gt;</c:if><c:out value="${cwfn:choose(mtfn:unknown(track.artist), msgUnknownArtist, track.artist)}" /> - <c:out value="${cwfn:choose(mtfn:unknown(track.album), msgUnknownAlbum, track.album)}" /></description>

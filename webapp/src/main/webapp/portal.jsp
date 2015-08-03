@@ -33,7 +33,7 @@
 
 <head>
 
-    <!-- OPML: ${permFeedServletUrl}/createPlaylistOpml/${auth} -->
+    <!-- OPML: ${permFeedServletUrl}/createPlaylistOpml/${auth}/MyTunesRSS.opml -->
 
     <jsp:include page="incl_head.jsp"/>
 
