@@ -34,7 +34,7 @@ public class CreatePlaylistOpmlCommandHandler extends MyTunesRssCommandHandler {
             public void process(Playlist playlist) {
                 String filename = playlist.getName() + ".xml";
                 String pathInfo = "playlist=" + playlist.getId() + "/_cdi=" + filename;
-                String xmlUrl = MyTunesRssWebUtils.getAuthCommandCall(getRequest(), MyTunesRssCommand.CreateRss) + "/" + MyTunesRssUtils.encryptPathInfo(pathInfo) + "/" + MiscUtils.getUtf8UrlEncoded(filename);
+                String xmlUrl = MyTunesRssWebUtils.getAuthCommandCall(getRequest(), MyTunesRssCommand.CreateRss) + "/" + MyTunesRssUtils.encryptPathInfo(pathInfo);
                 OpmlItem item = new OpmlItem(playlist.getName(), xmlUrl);
                 items.add(item);
             }
