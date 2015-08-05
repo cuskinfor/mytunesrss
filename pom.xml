@@ -12,7 +12,7 @@
     <parent>
         <groupId>de.codewave.mytunesrss</groupId>
         <artifactId>mytunesrss-pom</artifactId>
-        <version>6.8.2</version>
+        <version>6.8.3-SNAPSHOT</version>
         <relativePath>mytunesrss-pom/pom.xml</relativePath>
     </parent>
     <modules>
@@ -59,6 +59,7 @@
                                 <configuration>
                                     <descriptors>
                                         <descriptor>src/assembly/system-independent.xml</descriptor>
+                                        <descriptor>src/assembly/macosx.xml</descriptor>
                                     </descriptors>
                                 </configuration>
                                 <goals>

@@ -1,6 +1,6 @@
 <component name="ArtifactManager">
   <artifact type="exploded-war" build-on-make="true" name="webapp:war exploded">
-    <output-path>$PROJECT_DIR$/webapp/target/webapp-6.9-SNAPSHOT</output-path>
+    <output-path>$PROJECT_DIR$/webapp/target/webapp-6.8.3-SNAPSHOT</output-path>
     <root id="root">
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
@@ -43,7 +43,7 @@
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="$PROJECT_DIR$/webapp/target/webapp-6.9-SNAPSHOT/META-INF/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/webapp/target/webapp-6.8.3-SNAPSHOT/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="webapp/web/Web" />
     </root>
