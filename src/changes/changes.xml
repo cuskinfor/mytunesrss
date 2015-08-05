@@ -7,6 +7,10 @@
 
     <body>
 
+        <release version="6.8.3" date="2015-08-05">
+            <action dev="mdescher" type="add">Build Mac OS X ZIP file as well.</action>
+        </release>
+
         <release version="6.8.2" date="2015-07-13">
             <action dev="mdescher" type="fix">Fixed SQL exception when using certain user setting with a postgres database</action>
         </release>
