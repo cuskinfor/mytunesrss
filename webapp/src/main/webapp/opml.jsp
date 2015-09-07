@@ -5,6 +5,6 @@
         <dateCreated>${mtfn:rssDate(creationDate)}</dateCreated>
     </head>
     <body><c:forEach items="${items}" var="item">
-        <outline title="${item.name}" text="<c:out value="${item.name}"/>" type="rss" xmlUrl="${item.xmlUrl}" />
+        <outline title="<c:out value="${item.name}"/>" text="<c:out value="${item.name}"/>" type="rss" xmlUrl="${item.xmlUrl}" />
     </c:forEach></body>
 </opml>
