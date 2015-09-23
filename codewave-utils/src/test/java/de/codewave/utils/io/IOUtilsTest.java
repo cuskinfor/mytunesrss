@@ -1,10 +1,12 @@
 package de.codewave.utils.io;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.commons.codec.binary.Base64;
 
-import java.io.*;
-
-import org.apache.commons.codec.binary.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  * de.codewave.utils.io.IOUtilsTest
@@ -37,7 +39,7 @@ public class IOUtilsTest extends TestCase {
 
     public void testGetFileIdentifier() throws IOException {
         File dir = new File(".");
-        File file = new File("build.xml");
-        assertEquals(new String(Base64.encodeBase64((System.getProperty("file.separator") + "build.xml").getBytes("UTF-8")), "UTF-8"), IOUtils.getFileIdentifier(dir, file));
+        File file = new File("pom.xml");
+        assertEquals(new String(Base64.encodeBase64((System.getProperty("file.separator") + "pom.xml").getBytes("UTF-8")), "UTF-8"), IOUtils.getFileIdentifier(dir, file));
     }
 }

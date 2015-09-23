@@ -1,15 +1,13 @@
 package de.codewave.utils.servlet;
 
 import de.codewave.utils.io.IOUtils;
+import org.apache.commons.io.output.CloseShieldOutputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-
-import org.apache.commons.io.output.CloseShieldOutputStream;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 /**
  * de.codewave.utils.servlet.FileSender

@@ -1,9 +1,9 @@
 package de.codewave.utils.swing;
 
-import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
-import java.io.*;
+import java.io.File;
 
 /**
  * de.codewave.mytunesrss.NotEmptyTextFieldValidation

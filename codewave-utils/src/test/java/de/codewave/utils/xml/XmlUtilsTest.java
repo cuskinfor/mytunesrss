@@ -4,13 +4,14 @@
 
 package de.codewave.utils.xml;
 
-import junit.framework.*;
-import org.xml.sax.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.xml.sax.SAXException;
 
-import javax.xml.parsers.*;
-import javax.print.attribute.standard.*;
-import java.io.*;
-import java.util.*;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.io.StringReader;
 
 /**
  * de.codewave.utils.xml.XmlUtilsTest

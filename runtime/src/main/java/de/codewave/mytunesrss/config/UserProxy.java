@@ -1,7 +1,6 @@
 package de.codewave.mytunesrss.config;
 
 import de.codewave.mytunesrss.MyTunesRss;
-import de.codewave.mytunesrss.config.User;
 
 /**
  * de.codewave.mytunesrss.config.UserProxy

@@ -24,6 +24,7 @@ import de.codewave.mytunesrss.statistics.StatisticsEventManager;
 import de.codewave.mytunesrss.task.DeleteDatabaseFilesCallable;
 import de.codewave.mytunesrss.task.InitializeDatabaseCallable;
 import de.codewave.mytunesrss.upnp.MyTunesRssUpnpService;
+import de.codewave.utils.AppleExtensions;
 import de.codewave.utils.PrefsUtils;
 import de.codewave.utils.ProgramUtils;
 import de.codewave.utils.Version;
@@ -54,7 +55,7 @@ import java.awt.*;
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
-import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.net.*;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -179,7 +180,13 @@ public class MyTunesRss {
     public static MediaServerConfig MEDIA_SERVER_CONFIG;
     public static MyTunesRssUpnpService UPNP_SERVICE;
 
-    public static void main(final String[] args) throws IOException, SchedulerException, SQLException, DatabaseJobRunningException {
+    public static void main(final String[] args) throws IOException, SchedulerException, SQLException, DatabaseJobRunningException, ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        // Mac specific stuff
+        if (SystemUtils.IS_OS_MAC_OSX) {
+            System.setProperty("apple.awt.UIElement", "false");
+            System.setProperty("com.apple.mrj.application.apple.menu.about.name", "MyTunesRSS");
+            AppleExtensions.setDockIconImage(new ImageIcon(MyTunesRss.class.getResource("/de/codewave/mytunesrss/mytunesrss-icon.png")).getImage());
+        }
         processArguments(args);
         // shutdown command
         if (COMMAND_LINE_ARGS.get(CMD_SHUTDOWN) != null && COMMAND_LINE_ARGS.get(CMD_SHUTDOWN).length > 0) {
@@ -361,9 +368,7 @@ public class MyTunesRss {
         LOGGER.debug("Trying to execute apple specific code for headless mode on non-headless system.");
         try {
             LOGGER.debug("Executing apple specific code for headless mode on non-headless system.");
-            Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
-            Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
-            activateMethod.invoke(null, new AppleExtensionsEventListenerHeadlessMode());
+            AppleExtensions.activate(new AppleExtensionsEventListenerHeadlessMode());
         } catch (Exception e) {
             if (LOGGER.isErrorEnabled()) {
                 LOGGER.error("Could not activate apple extensions.", e);

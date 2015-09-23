@@ -20,7 +20,6 @@ import de.codewave.mytunesrss.servlet.TransactionFilter;
 import de.codewave.utils.MiscUtils;
 import de.codewave.utils.sql.QueryResult;
 import org.apache.commons.lang3.StringUtils;
-import org.codehaus.enunciate.Facet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -234,7 +233,9 @@ public class RestResource {
         return MiscUtils.getUtf8UrlEncoded(s);
     }
 
-    @Facet(name = "http://codewave.de/mytunesrss#internal")
+    /**
+     * @exclude no swagger docs
+     */
     @OPTIONS
     @Path("/{path:.*}")
     public Response handleCorsOptions(@HeaderParam("Access-Control-Request-Method") String method, @HeaderParam("Access-Control-Request-Headers") String headers) {

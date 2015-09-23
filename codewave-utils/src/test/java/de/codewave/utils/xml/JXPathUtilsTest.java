@@ -1,7 +1,9 @@
 package de.codewave.utils.xml;
 
-import junit.framework.*;
-import org.apache.commons.jxpath.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.commons.jxpath.JXPathContext;
 
 /**
  * de.codewave.utils.xml.JXPathUtilsTest

@@ -1,6 +1,7 @@
 package de.codewave.utils.sql;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * de.codewave.utils.sql.DataStoreStatement

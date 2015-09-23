@@ -1,7 +1,9 @@
 package de.codewave.utils.sql;
 
-import de.codewave.utils.xml.*;
-import junit.framework.*;
+import de.codewave.utils.xml.JXPathUtils;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
 import java.sql.*;
 import java.util.*;

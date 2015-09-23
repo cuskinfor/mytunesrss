@@ -3,7 +3,8 @@
  */
 package de.codewave.utils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Very general utilities.

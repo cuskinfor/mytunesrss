@@ -1,16 +1,17 @@
 package de.codewave.utils.xml;
 
-import org.apache.commons.codec.binary.*;
-
-import org.apache.commons.lang3.*;
-import org.w3c.dom.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import javax.xml.transform.*;
-import javax.xml.transform.stream.*;
-import javax.xml.transform.dom.*;
-import java.io.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 
 /**
  * de.codewave.utils.xml.DOMUtils

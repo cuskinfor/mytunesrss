@@ -41,7 +41,6 @@
           <element id="library" level="project" name="Maven: javax.validation:validation-api:1.1.0.Final" />
           <element id="library" level="project" name="Maven: org.codehaus.jackson:jackson-xc:1.9.3" />
           <element id="library" level="project" name="Maven: javax.activation:activation:1.1.1" />
-          <element id="library" level="project" name="Maven: org.codehaus.enunciate:enunciate-core-annotations:1.27" />
         </element>
       </element>
       <element id="directory" name="META-INF">

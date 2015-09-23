@@ -4,9 +4,11 @@
 
 package de.codewave.utils.servlet;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import java.net.*;
+import java.net.URL;
 
 /**
  * de.codewave.utils.servlet.ServletUtilsTest

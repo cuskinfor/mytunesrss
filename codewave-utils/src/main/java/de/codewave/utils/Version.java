@@ -1,8 +1,7 @@
 package de.codewave.utils;
 
-import org.apache.commons.lang3.*;
-
-import java.util.*;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * de.codewave.utils.Version

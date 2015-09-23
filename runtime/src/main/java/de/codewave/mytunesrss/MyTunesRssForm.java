@@ -8,6 +8,7 @@ package de.codewave.mytunesrss;
 import de.codewave.mytunesrss.desktop.DesktopWrapper;
 import de.codewave.mytunesrss.desktop.DesktopWrapperFactory;
 import de.codewave.mytunesrss.server.WebServer;
+import de.codewave.utils.AppleExtensions;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
@@ -19,7 +20,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.EventListener;
@@ -156,9 +156,7 @@ public class MyTunesRssForm {
         if (SystemUtils.IS_OS_MAC_OSX) {
             try {
                 LOGGER.debug("Executing apple specific code.");
-                Class appleExtensionsClass = Class.forName("de.codewave.apple.AppleExtensions");
-                Method activateMethod = appleExtensionsClass.getMethod("activate", EventListener.class);
-                activateMethod.invoke(null, new AppleExtensionsEventListener(myFrame));
+                AppleExtensions.activate(new AppleExtensionsEventListener(myFrame));
             } catch (Exception e) {
                 if (LOGGER.isErrorEnabled()) {
                     LOGGER.error("Could not activate apple extensions.", e);

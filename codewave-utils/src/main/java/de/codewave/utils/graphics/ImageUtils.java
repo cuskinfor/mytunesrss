@@ -1,14 +1,15 @@
 package de.codewave.utils.graphics;
 
-import de.codewave.utils.io.*;
-
+import de.codewave.utils.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.*;
+import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.*;
-import java.io.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * Utility classes for images.

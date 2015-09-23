@@ -1,8 +1,9 @@
 package de.codewave.utils.servlet;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
+
+import static org.junit.Assert.assertEquals;
 
 public class RangeHeaderTest {
     @Test

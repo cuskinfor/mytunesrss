@@ -4,8 +4,9 @@
 
 package de.codewave.utils.servlet;
 
-import javax.servlet.http.*;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 
 /**
  * de.codewave.utils.servlet.FileSender

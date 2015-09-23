@@ -42,38 +42,39 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.5.4</version>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <configuration>
+                            <descriptors>
+                                <descriptor>src/assembly/default.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
     <profiles>
         <profile>
             <id>seleniumtest</id>
-            <activation>
-                <property>
-                    <name>teamcity.version</name>
-                </property>
-            </activation>
             <build>
                 <plugins>
                     <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/assembly/system-independent.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2.1</version>
+                        <version>1.4.0</version>
                         <executions>
                             <execution>
                                 <id>startIntegrationServer</id>
@@ -128,87 +129,6 @@
                 </plugins>
             </build>
         </profile>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <artifactId>maven-assembly-plugin</artifactId>
-                        <version>2.4</version>
-                        <inherited>false</inherited>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <configuration>
-                                    <descriptors>
-                                        <descriptor>src/assembly/macosx.xml</descriptor>
-                                        <descriptor>src/assembly/system-independent.xml</descriptor>
-                                        <descriptor>src/assembly/windows.xml</descriptor>
-                                    </descriptors>
-                                </configuration>
-                                <goals>
-                                    <goal>single</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>exec-maven-plugin</artifactId>
-                        <version>1.2</version>
-                        <executions>
-                            <execution>
-                                <id>launch4j</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>java</executable>
-                                    <commandlineArgs>-jar etc/launch4j/launch4j.jar etc/launch4j.xml</commandlineArgs>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>macosx-package</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>exec</goal>
-                                </goals>
-                                <configuration>
-                                    <executable>sh</executable>
-                                    <commandlineArgs>etc/macosx-package.sh</commandlineArgs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>nsis-maven-plugin</artifactId>
-                        <version>1.0-codewave-1</version>
-                        <executions>
-                            <execution>
-                                <id>nsis-generate</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>generate-project</goal>
-                                </goals>
-                            </execution>
-                            <execution>
-                                <id>nsis-compile</id>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>compile</goal>
-                                </goals>
-                                <configuration>
-                                    <makensisBin>makensis</makensisBin>
-                                    <setupScript>etc/windows-installer.nsi</setupScript>
-                                    <outputFile>${project.build.directory}/${project.build.finalName}-setup.exe</outputFile>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
     </profiles>
+
 </project>

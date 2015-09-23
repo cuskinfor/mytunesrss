@@ -1,6 +1,6 @@
 package de.codewave.utils;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
 /**
  * de.codewave.utils.VersionTest

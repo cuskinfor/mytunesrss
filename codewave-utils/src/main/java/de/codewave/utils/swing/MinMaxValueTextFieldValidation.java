@@ -5,7 +5,7 @@
 package de.codewave.utils.swing;
 
 import javax.swing.*;
-import java.math.*;
+import java.math.BigDecimal;
 
 /**
  * de.codewave.mytunesrss.MinMaxValueTextFieldValidation

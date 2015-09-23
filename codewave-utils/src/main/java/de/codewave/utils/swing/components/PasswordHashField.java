@@ -4,16 +4,16 @@
 
 package de.codewave.utils.swing.components;
 
-import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import java.security.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
 
 /**
  * de.codewave.mytunesrss.settings.PasswordHashField

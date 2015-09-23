@@ -1,12 +1,11 @@
 package de.codewave.utils.maven;
 
 
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
-import java.io.*;
+import java.io.InputStream;
+import java.util.Properties;
 
 /**
  * de.codewave.utils.maven.MavenUtils

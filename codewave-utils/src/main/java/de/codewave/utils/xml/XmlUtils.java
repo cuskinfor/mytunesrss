@@ -4,16 +4,19 @@
 
 package de.codewave.utils.xml;
 
-import org.w3c.dom.*;
-import org.xml.sax.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import javax.xml.parsers.*;
 import java.io.*;
-import java.net.*;
-import java.util.regex.*;
+import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * de.codewave.utils.xml.XmlUtils

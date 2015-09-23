@@ -1,11 +1,15 @@
 package de.codewave.utils;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
+import org.apache.commons.codec.binary.Base64;
 
-import java.io.*;
-import java.util.*;
-
-import org.apache.commons.codec.binary.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.util.Arrays;
 
 /**
  * de.codewave.utils.Base64StreamTest

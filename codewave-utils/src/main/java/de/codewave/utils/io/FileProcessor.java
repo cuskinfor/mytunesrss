@@ -1,6 +1,6 @@
 package de.codewave.utils.io;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * de.codewave.utils.io.FileProcessor

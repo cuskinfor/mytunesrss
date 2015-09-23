@@ -1,8 +1,8 @@
 package de.codewave.utils.io;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * de.codewave.utils.io.FileCacheTest

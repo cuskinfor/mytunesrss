@@ -1,6 +1,6 @@
 package de.codewave.utils.swing.pleasewait;
 
-import de.codewave.utils.swing.*;
+import de.codewave.utils.swing.TaskExecutor;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,6 +1,6 @@
 package de.codewave.mytunesrss.datastore.statement;
 
-import java.util.*;
+import java.util.Collection;
 
 /**
  * de.codewave.mytunesrss.datastore.statement.SmartPlaylist

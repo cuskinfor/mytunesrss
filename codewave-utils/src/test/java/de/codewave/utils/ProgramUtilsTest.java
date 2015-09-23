@@ -3,9 +3,11 @@
  */
 package de.codewave.utils;
 
-import junit.framework.*;
+import junit.framework.Test;
+import junit.framework.TestCase;
+import junit.framework.TestSuite;
 
-import java.util.*;
+import java.util.Map;
 
 /**
  * de.codewave.utils.ProgramUtilsTest

@@ -4,9 +4,11 @@
 
 package de.codewave.utils;
 
-import org.apache.commons.codec.binary.*;
+import org.apache.commons.codec.binary.Base64;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 
 /**
  * de.codewave.utils.Base64InputStream

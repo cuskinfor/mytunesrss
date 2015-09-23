@@ -4,14 +4,16 @@
 
 package de.codewave.utils.servlet;
 
-import org.apache.commons.lang3.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import javax.servlet.*;
-import javax.servlet.http.*;
-import java.io.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
+import java.io.IOException;
 import java.util.*;
 
 /**

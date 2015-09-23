@@ -3,20 +3,28 @@
  */
 package de.codewave.utils.xml;
 
-import org.apache.commons.jxpath.*;
-import org.apache.commons.jxpath.xml.*;
-import org.apache.commons.lang3.*;
-
-import org.apache.commons.codec.binary.*;
-import org.xml.sax.*;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.xml.DOMParser;
+import org.apache.commons.jxpath.xml.DocumentContainer;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
-import javax.xml.parsers.*;
-import java.io.*;
-import java.net.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.util.*;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Xml utilities for the jxpath api.

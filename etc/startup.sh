@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 #
 # MyTunesRSS startup script

@@ -4,14 +4,11 @@
 
 package de.codewave.utils.jsp;
 
-import de.codewave.utils.*;
+import org.apache.commons.codec.binary.Base64;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
-import java.text.*;
-
-import org.apache.commons.codec.binary.*;
+import java.io.UnsupportedEncodingException;
+import java.text.MessageFormat;
+import java.util.Collection;
 
 /**
  * de.codewave.utils.jsp.CodewaveFunctions

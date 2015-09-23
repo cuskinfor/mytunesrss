@@ -120,10 +120,10 @@
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>org.codehaus.enunciate</groupId>
             <artifactId>enunciate-core-annotations</artifactId>
-        </dependency>
+        </dependency-->
     </dependencies>
     <build>
         <plugins>
@@ -156,6 +156,34 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>generate-service-docs</id>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <doclet>com.carma.swagger.doclet.ServiceDoclet</doclet>
+                            <docletArtifact>
+                                <groupId>com.carma</groupId>
+                                <artifactId>swagger-doclet</artifactId>
+                                <version>1.0.4.1</version>
+                            </docletArtifact>
+                            <reportOutputDirectory>${project.build.directory}/generated-resources/apidocs</reportOutputDirectory>
+                            <useStandardDocletOptions>false</useStandardDocletOptions>
+                            <additionalparam>
+                                -apiVersion ${project.version}
+                                -docBasePath .
+                                -apiBasePath /rest
+                            </additionalparam>
+                        </configuration>
+                        <goals>
+                            <goal>javadoc</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!--plugin>
                 <groupId>org.codehaus.enunciate</groupId>
                 <artifactId>maven-enunciate-plugin</artifactId>
                 <version>1.27</version>
@@ -169,7 +197,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin-->
         </plugins>
     </build>
 </project>

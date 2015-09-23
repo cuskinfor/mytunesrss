@@ -4,17 +4,22 @@
 
 package de.codewave.utils.io;
 
-import de.codewave.utils.*;
-import org.apache.commons.codec.binary.*;
-import org.apache.commons.lang3.*;
+import de.codewave.utils.Trigger;
+import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.*;
-import java.net.*;
-import java.security.*;
-import java.util.*;
+import java.net.URL;
+import java.net.URLConnection;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * IO Utilities.
