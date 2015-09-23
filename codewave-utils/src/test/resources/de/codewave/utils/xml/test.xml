@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<test>
+    <string>Hello World</string>
+    <class>de.codewave.utils.xml.JXPathUtils</class>
+    <int>24021972</int>
+    <double>3.141593</double>
+    <base64>aGVsbG8gd29ybGQ=</base64>
+</test>

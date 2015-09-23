@@ -15,8 +15,5 @@
   </component>
   <component name="VcsDirectoryMappings">
     <mapping directory="" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/camel" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/codewave-utils" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/systray" vcs="Git" />
   </component>
 </project>

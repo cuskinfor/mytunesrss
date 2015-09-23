@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<statements>
+    <statement name="customerByName">
+        <sql>
+            select c.name as name, count(o.id) as orders
+            from customer c, customer_order o
+            where o.customer_id = c.id
+            and c.name = :customerName
+            group by c.name
+        </sql>
+    </statement>
+
+    <statement name="bigOrdersByCustomerName">
+        <sql>
+            select o.item_name as name, o.item_count as item_count
+            from customer c, customer_order o
+            where c.name = :customerName
+            and o.item_count >= :countThreshold
+            order by o.item_count asc
+        </sql>
+    </statement>
+
+    <statement name="multiSqlSelect">
+        <sql>insert into customer values (:customerId, :customerName )</sql>
+        <sql>select id from customer where name = :customerName</sql>
+    </statement>
+
+    <statement name="fragmentTest">
+        <sql>select * from {frag1} where {frag2}</sql>
+    </statement>
+
+    <statement name="loopStatement">
+        <sql loop="name">INSERT INTO looptable (name, index) values (:loopitem_name, :loopindex_name)</sql>
+    </statement>
+
+    <statement name="loopQuery">
+        <sql loop="name">select index as index, name as name from looptable</sql>
+    </statement>
+
+    <statement name="mapLoopStatement">
+        <sql loop="person">INSERT INTO looptable (name, index) values (:loopitem_person_value, :loopitem_person_key)</sql>
+    </statement>
+
+    <statement name="defaultsTest">
+        <default name="name" value="Hans"/>
+        <default name="index" value="123" type="java.lang.Integer"/>
+        <sql>insert into looptable (name, index) values (:name, :index)</sql>
+        <sql>select name as name, index as index from looptable</sql>
+    </statement>
+
+    <statement name="defaultsTestWithNull">
+        <default name="name"/>
+        <default name="index" value="123" type="java.lang.Integer"/>
+        <sql>insert into looptable (name, index) values (:name, :index)</sql>
+        <sql>select name as name, index as index from looptable</sql>
+    </statement>
+
+  <statement name="arrayTest">
+    <sql loop="person">insert into looptable (name, index) values (:loopitem_person[0], :loopitem_person[1])</sql>
+  </statement>
+
+  <statement name="dynamicTestInsert">
+    <sql loop="person">insert into looptable (name, index) values (:loopitem_person, :loopindex_person)</sql>
+  </statement>
+
+  <statement name="dynamicTestQuery">
+    <sql>select name as name from looptable where index in (:index[])</sql>
+  </statement>
+
+    <fragment name="frag1">table</fragment>
+
+    <fragment name="frag2">condition</fragment>
+</statements>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<test xmlns="http://www.codewave.de"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://www.codewave.de http://www.codewave.de/namespace/schema/dummy.xsd">
+    <name>Michael</name>
+</test>
