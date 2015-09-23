@@ -1,3 +1,3 @@
 **/target/
-.idea/workspace.xml
-sonarIssues.xml
+.idea
+**/*.iml
