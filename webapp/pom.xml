@@ -136,7 +136,7 @@
                     <warSourceExcludes>**/*.jsp</warSourceExcludes>
                     <webResources>
                         <resource>
-                            <directory>${project.build.directory}/enunciate/build/docs</directory>
+                            <directory>${project.build.directory}/generated-resources/swagger/apidocs</directory>
                             <targetPath>rest-api-docs</targetPath>
                         </resource>
                     </webResources>
@@ -169,7 +169,7 @@
                                 <artifactId>swagger-doclet</artifactId>
                                 <version>1.0.4.1</version>
                             </docletArtifact>
-                            <reportOutputDirectory>${project.build.directory}/generated-resources/apidocs</reportOutputDirectory>
+                            <reportOutputDirectory>${project.build.directory}/generated-resources/swagger</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
                             <additionalparam>
                                 -apiVersion ${project.version}

@@ -7,7 +7,7 @@
           <deploymentDescriptor name="web.xml" url="file://$MODULE_DIR$/target/web.xml" />
         </descriptors>
         <webroots>
-          <root url="file://$MODULE_DIR$/target/enunciate/build/docs" relative="rest-api-docs" />
+          <root url="file://$MODULE_DIR$/target/generated-resources/rest-api-docs" relative="rest-api-docs" />
           <root url="file://$MODULE_DIR$/src/main/webapp" relative="/" />
         </webroots>
       </configuration>
