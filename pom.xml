@@ -16,6 +16,9 @@
         <relativePath>mytunesrss-pom/pom.xml</relativePath>
     </parent>
     <modules>
+        <module>codewave-utils</module>
+        <module>camel</module>
+        <module>systray</module>
         <module>runtime</module>
         <module>webapp</module>
         <module>admin</module>

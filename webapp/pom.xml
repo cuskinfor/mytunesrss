@@ -31,7 +31,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>de.codewave</groupId>
+            <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>codewave-utils</artifactId>
             <exclusions>
                 <exclusion>

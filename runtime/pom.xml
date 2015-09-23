@@ -127,7 +127,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>de.codewave</groupId>
+            <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>codewave-utils</artifactId>
             <exclusions>
                 <exclusion>
@@ -137,7 +137,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>de.codewave</groupId>
+            <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>camel</artifactId>
             <exclusions>
                 <exclusion>
@@ -244,7 +244,7 @@
         	<artifactId>lucene-queryparser</artifactId>
         </dependency>
         <dependency>
-            <groupId>de.codewave.systray</groupId>
+            <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>systray</artifactId>
         </dependency>
         <dependency>

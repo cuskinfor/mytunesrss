@@ -6,16 +6,10 @@
     <version>6.9-SNAPSHOT</version>
     <name>Codewave MyTunesRSS Common POM</name>
     <inceptionYear>2012</inceptionYear>
-    <parent>
-        <groupId>de.codewave</groupId>
-        <artifactId>codewave-base</artifactId>
-        <version>5.1</version>
-        <relativePath />
-    </parent>
     <repositories>
         <repository>
             <id>codewave</id>
-            <name>Codewave Repository</name>
+            <name>Codewave</name>
             <url>http://nexus-codewave.rhcloud.com/nexus/content/groups/codewave</url>
             <releases>
                 <enabled>true</enabled>
@@ -25,13 +19,62 @@
             </snapshots>
         </repository>
         <repository>
-            <id>4thline.org-repo</id>
+            <id>vaadin-addons</id>
+            <name>Vaadin Addons</name>
+            <url>http://maven.vaadin.com/vaadin-addons</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>4thline-repo</id>
             <url>http://4thline.org/m2</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>jboss</id>
+            <name>JBoss</name>
+            <url>http://repository.jboss.org/nexus/content/groups/public/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
+    <distributionManagement>
+        <repository>
+            <id>deploy.releases</id>
+            <url>http://nexus-codewave.rhcloud.com/nexus/content/repositories/releases</url>
+            <uniqueVersion>false</uniqueVersion>
+        </repository>
+        <snapshotRepository>
+            <id>deploy.snapshots</id>
+            <url>http://nexus-codewave.rhcloud.com/nexus/content/repositories/snapshots</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
+    </distributionManagement>
+    <developers>
+        <developer>
+            <name>Michael Descher</name>
+            <email>mdescher@codewave.de</email>
+            <organization>Codewave Software</organization>
+            <organizationUrl>http://www.codewave.de</organizationUrl>
+        </developer>
+    </developers>
+    <organization>
+        <name>Codewave Software</name>
+        <url>http://www.codewave.de</url>
+    </organization>
     <pluginRepositories>
         <pluginRepository>
             <id>codewave</id>
@@ -145,14 +188,14 @@
                 <version>2.0.1</version>
             </dependency>
             <dependency>
-                <groupId>de.codewave</groupId>
+                <groupId>de.codewave.mytunesrss</groupId>
                 <artifactId>codewave-utils</artifactId>
-                <version>2.3</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>de.codewave</groupId>
+                <groupId>de.codewave.mytunesrss</groupId>
                 <artifactId>camel</artifactId>
-                <version>2.3</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.intellij</groupId>
@@ -216,9 +259,9 @@
             	<version>4.9.0</version>
             </dependency>
             <dependency>
-                <groupId>de.codewave.systray</groupId>
+                <groupId>de.codewave.mytunesrss</groupId>
                 <artifactId>systray</artifactId>
-                <version>1.3</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
@@ -402,7 +445,7 @@
             <dependency>
                 <groupId>org.fourthline.cling</groupId>
                 <artifactId>cling-support</artifactId>
-                <version>2.0-alpha3</version>
+                <version>2.0.1</version>
             </dependency>
             <dependency>
             	<groupId>com.google.guava</groupId>
@@ -427,6 +470,56 @@
         </dependencies>
     </dependencyManagement>
     <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>ideauidesigner-maven-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>javac2</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <sourceDirectory>${project.build.sourceDirectory}</sourceDirectory>
+                        <destDirectory>${project.build.outputDirectory}</destDirectory>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.2</version>
+                    <configuration>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>2.7</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.3</version>
+                    <configuration>
+                        <source>1.7</source>
+                        <target>1.7</target>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>2.4</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>

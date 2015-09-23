@@ -64,13 +64,37 @@
         <processorPath useClasspath="true" />
         <module name="runtime" />
       </profile>
+      <profile default="false" name="Annotation profile for systray" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="systray" />
+      </profile>
+      <profile default="false" name="Annotation profile for codewave-utils" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="codewave-utils" />
+      </profile>
+      <profile default="false" name="Annotation profile for camel" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <processorPath useClasspath="true" />
+        <module name="camel" />
+      </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="admin" target="1.7" />
+      <module name="camel" target="1.7" />
+      <module name="codewave-utils" target="1.7" />
       <module name="mytunesrss" target="1.5" />
       <module name="mytunesrss-pom" target="1.5" />
       <module name="runtime" target="1.7" />
       <module name="selenium" target="1.7" />
+      <module name="systray" target="1.7" />
       <module name="webapp" target="1.7" />
     </bytecodeTargetLevel>
   </component>

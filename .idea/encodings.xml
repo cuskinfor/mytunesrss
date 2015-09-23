@@ -3,10 +3,12 @@
   <component name="Encoding" useUTFGuessing="true" native2AsciiForPropertiesFiles="true" defaultCharsetForPropertiesFiles="ISO-8859-15">
     <file url="file://$PROJECT_DIR$" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/admin" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/camel" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/codewave-utils" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/mytunesrss-pom" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/runtime" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/selenium" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/systray" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/webapp" charset="UTF-8" />
   </component>
 </project>
-
