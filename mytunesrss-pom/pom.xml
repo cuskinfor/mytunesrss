@@ -8,17 +8,6 @@
     <inceptionYear>2012</inceptionYear>
     <repositories>
         <repository>
-            <id>codewave</id>
-            <name>Codewave</name>
-            <url>http://nexus-codewave.rhcloud.com/nexus/content/groups/codewave</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>vaadin-addons</id>
             <name>Vaadin Addons</name>
             <url>http://maven.vaadin.com/vaadin-addons</url>
@@ -51,18 +40,6 @@
             </snapshots>
         </repository>
     </repositories>
-    <distributionManagement>
-        <repository>
-            <id>deploy.releases</id>
-            <url>http://nexus-codewave.rhcloud.com/nexus/content/repositories/releases</url>
-            <uniqueVersion>false</uniqueVersion>
-        </repository>
-        <snapshotRepository>
-            <id>deploy.snapshots</id>
-            <url>http://nexus-codewave.rhcloud.com/nexus/content/repositories/snapshots</url>
-            <uniqueVersion>false</uniqueVersion>
-        </snapshotRepository>
-    </distributionManagement>
     <developers>
         <developer>
             <name>Michael Descher</name>
@@ -75,19 +52,6 @@
         <name>Codewave Software</name>
         <url>http://www.codewave.de</url>
     </organization>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codewave</id>
-            <name>Codewave Repository</name>
-            <url>http://nexus-codewave.rhcloud.com/nexus/content/groups/codewave</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -98,13 +62,13 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>99</version>
+                <version>1.2</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging-api</artifactId>
-                <version>99</version>
+                <version>1.1</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -447,11 +411,6 @@
             	<artifactId>guava</artifactId>
             	<version>16.0.1</version>
             </dependency>
-            <!--dependency>
-                <groupId>org.codehaus.enunciate</groupId>
-                <artifactId>enunciate-core-annotations</artifactId>
-                <version>1.27</version>
-            </dependency-->
             <dependency>
                 <groupId>org.apache.tika</groupId>
                 <artifactId>tika-parsers</artifactId>
