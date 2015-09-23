@@ -167,13 +167,13 @@
                             <docletArtifact>
                                 <groupId>com.carma</groupId>
                                 <artifactId>swagger-doclet</artifactId>
-                                <version>1.0.4.1</version>
+                                <version>1.0.5</version>
                             </docletArtifact>
                             <reportOutputDirectory>${project.build.directory}/generated-resources/swagger</reportOutputDirectory>
                             <useStandardDocletOptions>false</useStandardDocletOptions>
                             <additionalparam>
                                 -apiVersion ${project.version}
-                                -docBasePath .
+                                -docBasePath /rest-api-docs
                                 -apiBasePath /rest
                             </additionalparam>
                         </configuration>
