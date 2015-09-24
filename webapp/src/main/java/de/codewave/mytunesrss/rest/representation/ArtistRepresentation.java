@@ -5,7 +5,6 @@ import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of an artist.
@@ -13,15 +12,45 @@ import java.net.URI;
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ArtistRepresentation implements RestRepresentation {
-    private URI myAlbumsUri;
-    private URI myTracksUri;
-    private URI myM3uUri;
-    private URI myXspfUri;
-    private URI myRssUri;
-    private URI myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myAlbumsUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myTracksUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myM3uUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myXspfUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myRssUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myAlbumCount;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private String myNaturalSortName;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTrackCount;
 
     public ArtistRepresentation() {
@@ -45,66 +74,66 @@ public class ArtistRepresentation implements RestRepresentation {
     /**
      * The URI to the list of albums with tracks of this artist.
      */
-    public URI getAlbumsUri() {
+    public String getAlbumsUri() {
         return myAlbumsUri;
     }
 
-    public void setAlbumsUri(URI albumsUri) {
+    public void setAlbumsUri(String albumsUri) {
         myAlbumsUri = albumsUri;
     }
 
     /**
      * The URI to the list of tracks of this artist.
      */
-    public URI getTracksUri() {
+    public String getTracksUri() {
         return myTracksUri;
     }
 
-    public void setTracksUri(URI tracksUri) {
+    public void setTracksUri(String tracksUri) {
         myTracksUri = tracksUri;
     }
 
     /**
      * The URI for the M3U playlist with all tracks of this artist.
      */
-    public URI getM3uUri() {
+    public String getM3uUri() {
         return myM3uUri;
     }
 
-    public void setM3uUri(URI m3uUri) {
+    public void setM3uUri(String m3uUri) {
         myM3uUri = m3uUri;
     }
 
     /**
      * The URI for the XSPF playlist with all tracks of this artist.
      */
-    public URI getXspfUri() {
+    public String getXspfUri() {
         return myXspfUri;
     }
 
-    public void setXspfUri(URI xspfUri) {
+    public void setXspfUri(String xspfUri) {
         myXspfUri = xspfUri;
     }
 
     /**
      * The URI for the RSS feed with all tracks of this artist.
      */
-    public URI getRssUri() {
+    public String getRssUri() {
         return myRssUri;
     }
 
-    public void setRssUri(URI rssUri) {
+    public void setRssUri(String rssUri) {
         myRssUri = rssUri;
     }
 
     /**
      * The URI for downloading a ZIP archive with all tracks of this artist.
      */
-    public URI getDownloadUri() {
+    public String getDownloadUri() {
         return myDownloadUri;
     }
 
-    public void setDownloadUri(URI downloadUri) {
+    public void setDownloadUri(String downloadUri) {
         myDownloadUri = downloadUri;
     }
 

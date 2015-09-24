@@ -46,25 +46,25 @@ public class RestResource {
     protected ArtistRepresentation toArtistRepresentation(UriInfo uriInfo, HttpServletRequest request, Artist artist) {
         ArtistRepresentation representation = new ArtistRepresentation(artist);
         if (IncludeExcludeInterceptor.isAttr("albumsUri")) {
-            representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
+            representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("tracksUri")) {
-            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())));
+            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).path(ArtistResource.class, "getTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(artist.getName())).toString());
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
             if (IncludeExcludeInterceptor.isAttr("m3uUri")) {
-                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), enc("_cdi=" + ue(artist.getName()) + ".m3u")));
+                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=M3u"), enc("_cdi=" + ue(artist.getName()) + ".m3u")).toString());
             }
             if (IncludeExcludeInterceptor.isAttr("xspfUri")) {
-                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), enc("_cdi=" + ue(artist.getName()) + ".xspf")));
+                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("artist=" + b64(artist.getName())), enc("type=Xspf"), enc("_cdi=" + ue(artist.getName()) + ".xspf")).toString());
             }
         }
         if (IncludeExcludeInterceptor.isAttr("rssUri") && user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("artist=" + b64(artist.getName())), enc("_cdi=" + ue(artist.getName()) + ".xml")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("artist=" + b64(artist.getName())), enc("_cdi=" + ue(artist.getName()) + ".xml")).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("downloadUri") && user.isDownload()) {
-            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("artist=" + b64(artist.getName())), enc("_cda=" + ue(artist.getName()) + ".zip")));
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("artist=" + b64(artist.getName())), enc("_cda=" + ue(artist.getName()) + ".zip")).toString());
         }
         return representation;
     }
@@ -81,28 +81,28 @@ public class RestResource {
     protected AlbumRepresentation toAlbumRepresentation(UriInfo uriInfo, HttpServletRequest request, Album album) {
         AlbumRepresentation representation = new AlbumRepresentation(album);
         if (IncludeExcludeInterceptor.isAttr("tracksUri")) {
-            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())));
+            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).path(AlbumResource.class, "getAlbumTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist()), MiscUtils.getUtf8UrlEncoded(album.getName())).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("artistUri")) {
-            representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist())));
+            representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(album.getArtist())).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("imageUri") && StringUtils.isNotBlank(album.getImageHash())) {
-            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + album.getImageHash())).toString());
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
             if (IncludeExcludeInterceptor.isAttr("m3uUri")) {
-                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=M3u"), enc("_cdi=" + ue(album.getName()) + ".m3u")));
+                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=M3u"), enc("_cdi=" + ue(album.getName()) + ".m3u")).toString());
             }
             if (IncludeExcludeInterceptor.isAttr("xspfUri")) {
-                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=Xspf"), enc("_cdi=" + ue(album.getName()) + ".xspf")));
+                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("album=" + b64(album.getName())), enc("type=Xspf"), enc("_cdi=" + ue(album.getName()) + ".xspf")).toString());
             }
         }
         if (IncludeExcludeInterceptor.isAttr("rssUri") && user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("album=" + b64(album.getName())), enc("_cdi=" + ue(album.getName()) + ".xml")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("album=" + b64(album.getName())), enc("_cdi=" + ue(album.getName()) + ".xml")).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("downloadUri") && user.isDownload()) {
-            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("album=" + b64(album.getName())), enc("albumartist=" + b64(album.getArtist())), enc("_cda=" + ue(album.getName()) + ".zip")));
+            representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("album=" + b64(album.getName())), enc("albumartist=" + b64(album.getArtist())), enc("_cda=" + ue(album.getName()) + ".zip")).toString());
         }
         return representation;
     }
@@ -119,13 +119,13 @@ public class RestResource {
     protected GenreRepresentation toGenreRepresentation(UriInfo uriInfo, Genre genre) {
         GenreRepresentation representation = new GenreRepresentation(genre);
         if (IncludeExcludeInterceptor.isAttr("tracksUri")) {
-            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+            representation.setTracksUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreTracks").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("albumsUri")) {
-            representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+            representation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreAlbums").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("artistsUri")) {
-            representation.setArtistsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreArtists").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())));
+            representation.setArtistsUri(uriInfo.getBaseUriBuilder().path(GenreResource.class).path(GenreResource.class, "getGenreArtists").buildFromEncoded(MiscUtils.getUtf8UrlEncoded(genre.getName())).toString());
         }
         return representation;
     }
@@ -144,21 +144,21 @@ public class RestResource {
         Playlist currentlyEditedPlaylist = (Playlist) request.getSession().getAttribute(EditPlaylistResource.KEY_EDIT_PLAYLIST);
         if (IncludeExcludeInterceptor.isAttr("tracksUri")) {
             if (playlist == currentlyEditedPlaylist) {
-                representation.setTracksUri(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build());
+                representation.setTracksUri(uriInfo.getBaseUriBuilder().path(EditPlaylistResource.class).path(EditPlaylistResource.class, "getPlaylistTracks").build().toString());
             } else {
-                representation.setTracksUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()));
+                representation.setTracksUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getTracks").build(playlist.getId()).toString());
             }
         }
         if (playlist.getId() != null) {
             // persistent playlist
             if (IncludeExcludeInterceptor.isAttr("childrenUri")) {
-                representation.setChildrenUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()));
+                representation.setChildrenUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylistChildren").build(playlist.getId()).toString());
             }
             if (IncludeExcludeInterceptor.isAttr("parentUri") && StringUtils.isNotBlank(playlist.getContainerId())) {
-                representation.setParentUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylist").build(playlist.getContainerId()));
+                representation.setParentUri(uriInfo.getBaseUriBuilder().path(PlaylistResource.class).path(PlaylistResource.class, "getPlaylist").build(playlist.getContainerId()).toString());
             }
             if (IncludeExcludeInterceptor.isAttr("downloadUri") && MyTunesRssWebUtils.getAuthUser(request).isDownload()) {
-                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("playlist=" + playlist.getId()), enc("_cda=" + ue(playlist.getName()) + ".zip")));
+                representation.setDownloadUri(getAppURI(request, MyTunesRssCommand.GetZipArchive, enc("playlist=" + playlist.getId()), enc("_cda=" + ue(playlist.getName()) + ".zip")).toString());
             }
         }
         return representation;
@@ -176,35 +176,35 @@ public class RestResource {
     protected TrackRepresentation toTrackRepresentation(UriInfo uriInfo, HttpServletRequest request, Track track) {
         TrackRepresentation representation = new TrackRepresentation(track);
         if (IncludeExcludeInterceptor.isAttr("imageUri") && StringUtils.isNotBlank(track.getImageHash())) {
-            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + track.getImageHash())));
+            representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + track.getImageHash())).toString());
         }
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (user.isPlaylist()) {
             if (IncludeExcludeInterceptor.isAttr("m3uUri")) {
-                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("track=" + track.getId()), enc("type=M3u"), enc("_cdi=" + ue(track.getName()) + ".m3u")));
+                representation.setM3uUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("track=" + track.getId()), enc("type=M3u"), enc("_cdi=" + ue(track.getName()) + ".m3u")).toString());
             }
             if (IncludeExcludeInterceptor.isAttr("xspfUri")) {
-                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("track=" + track.getId()), enc("type=Xspf"), enc("_cdi=" + ue(track.getName()) + ".xspf")));
+                representation.setXspfUri(getAppURI(request, MyTunesRssCommand.CreatePlaylist, enc("track=" + track.getId()), enc("type=Xspf"), enc("_cdi=" + ue(track.getName()) + ".xspf")).toString());
             }
         }
         if (IncludeExcludeInterceptor.isAttr("rssUri") && user.isRss()) {
-            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("track=" + track.getId()), enc("_cdi=" + ue(track.getName()) + ".xml")));
+            representation.setRssUri(getAppURI(request, MyTunesRssCommand.CreateRss, enc("track=" + track.getId()), enc("_cdi=" + ue(track.getName()) + ".xml")).toString());
         }
         request.setAttribute("downloadPlaybackServletUrl", MyTunesRssWebUtils.getServletUrl(request)); // prepare MyTunesFunctions
         if (IncludeExcludeInterceptor.isAttr("downloadUri") && user.isDownload()) {
-            representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(request, track, null)).build());
+            representation.setDownloadUri(UriBuilder.fromUri(MyTunesFunctions.downloadUrl(request, track, null)).build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("httpLiveStreamUri") && MyTunesRssWebUtils.isHttpLiveStreaming(request, track, true, true)) {
-            representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(request, track, null)).build());
+            representation.setHttpLiveStreamUri(UriBuilder.fromUri(MyTunesFunctions.httpLiveStreamUrl(request, track, null)).build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("playbackUri")) {
-            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build());
+            representation.setPlaybackUri(UriBuilder.fromUri(MyTunesFunctions.playbackUrl(request, track, null)).build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("artistUri")) {
-            representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getArtist())));
+            representation.setArtistUri(uriInfo.getBaseUriBuilder().path(ArtistResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getArtist())).toString());
         }
         if (IncludeExcludeInterceptor.isAttr("albumUri")) {
-            representation.setAlbumUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getAlbumArtist()), MiscUtils.getUtf8UrlEncoded(track.getAlbum())));
+            representation.setAlbumUri(uriInfo.getBaseUriBuilder().path(AlbumResource.class).buildFromEncoded(MiscUtils.getUtf8UrlEncoded(track.getAlbumArtist()), MiscUtils.getUtf8UrlEncoded(track.getAlbum())).toString());
         }
         return representation;
     }

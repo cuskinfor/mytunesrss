@@ -8,21 +8,49 @@ package de.codewave.mytunesrss.rest.representation;
 import de.codewave.mytunesrss.datastore.statement.Photo;
 import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 
-import java.net.URI;
-
 /**
  * Representation of a photo.
  */
 public class PhotoRepresentation implements RestRepresentation {
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private String myFile;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myDate;
+    /**
+     * @exclude from swagger docs
+     */
     private String myThumbnailImageHash;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myLastThumbnailImageUpdate;
-    private URI myOriginalImageUri;
-    private URI myThumbnailImageUri;
-    private URI myExifDataUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myOriginalImageUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myThumbnailImageUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myExifDataUri;
+    /**
+     * @exclude from swagger docs
+     */
     private long myWidth;
+    /**
+     * @exclude from swagger docs
+     */
     private long myHeight;
 
     public PhotoRepresentation() {
@@ -104,33 +132,33 @@ public class PhotoRepresentation implements RestRepresentation {
     /**
      * URI to the thumbnail image.
      */
-    public URI getThumbnailImageUri() {
+    public String getThumbnailImageUri() {
         return myThumbnailImageUri;
     }
 
-    public void setThumbnailImageUri(URI thumbnailImageUri) {
+    public void setThumbnailImageUri(String thumbnailImageUri) {
         myThumbnailImageUri = thumbnailImageUri;
     }
 
     /**
      * URI of the original image.
      */
-    public URI getOriginalImageUri() {
+    public String getOriginalImageUri() {
         return myOriginalImageUri;
     }
 
-    public void setOriginalImageUri(URI originalImageUri) {
+    public void setOriginalImageUri(String originalImageUri) {
         myOriginalImageUri = originalImageUri;
     }
 
     /**
      * URI to the EXIF data of the photo.
      */
-    public URI getExifDataUri() {
+    public String getExifDataUri() {
         return myExifDataUri;
     }
 
-    public void setExifDataUri(URI exifDataUri) {
+    public void setExifDataUri(String exifDataUri) {
         myExifDataUri = exifDataUri;
     }
 

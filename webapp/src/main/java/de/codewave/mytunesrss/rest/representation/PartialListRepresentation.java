@@ -12,7 +12,13 @@ import java.util.List;
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class PartialListRepresentation<T> implements RestRepresentation {
+    /**
+     * @exclude from swagger docs
+     */
     private List<T> myItems;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTotalCount;
 
     public PartialListRepresentation() {

@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of an album.
@@ -15,19 +14,61 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class AlbumRepresentation implements RestRepresentation {
 
-    private URI myTracksUri;
-    private URI myArtistUri;
-    private URI myImageUri;
-    private URI myM3uUri;
-    private URI myXspfUri;
-    private URI myRssUri;
-    private URI myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myTracksUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myArtistUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myImageUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myM3uUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myXspfUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myRssUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
     private String myArtist;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myArtistCount;
+    /**
+     * @exclude from swagger docs
+     */
     private String myImageHash;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private String myNaturalSortName;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTrackCount;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myYear;
 
     public AlbumRepresentation() {
@@ -60,77 +101,77 @@ public class AlbumRepresentation implements RestRepresentation {
     /**
      * URI to the tracks of the album.
      */
-    public URI getTracksUri() {
+    public String getTracksUri() {
         return myTracksUri;
     }
 
-    public void setTracksUri(URI tracksUri) {
+    public void setTracksUri(String tracksUri) {
         myTracksUri = tracksUri;
     }
 
     /**
      * URI to the album artist.
      */
-    public URI getArtistUri() {
+    public String getArtistUri() {
         return myArtistUri;
     }
 
-    public void setArtistUri(URI artistUri) {
+    public void setArtistUri(String artistUri) {
         myArtistUri = artistUri;
     }
 
     /**
      * URI to the album image.
      */
-    public URI getImageUri() {
+    public String getImageUri() {
         return myImageUri;
     }
 
-    public void setImageUri(URI imageUri) {
+    public void setImageUri(String imageUri) {
         myImageUri = imageUri;
     }
 
     /**
      * URI for an M3U playlist of the album.
      */
-    public URI getM3uUri() {
+    public String getM3uUri() {
         return myM3uUri;
     }
 
-    public void setM3uUri(URI m3uUri) {
+    public void setM3uUri(String m3uUri) {
         myM3uUri = m3uUri;
     }
 
     /**
      * URI for an XSPF playlist of the album.
      */
-    public URI getXspfUri() {
+    public String getXspfUri() {
         return myXspfUri;
     }
 
-    public void setXspfUri(URI xspfUri) {
+    public void setXspfUri(String xspfUri) {
         myXspfUri = xspfUri;
     }
 
     /**
      * URI for an RSS feed of the album.
      */
-    public URI getRssUri() {
+    public String getRssUri() {
         return myRssUri;
     }
 
-    public void setRssUri(URI rssUri) {
+    public void setRssUri(String rssUri) {
         myRssUri = rssUri;
     }
 
     /**
      * URI to an ZIP archive with all tracks of the album.
      */
-    public URI getDownloadUri() {
+    public String getDownloadUri() {
         return myDownloadUri;
     }
 
-    public void setDownloadUri(URI downloadUri) {
+    public void setDownloadUri(String downloadUri) {
         myDownloadUri = downloadUri;
     }
 

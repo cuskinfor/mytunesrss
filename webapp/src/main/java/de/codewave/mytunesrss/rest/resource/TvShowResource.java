@@ -31,6 +31,9 @@ import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * @resourcePath TV show operations
+ */
 @ValidateRequest
 @Path("tvshow/{show}")
 @RequiredUserPermissions({UserPermission.Video})
@@ -72,10 +75,10 @@ public class TvShowResource extends RestResource {
             TvShowSeasonRepresentation representation = new TvShowSeasonRepresentation();
             representation.setName(entry.getKey());
             representation.setEpisodeCount(entry.getValue().intValue());
-            representation.setEpisodesUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getEpisodes").build(show, entry.getKey()));
+            representation.setEpisodesUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getEpisodes").build(show, entry.getKey()).toString());
             if (imageHashPerEpisode.containsKey(entry.getKey())) {
                 representation.setImageHash(StringUtils.trimToNull(imageHashPerEpisode.get(entry.getKey())));
-                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + imageHashPerEpisode.get(entry.getKey()))));
+                representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + imageHashPerEpisode.get(entry.getKey()))).toString());
             }
             seasons.add(representation);
         }
@@ -92,6 +95,8 @@ public class TvShowResource extends RestResource {
      * @return List of all episodes.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.TrackRepresentation>
      */
     @GET
     @Path("season/{season}/episodes")

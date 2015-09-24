@@ -3,7 +3,6 @@ package de.codewave.mytunesrss.rest.representation;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 import java.util.List;
 
 /**
@@ -13,26 +12,44 @@ import java.util.List;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class SessionRepresentation implements RestRepresentation {
 
-    private URI myLibraryUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myLibraryUri;
 
+    /**
+     * @exclude from swagger docs
+     */
     private List<String> myTranscoders;
 
+    /**
+     * @exclude from swagger docs
+     */
     private List<MediaRendererRepresentation> myMediaRenderers;
 
+    /**
+     * @exclude from swagger docs
+     */
     private List<String> myPermissions;
 
+    /**
+     * @exclude from swagger docs
+     */
     private Integer mySessionTimeoutMinutes;
 
+    /**
+     * @exclude from swagger docs
+     */
     private Integer mySearchFuzziness;
 
     /**
      * Main library URI.
      */
-    public URI getLibraryUri() {
+    public String getLibraryUri() {
         return myLibraryUri;
     }
 
-    public void setLibraryUri(URI libraryUri) {
+    public void setLibraryUri(String libraryUri) {
         myLibraryUri = libraryUri;
     }
 

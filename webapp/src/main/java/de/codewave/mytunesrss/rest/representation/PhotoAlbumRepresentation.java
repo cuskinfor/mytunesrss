@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of a photo album.
@@ -19,11 +18,26 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class PhotoAlbumRepresentation implements RestRepresentation {
 
+    /**
+     * @exclude from swagger docs
+     */
     private long myFirstDate;
+    /**
+     * @exclude from swagger docs
+     */
     private long myLastDate;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private int myPhotoCount;
-    private URI myPhotosUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myPhotosUri;
 
     public PhotoAlbumRepresentation() {
     }
@@ -90,11 +104,11 @@ public class PhotoAlbumRepresentation implements RestRepresentation {
     /**
      * URI to the photos of the album.
      */
-    public URI getPhotosUri() {
+    public String getPhotosUri() {
         return myPhotosUri;
     }
 
-    public void setPhotosUri(URI photosUri) {
+    public void setPhotosUri(String photosUri) {
         myPhotosUri = photosUri;
     }
 }

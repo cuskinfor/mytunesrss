@@ -34,6 +34,9 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * @resourcePath Library operations
+ */
 @ValidateRequest
 @Path("/")
 public class LibraryResource extends RestResource {
@@ -42,6 +45,8 @@ public class LibraryResource extends RestResource {
      * Get URIs of all kind of data in the library.
      *
      * @return Tbe library representation which contains several URIs for further data retrieval.
+     *
+     * @exclude from swagger docs since it simply does not work with root path and I don't have a solution yet.
      */
     @GET
     @Produces({"application/json"})
@@ -52,34 +57,34 @@ public class LibraryResource extends RestResource {
             libraryRepresentation.setVersion(new VersionRepresentation(new Version(MyTunesRss.VERSION)));
         }
         if (IncludeExcludeInterceptor.isAttr("albumsUri")) {
-            libraryRepresentation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getAlbums").build());
+            libraryRepresentation.setAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getAlbums").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("artistsUri")) {
-            libraryRepresentation.setArtistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getArtists").build());
+            libraryRepresentation.setArtistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getArtists").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("genresUri")) {
-            libraryRepresentation.setGenresUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getGenres").build());
+            libraryRepresentation.setGenresUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getGenres").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("moviesUri")) {
-            libraryRepresentation.setMoviesUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getMovies").build());
+            libraryRepresentation.setMoviesUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getMovies").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("playlistsUri")) {
-            libraryRepresentation.setPlaylistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPlaylists").build());
+            libraryRepresentation.setPlaylistsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPlaylists").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("tracksUri")) {
-            libraryRepresentation.setTracksUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "findTracks").build());
+            libraryRepresentation.setTracksUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "findTracks").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("tvShowsUri")) {
-            libraryRepresentation.setTvShowsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getTvShows").build());
+            libraryRepresentation.setTvShowsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getTvShows").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("photoAlbumsUri")) {
-            libraryRepresentation.setPhotoAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPhotoAlbums").build());
+            libraryRepresentation.setPhotoAlbumsUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).path(LibraryResource.class, "getPhotoAlbums").build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("mediaPlayerUri")) {
-            libraryRepresentation.setMediaPlayerUri(uriInfo.getBaseUriBuilder().path(MediaPlayerResource.class).build());
+            libraryRepresentation.setMediaPlayerUri(uriInfo.getBaseUriBuilder().path(MediaPlayerResource.class).build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("sessionUri")) {
-            libraryRepresentation.setSessionUri(uriInfo.getBaseUriBuilder().path(SessionResource.class).build());
+            libraryRepresentation.setSessionUri(uriInfo.getBaseUriBuilder().path(SessionResource.class).build().toString());
         }
         return libraryRepresentation;
     }
@@ -102,6 +107,8 @@ public class LibraryResource extends RestResource {
      * @return A list of albums.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.AlbumRepresentation>
      */
     @GET
     @Path("albums")
@@ -140,6 +147,8 @@ public class LibraryResource extends RestResource {
      * @return A list of artists.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.ArtistRepresentation>
      */
     @GET
     @Path("artists")
@@ -171,6 +180,8 @@ public class LibraryResource extends RestResource {
      * @return A list of genres.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.GenreRepresentation>
      */
     @GET
     @Path("genres")
@@ -200,6 +211,8 @@ public class LibraryResource extends RestResource {
      * @return A list of playlists.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.PlaylistRepresentation>
      */
     @GET
     @Path("playlists")
@@ -226,6 +239,8 @@ public class LibraryResource extends RestResource {
      * @return A list of movies.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.TrackRepresentation>
      */
     @GET
     @Path("movies")
@@ -288,14 +303,14 @@ public class LibraryResource extends RestResource {
                 representation.setEpisodeCount(entry.getValue().intValue());
             }
             if (IncludeExcludeInterceptor.isAttr("seasonsUri")) {
-                representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name));
+                representation.setSeasonsUri(uriInfo.getBaseUriBuilder().path(TvShowResource.class).path(TvShowResource.class, "getSeasons").build(name).toString());
             }
             if (imageHashPerShow.containsKey(name)) {
                 if (IncludeExcludeInterceptor.isAttr("imageHash")) {
                     representation.setImageHash(StringUtils.trimToNull(imageHashPerShow.get(name)));
                 }
                 if (IncludeExcludeInterceptor.isAttr("imageUri")) {
-                    representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + imageHashPerShow.get(name))));
+                    representation.setImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + imageHashPerShow.get(name))).toString());
                 }
             }
             shows.add(representation);
@@ -308,6 +323,8 @@ public class LibraryResource extends RestResource {
      * Get a list of photo albums.
 
      * @return A list of photo albums.
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.PhotoAlbumRepresentation>
      */
     @GET
     @Path("photoalbums")
@@ -326,7 +343,7 @@ public class LibraryResource extends RestResource {
             public PhotoAlbumRepresentation transform(PhotoAlbum photoAlbum) {
                 PhotoAlbumRepresentation photoAlbumRepresentation = new PhotoAlbumRepresentation(photoAlbum);
                 if (IncludeExcludeInterceptor.isAttr("photosUri")) {
-                    photoAlbumRepresentation.setPhotosUri(uriInfo.getBaseUriBuilder().path(PhotoAlbumResource.class).path(PhotoAlbumResource.class, "getPhotos").build(photoAlbum.getId()));
+                    photoAlbumRepresentation.setPhotosUri(uriInfo.getBaseUriBuilder().path(PhotoAlbumResource.class).path(PhotoAlbumResource.class, "getPhotos").build(photoAlbum.getId()).toString());
                 }
                 return photoAlbumRepresentation;
             }
@@ -349,6 +366,8 @@ public class LibraryResource extends RestResource {
      * @throws IOException
      * @throws SQLException
      * @throws LuceneQueryParserException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.TrackRepresentation>
      */
     @GET
     @Path("tracks")

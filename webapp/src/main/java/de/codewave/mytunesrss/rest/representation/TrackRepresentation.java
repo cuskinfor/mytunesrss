@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of a track.
@@ -23,41 +22,149 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class TrackRepresentation implements RestRepresentation {
 
-    private URI myImageUri;
-    private URI myM3uUri;
-    private URI myXspfUri;
-    private URI myRssUri;
-    private URI myDownloadUri;
-    private URI myPlaybackUri;
-    private URI myHttpLiveStreamUri;
-    private URI myArtistUri;
-    private URI myAlbumUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myImageUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myM3uUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myXspfUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myRssUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myPlaybackUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myHttpLiveStreamUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myArtistUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myAlbumUri;
+    /**
+     * @exclude from swagger docs
+     */
     private String myId;
+    /**
+     * @exclude from swagger docs
+     */
     private String myAlbum;
+    /**
+     * @exclude from swagger docs
+     */
     private String myAlbumArtist;
+    /**
+     * @exclude from swagger docs
+     */
     private String myArtist;
+    /**
+     * @exclude from swagger docs
+     */
     private String myComment;
+    /**
+     * @exclude from swagger docs
+     */
     private String myComposer;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myEpisode;
+    /**
+     * @exclude from swagger docs
+     */
     private String myFilename;
+    /**
+     * @exclude from swagger docs
+     */
     private String myGenre;
+    /**
+     * @exclude from swagger docs
+     */
     private String myImageHash;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myLastImageUpdate;
+    /**
+     * @exclude from swagger docs
+     */
     private MediaType myMediaType;
+    /**
+     * @exclude from swagger docs
+     */
     private String myMp4Codec;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myPlayCount;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myDiscNumber;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myDiscCount;
+    /**
+     * @exclude from swagger docs
+     */
     private Boolean myProtected;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myTsPlayed;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myTsUpdated;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer mySeason;
+    /**
+     * @exclude from swagger docs
+     */
     private String myTvShow;
+    /**
+     * @exclude from swagger docs
+     */
     private TrackSource mySource;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTime;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTrackNumber;
+    /**
+     * @exclude from swagger docs
+     */
     private VideoType myVideoType;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myYear;
 
     public TrackRepresentation() {
@@ -150,99 +257,99 @@ public class TrackRepresentation implements RestRepresentation {
     /**
      * URI to the image of the track.
      */
-    public URI getImageUri() {
+    public String getImageUri() {
         return myImageUri;
     }
 
-    public void setImageUri(URI imageUri) {
+    public void setImageUri(String imageUri) {
         myImageUri = imageUri;
     }
 
     /**
      * URI to an M3U playlist of the track.
      */
-    public URI getM3uUri() {
+    public String getM3uUri() {
         return myM3uUri;
     }
 
-    public void setM3uUri(URI m3uUri) {
+    public void setM3uUri(String m3uUri) {
         myM3uUri = m3uUri;
     }
 
     /**
      * URI to an XSPF playlist of the track.
      */
-    public URI getXspfUri() {
+    public String getXspfUri() {
         return myXspfUri;
     }
 
-    public void setXspfUri(URI xspfUri) {
+    public void setXspfUri(String xspfUri) {
         myXspfUri = xspfUri;
     }
 
     /**
      * URI to an RSS feed of the track.
      */
-    public URI getRssUri() {
+    public String getRssUri() {
         return myRssUri;
     }
 
-    public void setRssUri(URI rssUri) {
+    public void setRssUri(String rssUri) {
         myRssUri = rssUri;
     }
 
     /**
      * Download URI of the track.
      */
-    public URI getDownloadUri() {
+    public String getDownloadUri() {
         return myDownloadUri;
     }
 
-    public void setDownloadUri(URI downloadUri) {
+    public void setDownloadUri(String downloadUri) {
         myDownloadUri = downloadUri;
     }
 
     /**
      * Playback URI of the track.
      */
-    public URI getPlaybackUri() {
+    public String getPlaybackUri() {
         return myPlaybackUri;
     }
 
-    public void setPlaybackUri(URI playbackUri) {
+    public void setPlaybackUri(String playbackUri) {
         myPlaybackUri = playbackUri;
     }
 
     /**
      * HTTP Live Streaming URI of the track.
      */
-    public URI getHttpLiveStreamUri() {
+    public String getHttpLiveStreamUri() {
         return myHttpLiveStreamUri;
     }
 
-    public void setHttpLiveStreamUri(URI httpLiveStreamUri) {
+    public void setHttpLiveStreamUri(String httpLiveStreamUri) {
         myHttpLiveStreamUri = httpLiveStreamUri;
     }
 
     /**
      * URI to the artist of the track.
      */
-    public URI getArtistUri() {
+    public String getArtistUri() {
         return myArtistUri;
     }
 
-    public void setArtistUri(URI artistUri) {
+    public void setArtistUri(String artistUri) {
         myArtistUri = artistUri;
     }
 
     /**
      * URI to the album of the track.
      */
-    public URI getAlbumUri() {
+    public String getAlbumUri() {
         return myAlbumUri;
     }
 
-    public void setAlbumUri(URI albumUri) {
+    public void setAlbumUri(String albumUri) {
         myAlbumUri = albumUri;
     }
 

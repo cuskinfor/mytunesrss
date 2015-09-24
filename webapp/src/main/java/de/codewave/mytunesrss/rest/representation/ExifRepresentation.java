@@ -16,6 +16,9 @@ import java.util.List;
 @XmlRootElement
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class ExifRepresentation implements RestRepresentation {
+    /**
+     * @exclude from swagger docs
+     */
     private List<ExifFieldRepresentation> myFields;
 
     public ExifRepresentation() {

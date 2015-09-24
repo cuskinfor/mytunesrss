@@ -25,6 +25,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 
+/**
+ * @resourcePath Genre operations
+ */
 @ValidateRequest
 @Path("genre/{genre}")
 @RequiredUserPermissions({UserPermission.Audio})
@@ -39,6 +42,8 @@ public class GenreResource extends RestResource {
      * @return List of tracks.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.TrackRepresentation>
      */
     @GET
     @Path("tracks")
@@ -72,6 +77,8 @@ public class GenreResource extends RestResource {
      * @return List of albums.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.AlbumRepresentation>
      */
     @GET
     @Path("albums")
@@ -105,6 +112,8 @@ public class GenreResource extends RestResource {
      * @return A list of artists.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.ArtistRepresentation>
      */
     @GET
     @Path("artists")

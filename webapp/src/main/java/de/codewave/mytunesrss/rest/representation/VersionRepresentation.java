@@ -11,9 +11,21 @@ import de.codewave.utils.Version;
  * Representation of the MyTunesRSS server version.
  */
 public class VersionRepresentation implements RestRepresentation {
+    /**
+     * @exclude from swagger docs
+     */
     private int myMajor;
+    /**
+     * @exclude from swagger docs
+     */
     private int myMinor;
+    /**
+     * @exclude from swagger docs
+     */
     private int myBugfix;
+    /**
+     * @exclude from swagger docs
+     */
     private String myText;
 
     public VersionRepresentation() {

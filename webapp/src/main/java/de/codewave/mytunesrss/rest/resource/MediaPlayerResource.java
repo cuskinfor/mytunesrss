@@ -27,6 +27,9 @@ import javax.ws.rs.core.UriInfo;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @resourcePath Media player operations
+ */
 @ValidateRequest
 @Path("mediaplayer")
 @RequiredUserPermissions({UserPermission.RemoteControl})

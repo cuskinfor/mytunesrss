@@ -13,13 +13,37 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MediaPlayerRepresentation implements RestRepresentation {
 
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myCurrentTime;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myCurrentTrack;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myLength;
+    /**
+     * @exclude from swagger docs
+     */
     private Boolean myPlaying;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myVolume;
+    /**
+     * @exclude from swagger docs
+     */
     private Long myPlaylistVersion;
+    /**
+     * @exclude from swagger docs
+     */
     private String myMediaRendererId;
+    /**
+     * @exclude from swagger docs
+     */
     private String myMediaRenderer;
 
     public MediaPlayerRepresentation() {

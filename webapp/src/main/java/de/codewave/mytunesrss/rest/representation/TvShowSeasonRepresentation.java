@@ -8,7 +8,6 @@ package de.codewave.mytunesrss.rest.representation;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of a tv show season.
@@ -17,31 +16,46 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class TvShowSeasonRepresentation implements RestRepresentation, Comparable<TvShowSeasonRepresentation> {
 
-    private URI myEpisodesUri;
-    private URI myImageUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myEpisodesUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myImageUri;
+    /**
+     * @exclude from swagger docs
+     */
     private String myImageHash;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myEpisodeCount;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myName;
 
     /**
      * URI of the episodes for this tv show season.
      */
-    public URI getEpisodesUri() {
+    public String getEpisodesUri() {
         return myEpisodesUri;
     }
 
-    public void setEpisodesUri(URI episodesUri) {
+    public void setEpisodesUri(String episodesUri) {
         myEpisodesUri = episodesUri;
     }
 
     /**
      * The URI of the TV show episode image.
      */
-    public URI getImageUri() {
+    public String getImageUri() {
         return myImageUri;
     }
 
-    public void setImageUri(URI imageUri) {
+    public void setImageUri(String imageUri) {
         myImageUri = imageUri;
     }
 

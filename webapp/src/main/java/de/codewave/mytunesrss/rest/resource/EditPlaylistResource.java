@@ -33,6 +33,9 @@ import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * @resourcePath Playlist editing operations
+ */
 @ValidateRequest
 @Path("editplaylist")
 @RequiredUserPermissions({UserPermission.CreatePlaylists})

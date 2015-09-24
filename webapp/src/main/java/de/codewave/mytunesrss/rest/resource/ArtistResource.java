@@ -25,6 +25,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 
+/**
+ * @resourcePath Artist operations
+ */
 @ValidateRequest
 @Path("artist/{artist}")
 @RequiredUserPermissions({UserPermission.Audio})
@@ -73,6 +76,8 @@ public class ArtistResource extends RestResource {
      * @return List of albums.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.AlbumRepresentation>
      */
     @GET
     @Path("albums")
@@ -105,6 +110,8 @@ public class ArtistResource extends RestResource {
      * @return List of tracks.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.TrackRepresentation>
      */
     @GET
     @Path("tracks")

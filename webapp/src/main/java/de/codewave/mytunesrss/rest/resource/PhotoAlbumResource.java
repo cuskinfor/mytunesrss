@@ -31,6 +31,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 
+/**
+ * @resourcePath Photo album operations
+ */
 @ValidateRequest
 @Path("photoalbum/{album}")
 @RequiredUserPermissions({UserPermission.Photos})
@@ -41,7 +44,10 @@ public class PhotoAlbumResource extends RestResource {
      *
      * @param albumId   A photo album ID.
      * @param photoSize Photo size used for the image URIs.
+     *
      * @return List of photos.
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.PhotoRepresentation>
      */
     @GET
     @Path("photos")
@@ -69,20 +75,20 @@ public class PhotoAlbumResource extends RestResource {
                 PhotoRepresentation photoRepresentation = new PhotoRepresentation(photo);
                 if (IncludeExcludeInterceptor.isAttr("thumbnailImageUri")) {
                     if (StringUtils.isNotBlank(photo.getImageHash())) {
-                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + photo.getImageHash())));
+                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("hash=" + photo.getImageHash())).toString());
                     } else {
-                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+                        photoRepresentation.setThumbnailImageUri(getAppURI(request, MyTunesRssCommand.ShowImage, enc("photoId=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))).toString());
                     }
                 }
                 if (IncludeExcludeInterceptor.isAttr("originalImageUri")) {
                     if (photoSize != null) {
-                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc("photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc("size=" + photoSize)));
+                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc("photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId())), enc("size=" + photoSize)).toString());
                     } else {
-                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc("photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))));
+                        photoRepresentation.setOriginalImageUri(getAppURI(request, MyTunesRssCommand.ShowPhoto, enc("photo=" + MiscUtils.getUtf8UrlEncoded(photo.getId()))).toString());
                     }
                 }
                 if (IncludeExcludeInterceptor.isAttr("exifDataUri")) {
-                    photoRepresentation.setExifDataUri(uriInfo.getBaseUriBuilder().path(PhotoResource.class).path(PhotoResource.class, "getExifData").build(photo.getId()));
+                    photoRepresentation.setExifDataUri(uriInfo.getBaseUriBuilder().path(PhotoResource.class).path(PhotoResource.class, "getExifData").build(photo.getId()).toString());
                 }
                 return photoRepresentation;
             }

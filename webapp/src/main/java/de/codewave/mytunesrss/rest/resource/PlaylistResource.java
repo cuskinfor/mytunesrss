@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @resourcePath Playlist operations
+ */
 @ValidateRequest
 @Path("playlist")
 @RequiredUserPermissions({UserPermission.Playlist})
@@ -162,6 +165,8 @@ public class PlaylistResource extends RestResource {
      * @return Tracks of the playlist.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.TrackRepresentation>
      */
     @GET
     @Path("{playlist}/tracks")
@@ -192,6 +197,8 @@ public class PlaylistResource extends RestResource {
      * @return List of playlists.
      *
      * @throws SQLException
+     *
+     * @responseType java.util.List<de.codewave.mytunesrss.rest.representation.PlaylistRepresentation>
      */
     @GET
     @Path("{playlist}/playlists")

@@ -10,7 +10,6 @@ import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of a genre.
@@ -19,14 +18,41 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class GenreRepresentation implements RestRepresentation {
 
-    private URI myTracksUri;
-    private URI myAlbumsUri;
-    private URI myArtistsUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myTracksUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myAlbumsUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myArtistsUri;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myAlbumCount;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myArtistCount;
+    /**
+     * @exclude from swagger docs
+     */
     private Boolean myHidden;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private String myNaturalSortName;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTrackCount;
 
     public GenreRepresentation() {
@@ -56,11 +82,11 @@ public class GenreRepresentation implements RestRepresentation {
     /**
      * URI for getting the tracks of this genre.
      */
-    public URI getTracksUri() {
+    public String getTracksUri() {
         return myTracksUri;
     }
 
-    public void setTracksUri(URI tracksUri) {
+    public void setTracksUri(String tracksUri) {
         myTracksUri = tracksUri;
     }
 
@@ -122,22 +148,22 @@ public class GenreRepresentation implements RestRepresentation {
     /**
      * URI of the albums with tracks of this genre.
      */
-    public URI getAlbumsUri() {
+    public String getAlbumsUri() {
         return myAlbumsUri;
     }
 
-    public void setAlbumsUri(URI albumsUri) {
+    public void setAlbumsUri(String albumsUri) {
         myAlbumsUri = albumsUri;
     }
 
     /**
      * URI of the artists with tracks of this genre.
      */
-    public URI getArtistsUri() {
+    public String getArtistsUri() {
         return myArtistsUri;
     }
 
-    public void setArtistsUri(URI artistsUri) {
+    public void setArtistsUri(String artistsUri) {
         myArtistsUri = artistsUri;
     }
 

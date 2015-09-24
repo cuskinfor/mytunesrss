@@ -31,6 +31,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @resourcePath Session operations
+ */
 @ValidateRequest
 @Path("session")
 public class SessionResource extends RestResource {
@@ -50,7 +53,7 @@ public class SessionResource extends RestResource {
         SessionRepresentation session = new SessionRepresentation();
         User user = MyTunesRssWebUtils.getAuthUser(request);
         if (IncludeExcludeInterceptor.isAttr("libraryUri")) {
-            session.setLibraryUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build());
+            session.setLibraryUri(uriInfo.getBaseUriBuilder().path(LibraryResource.class).build().toString());
         }
         if (IncludeExcludeInterceptor.isAttr("transcoders")) {
             session.setTranscoders(getTranscoders(user));
@@ -105,7 +108,9 @@ public class SessionResource extends RestResource {
      * @param uriInfo
      * @param username A user name.
      * @param password A password.
-     * @return
+     *
+     * @return A session representation.
+     *
      * @throws UnsupportedEncodingException
      */
     @POST

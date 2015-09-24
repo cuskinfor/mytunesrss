@@ -18,7 +18,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class MediaRendererRepresentation implements RestRepresentation {
 
+    /**
+     * @exclude from swagger docs
+     */
     private String myId;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
 
     public MediaRendererRepresentation() {

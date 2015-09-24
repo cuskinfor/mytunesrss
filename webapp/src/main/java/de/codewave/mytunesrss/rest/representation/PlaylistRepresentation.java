@@ -11,7 +11,6 @@ import de.codewave.mytunesrss.rest.IncludeExcludeInterceptor;
 import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URI;
 
 /**
  * Representation of a playlist.
@@ -20,17 +19,53 @@ import java.net.URI;
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public class PlaylistRepresentation implements RestRepresentation {
 
-    private URI myTracksUri;
-    private URI myChildrenUri;
-    private URI myParentUri;
-    private URI myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myTracksUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myChildrenUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myParentUri;
+    /**
+     * @exclude from swagger docs
+     */
+    private String myDownloadUri;
+    /**
+     * @exclude from swagger docs
+     */
     private String myName;
+    /**
+     * @exclude from swagger docs
+     */
     private String myContainerId;
+    /**
+     * @exclude from swagger docs
+     */
     private Boolean myHidden;
+    /**
+     * @exclude from swagger docs
+     */
     private String myId;
+    /**
+     * @exclude from swagger docs
+     */
     private Integer myTrackCount;
+    /**
+     * @exclude from swagger docs
+     */
     private PlaylistType myType;
+    /**
+     * @exclude from swagger docs
+     */
     private String myOwner;
+    /**
+     * @exclude from swagger docs
+     */
     private Boolean myPrivate;
 
     public PlaylistRepresentation() {
@@ -66,44 +101,44 @@ public class PlaylistRepresentation implements RestRepresentation {
     /**
      * URI to the tracks of the playlist.
      */
-    public URI getTracksUri() {
+    public String getTracksUri() {
         return myTracksUri;
     }
 
-    public void setTracksUri(URI tracksUri) {
+    public void setTracksUri(String tracksUri) {
         myTracksUri = tracksUri;
     }
 
     /**
      * URI to the child playlists.
      */
-    public URI getChildrenUri() {
+    public String getChildrenUri() {
         return myChildrenUri;
     }
 
-    public void setChildrenUri(URI childrenUri) {
+    public void setChildrenUri(String childrenUri) {
         myChildrenUri = childrenUri;
     }
 
     /**
      * URI to the parent playlist.
      */
-    public URI getParentUri() {
+    public String getParentUri() {
         return myParentUri;
     }
 
-    public void setParentUri(URI parentUri) {
+    public void setParentUri(String parentUri) {
         myParentUri = parentUri;
     }
 
     /**
      * URI for downloading a ZIP archive with all tracks of the playlist.
      */
-    public URI getDownloadUri() {
+    public String getDownloadUri() {
         return myDownloadUri;
     }
 
-    public void setDownloadUri(URI downloadUri) {
+    public void setDownloadUri(String downloadUri) {
         myDownloadUri = downloadUri;
     }
 
