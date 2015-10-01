@@ -191,7 +191,7 @@
                     <tr <mt:flipFlop/>>
                         <td class="label"><fmt:message key="type"/>:</td>
                         <td>
-                            <c:if test="${track.protected}"><img src="${themeUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
+                            <c:if test="${track.drmProtected}"><img src="${themeUrl}/images/protected.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle" /></c:if>
                             <c:if test="${track.mediaType == 'Video'}"><img src="${themeUrl}/images/${cwfn:choose(track.videoType == 'Movie', 'movie.png', 'tvshow.png')}" alt="<fmt:message key="video"/>" style="vertical-align:middle" /></c:if>
                             <c:out value="${mtfn:suffix(null, null, track)}" />
                         </td>

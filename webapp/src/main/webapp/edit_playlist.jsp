@@ -65,7 +65,7 @@
                 indexBefore : i - 1,
                 rowClass : (i % 2 == 0 ? "even" : "odd"),
                 oddSuffix : (i % 2 == 0 ? "" : "_odd"),
-                displayProtected : (track.protected ? "inline" : "none"),
+                displayProtected : (track.drmProtected ? "inline" : "none"),
                 displayVideo : (track.mediaType == "Video" ? "inline" : "none"),
                 trackName : track.name,
                 trackArtist : track.artist != "!" ? track.artist : unknownArtist,

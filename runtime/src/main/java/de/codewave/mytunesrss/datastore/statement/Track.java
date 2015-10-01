@@ -23,7 +23,7 @@ public class Track implements Serializable {
     private int myTime;
     private int myTrackNumber;
     private transient File myFile;
-    private boolean myProtected;
+    private boolean myDrmProtected;
     private MediaType myMediaType;
     private String myGenre;
     private String myMp4Codec;
@@ -61,7 +61,7 @@ public class Track implements Serializable {
         setTrackNumber(source.getTrackNumber());
         setFilename(source.getFilename());
         setFile(source.myFile);
-        setProtected(source.isProtected());
+        setDrmProtected(source.isDrmProtected());
         setMediaType(source.getMediaType());
         setGenre(source.getGenre());
         setMp4Codec(source.getMp4Codec());
@@ -143,12 +143,12 @@ public class Track implements Serializable {
         myTrackNumber = trackNumber;
     }
 
-    public boolean isProtected() {
-        return myProtected;
+    public boolean isDrmProtected() {
+        return myDrmProtected;
     }
 
-    public void setProtected(boolean aProtected) {
-        myProtected = aProtected;
+    public void setDrmProtected(boolean drmProtected) {
+        myDrmProtected = drmProtected;
     }
 
     public MediaType getMediaType() {

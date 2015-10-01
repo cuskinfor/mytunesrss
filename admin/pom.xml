@@ -28,16 +28,12 @@
             <groupId>de.codewave.mytunesrss</groupId>
             <artifactId>runtime</artifactId>
             <scope>provided</scope>
-            <exclusions>
+            <!--exclusions>
                 <exclusion>
                     <groupId>org.eclipse.jetty</groupId>
-                    <artifactId>jetty-jsp-2.1</artifactId>
+                    <artifactId>apache-jsp</artifactId>
                 </exclusion>
-                <exclusion>
-                    <groupId>org.mortbay.jetty</groupId>
-                    <artifactId>jsp-2.1-glassfish</artifactId>
-                </exclusion>
-            </exclusions>
+            </exclusions-->
         </dependency>
         <dependency>
             <groupId>com.google.gwt</groupId>

@@ -26,7 +26,7 @@ public class ProtectionTranscoderActivation extends TranscoderActivation {
 
     @Override
     public boolean matches(Track track) {
-        boolean b = applyNegation(track.isProtected());
+        boolean b = applyNegation(track.isDrmProtected());
         LOGGER.debug("Protection activation (negation \"" + isNegation() + "\") for \"" + track.getFilename() + "\": " + b);
         return b;
     }

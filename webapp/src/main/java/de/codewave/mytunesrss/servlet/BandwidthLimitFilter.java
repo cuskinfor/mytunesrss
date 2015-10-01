@@ -99,5 +99,15 @@ public class BandwidthLimitFilter implements Filter {
             myDelegate.write(i);
             myWritten++;
         }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener writeListener) {
+            // not implemented
+        }
     }
 }

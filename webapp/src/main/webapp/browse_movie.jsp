@@ -78,14 +78,14 @@
                             	<div class="albumCover">
                                 <img id="trackthumb_${loopStatus.index}" src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" onmouseover="showTooltip(this)" onmouseout="hideTooltip(this)" alt=""/>
                                 <div class="tooltip" id="tooltip_trackthumb_${loopStatus.index}"><img src="${servletUrl}/showImage/${auth}/<mt:encrypt>hash=${track.imageHash}/size=${config.albumImageSize}</mt:encrypt>" alt=""/></div>
-	                            </div>
+                                </div>
                             </c:if>
-                            <c:if test="${track.protected}"><img src="${themeUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
+                            <c:if test="${track.drmProtected}"><img src="${themeUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif" alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
                             <a id="functionsDialogName${fnCount}"
                                href="${servletUrl}/showTrackInfo/${auth}/<mt:encrypt>track=${track.id}</mt:encrypt>/backUrl=${mtfn:encode64(backUrl)}"
                                onmouseover="showTooltip(this)"
                                onmouseout="hideTooltip(this)"
-							   title="<fmt:message key="video"/>" class="movie">
+                               title="<fmt:message key="video"/>" class="movie">
                                 <c:out value="${cwfn:choose(mtfn:unknown(track.name), msgUnknownTrack, track.name)}" />
                                 <c:if test="${!empty track.comment}">
                                     <div class="tooltip" id="tooltip_functionsDialogName${fnCount}">

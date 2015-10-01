@@ -39,7 +39,10 @@ import org.apache.commons.lang3.SystemUtils;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
+import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
@@ -757,13 +760,18 @@ public class MyTunesRss {
         try {
             ADMIN_SERVER = new Server(new InetSocketAddress(StringUtils.defaultIfBlank(adminHost, "0.0.0.0"), adminPort));
             WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
-            adminContext.setSystemClasses((String[]) ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
+            adminContext.setSystemClasses(ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
             File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-admin-work");
             if (workDir.exists()) {
                 MyTunesRssUtils.deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
             }
             adminContext.setTempDirectory(workDir);
-            adminContext.setHandler(MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz())); // TODO config
+            HandlerList handlerList = new HandlerList();
+            handlerList.addHandler(MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz()));
+            GzipHandler gzipHandler = new GzipHandler();
+            gzipHandler.addIncludedMimeTypes("text/html");
+            handlerList.addHandler(gzipHandler);
+            adminContext.setHandler(handlerList);
             ADMIN_SERVER.setHandler(adminContext);
             ADMIN_SERVER.start();
             if (MyTunesRss.CONFIG.isUpnpAdmin()) {
@@ -778,9 +786,14 @@ public class MyTunesRss {
             }
             return false;
         }
-        int localPort = ADMIN_SERVER.getConnectors()[0].getLocalPort();
+        Collection<EndPoint> connectedEndPoints = ADMIN_SERVER.getConnectors()[0].getConnectedEndPoints();
+        if (connectedEndPoints.isEmpty()) {
+            return false;
+        }
+        int localPort = connectedEndPoints.iterator().next().getLocalAddress().getPort();
         if (FORM != null) {
-            FORM.setAdminUrl(ADMIN_SERVER.getConnectors()[0].getHost(), localPort);
+            String hostName = ADMIN_SERVER.getConnectors()[0].getConnectedEndPoints().iterator().next().getLocalAddress().getHostName();
+            FORM.setAdminUrl(hostName, localPort);
         }
         try {
             FileUtils.writeStringToFile(new File(MyTunesRss.CACHE_DATA_PATH, "adminport"), localPort + "\n");

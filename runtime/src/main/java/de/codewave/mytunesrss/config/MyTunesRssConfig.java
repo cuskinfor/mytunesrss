@@ -73,8 +73,6 @@ public class MyTunesRssConfig {
     private String myDatabaseConnectionOptions;
     private String myWebappContext;
     private String myTomcatMaxThreads;
-    private String myAjpHost;
-    private int myTomcatAjpPort;
     private String mySslKeystoreFile;
     private String mySslKeystorePass;
     private String mySslHost;
@@ -436,22 +434,6 @@ public class MyTunesRssConfig {
 
     public synchronized void setTomcatMaxThreads(String tomcatMaxThreads) {
         myTomcatMaxThreads = tomcatMaxThreads;
-    }
-
-    public synchronized String getAjpHost() {
-        return myAjpHost;
-    }
-
-    public synchronized void setAjpHost(String ajpHost) {
-        myAjpHost = StringUtils.trimToNull(ajpHost);
-    }
-
-    public synchronized int getTomcatAjpPort() {
-        return myTomcatAjpPort;
-    }
-
-    public synchronized void setTomcatAjpPort(int tomcatAjpPort) {
-        myTomcatAjpPort = tomcatAjpPort;
     }
 
     public synchronized String getSslKeystoreFile() {
@@ -1100,8 +1082,6 @@ public class MyTunesRssConfig {
         }
         loadDatabaseSettings(settings);
         setTomcatMaxThreads(JXPathUtils.getStringValue(settings, "tomcat/max-threads", "200"));
-        setAjpHost(JXPathUtils.getStringValue(settings, "tomcat/ajp-host", getAjpHost()));
-        setTomcatAjpPort(JXPathUtils.getIntValue(settings, "tomcat/ajp-port", 0));
         String context = StringUtils.trimToNull(StringUtils.strip(JXPathUtils.getStringValue(settings, "tomcat/webapp-context", ""), "/"));
         setWebappContext(context != null ? "/" + context : "");
         setSslKeystoreFile(JXPathUtils.getStringValue(settings, "ssl/keystore/file", null));
@@ -1504,12 +1484,6 @@ public class MyTunesRssConfig {
             Element tomcat = settings.createElement("tomcat");
             root.appendChild(tomcat);
             tomcat.appendChild(DOMUtils.createTextElement(settings, "max-threads", getTomcatMaxThreads()));
-            if (StringUtils.isNotBlank(getAjpHost())) {
-                tomcat.appendChild(DOMUtils.createTextElement(settings, "ajp-host", getAjpHost()));
-            }
-            if (getTomcatAjpPort() > 0) {
-                tomcat.appendChild(DOMUtils.createIntElement(settings, "ajp-port", getTomcatAjpPort()));
-            }
             tomcat.appendChild(DOMUtils.createTextElement(settings, "webapp-context", getWebappContext()));
             Element ssl = settings.createElement("ssl");
             root.appendChild(ssl);

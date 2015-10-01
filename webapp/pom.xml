@@ -120,6 +120,10 @@
             <artifactId>activation</artifactId>
             <version>1.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>apache-jstl</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -139,9 +143,21 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jspc-maven-plugin</artifactId>
-                <version>7.4.1.v20110513</version>
+                <version>9.3.3.v20150827</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>de.codewave.mytunesrss</groupId>
+                        <artifactId>runtime</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>de.codewave.mytunesrss</groupId>
+                        <artifactId>codewave-utils</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <id>jspc</id>

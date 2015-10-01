@@ -104,7 +104,7 @@
                                                 alt=""/></div>
                                     </div>
                                 </c:if>
-                                <c:if test="${track.protected}"><img
+                                <c:if test="${track.drmProtected}"><img
                                         src="${themeUrl}/images/protected${cwfn:choose(loopStatus.index % 2 == 0, '', '_odd')}.gif"
                                         alt="<fmt:message key="protected"/>" style="vertical-align:middle"/></c:if>
                                 <a id="functionsDialogName${fnCount}"

@@ -13,11 +13,11 @@ import de.codewave.utils.servlet.SessionManager;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.jetty.ajp.Ajp13SocketConnector;
-import org.eclipse.jetty.http.ssl.SslContextFactory;
+import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.gzip.GzipHandler;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.server.ssl.SslSelectChannelConnector;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
@@ -44,8 +44,7 @@ public class WebServer {
     public synchronized void start() throws Exception {
         if (!myRunning.get()) {
             ensureValidHttpPortInConfig();
-            myServer = new Server();
-            myServer.setThreadPool(new QueuedThreadPool(Integer.parseInt(MyTunesRss.CONFIG.getTomcatMaxThreads())));
+            myServer = new Server(new QueuedThreadPool(Integer.parseInt(MyTunesRss.CONFIG.getTomcatMaxThreads())));
             if (MyTunesRss.CONFIG.getSslPort() > 0 && MyTunesRss.CONFIG.getSslPort() < 65536) {
                 SslContextFactory sslContextFactory = new SslContextFactory();
                 if (StringUtils.isEmpty(MyTunesRss.CONFIG.getSslKeystoreFile()) || !new File(MyTunesRss.CONFIG.getSslKeystoreFile()).isFile()) {
@@ -68,21 +67,10 @@ public class WebServer {
                         sslContextFactory.setCertAlias(MyTunesRss.CONFIG.getSslKeystoreKeyAlias());
                     }
                 }
-                SslSelectChannelConnector sslConnector = new SslSelectChannelConnector(sslContextFactory);
+                ServerConnector sslConnector = new ServerConnector(myServer, sslContextFactory);
                 sslConnector.setPort(MyTunesRss.CONFIG.getSslPort());
                 sslConnector.setHost(MyTunesRss.CONFIG.getSslHost());
                 myServer.addConnector(sslConnector);
-            }
-            if (MyTunesRss.CONFIG.getTomcatAjpPort() > 0 && MyTunesRss.CONFIG.getTomcatAjpPort() < 65536) {
-                Ajp13SocketConnector ajpConnector = null;
-                try {
-                    ajpConnector = new Ajp13SocketConnector();
-                    ajpConnector.setPort(MyTunesRss.CONFIG.getTomcatAjpPort());
-                    ajpConnector.setHost(MyTunesRss.CONFIG.getAjpHost());
-                    myServer.addConnector(ajpConnector);
-                } catch (RuntimeException ignored) {
-                    LOGGER.error("Illegal AJP port \"" + MyTunesRss.CONFIG.getTomcatAjpPort() + "\" specified. Connector not added.");
-                }
             }
             myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
             File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-user-work");
@@ -94,9 +82,14 @@ public class WebServer {
             myContext.setSystemClasses(ArrayUtils.add(myContext.getSystemClasses(), "de.codewave."));
             myContext.setAttribute(MyTunesRssConfig.class.getName(), MyTunesRss.CONFIG);
             myContext.setAttribute(MyTunesRssDataStore.class.getName(), MyTunesRss.STORE);
-            myContext.setHandler(MyTunesRssUtils.createJettyAccessLogHandler("user", MyTunesRss.CONFIG.getUserAccessLogRetainDays(), MyTunesRss.CONFIG.isUserAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz()));
+            HandlerList handlerList = new HandlerList();
+            handlerList.addHandler(MyTunesRssUtils.createJettyAccessLogHandler("user", MyTunesRss.CONFIG.getUserAccessLogRetainDays(), MyTunesRss.CONFIG.isUserAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz()));
+            GzipHandler gzipHandler = new GzipHandler();
+            gzipHandler.addIncludedMimeTypes("text/html");
+            handlerList.addHandler(gzipHandler);
+            myContext.setHandler(handlerList);
             myServer.setHandler(myContext);
-            SelectChannelConnector httpConnector = new SelectChannelConnector();
+            ServerConnector httpConnector = new ServerConnector(myServer);
             httpConnector.setPort(MyTunesRss.CONFIG.getPort());
             httpConnector.setHost(MyTunesRss.CONFIG.getHost());
             myServer.addConnector(httpConnector);
@@ -118,7 +111,7 @@ public class WebServer {
                 MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(MyTunesRss.CONFIG.getSslPort(), MyTunesRssUpnpService.NAME_USER_MAPPING_HTTPS);
             }
             myRunning.set(true);
-            int localPort = myServer.getConnectors()[0].getLocalPort();
+            int localPort = myServer.getConnectors()[0].getConnectedEndPoints().iterator().next().getLocalAddress().getPort();
             LOGGER.debug("Started user server on port " + localPort + ".");
         }
     }

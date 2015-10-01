@@ -223,7 +223,7 @@ public class TrackRepresentation implements RestRepresentation {
             setDiscCount(track.getPosSize());
         }
         if (IncludeExcludeInterceptor.isAttr("protected")) {
-            setProtected(track.isProtected());
+            setProtected(track.isDrmProtected());
         }
         if (IncludeExcludeInterceptor.isAttr("tsPlayed")) {
             setTsPlayed(track.getTsPlayed());

@@ -8,6 +8,8 @@
     <body>
 
         <release version="___" date="___">
+            <action dev="mdescher" type="remove">Removed AJP support since Jetty 9 does not support it anymore.</action>
+            <action dev="mdescher" type="remove">Updated to Jetty 9.</action>
             <action dev="mdescher" type="remove">Replaced generic rss description with channel title.</action>
             <action dev="mdescher" type="add">Added OPML support for playlists, albums of an artist and albums of a genre.</action>
         </release>

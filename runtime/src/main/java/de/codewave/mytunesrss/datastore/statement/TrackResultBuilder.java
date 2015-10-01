@@ -24,7 +24,7 @@ public class TrackResultBuilder implements ResultBuilder<Track> {
         track.setTrackNumber(resultSet.getInt("TRACK_NUMBER"));
         String pathname = resultSet.getString("FILE");
         track.setFilename(pathname);
-        track.setProtected(resultSet.getBoolean("PROTECTED"));
+        track.setDrmProtected(resultSet.getBoolean("PROTECTED"));
         track.setMediaType(MediaType.valueOf(resultSet.getString("MEDIATYPE")));
         track.setGenre(resultSet.getString("GENRE"));
         track.setMp4Codec(resultSet.getString("MP4CODEC"));

@@ -73,8 +73,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
     private SmartTextField myServerName;
     private SmartTextField myWebappContext;
     private SmartTextField myTomcatMaxThreads;
-    private Select myTomcatAjpListenAddress;
-    private SmartTextField myTomcatAjpPort;
     private Select myListenAddress;
     private SmartTextField myPort;
     private Select mySslListenAddress;
@@ -113,8 +111,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myWebappContext = getComponentFactory().createTextField("serverConfigPanel.webappContext");
         myTomcatMaxThreads = getComponentFactory().createTextField("serverConfigPanel.tomcatMaxThreads", getApplication().getValidatorFactory().createMinMaxValidator(5, 1000));
         setRequired(myTomcatMaxThreads);
-        myTomcatAjpListenAddress = getComponentFactory().createSelect("serverConfigPanel.tomcatAjpListenAddress", getListenAddresses());
-        myTomcatAjpPort = getComponentFactory().createTextField("serverConfigPanel.tomcatAjpPort", getApplication().getValidatorFactory().createPortValidator());
         myListenAddress = getComponentFactory().createSelect("serverConfigPanel.listenAddress", getListenAddresses());
         myPort = getComponentFactory().createTextField("serverConfigPanel.port", getApplication().getValidatorFactory().createPortValidator());
         setRequired(myPort);
@@ -178,8 +174,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myExtendedForm = getComponentFactory().createForm(null, true);
         myExtendedForm.addField(myWebappContext, myWebappContext);
         myExtendedForm.addField(myTomcatMaxThreads, myTomcatMaxThreads);
-        myExtendedForm.addField(myTomcatAjpListenAddress, myTomcatAjpListenAddress);
-        myExtendedForm.addField(myTomcatAjpPort, myTomcatAjpPort);
         Panel extendedPanel = getComponentFactory().surroundWithPanel(myExtendedForm, FORM_PANEL_MARGIN_INFO, getBundleString("serverConfigPanel.caption.extended"));
         addComponent(extendedPanel);
 
@@ -218,8 +212,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         myServerName.setEnabled(MyTunesRss.CONFIG.isAvailableOnLocalNet());
         myWebappContext.setValue(MyTunesRss.CONFIG.getWebappContext());
         myTomcatMaxThreads.setValue(MyTunesRss.CONFIG.getTomcatMaxThreads());
-        myTomcatAjpListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getAjpHost(), null));
-        myTomcatAjpPort.setValue(MyTunesRss.CONFIG.getTomcatAjpPort(), 1, 65535, "");
         myListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getHost(), null));
         myPort.setValue(MyTunesRss.CONFIG.getPort(), 1, 65535, "");
         mySslListenAddress.setValue(new ListenAddress(MyTunesRss.CONFIG.getSslHost(), null));
@@ -250,8 +242,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         MyTunesRss.CONFIG.setServerName(myServerName.getStringValue(null));
         MyTunesRss.CONFIG.setWebappContext(myWebappContext.getStringValue(null));
         MyTunesRss.CONFIG.setTomcatMaxThreads(myTomcatMaxThreads.getStringValue(null));
-        MyTunesRss.CONFIG.setAjpHost(((ListenAddress) myTomcatAjpListenAddress.getValue()).getValue());
-        MyTunesRss.CONFIG.setTomcatAjpPort(myTomcatAjpPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setHost(((ListenAddress) myListenAddress.getValue()).getValue());
         MyTunesRss.CONFIG.setPort(myPort.getIntegerValue(0));
         MyTunesRss.CONFIG.setSslHost(((ListenAddress) mySslListenAddress.getValue()).getValue());
@@ -333,8 +323,6 @@ public class ServerConfigPanel extends MyTunesRssConfigPanel {
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getServerName()), myServerName.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getWebappContext()), myWebappContext.getStringValue(null));
         changed |= !MyTunesRssUtils.equals(StringUtils.trimToNull(MyTunesRss.CONFIG.getTomcatMaxThreads()), myTomcatMaxThreads.getStringValue(null));
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getAjpHost(), ((ListenAddress)myTomcatAjpListenAddress.getValue()).getValue());
-        changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getTomcatAjpPort(), myTomcatAjpPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getHost(), ((ListenAddress)myListenAddress.getValue()).getValue());
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getPort(), myPort.getIntegerValue(0));
         changed |= !MyTunesRssUtils.equals(MyTunesRss.CONFIG.getSslHost(), ((ListenAddress)mySslListenAddress.getValue()).getValue());

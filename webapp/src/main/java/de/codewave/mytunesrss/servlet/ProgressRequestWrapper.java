@@ -4,6 +4,7 @@
 
 package de.codewave.mytunesrss.servlet;
 
+import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
@@ -24,10 +25,32 @@ public class ProgressRequestWrapper extends HttpServletRequestWrapper {
     public ServletInputStream getInputStream() throws IOException {
         final ServletInputStream originalInputStream = super.getInputStream();
         return new ServletInputStream() {
+
+            private boolean myFinished;
+
+            @Override
+            public boolean isFinished() {
+                return myFinished;
+            }
+
+            @Override
+            public boolean isReady() {
+                return !myFinished;
+            }
+
+            @Override
+            public void setReadListener(ReadListener readListener) {
+                // not implemented
+            }
+
             @Override
             public int read() throws IOException {
                 countByte();
-                return originalInputStream.read();
+                int read = originalInputStream.read();
+                if (read == -1) {
+                    myFinished = true;
+                }
+                return read;
             }
         };
     }
