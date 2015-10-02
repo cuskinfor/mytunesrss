@@ -41,6 +41,7 @@ import org.apache.log4j.spi.LoggingEvent;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -767,15 +768,13 @@ public class MyTunesRss {
                 MyTunesRssUtils.deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
             }
             adminContext.setTempDirectory(workDir);
-
             RequestLogHandler accessLogHandler = MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz());
-
             GzipHandler gzipHandler = new GzipHandler();
             gzipHandler.addIncludedMimeTypes("text/html");
 
             accessLogHandler.setHandler(gzipHandler);
-            //adminContext.setHandler(accessLogHandler);
-            ADMIN_SERVER.setHandler(adminContext);
+            gzipHandler.setHandler(adminContext);
+            ADMIN_SERVER.setHandler(accessLogHandler);
 
             ADMIN_SERVER.start();
             if (MyTunesRss.CONFIG.isUpnpAdmin()) {
@@ -790,14 +789,14 @@ public class MyTunesRss {
             }
             return false;
         }
-        Collection<EndPoint> connectedEndPoints = ADMIN_SERVER.getConnectors()[0].getConnectedEndPoints();
-        if (connectedEndPoints.isEmpty()) {
+        if (ADMIN_SERVER.getConnectors().length != 1 || !ADMIN_SERVER.getConnectors()[0].isRunning()) {
             return false;
         }
-        int localPort = connectedEndPoints.iterator().next().getLocalAddress().getPort();
+
+        ServerConnector serverConnector = (ServerConnector) ADMIN_SERVER.getConnectors()[0];
+        int localPort = serverConnector.getLocalPort();
         if (FORM != null) {
-            String hostName = ADMIN_SERVER.getConnectors()[0].getConnectedEndPoints().iterator().next().getLocalAddress().getHostName();
-            FORM.setAdminUrl(hostName, localPort);
+            FORM.setAdminUrl(serverConnector.getHost(), localPort);
         }
         try {
             FileUtils.writeStringToFile(new File(MyTunesRss.CACHE_DATA_PATH, "adminport"), localPort + "\n");
