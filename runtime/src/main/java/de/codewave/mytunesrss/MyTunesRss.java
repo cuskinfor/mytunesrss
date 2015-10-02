@@ -42,6 +42,7 @@ import org.apache.log4j.xml.DOMConfigurator;
 import org.eclipse.jetty.io.EndPoint;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.quartz.Scheduler;
@@ -759,20 +760,23 @@ public class MyTunesRss {
     public static boolean startAdminServer(String adminHost, int adminPort) {
         try {
             ADMIN_SERVER = new Server(new InetSocketAddress(StringUtils.defaultIfBlank(adminHost, "0.0.0.0"), adminPort));
-            WebAppContext adminContext = new WebAppContext("webapps/ADMIN", "/");
+            WebAppContext adminContext = new WebAppContext(System.getProperty("de.codewave.mytunesrss.webdir.admin", "webapps/ADMIN"), "/");
             adminContext.setSystemClasses(ArrayUtils.add(adminContext.getSystemClasses(), "de.codewave."));
             File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-admin-work");
             if (workDir.exists()) {
                 MyTunesRssUtils.deleteRecursivly(workDir);// at least try to delete the working directory before starting the server to dump outdated stuff
             }
             adminContext.setTempDirectory(workDir);
-            HandlerList handlerList = new HandlerList();
-            handlerList.addHandler(MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz()));
+
+            RequestLogHandler accessLogHandler = MyTunesRssUtils.createJettyAccessLogHandler("admin", MyTunesRss.CONFIG.getAdminAccessLogRetainDays(), MyTunesRss.CONFIG.isAdminAccessLogExtended(), MyTunesRss.CONFIG.getAccessLogTz());
+
             GzipHandler gzipHandler = new GzipHandler();
             gzipHandler.addIncludedMimeTypes("text/html");
-            handlerList.addHandler(gzipHandler);
-            adminContext.setHandler(handlerList);
+
+            accessLogHandler.setHandler(gzipHandler);
+            //adminContext.setHandler(accessLogHandler);
             ADMIN_SERVER.setHandler(adminContext);
+
             ADMIN_SERVER.start();
             if (MyTunesRss.CONFIG.isUpnpAdmin()) {
                 MyTunesRss.UPNP_SERVICE.addInternetGatewayDevicePortMapping(adminPort, MyTunesRssUpnpService.NAME_ADMIN_MAPPING);

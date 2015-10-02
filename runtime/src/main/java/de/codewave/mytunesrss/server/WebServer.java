@@ -72,7 +72,7 @@ public class WebServer {
                 sslConnector.setHost(MyTunesRss.CONFIG.getSslHost());
                 myServer.addConnector(sslConnector);
             }
-            myContext = new WebAppContext("webapps/ROOT", StringUtils.defaultIfEmpty(getContext(), "/"));
+            myContext = new WebAppContext(System.getProperty("de.codewave.mytunesrss.webdir.webapp", "webapps/ROOT"), StringUtils.defaultIfEmpty(getContext(), "/"));
             File workDir = new File(MyTunesRss.CACHE_DATA_PATH + "/jetty-user-work");
             if (workDir.exists()) {
                 MyTunesRssUtils
