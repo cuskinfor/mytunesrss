@@ -33,6 +33,10 @@
         <param-name>org.eclipse.jetty.servlet.Default.welcomeServlets</param-name>
         <param-value>true</param-value>
     </context-param>
+    <!-- Jasper compiler initialization -->
+    <listener>
+        <listener-class>de.codewave.mytunesrss.JettyJasperInitializerListener</listener-class>
+    </listener>
     <!-- RestEasy bootstrapping -->
     <listener>
         <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
