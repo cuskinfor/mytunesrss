@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * @resourcePath Session operations
+ * Session operations.
  */
 @ValidateRequest
 @Path("session")

@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @resourcePath Media player operations
+ * Media player operations.
  */
 @ValidateRequest
 @Path("mediaplayer")

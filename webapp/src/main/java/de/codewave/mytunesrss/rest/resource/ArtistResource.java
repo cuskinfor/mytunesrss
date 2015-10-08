@@ -26,7 +26,7 @@ import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 
 /**
- * @resourcePath Artist operations
+ * Artist operations.
  */
 @ValidateRequest
 @Path("artist/{artist}")

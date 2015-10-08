@@ -34,7 +34,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @resourcePath Playlist editing operations
+ * Playlist editing operations.
  */
 @ValidateRequest
 @Path("editplaylist")
@@ -274,6 +274,7 @@ public class EditPlaylistResource extends RestResource {
      */
     @POST
     @Path("save")
+    @Produces("text/plain")
     public Response savePlaylist(
             @Context HttpServletRequest request,
             @FormParam("name") @NotBlank(message = "NO_PLAYLIST_NAME") String playlistName,

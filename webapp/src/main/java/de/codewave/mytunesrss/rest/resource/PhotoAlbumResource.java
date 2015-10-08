@@ -32,7 +32,7 @@ import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 
 /**
- * @resourcePath Photo album operations
+ * Photo album operations.
  */
 @ValidateRequest
 @Path("photoalbum/{album}")

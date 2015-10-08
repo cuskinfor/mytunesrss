@@ -26,7 +26,7 @@ import javax.ws.rs.core.UriInfo;
 import java.sql.SQLException;
 
 /**
- * @resourcePath Genre operations
+ * Genre operations.
  */
 @ValidateRequest
 @Path("genre/{genre}")

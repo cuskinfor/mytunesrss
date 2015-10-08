@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @resourcePath Photo operations
+ * Photo operations.
  */
 @ValidateRequest
 @Path("photo/{photo}")

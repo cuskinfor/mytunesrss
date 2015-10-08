@@ -35,7 +35,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @resourcePath Library operations
+ * Library operations.
  */
 @ValidateRequest
 @Path("/")

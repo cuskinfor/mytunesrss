@@ -32,7 +32,7 @@ import java.sql.SQLException;
 import java.util.*;
 
 /**
- * @resourcePath TV show operations
+ * TV show operations.
  */
 @ValidateRequest
 @Path("tvshow/{show}")

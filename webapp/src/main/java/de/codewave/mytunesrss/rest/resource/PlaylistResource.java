@@ -32,7 +32,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * @resourcePath Playlist operations
+ * Playlist operations.
  */
 @ValidateRequest
 @Path("playlist")
@@ -60,6 +60,7 @@ public class PlaylistResource extends RestResource {
      */
     @POST
     @Path("edit")
+    @Produces("text/plain")
     public Response startEditNewPlaylist(
             @Context HttpServletRequest request
     ) {
@@ -80,6 +81,7 @@ public class PlaylistResource extends RestResource {
      */
     @POST
     @Path("{playlist}/edit")
+    @Produces("text/plain")
     public Response startEditPaylist(
             @Context UriInfo uriInfo,
             @Context HttpServletRequest request,
