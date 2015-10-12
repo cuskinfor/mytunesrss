@@ -37,15 +37,14 @@
 #
 
 VM_OPTIONS='-Xmx512m -XX:HeapDumpPath=.'
-BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.9.1.jar'
-XML_PARSER='-Djavax.xml.parsers.SAXParserFactory=org.apache.xerces.jaxp.SAXParserFactoryImpl'
+BOOT_CP='-Xbootclasspath/p:lib/xercesImpl-2.11.0.jar'
 MYTUNESRSS_PROPS='-Dde.codewave.mytunesrss'
 SHUTDOWN_PORT=55555
 
 case "$1" in
   start)
         cd [... insert MyTunesRSS install dir here ...]
-        java ${VM_OPTIONS} ${BOOT_CP} ${XML_PARSER} ${MYTUNESRSS_PROPS} -jar mytunesrss.jar -shutdownPort ${SHUTDOWN_PORT}
+        java ${VM_OPTIONS} ${BOOT_CP} ${MYTUNESRSS_PROPS} -jar mytunesrss.jar -shutdownPort ${SHUTDOWN_PORT}
         ;;
   stop)
         cd [... insert MyTunesRSS install dir here ...]

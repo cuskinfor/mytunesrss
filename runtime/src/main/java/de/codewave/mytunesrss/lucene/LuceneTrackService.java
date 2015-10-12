@@ -70,25 +70,27 @@ public class LuceneTrackService {
     private IndexWriter myIndexWriter;
 
     private Directory getDirectory() throws IOException {
-        return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
+        return FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track").toPath());
     }
 
     private synchronized IndexWriter getIndexWriter() throws IOException {
         if (myDirectory == null) {
-            myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track"));
+            myDirectory = FSDirectory.open(new File(MyTunesRss.CACHE_DATA_PATH + "/lucene/track").toPath());
         }
         if (myAnalyzer == null) {
-            myAnalyzer = new LimitTokenCountAnalyzer(new WhitespaceAnalyzer(Version.LUCENE_4_9), 300);
+            WhitespaceAnalyzer whitespaceAnalyzer = new WhitespaceAnalyzer();
+            whitespaceAnalyzer.setVersion(Version.LUCENE_5_3_1);
+            myAnalyzer = new LimitTokenCountAnalyzer(whitespaceAnalyzer, 300);
         }
         try {
             if (myIndexWriter == null) {
-                IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_4_9, myAnalyzer);
+                IndexWriterConfig indexWriterConfig = new IndexWriterConfig(myAnalyzer);
                 indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.APPEND);
                 myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
             }
         } catch (IndexNotFoundException e) {
             LOGGER.warn("No lucene index found, creating a new one.", e);
-            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(Version.LUCENE_4_9, myAnalyzer);
+            IndexWriterConfig indexWriterConfig = new IndexWriterConfig(myAnalyzer);
             indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
             myIndexWriter = new IndexWriter(myDirectory, indexWriterConfig);
         }
@@ -281,7 +283,9 @@ public class LuceneTrackService {
             indexSearcher = new IndexSearcher(indexReader);
             Query luceneQuery = null;
             try {
-                QueryParser parser = new QueryParser(Version.LUCENE_4_9, "name", new WhitespaceAnalyzer(Version.LUCENE_4_9));
+                WhitespaceAnalyzer whitespaceAnalyzer = new WhitespaceAnalyzer();
+                whitespaceAnalyzer.setVersion(Version.LUCENE_5_3_1);
+                QueryParser parser = new QueryParser("name", whitespaceAnalyzer);
                 parser.setAllowLeadingWildcard(true);
                 luceneQuery = parser.parse(searchExpression);
             } catch (ParseException | RuntimeException e) {
