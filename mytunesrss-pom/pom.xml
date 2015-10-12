@@ -220,17 +220,17 @@
             <dependency>
                 <groupId>org.apache.lucene</groupId>
                 <artifactId>lucene-core</artifactId>
-                <version>${lucene.version}</version>
+                <version>5.3.1</version>
             </dependency>
             <dependency>
             	<groupId>org.apache.lucene</groupId>
             	<artifactId>lucene-queryparser</artifactId>
-            	<version>${lucene.version}</version>
+            	<version>5.3.1</version>
             </dependency>
             <dependency>
             	<groupId>org.apache.lucene</groupId>
             	<artifactId>lucene-analyzers-common</artifactId>
-            	<version>${lucene.version}</version>
+            	<version>5.3.1</version>
             </dependency>
             <dependency>
                 <groupId>de.codewave.mytunesrss</groupId>
@@ -240,32 +240,32 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-server</artifactId>
-                <version>${jetty.version}</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlets</artifactId>
-                <version>${jetty.version}</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-webapp</artifactId>
-                <version>${jetty.version}</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>apache-jsp</artifactId>
-                <version>${jetty.version}</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>apache-jstl</artifactId>
-                <version>${jetty.version}</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-util</artifactId>
-                <version>${jetty.version}</version>
+                <version>9.3.4.v20151007</version>
             </dependency>
             <dependency>
                 <groupId>javax.xml.bind</groupId>
@@ -505,8 +505,4 @@
             </plugin>
         </plugins>
     </build>
-    <properties>
-        <jetty.version>9.3.4.v20151007</jetty.version>
-        <lucene.version>5.3.1</lucene.version>
-    </properties>
 </project>
