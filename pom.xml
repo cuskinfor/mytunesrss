@@ -25,23 +25,6 @@
         <module>selenium</module>
         <module>mytunesrss-pom</module>
     </modules>
-    <dependencies>
-        <!--dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <scope>runtime</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>xml-resolver</groupId>
-                    <artifactId>xml-resolver</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency-->
-    </dependencies>
 
     <build>
         <plugins>
