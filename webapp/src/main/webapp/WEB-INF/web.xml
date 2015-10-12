@@ -15,14 +15,6 @@
         <param-name>resteasy.servlet.mapping.prefix</param-name>
         <param-value>/rest</param-value>
     </context-param>
-    <context-param>
-        <param-name>resteasy.scan.providers</param-name>
-        <param-value>true</param-value>
-    </context-param>
-    <context-param>
-        <param-name>resteasy.scan.resources</param-name>
-        <param-value>true</param-value>
-    </context-param>
     <!-- Session cookie name -->
     <context-param>
         <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
@@ -36,10 +28,6 @@
     <!-- Jasper compiler initialization -->
     <listener>
         <listener-class>de.codewave.mytunesrss.JettyJasperInitializerListener</listener-class>
-    </listener>
-    <!-- RestEasy bootstrapping -->
-    <listener>
-        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
     </listener>
     <!-- Listener for command handler registry -->
     <listener>
@@ -213,6 +201,10 @@
     <servlet>
         <servlet-name>resteasy</servlet-name>
         <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>de.codewave.mytunesrss.rest.Application</param-value>
+        </init-param>
     </servlet>
     <servlet>
         <servlet-name>resteasy-jsapi</servlet-name>

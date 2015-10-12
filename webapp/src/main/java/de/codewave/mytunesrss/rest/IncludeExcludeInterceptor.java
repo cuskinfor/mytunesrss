@@ -47,7 +47,7 @@ public class IncludeExcludeInterceptor implements PreProcessInterceptor, Accepte
 
 
     @Override
-    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) {
+    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod method) {
         INCLUDES.get().clear();
         if (myRequest.getParameterValues("attr.incl") != null) {
             INCLUDES.get().addAll(Arrays.asList(myRequest.getParameterValues("attr.incl")));

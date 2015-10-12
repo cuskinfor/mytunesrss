@@ -46,7 +46,7 @@ public class CacheControlInterceptor implements PreProcessInterceptor, PostProce
     }
 
     @Override
-    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod resourceMethod) {
+    public ServerResponse preProcess(HttpRequest httpRequest, ResourceMethod method) {
         IF_MODIFIED_SINCE.remove();
         List<String> header = httpRequest.getHttpHeaders().getRequestHeader("If-Modified-Since");
         if (header != null && !header.isEmpty()) {
